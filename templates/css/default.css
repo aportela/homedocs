@@ -1,0 +1,101 @@
+body {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.navbar {
+  margin-bottom: 20px;
+}
+
+
+div#results, div#details
+{
+    display: none;
+}
+
+
+div.document
+{
+    /*This is where you set the padding you want between the images*/
+    /* padding:10px; */
+    /* list-style-type: none; */
+    text-align: center;
+    margin: 10px;
+    /* float: left; */
+    -moz-box-shadow:0px 2px 4px rgba(0, 0, 0, 0.1);
+    -webkit-box-shadow:0px 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow:0px 2px 4px rgba(0, 0, 0, 0.1);
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+h5.title
+{
+    text-align: center;
+    max-width: 224px !important;
+    font-weight: bold;
+    width: 95%;
+    cursor: help;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+div#results div.row div img
+{
+    margin:0px auto;
+    padding:0;
+    display: block;
+    vertical-align:bottom;
+    opacity:1;
+    width: 128px;
+    height: 128px;
+
+    /*This is where you set the border you want for the image*/
+    border:6px solid #FFF;
+}
+
+
+.dropzone
+{
+    min-height: 300px !important;
+}
+
+form#dragdropUploadContainer
+{
+    -moz-box-shadow:0px 2px 4px rgba(0, 0, 0, 0.1);
+    -webkit-box-shadow:0px 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow:0px 2px 4px rgba(0, 0, 0, 0.1);
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    display: block;
+    width: 98% !important;
+    height: 300px !important;
+    margin: 0px auto;
+    overflow-y: scroll;
+}
+
+a#select_file_to_upload_button
+{
+    margin-top: 16px;
+}
+
+li.sub_filters
+{
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+p#pag span
+{
+    cursor: pointer;
+}
+
+div#search_container
+{
+    display: none;
+}

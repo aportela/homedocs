@@ -1,0 +1,57 @@
+body
+{
+  background: #E6E6E6;
+  margin: 0px;
+  overflow-y: auto;
+  position: relative;
+  z-index: 0;
+  color: #393939;
+  font: 14px/18px "Helvetica Neue",Arial,Helvetica,sans-serif;
+}
+
+a, p {
+  color: #939393;
+}
+
+a
+{
+  text-decoration: underline;
+}
+
+div#header
+{
+  margin-top: 32px;
+  margin-bottom: 10px;
+  text-align: center;
+  height: 46px;
+}
+
+div#header img
+{
+  width: 198px;
+  height: 46px;
+  text-align: center;
+}
+
+div#login_container, div#new_account_container, div#recover_account_container
+{
+  margin: 0px auto;
+  max-width: 320px;
+  padding: 10px 10px 50px;
+  position: relative;
+  background-color: #F0F0F0;
+  border: 1px solid #BFBFBF;
+  border-radius: 3px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+div#new_account_container, div#recover_account_container
+{
+  display: none;
+}
+
+a#forgot_password_link
+{
+  margin-left: 24px;
+}
