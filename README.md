@@ -21,8 +21,8 @@ Open include/configuration.php file with editor and set database values & storag
 - DATABASE_NAME
 - DATABASE_USERNAME
 - DATABASE_PASSWORD
-- ALLOW___NEW_ACCOUNTS: set TRUE to create first account
-- LOCAL___STORAGE_PATH: full storage directory path (full permission access required for web server process owner).
+- ALLOW_NEW_ACCOUNTS: set TRUE to create first account
+- LOCAL_STORAGE_PATH: full storage directory path (full permission access required for web server process owner).
 
 Point your browser to install.php file (ex: http://localhost/homedocs/install.php)
 
