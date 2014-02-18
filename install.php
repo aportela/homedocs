@@ -26,9 +26,20 @@
     	<div id="main">
     	<h1>HomeDocs installer</h1>
 <?php
+	// v5.5.0 required because native password hashing functions
 	if (PHP_VERSION >= 5.5)
 	{
-		if (extension_loaded('imagick'))
+		$required_extensions = array("PDO", "pdo_mysql", "imagick");
+		$loaded_extensions = get_loaded_extensions();
+		$not_found_extensions = array();
+		for ($i = 0; $i < 3; $i++)
+		{
+			if (! in_array($required_extensions[$i], $loaded_extensions))
+			{
+				$not_found_extensions[] = $required_extensions[$i];
+			}
+		}
+		if (count($not_found_extensions) == 0)
 		{
 		
 			require_once ("include/configuration.php");
@@ -49,7 +60,7 @@
 				{
 					echo '<div class="alert alert-danger alert-dismissable">
 			      			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-		      			<strong>Storage Error: </strong> ' . $e->getMessage() . '
+		      			<strong>Storage Error: </strong> ' . $e->getMessage() . ' (check permissions)
 			    		</div>';
 			    	$errors = TRUE;
 				}
@@ -88,6 +99,17 @@
 						</div>
 			    		</form>';
 			    }
+			    else
+			    {
+					echo '<div class="alert alert-info alert-dismissable">
+			      			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+			      			<p><strong>WARNING: </strong> errors found, <a href="' , basename(__FILE__) , '">launch installer again</a></p>
+			    		</div><form method="get" action="index.php">
+			    		<div class="form-group">
+						<button type="submit" class="btn btn-primary">ignore errors & login into HomeDocs</button>
+						</div>
+			    		</form>';			    	
+			    }
 			}
 			else
 			{
@@ -103,7 +125,7 @@
 					<li>Port: ' . DATABASE_PORT . '</li>
 					<li>Username: ' . DATABASE_USERNAME . '</li>
 					<li>Password: ' . DATABASE_PASSWORD . '</li>
-					<li>Database name: ' . DATABASE_NAME . '</li>
+					<li>Database name: ' . DATABASE_NAME . ' (<strong>WARNING - install script will not create database, <a href="http://dev.mysql.com/doc/refman/5.0/es/create-database.html">create before run</a></strong>)</li>
 				</ul>
 				<form method="get" role="form" action="install.php">
 					<input type="hidden" name="confirmation" value="1" />
@@ -118,7 +140,9 @@
 		{
 			echo '<div class="alert alert-danger alert-dismissable">
       			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-      			<strong>Error</strong> libmagick required php module php not found
+      			<strong>Error</strong> the following required php modules not found:
+      			' , implode(", ", $not_found_extensions) , '
+
     		</div>';
 		}
 	}
