@@ -72,15 +72,25 @@
 		*/
 		static function create_directories()
 		{
-			if (defined ('LOCAL_STORAGE_PATH') && is_dir(LOCAL_STORAGE_PATH))
+			if (defined ('LOCAL_STORAGE_PATH'))
 			{
+				if (! is_dir(LOCAL_STORAGE_PATH))
+				{
+					if (! mkdir(LOCAL_STORAGE_PATH, 0777, TRUE))
+					{
+						throw new Exception("Error creating path: " . LOCAL_STORAGE_PATH);
+					}
+				}
 				for ($i = 0; $i < 16; $i++)
 				{
 					for ($j = 0; $j < 16; $j++)
 					{
 						$dir = sprintf("%s/%x/%x/", rtrim(LOCAL_STORAGE_PATH, "/"), $i, $j);
 						if (! is_dir($dir)) {
-						    mkdir($dir, 0777, TRUE);         
+						    if (! mkdir($dir, 0777, TRUE))
+						    {
+						    	throw new Exception("Error creating path: " . $dir);
+						    }
 						}
 					}
 				}			
