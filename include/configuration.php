@@ -41,4 +41,9 @@
 			)
 	);
 
+	if (DEBUG == 0)
+	{
+		error_reporting(0);
+	}
+
 ?>
