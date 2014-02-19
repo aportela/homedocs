@@ -80,6 +80,7 @@
 					{
 						throw new Exception("Error creating path: " . LOCAL_STORAGE_PATH);
 					}
+					chmod(LOCAL_STORAGE_PATH, 0770);
 				}
 				for ($i = 0; $i < 16; $i++)
 				{
@@ -91,6 +92,7 @@
 						    {
 						    	throw new Exception("Error creating path: " . $dir);
 						    }
+						    chmod($dir, 0770);
 						}
 					}
 				}			
