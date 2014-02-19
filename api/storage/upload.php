@@ -43,10 +43,17 @@
 						{
 							$d->files[] = clone($result["file"]);
 						}
+						else
+						{
+							// exit on errors
+							$i = $total_files;
+						}
 					}
 					else
 					{
-						//$result["error"] = "can not upload this type of file (mime unsupported)";
+						$result = array("success" => FALSE, "error" => "invalid file mime type");
+						// exit on errors
+						$i = $total_files;
 					}
 				}
 				if (count($d->files) == $total_files)
@@ -54,30 +61,31 @@
 					$result = $d->add();
 					if ($result["success"] == TRUE)
 					{
-						$result = array("success" => TRUE, "document" => $d, "a" => 11);
+						$result = array("success" => TRUE, "document" => $d);
 					}
 					else
 					{
-						$result = array("success" => FALSE);
+						$result = array("success" => FALSE, "error" => "error creating document");
 					}
-				}
-				else
-				{
-					$result = array("success" => FALSE);
 				}
 			}
 
 		}
 		else
 		{
-			$result["error"] = "form file not found";
+			$result = array("success" => FALSE, "error" => "form file not found");
 		}
 	}
 	else
 	{
-		$result["error"] = "access denied";
+		$result = array("success" => FALSE, "error" => "access denied");
 	}
 
+	if ($result["success"] == FALSE)
+	{
+		header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+	}
+	
 	echo json_encode($result);
 
 	ob_end_flush();
