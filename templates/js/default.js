@@ -125,6 +125,7 @@ function refreshDocumentFile() {
 	var img = get_icon_url(filename);
 	var download_url = "api/storage/download.php?id=" + loadedDocument.files[documentFileIdx].id;
 	$("p#fd_filename").text(filename);
+	$("p#fd_filename").attr("title", filename);
 	$("span#fd_filesize").text(humanFileSize(filesize));
 	if (thumb_url != null) {
 		$("img#fl_thumb_url").attr("src", thumb_url);

@@ -172,7 +172,14 @@
 					if ($this->move_uploaded_to_storage($temporal_path))
 					{
 						$this->add_metadata();
-						$this->create_thumbnail();
+						try
+						{
+							$this->create_thumbnail();
+						}
+						catch (Exception $e)
+						{
+							$result["thumbnail_error"] = $e->getMessage();
+						}
 						if (file_exists(Storage::get_thumbnail_local_path($this->hash)))
 						{
 							$this->thumbnail_url = Storage::get_thumbnail_url_path($this->hash);
