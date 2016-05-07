@@ -91,6 +91,37 @@
 			return($rows);
 		}
 
+		static function exec_with_result_export($sql, $params = array())
+		{
+			$rows = array();
+			try
+			{
+				$dbh = new PDO(PDO_CONNECTION_STRING, DATABASE_USERNAME, DATABASE_PASSWORD, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+				$stmt = $dbh->prepare($sql);
+				$total_params = count($params);
+				if ($total_params > 0)
+				{
+					for ($i = 0; $i < $total_params; $i++)
+					{
+						$stmt->bindValue($params[$i]->name, $params[$i]->value, $params[$i]->type);
+					}
+				}				
+				if ($stmt->execute())
+				{
+					while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
+					{
+						$rows[] = $row;
+					}
+				}
+				$dbh = NULL;
+			}
+			catch (PDOException $e)
+			{
+				throw $e;
+			}		
+			return($rows);
+		}
+
 		public static function get_uuid()
 		{
 			$rows = Database::exec_with_result(" SELECT REPLACE(UUID(),'-','') AS ID ");
