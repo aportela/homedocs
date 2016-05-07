@@ -212,7 +212,7 @@ $("div#results").on("click", "a.document_details_link", function(e) {
 $("div#results").on("click", "button.delete_file", function(e) {
 	e.preventDefault();
 	e.stopPropagation();
-	if (confirm('Are you sure you want to delete this file ')) {
+	if (confirm('Are you sure you want to delete this file ?')) {
 	}
 });
 
@@ -225,6 +225,23 @@ $("button#submit_update_form_button").click(function(e) {
 		$("form#simple_search").submit();
 	});
 });
+
+$("button#submit_delete_form_button").click(function(e) {
+	e.preventDefault();
+	e.stopPropagation();	
+	if (confirm("Are you sure you want to delete this document ?")) {
+		var documentId = $("input#update_document_id").val();
+		$.post("api/storage/delete.php", "id=" + documentId , function(response) {
+			$('div#file_details').modal('hide');
+			var result = $('a[data-id="' + documentId + '"]'); 
+			if (result.length === 1) {
+				$(result).closest("div.document").remove();
+			}
+		});
+	};
+});
+
+
 
 $("a#logout_link").click(function(e) {
 	e.preventDefault();

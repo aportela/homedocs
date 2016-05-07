@@ -102,7 +102,7 @@
 		/*
 			delete file metadata
 		*/
-		private function delete_metadata()
+		function delete_metadata()
 		{
 			$sql = " DELETE FROM FILE WHERE ID = UNHEX(:ID) ";
 			Database::exec_without_result($sql, array(

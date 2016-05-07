@@ -84,10 +84,11 @@
 		*/
 		private function delete_metadata()
 		{
-			$sql = " DELETE FROM DOCUMENT WHERE ID = UNHEX(:ID) ";
+			$sql = " DELETE FROM DOCUMENT WHERE ID = UNHEX(:ID) AND USER_ID = UNHEX(:USER_ID) ";
 			Database::exec_without_result($sql, 
 				array(
-					DatabaseParam::str(":ID", $this->id)
+					DatabaseParam::str(":ID", $this->id),
+					DatabaseParam::str(":USER_ID", User::get_session_user_id())
 				)			
 			);
 		}
@@ -100,7 +101,7 @@
 			$sql = " DELETE FROM DOCUMENT_TAG WHERE DOCUMENT_ID = UNHEX(:DOCUMENT_ID) ";
 			Database::exec_without_result($sql, 
 				array(
-					DatabaseParam::str(":DOCUMENT_ID", $this->id)
+					DatabaseParam::str(":DOCUMENT_ID", $this->id)					
 				)			
 			);
 		}
@@ -110,12 +111,30 @@
 		*/
 		private function remove_files()
 		{
-			$sql = " DELETE FROM DOCUMENT_FILE WHERE DOCUMENT_ID = HEX(:DOCUMENT_ID) ";
-			Database::exec_without_result($sql, 
-				array(
-					DatabaseParam::str(":DOCUMENT_ID", $this->id)
-				)			
-			);
+			$this->get_files();
+			if ($this->total_files > 0)
+			{				
+				for ($i = 0; $i < $this->total_files; $i++)
+				{
+					$thumb_path = Storage::get_thumbnail_local_path($this->files[$i]->hash);
+					if (file_exists($thumb_path))
+					{
+						unlink($thumb_path);	
+					}
+					$file_path = Storage::get_storage_path($this->files[$i]->hash);
+					if (file_exists($file_path))
+					{
+						unlink($file_path);	
+					}									
+					$this->files[$i]->delete_metadata();
+				}
+				$sql = " DELETE FROM DOCUMENT_FILE WHERE DOCUMENT_ID = UNHEX(:DOCUMENT_ID) ";
+				Database::exec_without_result($sql, 
+					array(
+						DatabaseParam::str(":DOCUMENT_ID", $this->id)
+					)			
+				);
+			}
 		}
 
 		private function update_metadata()
@@ -299,7 +318,7 @@
 		*/
 		function delete()
 		{
-			$result = array("success" => FALSE);	
+			$result = array("success" => FALSE);
 			try
 			{
 				$this->delete_metadata();
