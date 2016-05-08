@@ -109,6 +109,53 @@
 		/*
 			remove document file references
 		*/
+		public function remove_file($file_id, $file_hash)
+		{
+			$result = array("success" => FALSE);
+			$f = new File();
+			$f->id = $file_id;
+			$f->hash = $file_hash;
+			$thumb_path = Storage::get_thumbnail_local_path($file_hash);
+			if (file_exists($thumb_path))
+			{
+				unlink($thumb_path);	
+			}
+			$file_path = Storage::get_storage_path($file_hash);
+			if (file_exists($file_path))
+			{
+				unlink($file_path);	
+			}									
+			$f->delete_metadata();
+			try
+			{											
+				$sql = " DELETE FROM DOCUMENT_FILE WHERE FILE_ID = UNHEX(:FILE_ID) ";
+				Database::exec_without_result($sql, 
+					array(
+						DatabaseParam::str(":FILE_ID", $file_id)
+					)			
+				);
+				$result["success"] = TRUE;
+			}
+			catch (PDOException $e)
+			{
+				if (defined("DEBUG"))
+				{
+					$result["pdo_exception_message"] = $e->getMessage();
+				}
+			}
+			catch (Exception $e)
+			{
+				if (defined("DEBUG"))
+				{
+					$result["exception_message"] = $e->getMessage();
+				}
+			}										
+			return($result);
+		}
+
+		/*
+			remove all document file references
+		*/
 		private function remove_files()
 		{
 			$this->get_files();
@@ -426,8 +473,8 @@
 				if ($words != NULL)
 				{
 					$sql = " SELECT HEX(DOCUMENT.ID) AS ID, DOCUMENT.TITLE, DOCUMENT.CREATED, COUNT(FILE.ID) AS TOTAL_DOCUMENT_FILES " .
-						   " FROM DOCUMENT_FILE " .
-						   " LEFT JOIN DOCUMENT ON DOCUMENT_FILE.DOCUMENT_ID = DOCUMENT.ID " .
+						   " FROM DOCUMENT " .
+						   " LEFT JOIN DOCUMENT_FILE ON DOCUMENT_FILE.DOCUMENT_ID = DOCUMENT.ID " .
 						   " LEFT JOIN FILE ON DOCUMENT_FILE.FILE_ID = FILE.ID " .
 						   " WHERE DOCUMENT.USER_ID = UNHEX(:USER_ID) " .
 						   " AND (FILE.NAME LIKE :WORDS OR DOCUMENT.TITLE LIKE :WORDS OR DOCUMENT.DESCRIPTION LIKE :WORDS) " .
@@ -451,8 +498,8 @@
 				else
 				{
 					$sql = " SELECT HEX(DOCUMENT.ID) AS ID, DOCUMENT.TITLE, DOCUMENT.CREATED, COUNT(FILE.ID) AS TOTAL_DOCUMENT_FILES " .
-						   " FROM DOCUMENT_FILE " .
-						   " LEFT JOIN DOCUMENT ON DOCUMENT_FILE.DOCUMENT_ID = DOCUMENT.ID " .
+						   " FROM DOCUMENT " .
+						   " LEFT JOIN DOCUMENT_FILE ON DOCUMENT_FILE.DOCUMENT_ID = DOCUMENT.ID " .
 						   " LEFT JOIN FILE ON DOCUMENT_FILE.FILE_ID = FILE.ID " .
 						   " WHERE DOCUMENT.USER_ID = UNHEX(:USER_ID) " .
 						     $creation_date_condition .

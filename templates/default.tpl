@@ -106,11 +106,12 @@
           </div>
           <div class="modal-body">
             <div class="row">
-              <div class="col-xs-6 col-md-4">
+              <div id="document_file_details" class="col-xs-6 col-md-4">
                 <img class="center-block" id="fd_mime_icon_url" src="#" alt="mime icon" />
                 <p class="text-center" id="pag"><span id="prev_download" class="glyphicon glyphicon-chevron-left"></span> change file <span id="next_download" class="glyphicon glyphicon-chevron-right"></span></p>
                 <p class="text-center" id="fd_filename"></p>
                 <p class="text-center"><a id="fd_download_url" href="#">download file (<span id="fd_filesize"></span>)</a></p>
+                <p class="text-center"><a id="fd_remove_file" href="#">remove file</a></p>
               </div>
               <div class="col-xs-12 col-md-8">
                 <form class="form-horizontal" role="form" method="post" action="api/storage/update.php" id="update_file_details_form">
@@ -140,9 +141,7 @@
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             <button type="button" class="btn btn-primary" id="submit_update_form_button">Update</button>
-            <!--
-            <button type="button" class="btn btn-danger" id="delete_document_button" data-dismiss="modal">Delete</button>
-            -->
+            <button type="button" class="btn btn-danger" id="submit_delete_form_button" data-dismiss="modal">Delete</button>
           </div>
         </div>
       </div>    
