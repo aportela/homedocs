@@ -172,6 +172,7 @@ function showDetails(id) {
 			$("p#pag").hide();
 		}
 		refreshDocumentFile();
+		$("a#permalink").attr("href", window.location.href.replace(window.location.search, "") + '?permalink=' + id);
 		$('div#file_details').modal('show')
 	});
 }
@@ -323,3 +324,9 @@ function loadTags() {
 }
 
 loadTags();
+
+var url = new URL(window.location.href);
+var permalink = url.searchParams.get("permalink");
+if (permalink) {
+	showDetails(permalink);
+}

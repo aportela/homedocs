@@ -39,10 +39,10 @@
       						<input type="text" name="q" class="form-control" placeholder="search">
       					</div>
       					<button type="submit" class="btn btn-default">Fast Search</button>
-      				</form>            	
+      				</form>
             </li>
           </ul>
-          <ul class="nav navbar-nav navbar-right">            
+          <ul class="nav navbar-nav navbar-right">
             <li><a id="logout_link" href="api/user/logout.php">Logout</a></li>
           </ul>
         </div>
@@ -58,7 +58,7 @@
           <div class="fallback">
             <input name="userfile" type="file"  multiple="" />
           </div>
-        </form>        
+        </form>
         <p>
           <a class="btn btn-lg btn-primary" href="#" id="select_file_to_upload_button">Select file/s &raquo;</a>
         </p>
@@ -71,7 +71,7 @@
             <div class="form-group">
               <label for="q">search text</label>
               <input type="text" name="q" class="form-control" placeholder="words">
-            </div>            
+            </div>
             <div class="form-group">
               <label for="tags">tags</label>
               <input type="text" name="tags" class="form-control" placeholder="enter (optional) tags">
@@ -102,7 +102,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title">Document details (<span id="total_files">0</span> file/s attached)</h4>
+            <h4 class="modal-title">Document details (<span id="total_files">0</span> file/s attached) - <a id="permalink" href="#">permalink</a></h4>
           </div>
           <div class="modal-body">
             <div class="row">
@@ -136,7 +136,7 @@
                   </div>
               </form>
             </div>
-          </div>          
+          </div>
           <img class="center-block" src="#" id="fl_thumb_url" alt="file thumbnail" />
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -144,7 +144,7 @@
             <button type="button" class="btn btn-danger" id="submit_delete_form_button" data-dismiss="modal">Delete</button>
           </div>
         </div>
-      </div>    
+      </div>
     </div>
 
 		<script src="templates/jquery-2.1.0.min.js"></script>
