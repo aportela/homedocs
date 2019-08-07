@@ -1,1 +1,7 @@
+/vendor/
+composer.lock
+/logs/*
+!/logs/README.md
+/data/*
+!/data/README.md
 /storage/
