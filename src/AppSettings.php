@@ -2,12 +2,12 @@
 
     declare(strict_types=1);
 
-    namespace Forms;
+    namespace HomeDocs;
 
     return [
         'settings' => [
             'displayErrorDetails' => true, // disable on production environments
-            'phpRequiredExtensions' => array('pdo_sqlite', 'mbstring'),
+            'phpRequiredExtensions' => array('pdo_mysql', 'mbstring'),
             'twigParams' => [
                 'production' => false,
                 'localVendorAssets' => true // use local vendor assets (vs remote cdn)
@@ -18,12 +18,12 @@
             ],
             // database settings
             'database' => [
-                'type' => "PDO_SQLITE", // supported types: PDO_SQLITE
+                'type' => "PDO_MARIADB", // supported types: PDO_SQLITE
                 'name' => 'homedocs',
                 'username' => '',
                 'password' => '',
-                'host' => '',
-                'port' => 0,
+                'host' => 'localhost',
+                'port' => 3306,
             ],
             // Monolog settings
             'logger' => [
@@ -42,7 +42,7 @@
                 'level' => \Monolog\Logger::DEBUG
             ],
             'common' => [
-                'allowSignUp' => false, // allow user public sign-ups
+                'allowSignUp' => true, // allow user public sign-ups
                 'defaultResultsPage' => 32 // default pagination results
             ]
         ],
