@@ -7,7 +7,7 @@
     return [
         'settings' => [
             'displayErrorDetails' => true, // disable on production environments
-            'phpRequiredExtensions' => array('pdo_mysql', 'mbstring'),
+            'phpRequiredExtensions' => array('pdo_sqlite', 'mbstring'),
             'twigParams' => [
                 'production' => false,
                 'localVendorAssets' => true // use local vendor assets (vs remote cdn)
@@ -18,12 +18,12 @@
             ],
             // database settings
             'database' => [
-                'type' => "PDO_MARIADB", // supported types: PDO_SQLITE
+                'type' => "PDO_SQLITE", // supported types: PDO_SQLITE
                 'name' => 'homedocs',
                 'username' => '',
                 'password' => '',
                 'host' => 'localhost',
-                'port' => 3306,
+                'port' => 0,
             ],
             // Monolog settings
             'logger' => [

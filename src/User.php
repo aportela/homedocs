@@ -30,7 +30,7 @@
                             (new \HomeDocs\Database\DBParam())->str(":email", mb_strtolower($this->email)),
                             (new \HomeDocs\Database\DBParam())->str(":password_hash", $this->passwordHash($this->password))
                         );
-                        return($dbh->execute(" INSERT INTO _USER (ID, EMAIL, PASSWORD_HASH) VALUES(:id, :email, :password_hash) ", $params));
+                        return($dbh->execute(" INSERT INTO USER (id, email, password_hash) VALUES(:id, :email, :password_hash) ", $params));
                     } else {
                         throw new \HomeDocs\Exception\InvalidParamsException("password");
                     }
@@ -48,9 +48,9 @@
                 $results = $dbh->query(
                     "
                         SELECT
-                            _USER.ID AS id, _USER.EMAIL AS email, _USER.PASSWORD_HASH AS passwordHash
-                        FROM _USER
-                        WHERE _USER.ID = :id
+                            USER.id, USER.email, USER.password_hash AS passwordHash
+                        FROM USER
+                        WHERE USER.id = :id
                     ",
                     array(
                         (new \HomeDocs\Database\DBParam())->str(":id", mb_strtolower($this->id))
@@ -60,9 +60,9 @@
                 $results = $dbh->query(
                     "
                     SELECT
-                        _USER.ID AS id, _USER.EMAIL AS email, _USER.PASSWORD_HASH AS passwordHash
-                    FROM _USER
-                        WHERE _USER.EMAIL = :email
+                        USER.id, USER.email, USER.password_hash AS passwordHash
+                    FROM USER
+                        WHERE USER.email = :email
                     ",
                     array(
                         (new \HomeDocs\Database\DBParam())->str(":email", mb_strtolower($this->email))
@@ -86,9 +86,9 @@
                 $results = $dbh->query(
                     "
                     SELECT
-                        _USER.ID AS id
-                    FROM _USER
-                        WHERE _USER.EMAIL = :email
+                        USER.id
+                    FROM USER
+                        WHERE USER.email = :email
                     ",
                     array(
                         (new \HomeDocs\Database\DBParam())->str(":email", mb_strtolower($email))
