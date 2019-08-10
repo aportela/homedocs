@@ -57,5 +57,42 @@
             );
         });
 
+        $this->post('/user/sign-out', function (Request $request, Response $response, array $args) {
+            \HomeDocs\User::signOut();
+            return $response->withJson(
+                [
+                    'initialState' => \HomeDocs\Utils::getInitialState($this)
+                ],
+                200
+            );
+        });
+
+        $this->post('/document/search', function (Request $request, Response $response, array $args) {
+            $data = \HomeDocs\Document::search(
+                new \HomeDocs\Database\DB($this)
+            );
+            return $response->withJson(
+                [
+                    'initialState' => \HomeDocs\Utils::getInitialState($this),
+                    'data' => $data
+                ],
+                200
+            );
+        });
+
+        $this->post('/tag/search', function (Request $request, Response $response, array $args) {
+            $data = \HomeDocs\Document::searchTags(
+                new \HomeDocs\Database\DB($this)
+            );
+            return $response->withJson(
+                [
+                    'initialState' => \HomeDocs\Utils::getInitialState($this),
+                    'data' => $data
+                ],
+                200
+            );
+        });
+
+
     })->add(new \HomeDocs\Middleware\APIExceptionCatcher($this->app->getContainer()));
 ?>

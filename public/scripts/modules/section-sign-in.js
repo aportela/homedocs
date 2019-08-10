@@ -73,6 +73,9 @@ export default {
             return(this.loading || ! (this.email && this.password));
         }
     },
+    created: function() {
+        this.validator.clear();
+    },
     mounted: function () {
         this.$nextTick(() => this.$refs.email.focus());
     },
@@ -88,6 +91,7 @@ export default {
             homedocsAPI.user.signIn(this.email, this.password, function (response) {
                 if (response.ok) {
                     self.loading = false;
+                    self.$router.push({ name: 'appDashBoard' });
                 } else {
                     switch (response.status) {
                         case 400:

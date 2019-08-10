@@ -81,6 +81,9 @@ export default {
     components: {
         'homedocs-modal-api-error': modalAPIError
     },
+    created: function() {
+        this.validator.clear();
+    },
     mounted: function () {
         this.$nextTick(() => this.$refs.email.focus());
     },

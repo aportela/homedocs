@@ -38,6 +38,43 @@
                             PRIMARY KEY (`id`)
                         );
                     '
+                ),
+                "1.02" => array(
+                    '
+                        CREATE TABLE `FILE` (
+                            `id` VARCHAR(36) NOT NULL,
+                            `sha1_hash` VARCHAR(40) NOT NULL,
+                            `name` VARCHAR(256) NOT NULL,
+                            `size` INTEGER NOT NULL,
+                            `uploaded_by` VARCHAR(36) NOT NULL,
+                            `uploaded_on` INTEGER NOT NULL,
+                            PRIMARY KEY (`id`)
+                        );
+                    ',
+                    '
+                        CREATE TABLE `DOCUMENT` (
+                            `id` VARCHAR(36) NOT NULL,
+                            `title` VARCHAR(128) NOT NULL,
+                            `description` VARCHAR(4096) NULL,
+                            `created_by` VARCHAR(36) NOT NULL,
+                            `uploaded_on` INTEGER NOT NULL,
+                            PRIMARY KEY (`id`)
+                        );
+                    ',
+                    '
+                        CREATE TABLE `DOCUMENT_FILE` (
+                            `document_id` VARCHAR(36) NOT NULL,
+                            `file_id` VARCHAR(36) NOT NULL,
+                            PRIMARY KEY (`document_id`, `file_id`)
+                        );
+                    ',
+                    '
+                        CREATE TABLE `DOCUMENT_TAG` (
+                            `document_id` VARCHAR(36) NOT NULL,
+                            `tag` VARCHAR(32) NOT NULL,
+                            PRIMARY KEY (`document_id`, `tag`)
+                        )
+                    '
                 )
             )
         );
