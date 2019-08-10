@@ -42,8 +42,13 @@ Vue.http.interceptors.push((request, next) => {
 const app = new Vue({
     router,
     created: function () {
+
         if (!this.$route.name) {
-            this.$router.push({ name: 'signIn' });
+            if (initialState.session.logged) {
+                this.$router.push({ name: 'appDashBoard' });
+            } else {
+                this.$router.push({ name: 'signIn' });
+            }
         }
     }
 }).$mount('#app');
