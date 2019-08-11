@@ -40,6 +40,14 @@
         public static function search(\HomeDocs\Database\DB $dbh, $filter) {
             $queryConditions = array();
             $params = array();
+            if (isset($filter["title"]) && ! empty($filter["title"])) {
+                $queryConditions[] = sprintf(" DOCUMENT.title LIKE :title ");
+                $params[] = (new \HomeDocs\Database\DBParam())->str(":title", "%" . $filter["title"] . "%");
+            }
+            if (isset($filter["description"]) && ! empty($filter["description"])) {
+                $queryConditions[] = sprintf(" DOCUMENT.description LIKE :description ");
+                $params[] = (new \HomeDocs\Database\DBParam())->str(":description", "%" . $filter["description"]. "%");
+            }
             if (isset($filter["tags"]) && is_array($filter["tags"]) && count($filter["tags"]) > 0) {
                 $tagParamNames = array();
                 foreach($filter["tags"] as $i => $tag) {

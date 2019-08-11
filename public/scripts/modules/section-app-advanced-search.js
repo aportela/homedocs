@@ -25,13 +25,13 @@ const template = `
             <div class="field">
                 <label class="label">Search on title</label>
                 <div class="control">
-                    <input class="input" type="text" placeholder="Title condition search">
+                    <input class="input" type="text" placeholder="Title condition search" v-model.trim="titleCondition">
                 </div>
             </div>
             <div class="field">
                 <label class="label">Search on description</label>
                 <div class="control">
-                    <input class="input" type="text" placeholder="Description condition search">
+                    <input class="input" type="text" placeholder="Description condition search" v-model.trim="descriptionCondition">
                 </div>
             </div>
             <div class="field">
@@ -91,6 +91,8 @@ export default {
         return ({
             loading: false,
             tab: "conditions",
+            titleCondition: null,
+            descriptionCondition: null,
             documents: [],
             tags: [],
             noResultsWarning: false
@@ -123,6 +125,8 @@ export default {
             self.loading = true;
             self.noResultsWarning = false;
             const params = {
+                title: this.titleCondition,
+                description: this.descriptionCondition,
                 tags: this.tags
             };
             homedocsAPI.document.search(params, function (response) {

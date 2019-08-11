@@ -83,6 +83,8 @@
 
         $this->post('/document/search', function (Request $request, Response $response, array $args) {
             $filter = array(
+                "title" => $request->getParam("title", null),
+                "description" => $request->getParam("description", null),
                 "tags" => $request->getParam("tags", array()),
             );
             $data = \HomeDocs\Document::search(
