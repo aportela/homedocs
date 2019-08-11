@@ -102,9 +102,16 @@ export default {
     methods: {
         showPreview: function(fileId) {
             this.previewFileId = fileId;
+            window.addEventListener('keydown', this.onKeyPress);
         },
         hidePreview: function(fileId) {
             this.previewFileId = null;
+            window.removeEventListener('keydown', this.onKeyPress);
+        },
+        onKeyPress: function(e) {
+            if (e.code == "Escape") {
+                this.hidePreview();
+            }
         },
         isImage: function(filename) {
             if (filename) {
