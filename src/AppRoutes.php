@@ -82,8 +82,12 @@
         });
 
         $this->post('/document/search', function (Request $request, Response $response, array $args) {
+            $filter = array(
+                "tags" => $request->getParam("tags", array()),
+            );
             $data = \HomeDocs\Document::search(
-                new \HomeDocs\Database\DB($this)
+                new \HomeDocs\Database\DB($this),
+                $filter
             );
             return $response->withJson(
                 [

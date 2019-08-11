@@ -71,8 +71,9 @@ export default {
             );
 
         },
-        search: function (callback) {
+        search: function (filter, callback) {
             const params = {
+                tags: filter.tags || []
             }
             Vue.http.post("api2/document/search", params).then(
                 response => {
