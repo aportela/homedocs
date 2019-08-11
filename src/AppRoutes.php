@@ -17,7 +17,6 @@
 
     $this->app->group("/api2", function() {
 
-
         $this->post('/user/sign-up', function (Request $request, Response $response, array $args) {
             if ($this->get('settings')['common']['allowSignUp']) {
                 $db = new \HomeDocs\Database\DB($this);
@@ -112,6 +111,55 @@
                 ],
                 200
             );
+        });
+
+        $this->get('/file/{id}', function (Request $request, Response $response, array $args) {
+            $route = $request->getAttribute('route');
+            $file = new \HomeDocs\File();
+            $file->id = $route->getArgument("id");
+            $file->get(new \HomeDocs\Database\DB($this));
+            $storagePath = $file->getStoragePath(dirname(__DIR__) . DIRECTORY_SEPARATOR  . "data" . DIRECTORY_SEPARATOR . "storage");
+            if (file_exists($storagePath)) {
+                $filesize = filesize($storagePath);
+                $offset = 0;
+                $length = $filesize;
+                // https://stackoverflow.com/a/157447
+                if (isset($_SERVER['HTTP_RANGE'])) {
+                    // if the HTTP_RANGE header is set we're dealing with partial content
+                    $partialContent = true;
+                    // find the requested range
+                    // this might be too simplistic, apparently the client can request
+                    // multiple ranges, which can become pretty complex, so ignore it for now
+                    preg_match('/bytes=(\d+)-(\d+)?/', $_SERVER['HTTP_RANGE'], $matches);
+                    $offset = intval($matches[1]);
+                    $length = ((isset($matches[2])) ? intval($matches[2]) : $filesize) - $offset;
+                } else {
+                    $partialContent = false;
+                }
+                $f = fopen($storagePath, 'r');
+                fseek($f, $offset);
+                $data = fread($f, $length);
+                fclose($f);
+                if ($partialContent) {
+                    // output the right headers for partial content
+                    return $response->withStatus(206)
+                    ->withHeader('Content-Type', "application/octet-stream")
+                    ->withHeader('Content-Disposition', 'attachment; filename="' . basename($file->name) . '"')
+                    ->withHeader('Content-Length', $filesize)
+                    ->withHeader('Content-Range', 'bytes ' . $offset . '-' . ($offset + $length - 1) . '/' . $filesize)
+                    ->withHeader('Accept-Ranges', 'bytes')
+                    ->write($data);
+                } else {
+                    return $response->withStatus(200)
+                        ->withHeader('Content-Type', "application/octet-stream")
+                        ->withHeader('Content-Disposition', 'attachment; filename="' . basename($file->name) . '"')
+                        ->withHeader('Content-Length', $filesize)
+                        ->withHeader('Accept-Ranges', 'bytes')
+                        ->write($data);
+                }
+            } else {
+                throw new \HomeDocs\Exception\NotFoundException($id);
+            }
         });
 
         $this->post('/tag/search', function (Request $request, Response $response, array $args) {
