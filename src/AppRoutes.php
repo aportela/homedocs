@@ -67,6 +67,20 @@
             );
         });
 
+        $this->post('/document/search-recent', function (Request $request, Response $response, array $args) {
+            $data = \HomeDocs\Document::searchRecent(
+                new \HomeDocs\Database\DB($this),
+                $request->getParam("count", 16)
+            );
+            return $response->withJson(
+                [
+                    'initialState' => \HomeDocs\Utils::getInitialState($this),
+                    'data' => $data
+                ],
+                200
+            );
+        });
+
         $this->post('/document/search', function (Request $request, Response $response, array $args) {
             $data = \HomeDocs\Document::search(
                 new \HomeDocs\Database\DB($this)

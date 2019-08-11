@@ -21,14 +21,33 @@
             $this->description = $description;
         }
 
-        public static function search(\HomeDocs\Database\DB $dbh) {
+        public static function searchRecent(\HomeDocs\Database\DB $dbh, int $count = 16) {
             $results = $dbh->query(
-                "
+                sprintf("
                     SELECT
                         id, title, uploaded_on AS uploadedOn
                     FROM DOCUMENT
                     ORDER BY uploaded_on DESC
-                    LIMIT 16;
+                    LIMIT %d;
+                ", $count),
+                array()
+            );
+            return($results);
+        }
+
+        public static function search(\HomeDocs\Database\DB $dbh) {
+            $results = $dbh->query(
+                "
+                    SELECT
+                        id, title, description, TMP_FILE.fileCount
+                    FROM DOCUMENT
+                    LEFT JOIN (
+                        SELECT COUNT(*) AS fileCount, document_id
+                        FROM DOCUMENT_FILE
+                        GROUP BY document_id
+                    ) TMP_FILE ON TMP_FILE.document_id = DOCUMENT.id
+                    ORDER BY uploaded_on DESC
+                    LIMIT 32;
                 ",
                 array(
                 )

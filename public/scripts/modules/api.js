@@ -53,6 +53,24 @@ export default {
         }
     },
     document: {
+        searchRecent: function(count, callback) {
+            const params = {
+                count: count
+            }
+            Vue.http.post("api2/document/search-recent", params).then(
+                response => {
+                    if (callback && typeof callback === "function") {
+                        callback(response);
+                    }
+                },
+                response => {
+                    if (callback && typeof callback === "function") {
+                        callback(response);
+                    }
+                }
+            );
+
+        },
         search: function(callback) {
             const params = {
             }
