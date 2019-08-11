@@ -44,9 +44,9 @@ const template = `
                     <td><a v-bind:href="'/api2/file/' + file.id">{{ file.name }}</a></td>
                     <td>{{ file.size | humanFileSize }}</td>
                     <td>
-                        <button type="button" v-bind:disabled="! isImage(file.name)" class="button is-light" v-on:click.prevent="showPreview(file.id)"><span class="icon"><i class="fas fa-folder-open"></i></span><span>Open/Preview</span></button>
-                        <a v-bind:href="'/api2/file/' + file.id" class="button is-light"><span class="icon"><i class="fas fa-download"></i></span><span>Download</span></a>
-                        <button type="button" class="button is-light" disabled><span class="icon"><i class="fas fa-trash-alt"></i></span><span>Remove</span></button>
+                        <button type="button" v-bind:disabled="! isImage(file.name)" class="button is-light" v-on:click.prevent="showPreview(file.id)"><span class="icon"><i class="fas fa-folder-open"></i></span><span class="is-hidden-mobile">Open/Preview</span></button>
+                        <a v-bind:href="'/api2/file/' + file.id" class="button is-light"><span class="icon"><i class="fas fa-download"></i></span><span class="is-hidden-mobile">Download</span></a>
+                        <button type="button" class="button is-light" disabled><span class="icon"><i class="fas fa-trash-alt"></i></span><span class="is-hidden-mobile">Remove</span></button>
                     </td>
                 </tr>
             </tbody>
