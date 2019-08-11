@@ -18,7 +18,7 @@ export default {
                 }
             );
         },
-        signOut: function(callback) {
+        signOut: function (callback) {
             Vue.http.post("api2/user/sign-out", {}).then(
                 response => {
                     if (callback && typeof callback === "function") {
@@ -53,7 +53,7 @@ export default {
         }
     },
     document: {
-        searchRecent: function(count, callback) {
+        searchRecent: function (count, callback) {
             const params = {
                 count: count
             }
@@ -71,7 +71,7 @@ export default {
             );
 
         },
-        search: function(callback) {
+        search: function (callback) {
             const params = {
             }
             Vue.http.post("api2/document/search", params).then(
@@ -90,10 +90,8 @@ export default {
         }
     },
     tag: {
-        search: function(callback) {
-            const params = {
-            }
-            Vue.http.post("api2/tag/search", params).then(
+        search: function (callback) {
+            Vue.http.post("api2/tag/search", {}).then(
                 response => {
                     if (callback && typeof callback === "function") {
                         callback(response);
