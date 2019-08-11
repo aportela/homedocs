@@ -88,7 +88,11 @@
             );
             $data = \HomeDocs\Document::search(
                 new \HomeDocs\Database\DB($this),
-                $filter
+                intval($request->getParam("currentPage", 1)),
+                intval($request->getParam("resultsPage", $this->get('settings')['common']['defaultResultsPage'])),
+                $filter,
+                $request->getParam("sortBy", ""),
+                $request->getParam("sortOrder", "")
             );
             return $response->withJson(
                 [

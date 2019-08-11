@@ -135,7 +135,10 @@
             }
         }
 
-        public static function search(\HomeDocs\Database\DB $dbh, $filter) {
+        public static function search(\HomeDocs\Database\DB $dbh, int $currentPage = 1, int $resultsPage = 16, $filter = array(), string $sortBy = "createdOnTimestamp", string $sortOrder = "DESC") {
+            $data = new \stdClass();
+            $data->pagination = new \stdClass();
+            $data->results = array();
             $queryConditions = array();
             $params = array();
             if (isset($filter["title"]) && ! empty($filter["title"])) {
@@ -167,33 +170,59 @@
             }
             $whereCondition = count($queryConditions) > 0 ? " WHERE " .  implode(" AND ", $queryConditions) : "";
 
-            $results = $dbh->query(
-                sprintf(
-                    "
-                        SELECT
-                            DOCUMENT.id, DOCUMENT.title, DOCUMENT.description, DOCUMENT.created_on_timestamp AS createdOnTimestamp,  TMP_FILE.fileCount
-                        FROM DOCUMENT
-                        LEFT JOIN (
-                            SELECT COUNT(*) AS fileCount, document_id
-                            FROM DOCUMENT_FILE
-                            GROUP BY document_id
-                        ) TMP_FILE ON TMP_FILE.document_id = DOCUMENT.id
-                        %s
-                        ORDER BY DOCUMENT.created_on_timestamp DESC
-                        LIMIT 32;
-                    ",
-                    $whereCondition
-                ), $params
-            );
-            $results = array_map(
-                function($item) {
-                    $item->createdOnTimestamp = intval($item->createdOnTimestamp);
-                    $item->fileCount = intval($item->fileCount);
-                    return($item);
-                },
-                $results
-            );
-            return($results);
+            $queryCount = sprintf('
+                SELECT
+                    COUNT (DOCUMENT.id) AS total
+                FROM DOCUMENT
+                %s
+            ', $whereCondition);
+            $result = $dbh->query($queryCount, $params);
+            $data->pagination->currentPage = $currentPage;
+            $data->pagination->resultsPage = $resultsPage;
+            $data->pagination->totalResults = intval($result[0]->total);
+            if ($data->pagination->resultsPage > 0) {
+                $data->pagination->totalPages = ceil($data->pagination->totalResults / $resultsPage);
+            } else {
+                $data->pagination->totalPages = $data->pagination->totalResults > 0 ? 1: 0;
+            }
+            if ($data->pagination->totalResults > 0) {
+                $sqlSortBy = "";
+                switch($sortBy) {
+                    default:
+                        $sqlSortBy = "DOCUMENT.created_on_timestamp";
+                    break;
+                }
+                $data->results = $dbh->query(
+                    sprintf(
+                        "
+                            SELECT
+                                DOCUMENT.id, DOCUMENT.title, DOCUMENT.description, DOCUMENT.created_on_timestamp AS createdOnTimestamp,  TMP_FILE.fileCount
+                            FROM DOCUMENT
+                            LEFT JOIN (
+                                SELECT COUNT(*) AS fileCount, document_id
+                                FROM DOCUMENT_FILE
+                                GROUP BY document_id
+                            ) TMP_FILE ON TMP_FILE.document_id = DOCUMENT.id
+                            %s
+                            ORDER BY %s COLLATE NOCASE %s
+                            %s;
+                        ",
+                        $whereCondition,
+                        $sqlSortBy,
+                    $sortOrder == "DESC" ? "DESC": "ASC",
+                    $data->pagination->resultsPage > 0 ? sprintf("LIMIT %d OFFSET %d", $data->pagination->resultsPage, $data->pagination->resultsPage * ($data->pagination->currentPage - 1)) : null
+                    ), $params
+                );
+                $results = array_map(
+                    function($item) {
+                        $item->createdOnTimestamp = intval($item->createdOnTimestamp);
+                        $item->fileCount = intval($item->fileCount);
+                        return($item);
+                    },
+                    $results
+                );
+            }
+            return($data);
         }
 
         public static function searchTags(\HomeDocs\Database\DB $dbh) {

@@ -1,6 +1,8 @@
 import { default as homedocsAPI } from './api.js';
 import { default as modalAPIError } from './modal-api-error.js';
 import { default as controlInputTags } from './control-input-tags.js';
+import { default as controlPagination } from './control-pagination.js';
+import { mixinDateTimes } from './mixins.js';
 
 const template = `
     <div>
@@ -52,21 +54,26 @@ const template = `
 
         </form>
 
+        <homedocs-control-pagination v-show="tab == 'results'" v-bind:data="pager" v-bind:disabled="loading" v-on:change="refreshFromPager($event.currentPage, $event.resultsPage)"></homedocs-control-pagination>
         <table class="table is-narrow is-striped is-fullwidth" v-show="tab == 'results'">
             <thead>
                 <tr>
                     <th>On</th>
-                    <th>File count</th>
                     <th>Title</th>
+                    <!--
                     <th>Description</th>
+                    -->
+                    <th class="has-text-right">Files</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="document in documents" v-bind:key="document.id">
-                    <td>{{ document.uploadedOn }}</td>
-                    <td>{{ document.fileCount }}</td>
+                    <td>{{ document.createdOnTimestamp | timestamp2HumanDateTime }}</td>
                     <td><router-link v-bind:to="{ name: 'appOpenDocument', params: { id: document.id } }">{{ document.title }}</router-link></td>
-                    <td style="white-space: pre;">{{ document.description | nl2br }}</td>
+                    <!--
+                    <td class="cursor-help" v-bind:title="document.description">{{ document.description }}</td>
+                    -->
+                    <td class="has-text-right">{{ document.fileCount }}</td>
                 </tr>
             </tbody>
         </table>
@@ -94,6 +101,13 @@ export default {
             titleCondition: null,
             descriptionCondition: null,
             documents: [],
+            pager: {
+                currentPage: 1,
+                previousPage: 1,
+                nextPage: 1,
+                totalPages: 0,
+                resultsPage: initialState.defaultResultsPage,
+            },
             tags: [],
             noResultsWarning: false
         });
@@ -106,42 +120,49 @@ export default {
             this.onSearch();
         }
     },
+    mixins: [
+        mixinDateTimes
+    ],
     components: {
         'homedocs-control-input-tags': controlInputTags,
+        'homedocs-control-pagination': controlPagination,
         'homedocs-modal-api-error': modalAPIError
     },
-    filters: {
-        nl2br: function(str) {
-            if (str) {
-                return(str.replace(/\r\n/, "<br>"));
-            } else {
-                return(null);
-            }
-        }
-    },
     methods: {
+        refreshFromPager: function (currentPage, resultsPage) {
+            if (this.pager.currentPage != currentPage) {
+                this.pager.currentPage = currentPage;
+                this.pager.resultsPage = resultsPage;
+            } else {
+                this.pager.resultsPage = resultsPage;
+
+            }
+            this.onSearch();
+        },
         onSearch: function () {
-            const self = this;
-            self.loading = true;
-            self.noResultsWarning = false;
+            this.loading = true;
+            this.noResultsWarning = false;
             const params = {
                 title: this.titleCondition,
                 description: this.descriptionCondition,
                 tags: this.tags
             };
-            homedocsAPI.document.search(params, function (response) {
+            homedocsAPI.document.search(this.pager.currentPage, this.pager.resultsPage, params, "createdOnTimestamp", "DESC", (response) => {
                 if (response.ok) {
-                    self.documents = response.body.data;
-                    if (self.documents.length > 0) {
-                        self.tab = "results";
+                    this.pager.currentPage = response.body.data.pagination.currentPage;
+                    this.pager.totalPages = response.body.data.pagination.totalPages;
+                    this.pager.totalResults = response.body.data.pagination.totalResults;
+                    this.documents = response.body.data.results;
+                    if (this.documents.length > 0) {
+                        this.tab = "results";
                     } else {
-                        self.tab = "conditions";
-                        self.noResultsWarning = true;
+                        this.tab = "conditions";
+                        this.noResultsWarning = true;
                     }
                 } else {
-                    self.apiError = response.getApiErrorData();
+                    this.apiError = response.getApiErrorData();
                 }
-                self.loading = false;
+                this.loading = false;
             });
         },
 

@@ -71,12 +71,16 @@ export default {
             );
 
         },
-        search: function (filter, callback) {
+        search: function (currentPage, resultsPage, filter, sortBy, sortOrder, callback) {
             const params = {
                 title: filter.title,
                 description: filter.description,
                 tags: filter.tags || []
             }
+            params.currentPage = currentPage;
+            params.resultsPage = resultsPage;
+            params.sortBy = sortBy;
+            params.sortOrder = sortOrder;
             Vue.http.post("api2/document/search", params).then(
                 response => {
                     if (callback && typeof callback === "function") {
