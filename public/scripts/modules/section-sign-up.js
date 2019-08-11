@@ -92,10 +92,10 @@ export default {
             this.validator.clear();
             this.loading = true;
             this.apiError = false;
-            homedocsAPI.user.signUp(uuid(), this.email, this.password, function (response) {
+            homedocsAPI.user.signUp(uuid(), this.email, this.password, (response) => {
                 if (response.ok) {
-                    this.success = true;
                     this.loading = false;
+                    this.success = true;
                 } else {
                     switch (response.status) {
                         case 400:
