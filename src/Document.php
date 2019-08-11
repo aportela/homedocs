@@ -48,8 +48,8 @@
                     $item->fileCount = intval($item->fileCount);
                     return($item);
                 },
-            $results
-        );
+                $results
+            );
             return($results);
         }
 
@@ -185,6 +185,14 @@
                     $whereCondition
                 ), $params
             );
+            $results = array_map(
+                function($item) {
+                    $item->createdOnTimestamp = intval($item->createdOnTimestamp);
+                    $item->fileCount = intval($item->fileCount);
+                    return($item);
+                },
+                $results
+            );
             return($results);
         }
 
@@ -202,6 +210,13 @@
                 array(
                     (new \HomeDocs\Database\DBParam())->str(":session_user_id", \HomeDocs\UserSession::getUserId())
                 )
+            );
+            $results = array_map(
+                function($item) {
+                    $item->total = intval($item->total);
+                    return($item);
+                },
+                $results
             );
             return($results);
         }
