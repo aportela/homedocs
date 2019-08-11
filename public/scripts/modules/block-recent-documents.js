@@ -1,4 +1,5 @@
 import { default as homedocsAPI } from './api.js';
+import { mixinDateTimes } from './mixins.js';
 
 const template = `
     <article class="message">
@@ -19,12 +20,14 @@ const template = `
                     <tr>
                         <th>On</th>
                         <th>Title</th>
+                        <th class="has-text-right">Files</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="document in documents" v-bind:key="document.id">
-                        <td>{{ document.uploadedOn }}</td>
+                        <td>{{ document.createdOnTimestamp | timestamp2HumanDateTime }}</td>
                         <td><router-link v-bind:to="{ name: 'appOpenDocument', params: { id: document.id } }">{{ document.title }}</router-link></td>
+                        <td class="has-text-right">{{ document.fileCount }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -46,6 +49,9 @@ export default {
             showWarningNoDocuments: false
         });
     },
+    mixins: [
+        mixinDateTimes
+    ],
     mounted: function () {
         this.onRefresh();
     },
@@ -60,6 +66,7 @@ export default {
                         this.documents = response.body.data;
                         this.showWarningNoDocuments = this.documents.length < 1;
                     } else {
+                        this.documents = [];
                         this.apiError = response.getApiErrorData();
                     }
                     this.loading = false;
