@@ -4,5 +4,6 @@ composer.lock
 !/logs/README.md
 /data/*
 !/data/README.md
+/data/storage/*
 !/data/storage/README.md
 /storage/

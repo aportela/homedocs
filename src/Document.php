@@ -222,13 +222,13 @@
                     $data->pagination->resultsPage > 0 ? sprintf("LIMIT %d OFFSET %d", $data->pagination->resultsPage, $data->pagination->resultsPage * ($data->pagination->currentPage - 1)) : null
                     ), $params
                 );
-                $results = array_map(
+                $data->results = array_map(
                     function($item) {
                         $item->createdOnTimestamp = intval($item->createdOnTimestamp);
                         $item->fileCount = intval($item->fileCount);
                         return($item);
                     },
-                    $results
+                    $data->results
                 );
             }
             return($data);
