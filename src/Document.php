@@ -188,6 +188,15 @@
             if ($data->pagination->totalResults > 0) {
                 $sqlSortBy = "";
                 switch($sortBy) {
+                    case "title":
+                        $sqlSortBy = "DOCUMENT.title";
+                    break;
+                    case "description":
+                        $sqlSortBy = "DOCUMENT.description";
+                    break;
+                    case "fileCount":
+                        $sqlSortBy = "TMP_FILE.fileCount";
+                    break;
                     default:
                         $sqlSortBy = "DOCUMENT.created_on_timestamp";
                     break;
@@ -196,7 +205,7 @@
                     sprintf(
                         "
                             SELECT
-                                DOCUMENT.id, DOCUMENT.title, DOCUMENT.description, DOCUMENT.created_on_timestamp AS createdOnTimestamp,  TMP_FILE.fileCount
+                                DOCUMENT.id, DOCUMENT.title, DOCUMENT.description, DOCUMENT.created_on_timestamp AS createdOnTimestamp, TMP_FILE.fileCount
                             FROM DOCUMENT
                             LEFT JOIN (
                                 SELECT COUNT(*) AS fileCount, document_id

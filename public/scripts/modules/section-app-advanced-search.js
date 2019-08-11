@@ -2,6 +2,8 @@ import { default as homedocsAPI } from './api.js';
 import { default as modalAPIError } from './modal-api-error.js';
 import { default as controlInputTags } from './control-input-tags.js';
 import { default as controlPagination } from './control-pagination.js';
+import { default as controlTableHeaderSortable } from './control-table-header-sortable.js';
+
 import { mixinDateTimes } from './mixins.js';
 
 const template = `
@@ -58,21 +60,15 @@ const template = `
         <table class="table is-narrow is-striped is-fullwidth" v-show="tab == 'results'">
             <thead>
                 <tr>
-                    <th>On</th>
-                    <th>Title</th>
-                    <!--
-                    <th>Description</th>
-                    -->
-                    <th class="has-text-right">Files</th>
+                    <homedocs-table-header-sortable v-bind:name="'On'" v-bind:isSorted="sortBy == 'createdOnTimestamp'" v-bind:sortOrder="sortOrder" v-on:sortClicked="toggleSort('createdOnTimestamp');"></homedocs-table-header-sortable>
+                    <homedocs-table-header-sortable v-bind:name="'Title'" v-bind:isSorted="sortBy == 'title'" v-bind:sortOrder="sortOrder" v-on:sortClicked="toggleSort('title');"></homedocs-table-header-sortable>
+                    <homedocs-table-header-sortable v-bind:name="'Files'" v-bind:isSorted="sortBy == 'fileCount'" v-bind:sortOrder="sortOrder" v-on:sortClicked="toggleSort('fileCount');"></homedocs-table-header-sortable>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="document in documents" v-bind:key="document.id">
                     <td>{{ document.createdOnTimestamp | timestamp2HumanDateTime }}</td>
                     <td><router-link v-bind:to="{ name: 'appOpenDocument', params: { id: document.id } }">{{ document.title }}</router-link></td>
-                    <!--
-                    <td class="cursor-help" v-bind:title="document.description">{{ document.description }}</td>
-                    -->
                     <td class="has-text-right">{{ document.fileCount }}</td>
                 </tr>
             </tbody>
@@ -108,6 +104,8 @@ export default {
                 totalPages: 0,
                 resultsPage: initialState.defaultResultsPage,
             },
+            sortBy: "createdOnTimestamp",
+            sortOrder: "DESC",
             tags: [],
             noResultsWarning: false
         });
@@ -126,6 +124,7 @@ export default {
     components: {
         'homedocs-control-input-tags': controlInputTags,
         'homedocs-control-pagination': controlPagination,
+        'homedocs-table-header-sortable': controlTableHeaderSortable,
         'homedocs-modal-api-error': modalAPIError
     },
     methods: {
@@ -139,6 +138,21 @@ export default {
             }
             this.onSearch();
         },
+        toggleSort: function (field) {
+            if (!this.loading) {
+                if (field == this.sortBy) {
+                    if (this.sortOrder == "ASC") {
+                        this.sortOrder = "DESC";
+                    } else {
+                        this.sortOrder = "ASC";
+                    }
+                } else {
+                    this.sortBy = field;
+                    this.sortOrder = "ASC";
+                }
+                this.onSearch();
+            }
+        },
         onSearch: function () {
             this.loading = true;
             this.noResultsWarning = false;
@@ -147,7 +161,7 @@ export default {
                 description: this.descriptionCondition,
                 tags: this.tags
             };
-            homedocsAPI.document.search(this.pager.currentPage, this.pager.resultsPage, params, "createdOnTimestamp", "DESC", (response) => {
+            homedocsAPI.document.search(this.pager.currentPage, this.pager.resultsPage, params, this.sortBy, this.sortOrder, (response) => {
                 if (response.ok) {
                     this.pager.currentPage = response.body.data.pagination.currentPage;
                     this.pager.totalPages = response.body.data.pagination.totalPages;
