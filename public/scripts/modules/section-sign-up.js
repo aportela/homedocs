@@ -89,43 +89,42 @@ export default {
     },
     methods: {
         onSubmit: function () {
-            var self = this;
-            self.validator.clear();
-            self.loading = true;
-            self.apiError = false;
+            this.validator.clear();
+            this.loading = true;
+            this.apiError = false;
             homedocsAPI.user.signUp(uuid(), this.email, this.password, function (response) {
                 if (response.ok) {
-                    self.success = true;
-                    self.loading = false;
+                    this.success = true;
+                    this.loading = false;
                 } else {
                     switch (response.status) {
                         case 400:
                             if (response.body.invalidOrMissingParams.find(function (e) { return (e === "email"); })) {
-                                self.validator.setInvalid("email", "API ERROR: Invalid email parameter");
-                                self.$nextTick(() => self.$refs.email.focus());
+                                this.validator.setInvalid("email", "API ERROR: Invalid email parameter");
+                                this.$nextTick(() => this.$refs.email.focus());
                             } else if (response.body.invalidOrMissingParams.find(function (e) { return (e === "password"); })) {
-                                self.validator.setInvalid("password", "API ERROR: Invalid password parameter");
-                                self.$nextTick(() => self.$refs.password.focus());
+                                this.validator.setInvalid("password", "API ERROR: Invalid password parameter");
+                                this.$nextTick(() => this.$refs.password.focus());
                             } else {
-                                self.apiError = response.getApiErrorData();
+                                this.apiError = response.getApiErrorData();
                             }
                             break;
                         case 409:
                             if (response.body.invalidParams.find(function (e) { return (e === "email"); })) {
-                                self.validator.setInvalid("email", "Email already used");
-                                self.$nextTick(() => self.$refs.email.focus());
+                                this.validator.setInvalid("email", "Email already used");
+                                this.$nextTick(() => this.$refs.email.focus());
                             } else if (response.body.invalidParams.find(function (e) { return (e === "name"); })) {
-                                self.validator.setInvalid("name", "Name already used");
-                                self.$nextTick(() => self.$refs.password.focus());
+                                this.validator.setInvalid("name", "Name already used");
+                                this.$nextTick(() => this.$refs.password.focus());
                             } else {
-                                self.apiError = response.getApiErrorData();
+                                this.apiError = response.getApiErrorData();
                             }
                             break;
                         default:
-                            self.apiError = response.getApiErrorData();
+                            this.apiError = response.getApiErrorData();
                             break;
                     }
-                    self.loading = false;
+                    this.loading = false;
                 }
             });
         }

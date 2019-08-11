@@ -84,40 +84,39 @@ export default {
     },
     methods: {
         onSubmit: function () {
-            var self = this;
-            self.validator.clear();
-            self.loading = true;
-            self.apiError = false;
-            homedocsAPI.user.signIn(this.email, this.password, function (response) {
+            this.validator.clear();
+            this.loading = true;
+            this.apiError = false;
+            homedocsAPI.user.signIn(this.email, this.password, (response) => {
                 if (response.ok) {
-                    self.loading = false;
-                    self.$router.push({ name: 'appDashBoard' });
+                    this.loading = false;
+                    this.$router.push({ name: 'appDashBoard' });
                 } else {
                     switch (response.status) {
                         case 400:
                             if (response.body.invalidOrMissingParams.find(function (e) { return (e === "email"); })) {
-                                self.validator.setInvalid("email", "API ERROR: Invalid email parameter");
-                                self.$nextTick(() => self.$refs.email.focus());
+                                this.validator.setInvalid("email", "API ERROR: Invalid email parameter");
+                                this.$nextTick(() => this.$refs.email.focus());
                             } else if (response.body.invalidOrMissingParams.find(function (e) { return (e === "password"); })) {
-                                self.validator.setInvalid("password", "API ERROR: Invalid password parameter");
-                                self.$nextTick(() => self.$refs.password.focus());
+                                this.validator.setInvalid("password", "API ERROR: Invalid password parameter");
+                                this.$nextTick(() => this.$refs.password.focus());
                             } else {
-                                self.apiError = response.getApiErrorData();
+                                this.apiError = response.getApiErrorData();
                             }
                             break;
                         case 404:
-                            self.validator.setInvalid("email", "Email not found");
-                            self.$nextTick(() => self.$refs.email.focus());
+                            this.validator.setInvalid("email", "Email not found");
+                            this.$nextTick(() => this.$refs.email.focus());
                             break;
                         case 401:
-                            self.validator.setInvalid("password", "Incorrect password");
-                            self.$nextTick(() => self.$refs.password.focus());
+                            this.validator.setInvalid("password", "Incorrect password");
+                            this.$nextTick(() => this.$refs.password.focus());
                             break;
                         default:
-                            self.apiError = response.getApiErrorData();
+                            this.apiError = response.getApiErrorData();
                             break;
                     }
-                    self.loading = false;
+                    this.loading = false;
                 }
             });
         }

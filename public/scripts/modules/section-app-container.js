@@ -72,15 +72,14 @@ export default {
     },
     methods: {
         onSignOut: function() {
-            const self = this;
-            self.loading = true;
-            homedocsAPI.user.signOut(function(response) {
+            this.loading = true;
+            homedocsAPI.user.signOut((response) => {
                 if (response.ok) {
-                    self.$router.push({ name: 'signIn' });
+                    this.$router.push({ name: 'signIn' });
                 } else {
-                    self.apiError = response.getApiErrorData();
+                    this.apiError = response.getApiErrorData();
                 }
-                self.loading = false;
+                this.loading = false;
             });
         }
     }
