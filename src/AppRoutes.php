@@ -100,6 +100,20 @@
             );
         });
 
+        $this->get('/document/{id}', function (Request $request, Response $response, array $args) {
+            $route = $request->getAttribute('route');
+            $document = new \HomeDocs\Document();
+            $document->id = $route->getArgument("id");
+            $document->get(new \HomeDocs\Database\DB($this));
+            return $response->withJson(
+                [
+                    'initialState' => \HomeDocs\Utils::getInitialState($this),
+                    'data' => $document
+                ],
+                200
+            );
+        });
+
         $this->post('/tag/search', function (Request $request, Response $response, array $args) {
             $data = \HomeDocs\Document::searchTags(
                 new \HomeDocs\Database\DB($this)

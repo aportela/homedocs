@@ -89,7 +89,20 @@ export default {
                     }
                 }
             );
-
+        },
+        get: function(id, callback) {
+            Vue.http.get("api2/document/" + id, {}).then(
+                response => {
+                    if (callback && typeof callback === "function") {
+                        callback(response);
+                    }
+                },
+                response => {
+                    if (callback && typeof callback === "function") {
+                        callback(response);
+                    }
+                }
+            );
         }
     },
     tag: {

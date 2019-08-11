@@ -37,6 +37,83 @@
             return($results);
         }
 
+        public function get (\HomeDocs\Database\DB $dbh) {
+            if (! empty($this->id)) {
+                $data = $dbh->query(
+                    "
+                        SELECT
+                            title, description
+                        FROM DOCUMENT
+                        WHERE id = :id
+                    ",
+                    array(
+                        (new \HomeDocs\Database\DBParam())->str(":id", $this->id)
+                    )
+                );
+                if (is_array($data) && count($data) == 1) {
+                    $this->title = $data[0]->title;
+                    $this->description = $data[0]->description;
+                    $this->getTags($dbh);
+                    $this->getFiles($dbh);
+                } else {
+                    throw new \HomeDocs\Exception\NotFoundException("id");
+                }
+            } else {
+                throw new \HomeDocs\Exception\InvalidParamsException("id");
+            }
+        }
+
+        private function getTags (\HomeDocs\Database\DB $dbh) {
+            $data = $dbh->query(
+                "
+                    SELECT
+                        tag
+                    FROM DOCUMENT_TAG
+                    INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_TAG.document_id
+                    WHERE DOCUMENT_TAG.document_id = :document_id
+                ",
+                array(
+                    (new \HomeDocs\Database\DBParam())->str(":document_id", $this->id)
+                )
+            );
+            if (is_array($data) && count($data) > 0) {
+                foreach($data as $item) {
+                    $this->tags[] = $item->tag;
+                }
+            } else {
+                $this->tags = [];
+            }
+        }
+
+        private function getFiles (\HomeDocs\Database\DB $dbh) {
+            $data = $dbh->query(
+                "
+                    SELECT
+                        FILE.id, FILE.name, FILE.size, FILE.uploaded_on AS uploadedTimestamp
+                    FROM DOCUMENT_FILE
+                    INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_FILE.document_id
+                    LEFT JOIN FILE ON FILE.id = DOCUMENT_FILE.file_id
+                    WHERE DOCUMENT_FILE.document_id = :document_id
+                    ORDER BY FILE.name, FILE.uploaded_on
+                ",
+                array(
+                    (new \HomeDocs\Database\DBParam())->str(":document_id", $this->id)
+                )
+            );
+            if (is_array($data) && count($data) > 0) {
+                foreach($data as $item) {
+                    $this->files[] = new \HomeDocs\File(
+                        $item->id,
+                        $item->name,
+                        intval($item->size),
+                        $item->uploadedTimestamp
+                    );
+                }
+            } else {
+                $this->files = [];
+            }
+        }
+
         public static function search(\HomeDocs\Database\DB $dbh, $filter) {
             $queryConditions = array();
             $params = array();
