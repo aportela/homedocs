@@ -9,9 +9,8 @@
         public $id;
         public $title;
         public $description;
-        public $createdOn;
+        public $createdOnTimestamp;
         public $createdBy;
-        public $fileCount;
         public $files;
         public $tags;
 
@@ -26,23 +25,40 @@
                 sprintf(
                     "
                         SELECT
-                            id, title, uploaded_on AS uploadedOn
+                            id, title, CAST(created_on_timestamp AS INT) AS createdOnTimestamp, TMP_FILE.fileCount
                         FROM DOCUMENT
-                        ORDER BY uploaded_on DESC
+                        LEFT JOIN (
+                            SELECT COUNT(*) AS fileCount, document_id
+                            FROM DOCUMENT_FILE
+                            GROUP BY document_id
+                        ) TMP_FILE ON TMP_FILE.document_id = DOCUMENT.id
+                        WHERE created_by_user_id = :session_user_id
+                        ORDER BY created_on_timestamp DESC
                         LIMIT %d;
                     ",
                     $count
+                ),
+                array(
+                    (new \HomeDocs\Database\DBParam())->str(":session_user_id", \HomeDocs\UserSession::getUserId())
                 )
             );
+            $results = array_map(
+                function($item) {
+                    $item->createdOnTimestamp = intval($item->createdOnTimestamp);
+                    $item->fileCount = intval($item->fileCount);
+                    return($item);
+                },
+            $results
+        );
             return($results);
         }
 
         public function get (\HomeDocs\Database\DB $dbh) {
-            if (! empty($this->id)) {
+            if (! empty($this->id) && mb_strlen($this->id) == 36) {
                 $data = $dbh->query(
                     "
                         SELECT
-                            title, description
+                            title, description, created_on_timestamp AS createdOnTimestamp, created_by_user_id AS createdByUserId
                         FROM DOCUMENT
                         WHERE id = :id
                     ",
@@ -51,10 +67,15 @@
                     )
                 );
                 if (is_array($data) && count($data) == 1) {
-                    $this->title = $data[0]->title;
-                    $this->description = $data[0]->description;
-                    $this->getTags($dbh);
-                    $this->getFiles($dbh);
+                    if ($data[0]->createdByUserId == \HomeDocs\UserSession::getUserId()) {
+                        $this->title = $data[0]->title;
+                        $this->description = $data[0]->description;
+                        $this->createdOnTimestamp = intval($data[0]->createdOnTimestamp);
+                        $this->getTags($dbh);
+                        $this->getFiles($dbh);
+                    } else {
+                        throw new \HomeDocs\Exception\AccessDeniedException("id");
+                    }
                 } else {
                     throw new \HomeDocs\Exception\NotFoundException("id");
                 }
@@ -89,12 +110,12 @@
             $data = $dbh->query(
                 "
                     SELECT
-                        FILE.id, FILE.name, FILE.size, FILE.uploaded_on AS uploadedTimestamp
+                        FILE.id, FILE.name, FILE.size, FILE.uploaded_on_timestamp AS uploadedOnTimestamp
                     FROM DOCUMENT_FILE
                     INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_FILE.document_id
                     LEFT JOIN FILE ON FILE.id = DOCUMENT_FILE.file_id
                     WHERE DOCUMENT_FILE.document_id = :document_id
-                    ORDER BY FILE.name, FILE.uploaded_on
+                    ORDER BY FILE.name, FILE.uploaded_on_timestamp
                 ",
                 array(
                     (new \HomeDocs\Database\DBParam())->str(":document_id", $this->id)
@@ -106,7 +127,7 @@
                         $item->id,
                         $item->name,
                         intval($item->size),
-                        $item->uploadedTimestamp
+                        $item->uploadedOnTimestamp
                     );
                 }
             } else {
@@ -150,7 +171,7 @@
                 sprintf(
                     "
                         SELECT
-                            id, title, description, TMP_FILE.fileCount
+                            DOCUMENT.id, DOCUMENT.title, DOCUMENT.description, DOCUMENT.created_on_timestamp AS createdOnTimestamp,  TMP_FILE.fileCount
                         FROM DOCUMENT
                         LEFT JOIN (
                             SELECT COUNT(*) AS fileCount, document_id
@@ -158,7 +179,7 @@
                             GROUP BY document_id
                         ) TMP_FILE ON TMP_FILE.document_id = DOCUMENT.id
                         %s
-                        ORDER BY uploaded_on DESC
+                        ORDER BY DOCUMENT.created_on_timestamp DESC
                         LIMIT 32;
                     ",
                     $whereCondition
@@ -171,10 +192,16 @@
             $results = $dbh->query(
                 "
                     SELECT
-                        COUNT(*) AS total, tag FROM DOCUMENT_TAG
+                        COUNT(*) AS total, tag
+                    FROM DOCUMENT_TAG
+                    INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_TAG.document_id
+                    WHERE DOCUMENT.created_by_user_id = :session_user_id
                     GROUP BY tag
                     ORDER BY tag
-                "
+                ",
+                array(
+                    (new \HomeDocs\Database\DBParam())->str(":session_user_id", \HomeDocs\UserSession::getUserId())
+                )
             );
             return($results);
         }
