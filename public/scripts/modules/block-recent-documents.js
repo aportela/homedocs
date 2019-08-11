@@ -14,7 +14,7 @@ const template = `
             <i class="fas fa-sync-alt cursor-pointer" title="Click here to refresh" v-on:click.prevent="onRefresh"></i>
         </div>
         <div class="message-body has-text-centered">
-            <table class="table is-narrow is-striped is-fullwidth">
+            <table class="table is-narrow is-striped is-fullwidth" v-if="documents.length > 0">
                 <thead>
                     <tr>
                         <th>On</th>
@@ -28,6 +28,9 @@ const template = `
                     </tr>
                 </tbody>
             </table>
+            <div v-if="showWarningNoDocuments">
+                No document has been created yet
+            </div>
         </div>
     </article>
 `;
@@ -39,7 +42,8 @@ export default {
         return ({
             loading: false,
             apiError: null,
-            documents: []
+            documents: [],
+            showWarningNoDocuments: false
         });
     },
     mounted: function () {
@@ -50,9 +54,11 @@ export default {
             if (!this.loading) {
                 this.apiError = null;
                 this.loading = true;
+                this.showWarningNoDocuments = false;
                 homedocsAPI.document.searchRecent(16, (response) => {
                     if (response.ok) {
                         this.documents = response.body.data;
+                        this.showWarningNoDocuments = this.documents.length < 1;
                     } else {
                         this.apiError = response.getApiErrorData();
                     }
