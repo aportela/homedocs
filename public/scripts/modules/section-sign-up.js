@@ -21,7 +21,7 @@ const template = `
                                     <p class="control has-icons-left" v-bind:class="{ 'has-icons-right' : validator.hasInvalidField('email') }">
                                         <input class="input" type="email" name="email" maxlength="255" ref="email" required v-bind:class="{ 'is-danger': validator.hasInvalidField('email') }" v-bind:disabled="loading" v-model.trim="email">
                                         <span class="icon is-small is-left"><i class="fa fa-envelope"></i></span>
-                                        <span class="icon is-small is-right" v-show="validator.hasInvalidField('email')"><i class="fa fa-warning"></i></span>
+                                        <span class="icon is-small is-right" v-show="validator.hasInvalidField('email')"><i class="fas fa-exclamation-triangle"></i></span>
                                         <p class="help is-danger" v-show="validator.hasInvalidField('email')">{{ validator.getInvalidFieldMessage('email') }}</p>
                                     </p>
                                 </div>
@@ -30,7 +30,7 @@ const template = `
                                     <p class="control has-icons-left" v-bind:class="{ 'has-icons-right' : validator.hasInvalidField('password') }">
                                         <input class="input" type="password" name="password" required ref="password" v-bind:class="{ 'is-danger': validator.hasInvalidField('password') }" v-bind:disabled="loading" v-model="password">
                                         <span class="icon is-small is-left"><i class="fa fa-key"></i></span>
-                                        <span class="icon is-small is-right" v-show="validator.hasInvalidField('password')"><i class="fa fa-warning"></i></span>
+                                        <span class="icon is-small is-right" v-show="validator.hasInvalidField('password')"><i class="fas fa-exclamation-triangle"></i></span>
                                         <p class="help is-danger" v-show="validator.hasInvalidField('password')">{{ validator.getInvalidFieldMessage('password') }}</p>
                                     </p>
                                 </div>
