@@ -184,7 +184,7 @@
                 if ($partialContent) {
                     // output the right headers for partial content
                     return $response->withStatus(206)
-                    ->withHeader('Content-Type', "application/octet-stream")
+                    ->withHeader('Content-Type', \HomeDocs\Utils::getMimeType($file->name))
                     ->withHeader('Content-Disposition', 'attachment; filename="' . basename($file->name) . '"')
                     ->withHeader('Content-Length', $filesize)
                     ->withHeader('Content-Range', 'bytes ' . $offset . '-' . ($offset + $length - 1) . '/' . $filesize)
@@ -192,7 +192,7 @@
                     ->write($data);
                 } else {
                     return $response->withStatus(200)
-                        ->withHeader('Content-Type', "application/octet-stream")
+                        ->withHeader('Content-Type', \HomeDocs\Utils::getMimeType($file->name))
                         ->withHeader('Content-Disposition', 'attachment; filename="' . basename($file->name) . '"')
                         ->withHeader('Content-Length', $filesize)
                         ->withHeader('Accept-Ranges', 'bytes')
