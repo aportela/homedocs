@@ -14,10 +14,12 @@
         public $files;
         public $tags;
 
-        public function __construct (string $id = "", string $title = "", string $description = "") {
+        public function __construct (string $id = "", string $title = "", string $description = "", $tags = array(), $files = array()) {
             $this->id = $id;
             $this->title = $title;
             $this->description = $description;
+            $this->tags = $tags;
+            $this->files = $files;
         }
 
         public static function searchRecent(\HomeDocs\Database\DB $dbh, int $count = 16) {
@@ -53,6 +55,117 @@
             return($results);
         }
 
+        private function validate() {
+            if (! empty($this->id) && mb_strlen($this->id) == 36) {
+                if (! empty($this->title) && mb_strlen($this->title) <= 128) {
+                    if ((! empty($this->description) && mb_strlen($this->title) <= 4096) || empty($this->description)) {
+                        if (is_array($this->tags) && count($this->tags) > 0) {
+                            foreach($this->tags as $tag) {
+                                if (empty($tag)) {
+                                    throw new \HomeDocs\Exception\InvalidParamsException("tags");
+                                } else if (mb_strlen($tag) > 32) {
+                                    throw new \HomeDocs\Exception\InvalidParamsException("tags");
+                                }
+                            }
+                        }
+                    } else {
+                        throw new \HomeDocs\Exception\InvalidParamsException("description");
+                    }
+                } else {
+                    throw new \HomeDocs\Exception\InvalidParamsException("title");
+                }
+            } else {
+                throw new \HomeDocs\Exception\InvalidParamsException("id");
+            }
+        }
+
+        public function add(\HomeDocs\Database\DB $dbh) {
+            $this->validate();
+            $params = array(
+                (new \HomeDocs\Database\DBParam())->str(":id", mb_strtolower($this->id)),
+                (new \HomeDocs\Database\DBParam())->str(":title", $this->title),
+                (new \HomeDocs\Database\DBParam())->str(":created_by_user_id", \HomeDocs\UserSession::getUserId())
+            );
+            if (! empty($this->description)) {
+                $params[] = (new \HomeDocs\Database\DBParam())->str(":description", $this->description);
+            } else {
+                $params[] = (new \HomeDocs\Database\DBParam())->null(":description");
+            }
+            if ($dbh->execute(
+                "
+                    INSERT INTO DOCUMENT
+                        (id, title, description, created_by_user_id, created_on_timestamp)
+                    VALUES
+                        (:id, :title, :description, :created_by_user_id, strftime('%s', 'now'))
+                ",
+                $params)
+            ) {
+                $tagsQuery = "
+                    INSERT INTO DOCUMENT_TAG
+                        (document_id, tag)
+                    VALUES
+                        (:document_id, :tag)
+                ";
+                foreach($this->tags as $tag) {
+                    $params = array(
+                        (new \HomeDocs\Database\DBParam())->str(":document_id", mb_strtolower($this->id)),
+                        (new \HomeDocs\Database\DBParam())->str(":tag", mb_strtolower($tag))
+                    );
+                    $dbh->execute($tagsQuery, $params);
+                }
+            }
+        }
+
+        public function update(\HomeDocs\Database\DB $dbh) {
+            $this->validate();
+            $params = array(
+                (new \HomeDocs\Database\DBParam())->str(":id", mb_strtolower($this->id)),
+                (new \HomeDocs\Database\DBParam())->str(":title", $this->title),
+            );
+            if (! empty($this->description)) {
+                $params[] = (new \HomeDocs\Database\DBParam())->str(":description", $this->description);
+            } else {
+                $params[] = (new \HomeDocs\Database\DBParam())->null(":description");
+            }
+            if ($dbh->execute(
+                "
+                   UPDATE DOCUMENT SET
+                        title = :title,
+                        description = :description
+                   WHERE
+                        id = :id
+                ",
+                $params)
+            ) {
+                $dbh->execute(
+                    "
+                        DELETE FROM DOCUMENT_TAG
+                        WHERE document_id = :document_id
+                    ",
+                    array(
+                        (new \HomeDocs\Database\DBParam())->str(":document_id", mb_strtolower($this->id)),
+                    )
+                );
+                foreach($this->tags as $tag) {
+                    $params = array(
+                        (new \HomeDocs\Database\DBParam())->str(":document_id", mb_strtolower($this->id)),
+                        (new \HomeDocs\Database\DBParam())->str(":tag", mb_strtolower($tag))
+                    );
+                    $dbh->execute(
+                        "
+                            INSERT INTO DOCUMENT_TAG
+                                (document_id, tag)
+                            VALUES
+                                (:document_id, :tag)
+                        "
+                        ,
+                        $params
+                    );
+                }
+            }
+        }
+
+
         public function get (\HomeDocs\Database\DB $dbh) {
             if (! empty($this->id) && mb_strlen($this->id) == 36) {
                 $data = $dbh->query(
@@ -63,7 +176,7 @@
                         WHERE id = :id
                     ",
                     array(
-                        (new \HomeDocs\Database\DBParam())->str(":id", $this->id)
+                        (new \HomeDocs\Database\DBParam())->str(":id", mb_strtolower($this->id))
                     )
                 );
                 if (is_array($data) && count($data) == 1) {
@@ -94,7 +207,7 @@
                     WHERE DOCUMENT_TAG.document_id = :document_id
                 ",
                 array(
-                    (new \HomeDocs\Database\DBParam())->str(":document_id", $this->id)
+                    (new \HomeDocs\Database\DBParam())->str(":document_id", mb_strtolower($this->id))
                 )
             );
             if (is_array($data) && count($data) > 0) {
@@ -118,7 +231,7 @@
                     ORDER BY FILE.name, FILE.uploaded_on_timestamp
                 ",
                 array(
-                    (new \HomeDocs\Database\DBParam())->str(":document_id", $this->id)
+                    (new \HomeDocs\Database\DBParam())->str(":document_id", mb_strtolower($this->id))
                 )
             );
             if (is_array($data) && count($data) > 0) {

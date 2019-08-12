@@ -2,22 +2,30 @@ import { default as homedocsAPI } from './api.js';
 import { default as validator } from './validator.js';
 import { default as controlInputTags } from './control-input-tags.js';
 import { mixinDateTimes, mixinFiles } from './mixins.js';
+import { uuid as uuid } from './utils.js';
 
 const template = `
     <form>
-        <div class="field">
+        <h1 class="title is-1" v-if="isAddForm">Add new document</h1>
+        <h1 class="title is-1" v-else>Update/view document</h1>
+        <button type="button" class="button is-dark is-fullwidth" v-on:click.prevent="onSave"><span class="icon"><i class="fas fa-save"></i></span><span>Save pending changes</span></button>
+        <div class="field" v-if="! isAddForm">
             <label class="label">Document created on {{ document.createdOnTimestamp | timestamp2HumanDateTime }}</label>
         </div>
         <div class="field">
             <label class="label">Title</label>
-            <div class="control">
-                <input class="input" type="text" placeholder="Document title" v-model.trim="document.title">
+            <div class="control" v-bind:class="{ 'has-icons-right' : validator.hasInvalidField('title') }">
+                <input class="input" ref="title" type="text" maxlength="128" placeholder="Type document title" v-model.trim="document.title">
+                <span class="icon is-small is-right" v-show="validator.hasInvalidField('title')"><i class="fas fa-exclamation-triangle"></i></span>
+                <p class="help is-danger" v-show="validator.hasInvalidField('title')">{{ validator.getInvalidFieldMessage('title') }}</p>
             </div>
         </div>
         <div class="field">
             <label class="label">Description</label>
-            <div class="control">
-                <textarea class="textarea" placeholder="Document description" v-model.trim="document.description" rows="8"></textarea>
+            <div class="control" v-bind:class="{ 'has-icons-right' : validator.hasInvalidField('description') }">
+                <textarea class="textarea" ref="description" maxlength="4096" placeholder="Type (optional) document description" v-model.trim="document.description" rows="8"></textarea>
+                <span class="icon is-small is-right" v-show="validator.hasInvalidField('description')"><i class="fas fa-exclamation-triangle"></i></span>
+                <p class="help is-danger" v-show="validator.hasInvalidField('description')">{{ validator.getInvalidFieldMessage('description') }}</p>
             </div>
         </div>
         <div class="field">
@@ -69,7 +77,9 @@ export default {
     data: function () {
         return ({
             loading: false,
+            validator: validator,
             apiError: null,
+            formMode: null, // 0 = ADD, 1 = UPDATE/VIEW
             document: {
                 id: null,
                 title: null,
@@ -81,8 +91,41 @@ export default {
         });
     },
     computed: {
-        isPreviewVisible: function() {
-            return(this.previewFileId);
+        isPreviewVisible: function () {
+            return (this.previewFileId);
+        },
+        isAddForm: function () {
+            return (this.formMode == 0);
+        },
+        isUpdateViewForm: function() {
+            return (this.formMode == 1);
+        }
+    },
+    watch: {
+        '$route': function (to, from) {
+            if (to.name == "appAddDocument") {
+                this.formMode = 0;
+                this.document = {
+                    id: null,
+                    title: null,
+                    description: null,
+                    tags: [],
+                    files: []
+                };
+            } else {
+                this.formMode = 1;
+                this.document = {
+                    id: this.$route.params.id || null,
+                    title: null,
+                    description: null,
+                    tags: [],
+                    files: []
+                };
+                if (this.document.id) {
+                    this.onRefresh();
+                }
+            }
+            this.validator.clear();
         }
     },
     mixins: [
@@ -92,7 +135,13 @@ export default {
         this.document.id = this.$route.params.id || null;
     },
     mounted: function () {
-        if (this.document.id) {
+        if (this.$route.params.id) {
+            this.document.id = this.$route.params.id;
+            this.formMode = 1;
+        } else {
+            this.formMode = 0;
+        }
+        if (this.isUpdateViewForm) {
             this.onRefresh();
         }
     },
@@ -100,24 +149,72 @@ export default {
         'homedocs-control-input-tags': controlInputTags
     },
     methods: {
-        showPreview: function(fileId) {
+        isValid: function() {
+            let valid = true;
+            if (this.document.title && this.document.title.length <= 128) {
+                if (this.document.description != null) {
+                    if (this.document.description.length <= 4096) {
+                    } else {
+                        this.validator.setInvalid("description", "Invalid document description (field is not required, max length 4096 chars");
+                        this.$nextTick(() => this.$refs.description.focus());
+                        valid = false;
+                    }
+                }
+            } else {
+                this.validator.setInvalid("title", "Invalid document title (field is required, max length 128 chars");
+                this.$nextTick(() => this.$refs.title.focus());
+                valid = false;
+            }
+            return(valid);
+        },
+        onSave: function() {
+            if (!this.loading) {
+                this.loading = true;
+                if (this.isValid()) {
+                    if (this.isUpdateViewForm) {
+                        homedocsAPI.document.update(this.document, (response) => {
+                            if (response.ok) {
+                                console.log(22);
+                                this.loading = false;
+                                this.onRefresh();
+                            } else {
+                                this.apiError = response.getApiErrorData();
+                                this.loading = false;
+                            }
+                        });
+                    } else {
+                        this.document.id = uuid();
+                        homedocsAPI.document.add(this.document, (response) => {
+                            if (response.ok) {
+                                this.$router.push({ name: 'appOpenDocument', params: { id: this.document.id } });
+                            } else {
+                                this.apiError = response.getApiErrorData();
+                            }
+                            this.loading = false;
+                        });
+                    }
+                }
+            }
+
+        },
+        showPreview: function (fileId) {
             this.previewFileId = fileId;
             window.addEventListener('keydown', this.onKeyPress);
         },
-        hidePreview: function(fileId) {
+        hidePreview: function (fileId) {
             this.previewFileId = null;
             window.removeEventListener('keydown', this.onKeyPress);
         },
-        onKeyPress: function(e) {
+        onKeyPress: function (e) {
             if (e.code == "Escape") {
                 this.hidePreview();
             }
         },
-        isImage: function(filename) {
+        isImage: function (filename) {
             if (filename) {
-                return(filename.match(/.(jpg|jpeg|png|gif)$/i));
+                return (filename.match(/.(jpg|jpeg|png|gif)$/i));
             } else {
-                return(false);
+                return (false);
             }
         },
         onRefresh: function () {

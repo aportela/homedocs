@@ -117,6 +117,43 @@
             );
         });
 
+        $this->post('/document/{id}', function (Request $request, Response $response, array $args) {
+            $route = $request->getAttribute('route');
+            $document = new \HomeDocs\Document(
+                $route->getArgument("id"),
+                $request->getParam("title", ""),
+                $request->getParam("description", ""),
+                $request->getParam("tags", array()),
+                $request->getParam("files", array())
+            );
+            $document->add(new \HomeDocs\Database\DB($this));
+            return $response->withJson(
+                [
+                    'initialState' => \HomeDocs\Utils::getInitialState($this)
+                ],
+                200
+            );
+        });
+
+        $this->put('/document/{id}', function (Request $request, Response $response, array $args) {
+            $route = $request->getAttribute('route');
+            $document = new \HomeDocs\Document(
+                $route->getArgument("id"),
+                $request->getParam("title", ""),
+                $request->getParam("description", ""),
+                $request->getParam("tags", array()),
+                $request->getParam("files", array())
+            );
+            // TODO: check permissions
+            $document->update(new \HomeDocs\Database\DB($this));
+            return $response->withJson(
+                [
+                    'initialState' => \HomeDocs\Utils::getInitialState($this)
+                ],
+                200
+            );
+        });
+
         $this->get('/file/{id}', function (Request $request, Response $response, array $args) {
             $route = $request->getAttribute('route');
             $file = new \HomeDocs\File();

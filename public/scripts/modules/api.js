@@ -69,7 +69,6 @@ export default {
                     }
                 }
             );
-
         },
         search: function (currentPage, resultsPage, filter, sortBy, sortOrder, callback) {
             const params = {
@@ -82,6 +81,50 @@ export default {
             params.sortBy = sortBy;
             params.sortOrder = sortOrder;
             Vue.http.post("api2/document/search", params).then(
+                response => {
+                    if (callback && typeof callback === "function") {
+                        callback(response);
+                    }
+                },
+                response => {
+                    if (callback && typeof callback === "function") {
+                        callback(response);
+                    }
+                }
+            );
+        },
+        add: function(document, callback) {
+            const params = {
+                id: document.id,
+                title: document.title,
+                tags: document.tags || []
+            }
+            if (document.description) {
+                params.description = document.description;
+            }
+            Vue.http.post("api2/document/" + document.id, params).then(
+                response => {
+                    if (callback && typeof callback === "function") {
+                        callback(response);
+                    }
+                },
+                response => {
+                    if (callback && typeof callback === "function") {
+                        callback(response);
+                    }
+                }
+            );
+        },
+        update: function(document, callback) {
+            const params = {
+                id: document.id,
+                title: document.title,
+                tags: document.tags || []
+            }
+            if (document.description) {
+                params.description = document.description;
+            }
+            Vue.http.put("api2/document/" + document.id, params).then(
                 response => {
                     if (callback && typeof callback === "function") {
                         callback(response);
