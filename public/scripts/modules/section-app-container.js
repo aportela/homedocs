@@ -19,18 +19,18 @@ const template = `
             </div>
             <div class="navbar-menu">
                 <div class="navbar-start">
-                    <router-link v-bind:to="{ name: 'appDashBoard' }" class="navbar-item">
+                    <router-link v-bind:to="{ name: 'appDashBoard' }" class="navbar-item" v-bind:class="{ 'is-active': $route.name == 'appDashBoard' }">
                         <span class="icon">
                             <i class="fas fa-home"></i>
                         </span>
                         <span>Home</span>
                     </router-link>
-                    <a class="navbar-item">
+                    <router-link v-bind:to="{ name: 'appAddDocument' }" class="navbar-item" v-bind:class="{ 'is-active': $route.name == 'appAddDocument' }">
                         <span class="icon">
                             <i class="fas fa-folder-plus"></i>
                         </span>
                         <span>Add</span>
-                    </a>
+                    </router-link>
                 </div>
                 <div class="navbar-end">
                     <div class="navbar-item">
