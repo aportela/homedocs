@@ -174,7 +174,6 @@ export default {
                     if (this.isUpdateViewForm) {
                         homedocsAPI.document.update(this.document, (response) => {
                             if (response.ok) {
-                                console.log(22);
                                 this.loading = false;
                                 this.onRefresh();
                             } else {
