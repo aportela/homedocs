@@ -97,7 +97,8 @@ export default {
             const params = {
                 id: document.id,
                 title: document.title,
-                tags: document.tags || []
+                tags: document.tags || [],
+                files: document.files || []
             }
             if (document.description) {
                 params.description = document.description;
@@ -115,27 +116,12 @@ export default {
                 }
             );
         },
-        addFile: function(file, callback) {
-            let formData = new FormData();
-            formData.append('file', file);
-            Vue.http.post("api2/upload-file", formData).then(
-                response => {
-                    if (callback && typeof callback === "function") {
-                        callback(response);
-                    }
-                },
-                response => {
-                    if (callback && typeof callback === "function") {
-                        callback(response);
-                    }
-                }
-            );
-        },
         update: function(document, callback) {
             const params = {
                 id: document.id,
                 title: document.title,
-                tags: document.tags || []
+                tags: document.tags || [],
+                files: document.files || []
             }
             if (document.description) {
                 params.description = document.description;
@@ -155,6 +141,22 @@ export default {
         },
         get: function(id, callback) {
             Vue.http.get("api2/document/" + id, {}).then(
+                response => {
+                    if (callback && typeof callback === "function") {
+                        callback(response);
+                    }
+                },
+                response => {
+                    if (callback && typeof callback === "function") {
+                        callback(response);
+                    }
+                }
+            );
+        },
+        addFile: function(id, file, callback) {
+            let formData = new FormData();
+            formData.append('file', file);
+            Vue.http.post("api2/file/" + id, formData).then(
                 response => {
                     if (callback && typeof callback === "function") {
                         callback(response);

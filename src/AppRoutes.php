@@ -119,12 +119,24 @@
 
         $this->post('/document/{id}', function (Request $request, Response $response, array $args) {
             $route = $request->getAttribute('route');
+            $documentFiles = $request->getParam("files", array());
+            $files = array();
+            if (is_array($documentFiles) && count($documentFiles) > 0) {
+                foreach($documentFiles as $documentFile) {
+                    $files[] = new \HomeDocs\File(
+                        $documentFile["id"],
+                        $documentFile["name"],
+                        $documentFile["size"],
+                        $documentFile["hash"]
+                    );
+                }
+            }
             $document = new \HomeDocs\Document(
                 $route->getArgument("id"),
                 $request->getParam("title", ""),
                 $request->getParam("description", ""),
                 $request->getParam("tags", array()),
-                $request->getParam("files", array())
+                $files
             );
             $document->add(new \HomeDocs\Database\DB($this));
             return $response->withJson(
@@ -137,13 +149,26 @@
 
         $this->put('/document/{id}', function (Request $request, Response $response, array $args) {
             $route = $request->getAttribute('route');
+            $documentFiles = $request->getParam("files", array());
+            $files = array();
+            if (is_array($documentFiles) && count($documentFiles) > 0) {
+                foreach($documentFiles as $documentFile) {
+                    $files[] = new \HomeDocs\File(
+                        $documentFile["id"],
+                        $documentFile["name"],
+                        $documentFile["size"],
+                        $documentFile["hash"]
+                    );
+                }
+            }
             $document = new \HomeDocs\Document(
                 $route->getArgument("id"),
                 $request->getParam("title", ""),
                 $request->getParam("description", ""),
                 $request->getParam("tags", array()),
-                $request->getParam("files", array())
+                $files
             );
+
             // TODO: check permissions
             $document->update(new \HomeDocs\Database\DB($this));
             return $response->withJson(
@@ -156,12 +181,12 @@
 
         $this->get('/file/{id}', function (Request $request, Response $response, array $args) {
             $route = $request->getAttribute('route');
-            $file = new \HomeDocs\File();
-            $file->id = $route->getArgument("id");
+            $file = new \HomeDocs\File(
+                $route->getArgument("id")
+            );
             $file->get(new \HomeDocs\Database\DB($this));
-            $storagePath = $file->getStoragePath(dirname(__DIR__) . DIRECTORY_SEPARATOR  . "data" . DIRECTORY_SEPARATOR . "storage");
-            if (file_exists($storagePath)) {
-                $filesize = filesize($storagePath);
+            if (file_exists($file->localStoragePath)) {
+                $filesize = filesize($file->localStoragePath);
                 $offset = 0;
                 $length = $filesize;
                 // https://stackoverflow.com/a/157447
@@ -177,7 +202,7 @@
                 } else {
                     $partialContent = false;
                 }
-                $f = fopen($storagePath, 'r');
+                $f = fopen($file->localStoragePath, 'r');
                 fseek($f, $offset);
                 $data = fread($f, $length);
                 fclose($f);
@@ -203,15 +228,23 @@
             }
         });
 
-        $this->post('/upload-file', function (Request $request, Response $response, array $args) {
+        $this->post('/file/{id}', function (Request $request, Response $response, array $args) {
+            $route = $request->getAttribute('route');
             $files = $request->getUploadedFiles();
+            $file = new \HomeDocs\File(
+                $route->getArgument("id"),
+                $files["file"]->getClientFilename(),
+                $files["file"]->getSize()
+            );
+            $file->add(new \HomeDocs\Database\DB($this), $files["file"]);
             return $response->withJson(
                 [
                     'initialState' => \HomeDocs\Utils::getInitialState($this),
                     'data' => array(
-                        "id" => "0-0-0-0",
-                        "name" => $files["file"]->getClientFilename(),
-                        "size" => $files["file"]->getSize(),
+                        "id" => $file->id,
+                        "name" => $file->name,
+                        "size" => $file->size,
+                        "hash" => $file->hash,
                         "uploadedOnTimestamp" => time()
                     )
                 ],
@@ -231,7 +264,6 @@
                 200
             );
         });
-
 
     })->add(new \HomeDocs\Middleware\APIExceptionCatcher($this->app->getContainer()));
 ?>

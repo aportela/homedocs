@@ -113,6 +113,15 @@
                     );
                     $dbh->execute($tagsQuery, $params);
                 }
+                $filesQuery = "
+                    INSERT INTO DOCUMENT_TAG
+                        (document_id, tag)
+                    VALUES
+                        (:document_id, :tag)
+                ";
+                foreach($this->files as $documentFile) {
+                    $documentFile->saveMetadata($dbh);
+                }
             }
         }
 
@@ -120,7 +129,7 @@
             $this->validate();
             $params = array(
                 (new \HomeDocs\Database\DBParam())->str(":id", mb_strtolower($this->id)),
-                (new \HomeDocs\Database\DBParam())->str(":title", $this->title),
+                (new \HomeDocs\Database\DBParam())->str(":title", $this->title)
             );
             if (! empty($this->description)) {
                 $params[] = (new \HomeDocs\Database\DBParam())->str(":description", $this->description);
@@ -162,9 +171,33 @@
                         $params
                     );
                 }
+                $dbh->execute(
+                    "
+                        DELETE FROM DOCUMENT_FILE
+                        WHERE document_id = :document_id
+                    ",
+                    array(
+                        (new \HomeDocs\Database\DBParam())->str(":document_id", mb_strtolower($this->id)),
+                    )
+                );
+                foreach($this->files as $file) {
+                    $params = array(
+                        (new \HomeDocs\Database\DBParam())->str(":document_id", mb_strtolower($this->id)),
+                        (new \HomeDocs\Database\DBParam())->str(":file_id", mb_strtolower($file->id))
+                    );
+                    $dbh->execute(
+                        "
+                            INSERT INTO DOCUMENT_FILE
+                                (document_id, file_id)
+                            VALUES
+                                (:document_id, :file_id)
+                        "
+                        ,
+                        $params
+                    );
+                }
             }
         }
-
 
         public function get (\HomeDocs\Database\DB $dbh) {
             if (! empty($this->id) && mb_strlen($this->id) == 36) {
@@ -240,6 +273,7 @@
                         $item->id,
                         $item->name,
                         intval($item->size),
+                        null,
                         $item->uploadedOnTimestamp
                     );
                 }

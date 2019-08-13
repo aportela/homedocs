@@ -52,13 +52,10 @@ const template = `
                     <td>{{ file.uploadedOnTimestamp | timestamp2HumanDateTime }}</td>
                     <td><a v-bind:href="'/api2/file/' + file.id">{{ file.name }}</a></td>
                     <td>{{ file.size | humanFileSize }}</td>
-                    <td v-if="! file.isUploading">
+                    <td>
                         <button type="button" v-bind:disabled="! isImage(file.name)" class="button is-light" v-on:click.prevent="showPreview(file.id)"><span class="icon"><i class="fas fa-folder-open"></i></span><span class="is-hidden-mobile">Open/Preview</span></button>
                         <a v-bind:href="'/api2/file/' + file.id" class="button is-light"><span class="icon"><i class="fas fa-download"></i></span><span class="is-hidden-mobile">Download</span></a>
                         <button type="button" class="button is-light" disabled><span class="icon"><i class="fas fa-trash-alt"></i></span><span class="is-hidden-mobile">Remove</span></button>
-                    </td>
-                    <td v-else>
-                        <progress class="progress is-medium" value="87" max="100">uploading... (87%)</progress>
                     </td>
                 </tr>
             </tbody>
@@ -66,8 +63,12 @@ const template = `
         <div class="modal is-active" v-if="isPreviewVisible">
             <div class="modal-background"></div>
                 <div class="modal-content">
-                    <p class="image">
-                    <img v-bind:src="'/api2/file/' + previewFileId" alt="image preview">
+                    <div class="notification" v-if="previewError">
+                        <h1 class="title"><i class="fas fa-exclamation-triangle"></i> Error loading preview</h1>
+                        <h2 class="sub-title">URL: <strong>{{ '/api2/file/' + previewFileId }}</strong></h2>
+                    </div>
+                    <p class="image" v-else>
+                    <img v-bind:src="'/api2/file/' + previewFileId" alt="image preview" v-on:error="previewError = true;">
                 </p>
             </div>
             <button class="modal-close is-large" aria-label="close" v-on:click.prevent="hidePreview"></button>
@@ -92,7 +93,8 @@ export default {
                 tags: [],
                 files: []
             },
-            previewFileId: null
+            previewFileId: null,
+            previewError: false
         });
     },
     computed: {
@@ -174,22 +176,13 @@ export default {
         },
         onFileChanged: function(event) {
             for (let i = 0; i < event.target.files.length; i++) {
-                homedocsAPI.document.addFile(event.target.files[i], (response) => {
+                homedocsAPI.document.addFile(uuid(), event.target.files[i], (response) => {
                     if (response.ok) {
                         this.document.files.push(response.body.data);
                     } else {
                         this.apiError = response.getApiErrorData();
                     }
                 });
-                /*
-                let reader = new FileReader();
-                reader.onload = ((file) => {
-                    console.log(file.name);
-                    console.log(file.size);
-                    this.document.files.push({ id: null, uploadedOnTimestamp: dayjs().unix(), name: file.name, size: file.size, isUploading: true});
-                })(event.target.files[i]);
-                reader.readAsDataURL(event.target.files[i]);
-                */
             };
         },
         onSave: function() {
@@ -223,6 +216,7 @@ export default {
         },
         showPreview: function (fileId) {
             this.previewFileId = fileId;
+            this.previewError = false;
             window.addEventListener('keydown', this.onKeyPress);
         },
         hidePreview: function (fileId) {

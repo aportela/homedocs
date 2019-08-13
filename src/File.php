@@ -11,30 +11,34 @@
         public $size;
         public $hash;
         public $uploadedOnTimestamp;
+        public $localStoragePath;
 
-        public function __construct (string $id = "", string $name = "", $size = 0, $uploadedOnTimestamp = null) {
+        public function __construct (string $id = "", string $name = "", int $size = 0, $hash = "", $uploadedOnTimestamp = null) {
             $this->id = $id;
             $this->name = $name;
             $this->size = $size;
+            $this->hash = $hash;
             $this->uploadedOnTimestamp = $uploadedOnTimestamp;
+            $this->localStoragePath = $this->getFileStoragePath();
         }
 
-        public function getStoragePath($localStoragePath): string {
-            if (! empty($this->hash) && mb_strlen($this->hash) == 40) {
+        private function getFileStoragePath(): string {
+            if (! empty($this->id) && mb_strlen($this->id) == 36) {
+                $localStoragePath = dirname(__DIR__) . DIRECTORY_SEPARATOR  . "data" . DIRECTORY_SEPARATOR . "storage";
                 return(
                     sprintf(
                         "%s%s%s%s%s%s%s",
                         rtrim($localStoragePath, DIRECTORY_SEPARATOR),
                         DIRECTORY_SEPARATOR,
-                        substr($this->hash, 0, 1),
+                        substr($this->id, 0, 1),
                         DIRECTORY_SEPARATOR,
-                        substr($this->hash, 1, 1),
+                        substr($this->id, 1, 1),
                         DIRECTORY_SEPARATOR,
-                        $this->hash
+                        $this->id
                     )
                 );
             } else {
-                throw new \HomeDocs\Exception\InvalidParamsException("hash");
+                throw new \HomeDocs\Exception\InvalidParamsException("id");
             }
         }
 
@@ -65,6 +69,49 @@
                 }
             } else {
                 throw new \HomeDocs\Exception\InvalidParamsException("id");
+            }
+        }
+
+        private function exists(): bool {
+            return(file_exists($this->localStoragePath));
+        }
+
+        private function saveStorage(\HomeDocs\Database\DB $dbh, \Slim\Http\UploadedFile $uploadedFile) {
+            if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
+                $uploadedFile->moveTo($this->localStoragePath);
+                $this->hash = sha1_file($this->localStoragePath);
+            } else {
+                throw new \HomeDocs\Exception\UploadException("Error: " . $uploadedFile->getError());
+            }
+        }
+
+        public function saveMetadata(\HomeDocs\Database\DB $dbh) {
+            $params = array(
+                (new \HomeDocs\Database\DBParam())->str(":id", mb_strtolower($this->id)),
+                (new \HomeDocs\Database\DBParam())->str(":sha1_hash", $this->hash),
+                (new \HomeDocs\Database\DBParam())->str(":name", $this->name),
+                (new \HomeDocs\Database\DBParam())->int(":size", $this->size),
+                (new \HomeDocs\Database\DBParam())->str(":uploaded_by_user_id", \HomeDocs\UserSession::getUserId())
+            );
+            return(
+                $dbh->execute(
+                    "
+                        INSERT INTO FILE
+                            (id, sha1_hash, name, size, uploaded_by_user_id, uploaded_on_timestamp)
+                        VALUES
+                            (:id, :sha1_hash, :name, :size, :uploaded_by_user_id, strftime('%s', 'now'))
+                    ",
+                    $params
+                )
+            );
+        }
+
+        public function add(\HomeDocs\Database\DB $dbh, \Slim\Http\UploadedFile $uploadedFile) {
+            if (! $this->exists()) {
+                $this->saveStorage($dbh, $uploadedFile);
+                $this->saveMetadata($dbh);
+            } else {
+                throw new \HomeDocs\Exception\AlreadyExistsException("id");
             }
         }
     }
