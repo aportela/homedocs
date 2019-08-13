@@ -115,6 +115,22 @@ export default {
                 }
             );
         },
+        addFile: function(file, callback) {
+            let formData = new FormData();
+            formData.append('file', file);
+            Vue.http.post("api2/upload-file", formData).then(
+                response => {
+                    if (callback && typeof callback === "function") {
+                        callback(response);
+                    }
+                },
+                response => {
+                    if (callback && typeof callback === "function") {
+                        callback(response);
+                    }
+                }
+            );
+        },
         update: function(document, callback) {
             const params = {
                 id: document.id,

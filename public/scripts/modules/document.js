@@ -35,8 +35,9 @@ const template = `
 
         <div class="field">
             <label class="label">Files</label>
+            <button type="button" class="button is-small is-dark" v-on:click.prevent="$refs.file.click()"><span class="icon"><i class="fas fa-file-upload"></i></span><span>Add new</span></button>
         </div>
-
+        <input type="file" multiple="multiple" ref="file" class="is-hidden" v-on:change="onFileChanged">
         <table class="table is-narrow is-striped is-fullwidth">
             <thead>
                 <tr>
@@ -51,10 +52,13 @@ const template = `
                     <td>{{ file.uploadedOnTimestamp | timestamp2HumanDateTime }}</td>
                     <td><a v-bind:href="'/api2/file/' + file.id">{{ file.name }}</a></td>
                     <td>{{ file.size | humanFileSize }}</td>
-                    <td>
+                    <td v-if="! file.isUploading">
                         <button type="button" v-bind:disabled="! isImage(file.name)" class="button is-light" v-on:click.prevent="showPreview(file.id)"><span class="icon"><i class="fas fa-folder-open"></i></span><span class="is-hidden-mobile">Open/Preview</span></button>
                         <a v-bind:href="'/api2/file/' + file.id" class="button is-light"><span class="icon"><i class="fas fa-download"></i></span><span class="is-hidden-mobile">Download</span></a>
                         <button type="button" class="button is-light" disabled><span class="icon"><i class="fas fa-trash-alt"></i></span><span class="is-hidden-mobile">Remove</span></button>
+                    </td>
+                    <td v-else>
+                        <progress class="progress is-medium" value="87" max="100">uploading... (87%)</progress>
                     </td>
                 </tr>
             </tbody>
@@ -80,6 +84,7 @@ export default {
             validator: validator,
             apiError: null,
             formMode: null, // 0 = ADD, 1 = UPDATE/VIEW
+            file: null,
             document: {
                 id: null,
                 title: null,
@@ -166,6 +171,26 @@ export default {
                 valid = false;
             }
             return(valid);
+        },
+        onFileChanged: function(event) {
+            for (let i = 0; i < event.target.files.length; i++) {
+                homedocsAPI.document.addFile(event.target.files[i], (response) => {
+                    if (response.ok) {
+                        this.document.files.push(response.body.data);
+                    } else {
+                        this.apiError = response.getApiErrorData();
+                    }
+                });
+                /*
+                let reader = new FileReader();
+                reader.onload = ((file) => {
+                    console.log(file.name);
+                    console.log(file.size);
+                    this.document.files.push({ id: null, uploadedOnTimestamp: dayjs().unix(), name: file.name, size: file.size, isUploading: true});
+                })(event.target.files[i]);
+                reader.readAsDataURL(event.target.files[i]);
+                */
+            };
         },
         onSave: function() {
             if (!this.loading) {

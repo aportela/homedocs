@@ -5,3 +5,7 @@
 .cursor-help {
     cursor: help !important;
 }
+
+td progress {
+    display: inline-block !important;
+}

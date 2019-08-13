@@ -203,6 +203,22 @@
             }
         });
 
+        $this->post('/upload-file', function (Request $request, Response $response, array $args) {
+            $files = $request->getUploadedFiles();
+            return $response->withJson(
+                [
+                    'initialState' => \HomeDocs\Utils::getInitialState($this),
+                    'data' => array(
+                        "id" => "0-0-0-0",
+                        "name" => $files["file"]->getClientFilename(),
+                        "size" => $files["file"]->getSize(),
+                        "uploadedOnTimestamp" => time()
+                    )
+                ],
+                200
+            );
+        });
+
         $this->post('/tag/search', function (Request $request, Response $response, array $args) {
             $data = \HomeDocs\Document::searchTags(
                 new \HomeDocs\Database\DB($this)
