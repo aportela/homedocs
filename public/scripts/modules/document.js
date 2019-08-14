@@ -8,14 +8,14 @@ const template = `
     <form>
         <h1 class="title is-1" v-if="isAddForm">Add new document</h1>
         <h1 class="title is-1" v-else>Update/view document</h1>
-        <button type="button" class="button is-dark is-fullwidth" v-on:click.prevent="onSave"><span class="icon"><i class="fas fa-save"></i></span><span>Save pending changes</span></button>
+        <button type="button" class="button is-dark is-fullwidth" v-on:click.prevent="onSave" v-bind:disabled="loading"><span class="icon"><i class="fas fa-save"></i></span><span>Save pending changes</span></button>
         <div class="field" v-if="! isAddForm">
             <label class="label">Document created on {{ document.createdOnTimestamp | timestamp2HumanDateTime }}</label>
         </div>
         <div class="field">
             <label class="label">Title</label>
             <div class="control" v-bind:class="{ 'has-icons-right' : validator.hasInvalidField('title') }">
-                <input class="input" ref="title" type="text" maxlength="128" placeholder="Type document title" v-model.trim="document.title">
+                <input class="input" ref="title" type="text" maxlength="128" placeholder="Type document title" v-model.trim="document.title" v-bind:disabled="loading">
                 <span class="icon is-small is-right" v-show="validator.hasInvalidField('title')"><i class="fas fa-exclamation-triangle"></i></span>
                 <p class="help is-danger" v-show="validator.hasInvalidField('title')">{{ validator.getInvalidFieldMessage('title') }}</p>
             </div>
@@ -23,19 +23,20 @@ const template = `
         <div class="field">
             <label class="label">Description</label>
             <div class="control" v-bind:class="{ 'has-icons-right' : validator.hasInvalidField('description') }">
-                <textarea class="textarea" ref="description" maxlength="4096" placeholder="Type (optional) document description" v-model.trim="document.description" rows="8"></textarea>
+                <textarea class="textarea" ref="description" maxlength="4096" placeholder="Type (optional) document description" v-model.trim="document.description" v-bind:disabled="loading" rows="8"></textarea>
                 <span class="icon is-small is-right" v-show="validator.hasInvalidField('description')"><i class="fas fa-exclamation-triangle"></i></span>
                 <p class="help is-danger" v-show="validator.hasInvalidField('description')">{{ validator.getInvalidFieldMessage('description') }}</p>
             </div>
         </div>
         <div class="field">
             <label class="label">Tags</label>
-            <homedocs-control-input-tags v-bind:tags="document.tags" v-on:update="document.tags = $event.tags"></homedocs-control-input-tags>
+            <homedocs-control-input-tags v-bind:tags="document.tags" v-on:update="document.tags = $event.tags" v-bind:disabled="loading"></homedocs-control-input-tags>
         </div>
 
         <div class="field">
             <label class="label">Files</label>
-            <button type="button" class="button is-small is-dark" v-on:click.prevent="$refs.file.click()"><span class="icon"><i class="fas fa-file-upload"></i></span><span>Add new</span></button>
+            <button type="button" class="button is-small is-dark" v-if="pendingUploads == 0" v-on:click.prevent="$refs.file.click()" v-bind:disabled="loading"><span class="icon"><i class="fas fa-file-upload"></i></span><span>Add new</span></button>
+            <button type="button" class="button is-small is-dark" disabled v-else><span class="icon"><i class="fas fa-cog fa-spin"></i></span><span>Uploading {{ pendingUploads }} file/s...</span></button>
         </div>
         <input type="file" multiple="multiple" ref="file" class="is-hidden" v-on:change="onFileChanged">
         <table class="table is-narrow is-striped is-fullwidth">
@@ -48,14 +49,34 @@ const template = `
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="file in document.files" v-bind:key="file.id">
+                <tr v-for="file, idx in document.files" v-bind:key="file.id">
                     <td>{{ file.uploadedOnTimestamp | timestamp2HumanDateTime }}</td>
                     <td><a v-bind:href="'/api2/file/' + file.id">{{ file.name }}</a></td>
                     <td>{{ file.size | humanFileSize }}</td>
-                    <td>
-                        <button type="button" v-bind:disabled="! isImage(file.name)" class="button is-light" v-on:click.prevent="showPreview(file.id)"><span class="icon"><i class="fas fa-folder-open"></i></span><span class="is-hidden-mobile">Open/Preview</span></button>
-                        <a v-bind:href="'/api2/file/' + file.id" class="button is-light"><span class="icon"><i class="fas fa-download"></i></span><span class="is-hidden-mobile">Download</span></a>
-                        <button type="button" class="button is-light" disabled><span class="icon"><i class="fas fa-trash-alt"></i></span><span class="is-hidden-mobile">Remove</span></button>
+                    <td v-if="confirmDeleteFileId == null || confirmDeleteFileId != file.id">
+                        <button type="button" v-bind:disabled="! isImage(file.name) || loading" class="button is-light" v-on:click.prevent="showPreview(file.id)"><span class="icon"><i class="fas fa-folder-open"></i></span><span class="is-hidden-mobile">Open/Preview</span></button>
+                        <a v-bind:href="'/api2/file/' + file.id" class="button is-light" v-bind:disabled="loading"><span class="icon"><i class="fas fa-download"></i></span><span class="is-hidden-mobile">Download</span></a>
+                        <button type="button" class="button is-light" v-on:click.prevent="confirmDeleteFileId = file.id"><span class="icon"><i class="fas fa-trash-alt"></i></span><span class="is-hidden-mobile">Remove</span></button>
+                    </td>
+                    <td v-else-if="confirmDeleteFileId == file.id">
+                        <div class="field has-addons">
+                            <p class="control">
+                                <a class="button is-dark" v-on:click.prevent="onFileRemove(idx)">
+                                    <span class="icon is-small">
+                                    <i class="fas fa-check-circle"></i>
+                                    </span>
+                                    <span>Confirm file remove</span>
+                                </a>
+                            </p>
+                            <p class="control">
+                                <a class="button is-light" v-on:click.prevent="confirmDeleteFileId = null">
+                                    <span class="icon is-small">
+                                    <i class="fas fa-ban"></i>
+                                    </span>
+                                    <span>Cancel</span>
+                                </a>
+                            </p>
+                          </div>
                     </td>
                 </tr>
             </tbody>
@@ -94,7 +115,9 @@ export default {
                 files: []
             },
             previewFileId: null,
-            previewError: false
+            previewError: false,
+            pendingUploads: 0,
+            confirmDeleteFileId: null
         });
     },
     computed: {
@@ -133,6 +156,14 @@ export default {
                 }
             }
             this.validator.clear();
+
+        },
+        'pendingUploads': function(to, from) {
+            if (to > 0) {
+                this.loading = true;
+            } else {
+                this.loading = false;
+            }
         }
     },
     mixins: [
@@ -175,8 +206,10 @@ export default {
             return(valid);
         },
         onFileChanged: function(event) {
+            this.pendingUploads += event.target.files.length;
             for (let i = 0; i < event.target.files.length; i++) {
                 homedocsAPI.document.addFile(uuid(), event.target.files[i], (response) => {
+                    this.pendingUploads--;
                     if (response.ok) {
                         this.document.files.push(response.body.data);
                     } else {
@@ -184,6 +217,12 @@ export default {
                     }
                 });
             };
+        },
+        onFileRemove: function(fileIndex) {
+            if (fileIndex > -1) {
+                this.confirmDeleteFileId = null;
+                this.document.files.splice(fileIndex, 1);
+            }
         },
         onSave: function() {
             if (!this.loading) {
