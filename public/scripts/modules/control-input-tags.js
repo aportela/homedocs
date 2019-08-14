@@ -1,9 +1,11 @@
+import { default as homedocsAPI } from './api.js';
+
 const template = `
     <div class="field is-grouped is-grouped-multiline">
         <div class="control" v-for="tag in tags">
             <div class="tags has-addons">
                 <span class="tag is-medium is-dark">{{ tag }} </span>
-                <a class="tag is-medium is-delete" v-on:click.prevent="onRemove(tag)"></a>
+                <a class="tag is-medium is-delete" v-on:click.prevent="onRemove(tag)" v-bind:disabled="loading"></a>
             </div>
         </div>
         <div class="control">
@@ -11,7 +13,7 @@ const template = `
             <div class="dropdown is-active" v-if="hasResults">
                 <div class="dropdown-menu">
                     <div class="dropdown-content is-unselectable">
-                        <a href="#" class="dropdown-item" v-bind:class="{ 'is-active': selectedMatchTagIndex == index }" v-for="tag, index in matchedTags" v-bind:key="tag" v-on:click.prevent="onSelect(tag)">
+                        <a href="#" class="dropdown-item" v-bind:class="{ 'is-active': selectedMatchTagIndex == index }" v-for="tag, index in matchedTags" v-bind:key="tag" v-on:click.prevent="onSelect(tag)" v-bind:disabled="loading">
                             <span>{{ tag }}</span>
                         </a>
                     </div>
@@ -40,7 +42,19 @@ export default {
             return (this.matchedTags.length > 0);
         }
     },
+    created: function() {
+        this.loadCurrentTags();
+    },
     methods: {
+        loadCurrentTags: function() {
+            homedocsAPI.tag.search((response) => {
+                if (response.ok) {
+                    this.initialStateTags = response.body.data.map((item) => { return(item.tag) });
+                } else {
+                    this.apiError = response.getApiErrorData();
+                }
+            });
+        },
         onKeyUp: function (event) {
             switch (event.code) {
                 case "Escape":
