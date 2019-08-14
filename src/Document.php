@@ -221,6 +221,34 @@
             }
         }
 
+        public function delete(\HomeDocs\Database\DB $dbh) {
+            $params = array(
+                (new \HomeDocs\Database\DBParam())->str(":document_id", mb_strtolower($this->id)),
+            );
+
+            $dbh->execute(
+                "
+                    DELETE FROM DOCUMENT_TAG
+                    WHERE document_id = :document_id
+                ",
+                $params
+            );
+            $dbh->execute(
+                "
+                    DELETE FROM DOCUMENT_FILE
+                    WHERE document_id = :document_id
+                ",
+                $params
+            );
+            $dbh->execute(
+                "
+                    DELETE FROM DOCUMENT
+                    WHERE id = :document_id
+                ",
+                $params
+            );
+        }
+
         public function get (\HomeDocs\Database\DB $dbh) {
             if (! empty($this->id) && mb_strlen($this->id) == 36) {
                 $data = $dbh->query(

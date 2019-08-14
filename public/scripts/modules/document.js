@@ -81,11 +81,36 @@ const template = `
                                     <span>Cancel</span>
                                 </a>
                             </p>
-                          </div>
+                        </div>
                     </td>
                 </tr>
             </tbody>
         </table>
+
+        <p class="control">
+            <button type="button" class="button is-dark is-fullwidth" v-if="! isAddForm" v-bind:disabled="loading || confirmDeleteDocumentId" v-on:click.prevent="confirmDeleteDocumentId = document.id"><span class="icon"><i class="fas fa-trash"></i></span><span>Remove this document</span></button>
+        </p>
+
+        <div class="notification" v-if="confirmDeleteDocumentId">
+            <h3 class="title"><i class="fas fa-exclamation-triangle"></i> WARNING</h3>
+            <h4 class="subtitle">This operation can not be undone. Are you sure you want to remove this document (tags & files included)</h4>
+
+            <p class="buttons">
+                <a class="button is-dark is-full-width" v-on:click.prevent="onDocumentRemove(document.id)">
+                    <span class="icon is-small">
+                    <i class="fas fa-check-circle"></i>
+                    </span>
+                    <span>Confirm document remove</span>
+                </a>
+                <a class="button is-light is-full-width" v-on:click.prevent="confirmDeleteDocumentId = null">
+                    <span class="icon is-small">
+                    <i class="fas fa-ban"></i>
+                    </span>
+                    <span>Cancel</span>
+                </a>
+            </p>
+        </div>
+
         <div class="modal is-active" v-if="isPreviewVisible">
             <div class="modal-background"></div>
                 <div class="modal-content">
@@ -100,6 +125,7 @@ const template = `
             <button class="modal-close is-large" aria-label="close" v-on:click.prevent="hidePreview"></button>
         </div>
     </form>
+
 `;
 
 export default {
@@ -109,7 +135,6 @@ export default {
         return ({
             loading: false,
             validator: validator,
-            apiError: null,
             formMode: null, // 0 = ADD, 1 = UPDATE/VIEW
             file: null,
             document: {
@@ -123,6 +148,7 @@ export default {
             previewError: false,
             pendingUploads: 0,
             uploadErrors: [],
+            confirmDeleteDocumentId: null,
             confirmDeleteFileId: null
         });
     },
@@ -211,6 +237,27 @@ export default {
             }
             return (valid);
         },
+        showPreview: function (fileId) {
+            this.previewFileId = fileId;
+            this.previewError = false;
+            window.addEventListener('keydown', this.onKeyPress);
+        },
+        hidePreview: function (fileId) {
+            this.previewFileId = null;
+            window.removeEventListener('keydown', this.onKeyPress);
+        },
+        onKeyPress: function (e) {
+            if (e.code == "Escape") {
+                this.hidePreview();
+            }
+        },
+        isImage: function (filename) {
+            if (filename) {
+                return (filename.match(/.(jpg|jpeg|png|gif)$/i));
+            } else {
+                return (false);
+            }
+        },
         onFileChanged: function (event) {
             this.uploadErrors = [];
             this.pendingUploads += event.target.files.length;
@@ -222,7 +269,7 @@ export default {
                             this.document.files.push(response.body.data);
                         } else {
                             this.uploadErrors.push("Can not upload local file " + event.target.files[i].name + " (server error)");
-                            this.apiError = response.getApiErrorData();
+                            this.$emit("showAPIError", response.getApiErrorData());
                         }
                     });
                 } else {
@@ -247,7 +294,7 @@ export default {
                                 this.loading = false;
                                 this.onRefresh();
                             } else {
-                                this.apiError = response.getApiErrorData();
+                                this.$emit("showAPIError", response.getApiErrorData());
                                 this.loading = false;
                             }
                         });
@@ -257,7 +304,7 @@ export default {
                             if (response.ok) {
                                 this.$router.push({ name: 'appOpenDocument', params: { id: this.document.id } });
                             } else {
-                                this.apiError = response.getApiErrorData();
+                                this.$emit("showAPIError", response.getApiErrorData());
                             }
                             this.loading = false;
                         });
@@ -266,25 +313,18 @@ export default {
             }
 
         },
-        showPreview: function (fileId) {
-            this.previewFileId = fileId;
-            this.previewError = false;
-            window.addEventListener('keydown', this.onKeyPress);
-        },
-        hidePreview: function (fileId) {
-            this.previewFileId = null;
-            window.removeEventListener('keydown', this.onKeyPress);
-        },
-        onKeyPress: function (e) {
-            if (e.code == "Escape") {
-                this.hidePreview();
-            }
-        },
-        isImage: function (filename) {
-            if (filename) {
-                return (filename.match(/.(jpg|jpeg|png|gif)$/i));
-            } else {
-                return (false);
+        onDocumentRemove: function (id) {
+            if (!this.loading) {
+                this.loading = true;
+                homedocsAPI.document.remove(id, (response) => {
+                    if (response.ok) {
+                        this.loading = false;
+                        this.$router.push({ name: 'appDashBoard' });
+                    } else {
+                        this.$emit("showAPIError", response.getApiErrorData());
+                        this.loading = false;
+                    }
+                });
             }
         },
         onRefresh: function () {
@@ -294,7 +334,7 @@ export default {
                     if (response.ok) {
                         this.document = response.body.data;
                     } else {
-                        this.apiError = response.getApiErrorData();
+                        this.$emit("showAPIError", response.getApiErrorData());
                     }
                     this.loading = false;
                 });

@@ -161,6 +161,8 @@
                     );
                 }
             }
+            // test existence && check permissions
+            $document->get($dbh);
             $document = new \HomeDocs\Document(
                 $route->getArgument("id"),
                 $request->getParam("title", ""),
@@ -168,9 +170,24 @@
                 $request->getParam("tags", array()),
                 $files
             );
-
-            // TODO: check permissions
             $document->update(new \HomeDocs\Database\DB($this));
+            return $response->withJson(
+                [
+                    'initialState' => \HomeDocs\Utils::getInitialState($this)
+                ],
+                200
+            );
+        });
+
+        $this->delete('/document/{id}', function (Request $request, Response $response, array $args) {
+            $route = $request->getAttribute('route');
+            $document = new \HomeDocs\Document(
+                $route->getArgument("id")
+            );
+            $dbh = new \HomeDocs\Database\DB($this);
+            // test existence && check permissions
+            $document->get($dbh);
+            $document->delete($dbh);
             return $response->withJson(
                 [
                     'initialState' => \HomeDocs\Utils::getInitialState($this)
