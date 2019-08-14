@@ -54,7 +54,8 @@ const template = `
                 </div>
             </div>
         </nav>
-        <router-view></router-view>
+        <router-view v-on:showAPIError="apiError = $event;"></router-view>
+        <homedocs-modal-api-error v-if="apiError" v-bind:error="apiError" v-on:close="apiError = null"></homedocs-modal-api-error>
     </div>
 `;
 
