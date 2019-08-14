@@ -161,6 +161,10 @@
                     );
                 }
             }
+            $dbh = new \HomeDocs\Database\DB($this);
+            $document = new \HomeDocs\Document(
+                $route->getArgument("id")
+            );
             // test existence && check permissions
             $document->get($dbh);
             $document = new \HomeDocs\Document(
@@ -170,7 +174,7 @@
                 $request->getParam("tags", array()),
                 $files
             );
-            $document->update(new \HomeDocs\Database\DB($this));
+            $document->update($dbh);
             return $response->withJson(
                 [
                     'initialState' => \HomeDocs\Utils::getInitialState($this)
