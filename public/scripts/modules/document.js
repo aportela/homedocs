@@ -38,6 +38,11 @@ const template = `
             <button type="button" class="button is-small is-dark" v-if="pendingUploads == 0" v-on:click.prevent="$refs.file.click()" v-bind:disabled="loading"><span class="icon"><i class="fas fa-file-upload"></i></span><span>Add new</span></button>
             <button type="button" class="button is-small is-dark" disabled v-else><span class="icon"><i class="fas fa-cog fa-spin"></i></span><span>Uploading {{ pendingUploads }} file/s...</span></button>
         </div>
+        <div class="notification" v-if="uploadErrors.length > 0">
+            <ul>
+                <li v-for="uploadError in uploadErrors"><i class="fas fa-exclamation-triangle"></i> {{ uploadError }}</li>
+            </ul>
+        </div>
         <input type="file" multiple="multiple" ref="file" class="is-hidden" v-on:change="onFileChanged">
         <table class="table is-narrow is-striped is-fullwidth">
             <thead>
@@ -117,6 +122,7 @@ export default {
             previewFileId: null,
             previewError: false,
             pendingUploads: 0,
+            uploadErrors: [],
             confirmDeleteFileId: null
         });
     },
@@ -127,7 +133,7 @@ export default {
         isAddForm: function () {
             return (this.formMode == 0);
         },
-        isUpdateViewForm: function() {
+        isUpdateViewForm: function () {
             return (this.formMode == 1);
         }
     },
@@ -158,7 +164,7 @@ export default {
             this.validator.clear();
 
         },
-        'pendingUploads': function(to, from) {
+        'pendingUploads': function (to, from) {
             if (to > 0) {
                 this.loading = true;
             } else {
@@ -187,7 +193,7 @@ export default {
         'homedocs-control-input-tags': controlInputTags
     },
     methods: {
-        isValid: function() {
+        isValid: function () {
             let valid = true;
             if (this.document.title && this.document.title.length <= 128) {
                 if (this.document.description != null) {
@@ -203,28 +209,35 @@ export default {
                 this.$nextTick(() => this.$refs.title.focus());
                 valid = false;
             }
-            return(valid);
+            return (valid);
         },
-        onFileChanged: function(event) {
+        onFileChanged: function (event) {
+            this.uploadErrors = [];
             this.pendingUploads += event.target.files.length;
             for (let i = 0; i < event.target.files.length; i++) {
-                homedocsAPI.document.addFile(uuid(), event.target.files[i], (response) => {
+                if (event.target.files[i].size <= initialState.maxUploadFileSize) {
+                    homedocsAPI.document.addFile(uuid(), event.target.files[i], (response) => {
+                        this.pendingUploads--;
+                        if (response.ok) {
+                            this.document.files.push(response.body.data);
+                        } else {
+                            this.uploadErrors.push("Can not upload local file " + event.target.files[i].name + " (server error)");
+                            this.apiError = response.getApiErrorData();
+                        }
+                    });
+                } else {
                     this.pendingUploads--;
-                    if (response.ok) {
-                        this.document.files.push(response.body.data);
-                    } else {
-                        this.apiError = response.getApiErrorData();
-                    }
-                });
+                    this.uploadErrors.push("Can not upload local file " + event.target.files[i].name + " (max upload size supported by server: " + initialState.maxUploadFileSize + " bytes, file size: " + event.target.files[i].size + " bytes)");
+                }
             };
         },
-        onFileRemove: function(fileIndex) {
+        onFileRemove: function (fileIndex) {
             if (fileIndex > -1) {
                 this.confirmDeleteFileId = null;
                 this.document.files.splice(fileIndex, 1);
             }
         },
-        onSave: function() {
+        onSave: function () {
             if (!this.loading) {
                 this.loading = true;
                 if (this.isValid()) {
