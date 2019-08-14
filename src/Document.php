@@ -119,8 +119,30 @@
                     VALUES
                         (:document_id, :tag)
                 ";
-                foreach($this->files as $documentFile) {
-                    $documentFile->saveMetadata($dbh);
+                $dbh->execute(
+                    "
+                        DELETE FROM DOCUMENT_FILE
+                        WHERE document_id = :document_id
+                    ",
+                    array(
+                        (new \HomeDocs\Database\DBParam())->str(":document_id", mb_strtolower($this->id)),
+                    )
+                );
+                foreach($this->files as $file) {
+                    $params = array(
+                        (new \HomeDocs\Database\DBParam())->str(":document_id", mb_strtolower($this->id)),
+                        (new \HomeDocs\Database\DBParam())->str(":file_id", mb_strtolower($file->id))
+                    );
+                    $dbh->execute(
+                        "
+                            INSERT INTO DOCUMENT_FILE
+                                (document_id, file_id)
+                            VALUES
+                                (:document_id, :file_id)
+                        "
+                        ,
+                        $params
+                    );
                 }
             }
         }
