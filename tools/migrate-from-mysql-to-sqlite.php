@@ -40,7 +40,7 @@
     );
 
     $mariaDBQueries = array(
-        // create required mariadb function to convert old hex-binary uuids to standard varchar(36) uuids
+        // TODO: create required mariadb function to convert old hex-binary uuids to standard varchar(36) uuids
         // USER table export
         "
             SELECT
@@ -64,7 +64,7 @@
                     \"', '\",
                     SHA1_HASH,
                     \"', '\",
-                    CONVERT(CAST(CONVERT(NAME USING LATIN1) AS BINARY) USING UTF8),
+                    CONVERT(CAST(CONVERT(NAME USING UTF8) AS BINARY) USING UTF8),
                     \"', \",
                     SIZE,
                     \", '\",
@@ -83,9 +83,9 @@
                     \"REPLACE INTO `DOCUMENT` (id, title, description, created_by_user_id, created_on_timestamp) VALUES ('\",
                     CONVERT_TO_UUID(ID),
                     \"', '\",
-                    CONVERT(CAST(CONVERT(TITLE USING LATIN1) AS BINARY) USING UTF8),
+                    CONVERT(CAST(CONVERT(TITLE USING UTF8) AS BINARY) USING UTF8),
                     \"', '\",
-                    CONVERT(CAST(CONVERT(COALESCE(DESCRIPTION, \"\") USING LATIN1) AS BINARY) USING UTF8),
+                    CONVERT(CAST(CONVERT(COALESCE(DESCRIPTION, \"\") USING UTF8) AS BINARY) USING UTF8),
                      \"', '\",
                      CONVERT_TO_UUID(USER_ID),
                     \"', \",
@@ -123,17 +123,22 @@
                     \"REPLACE INTO `DOCUMENT_TAG` (document_id, tag) VALUES ('\",
                     CONVERT_TO_UUID(DOCUMENT_ID),
                     \"', '\",
-                    CONVERT(CAST(CONVERT(TAG USING LATIN1) AS BINARY) USING UTF8),
+                    CONVERT(CAST(CONVERT(TAG USING UTF8) AS BINARY) USING UTF8),
                     \"');\"
                 ) AS query
             FROM DOCUMENT_TAG;
         "
     );
-    $sqliteQueries = array();
+    $sqliteQueries = array(
+        " DELETE FROM USER; ",
+        " DELETE FROM FILE; ",
+        " DELETE FROM DOCUMENT; ",
+        " DELETE FROM DOCUMENT_FILE ",
+        " DELETE FROM DOCUMENT_TAG; "
+    );
     echo "Exporting queries from MariaDB...";
     foreach($mariaDBQueries as $mariaDBQuery) {
         $stmt = $oldDatabaseHandler->prepare($mariaDBQuery);
-
         if ($stmt->execute()) {
             while ($row = $stmt->fetchObject()) {
                 $sqliteQueries[] = $row->query;
@@ -141,13 +146,15 @@
         }
         $stmt->closeCursor();
     }
+    // fix empty descriptions
+    $sqliteQueries[] = " UPDATE DOCUMENT SET DESCRIPTION = NULL WHERE DESCRIPTION = ''; ";
     $totalSqliteQueries = count($sqliteQueries);
     echo "done!" . PHP_EOL;
     echo "Importing " . count($sqliteQueries) . " queries... " . PHP_EOL;
     $dbh = new \HomeDocs\Database\DB($app->getContainer());
     $i = 0;
     foreach($sqliteQueries as $sqliteQuery) {
-        //$dbh->query($sqliteQuery);
+        $dbh->execute($sqliteQuery);
         \HomeDocs\Utils::showProgressBar($i + 1, $totalSqliteQueries, 20);
         $i++;
     }
