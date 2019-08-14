@@ -35,10 +35,10 @@ const template = `
         </div>
         <div class="columns">
             <div class="column is-6">
-                <homedocs-block-recent-documents></homedocs-block-recent-documents>
+                <homedocs-block-recent-documents v-on:showAPIError="raiseAPIError($event)"></homedocs-block-recent-documents>
             </div>
             <div class="column is-6">
-                <homedocs-block-tag-cloud></homedocs-block-tag-cloud>
+                <homedocs-block-tag-cloud v-on:showAPIError="raiseAPIError($event)"></homedocs-block-tag-cloud>
             </div>
         </div>
     </div>
@@ -51,5 +51,9 @@ export default {
         'homedocs-modal-api-error': modalAPIError,
         'homedocs-block-recent-documents': blockRecentDocuments,
         'homedocs-block-tag-cloud': blockTagCloud
+    }, methods: {
+        raiseAPIError: function(error) {
+            this.$emit("showAPIError", error);
+        }
     }
 }

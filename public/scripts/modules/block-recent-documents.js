@@ -14,7 +14,10 @@ const template = `
             </p>
             <i class="fas fa-sync-alt cursor-pointer" title="Click here to refresh" v-on:click.prevent="onRefresh"></i>
         </div>
-        <div class="message-body has-text-centered">
+        <div class="message-body has-text-centered" v-if="apiError">
+            <h5 class="title is-5"><i class="fas fa-exclamation-triangle"></i> Error loading data</h5>
+        </div>
+        <div class="message-body has-text-centered" v-else>
             <table class="table is-narrow is-striped is-fullwidth" v-if="documents.length > 0">
                 <thead>
                     <tr>
@@ -68,6 +71,7 @@ export default {
                     } else {
                         this.documents = [];
                         this.apiError = response.getApiErrorData();
+                        this.$emit("showAPIError", this.apiError);
                     }
                     this.loading = false;
                 });

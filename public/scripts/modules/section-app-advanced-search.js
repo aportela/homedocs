@@ -1,5 +1,4 @@
 import { default as homedocsAPI } from './api.js';
-import { default as modalAPIError } from './modal-api-error.js';
 import { default as controlInputTags } from './control-input-tags.js';
 import { default as controlPagination } from './control-pagination.js';
 import { default as controlTableHeaderSortable } from './control-table-header-sortable.js';
@@ -124,8 +123,7 @@ export default {
     components: {
         'homedocs-control-input-tags': controlInputTags,
         'homedocs-control-pagination': controlPagination,
-        'homedocs-table-header-sortable': controlTableHeaderSortable,
-        'homedocs-modal-api-error': modalAPIError
+        'homedocs-table-header-sortable': controlTableHeaderSortable
     },
     methods: {
         refreshFromPager: function (currentPage, resultsPage) {
@@ -174,7 +172,7 @@ export default {
                         this.noResultsWarning = true;
                     }
                 } else {
-                    this.apiError = response.getApiErrorData();
+                    this.$emit("showAPIError", response.getApiErrorData());
                 }
                 this.loading = false;
             });

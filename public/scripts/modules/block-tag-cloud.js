@@ -13,7 +13,10 @@ const template = `
             </p>
             <i class="fas fa-sync-alt cursor-pointer" title="Click here to refresh" v-on:click.prevent="onRefresh"></i>
         </div>
-        <div class="message-body has-text-centered">
+        <div class="message-body has-text-centered" v-if="apiError">
+            <h5 class="title is-5"><i class="fas fa-exclamation-triangle"></i> Error loading data</h5>
+        </div>
+        <div class="message-body has-text-centered" v-else>
             <div class="field is-grouped is-grouped-multiline" v-if="items.length > 0">
                 <div class="control" v-for="item in items" v-bind:key="item.tag">
                     <router-link v-bind:to="{ name: 'appAdvancedSearch', params: { tags: [ item.tag ], launch: true } }">
@@ -57,6 +60,7 @@ export default {
                         this.showWarningNoTags = this.items.length < 1;
                     } else {
                         this.apiError = response.getApiErrorData();
+                        this.$emit("showAPIError", this.apiError);
                     }
                     this.loading = false;
                 });
