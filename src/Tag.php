@@ -35,7 +35,7 @@
             $results = $dbh->query(
                 "
                     SELECT
-                        tag
+                        DISTINCT tag
                     FROM DOCUMENT_TAG
                     INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_TAG.document_id
                     WHERE DOCUMENT.created_by_user_id = :session_user_id
@@ -44,6 +44,12 @@
                 array(
                     (new \HomeDocs\Database\DBParam())->str(":session_user_id", \HomeDocs\UserSession::getUserId())
                 )
+            );
+            $results = array_map(
+                function($item) {
+                    return($item->tag);
+                },
+                $results
             );
             return($results);
         }
