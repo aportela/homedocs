@@ -273,8 +273,8 @@
             );
         });
 
-        $this->post('/tag/search', function (Request $request, Response $response, array $args) {
-            $data = \HomeDocs\Document::searchTags(
+        $this->get('/tag-cloud', function (Request $request, Response $response, array $args) {
+            $data = \HomeDocs\Tag::getCloud(
                 new \HomeDocs\Database\DB($this)
             );
             return $response->withJson(
