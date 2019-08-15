@@ -78,6 +78,10 @@
 
         private function saveStorage(\HomeDocs\Database\DB $dbh, \Slim\Http\UploadedFile $uploadedFile) {
             if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
+                $path = pathinfo($this->localStoragePath);
+                if (!file_exists($path['dirname'])) {
+                    mkdir($path['dirname'], 0777, true);
+                }    
                 $uploadedFile->moveTo($this->localStoragePath);
                 $this->hash = sha1_file($this->localStoragePath);
             } else {
