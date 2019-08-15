@@ -292,6 +292,8 @@ export default {
                         homedocsAPI.document.update(this.document, (response) => {
                             if (response.ok) {
                                 this.loading = false;
+                                // clear tag cache
+                                initialState.cachedTags = null;
                                 this.onRefresh();
                             } else {
                                 this.$emit("showAPIError", response.getApiErrorData());
@@ -302,6 +304,10 @@ export default {
                         this.document.id = uuid();
                         homedocsAPI.document.add(this.document, (response) => {
                             if (response.ok) {
+                                if (this.document.tags.length > 0) {
+                                    // clear tag cache for refreshing new tags
+                                    initialState.cachedTags = null;
+                                }
                                 this.$router.push({ name: 'appOpenDocument', params: { id: this.document.id } });
                             } else {
                                 this.$emit("showAPIError", response.getApiErrorData());

@@ -31,7 +31,6 @@ export default {
             newTag: null,
             matchedTags: [],
             selectedMatchTagIndex: -1,
-            initialStateTags: []
         });
     },
     props: [
@@ -43,13 +42,15 @@ export default {
         }
     },
     created: function() {
-        this.loadCurrentTags();
+        if (! Array.isArray(initialState.cachedTags)) {
+            this.loadCurrentTagCache();
+        }
     },
     methods: {
-        loadCurrentTags: function() {
+        loadCurrentTagCache: function() {
             homedocsAPI.tag.search((response) => {
                 if (response.ok) {
-                    this.initialStateTags = response.body.data.map((item) => { return(item.tag) });
+                    initialState.cachedTags = response.body.data;
                 } else {
                     this.apiError = response.getApiErrorData();
                 }
@@ -92,7 +93,9 @@ export default {
                 default:
                     if (this.newTag) {
                         if (!this.tags.includes(this.newTag.toLowerCase())) {
-                            this.matchedTags = this.initialStateTags.filter(tag => tag.indexOf(this.newTag) !== -1);
+                            if (Array.isArray(initialState.cachedTags)) {
+                                this.matchedTags = initialState.cachedTags.filter((tag) => tag.indexOf(this.newTag) !== -1);
+                            }
                         }
                     } else {
                         this.matchedTags = [];
