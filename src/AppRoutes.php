@@ -84,6 +84,8 @@
             $filter = array(
                 "title" => $request->getParam("title", null),
                 "description" => $request->getParam("description", null),
+                "fromTimestampCondition" => intval($request->getParam("fromTimestampCondition", 0)),
+                "toTimestampCondition" => intval($request->getParam("toTimestampCondition", 0)),
                 "tags" => $request->getParam("tags", array()),
             );
             $data = \HomeDocs\Document::search(

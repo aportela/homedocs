@@ -76,6 +76,12 @@ export default {
                 description: filter.description,
                 tags: filter.tags || []
             }
+            if (filter.fromTimestampCondition) {
+                params.fromTimestampCondition = filter.fromTimestampCondition;
+            }
+            if (filter.toTimestampCondition) {
+                params.toTimestampCondition = filter.toTimestampCondition;
+            }
             params.currentPage = currentPage;
             params.resultsPage = resultsPage;
             params.sortBy = sortBy;

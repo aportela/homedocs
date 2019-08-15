@@ -364,6 +364,14 @@
                     }
                 }
             }
+            if (isset($filter["fromTimestampCondition"]) && $filter["fromTimestampCondition"] > 0) {
+                $params[] = (new \HomeDocs\Database\DBParam())->int(":fromTimestamp" , $filter["fromTimestampCondition"]);
+                $queryConditions[] = " DOCUMENT.created_on_timestamp >= :fromTimestamp ";
+            }
+            if (isset($filter["toTimestampCondition"]) && $filter["toTimestampCondition"] > 0) {
+                $params[] = (new \HomeDocs\Database\DBParam())->int(":toTimestamp" , $filter["toTimestampCondition"]);
+                $queryConditions[] = " DOCUMENT.created_on_timestamp <= :toTimestamp ";
+            }
             if (isset($filter["tags"]) && is_array($filter["tags"]) && count($filter["tags"]) > 0) {
                 $tagParamNames = array();
                 foreach($filter["tags"] as $i => $tag) {

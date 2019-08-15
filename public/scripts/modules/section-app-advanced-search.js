@@ -1,5 +1,6 @@
 import { default as homedocsAPI } from './api.js';
 import { default as controlInputTags } from './control-input-tags.js';
+import { default as controlDateSelector } from './control-date-selector.js';
 import { default as controlPagination } from './control-pagination.js';
 import { default as controlTableHeaderSortable } from './control-table-header-sortable.js';
 
@@ -39,13 +40,7 @@ const template = `
             </div>
             <div class="field">
                 <label class="label">Published on</label>
-                <div class="select">
-                    <select>
-                        <option value="0">Any date</option>
-                        <option value="0">Today</option>
-                        <option value="0">Yesterday</option>
-                    </select>
-                </div>
+                <homedocs-control-date-selector v-bind:selectedValue="dateCondition" v-on:change="dateCondition = $event.range; fromTimestampCondition = $event.fromTimestamp; toTimestampCondition = $event.toTimestamp;"></homedocs-control-date-selector>
             </div>
             <div class="field">
                 <label class="label">Tags</label>
@@ -96,6 +91,9 @@ export default {
             tab: "conditions",
             titleCondition: null,
             descriptionCondition: null,
+            dateCondition: 0,
+            fromTimestampCondition: null,
+            toTimestampCondition: null,
             documents: [],
             pager: {
                 currentPage: 1,
@@ -125,6 +123,7 @@ export default {
     ],
     components: {
         'homedocs-control-input-tags': controlInputTags,
+        'homedocs-control-date-selector': controlDateSelector,
         'homedocs-control-pagination': controlPagination,
         'homedocs-table-header-sortable': controlTableHeaderSortable
     },
@@ -173,6 +172,8 @@ export default {
             const params = {
                 title: this.titleCondition,
                 description: this.descriptionCondition,
+                fromTimestampCondition: this.fromTimestampCondition,
+                toTimestampCondition: this.toTimestampCondition,
                 tags: this.tags
             };
             homedocsAPI.document.search(this.pager.currentPage, this.pager.resultsPage, params, this.sortBy, this.sortOrder, (response) => {
