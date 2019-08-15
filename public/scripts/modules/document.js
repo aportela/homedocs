@@ -328,6 +328,10 @@ export default {
             }
         },
         onRefresh: function () {
+            this.pendingUploads = 0;
+            this.uploadErrors = [];
+            this.confirmDeleteDocumentId = null;
+            this.confirmDeleteFileId = null;
             if (!this.loading) {
                 this.loading = true;
                 homedocsAPI.document.get(this.$route.params.id, (response) => {
