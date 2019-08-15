@@ -346,7 +346,7 @@
                     foreach($words as $word) {
                         $paramName = sprintf(":TITLE_%03d", $totalWords);
                         $params[] = (new \HomeDocs\Database\DBParam())->str($paramName, "%" . $word . "%");
-                        $queryConditions[] = sprintf(" DOCUMENT.TITLE LIKE %s ", $paramName);
+                        $queryConditions[] = sprintf(" DOCUMENT.title LIKE %s ", $paramName);
                         $totalWords--;
                     }
                 }
@@ -359,7 +359,7 @@
                     foreach($words as $word) {
                         $paramName = sprintf(":DESCRIPTION_%03d", $totalWords);
                         $params[] = (new \HomeDocs\Database\DBParam())->str($paramName, "%" . $word . "%");
-                        $queryConditions[] = sprintf(" DOCUMENT.TITLE LIKE %s ", $paramName);
+                        $queryConditions[] = sprintf(" DOCUMENT.description LIKE %s ", $paramName);
                         $totalWords--;
                     }
                 }
