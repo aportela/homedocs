@@ -339,12 +339,30 @@
             $queryConditions = array();
             $params = array();
             if (isset($filter["title"]) && ! empty($filter["title"])) {
-                $queryConditions[] = sprintf(" DOCUMENT.title LIKE :title ");
-                $params[] = (new \HomeDocs\Database\DBParam())->str(":title", "%" . $filter["title"] . "%");
+                // explode into words, remove duplicated & empty elements
+                $words = array_filter(array_unique(explode(" ", trim(mb_strtolower($filter["title"])))));
+                $totalWords = count($words);
+                if ($totalWords > 0) {
+                    foreach($words as $word) {
+                        $paramName = sprintf(":TITLE_%03d", $totalWords);
+                        $params[] = (new \HomeDocs\Database\DBParam())->str($paramName, "%" . $word . "%");
+                        $queryConditions[] = sprintf(" DOCUMENT.TITLE LIKE %s ", $paramName);
+                        $totalWords--;
+                    }
+                }
             }
             if (isset($filter["description"]) && ! empty($filter["description"])) {
-                $queryConditions[] = sprintf(" DOCUMENT.description LIKE :description ");
-                $params[] = (new \HomeDocs\Database\DBParam())->str(":description", "%" . $filter["description"]. "%");
+                // explode into words, remove duplicated & empty elements
+                $words = array_filter(array_unique(explode(" ", trim(mb_strtolower($filter["description"])))));
+                $totalWords = count($words);
+                if ($totalWords > 0) {
+                    foreach($words as $word) {
+                        $paramName = sprintf(":DESCRIPTION_%03d", $totalWords);
+                        $params[] = (new \HomeDocs\Database\DBParam())->str($paramName, "%" . $word . "%");
+                        $queryConditions[] = sprintf(" DOCUMENT.TITLE LIKE %s ", $paramName);
+                        $totalWords--;
+                    }
+                }
             }
             if (isset($filter["tags"]) && is_array($filter["tags"]) && count($filter["tags"]) > 0) {
                 $tagParamNames = array();
