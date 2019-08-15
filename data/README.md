@@ -1,1 +1,2 @@
-common data files will be stored on this directory
+database & document files will be stored on this directory
+
