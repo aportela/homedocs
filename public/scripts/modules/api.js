@@ -198,6 +198,20 @@ export default {
                     }
                 }
             );
+        },
+        search: function (callback) {
+            Vue.http.post("api2/tag/search", {}).then(
+                response => {
+                    if (callback && typeof callback === "function") {
+                        callback(response);
+                    }
+                },
+                response => {
+                    if (callback && typeof callback === "function") {
+                        callback(response);
+                    }
+                }
+            );
         }
     }
 };

@@ -31,6 +31,22 @@
             return($results);
         }
 
+        public static function search(\HomeDocs\Database\DB $dbh) {
+            $results = $dbh->query(
+                "
+                    SELECT
+                        tag
+                    FROM DOCUMENT_TAG
+                    INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_TAG.document_id
+                    WHERE DOCUMENT.created_by_user_id = :session_user_id
+                    ORDER BY tag
+                ",
+                array(
+                    (new \HomeDocs\Database\DBParam())->str(":session_user_id", \HomeDocs\UserSession::getUserId())
+                )
+            );
+            return($results);
+        }
 
     }
 ?>

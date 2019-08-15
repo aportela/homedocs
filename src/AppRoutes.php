@@ -286,5 +286,18 @@
             );
         });
 
+        $this->post('/tag/search', function (Request $request, Response $response, array $args) {
+            $data = \HomeDocs\Tag::search(
+                new \HomeDocs\Database\DB($this)
+            );
+            return $response->withJson(
+                [
+                    'initialState' => \HomeDocs\Utils::getInitialState($this),
+                    'data' => $data
+                ],
+                200
+            );
+        });
+
     })->add(new \HomeDocs\Middleware\APIExceptionCatcher($this->app->getContainer()));
 ?>
