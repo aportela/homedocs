@@ -1,2 +1,2 @@
-database & document files will be stored on this directory
+database will be stored on this directory
 
