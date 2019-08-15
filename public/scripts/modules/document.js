@@ -35,8 +35,8 @@ const template = `
 
         <div class="field">
             <label class="label">Files</label>
-            <button type="button" class="button is-small is-dark" v-if="pendingUploads == 0" v-on:click.prevent="$refs.file.click()" v-bind:disabled="loading"><span class="icon"><i class="fas fa-file-upload"></i></span><span>Add new</span></button>
-            <button type="button" class="button is-small is-dark" disabled v-else><span class="icon"><i class="fas fa-cog fa-spin"></i></span><span>Uploading {{ pendingUploads }} file/s...</span></button>
+            <button type="button" class="button is-dark" v-if="pendingUploads == 0" v-on:click.prevent="$refs.file.click()" v-bind:disabled="loading"><span class="icon"><i class="fas fa-file-upload"></i></span><span>Add new</span></button>
+            <button type="button" class="button is-dark" disabled v-else><span class="icon"><i class="fas fa-cog fa-spin"></i></span><span>Uploading {{ pendingUploads }} file/s...</span></button>
         </div>
         <div class="notification" v-if="uploadErrors.length > 0">
             <ul>
@@ -285,7 +285,7 @@ export default {
             }
         },
         onSave: function () {
-            if (!this.loading) {                
+            if (!this.loading) {
                 if (this.isValid()) {
                     this.loading = true;
                     if (this.isUpdateViewForm) {
