@@ -28,7 +28,7 @@ const template = `
             <div class="field">
                 <label class="label">Search on title</label>
                 <div class="control">
-                    <input class="input" type="text" placeholder="Title condition search" v-model.trim="titleCondition">
+                    <input class="input" type="text" ref="titleCondition" placeholder="Title condition search" v-model.trim="titleCondition">
                 </div>
             </div>
             <div class="field">
@@ -76,7 +76,6 @@ const template = `
         <article class="message is-warning" v-if="noResultsWarning">
             <div class="message-header">
                 <p>Warning</p>
-                <button class="delete" aria-label="delete"></button>
             </div>
             <div class="message-body">
                 No results found for current search conditions
@@ -113,6 +112,7 @@ export default {
         this.tags = this.$route.params.tags || [];
     },
     mounted: function() {
+        this.$nextTick(() => this.$refs.titleCondition.focus());
         if (this.$route.params.launch) {
             this.onSearch();
         }
