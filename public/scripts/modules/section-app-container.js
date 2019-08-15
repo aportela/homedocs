@@ -10,14 +10,13 @@ const template = `
                 <a class="navbar-item is-uppercase has-text-weight-bold" href="https://github.com/aportela/homedocs" target="_blank">
                     <span class="icon"><i class="fab fa-github"></i></span> <span>homedocs</span></a>
 
-                <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false"
-                    data-target="navbarBasicExample">
+                <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" v-bind:class="{ 'is-active': showMobileMenu }" v-on:click.prevent="showMobileMenu = !showMobileMenu">
                     <span aria-hidden="true"></span>
                     <span aria-hidden="true"></span>
                     <span aria-hidden="true"></span>
                 </a>
             </div>
-            <div class="navbar-menu">
+            <div class="navbar-menu" v-bind:class="{ 'is-active': showMobileMenu }">
                 <div class="navbar-start">
                     <router-link v-bind:to="{ name: 'appDashBoard' }" class="navbar-item" v-bind:class="{ 'is-active': $route.name == 'appDashBoard' }">
                         <span class="icon">
@@ -31,18 +30,14 @@ const template = `
                         </span>
                         <span>Add</span>
                     </router-link>
+                    <router-link v-bind:to="{ name: 'appAdvancedSearch' }" class="navbar-item" v-bind:class="{ 'is-active': $route.name == 'appAdvancedSearch' }">
+                        <span class="icon">
+                        <i class="fas fa-search"></i>
+                        </span>
+                        <span>Search</span>
+                    </router-link>
                 </div>
                 <div class="navbar-end">
-                    <div class="navbar-item">
-                        <div class="field">
-                            <p class="control has-icons-left">
-                                <input class="input is-rounded" type="text" placeholder="Search">
-                                <span class="icon is-small is-left">
-                                    <i class="fas fa-search"></i>
-                                </span>
-                            </p>
-                        </div>
-                    </div>
                     <div class="navbar-item">
                         <div class="buttons">
                             <button class="button" v-on:click.prevent="onSignOut">
@@ -65,13 +60,20 @@ export default {
     data: function () {
         return ({
             loading: false,
-            apiError: null
+            apiError: null,
+            searchQuery: null,
+            showMobileMenu: false
         });
+    },
+    watch: {
+        '$route': function (to, from) {
+            this.showMobileMenu = false;
+        }
     },
     components: {
         'homedocs-modal-api-error': modalAPIError
     },
-    methods: {
+    methods: {        
         onSignOut: function() {
             this.loading = true;
             homedocsAPI.user.signOut((response) => {
