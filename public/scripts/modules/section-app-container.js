@@ -38,7 +38,7 @@ const template = `
                     </router-link>
                 </div>
                 <div class="navbar-end">
-                    <a class="navbar-item">
+                    <a class="navbar-item" v-on:click.prevent="onSignOut">
                         <span class="icon"><i class="fas fa-sign-out-alt"></i></span>
                         <span>Sign out</span>
                     </a>
