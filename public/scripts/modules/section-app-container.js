@@ -38,14 +38,10 @@ const template = `
                     </router-link>
                 </div>
                 <div class="navbar-end">
-                    <div class="navbar-item">
-                        <div class="buttons">
-                            <button class="button" v-on:click.prevent="onSignOut">
-                                <span class="icon"><i class="fas fa-sign-out-alt"></i></span>
-                                <span>Sign out</span>
-                            </button>
-                        </div>
-                    </div>
+                    <a class="navbar-item">
+                        <span class="icon"><i class="fas fa-sign-out-alt"></i></span>
+                        <span>Sign out</span>
+                    </a>
                 </div>
             </div>
         </nav>
@@ -73,7 +69,7 @@ export default {
     components: {
         'homedocs-modal-api-error': modalAPIError
     },
-    methods: {        
+    methods: {
         onSignOut: function() {
             this.loading = true;
             homedocsAPI.user.signOut((response) => {
