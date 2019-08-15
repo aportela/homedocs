@@ -56,7 +56,7 @@ const template = `
             <tbody>
                 <tr v-for="file, idx in document.files" v-bind:key="file.id">
                     <td>{{ file.uploadedOnTimestamp | timestamp2HumanDateTime }}</td>
-                    <td><a v-bind:href="'/api2/file/' + file.id">{{ file.name }}</a></td>
+                    <td><a v-bind:href="'api2/file/' + file.id">{{ file.name }}</a></td>
                     <td>{{ file.size | humanFileSize }}</td>
                     <td v-if="confirmDeleteFileId == null || confirmDeleteFileId != file.id">
                         <button type="button" v-bind:disabled="! isImage(file.name) || loading" class="button is-light" v-on:click.prevent="showPreview(file.id)"><span class="icon"><i class="fas fa-folder-open"></i></span><span class="is-hidden-mobile">Open/Preview</span></button>
@@ -116,10 +116,10 @@ const template = `
                 <div class="modal-content">
                     <div class="notification" v-if="previewError">
                         <h1 class="title"><i class="fas fa-exclamation-triangle"></i> Error loading preview</h1>
-                        <h2 class="sub-title">URL: <strong>{{ '/api2/file/' + previewFileId }}</strong></h2>
+                        <h2 class="sub-title">URL: <strong>{{ 'api2/file/' + previewFileId }}</strong></h2>
                     </div>
                     <p class="image" v-else>
-                    <img v-bind:src="'/api2/file/' + previewFileId" alt="image preview" v-on:error="previewError = true;">
+                    <img v-bind:src="'api2/file/' + previewFileId" alt="image preview" v-on:error="previewError = true;">
                 </p>
             </div>
             <button class="modal-close is-large" aria-label="close" v-on:click.prevent="hidePreview"></button>
