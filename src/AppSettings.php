@@ -9,8 +9,8 @@
             'displayErrorDetails' => true, // disable on production environments
             'phpRequiredExtensions' => array('pdo_sqlite', 'mbstring'),
             'twigParams' => [
-                'production' => false,
-                'localVendorAssets' => true // use local vendor assets (vs remote cdn)
+                'production' => true,
+                'localVendorAssets' => false // use local vendor assets (vs remote cdn)
             ],
             // Renderer settings
             'renderer' => [
