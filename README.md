@@ -8,32 +8,25 @@ This software may contain bugs, so use under your own risk
 
 ## System requirements
 
-- PHP v5.5 (with imagick module)
-- mysql
+- PHP v7.x
+- 'pdo_sqlite' & 'mbstring' php extensions
 - enough disk space for storing documents
 
-## Setup & Installation
+## Setup / Installation
 
-Open include/configuration.php file with editor and set database values & storage path according with your configuration
+Enter on path "tools" and execute console script install-upgrade-db.php
 
-- DATABASE_HOST
-- DATABASE_PORT
-- DATABASE_NAME
-- DATABASE_USERNAME
-- DATABASE_PASSWORD
-- ALLOW_NEW_ACCOUNTS: set TRUE to create first account
-- LOCAL_STORAGE_PATH: full storage directory path (full permission access required for web server process owner).
+Check proper permissions, web server process must read/write (files) read/write/execute (dirs) on
 
-Point your browser to install.php file (ex: http://localhost/homedocs/install.php)
+    Database file
+        data\homedocs.sqlite3
 
-**Warning: after install, install.php file must be deleted**
+    Storage paths
+        data\storage\*.*
 
-## Using HomeDocs
+    Debug files
+        logs\*.*
 
-After login you will be automatically redirected to default workspace page. For uploading new document/s drag & drop files to the designated area or using the Select files button.
+## Migration from first/old version
 
-Once you have selected and uploaded all the files related to a new document, a popup window appears to fill some document metadata.
-
-## Icon credits
-
-PNG icons by FileSquare - https://www.iconfinder.com/search/?q=iconset:filetypeicons-set-
+TODO
