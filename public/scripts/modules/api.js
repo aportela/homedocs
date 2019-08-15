@@ -185,7 +185,7 @@ export default {
         }
     },
     tag: {
-        search: function (callback) {
+        getCloud: function (callback) {
             Vue.http.get("api2/tag-cloud", {}).then(
                 response => {
                     if (callback && typeof callback === "function") {

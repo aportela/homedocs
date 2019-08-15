@@ -54,7 +54,7 @@ export default {
                 this.apiError = null;
                 this.loading = true;
                 this.showWarningNoTags = false;
-                homedocsAPI.tag.search((response) => {
+                homedocsAPI.tag.getCloud((response) => {
                     if (response.ok) {
                         this.items = response.body.data;
                         this.showWarningNoTags = this.items.length < 1;
