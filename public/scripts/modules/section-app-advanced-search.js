@@ -61,13 +61,15 @@ const template = `
                 <tr>
                     <homedocs-table-header-sortable v-bind:name="'On'" v-bind:isSorted="sortBy == 'createdOnTimestamp'" v-bind:sortOrder="sortOrder" v-on:sortClicked="toggleSort('createdOnTimestamp');"></homedocs-table-header-sortable>
                     <homedocs-table-header-sortable v-bind:name="'Title'" v-bind:isSorted="sortBy == 'title'" v-bind:sortOrder="sortOrder" v-on:sortClicked="toggleSort('title');"></homedocs-table-header-sortable>
-                    <homedocs-table-header-sortable v-bind:name="'Files'" v-bind:isSorted="sortBy == 'fileCount'" v-bind:sortOrder="sortOrder" v-on:sortClicked="toggleSort('fileCount');"></homedocs-table-header-sortable>
+                    <homedocs-table-header-sortable v-bind:name="'Description'" v-bind:className="'is-hidden-mobile'" v-bind:isSorted="sortBy == 'description'" v-bind:sortOrder="sortOrder" v-on:sortClicked="toggleSort('description');"></homedocs-table-header-sortable>
+                    <homedocs-table-header-sortable v-bind:name="'Files'" v-bind:className="'has-text-right'" v-bind:isSorted="sortBy == 'fileCount'" v-bind:sortOrder="sortOrder" v-on:sortClicked="toggleSort('fileCount');"></homedocs-table-header-sortable>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="document in documents" v-bind:key="document.id">
-                    <td>{{ document.createdOnTimestamp | timestamp2HumanDateTime }}</td>
-                    <td><router-link v-bind:to="{ name: 'appOpenDocument', params: { id: document.id } }">{{ document.title }}</router-link></td>
+                    <td class="nowrap">{{ document.createdOnTimestamp | timestamp2HumanDateTime }}</td>
+                    <td class="nowrap"><router-link v-bind:to="{ name: 'appOpenDocument', params: { id: document.id } }">{{ document.title }}</router-link></td>
+                    <td class="is-hidden-mobile" v-bind:title="document.description">{{ document.description | cutDescription }}</td>
                     <td class="has-text-right">{{ document.fileCount }}</td>
                 </tr>
             </tbody>
@@ -112,9 +114,10 @@ export default {
         this.tags = this.$route.params.tags || [];
     },
     mounted: function() {
-        this.$nextTick(() => this.$refs.titleCondition.focus());
         if (this.$route.params.launch) {
             this.onSearch();
+        } else {
+            this.$nextTick(() => this.$refs.titleCondition.focus());
         }
     },
     mixins: [
@@ -124,6 +127,19 @@ export default {
         'homedocs-control-input-tags': controlInputTags,
         'homedocs-control-pagination': controlPagination,
         'homedocs-table-header-sortable': controlTableHeaderSortable
+    },
+    filters: {
+        cutDescription: function(description) {
+            if (description) {
+                if (description.length > 64) {
+                    return(description.slice(0, 64) + "...");
+                } else {
+                    return(description);
+                }
+            } else {
+                return(null);
+            }
+        }
     },
     methods: {
         refreshFromPager: function (currentPage, resultsPage) {

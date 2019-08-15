@@ -6,6 +6,6 @@
     cursor: help !important;
 }
 
-td progress {
-    display: inline-block !important;
+.nowrap {
+    white-space: nowrap;
 }
