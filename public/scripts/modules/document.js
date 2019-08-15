@@ -285,9 +285,9 @@ export default {
             }
         },
         onSave: function () {
-            if (!this.loading) {
-                this.loading = true;
+            if (!this.loading) {                
                 if (this.isValid()) {
+                    this.loading = true;
                     if (this.isUpdateViewForm) {
                         homedocsAPI.document.update(this.document, (response) => {
                             if (response.ok) {
