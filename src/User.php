@@ -42,6 +42,27 @@
             }
         }
 
+        public function update(\HomeDocs\Database\DB $dbh) {
+            if (! empty($this->id) && mb_strlen($this->id) == 36) {
+                if (! empty($this->email) && mb_strlen($this->email) <= 255 && filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
+                    if (! empty($this->password)) {
+                        $params = array(
+                            (new \HomeDocs\Database\DBParam())->str(":id", mb_strtolower($this->id)),
+                            (new \HomeDocs\Database\DBParam())->str(":email", mb_strtolower($this->email)),
+                            (new \HomeDocs\Database\DBParam())->str(":password_hash", $this->passwordHash($this->password))
+                        );
+                        return($dbh->execute(" UPDATE USER SET email = :email, password_hash = :password_hash WHERE id = :id ", $params));
+                    } else {
+                        throw new \HomeDocs\Exception\InvalidParamsException("password");
+                    }
+                } else {
+                    throw new \HomeDocs\Exception\InvalidParamsException("email");
+                }
+            } else {
+                throw new \HomeDocs\Exception\InvalidParamsException("id");
+            }
+        }
+
         public function get(\HomeDocs\Database\DB $dbh) {
             $results = null;
             if (! empty($this->id) && mb_strlen($this->id) == 36) {
