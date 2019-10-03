@@ -1,6 +1,7 @@
 import { default as homedocsAPI } from './api.js';
 import { default as validator } from './validator.js';
 import { default as controlInputTags } from './control-input-tags.js';
+import { default as modalDocumentFilePreview } from './modal-document-file-preview.js';
 import { mixinDateTimes, mixinFiles } from './mixins.js';
 import { uuid as uuid } from './utils.js';
 
@@ -59,7 +60,7 @@ const template = `
                     <td><a v-bind:href="'api2/file/' + file.id">{{ file.name }}</a></td>
                     <td>{{ file.size | humanFileSize }}</td>
                     <td v-if="confirmDeleteFileId == null || confirmDeleteFileId != file.id">
-                        <button type="button" v-bind:disabled="! isImage(file.name) || loading" class="button is-light" v-on:click.prevent="showPreview(file.id)"><span class="icon"><i class="fas fa-folder-open"></i></span><span class="is-hidden-mobile">Open/Preview</span></button>
+                        <button type="button" v-bind:disabled="! isImage(file.name) || loading" class="button is-light" v-on:click.prevent="showPreview(idx)"><span class="icon"><i class="fas fa-folder-open"></i></span><span class="is-hidden-mobile">Open/Preview</span></button>
                         <a v-bind:href="'api2/file/' + file.id" class="button is-light" v-bind:disabled="loading"><span class="icon"><i class="fas fa-download"></i></span><span class="is-hidden-mobile">Download</span></a>
                         <button type="button" class="button is-light" v-on:click.prevent="confirmDeleteFileId = file.id"><span class="icon"><i class="fas fa-trash-alt"></i></span><span class="is-hidden-mobile">Remove</span></button>
                     </td>
@@ -111,19 +112,8 @@ const template = `
             </p>
         </div>
 
-        <div class="modal is-active" v-if="isPreviewVisible">
-            <div class="modal-background"></div>
-                <div class="modal-content">
-                    <div class="notification" v-if="previewError">
-                        <h1 class="title"><i class="fas fa-exclamation-triangle"></i> Error loading preview</h1>
-                        <h2 class="sub-title">URL: <strong>{{ 'api2/file/' + previewFileId }}</strong></h2>
-                    </div>
-                    <p class="image" v-else>
-                    <img v-bind:src="'api2/file/' + previewFileId" alt="image preview" v-on:error="previewError = true;">
-                </p>
-            </div>
-            <button class="modal-close is-large" aria-label="close" v-on:click.prevent="hidePreview"></button>
-        </div>
+        <homedocs-modal-document-file-preview v-if="! loading && isPreviewVisible" v-bind:files="document.files" v-bind:previewIndex="previewFileIndex" v-on:onClose="hidePreview"></homedocs-modal-document-file-preview>
+
     </form>
 
 `;
@@ -144,6 +134,8 @@ export default {
                 tags: [],
                 files: []
             },
+            previewFileIndex: -1,
+            isPreviewVisible: false,
             previewFileId: null,
             previewError: false,
             pendingUploads: 0,
@@ -153,9 +145,6 @@ export default {
         });
     },
     computed: {
-        isPreviewVisible: function () {
-            return (this.previewFileId);
-        },
         isAddForm: function () {
             return (this.formMode == 0);
         },
@@ -216,7 +205,8 @@ export default {
         }
     },
     components: {
-        'homedocs-control-input-tags': controlInputTags
+        'homedocs-control-input-tags': controlInputTags,
+        'homedocs-modal-document-file-preview': modalDocumentFilePreview
     },
     methods: {
         isValid: function () {
@@ -237,25 +227,19 @@ export default {
             }
             return (valid);
         },
-        showPreview: function (fileId) {
-            this.previewFileId = fileId;
-            this.previewError = false;
-            window.addEventListener('keydown', this.onKeyPress);
+        showPreview: function (fileIndex) {
+            this.isPreviewVisible = true;
+            this.previewFileIndex = fileIndex;
+            //window.addEventListener('keydown', this.onKeyPress);
         },
-        hidePreview: function (fileId) {
-            this.previewFileId = null;
-            window.removeEventListener('keydown', this.onKeyPress);
+        hidePreview: function () {
+            this.isPreviewVisible = false;
+            this.previewFileIndex = -1;
+            //window.removeEventListener('keydown', this.onKeyPress);
         },
         onKeyPress: function (e) {
             if (e.code == "Escape") {
                 this.hidePreview();
-            }
-        },
-        isImage: function (filename) {
-            if (filename) {
-                return (filename.match(/.(jpg|jpeg|png|gif)$/i));
-            } else {
-                return (false);
             }
         },
         onFileChanged: function (event) {

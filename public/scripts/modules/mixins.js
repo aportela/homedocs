@@ -4,8 +4,17 @@ export const mixinFiles = {
     filters: {
         humanFileSize: function(size) {
             return(humanFileSize(size, true));
-        }
+        },
     },
+    methods: {
+        isImage: function (filename) {
+            if (filename) {
+                return (filename.match(/.(jpg|jpeg|png|gif)$/i));
+            } else {
+                return (false);
+            }
+        }
+    }
 };
 
 export const mixinDateTimes = {
