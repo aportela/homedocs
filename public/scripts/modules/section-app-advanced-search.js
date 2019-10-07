@@ -46,7 +46,7 @@ const template = `
                 <label class="label">Tags</label>
                 <homedocs-control-input-tags v-bind:tags="tags" v-on:update="tags = $event.tags"></homedocs-control-input-tags>
             </div>
-            <button type="submit" class="button is-primary is-fullwidth" v-on:click.prevent="onSearch">Search</button>
+            <button type="submit" class="button is-primary is-fullwidth" v-on:click.prevent="onSearch(true)">Search</button>
 
         </form>
 
@@ -166,7 +166,10 @@ export default {
                 this.onSearch();
             }
         },
-        onSearch: function () {
+        onSearch: function (resetPager) {
+            if (resetPager) {
+                this.pager.currentPage = 1;
+            }
             this.loading = true;
             this.noResultsWarning = false;
             const params = {
