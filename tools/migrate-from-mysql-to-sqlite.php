@@ -39,6 +39,26 @@
         )
     );
 
+    $mariaDBUUIDFunctionCreateQueries = array(
+        "
+            DROP FUNCTION IF EXISTS `CONVERT_TO_UUID`;
+        ",
+        "
+            CREATE FUNCTION `CONVERT_TO_UUID`(
+                `ID` BINARY(50)
+            )
+            RETURNS VARCHAR(36)
+            LANGUAGE SQL
+            NOT DETERMINISTIC
+            CONTAINS SQL
+            SQL SECURITY DEFINER
+            COMMENT ''
+            BEGIN
+                SET @H_ID = HEX(ID);
+                RETURN(LOWER(CONCAT(SUBSTRING(@H_ID, 1, 8), \"-\", SUBSTRING(@H_ID, 9, 4), \"-\",  SUBSTRING(@H_ID, 13, 4), \"-\", SUBSTRING(@H_ID, 17, 4), \"-\", SUBSTRING(@H_ID, 21, 12))));
+            END;
+        "
+    );
     $mariaDBQueries = array(
         // TODO: create required mariadb function to convert old hex-binary uuids to standard varchar(36) uuids
         // USER table export
@@ -136,6 +156,13 @@
         " DELETE FROM DOCUMENT_FILE ",
         " DELETE FROM DOCUMENT_TAG; "
     );
+
+    echo "Installing uuid convert function...";
+    foreach($mariaDBUUIDFunctionCreateQueries as $mariaDBQuery) {
+        $stmt = $oldDatabaseHandler->prepare($mariaDBQuery);
+        $stmt->execute();
+    }
+
     echo "Exporting queries from MariaDB...";
     foreach($mariaDBQueries as $mariaDBQuery) {
         $stmt = $oldDatabaseHandler->prepare($mariaDBQuery);
