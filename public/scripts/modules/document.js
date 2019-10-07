@@ -31,7 +31,7 @@ const template = `
         </div>
         <div class="field">
             <label class="label">Tags</label>
-            <homedocs-control-input-tags v-bind:tags="document.tags" v-on:update="document.tags = $event.tags" v-bind:disabled="loading"></homedocs-control-input-tags>
+            <homedocs-control-input-tags v-bind:allowNavigation="true" v-bind:tags="document.tags" v-on:update="document.tags = $event.tags" v-bind:disabled="loading"></homedocs-control-input-tags>
         </div>
 
         <div class="field">
