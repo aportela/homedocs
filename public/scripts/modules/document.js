@@ -13,6 +13,10 @@ const template = `
         <div class="field" v-if="! isAddForm">
             <label class="label">Document created on {{ document.createdOnTimestamp | timestamp2HumanDateTime }}</label>
         </div>
+        <div class="notification" v-if="pendingChanges">
+            <h2 class="title is-4"><i class="fas fa-exclamation-triangle"></i> WARNING</h2>
+            <h2 class="subtitle is-4">Pending changes, save before exit</h2>
+        </div>
         <div class="field">
             <label class="label">Title</label>
             <div class="control" v-bind:class="{ 'has-icons-right' : validator.hasInvalidField('title') }">
@@ -62,16 +66,16 @@ const template = `
                     <td>
                         <button type="button" v-bind:disabled="! isImage(file.name) || loading" class="button is-light" v-on:click.prevent="showPreview(idx)"><span class="icon"><i class="fas fa-folder-open"></i></span><span class="is-hidden-mobile">Open/Preview</span></button>
                         <a v-bind:href="'api2/file/' + file.id" class="button is-light" v-bind:disabled="loading"><span class="icon"><i class="fas fa-download"></i></span><span class="is-hidden-mobile">Download</span></a>
-                        <button type="button" class="button is-light" v-on:click.prevent="confirmDeleteFileIndex = idx"><span class="icon"><i class="fas fa-trash-alt"></i></span><span class="is-hidden-mobile">Remove</span></button>
+                        <button type="button" class="button is-light" v-on:click.prevent="confirmDeleteFileIndex = idx; console.log(idx)"><span class="icon"><i class="fas fa-trash-alt"></i></span><span class="is-hidden-mobile">Remove</span></button>
                     </td>
                 </tr>
             </tbody>
         </table>
 
-        <button type="button" class="button is-dark is-fullwidth" v-if="isAddForm" v-on:click.prevent="onSave" v-bind:disabled="loading"><span class="icon"><i class="fas fa-save"></i></span><span>Save pending changes</span></button>
+        <button type="button" class="button is-dark is-fullwidth" v-if="isAddForm" v-on:click.prevent="onSave" v-bind:disabled="loading"><span class="icon"><i class="fas fa-save"></i></span><span>Save document</span></button>
         <div class="columns" v-else>
             <div class="column is-half">
-                <button type="button" class="button is-dark is-fullwidth" v-on:click.prevent="onSave" v-bind:disabled="loading"><span class="icon"><i class="fas fa-save"></i></span><span>Save pending changes</span></button>
+                <button type="button" class="button is-dark is-fullwidth" v-on:click.prevent="onSave" v-bind:disabled="loading"><span class="icon"><i class="fas fa-save"></i></span><span>Save document</span></button>
             </div>
             <div class="column is-half">
                 <button type="button" class="button is-dark is-fullwidth" v-if="! isAddForm" v-bind:disabled="loading || confirmDeleteDocumentId" v-on:click.prevent="confirmDeleteDocumentId = document.id"><span class="icon"><i class="fas fa-trash"></i></span><span>Remove this document</span></button>
@@ -80,9 +84,9 @@ const template = `
 
         <homedocs-modal-document-file-preview v-if="! loading && isPreviewVisible" v-bind:files="document.files" v-bind:previewIndex="previewFileIndex" v-on:onClose="hidePreview"></homedocs-modal-document-file-preview>
 
-        <homedocs-modal-confirm-delete v-if="confirmDeleteFileIndex" v-on:onCancel="confirmDeleteFileIndex = null" v-on:onClose="confirmDeleteFileIndex = null" v-on:onConfirm="onFileRemove(confirmDeleteFileIndex)"></homedocs-modal-confirm-delete>
+        <homedocs-modal-confirm-delete v-if="removeDocumentFileModalVisible" v-on:onCancel="confirmDeleteFileIndex = -1" v-on:onClose="confirmDeleteFileIndex = -1" v-on:onConfirm="onFileRemove(confirmDeleteFileIndex)"></homedocs-modal-confirm-delete>
 
-        <homedocs-modal-confirm-delete v-if="confirmDeleteDocumentId" v-on:onCancel="confirmDeleteDocumentId = null" v-on:onClose="confirmDeleteDocumentId = null" v-on:onConfirm="onDocumentRemove(confirmDeleteDocumentId)"></homedocs-modal-confirm-delete>
+        <homedocs-modal-confirm-delete v-if="removeDocumentModalVisible" v-on:onCancel="confirmDeleteDocumentId = null" v-on:onClose="confirmDeleteDocumentId = null" v-on:onConfirm="onDocumentRemove(confirmDeleteDocumentId)"></homedocs-modal-confirm-delete>
 
     </form>
 
@@ -111,7 +115,8 @@ export default {
             pendingUploads: 0,
             uploadErrors: [],
             confirmDeleteDocumentId: null,
-            confirmDeleteFileIndex: null
+            confirmDeleteFileIndex: -1,
+            pendingChanges: false
         });
     },
     computed: {
@@ -120,6 +125,12 @@ export default {
         },
         isUpdateViewForm: function () {
             return (this.formMode == 1);
+        },
+        removeDocumentFileModalVisible: function() {
+            return(this.confirmDeleteFileIndex >= 0);
+        },
+        removeDocumentModalVisible: function() {
+            return(this.confirmDeleteDocumentId);
         }
     },
     watch: {
@@ -147,7 +158,6 @@ export default {
                 }
             }
             this.validator.clear();
-
         },
         'pendingUploads': function (to, from) {
             if (to > 0) {
@@ -172,6 +182,8 @@ export default {
         }
         if (this.isUpdateViewForm) {
             this.onRefresh();
+        } else {
+            this.pendingChanges = false;
         }
     },
     components: {
@@ -220,6 +232,7 @@ export default {
                         this.pendingUploads--;
                         if (response.ok) {
                             this.document.files.push(response.body.data);
+                            this.pendingChanges = true;
                         } else {
                             this.uploadErrors.push("Can not upload local file " + event.target.files[i].name + " (server error)");
                             this.$emit("showAPIError", response.getApiErrorData());
@@ -234,12 +247,14 @@ export default {
         onFileRemove: function (fileIndex) {
             if (fileIndex > -1) {
                 this.document.files.splice(fileIndex, 1);
-                this.confirmDeleteFileIndex = null;
+                this.confirmDeleteFileIndex = -1;
+                this.pendingChanges = true;
             }
         },
         onSave: function () {
             if (!this.loading) {
                 if (this.isValid()) {
+                    this.pendingChanges = false;
                     this.loading = true;
                     if (this.isUpdateViewForm) {
                         homedocsAPI.document.update(this.document, (response) => {
@@ -300,6 +315,7 @@ export default {
                         this.$emit("showAPIError", response.getApiErrorData());
                     }
                     this.loading = false;
+                    this.pendingChanges = false;
                 });
             }
         }
