@@ -185,6 +185,11 @@ export default {
             } else {
                 this.loading = false;
             }
+        },
+        confirmDeleteDocumentId: function(to, from) {
+            if (to) {
+                this.$nextTick(() => window.scrollTo(0, document.body.scrollHeight));
+            }
         }
     },
     mixins: [
@@ -230,12 +235,10 @@ export default {
         showPreview: function (fileIndex) {
             this.isPreviewVisible = true;
             this.previewFileIndex = fileIndex;
-            //window.addEventListener('keydown', this.onKeyPress);
         },
         hidePreview: function () {
             this.isPreviewVisible = false;
             this.previewFileIndex = -1;
-            //window.removeEventListener('keydown', this.onKeyPress);
         },
         onKeyPress: function (e) {
             if (e.code == "Escape") {
