@@ -2,6 +2,7 @@ import { default as homedocsAPI } from './api.js';
 import { default as validator } from './validator.js';
 import { default as controlInputTags } from './control-input-tags.js';
 import { default as modalDocumentFilePreview } from './modal-document-file-preview.js';
+import { default as modalConfirmDelete } from './modal-confirm-delete.js';
 import { mixinDateTimes, mixinFiles } from './mixins.js';
 import { uuid as uuid } from './utils.js';
 
@@ -9,7 +10,6 @@ const template = `
     <form>
         <h1 class="title is-1" v-if="isAddForm">Add new document</h1>
         <h1 class="title is-1" v-else>Update/view document</h1>
-        <button type="button" class="button is-dark is-fullwidth" v-on:click.prevent="onSave" v-bind:disabled="loading"><span class="icon"><i class="fas fa-save"></i></span><span>Save pending changes</span></button>
         <div class="field" v-if="! isAddForm">
             <label class="label">Document created on {{ document.createdOnTimestamp | timestamp2HumanDateTime }}</label>
         </div>
@@ -59,60 +59,30 @@ const template = `
                     <td>{{ file.uploadedOnTimestamp | timestamp2HumanDateTime }}</td>
                     <td><a v-bind:href="'api2/file/' + file.id">{{ file.name }}</a></td>
                     <td>{{ file.size | humanFileSize }}</td>
-                    <td v-if="confirmDeleteFileId == null || confirmDeleteFileId != file.id">
+                    <td>
                         <button type="button" v-bind:disabled="! isImage(file.name) || loading" class="button is-light" v-on:click.prevent="showPreview(idx)"><span class="icon"><i class="fas fa-folder-open"></i></span><span class="is-hidden-mobile">Open/Preview</span></button>
                         <a v-bind:href="'api2/file/' + file.id" class="button is-light" v-bind:disabled="loading"><span class="icon"><i class="fas fa-download"></i></span><span class="is-hidden-mobile">Download</span></a>
-                        <button type="button" class="button is-light" v-on:click.prevent="confirmDeleteFileId = file.id"><span class="icon"><i class="fas fa-trash-alt"></i></span><span class="is-hidden-mobile">Remove</span></button>
-                    </td>
-                    <td v-else-if="confirmDeleteFileId == file.id">
-                        <div class="field has-addons">
-                            <p class="control">
-                                <a class="button is-dark" v-on:click.prevent="onFileRemove(idx)">
-                                    <span class="icon is-small">
-                                    <i class="fas fa-check-circle"></i>
-                                    </span>
-                                    <span>Confirm file remove</span>
-                                </a>
-                            </p>
-                            <p class="control">
-                                <a class="button is-light" v-on:click.prevent="confirmDeleteFileId = null">
-                                    <span class="icon is-small">
-                                    <i class="fas fa-ban"></i>
-                                    </span>
-                                    <span>Cancel</span>
-                                </a>
-                            </p>
-                        </div>
+                        <button type="button" class="button is-light" v-on:click.prevent="confirmDeleteFileIndex = idx"><span class="icon"><i class="fas fa-trash-alt"></i></span><span class="is-hidden-mobile">Remove</span></button>
                     </td>
                 </tr>
             </tbody>
         </table>
 
-        <p class="control">
-            <button type="button" class="button is-dark is-fullwidth" v-if="! isAddForm" v-bind:disabled="loading || confirmDeleteDocumentId" v-on:click.prevent="confirmDeleteDocumentId = document.id"><span class="icon"><i class="fas fa-trash"></i></span><span>Remove this document</span></button>
-        </p>
-
-        <div class="notification" v-if="confirmDeleteDocumentId">
-            <h3 class="title"><i class="fas fa-exclamation-triangle"></i> WARNING</h3>
-            <h4 class="subtitle">This operation can not be undone. Are you sure you want to remove this document (tags & files included)</h4>
-
-            <p class="buttons">
-                <a class="button is-dark is-full-width" v-on:click.prevent="onDocumentRemove(document.id)">
-                    <span class="icon is-small">
-                    <i class="fas fa-check-circle"></i>
-                    </span>
-                    <span>Confirm document remove</span>
-                </a>
-                <a class="button is-light is-full-width" v-on:click.prevent="confirmDeleteDocumentId = null">
-                    <span class="icon is-small">
-                    <i class="fas fa-ban"></i>
-                    </span>
-                    <span>Cancel</span>
-                </a>
-            </p>
+        <button type="button" class="button is-dark is-fullwidth" v-if="isAddForm" v-on:click.prevent="onSave" v-bind:disabled="loading"><span class="icon"><i class="fas fa-save"></i></span><span>Save pending changes</span></button>
+        <div class="columns" v-else>
+            <div class="column is-half">
+                <button type="button" class="button is-dark is-fullwidth" v-on:click.prevent="onSave" v-bind:disabled="loading"><span class="icon"><i class="fas fa-save"></i></span><span>Save pending changes</span></button>
+            </div>
+            <div class="column is-half">
+                <button type="button" class="button is-dark is-fullwidth" v-if="! isAddForm" v-bind:disabled="loading || confirmDeleteDocumentId" v-on:click.prevent="confirmDeleteDocumentId = document.id"><span class="icon"><i class="fas fa-trash"></i></span><span>Remove this document</span></button>
+            </div>
         </div>
 
         <homedocs-modal-document-file-preview v-if="! loading && isPreviewVisible" v-bind:files="document.files" v-bind:previewIndex="previewFileIndex" v-on:onClose="hidePreview"></homedocs-modal-document-file-preview>
+
+        <homedocs-modal-confirm-delete v-if="confirmDeleteFileIndex" v-on:onCancel="confirmDeleteFileIndex = null" v-on:onClose="confirmDeleteFileIndex = null" v-on:onConfirm="onFileRemove(confirmDeleteFileIndex)"></homedocs-modal-confirm-delete>
+
+        <homedocs-modal-confirm-delete v-if="confirmDeleteDocumentId" v-on:onCancel="confirmDeleteDocumentId = null" v-on:onClose="confirmDeleteDocumentId = null" v-on:onConfirm="onDocumentRemove(confirmDeleteDocumentId)"></homedocs-modal-confirm-delete>
 
     </form>
 
@@ -141,7 +111,7 @@ export default {
             pendingUploads: 0,
             uploadErrors: [],
             confirmDeleteDocumentId: null,
-            confirmDeleteFileId: null
+            confirmDeleteFileIndex: null
         });
     },
     computed: {
@@ -185,11 +155,6 @@ export default {
             } else {
                 this.loading = false;
             }
-        },
-        confirmDeleteDocumentId: function(to, from) {
-            if (to) {
-                this.$nextTick(() => window.scrollTo(0, document.body.scrollHeight));
-            }
         }
     },
     mixins: [
@@ -211,7 +176,8 @@ export default {
     },
     components: {
         'homedocs-control-input-tags': controlInputTags,
-        'homedocs-modal-document-file-preview': modalDocumentFilePreview
+        'homedocs-modal-document-file-preview': modalDocumentFilePreview,
+        'homedocs-modal-confirm-delete': modalConfirmDelete
     },
     methods: {
         isValid: function () {
@@ -267,8 +233,8 @@ export default {
         },
         onFileRemove: function (fileIndex) {
             if (fileIndex > -1) {
-                this.confirmDeleteFileId = null;
                 this.document.files.splice(fileIndex, 1);
+                this.confirmDeleteFileIndex = null;
             }
         },
         onSave: function () {
