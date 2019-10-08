@@ -20,7 +20,7 @@ const template = `
         <div class="field">
             <label class="label">Title</label>
             <div class="control" v-bind:class="{ 'has-icons-right' : validator.hasInvalidField('title') }">
-                <input class="input" ref="title" type="text" maxlength="128" placeholder="Type document title" v-model.trim="document.title" v-bind:disabled="loading">
+                <input class="input" ref="title" type="text" maxlength="128" placeholder="Type document title" v-model.trim="document.title" v-bind:disabled="loading" v-on:change="onDirtyDocument">
                 <span class="icon is-small is-right" v-show="validator.hasInvalidField('title')"><i class="fas fa-exclamation-triangle"></i></span>
                 <p class="help is-danger" v-show="validator.hasInvalidField('title')">{{ validator.getInvalidFieldMessage('title') }}</p>
             </div>
@@ -28,14 +28,14 @@ const template = `
         <div class="field">
             <label class="label">Description</label>
             <div class="control" v-bind:class="{ 'has-icons-right' : validator.hasInvalidField('description') }">
-                <textarea class="textarea" ref="description" maxlength="4096" placeholder="Type (optional) document description" v-model.trim="document.description" v-bind:disabled="loading" rows="8"></textarea>
+                <textarea class="textarea" ref="description" maxlength="4096" placeholder="Type (optional) document description" v-model.trim="document.description" v-bind:disabled="loading" rows="8" v-on:change="onDirtyDocument"></textarea>
                 <span class="icon is-small is-right" v-show="validator.hasInvalidField('description')"><i class="fas fa-exclamation-triangle"></i></span>
                 <p class="help is-danger" v-show="validator.hasInvalidField('description')">{{ validator.getInvalidFieldMessage('description') }}</p>
             </div>
         </div>
         <div class="field">
             <label class="label">Tags</label>
-            <homedocs-control-input-tags v-bind:allowNavigation="true" v-bind:tags="document.tags" v-on:update="document.tags = $event.tags" v-bind:disabled="loading"></homedocs-control-input-tags>
+            <homedocs-control-input-tags v-bind:allowNavigation="true" v-bind:tags="document.tags" v-on:update="document.tags = $event.tags; onDirtyDocument()" v-bind:disabled="loading"></homedocs-control-input-tags>
         </div>
 
         <div class="field">
@@ -159,7 +159,7 @@ export default {
             }
             this.validator.clear();
         },
-        'pendingUploads': function (to, from) {
+        pendingUploads: function (to, from) {
             if (to > 0) {
                 this.loading = true;
             } else {
@@ -315,9 +315,11 @@ export default {
                         this.$emit("showAPIError", response.getApiErrorData());
                     }
                     this.loading = false;
-                    this.pendingChanges = false;
                 });
             }
+        },
+        onDirtyDocument: function() {
+            this.pendingChanges = true;
         }
     }
 }
