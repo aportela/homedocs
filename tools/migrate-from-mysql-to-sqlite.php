@@ -60,7 +60,6 @@
         "
     );
     $mariaDBQueries = array(
-        // TODO: create required mariadb function to convert old hex-binary uuids to standard varchar(36) uuids
         // USER table export
         "
             SELECT
