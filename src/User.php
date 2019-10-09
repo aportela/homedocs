@@ -121,11 +121,12 @@
             return(count($results) == 1);
         }
 
-        public function signIn(\HomeDocs\Database\DB $dbh) {
+        public function signIn(\HomeDocs\Database\DB $dbh): bool {
             if (! empty($this->password)) {
                 $this->get($dbh);
                 if (password_verify($this->password, $this->passwordHash)) {
                     \HomeDocs\UserSession::set($this->id, $this->email);
+                    return(true);
                 } else {
                     throw new \HomeDocs\Exception\UnauthorizedException("password");
                 }
@@ -134,8 +135,9 @@
             }
         }
 
-        public static function signOut() {
+        public static function signOut(): bool {
             \HomeDocs\UserSession::clear();
+            return(true);
         }
 
     }
