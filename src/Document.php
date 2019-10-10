@@ -336,8 +336,12 @@
             $data = new \stdClass();
             $data->pagination = new \stdClass();
             $data->results = array();
-            $queryConditions = array();
-            $params = array();
+            $queryConditions = array(
+                " DOCUMENT.created_by_user_id = :session_user_id "
+            );
+            $params = array(
+                (new \HomeDocs\Database\DBParam())->str(":session_user_id", \HomeDocs\UserSession::getUserId())
+            );
             if (isset($filter["title"]) && ! empty($filter["title"])) {
                 // explode into words, remove duplicated & empty elements
                 $words = array_filter(array_unique(explode(" ", trim(mb_strtolower($filter["title"])))));
