@@ -24,7 +24,7 @@
         }
 
         public function testIsLogged(): void {
-            $id = (\Ramsey\Uuid\Uuid::uuid4())->toString();
+            $id = \HomeDocs\Utils::uuidv4();
             $u = new \HomeDocs\User($id, $id . "@server.com", "secret");
             $u->add(self::$dbh);
             $u->signIn(self::$dbh);
@@ -39,7 +39,7 @@
 
         public function testGetUserId(): void {
             \HomeDocs\User::signOut();
-            $id = (\Ramsey\Uuid\Uuid::uuid4())->toString();
+            $id = \HomeDocs\Utils::uuidv4();
             $u = new \HomeDocs\User($id, $id . "@server.com", "secret");
             $u->add(self::$dbh);
             $u->signIn(self::$dbh);
@@ -53,7 +53,7 @@
 
         public function testGetEmail(): void {
             \HomeDocs\User::signOut();
-            $id = (\Ramsey\Uuid\Uuid::uuid4())->toString();
+            $id = \HomeDocs\Utils::uuidv4();
             $u = new \HomeDocs\User($id, $id . "@server.com", "secret");
             $u->add(self::$dbh);
             $u->signIn(self::$dbh);
