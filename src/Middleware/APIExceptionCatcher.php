@@ -1,56 +1,72 @@
 <?php
 
-    declare(strict_types=1);
+declare(strict_types=1);
 
-    namespace HomeDocs\Middleware;
+namespace HomeDocs\Middleware;
 
-    class APIExceptionCatcher {
+class APIExceptionCatcher
+{
 
-        private $container;
+    protected $logger;
 
-        public function __construct($container) {
-            $this->container = $container;
-        }
-
-        /**
-         * Example middleware invokable class
-         *
-         * @param  \Psr\Http\Message\ServerRequestInterface $request  PSR7 request
-         * @param  \Psr\Http\Message\ResponseInterface      $response PSR7 response
-         * @param  callable                                 $next     Next middleware
-         *
-         * @return \Psr\Http\Message\ResponseInterface
-         */
-        public function __invoke($request, $response, $next)
-        {
-            try {
-                $this->container["apiLogger"]->info($request->getOriginalMethod() . " " . $request->getUri()->getPath());
-                $this->container["apiLogger"]->debug($request->getBody());
-                $response = $next($request, $response);
-                return $response;
-            } catch (\HomeDocs\Exception\InvalidParamsException $e) {
-                $this->container["apiLogger"]->debug("Exception caught: " . $e->getMessage());
-                return $response->withJson(['invalidOrMissingParams' => explode(",", $e->getMessage())], 400);
-            } catch (\HomeDocs\Exception\AlreadyExistsException $e) {
-                $this->container["apiLogger"]->debug("Exception caught: " . $e->getMessage());
-                return $response->withJson(['invalidParams' => explode(",", $e->getMessage())], 409);
-            } catch (\HomeDocs\Exception\NotFoundException $e) {
-                $this->container["apiLogger"]->debug("Exception caught: " . $e->getMessage());
-                return $response->withJson(['keyNotFound' => $e->getMessage()], 404);
-            } catch (\HomeDocs\Exception\DeletedException $e) {
-                $this->container["apiLogger"]->debug("Exception caught: " . $e->getMessage());
-                return $response->withJson(['keyDeleted' => $e->getMessage()], 410);
-            } catch (\HomeDocs\Exception\UnauthorizedException $e) {
-                $this->container["apiLogger"]->debug("Exception caught: " . $e->getMessage());
-                return $response->withJson([], 401);
-            } catch (\HomeDocs\Exception\AccessDeniedException $e) {
-                $this->container["apiLogger"]->debug("Exception caught: " . $e->getMessage());
-                return $response->withJson([], 403);
-            } catch (\Throwable $e) {
-                $this->container["apiLogger"]->error("Exception caught: " . $e->getMessage());
-                return $response->withJson(['exceptionDetails' => $e->getMessage()], 500);
-            }
-        }
+    public function __construct(\HomeDocs\Logger\HTTPRequestLogger $logger)
+    {
+        $this->logger = $logger;
     }
 
-?>
+    /**
+     * APIExceptionCatcher middleware invokable class
+     *
+     * @param  \Psr\Http\Message\ServerRequestInterface $request  PSR7 request
+     * @param  \Psr\Http\Server\RequestHandlerInterface $handler  PSR7 request handler object
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function __invoke(\Psr\Http\Message\ServerRequestInterface $request, \Psr\Http\Server\RequestHandlerInterface $handler): \Psr\Http\Message\ResponseInterface
+    {
+        try {
+            $this->logger->debug($request->getMethod() . " " . $request->getUri()->getPath());
+            $this->logger->debug($request->getBody());
+            $response = $handler->handle($request);
+            return $response;
+        } catch (\HomeDocs\Exception\InvalidParamsException $e) {
+            $this->logger->debug(sprintf("Exception caught (%s) - Message: %s", get_class($e), $e->getMessage()));
+            $response = new \Slim\Psr7\Response();
+            $payload = json_encode(['invalidOrMissingParams' => explode(",", $e->getMessage())]);
+            $response->getBody()->write($payload);
+            return ($response)->withStatus(400);
+        } catch (\HomeDocs\Exception\AlreadyExistsException $e) {
+            $this->logger->debug(sprintf("Exception caught (%s) - Message: %s", get_class($e), $e->getMessage()));
+            $response = new \Slim\Psr7\Response();
+            $payload = json_encode(['invalidOrMissingParams' => explode(",", $e->getMessage())]);
+            $response->getBody()->write($payload);
+            return ($response)->withStatus(409);
+        } catch (\HomeDocs\Exception\UnauthorizedException $e) {
+            $this->logger->debug(sprintf("Exception caught (%s) - Message: %s", get_class($e), $e->getMessage()));
+            $response = new \Slim\Psr7\Response();
+            $payload = json_encode([]);
+            return ($response)->withStatus(401);
+        } catch (\HomeDocs\Exception\AccessDeniedException $e) {
+            $this->logger->debug(sprintf("Exception caught (%s) - Message: %s", get_class($e), $e->getMessage()));
+            $response = new \Slim\Psr7\Response();
+            $payload = json_encode([]);
+            $response->getBody()->write($payload);
+            return ($response)->withStatus(403);
+        } catch (\HomeDocs\Exception\NotFoundException $e) {
+            $this->logger->debug(sprintf("Exception caught (%s) - Message: %s", get_class($e), $e->getMessage()));
+            $response = new \Slim\Psr7\Response();
+            $payload = json_encode(['keyNotFound' => $e->getMessage()]);
+            return ($response)->withStatus(404);
+        } catch (\Throwable $e) {
+            $this->logger->debug(sprintf("Exception caught (%s) - Message: %s", get_class($e), $e->getMessage()));
+            $response = new \Slim\Psr7\Response();
+            $payload = json_encode([
+                'exceptionDetails' => $e->getMessage(),
+                'file' => $e->getLine(),
+                'line' => $e->getFile()
+            ]);
+            $response->getBody()->write($payload);
+            return ($response)->withStatus(500);
+        }
+    }
+}

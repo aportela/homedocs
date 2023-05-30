@@ -27,10 +27,7 @@
                 $response = $next($request, $response);
                 return $response;
             } else {
-                $this->container["apiLogger"]->warning("this api call requires authentication");
-                return $response->withJson([], 401);
+                throw new \HomeDocs\Exception\UnauthorizedException($request->getMethod() . " " . $request->getUri()->getPath());
             }
         }
     }
-
-?>

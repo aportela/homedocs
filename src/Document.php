@@ -24,7 +24,7 @@ class Document
         $this->files = $files;
     }
 
-    public static function searchRecent(\HomeDocs\Database\DB $dbh, int $count = 16)
+    public static function searchRecent(\aportela\DatabaseWrapper\DB $dbh, int $count = 16)
     {
         $results = $dbh->query(
             sprintf(
@@ -44,7 +44,7 @@ class Document
                 $count
             ),
             array(
-                (new \HomeDocs\Database\DBParam())->str(":session_user_id", \HomeDocs\UserSession::getUserId())
+                new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
             )
         );
         $results = array_map(
@@ -83,20 +83,20 @@ class Document
         }
     }
 
-    public function add(\HomeDocs\Database\DB $dbh)
+    public function add(\aportela\DatabaseWrapper\DB $dbh)
     {
         $this->validate();
         $params = array(
-            (new \HomeDocs\Database\DBParam())->str(":id", mb_strtolower($this->id)),
-            (new \HomeDocs\Database\DBParam())->str(":title", $this->title),
-            (new \HomeDocs\Database\DBParam())->str(":created_by_user_id", \HomeDocs\UserSession::getUserId())
+            (new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id))),
+            (new \aportela\DatabaseWrapper\Param\StringParam(":title", $this->title)),
+            (new \aportela\DatabaseWrapper\Param\StringParam(":created_by_user_id", \HomeDocs\UserSession::getUserId()))
         );
         if (!empty($this->description)) {
-            $params[] = (new \HomeDocs\Database\DBParam())->str(":description", $this->description);
+            $params[] = (new \aportela\DatabaseWrapper\Param\StringParam(":description", $this->description));
         } else {
-            $params[] = (new \HomeDocs\Database\DBParam())->null(":description");
+            $params[] = (new \aportela\DatabaseWrapper\Param\NullParam(":description"));
         }
-        if ($dbh->execute(
+        if ($dbh->exec(
             "
                     INSERT INTO DOCUMENT
                         (id, title, description, created_by_user_id, created_on_timestamp)
@@ -112,58 +112,49 @@ class Document
                         (:document_id, :tag)
                 ";
             foreach ($this->tags as $tag) {
-                $params = array(
-                    (new \HomeDocs\Database\DBParam())->str(":document_id", mb_strtolower($this->id)),
-                    (new \HomeDocs\Database\DBParam())->str(":tag", mb_strtolower($tag))
-                );
-                $dbh->execute($tagsQuery, $params);
+                if (!empty($tag)) {
+                    $params = array(
+                        new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
+                        new \aportela\DatabaseWrapper\Param\StringParam(":tag", mb_strtolower($tag))
+                    );
+                    $dbh->exec($tagsQuery, $params);
+                } else {
+                    throw new \HomeDocs\Exception\InvalidParamsException("tag");
+                }
             }
             $filesQuery = "
-                    INSERT INTO DOCUMENT_TAG
-                        (document_id, tag)
+                    INSERT INTO DOCUMENT_FILE
+                        (document_id, file_id)
                     VALUES
-                        (:document_id, :tag)
+                        (:document_id, :file_id)
                 ";
-            $dbh->execute(
-                "
-                        DELETE FROM DOCUMENT_FILE
-                        WHERE document_id = :document_id
-                    ",
-                array(
-                    (new \HomeDocs\Database\DBParam())->str(":document_id", mb_strtolower($this->id)),
-                )
-            );
             foreach ($this->files as $file) {
-                $params = array(
-                    (new \HomeDocs\Database\DBParam())->str(":document_id", mb_strtolower($this->id)),
-                    (new \HomeDocs\Database\DBParam())->str(":file_id", mb_strtolower($file->id))
-                );
-                $dbh->execute(
-                    "
-                            INSERT INTO DOCUMENT_FILE
-                                (document_id, file_id)
-                            VALUES
-                                (:document_id, :file_id)
-                        ",
-                    $params
-                );
+                if (!empty($file->id)) {
+                    $params = array(
+                        new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
+                        new \aportela\DatabaseWrapper\Param\StringParam(":file_id", mb_strtolower($file->id))
+                    );
+                    $dbh->exec($filesQuery, $params);
+                } else {
+                    throw new \HomeDocs\Exception\InvalidParamsException("fileId");
+                }
             }
         }
     }
 
-    public function update(\HomeDocs\Database\DB $dbh)
+    public function update(\aportela\DatabaseWrapper\DB $dbh)
     {
         $this->validate();
         $params = array(
-            (new \HomeDocs\Database\DBParam())->str(":id", mb_strtolower($this->id)),
-            (new \HomeDocs\Database\DBParam())->str(":title", $this->title)
+            new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id)),
+            new \aportela\DatabaseWrapper\Param\StringParam(":title", $this->title)
         );
         if (!empty($this->description)) {
-            $params[] = (new \HomeDocs\Database\DBParam())->str(":description", $this->description);
+            $params[] = new \aportela\DatabaseWrapper\Param\StringParam(":description", $this->description);
         } else {
-            $params[] = (new \HomeDocs\Database\DBParam())->null(":description");
+            $params[] = new \aportela\DatabaseWrapper\Param\NullParam(":description");
         }
-        if ($dbh->execute(
+        if ($dbh->exec(
             "
                    UPDATE DOCUMENT SET
                         title = :title,
@@ -173,29 +164,31 @@ class Document
                 ",
             $params
         )) {
-            $dbh->execute(
+            $dbh->exec(
                 "
                         DELETE FROM DOCUMENT_TAG
                         WHERE document_id = :document_id
                     ",
                 array(
-                    (new \HomeDocs\Database\DBParam())->str(":document_id", mb_strtolower($this->id)),
+                    new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
                 )
             );
+            $tagsQuery = "
+                    INSERT INTO DOCUMENT_TAG
+                        (document_id, tag)
+                    VALUES
+                        (:document_id, :tag)
+                ";
             foreach ($this->tags as $tag) {
-                $params = array(
-                    (new \HomeDocs\Database\DBParam())->str(":document_id", mb_strtolower($this->id)),
-                    (new \HomeDocs\Database\DBParam())->str(":tag", mb_strtolower($tag))
-                );
-                $dbh->execute(
-                    "
-                            INSERT INTO DOCUMENT_TAG
-                                (document_id, tag)
-                            VALUES
-                                (:document_id, :tag)
-                        ",
-                    $params
-                );
+                if (!empty($tag)) {
+                    $params = array(
+                        new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
+                        new \aportela\DatabaseWrapper\Param\StringParam(":tag", mb_strtolower($tag))
+                    );
+                    $dbh->exec($tagsQuery, $params);
+                } else {
+                    throw new \HomeDocs\Exception\InvalidParamsException("tag");
+                }
             }
             $originalFiles = $this->getFiles($dbh);
             foreach ($originalFiles as $originalFile) {
@@ -204,32 +197,17 @@ class Document
                     if ($file->id == $originalFile->id) {
                         $notFound = false;
                     }
-                    /*
-                    $params = array(
-                        (new \HomeDocs\Database\DBParam())->str(":document_id", mb_strtolower($this->id)),
-                        (new \HomeDocs\Database\DBParam())->str(":file_id", mb_strtolower($file->id))
-                    );
-                    $dbh->execute(
-                        "
-                                INSERT INTO DOCUMENT_FILE
-                                    (document_id, file_id)
-                                VALUES
-                                    (:document_id, :file_id)
-                            ",
-                        $params
-                    );
-                    */
                 }
                 if ($notFound) {
-                    $dbh->execute(
+                    $dbh->exec(
                         "
                                 DELETE FROM DOCUMENT_FILE
                                 WHERE document_id = :document_id
                                 AND file_id = :file_id
                             ",
                         array(
-                            (new \HomeDocs\Database\DBParam())->str(":document_id", mb_strtolower($this->id)),
-                            (new \HomeDocs\Database\DBParam())->str(":file_id", mb_strtolower($originalFile->id))
+                            new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
+                            new \aportela\DatabaseWrapper\Param\StringParam(":file_id", mb_strtolower($originalFile->id))
                         )
                     );
                     $file = new \HomeDocs\File($originalFile->id);
@@ -237,61 +215,75 @@ class Document
                 }
             }
             foreach ($this->files as $file) {
-                $notFound = true;
-                foreach ($originalFiles as $originalFile) {
-                    if ($file->id == $originalFile->id) {
-                        $notFound = false;
+                if (!empty($file->id)) {
+                    $notFound = true;
+                    foreach ($originalFiles as $originalFile) {
+                        if ($file->id == $originalFile->id) {
+                            $notFound = false;
+                        }
                     }
-                }
-                if ($notFound) {
-                    $params = array(
-                        (new \HomeDocs\Database\DBParam())->str(":document_id", mb_strtolower($this->id)),
-                        (new \HomeDocs\Database\DBParam())->str(":file_id", mb_strtolower($file->id))
-                    );
-                    $dbh->execute(
-                        "
-                                INSERT INTO DOCUMENT_FILE
-                                    (document_id, file_id)
-                                VALUES
-                                    (:document_id, :file_id)
-                            ",
-                        $params
-                    );
+                    if ($notFound) {
+                        $params = array(
+                            new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
+                            new \aportela\DatabaseWrapper\Param\StringParam(":file_id", mb_strtolower($file->id))
+                        );
+                        $dbh->exec(
+                            "
+                                    INSERT INTO DOCUMENT_FILE
+                                        (document_id, file_id)
+                                    VALUES
+                                        (:document_id, :file_id)
+                                ",
+                            $params
+                        );
+                    }
+                } else {
+                    throw new \HomeDocs\Exception\InvalidParamsException("fileId");
                 }
             }
         }
     }
 
-    public function delete(\HomeDocs\Database\DB $dbh)
+    public function delete(\aportela\DatabaseWrapper\DB $dbh)
     {
-        $params = array(
-            (new \HomeDocs\Database\DBParam())->str(":document_id", mb_strtolower($this->id)),
-        );
+        if (!empty($this->id) && mb_strlen($this->id) == 36) {
+            $originalFiles = $this->getFiles($dbh);
+            foreach ($originalFiles as $file) {
+                $file = new \HomeDocs\File($file->id);
+                $file->remove($dbh);
+            }
 
-        $dbh->execute(
-            "
-                    DELETE FROM DOCUMENT_TAG
-                    WHERE document_id = :document_id
-                ",
-            $params
-        );
-        $dbh->execute(
-            "
-                    DELETE FROM DOCUMENT_FILE
-                    WHERE document_id = :document_id
-                ",
-            $params
-        );
-        $dbh->execute(
-            "
-                    DELETE FROM DOCUMENT
-                    WHERE id = :document_id
-                ",
-            $params
-        );
+            $params = array(
+                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
+            );
+
+            $dbh->exec(
+                "
+                        DELETE FROM DOCUMENT_TAG
+                        WHERE document_id = :document_id
+                    ",
+                $params
+            );
+            $dbh->exec(
+                "
+                        DELETE FROM DOCUMENT_FILE
+                        WHERE document_id = :document_id
+                    ",
+                $params
+            );
+            $dbh->exec(
+                "
+                        DELETE FROM DOCUMENT
+                        WHERE id = :document_id
+                    ",
+                $params
+            );
+        } else {
+            throw new \HomeDocs\Exception\InvalidParamsException("id");
+        }
     }
 
-    public function get(\HomeDocs\Database\DB $dbh)
+    public function get(\aportela\DatabaseWrapper\DB $dbh)
     {
         if (!empty($this->id) && mb_strlen($this->id) == 36) {
             $data = $dbh->query(
@@ -300,9 +292,9 @@ class Document
                             title, description, created_on_timestamp AS createdOnTimestamp, created_by_user_id AS createdByUserId
                         FROM DOCUMENT
                         WHERE id = :id
-                    ",
+                ",
                 array(
-                    (new \HomeDocs\Database\DBParam())->str(":id", mb_strtolower($this->id))
+                    new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id))
                 )
             );
             if (is_array($data) && count($data) == 1) {
@@ -323,7 +315,7 @@ class Document
         }
     }
 
-    private function getTags(\HomeDocs\Database\DB $dbh)
+    private function getTags(\aportela\DatabaseWrapper\DB $dbh)
     {
         $tags = [];
         $data = $dbh->query(
@@ -333,9 +325,10 @@ class Document
                     FROM DOCUMENT_TAG
                     INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_TAG.document_id
                     WHERE DOCUMENT_TAG.document_id = :document_id
+                    ORDER BY DOCUMENT_TAG.tag
                 ",
             array(
-                (new \HomeDocs\Database\DBParam())->str(":document_id", mb_strtolower($this->id))
+                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id))
             )
         );
         if (is_array($data) && count($data) > 0) {
@@ -346,7 +339,7 @@ class Document
         return ($tags);
     }
 
-    private function getFiles(\HomeDocs\Database\DB $dbh)
+    private function getFiles(\aportela\DatabaseWrapper\DB $dbh)
     {
         $files = [];
         $data = $dbh->query(
@@ -360,7 +353,7 @@ class Document
                     ORDER BY FILE.name, FILE.uploaded_on_timestamp
                 ",
             array(
-                (new \HomeDocs\Database\DBParam())->str(":document_id", mb_strtolower($this->id))
+                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id))
             )
         );
         if (is_array($data) && count($data) > 0) {
@@ -377,7 +370,7 @@ class Document
         return ($files);
     }
 
-    public static function search(\HomeDocs\Database\DB $dbh, int $currentPage = 1, int $resultsPage = 16, $filter = array(), string $sortBy = "createdOnTimestamp", string $sortOrder = "DESC")
+    public static function search(\aportela\DatabaseWrapper\DB $dbh, int $currentPage = 1, int $resultsPage = 16, $filter = array(), string $sortBy = "createdOnTimestamp", string $sortOrder = "DESC")
     {
         $data = new \stdClass();
         $data->pagination = new \stdClass();
@@ -386,7 +379,7 @@ class Document
             " DOCUMENT.created_by_user_id = :session_user_id "
         );
         $params = array(
-            (new \HomeDocs\Database\DBParam())->str(":session_user_id", \HomeDocs\UserSession::getUserId())
+            new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
         );
         if (isset($filter["title"]) && !empty($filter["title"])) {
             // explode into words, remove duplicated & empty elements
@@ -395,7 +388,7 @@ class Document
             if ($totalWords > 0) {
                 foreach ($words as $word) {
                     $paramName = sprintf(":TITLE_%03d", $totalWords);
-                    $params[] = (new \HomeDocs\Database\DBParam())->str($paramName, "%" . $word . "%");
+                    $params[] = new \aportela\DatabaseWrapper\Param\StringParam($paramName, "%" . $word . "%");
                     $queryConditions[] = sprintf(" DOCUMENT.title LIKE %s ", $paramName);
                     $totalWords--;
                 }
@@ -408,18 +401,18 @@ class Document
             if ($totalWords > 0) {
                 foreach ($words as $word) {
                     $paramName = sprintf(":DESCRIPTION_%03d", $totalWords);
-                    $params[] = (new \HomeDocs\Database\DBParam())->str($paramName, "%" . $word . "%");
+                    $params[] = new \aportela\DatabaseWrapper\Param\StringParam($paramName, "%" . $word . "%");
                     $queryConditions[] = sprintf(" DOCUMENT.description LIKE %s ", $paramName);
                     $totalWords--;
                 }
             }
         }
         if (isset($filter["fromTimestampCondition"]) && $filter["fromTimestampCondition"] > 0) {
-            $params[] = (new \HomeDocs\Database\DBParam())->int(":fromTimestamp", $filter["fromTimestampCondition"]);
+            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":fromTimestamp", $filter["fromTimestampCondition"]);
             $queryConditions[] = " DOCUMENT.created_on_timestamp >= :fromTimestamp ";
         }
         if (isset($filter["toTimestampCondition"]) && $filter["toTimestampCondition"] > 0) {
-            $params[] = (new \HomeDocs\Database\DBParam())->int(":toTimestamp", $filter["toTimestampCondition"]);
+            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":toTimestamp", $filter["toTimestampCondition"]);
             $queryConditions[] = " DOCUMENT.created_on_timestamp <= :toTimestamp ";
         }
         if (isset($filter["tags"]) && is_array($filter["tags"]) && count($filter["tags"]) > 0) {
@@ -427,7 +420,7 @@ class Document
             foreach ($filter["tags"] as $i => $tag) {
                 $paramName = sprintf(":TAG_%03d", $i + 1);
                 $tagParamNames[] = $paramName;
-                $params[] = (new \HomeDocs\Database\DBParam())->str($paramName, $tag);
+                $params[] = new \aportela\DatabaseWrapper\Param\StringParam($paramName, $tag);
             }
             $queryConditions[] = sprintf(
                 "

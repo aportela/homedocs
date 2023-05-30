@@ -44,7 +44,7 @@ class File
         }
     }
 
-    public function get(\HomeDocs\Database\DB $dbh)
+    public function get(\aportela\DatabaseWrapper\DB $dbh)
     {
         if (!empty($this->id) && mb_strlen($this->id) == 36) {
             $data = $dbh->query(
@@ -55,7 +55,7 @@ class File
                         WHERE id = :id
                     ",
                 array(
-                    (new \HomeDocs\Database\DBParam())->str(":id", $this->id)
+                    new \aportela\DatabaseWrapper\Param\StringParam(":id", $this->id)
                 )
             );
             if (is_array($data) && count($data) == 1) {
@@ -80,7 +80,7 @@ class File
         return (file_exists($this->localStoragePath));
     }
 
-    private function saveStorage(\HomeDocs\Database\DB $dbh, \Slim\Http\UploadedFile $uploadedFile)
+    private function saveStorage(\aportela\DatabaseWrapper\DB $dbh, \Psr\Http\Message\UploadedFileInterface $uploadedFile)
     {
         if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
             $path = pathinfo($this->localStoragePath);
@@ -101,16 +101,16 @@ class File
         }
     }
 
-    public function saveMetadata(\HomeDocs\Database\DB $dbh)
+    public function saveMetadata(\aportela\DatabaseWrapper\DB $dbh)
     {
         $params = array(
-            (new \HomeDocs\Database\DBParam())->str(":id", mb_strtolower($this->id)),
-            (new \HomeDocs\Database\DBParam())->str(":sha1_hash", $this->hash),
-            (new \HomeDocs\Database\DBParam())->str(":name", $this->name),
-            (new \HomeDocs\Database\DBParam())->int(":size", $this->size),
-            (new \HomeDocs\Database\DBParam())->str(":uploaded_by_user_id", \HomeDocs\UserSession::getUserId())
+            new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id)),
+            new \aportela\DatabaseWrapper\Param\StringParam(":sha1_hash", $this->hash),
+            new \aportela\DatabaseWrapper\Param\StringParam(":name", $this->name),
+            new \aportela\DatabaseWrapper\Param\IntegerParam(":size", $this->size),
+            new \aportela\DatabaseWrapper\Param\StringParam(":uploaded_by_user_id", \HomeDocs\UserSession::getUserId())
         );
-        return ($dbh->execute(
+        return ($dbh->exec(
             "
                         INSERT INTO FILE
                             (id, sha1_hash, name, size, uploaded_by_user_id, uploaded_on_timestamp)
@@ -122,12 +122,12 @@ class File
         );
     }
 
-    public function removeMetadata(\HomeDocs\Database\DB $dbh)
+    public function removeMetadata(\aportela\DatabaseWrapper\DB $dbh)
     {
         $params = array(
-            (new \HomeDocs\Database\DBParam())->str(":id", mb_strtolower($this->id))
+            new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id))
         );
-        return ($dbh->execute(
+        return ($dbh->exec(
             "
                         DELETE FROM FILE WHERE id = :id
                     ",
@@ -137,7 +137,7 @@ class File
     }
 
 
-    public function add(\HomeDocs\Database\DB $dbh, \Slim\Http\UploadedFile $uploadedFile)
+    public function add(\aportela\DatabaseWrapper\DB $dbh, \Psr\Http\Message\UploadedFileInterface $uploadedFile)
     {
         if (!$this->exists()) {
             $this->saveStorage($dbh, $uploadedFile);
@@ -147,7 +147,7 @@ class File
         }
     }
 
-    public function remove(\HomeDocs\Database\DB $dbh)
+    public function remove(\aportela\DatabaseWrapper\DB $dbh)
     {
         $this->removeMetadata($dbh);
         $this->removeStorage();

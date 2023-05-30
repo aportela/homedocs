@@ -1,14 +1,16 @@
 <?php
 
-    declare(strict_types=1);
+declare(strict_types=1);
 
-    namespace HomeDocs;
+namespace HomeDocs;
 
-    class Tag {
+class Tag
+{
 
-        public static function getCloud(\HomeDocs\Database\DB $dbh) {
-            $results = $dbh->query(
-                "
+    public static function getCloud(\aportela\DatabaseWrapper\DB $dbh)
+    {
+        $results = $dbh->query(
+            "
                     SELECT
                         COUNT(*) AS total, tag
                     FROM DOCUMENT_TAG
@@ -17,23 +19,24 @@
                     GROUP BY tag
                     ORDER BY tag
                 ",
-                array(
-                    (new \HomeDocs\Database\DBParam())->str(":session_user_id", \HomeDocs\UserSession::getUserId())
-                )
-            );
-            $results = array_map(
-                function($item) {
-                    $item->total = intval($item->total);
-                    return($item);
-                },
-                $results
-            );
-            return($results);
-        }
+            array(
+                new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
+            )
+        );
+        $results = array_map(
+            function ($item) {
+                $item->total = intval($item->total);
+                return ($item);
+            },
+            $results
+        );
+        return ($results);
+    }
 
-        public static function search(\HomeDocs\Database\DB $dbh) {
-            $results = $dbh->query(
-                "
+    public static function search(\aportela\DatabaseWrapper\DB $dbh)
+    {
+        $results = $dbh->query(
+            "
                     SELECT
                         DISTINCT tag
                     FROM DOCUMENT_TAG
@@ -41,18 +44,16 @@
                     WHERE DOCUMENT.created_by_user_id = :session_user_id
                     ORDER BY tag
                 ",
-                array(
-                    (new \HomeDocs\Database\DBParam())->str(":session_user_id", \HomeDocs\UserSession::getUserId())
-                )
-            );
-            $results = array_map(
-                function($item) {
-                    return($item->tag);
-                },
-                $results
-            );
-            return($results);
-        }
-
+            array(
+                new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
+            )
+        );
+        $results = array_map(
+            function ($item) {
+                return ($item->tag);
+            },
+            $results
+        );
+        return ($results);
     }
-?>
+}

@@ -17,7 +17,7 @@
         public static function setUpBeforeClass () {
             self::$app = (new \HomeDocs\App())->get();
             self::$container = self::$app->getContainer();
-            self::$dbh = new \HomeDocs\Database\DB(self::$container);
+            self::$dbh = new \aportela\DatabaseWrapper\DB(self::$container);
         }
 
         /**
@@ -49,5 +49,3 @@
         }
 
     }
-
-?>

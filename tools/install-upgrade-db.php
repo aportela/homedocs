@@ -1,22 +1,36 @@
 <?php
 
-    declare(strict_types=1);
+use DI\ContainerBuilder;
 
-    require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
+require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
 
-    echo "HomeDocs installer" . PHP_EOL;
+$containerBuilder = new ContainerBuilder();
 
-    $app = (new \HomeDocs\App())->get();
+// Set up settings
+$containerBuilder->addDefinitions(__DIR__ . '../../config/container.php');
 
-    $missingExtensions = array_diff($app->getContainer()["settings"]["phpRequiredExtensions"], get_loaded_extensions());
-    if (count($missingExtensions) > 0) {
-        echo "Error: missing php extension/s: " . implode(", ", $missingExtensions) . PHP_EOL;
-        exit;
-    }
+// Build PHP-DI Container instance
+$container = $containerBuilder->build();
+
+echo "HomeDocs installer" . PHP_EOL;
+
+
+$logger = $container->get(\HomeDocs\Logger\InstallerLogger::class);
+
+$logger->info("Scan started");
+
+$settings = $container->get('settings');
+
+$missingExtensions = array_diff($settings["phpRequiredExtensions"], get_loaded_extensions());
+if (count($missingExtensions) > 0) {
+    $missingExtensionsStr = implode(", ", $missingExtensions);
+    echo "Error: missing php extension/s: " . $missingExtensionsStr . PHP_EOL;
+    $logger->critical("Error: missing php extension/s: ", [$missingExtensionsStr]);
+} else {
 
     $actualVersion = 0;
     $container = $app->getContainer();
-    $v = new \HomeDocs\Database\Version(new \HomeDocs\Database\DB($container), $container->get("settings")['database']['type']);
+    $v = new \HomeDocs\Database\Version(new \aportela\DatabaseWrapper\DB($container), $container->get("settings")['database']['type']);
     try {
         $actualVersion = $v->get();
     } catch (\HomeDocs\Exception\NotFoundException $e) {
@@ -25,20 +39,19 @@
     if ($actualVersion == 0) {
         echo "Creating database...";
         $v->install();
-        echo "ok!" , PHP_EOL;
+        echo "ok!", PHP_EOL;
         $actualVersion = 1.00;
     }
     echo sprintf("Upgrading database from version %.2f%s", $actualVersion, PHP_EOL);
     $result = $v->upgrade();
     if (count($result["successVersions"]) > 0 || count($result["failedVersions"]) > 0) {
-        foreach($result["successVersions"] as $v) {
+        foreach ($result["successVersions"] as $v) {
             echo sprintf(" upgrading version to: %.2f: ok!%s", $v, PHP_EOL);
         }
-        foreach($result["failedVersions"] as $v) {
+        foreach ($result["failedVersions"] as $v) {
             echo sprintf(" upgrading version to: %.2f: error!%s", $v, PHP_EOL);
         }
     } else {
         echo "No database upgrade required" . PHP_EOL;
     }
-
-?>
+}
