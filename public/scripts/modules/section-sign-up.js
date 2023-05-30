@@ -41,12 +41,12 @@ const template = `
                                     </button>
                                 </p>
                             </div>
-                            <p class="has-text-centered has-text-weight-bold s-mt-1rem">Already have an account ?<br><router-link v-bind:to="{ name: 'signIn' }">Click here to sign in</router-link></p>
+                            <p class="has-text-centered has-text-weight-bold">Already have an account ?<br><router-link v-bind:to="{ name: 'signIn' }">Click here to sign in</router-link></p>
                         </form>
                         <div class="box" v-else>
                             <p class="has-text-centered has-text-weight-bold"><span class="icon"><i class="fas fa-check-circle"></i></span> Your account has been created!<br><router-link v-bind:to="{ name: 'signIn' }">Click here to sign in</router-link></p>
                         </div>
-                        <p class="has-text-centered s-mt-1rem">
+                        <p class="has-text-centered mt-2">
                             <a href="https://github.com/aportela/homedocs" target="_blank"><span class="icon is-small"><i class="fab fa-github"></i></span> <span>Project page</span></a> | <a href="mailto:766f6964+github@gmail.com">by alex</a>
                         </p>
                     </div>
@@ -74,14 +74,14 @@ export default {
         allowSignUp: function () {
             return (initialState.allowSignUp);
         },
-        disableSubmit: function() {
-            return(this.loading || ! (this.email && this.password));
+        disableSubmit: function () {
+            return (this.loading || !(this.email && this.password));
         }
     },
     components: {
         'homedocs-modal-api-error': modalAPIError
     },
-    created: function() {
+    created: function () {
         this.validator.clear();
     },
     mounted: function () {
@@ -97,6 +97,7 @@ export default {
                     this.loading = false;
                     this.success = true;
                 } else {
+                    console.log(response.status);
                     switch (response.status) {
                         case 400:
                             if (response.body.invalidOrMissingParams.find(function (e) { return (e === "email"); })) {
@@ -110,10 +111,10 @@ export default {
                             }
                             break;
                         case 409:
-                            if (response.body.invalidParams.find(function (e) { return (e === "email"); })) {
+                            if (response.body.invalidOrMissingParams.find(function (e) { return (e === "email"); })) {
                                 this.validator.setInvalid("email", "Email already used");
                                 this.$nextTick(() => this.$refs.email.focus());
-                            } else if (response.body.invalidParams.find(function (e) { return (e === "name"); })) {
+                            } else if (response.body.invalidOrMissingParams.find(function (e) { return (e === "name"); })) {
                                 this.validator.setInvalid("name", "Name already used");
                                 this.$nextTick(() => this.$refs.password.focus());
                             } else {
