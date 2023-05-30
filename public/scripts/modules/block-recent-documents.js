@@ -21,15 +21,15 @@ const template = `
             <table class="table is-narrow is-striped is-fullwidth" v-if="documents.length > 0">
                 <thead>
                     <tr>
-                        <th>On</th>
-                        <th>Title</th>
+                        <th class="has-text-left">Title</th>
+                        <th class="has-text-left">Created on</th>
                         <th class="has-text-right">Files</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="document in documents" v-bind:key="document.id">
-                        <td>{{ document.createdOnTimestamp | timestamp2HumanDateTime }}</td>
-                        <td><router-link v-bind:to="{ name: 'appOpenDocument', params: { id: document.id } }">{{ document.title }}</router-link></td>
+                        <td class="has-text-left"><router-link v-bind:to="{ name: 'appOpenDocument', params: { id: document.id } }">{{ document.title }}</router-link></td>
+                        <td class="has-text-left">{{ document.createdOnTimestamp | timestamp2HumanDateTime }}</td>
                         <td class="has-text-right">{{ document.fileCount }}</td>
                     </tr>
                 </tbody>
