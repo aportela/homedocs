@@ -13,14 +13,10 @@ const template = `
         <div class="field" v-if="! isAddForm">
             <label class="label">Document created on {{ document.createdOnTimestamp | timestamp2HumanDateTime }}</label>
         </div>
-        <div class="notification" v-if="pendingChanges">
-            <h2 class="title is-4"><i class="fas fa-exclamation-triangle"></i> WARNING</h2>
-            <h2 class="subtitle is-4">Pending changes, save before exit</h2>
-        </div>
         <div class="field">
             <label class="label">Title</label>
             <div class="control" v-bind:class="{ 'has-icons-right' : validator.hasInvalidField('title') }">
-                <input class="input" ref="title" type="text" maxlength="128" placeholder="Type document title" v-model.trim="document.title" v-bind:disabled="loading" v-on:change="onDirtyDocument">
+                <input class="input" ref="title" type="text" maxlength="128" placeholder="Type document title" v-model.trim="document.title" v-bind:disabled="loading">
                 <span class="icon is-small is-right" v-show="validator.hasInvalidField('title')"><i class="fas fa-exclamation-triangle"></i></span>
                 <p class="help is-danger" v-show="validator.hasInvalidField('title')">{{ validator.getInvalidFieldMessage('title') }}</p>
             </div>
@@ -28,14 +24,14 @@ const template = `
         <div class="field">
             <label class="label">Description</label>
             <div class="control" v-bind:class="{ 'has-icons-right' : validator.hasInvalidField('description') }">
-                <textarea class="textarea" ref="description" maxlength="4096" placeholder="Type (optional) document description" v-model.trim="document.description" v-bind:disabled="loading" rows="8" v-on:change="onDirtyDocument"></textarea>
+                <textarea class="textarea" ref="description" maxlength="4096" placeholder="Type (optional) document description" v-model.trim="document.description" v-bind:disabled="loading" rows="8"></textarea>
                 <span class="icon is-small is-right" v-show="validator.hasInvalidField('description')"><i class="fas fa-exclamation-triangle"></i></span>
                 <p class="help is-danger" v-show="validator.hasInvalidField('description')">{{ validator.getInvalidFieldMessage('description') }}</p>
             </div>
         </div>
         <div class="field">
             <label class="label">Tags</label>
-            <homedocs-control-input-tags v-bind:allowNavigation="true" v-bind:tags="document.tags" v-on:update="document.tags = $event.tags; onDirtyDocument()" v-bind:disabled="loading"></homedocs-control-input-tags>
+            <homedocs-control-input-tags v-bind:allowNavigation="true" v-bind:tags="document.tags" v-on:update="document.tags = $event.tags;" v-bind:disabled="loading"></homedocs-control-input-tags>
         </div>
 
         <div class="field">
@@ -64,18 +60,18 @@ const template = `
                     <td><a v-bind:href="'api2/file/' + file.id">{{ file.name }}</a></td>
                     <td>{{ file.size | humanFileSize }}</td>
                     <td>
-                        <button type="button" v-bind:disabled="! isImage(file.name) || loading" class="button is-light" v-on:click.prevent="showPreview(idx)"><span class="icon"><i class="fas fa-folder-open"></i></span><span class="is-hidden-mobile">Open/Preview</span></button>
-                        <a v-bind:href="'api2/file/' + file.id" class="button is-light" v-bind:disabled="loading"><span class="icon"><i class="fas fa-download"></i></span><span class="is-hidden-mobile">Download</span></a>
-                        <button type="button" class="button is-light" v-on:click.prevent="confirmDeleteFileIndex = idx; console.log(idx)"><span class="icon"><i class="fas fa-trash-alt"></i></span><span class="is-hidden-mobile">Remove</span></button>
+                        <button type="button" v-bind:disabled="! isImage(file.name) || loading" class="button is-light" v-on:click.prevent="showPreview(idx)"><span class="icon"><i class="fas fa-folder-open"></i></span><span class="is-hidden-mobile is-hidden-tablet">Open/Preview</span></button>
+                        <a v-bind:href="'api2/file/' + file.id" class="button is-light" v-bind:disabled="loading"><span class="icon"><i class="fas fa-download"></i></span><span class="is-hidden-mobile is-hidden-tablet">Download</span></a>
+                        <button type="button" class="button is-light" v-on:click.prevent="confirmDeleteFileIndex = idx; console.log(idx)" v-bind:disabled="loading"><span class="icon"><i class="fas fa-trash-alt"></i></span><span class="is-hidden-mobile is-hidden-tablet">Remove</span></button>
                     </td>
                 </tr>
             </tbody>
         </table>
 
-        <button type="button" class="button is-dark is-fullwidth" v-if="isAddForm" v-on:click.prevent="onSave" v-bind:disabled="loading"><span class="icon"><i class="fas fa-save"></i></span><span>Save document</span></button>
+        <button type="button" class="button is-dark is-fullwidth" v-if="isAddForm" v-on:click.prevent="onSave" v-bind:disabled="loading || ! enableSave"><span class="icon"><i class="fas fa-save"></i></span><span>Save document</span></button>
         <div class="columns" v-else>
             <div class="column is-half">
-                <button type="button" class="button is-dark is-fullwidth" v-on:click.prevent="onSave" v-bind:disabled="loading"><span class="icon"><i class="fas fa-save"></i></span><span>Save document</span></button>
+                <button type="button" class="button is-dark is-fullwidth" v-on:click.prevent="onSave" v-bind:disabled="loading || ! enableSave"><span class="icon"><i class="fas fa-save"></i></span><span>Save document</span></button>
             </div>
             <div class="column is-half">
                 <button type="button" class="button is-dark is-fullwidth" v-if="! isAddForm" v-bind:disabled="loading || confirmDeleteDocumentId" v-on:click.prevent="confirmDeleteDocumentId = document.id"><span class="icon"><i class="fas fa-trash"></i></span><span>Remove this document</span></button>
@@ -126,11 +122,14 @@ export default {
         isUpdateViewForm: function () {
             return (this.formMode == 1);
         },
-        removeDocumentFileModalVisible: function() {
-            return(this.confirmDeleteFileIndex >= 0);
+        removeDocumentFileModalVisible: function () {
+            return (this.confirmDeleteFileIndex >= 0);
         },
-        removeDocumentModalVisible: function() {
-            return(this.confirmDeleteDocumentId);
+        removeDocumentModalVisible: function () {
+            return (this.confirmDeleteDocumentId);
+        },
+        enableSave: function () {
+            return (this.document.title != null);
         }
     },
     watch: {
@@ -182,8 +181,6 @@ export default {
         }
         if (this.isUpdateViewForm) {
             this.onRefresh();
-        } else {
-            this.pendingChanges = false;
         }
     },
     components: {
@@ -248,13 +245,11 @@ export default {
             if (fileIndex > -1) {
                 this.document.files.splice(fileIndex, 1);
                 this.confirmDeleteFileIndex = -1;
-                this.pendingChanges = true;
             }
         },
         onSave: function () {
             if (!this.loading) {
                 if (this.isValid()) {
-                    this.pendingChanges = false;
                     this.loading = true;
                     if (this.isUpdateViewForm) {
                         homedocsAPI.document.update(this.document, (response) => {
@@ -317,9 +312,6 @@ export default {
                     this.loading = false;
                 });
             }
-        },
-        onDirtyDocument: function() {
-            this.pendingChanges = true;
         }
     }
 }
