@@ -40,9 +40,9 @@ const template = `
                                     </button>
                                 </p>
                             </div>
-                            <p class="has-text-centered has-text-weight-bold s-mt-1rem" v-if="allowSignUp">Don't have an account ?<br><router-link v-bind:to="{ name: 'signUp' }">Create one</router-link></p>
+                            <p class="has-text-centered has-text-weight-bold" v-if="allowSignUp">Don't have an account ?<br><router-link v-bind:to="{ name: 'signUp' }">Create one</router-link></p>
                         </form>
-                        <p class="has-text-centered s-mt-1rem">
+                        <p class="has-text-centered mt-2">
                             <a href="https://github.com/aportela/homedocs" target="_blank"><span class="icon is-small"><i class="fab fa-github"></i></span> <span>Project page</span></a> | <a href="mailto:766f6964+github@gmail.com">by alex</a>
                         </p>
                     </div>
@@ -69,11 +69,11 @@ export default {
         allowSignUp: function () {
             return (initialState.allowSignUp);
         },
-        disableSubmit: function() {
-            return(this.loading || ! (this.email && this.password));
+        disableSubmit: function () {
+            return (this.loading || !(this.email && this.password));
         }
     },
-    created: function() {
+    created: function () {
         this.validator.clear();
     },
     mounted: function () {
