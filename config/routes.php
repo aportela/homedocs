@@ -13,7 +13,7 @@ return function (App $app) {
         return $this->get('Twig')->render($response, 'index.html.twig', [
             'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this))
         ]);
-    });
+    })->add(\HomeDocs\Middleware\JWT::class);
 
     $app->group(
         '/api2',
@@ -310,5 +310,5 @@ return function (App $app) {
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             });
         }
-    )->add(\HomeDocs\Middleware\APIExceptionCatcher::class);;
+    )->add(\HomeDocs\Middleware\JWT::class)->add(\HomeDocs\Middleware\APIExceptionCatcher::class);
 };
