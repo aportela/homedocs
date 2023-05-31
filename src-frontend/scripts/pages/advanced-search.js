@@ -3,8 +3,6 @@ import { default as controlDateSelector } from '../vue-components/control-date-s
 import { default as controlPagination } from '../vue-components/control-pagination.js';
 import { default as controlTableHeaderSortable } from '../vue-components/control-table-header-sortable.js';
 
-import { mixinDateTimes } from '../modules/mixins.js';
-
 const template = `
     <div>
         <h1 class="title">Advanced search</h1>
@@ -61,7 +59,7 @@ const template = `
             </thead>
             <tbody>
                 <tr v-for="document in documents" v-bind:key="document.id">
-                    <td class="nowrap">{{ document.createdOnTimestamp | timestamp2HumanDateTime }}</td>
+                    <td class="nowrap">{{ $utils.timestamp2HumanDateTime(document.createdOnTimestamp) }}</td>
                     <td class="nowrap"><router-link v-bind:to="{ name: 'appOpenDocument', params: { id: document.id } }">{{ document.title }}</router-link></td>
                     <td class="is-hidden-mobile" v-bind:title="document.description">{{ document.description | cutDescription }}</td>
                     <td class="has-text-right">{{ document.fileCount }}</td>
@@ -117,9 +115,6 @@ export default {
             this.$nextTick(() => this.$refs.titleCondition.focus());
         }
     },
-    mixins: [
-        mixinDateTimes
-    ],
     components: {
         'homedocs-control-input-tags': controlInputTags,
         'homedocs-control-date-selector': controlDateSelector,

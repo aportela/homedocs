@@ -3,8 +3,6 @@ import { default as validator } from '../modules/validator.js';
 import { default as controlInputTags } from '../vue-components/control-input-tags.js';
 import { default as modalDocumentFilePreview } from '../vue-components/modal-document-file-preview.js';
 import { default as modalConfirmDelete } from '../vue-components/modal-confirm-delete.js';
-import { mixinDateTimes, mixinFiles } from '../modules/mixins.js';
-import { uuid as uuid } from '../modules/utils.js';
 
 const template = `
     <form>
@@ -56,11 +54,11 @@ const template = `
             </thead>
             <tbody>
                 <tr v-for="file, idx in document.files" v-bind:key="file.id">
-                    <td>{{ file.uploadedOnTimestamp | timestamp2HumanDateTime }}</td>
+                    <td>{{ $utils.timestamp2HumanDateTime(file.uploadedOnTimestamp) }}</td>
                     <td><a v-bind:href="'api2/file/' + file.id">{{ file.name }}</a></td>
-                    <td>{{ file.size | humanFileSize }}</td>
+                    <td>{{ $utils.humanFileSize(file.size, true) }}</td>
                     <td>
-                        <button type="button" v-bind:disabled="! isImage(file.name) || loading" class="button is-light" v-on:click.prevent="showPreview(idx)"><span class="icon"><i class="fas fa-folder-open"></i></span><span class="is-hidden-mobile is-hidden-tablet">Open/Preview</span></button>
+                        <button type="button" v-bind:disabled="! $utils.isImage(file.name) || loading" class="button is-light" v-on:click.prevent="showPreview(idx)"><span class="icon"><i class="fas fa-folder-open"></i></span><span class="is-hidden-mobile is-hidden-tablet">Open/Preview</span></button>
                         <a v-bind:href="'api2/file/' + file.id" class="button is-light" v-bind:disabled="loading"><span class="icon"><i class="fas fa-download"></i></span><span class="is-hidden-mobile is-hidden-tablet">Download</span></a>
                         <button type="button" class="button is-light" v-on:click.prevent="confirmDeleteFileIndex = idx; console.log(idx)" v-bind:disabled="loading"><span class="icon"><i class="fas fa-trash-alt"></i></span><span class="is-hidden-mobile is-hidden-tablet">Remove</span></button>
                     </td>
@@ -227,7 +225,7 @@ export default {
             this.pendingUploads += event.target.files.length;
             for (let i = 0; i < event.target.files.length; i++) {
                 if (event.target.files[i].size <= initialState.maxUploadFileSize) {
-                    this.$api.document.addFile(uuid(), event.target.files[i], (response) => {
+                    this.$api.document.addFile(this.$utils.uuid(), event.target.files[i], (response) => {
                         this.pendingUploads--;
                         if (response.ok) {
                             this.document.files.push(response.data.data);
@@ -266,7 +264,7 @@ export default {
 
                         });
                     } else {
-                        this.document.id = uuid();
+                        this.document.id = this.$utils.uuid();
                         this.$api.document.add(this.document).then(response => {
                             this.loading = false;
                             if (this.document.tags.length > 0) {

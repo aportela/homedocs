@@ -1,11 +1,9 @@
-import { mixinFiles } from '../modules/mixins.js';
-
 const template = `
     <div class="modal is-active" v-if="previewIndex >= 0">
         <div class="modal-background"></div>
             <div class="modal-card">
                 <header class="modal-card-head has-text-centered">
-                    <p class="modal-card-title">{{ fileName }} ({{ fileSize | humanFileSize }})</span></p>
+                    <p class="modal-card-title">{{ fileName }} ({{ $utils.humanFileSize(fileSize, true) }})</span></p>
                     <button class="delete" aria-label="close" v-on:click.prevent="onClose"></button>
                 </header>
                 <section class="modal-card-body" v-if="hasPreviewSupport">
@@ -52,9 +50,6 @@ export default {
     props: [
         'files', 'previewIndex'
     ],
-    mixins: [
-        mixinFiles
-    ],
     created: function () {
         window.addEventListener('keydown', this.onKeyPress);
     },
@@ -78,7 +73,7 @@ export default {
             return (this.previewIndex >= this.files.length - 1);
         },
         hasPreviewSupport: function () {
-            return (this.isImage(this.files[this.previewIndex].name));
+            return (this.$utils.isImage(this.files[this.previewIndex].name));
         }
     },
     methods: {

@@ -1,6 +1,5 @@
 import { default as validator } from '../modules/validator.js';
 import { default as modalAPIError } from '../vue-components/modal-api-error.js';
-import { uuid as uuid } from '../modules/utils.js';
 
 const template = `
     <!-- template credits: daniel (https://github.com/dansup) -->
@@ -91,7 +90,7 @@ export default {
             this.validator.clear();
             this.loading = true;
             this.apiError = false;
-            this.$api.user.signUp(uuid(), this.email, this.password).then(success => {
+            this.$api.user.signUp(this.$utils.uuid(), this.email, this.password).then(success => {
                 this.loading = false;
                 this.success = true;
             }).catch(error => {
