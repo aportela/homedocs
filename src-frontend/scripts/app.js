@@ -3,6 +3,7 @@ import { default as router } from './plugins/router.js';
 import { default as axios } from './plugins/axios.js';
 import { default as api } from './plugins/api.js';
 import { default as utils } from './plugins/utils.js';
+import { default as validator } from './plugins/validator.js';
 import { default as localStorage } from './plugins/localStorage.js';
 
 const homeDocsApp = {
@@ -19,4 +20,4 @@ const localStorageBasilOptions = {
     expireDays: 3650
 };
 
-createApp(homeDocsApp).use(router).use(localStorage, localStorageBasilOptions).use(axios, {}).use(api).use(utils).mount('#app');
+createApp(homeDocsApp).use(router).use(localStorage, localStorageBasilOptions).use(axios, {}).use(api).use(utils).use(validator).mount('#app');

@@ -1,4 +1,3 @@
-import { default as validator } from '../modules/validator.js';
 import { default as modalAPIError } from '../vue-components/modal-api-error.js';
 
 const template = `
@@ -16,20 +15,20 @@ const template = `
                             <div class="box">
                                 <div class="field">
                                     <label class="label">Email</label>
-                                    <p class="control has-icons-left" v-bind:class="{ 'has-icons-right' : validator.hasInvalidField('email') }">
-                                        <input class="input" type="email" name="email" maxlength="255" ref="email" required v-bind:class="{ 'is-danger': validator.hasInvalidField('email') }" v-bind:disabled="loading" v-model.trim="email">
+                                    <p class="control has-icons-left" v-bind:class="{ 'has-icons-right' : $validator.hasInvalidField('email') }">
+                                        <input class="input" type="email" name="email" maxlength="255" ref="email" required v-bind:class="{ 'is-danger': $validator.hasInvalidField('email') }" v-bind:disabled="loading" v-model.trim="email">
                                         <span class="icon is-small is-left"><i class="fa fa-envelope"></i></span>
-                                        <span class="icon is-small is-right" v-show="validator.hasInvalidField('email')"><i class="fas fa-exclamation-triangle"></i></span>
-                                        <p class="help is-danger" v-show="validator.hasInvalidField('email')">{{ validator.getInvalidFieldMessage('email') }}</p>
+                                        <span class="icon is-small is-right" v-show="$validator.hasInvalidField('email')"><i class="fas fa-exclamation-triangle"></i></span>
+                                        <p class="help is-danger" v-show="$validator.hasInvalidField('email')">{{ $validator.getInvalidFieldMessage('email') }}</p>
                                     </p>
                                 </div>
                                 <div class="field">
                                     <label class="label">Password</label>
-                                    <p class="control has-icons-left" v-bind:class="{ 'has-icons-right' : validator.hasInvalidField('password') }">
-                                        <input class="input" type="password" name="password" required ref="password" v-bind:class="{ 'is-danger': validator.hasInvalidField('password') }" v-bind:disabled="loading" v-model="password">
+                                    <p class="control has-icons-left" v-bind:class="{ 'has-icons-right' : $validator.hasInvalidField('password') }">
+                                        <input class="input" type="password" name="password" required ref="password" v-bind:class="{ 'is-danger': $validator.hasInvalidField('password') }" v-bind:disabled="loading" v-model="password">
                                         <span class="icon is-small is-left"><i class="fa fa-key"></i></span>
-                                        <span class="icon is-small is-right" v-show="validator.hasInvalidField('password')"><i class="fas fa-exclamation-triangle"></i></span>
-                                        <p class="help is-danger" v-show="validator.hasInvalidField('password')">{{ validator.getInvalidFieldMessage('password') }}</p>
+                                        <span class="icon is-small is-right" v-show="$validator.hasInvalidField('password')"><i class="fas fa-exclamation-triangle"></i></span>
+                                        <p class="help is-danger" v-show="$validator.hasInvalidField('password')">{{ $validator.getInvalidFieldMessage('password') }}</p>
                                     </p>
                                 </div>
                                 <p class="control">
@@ -58,7 +57,6 @@ export default {
     data: function () {
         return ({
             loading: false,
-            validator: validator,
             email: null,
             password: null,
             apiError: null
@@ -73,7 +71,7 @@ export default {
         }
     },
     created: function () {
-        this.validator.clear();
+        this.$validator.clear();
     },
     mounted: function () {
         this.$nextTick(() => this.$refs.email.focus());
@@ -83,7 +81,7 @@ export default {
     },
     methods: {
         onSubmit: function () {
-            this.validator.clear();
+            this.$validator.clear();
             this.loading = true;
             this.apiError = false;
             this.$api.user.signIn(this.email, this.password).then(success => {
@@ -94,21 +92,21 @@ export default {
                 switch (error.response.status) {
                     case 400:
                         if (error.response.data.invalidOrMissingParams.find(function (e) { return (e === "email"); })) {
-                            this.validator.setInvalid("email", "API ERROR: Invalid email parameter");
+                            this.$validator.setInvalid("email", "API ERROR: Invalid email parameter");
                             this.$nextTick(() => this.$refs.email.focus());
                         } else if (error.response.data.invalidOrMissingParams.find(function (e) { return (e === "password"); })) {
-                            this.validator.setInvalid("password", "API ERROR: Invalid password parameter");
+                            this.$validator.setInvalid("password", "API ERROR: Invalid password parameter");
                             this.$nextTick(() => this.$refs.password.focus());
                         } else {
                             this.apiError = response.getApiErrorData();
                         }
                         break;
                     case 404:
-                        this.validator.setInvalid("email", "Email not found");
+                        this.$validator.setInvalid("email", "Email not found");
                         this.$nextTick(() => this.$refs.email.focus());
                         break;
                     case 401:
-                        this.validator.setInvalid("password", "Incorrect password");
+                        this.$validator.setInvalid("password", "Incorrect password");
                         this.$nextTick(() => this.$refs.password.focus());
                         break;
                     default:

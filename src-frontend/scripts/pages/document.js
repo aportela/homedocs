@@ -1,5 +1,4 @@
 import dayjs from 'dayjs';
-import { default as validator } from '../modules/validator.js';
 import { default as controlInputTags } from '../vue-components/control-input-tags.js';
 import { default as modalDocumentFilePreview } from '../vue-components/modal-document-file-preview.js';
 import { default as modalConfirmDelete } from '../vue-components/modal-confirm-delete.js';
@@ -13,18 +12,18 @@ const template = `
         </div>
         <div class="field">
             <label class="label">Title</label>
-            <div class="control" v-bind:class="{ 'has-icons-right' : validator.hasInvalidField('title') }">
+            <div class="control" v-bind:class="{ 'has-icons-right' : $validator.hasInvalidField('title') }">
                 <input class="input" ref="title" type="text" maxlength="128" placeholder="Type document title" v-model.trim="document.title" v-bind:disabled="loading">
-                <span class="icon is-small is-right" v-show="validator.hasInvalidField('title')"><i class="fas fa-exclamation-triangle"></i></span>
-                <p class="help is-danger" v-show="validator.hasInvalidField('title')">{{ validator.getInvalidFieldMessage('title') }}</p>
+                <span class="icon is-small is-right" v-show="$validator.hasInvalidField('title')"><i class="fas fa-exclamation-triangle"></i></span>
+                <p class="help is-danger" v-show="$validator.hasInvalidField('title')">{{ $validator.getInvalidFieldMessage('title') }}</p>
             </div>
         </div>
         <div class="field">
             <label class="label">Description</label>
-            <div class="control" v-bind:class="{ 'has-icons-right' : validator.hasInvalidField('description') }">
+            <div class="control" v-bind:class="{ 'has-icons-right' : $validator.hasInvalidField('description') }">
                 <textarea class="textarea" ref="description" maxlength="4096" placeholder="Type (optional) document description" v-model.trim="document.description" v-bind:disabled="loading" rows="8"></textarea>
-                <span class="icon is-small is-right" v-show="validator.hasInvalidField('description')"><i class="fas fa-exclamation-triangle"></i></span>
-                <p class="help is-danger" v-show="validator.hasInvalidField('description')">{{ validator.getInvalidFieldMessage('description') }}</p>
+                <span class="icon is-small is-right" v-show="$validator.hasInvalidField('description')"><i class="fas fa-exclamation-triangle"></i></span>
+                <p class="help is-danger" v-show="$validator.hasInvalidField('description')">{{ $validator.getInvalidFieldMessage('description') }}</p>
             </div>
         </div>
         <div class="field">
@@ -92,7 +91,6 @@ export default {
     data: function () {
         return ({
             loading: false,
-            validator: validator,
             formMode: null, // 0 = ADD, 1 = UPDATE/VIEW
             file: null,
             document: {
@@ -156,7 +154,7 @@ export default {
                     this.onRefresh();
                 }
             }
-            this.validator.clear();
+            this.$validator.clear();
         },
         pendingUploads: function (to, from) {
             if (to > 0) {
@@ -166,9 +164,6 @@ export default {
             }
         }
     },
-    mixins: [
-        mixinDateTimes, mixinFiles
-    ],
     created: function () {
         this.document.id = this.$route.params.id || null;
     },
@@ -195,13 +190,13 @@ export default {
                 if (this.document.description != null) {
                     if (this.document.description.length <= 4096) {
                     } else {
-                        this.validator.setInvalid("description", "Invalid document description (field is not required, max length 4096 chars");
+                        this.$validator.setInvalid("description", "Invalid document description (field is not required, max length 4096 chars");
                         this.$nextTick(() => this.$refs.description.focus());
                         valid = false;
                     }
                 }
             } else {
-                this.validator.setInvalid("title", "Invalid document title (field is required, max length 128 chars");
+                this.$validator.setInvalid("title", "Invalid document title (field is required, max length 128 chars");
                 this.$nextTick(() => this.$refs.title.focus());
                 valid = false;
             }
