@@ -97,10 +97,10 @@ export default {
             }).catch(error => {
                 switch (error.response.status) {
                     case 400:
-                        if (response.body.invalidOrMissingParams.find(function (e) { return (e === "email"); })) {
+                        if (error.response.data.invalidOrMissingParams.find(function (e) { return (e === "email"); })) {
                             this.validator.setInvalid("email", "API ERROR: Invalid email parameter");
                             this.$nextTick(() => this.$refs.email.focus());
-                        } else if (response.body.invalidOrMissingParams.find(function (e) { return (e === "password"); })) {
+                        } else if (error.response.data.invalidOrMissingParams.find(function (e) { return (e === "password"); })) {
                             this.validator.setInvalid("password", "API ERROR: Invalid password parameter");
                             this.$nextTick(() => this.$refs.password.focus());
                         } else {
@@ -108,10 +108,10 @@ export default {
                         }
                         break;
                     case 409:
-                        if (response.body.invalidOrMissingParams.find(function (e) { return (e === "email"); })) {
+                        if (error.response.data.invalidOrMissingParams.find(function (e) { return (e === "email"); })) {
                             this.validator.setInvalid("email", "Email already used");
                             this.$nextTick(() => this.$refs.email.focus());
-                        } else if (response.body.invalidOrMissingParams.find(function (e) { return (e === "name"); })) {
+                        } else if (error.response.data.invalidOrMissingParams.find(function (e) { return (e === "name"); })) {
                             this.validator.setInvalid("name", "Name already used");
                             this.$nextTick(() => this.$refs.password.focus());
                         } else {
