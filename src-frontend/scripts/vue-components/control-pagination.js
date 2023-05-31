@@ -5,7 +5,7 @@ const template = function () {
             <nav class="pagination has-text-weight-normal is-left" role="navigation" aria-label="pagination">
                 <button type="button" class="pagination-previous" title="Click for navigate to previous page" v-show="isEnabled" v-bind:disabled="disabled || this.data.currentPage <= 1" v-on:click.prevent="navigateToPreviousPage"><span class="icon is-small"><i class="fas fa-caret-left"></i></span> <span>Previous page</span></button>
                 <button type="button" class="pagination-next" title="Click for navigate to next page" v-show="isEnabled" v-bind:disabled="disabled || this.data.currentPage >= this.data.totalPages" v-on:click.prevent="navigateToNextPage">Next page <span class="icon is-small"><i class="fas fa-caret-right"></i></span></button>
-                <ul class="pagination-list is-hidden-mobile"" v-show="isEnabled">
+                <ul class="pagination-list is-hidden-mobile" v-show="isEnabled">
                     <!-- vuejs pagination inspired by Jeff (https://stackoverflow.com/a/35706926) -->
                     <li v-for="pageNumber in data.totalPages" v-if="pageNumber < 3 || Math.abs(pageNumber - data.currentPage) < 3 || data.totalPages - 2 < pageNumber">
                         <a href="#" title="Click for navigate to this index page" v-bind:disabled="disabled" v-on:click.prevent="navigateToCustomPage(pageNumber)" class="pagination-link" v-bind:class="{ 'is-current': data.currentPage === pageNumber }">{{ pageNumber }}</a>
@@ -78,12 +78,12 @@ export default {
     methods: {
         navigateToPreviousPage: function () {
             if (this.data.currentPage > 1) {
-                this.$emit("change", { currentPage: this.data.currentPage- 1, resultsPage: this.data.resultsPage });
+                this.$emit("change", { currentPage: this.data.currentPage - 1, resultsPage: this.data.resultsPage });
             }
         },
         navigateToNextPage: function () {
             if (this.data.currentPage < this.data.totalPages) {
-                this.$emit("change", { currentPage: this.data.currentPage+1, resultsPage: this.data.resultsPage });
+                this.$emit("change", { currentPage: this.data.currentPage + 1, resultsPage: this.data.resultsPage });
             }
         },
         navigateToCustomPage: function (pageIdx) {
