@@ -2,7 +2,7 @@ import { createApp } from 'vue';
 import { default as router } from './plugins/router.js';
 import { default as axios } from './plugins/axios.js';
 import { default as api } from './plugins/api.js';
-import { default as utils } from './modules/utils.js';
+import { default as utils } from './plugins/utils.js';
 import { default as localStorage } from './plugins/localStorage.js';
 
 const homeDocsApp = {
