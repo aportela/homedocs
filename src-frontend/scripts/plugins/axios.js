@@ -7,6 +7,7 @@ export default {
         axiosInstance.interceptors.request.use((config) => {
             if (jwt) {
                 config.headers["HOMEDOCS-JWT"] = jwt;
+                config.withCredentials = true;
             }
             return (config);
         }, (error) => {
