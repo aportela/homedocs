@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { default as validator } from '../modules/validator.js';
 import { default as controlInputTags } from '../vue-components/control-input-tags.js';
 import { default as modalDocumentFilePreview } from '../vue-components/modal-document-file-preview.js';
@@ -10,7 +11,7 @@ const template = `
         <h1 class="title is-1" v-if="isAddForm">Add new document</h1>
         <h1 class="title is-1" v-else>Update/view document</h1>
         <div class="field" v-if="! isAddForm">
-            <label class="label">Document created on {{ document.createdOnTimestamp | timestamp2HumanDateTime }}</label>
+            <label class="label">Document created on {{ document.created }}</label>
         </div>
         <div class="field">
             <label class="label">Title</label>
@@ -101,7 +102,9 @@ export default {
                 title: null,
                 description: null,
                 tags: [],
-                files: []
+                files: [],
+                createdOnTimestamp: null,
+                created: null
             },
             previewFileIndex: -1,
             isPreviewVisible: false,
@@ -305,10 +308,12 @@ export default {
                 this.$api.document.get(this.$route.params.id).then(response => {
                     console.log(response);
                     this.document = response.data.data;
+                    this.document.created = dayjs.unix(this.document.createdOnTimestamp).format("YYYY-MM-DD HH:mm:ss");
                     this.loading = false;
                 }).catch(error => {
                     // TODO
-                    this.$emit("showAPIError", response.getApiErrorData());
+                    console.log(error);
+                    //this.$emit("showAPIError", response.getApiErrorData());
                     this.loading = false;
                 });
             }
