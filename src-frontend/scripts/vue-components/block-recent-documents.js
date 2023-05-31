@@ -1,4 +1,4 @@
-import { mixinDateTimes } from '../modules/mixins.js';
+import dayjs from 'dayjs';
 
 const template = `
     <article class="message">
@@ -28,14 +28,12 @@ const template = `
                 <tbody>
                     <tr v-for="document in documents" v-bind:key="document.id">
                         <td class="has-text-left"><router-link v-bind:to="{ name: 'appOpenDocument', params: { id: document.id } }">{{ document.title }}</router-link></td>
-                        <td class="has-text-left">{{ document.createdOnTimestamp | timestamp2HumanDateTime }}</td>
+                        <td class="has-text-left">{{ document.created }}</td>
                         <td class="has-text-right">{{ document.fileCount }}</td>
                     </tr>
                 </tbody>
             </table>
-            <div v-if="showWarningNoDocuments">
-                No document has been created yet
-            </div>
+            <p v-if="showWarningNoDocuments">No document has been created yet</p>
         </div>
     </article>
 `;
@@ -51,9 +49,6 @@ export default {
             showWarningNoDocuments: false
         });
     },
-    mixins: [
-        mixinDateTimes
-    ],
     mounted: function () {
         this.onRefresh();
     },
@@ -63,8 +58,11 @@ export default {
                 this.apiError = null;
                 this.loading = true;
                 this.showWarningNoDocuments = false;
-                this.$api.document.searchRecent(16).then(success => {
-                    this.documents = response.body.data;
+                this.$api.document.searchRecent(16).then(response => {
+                    this.documents = response.data.recentDocuments.map((document) => {
+                        document.created = dayjs.unix(document.createdOnTimestamp).format("YYYY-MM-DD HH:mm:ss")
+                        return (document);
+                    });
                     this.showWarningNoDocuments = this.documents.length < 1;
                     this.loading = false;
                 }).catch(error => {

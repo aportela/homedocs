@@ -83,7 +83,7 @@ return function (App $app) {
                 $payload = json_encode(
                     [
                         'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this)),
-                        'data' => \HomeDocs\Document::searchRecent(
+                        'recentDocuments' => \HomeDocs\Document::searchRecent(
                             $this->get(\aportela\DatabaseWrapper\DB::class),
                             $params["count"] ?? $settings["common"]["defaultResultsPage"]
                         )
