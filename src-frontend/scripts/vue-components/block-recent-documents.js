@@ -60,7 +60,7 @@ export default {
                 this.showWarningNoDocuments = false;
                 this.$api.document.searchRecent(16).then(response => {
                     this.documents = response.data.recentDocuments.map((document) => {
-                        document.created = dayjs.unix(document.createdOnTimestamp).format("YYYY-MM-DD HH:mm:ss")
+                        document.created = dayjs.unix(document.createdOnTimestamp).format("YYYY-MM-DD HH:mm:ss");
                         return (document);
                     });
                     this.showWarningNoDocuments = this.documents.length < 1;
