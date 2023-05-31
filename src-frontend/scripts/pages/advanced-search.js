@@ -102,14 +102,20 @@ export default {
             sortBy: "createdOnTimestamp",
             sortOrder: "DESC",
             tags: [],
-            noResultsWarning: false
+            noResultsWarning: false,
+            autoLaunch: false
         });
     },
     created: function () {
-        this.tags = this.$route.params.tags || [];
+        if (this.$route.params.tag) {
+            this.tags = [this.$route.params.tag];
+            this.autoLaunch = true;
+        } else {
+            this.tags = [];
+        }
     },
     mounted: function () {
-        if (this.$route.params.launch) {
+        if (this.autoLaunch) {
             this.onSearch();
         } else {
             this.$nextTick(() => this.$refs.titleCondition.focus());
