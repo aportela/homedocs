@@ -1,6 +1,5 @@
-import { default as homedocsAPI } from './api.js';
-import { default as validator } from './validator.js';
-import { default as modalAPIError } from './modal-api-error.js';
+import { default as validator } from '../modules/validator.js';
+import { default as modalAPIError } from '../vue-components/modal-api-error.js';
 
 const template = `
     <!-- template credits: daniel (https://github.com/dansup) -->
@@ -87,37 +86,36 @@ export default {
             this.validator.clear();
             this.loading = true;
             this.apiError = false;
-            homedocsAPI.user.signIn(this.email, this.password, (response) => {
-                if (response.ok) {
-                    this.loading = false;
-                    this.$router.push({ name: 'appDashBoard' });
-                } else {
-                    switch (response.status) {
-                        case 400:
-                            if (response.body.invalidOrMissingParams.find(function (e) { return (e === "email"); })) {
-                                this.validator.setInvalid("email", "API ERROR: Invalid email parameter");
-                                this.$nextTick(() => this.$refs.email.focus());
-                            } else if (response.body.invalidOrMissingParams.find(function (e) { return (e === "password"); })) {
-                                this.validator.setInvalid("password", "API ERROR: Invalid password parameter");
-                                this.$nextTick(() => this.$refs.password.focus());
-                            } else {
-                                this.apiError = response.getApiErrorData();
-                            }
-                            break;
-                        case 404:
-                            this.validator.setInvalid("email", "Email not found");
+            this.$api.user.signIn(this.email, this.password).then(success => {
+                this.loading = false;
+                initialState.logged = true;
+                this.$router.push({ name: 'appDashBoard' });
+            }).catch(error => {
+                switch (error.response.status) {
+                    case 400:
+                        if (response.body.invalidOrMissingParams.find(function (e) { return (e === "email"); })) {
+                            this.validator.setInvalid("email", "API ERROR: Invalid email parameter");
                             this.$nextTick(() => this.$refs.email.focus());
-                            break;
-                        case 401:
-                            this.validator.setInvalid("password", "Incorrect password");
+                        } else if (response.body.invalidOrMissingParams.find(function (e) { return (e === "password"); })) {
+                            this.validator.setInvalid("password", "API ERROR: Invalid password parameter");
                             this.$nextTick(() => this.$refs.password.focus());
-                            break;
-                        default:
+                        } else {
                             this.apiError = response.getApiErrorData();
-                            break;
-                    }
-                    this.loading = false;
+                        }
+                        break;
+                    case 404:
+                        this.validator.setInvalid("email", "Email not found");
+                        this.$nextTick(() => this.$refs.email.focus());
+                        break;
+                    case 401:
+                        this.validator.setInvalid("password", "Incorrect password");
+                        this.$nextTick(() => this.$refs.password.focus());
+                        break;
+                    default:
+                        this.apiError = response.getApiErrorData();
+                        break;
                 }
+                this.loading = false;
             });
         }
     }

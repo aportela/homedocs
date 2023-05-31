@@ -1,0 +1,11 @@
+.cursor-pointer {
+    cursor: pointer !important;
+}
+
+.cursor-help {
+    cursor: help !important;
+}
+
+.nowrap {
+    white-space: nowrap;
+}

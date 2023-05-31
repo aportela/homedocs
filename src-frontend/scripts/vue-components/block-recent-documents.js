@@ -1,5 +1,4 @@
-import { default as homedocsAPI } from './api.js';
-import { mixinDateTimes } from './mixins.js';
+import { mixinDateTimes } from '../modules/mixins.js';
 
 const template = `
     <article class="message">
@@ -64,15 +63,15 @@ export default {
                 this.apiError = null;
                 this.loading = true;
                 this.showWarningNoDocuments = false;
-                homedocsAPI.document.searchRecent(16, (response) => {
-                    if (response.ok) {
-                        this.documents = response.body.data;
-                        this.showWarningNoDocuments = this.documents.length < 1;
-                    } else {
-                        this.documents = [];
-                        this.apiError = response.getApiErrorData();
-                        this.$emit("showAPIError", this.apiError);
-                    }
+                this.$api.document.searchRecent(16).then(success => {
+                    this.documents = response.body.data;
+                    this.showWarningNoDocuments = this.documents.length < 1;
+                    this.loading = false;
+                }).catch(error => {
+                    // TODO
+                    this.documents = [];
+                    //this.apiError = response.getApiErrorData();
+                    //this.$emit("showAPIError", this.apiError);
                     this.loading = false;
                 });
             }

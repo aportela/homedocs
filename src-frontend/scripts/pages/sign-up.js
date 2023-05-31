@@ -1,7 +1,6 @@
-import { default as homedocsAPI } from './api.js';
-import { default as validator } from './validator.js';
-import { default as modalAPIError } from './modal-api-error.js';
-import { uuid as uuid } from './utils.js';
+import { default as validator } from '../modules/validator.js';
+import { default as modalAPIError } from '../vue-components/modal-api-error.js';
+import { uuid as uuid } from '../modules/utils.js';
 
 const template = `
     <!-- template credits: daniel (https://github.com/dansup) -->
@@ -92,41 +91,38 @@ export default {
             this.validator.clear();
             this.loading = true;
             this.apiError = false;
-            homedocsAPI.user.signUp(uuid(), this.email, this.password, (response) => {
-                if (response.ok) {
-                    this.loading = false;
-                    this.success = true;
-                } else {
-                    console.log(response.status);
-                    switch (response.status) {
-                        case 400:
-                            if (response.body.invalidOrMissingParams.find(function (e) { return (e === "email"); })) {
-                                this.validator.setInvalid("email", "API ERROR: Invalid email parameter");
-                                this.$nextTick(() => this.$refs.email.focus());
-                            } else if (response.body.invalidOrMissingParams.find(function (e) { return (e === "password"); })) {
-                                this.validator.setInvalid("password", "API ERROR: Invalid password parameter");
-                                this.$nextTick(() => this.$refs.password.focus());
-                            } else {
-                                this.apiError = response.getApiErrorData();
-                            }
-                            break;
-                        case 409:
-                            if (response.body.invalidOrMissingParams.find(function (e) { return (e === "email"); })) {
-                                this.validator.setInvalid("email", "Email already used");
-                                this.$nextTick(() => this.$refs.email.focus());
-                            } else if (response.body.invalidOrMissingParams.find(function (e) { return (e === "name"); })) {
-                                this.validator.setInvalid("name", "Name already used");
-                                this.$nextTick(() => this.$refs.password.focus());
-                            } else {
-                                this.apiError = response.getApiErrorData();
-                            }
-                            break;
-                        default:
+            this.$api.user.signUp(uuid(), this.email, this.password).then(success => {
+                this.loading = false;
+                this.success = true;
+            }).catch(error => {
+                switch (error.response.status) {
+                    case 400:
+                        if (response.body.invalidOrMissingParams.find(function (e) { return (e === "email"); })) {
+                            this.validator.setInvalid("email", "API ERROR: Invalid email parameter");
+                            this.$nextTick(() => this.$refs.email.focus());
+                        } else if (response.body.invalidOrMissingParams.find(function (e) { return (e === "password"); })) {
+                            this.validator.setInvalid("password", "API ERROR: Invalid password parameter");
+                            this.$nextTick(() => this.$refs.password.focus());
+                        } else {
                             this.apiError = response.getApiErrorData();
-                            break;
-                    }
-                    this.loading = false;
+                        }
+                        break;
+                    case 409:
+                        if (response.body.invalidOrMissingParams.find(function (e) { return (e === "email"); })) {
+                            this.validator.setInvalid("email", "Email already used");
+                            this.$nextTick(() => this.$refs.email.focus());
+                        } else if (response.body.invalidOrMissingParams.find(function (e) { return (e === "name"); })) {
+                            this.validator.setInvalid("name", "Name already used");
+                            this.$nextTick(() => this.$refs.password.focus());
+                        } else {
+                            this.apiError = response.getApiErrorData();
+                        }
+                        break;
+                    default:
+                        this.apiError = response.getApiErrorData();
+                        break;
                 }
+                this.loading = false;
             });
         }
     }

@@ -1,4 +1,4 @@
-import { mixinFiles } from './mixins.js';
+import { mixinFiles } from '../modules/mixins.js';
 
 const template = `
     <div class="modal is-active" v-if="previewIndex >= 0">
@@ -55,58 +55,58 @@ export default {
     mixins: [
         mixinFiles
     ],
-    created: function() {
+    created: function () {
         window.addEventListener('keydown', this.onKeyPress);
     },
     computed: {
-        totalFiles: function() {
-            return(this.files.length);
+        totalFiles: function () {
+            return (this.files.length);
         },
-        fileId: function() {
-            return(this.files[this.previewIndex].id);
+        fileId: function () {
+            return (this.files[this.previewIndex].id);
         },
-        fileName: function() {
-            return(this.files[this.previewIndex].name);
+        fileName: function () {
+            return (this.files[this.previewIndex].name);
         },
-        fileSize: function() {
-            return(this.files[this.previewIndex].size);
+        fileSize: function () {
+            return (this.files[this.previewIndex].size);
         },
-        isPreviousButtonDisabled: function() {
-            return(this.previewIndex < 1);
+        isPreviousButtonDisabled: function () {
+            return (this.previewIndex < 1);
         },
-        isNextButtonDisabled: function() {
-            return(this.previewIndex >= this.files.length - 1);
+        isNextButtonDisabled: function () {
+            return (this.previewIndex >= this.files.length - 1);
         },
-        hasPreviewSupport: function() {
-            return(this.isImage(this.files[this.previewIndex].name));
+        hasPreviewSupport: function () {
+            return (this.isImage(this.files[this.previewIndex].name));
         }
     },
     methods: {
-        onPrevious: function() {
+        onPrevious: function () {
             if (this.previewIndex > 0) {
                 this.previewIndex--;
             }
         },
-        onNext: function() {
-            if (this.previewIndex < this.files.length -1) {
+        onNext: function () {
+            if (this.previewIndex < this.files.length - 1) {
                 this.previewIndex++;
             }
         },
-        onClose: function() {
+        onClose: function () {
             window.removeEventListener('keydown', this.onKeyPress);
             this.$emit("onClose");
         },
-        onKeyPress: function(e) {
-            switch(e.code) {
+        onKeyPress: function (e) {
+            switch (e.code) {
                 case "Escape":
                     this.onClose();
-                break;
+                    break;
                 case "ArrowLeft":
                     this.onPrevious();
-                break;
+                    break;
                 case "ArrowRight":
                     this.onNext();
-                break;
+                    break;
             }
         }
     }

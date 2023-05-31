@@ -1,5 +1,3 @@
-import { default as homedocsAPI } from './api.js';
-
 const template = `
     <div>
         <div class="field is-grouped is-grouped-multiline">
@@ -64,19 +62,18 @@ export default {
             return (this.matchedTags.length > 0);
         }
     },
-    created: function() {
-        if (! Array.isArray(initialState.cachedTags)) {
+    created: function () {
+        if (!Array.isArray(initialState.cachedTags)) {
             this.loadCurrentTagCache();
         }
     },
     methods: {
-        loadCurrentTagCache: function() {
-            homedocsAPI.tag.search((response) => {
-                if (response.ok) {
-                    initialState.cachedTags = response.body.data;
-                } else {
-                    this.apiError = response.getApiErrorData();
-                }
+        loadCurrentTagCache: function () {
+            this.$api.tag.search().then(success => {
+                initialState.cachedTags = response.body.data;
+            }).catch(error => {
+                // TODO
+                //this.apiError = response.getApiErrorData();
             });
         },
         onKeyUp: function (event) {
@@ -131,7 +128,7 @@ export default {
         onAdd: function () {
             if (this.newTag) {
                 if (!this.tags.includes(this.newTag.toLowerCase())) {
-                    this.$emit("update", {tags: this.tags.concat(Array(this.newTag.toLowerCase())) });
+                    this.$emit("update", { tags: this.tags.concat(Array(this.newTag.toLowerCase())) });
                     this.newTag = null;
                     this.matchedTags = [];
                 } else {

@@ -1,10 +1,9 @@
-import { default as homedocsAPI } from './api.js';
-import { default as controlInputTags } from './control-input-tags.js';
-import { default as controlDateSelector } from './control-date-selector.js';
-import { default as controlPagination } from './control-pagination.js';
-import { default as controlTableHeaderSortable } from './control-table-header-sortable.js';
+import { default as controlInputTags } from '../vue-components/control-input-tags.js';
+import { default as controlDateSelector } from '../vue-components/control-date-selector.js';
+import { default as controlPagination } from '../vue-components/control-pagination.js';
+import { default as controlTableHeaderSortable } from '../vue-components/control-table-header-sortable.js';
 
-import { mixinDateTimes } from './mixins.js';
+import { mixinDateTimes } from '../modules/mixins.js';
 
 const template = `
     <div>
@@ -108,10 +107,10 @@ export default {
             noResultsWarning: false
         });
     },
-    created: function() {
+    created: function () {
         this.tags = this.$route.params.tags || [];
     },
-    mounted: function() {
+    mounted: function () {
         if (this.$route.params.launch) {
             this.onSearch();
         } else {
@@ -128,15 +127,15 @@ export default {
         'homedocs-table-header-sortable': controlTableHeaderSortable
     },
     filters: {
-        cutDescription: function(description) {
+        cutDescription: function (description) {
             if (description) {
                 if (description.length > 64) {
-                    return(description.slice(0, 64) + "...");
+                    return (description.slice(0, 64) + "...");
                 } else {
-                    return(description);
+                    return (description);
                 }
             } else {
-                return(null);
+                return (null);
             }
         }
     },
@@ -179,24 +178,23 @@ export default {
                 toTimestampCondition: this.toTimestampCondition,
                 tags: this.tags
             };
-            homedocsAPI.document.search(this.pager.currentPage, this.pager.resultsPage, params, this.sortBy, this.sortOrder, (response) => {
-                if (response.ok) {
-                    this.pager.currentPage = response.body.data.pagination.currentPage;
-                    this.pager.totalPages = response.body.data.pagination.totalPages;
-                    this.pager.totalResults = response.body.data.pagination.totalResults;
-                    this.documents = response.body.data.results;
-                    if (this.documents.length > 0) {
-                        this.tab = "results";
-                    } else {
-                        this.tab = "conditions";
-                        this.noResultsWarning = true;
-                    }
-                } else {
-                    this.$emit("showAPIError", response.getApiErrorData());
-                }
+            this.$api.document.search(this.pager.currentPage, this.pager.resultsPage, params, this.sortBy, this.sortOrder).then(success => {
                 this.loading = false;
+                this.pager.currentPage = response.body.data.pagination.currentPage;
+                this.pager.totalPages = response.body.data.pagination.totalPages;
+                this.pager.totalResults = response.body.data.pagination.totalResults;
+                this.documents = response.body.data.results;
+                if (this.documents.length > 0) {
+                    this.tab = "results";
+                } else {
+                    this.tab = "conditions";
+                    this.noResultsWarning = true;
+                }
+            }).catch(error => {
+                this.loading = false;
+                // TODO
+                //this.$emit("showAPIError", response.getApiErrorData());
             });
-        },
-
+        }
     }
 }

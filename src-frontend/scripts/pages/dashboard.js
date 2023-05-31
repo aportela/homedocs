@@ -1,6 +1,6 @@
-import { default as modalAPIError } from './modal-api-error.js';
-import { default as blockRecentDocuments } from './block-recent-documents.js';
-import { default as blockTagCloud } from './block-tag-cloud.js';
+import { default as modalAPIError } from '../vue-components/modal-api-error.js';
+import { default as blockRecentDocuments } from '../vue-components/block-recent-documents.js';
+import { default as blockTagCloud } from '../vue-components/block-tag-cloud.js';
 
 const template = `
         <div>
@@ -51,7 +51,7 @@ export default {
         'homedocs-block-recent-documents': blockRecentDocuments,
         'homedocs-block-tag-cloud': blockTagCloud
     }, methods: {
-        raiseAPIError: function(error) {
+        raiseAPIError: function (error) {
             this.$emit("showAPIError", error);
         }
     }

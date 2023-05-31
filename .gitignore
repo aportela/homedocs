@@ -8,3 +8,5 @@ composer.lock
 !/data/storage
 !/data/storage/README.md
 /storage/
+/node_modules/
+package-lock.json

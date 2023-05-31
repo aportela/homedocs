@@ -1,5 +1,4 @@
-import { default as homedocsAPI } from './api.js';
-import { default as modalAPIError } from './modal-api-error.js';
+import { default as modalAPIError } from '../vue-components/modal-api-error.js';
 
 const template = `
     <section class="section">
@@ -71,15 +70,15 @@ export default {
         'homedocs-modal-api-error': modalAPIError
     },
     methods: {
-        onSignOut: function() {
+        onSignOut: function () {
             this.loading = true;
-            homedocsAPI.user.signOut((response) => {
-                if (response.ok) {
-                    this.$router.push({ name: 'signIn' });
-                } else {
-                    this.apiError = response.getApiErrorData();
-                }
+            this.$api.user.signOut().then(success => {
                 this.loading = false;
+                this.$localStorage.remove("jwt");
+                this.$router.push({ name: 'signIn' });
+            }).catch(error => {
+                this.loading = false;
+                // TODO
             });
         }
     }

@@ -1,10 +1,9 @@
-import { default as homedocsAPI } from './api.js';
-import { default as validator } from './validator.js';
-import { default as controlInputTags } from './control-input-tags.js';
-import { default as modalDocumentFilePreview } from './modal-document-file-preview.js';
-import { default as modalConfirmDelete } from './modal-confirm-delete.js';
-import { mixinDateTimes, mixinFiles } from './mixins.js';
-import { uuid as uuid } from './utils.js';
+import { default as validator } from '../modules/validator.js';
+import { default as controlInputTags } from '../vue-components/control-input-tags.js';
+import { default as modalDocumentFilePreview } from '../vue-components/modal-document-file-preview.js';
+import { default as modalConfirmDelete } from '../vue-components/modal-confirm-delete.js';
+import { mixinDateTimes, mixinFiles } from '../modules/mixins.js';
+import { uuid as uuid } from '../modules/utils.js';
 
 const template = `
     <form>
@@ -225,7 +224,7 @@ export default {
             this.pendingUploads += event.target.files.length;
             for (let i = 0; i < event.target.files.length; i++) {
                 if (event.target.files[i].size <= initialState.maxUploadFileSize) {
-                    homedocsAPI.document.addFile(uuid(), event.target.files[i], (response) => {
+                    this.$api.document.addFile(uuid(), event.target.files[i], (response) => {
                         this.pendingUploads--;
                         if (response.ok) {
                             this.document.files.push(response.body.data);
@@ -252,30 +251,30 @@ export default {
                 if (this.isValid()) {
                     this.loading = true;
                     if (this.isUpdateViewForm) {
-                        homedocsAPI.document.update(this.document, (response) => {
-                            if (response.ok) {
-                                this.loading = false;
-                                // clear tag cache
-                                initialState.cachedTags = null;
-                                this.onRefresh();
-                            } else {
-                                this.$emit("showAPIError", response.getApiErrorData());
-                                this.loading = false;
-                            }
+                        this.$api.document.update(this.document).then(response => {
+                            this.loading = false;
+                            // clear tag cache
+                            initialState.cachedTags = null;
+                            this.onRefresh();
+                        }).catch(error => {
+                            // TODO
+                            this.$emit("showAPIError", response.getApiErrorData());
+                            this.loading = false;
+
                         });
                     } else {
                         this.document.id = uuid();
-                        homedocsAPI.document.add(this.document, (response) => {
-                            if (response.ok) {
-                                if (this.document.tags.length > 0) {
-                                    // clear tag cache for refreshing new tags
-                                    initialState.cachedTags = null;
-                                }
-                                this.$router.push({ name: 'appOpenDocument', params: { id: this.document.id } });
-                            } else {
-                                this.$emit("showAPIError", response.getApiErrorData());
-                            }
+                        this.$api.document.add(this.document).then(response => {
                             this.loading = false;
+                            if (this.document.tags.length > 0) {
+                                // clear tag cache for refreshing new tags
+                                initialState.cachedTags = null;
+                            }
+                            this.$router.push({ name: 'appOpenDocument', params: { id: this.document.id } });
+                        }).catch(error => {
+                            // TODO
+                            this.loading = false;
+                            this.$emit("showAPIError", response.getApiErrorData());
                         });
                     }
                 }
@@ -285,33 +284,33 @@ export default {
         onDocumentRemove: function (id) {
             if (!this.loading) {
                 this.loading = true;
-                homedocsAPI.document.remove(id, (response) => {
-                    if (response.ok) {
-                        this.loading = false;
-                        this.$router.push({ name: 'appDashBoard' });
-                    } else {
-                        this.$emit("showAPIError", response.getApiErrorData());
-                        this.loading = false;
-                    }
-                });
-            }
-        },
-        onRefresh: function () {
-            this.pendingUploads = 0;
-            this.uploadErrors = [];
-            this.confirmDeleteDocumentId = null;
-            this.confirmDeleteFileId = null;
-            if (!this.loading) {
-                this.loading = true;
-                homedocsAPI.document.get(this.$route.params.id, (response) => {
-                    if (response.ok) {
-                        this.document = response.body.data;
-                    } else {
-                        this.$emit("showAPIError", response.getApiErrorData());
-                    }
+                this.$api.document.remove(id).then(response => {
+                    this.loading = false;
+                    this.loading = false;
+                    this.$router.push({ name: 'appDashBoard' });
+                }).catch(error => {
+                    // TODO
+                    this.$emit("showAPIError", response.getApiErrorData());
                     this.loading = false;
                 });
-            }
+            };
+        }
+    },
+    onRefresh: function () {
+        this.pendingUploads = 0;
+        this.uploadErrors = [];
+        this.confirmDeleteDocumentId = null;
+        this.confirmDeleteFileId = null;
+        if (!this.loading) {
+            this.loading = true;
+            this.$api.document.get(this.$route.params.id).then(response => {
+                this.document = response.body.data;
+                this.loading = false;
+            }).catch(error => {
+                // TODO
+                this.$emit("showAPIError", response.getApiErrorData());
+                this.loading = false;
+            });
         }
     }
 }

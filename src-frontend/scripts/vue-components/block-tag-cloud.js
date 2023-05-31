@@ -1,5 +1,3 @@
-import { default as homedocsAPI } from './api.js';
-
 const template = `
     <article class="message">
         <div class="message-header">
@@ -54,14 +52,14 @@ export default {
                 this.apiError = null;
                 this.loading = true;
                 this.showWarningNoTags = false;
-                homedocsAPI.tag.getCloud((response) => {
-                    if (response.ok) {
-                        this.items = response.body.data;
-                        this.showWarningNoTags = this.items.length < 1;
-                    } else {
-                        this.apiError = response.getApiErrorData();
-                        this.$emit("showAPIError", this.apiError);
-                    }
+                this.$api.tag.getCloud().then(success => {
+                    this.items = response.body.data;
+                    this.showWarningNoTags = this.items.length < 1;
+                    this.loading = false;
+                }).catch(error => {
+                    // TODO
+                    //this.apiError = response.getApiErrorData();
+                    //this.$emit("showAPIError", this.apiError);
                     this.loading = false;
                 });
             }
