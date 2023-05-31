@@ -227,7 +227,7 @@ export default {
                     this.$api.document.addFile(uuid(), event.target.files[i], (response) => {
                         this.pendingUploads--;
                         if (response.ok) {
-                            this.document.files.push(response.body.data);
+                            this.document.files.push(response.data.data);
                             this.pendingChanges = true;
                         } else {
                             this.uploadErrors.push("Can not upload local file " + event.target.files[i].name + " (server error)");
@@ -293,24 +293,25 @@ export default {
                     this.$emit("showAPIError", response.getApiErrorData());
                     this.loading = false;
                 });
-            };
-        }
-    },
-    onRefresh: function () {
-        this.pendingUploads = 0;
-        this.uploadErrors = [];
-        this.confirmDeleteDocumentId = null;
-        this.confirmDeleteFileId = null;
-        if (!this.loading) {
-            this.loading = true;
-            this.$api.document.get(this.$route.params.id).then(response => {
-                this.document = response.body.data;
-                this.loading = false;
-            }).catch(error => {
-                // TODO
-                this.$emit("showAPIError", response.getApiErrorData());
-                this.loading = false;
-            });
+            }
+        },
+        onRefresh: function () {
+            this.pendingUploads = 0;
+            this.uploadErrors = [];
+            this.confirmDeleteDocumentId = null;
+            this.confirmDeleteFileId = null;
+            if (!this.loading) {
+                this.loading = true;
+                this.$api.document.get(this.$route.params.id).then(response => {
+                    console.log(response);
+                    this.document = response.data.data;
+                    this.loading = false;
+                }).catch(error => {
+                    // TODO
+                    this.$emit("showAPIError", response.getApiErrorData());
+                    this.loading = false;
+                });
+            }
         }
     }
 }
