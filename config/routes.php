@@ -292,7 +292,7 @@ return function (App $app) {
                 $payload = json_encode(
                     [
                         'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this)),
-                        'data' => \HomeDocs\Tag::getCloud($this->get(\aportela\DatabaseWrapper\DB::class))
+                        'tags' => \HomeDocs\Tag::getCloud($this->get(\aportela\DatabaseWrapper\DB::class))
                     ]
                 );
                 $response->getBody()->write($payload);

@@ -52,8 +52,8 @@ export default {
                 this.apiError = null;
                 this.loading = true;
                 this.showWarningNoTags = false;
-                this.$api.tag.getCloud().then(success => {
-                    this.items = response.body.data;
+                this.$api.tag.getCloud().then(response => {
+                    this.items = response.data.tags;
                     this.showWarningNoTags = this.items.length < 1;
                     this.loading = false;
                 }).catch(error => {
