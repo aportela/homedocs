@@ -17,7 +17,7 @@ const template = `
         <div class="message-body has-text-centered" v-else>
             <div class="field is-grouped is-grouped-multiline" v-if="items.length > 0">
                 <div class="control" v-for="item in items" v-bind:key="item.tag">
-                    <router-link v-bind:to="{ name: 'appAdvancedSearch', params: { tags: [ item.tag ], launch: true } }">
+                    <router-link v-bind:to="{ name: 'appAdvancedSearchByTag', params: { tag: item.tag } }">
                         <div class="tags has-addons">
                             <span class="tag is-dark">{{ item.tag }}</span>
                             <span class="tag is-white">{{ item.total }}</span>

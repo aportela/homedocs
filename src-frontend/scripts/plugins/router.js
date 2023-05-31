@@ -29,6 +29,11 @@ const routes = [
                 component: appAdvancedSearch
             },
             {
+                path: '/advanced-search/tag/:tag',
+                name: 'appAdvancedSearchByTag',
+                component: appAdvancedSearch
+            },
+            {
                 path: '/add-document',
                 name: 'appAddDocument',
                 component: document
