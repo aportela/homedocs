@@ -303,7 +303,7 @@ return function (App $app) {
                 $payload = json_encode(
                     [
                         'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this)),
-                        'data' => \HomeDocs\Tag::search($this->get(\aportela\DatabaseWrapper\DB::class))
+                        'tags' => \HomeDocs\Tag::search($this->get(\aportela\DatabaseWrapper\DB::class))
                     ]
                 );
                 $response->getBody()->write($payload);

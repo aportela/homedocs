@@ -69,8 +69,8 @@ export default {
     },
     methods: {
         loadCurrentTagCache: function () {
-            this.$api.tag.search().then(success => {
-                initialState.cachedTags = response.body.data;
+            this.$api.tag.search().then(response => {
+                initialState.cachedTags = response.data.tags;
             }).catch(error => {
                 // TODO
                 //this.apiError = response.getApiErrorData();
