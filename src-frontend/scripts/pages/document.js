@@ -133,8 +133,7 @@ export default {
             pendingUploads: 0,
             uploadErrors: [],
             confirmDeleteDocumentId: null,
-            confirmDeleteFileIndex: -1,
-            pendingChanges: false
+            confirmDeleteFileIndex: -1
         });
     },
     computed: {
@@ -246,15 +245,15 @@ export default {
             this.pendingUploads += event.target.files.length;
             for (let i = 0; i < event.target.files.length; i++) {
                 if (event.target.files[i].size <= initialState.maxUploadFileSize) {
-                    this.$api.document.addFile(this.$utils.uuid(), event.target.files[i], (response) => {
+                    this.$api.document.addFile(this.$utils.uuid(), event.target.files[i]).then(response => {
                         this.pendingUploads--;
-                        if (response.ok) {
-                            this.document.files.push(response.data.data);
-                            this.pendingChanges = true;
-                        } else {
-                            this.uploadErrors.push("Can not upload local file " + event.target.files[i].name + " (server error)");
-                            //this.$emit("showAPIError", response.getApiErrorData());
-                        }
+                        this.document.files.push(response.data.data);
+                    }).catch(error => {
+                        // TODO
+                        this.uploadErrors.push("Can not upload local file " + event.target.files[i].name + " (server error)");
+                        this.pendingUploads--;
+                        //this.$emit("showAPIError", response.getApiErrorData());
+                        this.loading = false;
                     });
                 } else {
                     this.pendingUploads--;
@@ -306,7 +305,6 @@ export default {
             if (!this.loading) {
                 this.loading = true;
                 this.$api.document.remove(id).then(response => {
-                    this.loading = false;
                     this.loading = false;
                     this.$router.push({ name: 'appDashBoard' });
                 }).catch(error => {
