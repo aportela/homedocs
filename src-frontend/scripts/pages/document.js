@@ -45,21 +45,29 @@ const template = `
         <table class="table is-narrow is-striped is-fullwidth">
             <thead>
                 <tr>
-                    <th>On</th>
+                    <th>Created on</th>
                     <th>Name</th>
-                    <th>Size</th>
-                    <th>Actions</th>
+                    <th class="has-text-right">Size</th>
+                    <th class="has-text-centered">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="file, idx in document.files" v-bind:key="file.id">
                     <td>{{ $utils.timestamp2HumanDateTime(file.uploadedOnTimestamp) }}</td>
                     <td><a v-bind:href="'api2/file/' + file.id">{{ file.name }}</a></td>
-                    <td>{{ $utils.humanFileSize(file.size, true) }}</td>
-                    <td>
-                        <button type="button" v-bind:disabled="! $utils.isImage(file.name) || loading" class="button is-light" v-on:click.prevent="showPreview(idx)"><span class="icon"><i class="fas fa-folder-open"></i></span><span class="is-hidden-mobile is-hidden-tablet">Open/Preview</span></button>
-                        <a v-bind:href="'api2/file/' + file.id" class="button is-light" v-bind:disabled="loading"><span class="icon"><i class="fas fa-download"></i></span><span class="is-hidden-mobile is-hidden-tablet">Download</span></a>
-                        <button type="button" class="button is-light" v-on:click.prevent="confirmDeleteFileIndex = idx; console.log(idx)" v-bind:disabled="loading"><span class="icon"><i class="fas fa-trash-alt"></i></span><span class="is-hidden-mobile is-hidden-tablet">Remove</span></button>
+                    <td class="has-text-right">{{ $utils.humanFileSize(file.size, true) }}</td>
+                    <td class="has-text-centered">
+                        <div class="buttons has-addons is-centered">
+                            <p class="control">
+                                <button type="button" v-bind:disabled="! $utils.isImage(file.name) || loading" class="button is-light" v-on:click.prevent="showPreview(idx)"><span class="icon"><i class="fas fa-folder-open"></i></span><span class="is-hidden-mobile">Open/Preview</span></button>
+                            </p>
+                            <p class="control">
+                                <a v-bind:href="'api2/file/' + file.id" class="button is-light"><span class="icon"><i class="fas fa-download"></i></span><span class="is-hidden-mobile">Download</span></a>
+                            </p>
+                            <p class="control">
+                                <button type="button" class="button is-light" v-on:click.prevent="confirmDeleteFileIndex = idx; console.log(idx)" v-bind:disabled="loading"><span class="icon"><i class="fas fa-trash-alt"></i></span><span class="is-hidden-mobile">Remove</span></button>
+                            </p>
+                        </div>
                     </td>
                 </tr>
             </tbody>
@@ -71,15 +79,31 @@ const template = `
                 <button type="button" class="button is-dark is-fullwidth" v-on:click.prevent="onSave" v-bind:disabled="loading || ! enableSave"><span class="icon"><i class="fas fa-save"></i></span><span>Save document</span></button>
             </div>
             <div class="column is-half">
-                <button type="button" class="button is-dark is-fullwidth" v-if="! isAddForm" v-bind:disabled="loading || confirmDeleteDocumentId" v-on:click.prevent="confirmDeleteDocumentId = document.id"><span class="icon"><i class="fas fa-trash"></i></span><span>Remove this document</span></button>
+                <button type="button" class="button is-dark is-fullwidth" v-if="! isAddForm" v-bind:disabled="loading || confirmDeleteDocumentId" v-on:click.prevent="confirmDeleteDocumentId = document.id"><span class="icon"><i class="fas fa-trash"></i></span><span>Delete this document</span></button>
             </div>
         </div>
 
         <homedocs-modal-document-file-preview v-if="! loading && isPreviewVisible" v-bind:files="document.files" v-bind:previewIndex="previewFileIndex" v-on:onClose="hidePreview"></homedocs-modal-document-file-preview>
 
-        <homedocs-modal-confirm-delete v-if="removeDocumentFileModalVisible" v-on:onCancel="confirmDeleteFileIndex = -1" v-on:onClose="confirmDeleteFileIndex = -1" v-on:onConfirm="onFileRemove(confirmDeleteFileIndex)"></homedocs-modal-confirm-delete>
+        <homedocs-modal-confirm-delete v-if="removeDocumentFileModalVisible" v-on:onCancel="confirmDeleteFileIndex = -1" v-on:onClose="confirmDeleteFileIndex = -1" v-on:onConfirm="onFileRemove(confirmDeleteFileIndex)">
+            <template v-slot:title>
+            Remove document file
+            </template>
+            <template v-slot:body>
+                <h4><i class="fas fa-exclamation-triangle"></i> <strong>WARNING:</strong>
+                <h4 class="mt-2">You are about to remove a file from document, this operation cannot be undone.</h5>
+            </template>
+        </homedocs-modal-confirm-delete>
 
-        <homedocs-modal-confirm-delete v-if="removeDocumentModalVisible" v-on:onCancel="confirmDeleteDocumentId = null" v-on:onClose="confirmDeleteDocumentId = null" v-on:onConfirm="onDocumentRemove(confirmDeleteDocumentId)"></homedocs-modal-confirm-delete>
+        <homedocs-modal-confirm-delete v-if="removeDocumentModalVisible" v-on:onCancel="confirmDeleteDocumentId = null" v-on:onClose="confirmDeleteDocumentId = null" v-on:onConfirm="onDocumentRemove(confirmDeleteDocumentId)">
+            <template v-slot:title>
+            Delete document
+            </template>
+            <template v-slot:body>
+                <h4><i class="fas fa-exclamation-triangle"></i> <strong>WARNING:</strong>
+                <h4 class="mt-2">You are about to delete the document and the files, this operation cannot be undone.</h5>
+            </template>
+        </homedocs-modal-confirm-delete>
 
     </form>
 
