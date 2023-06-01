@@ -43,7 +43,7 @@ const template = `
                 <label class="label">Tags</label>
                 <homedocs-control-input-tags v-bind:tags="tags" v-on:update="tags = $event.tags"></homedocs-control-input-tags>
             </div>
-            <button type="submit" class="button is-primary is-fullwidth" v-on:click.prevent="onSearch(true)">Search</button>
+            <button type="submit" class="button is-dark is-fullwidth" v-on:click.prevent="onSearch(true)">Search</button>
 
         </form>
 
@@ -68,9 +68,9 @@ const template = `
             </tbody>
         </table>
 
-        <article class="message is-warning" v-if="noResultsWarning">
+        <article class="message is-dark mt-4" v-if="noResultsWarning">
             <div class="message-header">
-                <p>Warning</p>
+                <p><i class="fas fa-exclamation-triangle"></i> Warning</p>
             </div>
             <div class="message-body">
                 No results found for current search conditions
