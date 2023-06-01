@@ -52,7 +52,7 @@ export default {
         'homedocs-block-tag-cloud': blockTagCloud
     }, methods: {
         raiseAPIError: function (error) {
-            this.$emit("showAPIError", error);
+            //this.$emit("showAPIError", error);
         }
     }
 }
