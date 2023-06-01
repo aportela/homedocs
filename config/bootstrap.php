@@ -3,11 +3,12 @@
 use DI\ContainerBuilder;
 use Slim\App;
 
-session_set_cookie_params(["SameSite" => "Strict"]);
-session_set_cookie_params(["Secure" => "true"]);
-session_set_cookie_params(["HttpOnly" => "true"]);
-
-session_start();
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_set_cookie_params(["SameSite" => "Strict"]);
+    session_set_cookie_params(["Secure" => "true"]);
+    session_set_cookie_params(["HttpOnly" => "true"]);
+    session_start();
+}
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
