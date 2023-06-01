@@ -7,8 +7,8 @@ const template = function () {
                 <button type="button" class="pagination-next" title="Click for navigate to next page" v-show="isEnabled" v-bind:disabled="disabled || this.data.currentPage >= this.data.totalPages" v-on:click.prevent="navigateToNextPage">Next page <span class="icon is-small"><i class="fas fa-caret-right"></i></span></button>
                 <ul class="pagination-list is-hidden-mobile" v-show="isEnabled">
                     <!-- vuejs pagination inspired by Jeff (https://stackoverflow.com/a/35706926) -->
-                    <li v-for="pageNumber in data.totalPages" v-if="pageNumber < 3 || Math.abs(pageNumber - data.currentPage) < 3 || data.totalPages - 2 < pageNumber">
-                        <a href="#" title="Click for navigate to this index page" v-bind:disabled="disabled" v-on:click.prevent="navigateToCustomPage(pageNumber)" class="pagination-link" v-bind:class="{ 'is-current': data.currentPage === pageNumber }">{{ pageNumber }}</a>
+                    <li v-for="pageNumber in visiblePages">
+                        <a href="#" title="Click for navigate to this index page" v-on:click.prevent="navigateToCustomPage(pageNumber)" class="pagination-link" v-bind:class="{ 'is-current': data.currentPage === pageNumber, 'disabled': disabled }">{{ pageNumber }}</a>
                     </li>
                 </ul>
                 <div class="field has-addons is-hidden-mobile">
@@ -47,7 +47,8 @@ export default {
     template: template(),
     data: function () {
         return ({
-            resultsPage: initialState.defaultResultsPage
+            resultsPage: initialState.defaultResultsPage,
+            visiblePages: []
         });
     },
     props: [
@@ -58,6 +59,12 @@ export default {
         this.resultsPage = this.data.resultsPage;
     },
     computed: {
+        totalPages: function () {
+            return (this.data.totalPages);
+        },
+        currentPage: function () {
+            return (this.data.currentPage);
+        },
         visible: function () {
             return (this.data && this.data.totalPages > 1);
         },
@@ -73,21 +80,31 @@ export default {
     watch: {
         resultsPage: function (v) {
             this.$emit("change", { currentPage: 1, resultsPage: parseInt(v) });
+        },
+        currentPage: function (v) {
+            this.visiblePages = [...Array(this.totalPages + 1).keys(this.totalPages)].filter((pageNumber) =>
+                pageNumber > 0 && (pageNumber < 3 || Math.abs(pageNumber - this.data.currentPage) < 3 || this.data.totalPages - 2 < pageNumber)
+            );
+        },
+        totalPages: function (v) {
+            this.visiblePages = [...Array(this.totalPages + 1).keys(this.totalPages)].filter((pageNumber) =>
+                pageNumber > 0 && (pageNumber < 3 || Math.abs(pageNumber - this.data.currentPage) < 3 || this.data.totalPages - 2 < pageNumber)
+            );
         }
     },
     methods: {
         navigateToPreviousPage: function () {
-            if (this.data.currentPage > 1) {
+            if (!this.disabled && this.data.currentPage > 1) {
                 this.$emit("change", { currentPage: this.data.currentPage - 1, resultsPage: this.data.resultsPage });
             }
         },
         navigateToNextPage: function () {
-            if (this.data.currentPage < this.data.totalPages) {
+            if (!this.disabled && this.data.currentPage < this.data.totalPages) {
                 this.$emit("change", { currentPage: this.data.currentPage + 1, resultsPage: this.data.resultsPage });
             }
         },
         navigateToCustomPage: function (pageIdx) {
-            if (pageIdx > 0 && pageIdx <= this.data.totalPages) {
+            if (!this.disabled && pageIdx > 0 && pageIdx <= this.data.totalPages) {
                 this.$emit("change", { currentPage: pageIdx, resultsPage: this.data.resultsPage });
             }
         }
