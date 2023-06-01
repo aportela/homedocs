@@ -3,7 +3,7 @@ const template = `
         <div class="field is-grouped is-grouped-multiline">
             <div class="control" v-for="tag in tags">
                 <div class="tags has-addons" v-if="allowNavigation">
-                    <router-link v-bind:to="{ name: 'appAdvancedSearch', params: { tags: [ tag ], launch: true } }">
+                    <router-link v-bind:to="{ name: 'appAdvancedSearchByTag', params: { tag: tag } }">
                         <div class="tags has-addons">
                             <span class="tag is-medium is-dark">{{ tag }}</span>
                             <a class="tag is-medium is-delete" v-on:click.prevent="onRemove(tag)" v-bind:disabled="loading"></a>
