@@ -52,7 +52,7 @@ const template = `
         <table class="table is-narrow is-striped is-fullwidth" v-show="tab == 'results'">
             <thead>
                 <tr>
-                    <homedocs-table-header-sortable v-bind:name="'On'" v-bind:isSorted="sortBy == 'createdOnTimestamp'" v-bind:sortOrder="sortOrder" v-on:sortClicked="toggleSort('createdOnTimestamp');"></homedocs-table-header-sortable>
+                    <homedocs-table-header-sortable v-bind:name="'Created on'" v-bind:isSorted="sortBy == 'createdOnTimestamp'" v-bind:sortOrder="sortOrder" v-on:sortClicked="toggleSort('createdOnTimestamp');"></homedocs-table-header-sortable>
                     <homedocs-table-header-sortable v-bind:name="'Title'" v-bind:isSorted="sortBy == 'title'" v-bind:sortOrder="sortOrder" v-on:sortClicked="toggleSort('title');"></homedocs-table-header-sortable>
                     <homedocs-table-header-sortable v-bind:name="'Description'" v-bind:className="'is-hidden-mobile'" v-bind:isSorted="sortBy == 'description'" v-bind:sortOrder="sortOrder" v-on:sortClicked="toggleSort('description');"></homedocs-table-header-sortable>
                     <homedocs-table-header-sortable v-bind:name="'Files'" v-bind:className="'has-text-right'" v-bind:isSorted="sortBy == 'fileCount'" v-bind:sortOrder="sortOrder" v-on:sortClicked="toggleSort('fileCount');"></homedocs-table-header-sortable>
