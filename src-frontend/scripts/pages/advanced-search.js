@@ -10,7 +10,7 @@ const template = `
             <ul>
                 <li v-bind:class="{ 'is-active': tab == 'conditions' }">
                     <a v-on:click.prevent="tab = 'conditions'">
-                        <span class="icon is-small"><i class="far fa-keyboard" aria-hidden="true"></i></span>
+                        <span class="icon is-small"><i class="fas fa-search" aria-hidden="true"></i></span>
                         <span>Conditions</span>
                     </a>
                 </li>
@@ -48,6 +48,7 @@ const template = `
         </form>
 
         <homedocs-control-pagination v-show="tab == 'results'" v-bind:data="pager" v-bind:disabled="loading" v-on:change="refreshFromPager($event.currentPage, $event.resultsPage)"></homedocs-control-pagination>
+
         <table class="table is-narrow is-striped is-fullwidth" v-show="tab == 'results'">
             <thead>
                 <tr>
@@ -61,7 +62,7 @@ const template = `
                 <tr v-for="document in documents" v-bind:key="document.id">
                     <td class="nowrap">{{ $utils.timestamp2HumanDateTime(document.createdOnTimestamp) }}</td>
                     <td class="nowrap"><router-link v-bind:to="{ name: 'appOpenDocument', params: { id: document.id } }">{{ document.title }}</router-link></td>
-                    <td class="is-hidden-mobile" v-bind:title="document.description">{{ document.description | cutDescription }}</td>
+                    <td class="is-hidden-mobile" v-bind:title="document.description">{{ cutDescription(document.description) }}</td>
                     <td class="has-text-right">{{ document.fileCount }}</td>
                 </tr>
             </tbody>
@@ -127,19 +128,6 @@ export default {
         'homedocs-control-pagination': controlPagination,
         'homedocs-table-header-sortable': controlTableHeaderSortable
     },
-    filters: {
-        cutDescription: function (description) {
-            if (description) {
-                if (description.length > 64) {
-                    return (description.slice(0, 64) + "...");
-                } else {
-                    return (description);
-                }
-            } else {
-                return (null);
-            }
-        }
-    },
     methods: {
         refreshFromPager: function (currentPage, resultsPage) {
             if (this.pager.currentPage != currentPage) {
@@ -147,7 +135,6 @@ export default {
                 this.pager.resultsPage = resultsPage;
             } else {
                 this.pager.resultsPage = resultsPage;
-
             }
             this.onSearch();
         },
@@ -181,10 +168,10 @@ export default {
             };
             this.$api.document.search(this.pager.currentPage, this.pager.resultsPage, params, this.sortBy, this.sortOrder).then(success => {
                 this.loading = false;
-                this.pager.currentPage = response.body.data.pagination.currentPage;
-                this.pager.totalPages = response.body.data.pagination.totalPages;
-                this.pager.totalResults = response.body.data.pagination.totalResults;
-                this.documents = response.body.data.results;
+                this.pager.currentPage = success.data.results.pagination.currentPage;
+                this.pager.totalPages = success.data.results.pagination.totalPages;
+                this.pager.totalResults = success.data.results.pagination.totalResults;
+                this.documents = success.data.results.documents;
                 if (this.documents.length > 0) {
                     this.tab = "results";
                 } else {
@@ -196,6 +183,17 @@ export default {
                 // TODO
                 //this.$emit("showAPIError", response.getApiErrorData());
             });
+        },
+        cutDescription: function (description) {
+            if (description) {
+                if (description.length > 64) {
+                    return (description.slice(0, 64) + "...");
+                } else {
+                    return (description);
+                }
+            } else {
+                return (null);
+            }
         }
     }
 }
