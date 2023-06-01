@@ -37,7 +37,7 @@ const template = `
             </div>
             <div class="field">
                 <label class="label">Published on</label>
-                <homedocs-control-date-selector v-bind:selectedValue="dateCondition" v-on:change="dateCondition = $event.range; fromTimestampCondition = $event.fromTimestamp; toTimestampCondition = $event.toTimestamp;"></homedocs-control-date-selector>
+                <homedocs-control-date-selector v-bind:disabled="loading" v-on:changed="fromTimestampCondition = $event.fromTimestamp; toTimestampCondition = $event.toTimestamp;"></homedocs-control-date-selector>
             </div>
             <div class="field">
                 <label class="label">Tags</label>
@@ -89,7 +89,6 @@ export default {
             tab: "conditions",
             titleCondition: null,
             descriptionCondition: null,
-            dateCondition: 0,
             fromTimestampCondition: null,
             toTimestampCondition: null,
             documents: [],
@@ -120,6 +119,13 @@ export default {
             this.onSearch();
         } else {
             this.$nextTick(() => this.$refs.titleCondition.focus());
+        }
+    },
+    watch: {
+        tab: function (newValue) {
+            if (newValue == 'conditions') {
+                this.$nextTick(() => this.$refs.titleCondition.focus());
+            }
         }
     },
     components: {
