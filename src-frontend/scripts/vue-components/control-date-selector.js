@@ -1,6 +1,8 @@
+import dayjs from 'dayjs';
+
 const template = `
     <div class="select">
-        <select v-model.number="range" v-on:change="onChange">
+        <select v-model.number="range" v-on:change="onChange" :disabled="disabled">
             <option value="0">Any date</option>
             <option value="1">Today</option>
             <option value="2">Yesterday</option>
@@ -23,7 +25,7 @@ export default {
         });
     },
     props: [
-        'loading', 'selectedValue'
+        'disabled', 'selectedValue'
     ],
     created: function () {
         if (this.selectedValue) {
