@@ -89,6 +89,7 @@ export default {
                 initialState.session.logged = true;
                 this.$router.push({ name: 'appDashBoard' });
             }).catch(error => {
+                this.loading = false;
                 switch (error.response.status) {
                     case 400:
                         if (error.response.data.invalidOrMissingParams.find(function (e) { return (e === "email"); })) {
@@ -113,7 +114,6 @@ export default {
                         this.apiError = response.getApiErrorData();
                         break;
                 }
-                this.loading = false;
             });
         }
     }
