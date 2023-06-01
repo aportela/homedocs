@@ -374,7 +374,7 @@ class Document
     {
         $data = new \stdClass();
         $data->pagination = new \stdClass();
-        $data->results = array();
+        $data->documents = array();
         $queryConditions = array(
             " DOCUMENT.created_by_user_id = :session_user_id "
         );
@@ -467,7 +467,7 @@ class Document
                     $sqlSortBy = "DOCUMENT.created_on_timestamp";
                     break;
             }
-            $data->results = $dbh->query(
+            $data->documents = $dbh->query(
                 sprintf(
                     "
                             SELECT
@@ -489,13 +489,13 @@ class Document
                 ),
                 $params
             );
-            $data->results = array_map(
+            $data->documents = array_map(
                 function ($item) {
                     $item->createdOnTimestamp = intval($item->createdOnTimestamp);
                     $item->fileCount = intval($item->fileCount);
                     return ($item);
                 },
-                $data->results
+                $data->documents
             );
         }
         return ($data);
