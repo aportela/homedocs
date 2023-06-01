@@ -86,7 +86,7 @@ export default {
             this.apiError = false;
             this.$api.user.signIn(this.email, this.password).then(success => {
                 this.loading = false;
-                initialState.logged = true;
+                initialState.session.logged = true;
                 this.$router.push({ name: 'appDashBoard' });
             }).catch(error => {
                 switch (error.response.status) {
