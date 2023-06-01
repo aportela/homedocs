@@ -416,23 +416,21 @@ class Document
             $queryConditions[] = " DOCUMENT.created_on_timestamp <= :toTimestamp ";
         }
         if (isset($filter["tags"]) && is_array($filter["tags"]) && count($filter["tags"]) > 0) {
-            $tagParamNames = array();
             foreach ($filter["tags"] as $i => $tag) {
                 $paramName = sprintf(":TAG_%03d", $i + 1);
-                $tagParamNames[] = $paramName;
                 $params[] = new \aportela\DatabaseWrapper\Param\StringParam($paramName, $tag);
+                $queryConditions[] = sprintf(
+                    "
+                            EXISTS (
+                                SELECT document_id
+                                FROM DOCUMENT_TAG
+                                WHERE DOCUMENT_TAG.document_id = DOCUMENT.id
+                                AND DOCUMENT_TAG.tag IN (%s)
+                            )
+                        ",
+                    $paramName
+                );
             }
-            $queryConditions[] = sprintf(
-                "
-                        EXISTS (
-                            SELECT document_id
-                            FROM DOCUMENT_TAG
-                            WHERE DOCUMENT_TAG.document_id = DOCUMENT.id
-                            AND DOCUMENT_TAG.tag IN (%s)
-                        )
-                    ",
-                implode(", ", $tagParamNames)
-            );
         }
         $whereCondition = count($queryConditions) > 0 ? " WHERE " .  implode(" AND ", $queryConditions) : "";
 
