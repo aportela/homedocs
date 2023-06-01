@@ -99,7 +99,7 @@ return function (App $app) {
                 $payload = json_encode(
                     [
                         'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this)),
-                        'data' => \HomeDocs\Document::search(
+                        'results' => \HomeDocs\Document::search(
                             $this->get(\aportela\DatabaseWrapper\DB::class),
                             intval($params["currentPage"] ?? 1),
                             intval($params["resultsPage"] ?? $settings["common"]["defaultResultsPage"]),
