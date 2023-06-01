@@ -80,7 +80,8 @@ $settings['db'] = [
 
 $settings['twig'] = [
     'path' =>  dirname(__DIR__) . DIRECTORY_SEPARATOR . 'templates',
-    'options' => ['cache' => $settings['environment'] == 'development' ? false : dirname(__DIR__) . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'twig_cache']
+    //'options' =>  ['cache' => $settings['environment'] == 'development' ? false : dirname(__DIR__) . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'twig_cache']
+    'options' =>  ['cache' => false]
 ];
 
 
@@ -95,7 +96,5 @@ $settings['jwt'] = [
 ];
 
 $settings['phpRequiredExtensions'] = array('pdo_sqlite', 'mbstring', 'curl');
-
-$settings['webpack'] = require_once('webpack.php');
 
 return $settings;

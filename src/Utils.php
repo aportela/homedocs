@@ -11,7 +11,6 @@ class Utils
         $settings = $container->get('settings');
         return ([
             'locale' => $settings['common']['locale'],
-            'webpack' => $settings['webpack'],
             'allowSignUp' => $settings['common']['allowSignUp'],
             'defaultResultsPage' => $settings['common']['defaultResultsPage'],
             'environment' => $settings['environment'],
