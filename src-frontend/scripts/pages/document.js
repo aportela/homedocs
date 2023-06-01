@@ -65,7 +65,7 @@ const template = `
                                 <a v-bind:href="'api2/file/' + file.id" class="button is-light"><span class="icon"><i class="fas fa-download"></i></span><span class="is-hidden-mobile">Download</span></a>
                             </p>
                             <p class="control">
-                                <button type="button" class="button is-light" v-on:click.prevent="confirmDeleteFileIndex = idx; console.log(idx)" v-bind:disabled="loading"><span class="icon"><i class="fas fa-trash-alt"></i></span><span class="is-hidden-mobile">Remove</span></button>
+                                <button type="button" class="button is-light" v-on:click.prevent="confirmDeleteFileIndex = idx;" v-bind:disabled="loading"><span class="icon"><i class="fas fa-trash-alt"></i></span><span class="is-hidden-mobile">Remove</span></button>
                             </p>
                         </div>
                     </td>
@@ -90,8 +90,8 @@ const template = `
             Remove document file
             </template>
             <template v-slot:body>
-                <h4><i class="fas fa-exclamation-triangle"></i> <strong>WARNING:</strong>
-                <h4 class="mt-2">You are about to remove a file from document, this operation cannot be undone.</h5>
+                <h4><i class="fas fa-exclamation-triangle"></i> <strong>WARNING:</strong></h4>
+                <h5 class="mt-2">You are about to remove a file from document, this operation cannot be undone.</h5>
             </template>
         </homedocs-modal-confirm-delete>
 
@@ -100,8 +100,8 @@ const template = `
             Delete document
             </template>
             <template v-slot:body>
-                <h4><i class="fas fa-exclamation-triangle"></i> <strong>WARNING:</strong>
-                <h4 class="mt-2">You are about to delete the document and the files, this operation cannot be undone.</h5>
+                <h4><i class="fas fa-exclamation-triangle"></i> <strong>WARNING:</strong></h4>
+                <h5 class="mt-2">You are about to delete the document and the files, this operation cannot be undone.</h5>
             </template>
         </homedocs-modal-confirm-delete>
 
