@@ -176,6 +176,8 @@ export default {
         }
         if (this.isUpdateViewForm) {
             this.onRefresh();
+        } else {
+            this.$nextTick(() => this.$refs.title.focus());
         }
     },
     components: {
@@ -227,7 +229,7 @@ export default {
                             this.pendingChanges = true;
                         } else {
                             this.uploadErrors.push("Can not upload local file " + event.target.files[i].name + " (server error)");
-                            this.$emit("showAPIError", response.getApiErrorData());
+                            //this.$emit("showAPIError", response.getApiErrorData());
                         }
                     });
                 } else {
@@ -254,9 +256,8 @@ export default {
                             this.onRefresh();
                         }).catch(error => {
                             // TODO
-                            this.$emit("showAPIError", response.getApiErrorData());
+                            //this.$emit("showAPIError", response.getApiErrorData());
                             this.loading = false;
-
                         });
                     } else {
                         this.document.id = this.$utils.uuid();
@@ -270,7 +271,7 @@ export default {
                         }).catch(error => {
                             // TODO
                             this.loading = false;
-                            this.$emit("showAPIError", response.getApiErrorData());
+                            //this.$emit("showAPIError", response.getApiErrorData());
                         });
                     }
                 }
@@ -286,7 +287,7 @@ export default {
                     this.$router.push({ name: 'appDashBoard' });
                 }).catch(error => {
                     // TODO
-                    this.$emit("showAPIError", response.getApiErrorData());
+                    //this.$emit("showAPIError", response.getApiErrorData());
                     this.loading = false;
                 });
             }
@@ -299,13 +300,12 @@ export default {
             if (!this.loading) {
                 this.loading = true;
                 this.$api.document.get(this.$route.params.id).then(response => {
-                    console.log(response);
                     this.document = response.data.data;
                     this.document.created = dayjs.unix(this.document.createdOnTimestamp).format("YYYY-MM-DD HH:mm:ss");
                     this.loading = false;
+                    this.$nextTick(() => this.$refs.title.focus());
                 }).catch(error => {
                     // TODO
-                    console.log(error);
                     //this.$emit("showAPIError", response.getApiErrorData());
                     this.loading = false;
                 });
