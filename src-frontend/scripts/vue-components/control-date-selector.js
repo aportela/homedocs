@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 
 const template = `
     <div class="select">
-        <select v-model.number="range" v-on:change="onChange" :disabled="disabled">
+        <select v-model.number="range" :disabled="disabled" v-on:change="onChange">
             <option value="0">Any date</option>
             <option value="1">Today</option>
             <option value="2">Yesterday</option>
@@ -25,12 +25,9 @@ export default {
         });
     },
     props: [
-        'disabled', 'selectedValue'
+        'disabled'
     ],
     created: function () {
-        if (this.selectedValue) {
-            this.range = this.selectedValue;
-        }
     },
     methods: {
         onChange: function () {
@@ -73,7 +70,7 @@ export default {
                     to = dayjs().hour(23).minute(59).second(59).unix();
                     break;
             }
-            this.$emit("change", { range: this.range, fromTimestamp: from, toTimestamp: to });
+            this.$emit("changed", { range: this.range, fromTimestamp: from, toTimestamp: to });
         }
     }
 }
