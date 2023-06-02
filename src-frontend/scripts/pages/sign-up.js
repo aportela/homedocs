@@ -1,4 +1,4 @@
-import { default as modalAPIError } from '../vue-components/modal-api-error.js';
+//import { default as modalAPIError } from '../vue-components/modal-api-error.js';
 
 const template = `
     <!-- template credits: daniel (https://github.com/dansup) -->
@@ -10,11 +10,11 @@ const template = `
                         <h1 class="title has-text-centered"><span class="icon is-medium"><i class="fas fa-book-reader"></i></span> HOMEDOCS <span class="icon is-medium"><i class="fas fa-book-reader"></i></span></h1>
                         <h2 class="subtitle is-6 has-text-centered">I ASSURE YOU; WE'RE OPEN</h2>
                         <hr>
-                        <h1 class="title is-3 has-text-centered"><i class="fas fa-user-plus"></i> Sign up</h1>
+                        <h1 class="title is-3 has-text-centered"><i class="fas fa-user-plus"></i> {{ $t("pages.signUp.labels.headerField") }}</h1>
                         <form v-on:submit.prevent="onSubmit" v-if="! success">
                             <div class="box">
                                 <div class="field">
-                                    <label class="label">Email</label>
+                                    <label class="label">{{ $t("pages.signUp.labels.emailField") }}</label>
                                     <p class="control has-icons-left" v-bind:class="{ 'has-icons-right' : $validator.hasInvalidField('email') }">
                                         <input class="input" type="email" name="email" maxlength="255" ref="email" required v-bind:class="{ 'is-danger': $validator.hasInvalidField('email') }" v-bind:disabled="loading" v-model.trim="email">
                                         <span class="icon is-small is-left"><i class="fa fa-envelope"></i></span>
@@ -23,7 +23,7 @@ const template = `
                                     </p>
                                 </div>
                                 <div class="field">
-                                    <label class="label">Password</label>
+                                    <label class="label">{{ $t("pages.signUp.labels.passwordField") }}</label>
                                     <p class="control has-icons-left" v-bind:class="{ 'has-icons-right' : $validator.hasInvalidField('password') }">
                                         <input class="input" type="password" name="password" required ref="password" v-bind:class="{ 'is-danger': $validator.hasInvalidField('password') }" v-bind:disabled="loading" v-model="password">
                                         <span class="icon is-small is-left"><i class="fa fa-key"></i></span>
@@ -34,23 +34,25 @@ const template = `
                                 <p class="control">
                                     <button type="submit" class="button is-link is-fullwidth" v-bind:class="{ 'is-loading': loading }" v-bind:disabled="disableSubmit">
                                         <span class="icon"><i class="fa fa-plus-circle"></i></span>
-                                        <span>Sign up</span>
+                                        <span>{{ $t("pages.signUp.labels.submitButton") }}</span>
                                     </button>
                                 </p>
                             </div>
-                            <p class="has-text-centered has-text-weight-bold">Already have an account ?<br><router-link v-bind:to="{ name: 'signIn' }">Click here to sign in</router-link></p>
+                            <p class="has-text-centered has-text-weight-bold">{{ $t("pages.signUp.labels.alreadyHaveAnAccount") }}<br><router-link v-bind:to="{ name: 'signIn' }">{{ $t("pages.signUp.labels.signInWithAccount") }}</router-link></p>
                         </form>
                         <div class="box" v-else>
-                            <p class="has-text-centered has-text-weight-bold"><span class="icon"><i class="fas fa-check-circle"></i></span> Your account has been created!<br><router-link v-bind:to="{ name: 'signIn' }">Click here to sign in</router-link></p>
+                            <p class="has-text-centered has-text-weight-bold"><span class="icon"><i class="fas fa-check-circle"></i></span> {{ $t("pages.signUp.labels.accountCreated") }}<br><router-link v-bind:to="{ name: 'signIn' }">{{ $t("pages.signUp.labels.signInWithAccount") }}</router-link></p>
                         </div>
                         <p class="has-text-centered mt-2">
-                            <a href="https://github.com/aportela/homedocs" target="_blank"><span class="icon is-small"><i class="fab fa-github"></i></span> <span>Project page</span></a> | <a href="mailto:766f6964+github@gmail.com">by alex</a>
+                            <a href="https://github.com/aportela/homedocs" target="_blank"><span class="icon is-small"><i class="fab fa-github"></i></span> <span>{{ $t("pages.common.labels.projectPage") }}</span></a> | <a href="mailto:766f6964+github@gmail.com">{{ $t("pages.common.labels.byAuthor") }}</a>
                         </p>
                     </div>
                 </div>
             </div>
         </div>
+        <!--
         <homedocs-modal-api-error v-if="apiError" v-bind:error="apiError" v-on:close="apiError = null"></homedocs-modal-api-error>
+        -->
     </section>
 `;
 
@@ -75,7 +77,7 @@ export default {
         }
     },
     components: {
-        'homedocs-modal-api-error': modalAPIError
+        //'homedocs-modal-api-error': modalAPIError
     },
     created: function () {
         this.$validator.clear();
@@ -96,28 +98,28 @@ export default {
                 switch (error.response.status) {
                     case 400:
                         if (error.response.data.invalidOrMissingParams.find(function (e) { return (e === "email"); })) {
-                            this.$validator.setInvalid("email", "API ERROR: Invalid email parameter");
+                            this.$validator.setInvalid("email", this.$t('pages.signUp.errorMessages.APIMissingEmail'));
                             this.$nextTick(() => this.$refs.email.focus());
                         } else if (error.response.data.invalidOrMissingParams.find(function (e) { return (e === "password"); })) {
-                            this.$validator.setInvalid("password", "API ERROR: Invalid password parameter");
+                            this.$validator.setInvalid("password", this.$t('pages.signUp.errorMessages.APIMissingPassword'));
                             this.$nextTick(() => this.$refs.password.focus());
                         } else {
-                            this.apiError = response.getApiErrorData();
+                            // TODO
+                            //this.apiError = response.getApiErrorData();
                         }
                         break;
                     case 409:
                         if (error.response.data.invalidOrMissingParams.find(function (e) { return (e === "email"); })) {
-                            this.$validator.setInvalid("email", "Email already used");
+                            this.$validator.setInvalid("email", this.$t('pages.signUp.errorMessages.emailAlreadyInUse'));
                             this.$nextTick(() => this.$refs.email.focus());
-                        } else if (error.response.data.invalidOrMissingParams.find(function (e) { return (e === "name"); })) {
-                            this.$validator.setInvalid("name", "Name already used");
-                            this.$nextTick(() => this.$refs.password.focus());
                         } else {
-                            this.apiError = response.getApiErrorData();
+                            // TODO
+                            //this.apiError = response.getApiErrorData();
                         }
                         break;
                     default:
-                        this.apiError = response.getApiErrorData();
+                        // TODO
+                        //this.apiError = response.getApiErrorData();
                         break;
                 }
             });

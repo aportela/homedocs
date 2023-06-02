@@ -41,7 +41,7 @@ const template = `
                             <p class="has-text-centered has-text-weight-bold" v-if="allowSignUp">{{ $t("pages.signIn.labels.doNotHaveAccount") }}<br><router-link v-bind:to="{ name: 'signUp' }">{{ $t("pages.signIn.labels.createAnAccount") }}</router-link></p>
                         </form>
                         <p class="has-text-centered mt-2">
-                            <a href="https://github.com/aportela/homedocs" target="_blank"><span class="icon is-small"><i class="fab fa-github"></i></span> <span>{{ $t("pages.signIn.labels.projectPage") }}</span></a> | <a href="mailto:766f6964+github@gmail.com">{{ $t("pages.signIn.labels.byAuthor") }}</a>
+                            <a href="https://github.com/aportela/homedocs" target="_blank"><span class="icon is-small"><i class="fab fa-github"></i></span> <span>{{ $t("pages.common.labels.projectPage") }}</span></a> | <a href="mailto:766f6964+github@gmail.com">{{ $t("pages.common.labels.byAuthor") }}</a>
                         </p>
                     </div>
                 </div>
