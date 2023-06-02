@@ -41,7 +41,7 @@ const template = `
                 <li v-for="uploadError in uploadErrors"><i class="fas fa-exclamation-triangle"></i> {{ uploadError }}</li>
             </ul>
         </div>
-        <input type="file" multiple="multiple" ref="file" class="is-hidden" v-on:change="onFileChanged">
+        <input type="file" id="file" multiple="multiple" ref="file" class="is-hidden" v-on:change="onFileChanged">
         <table class="table is-narrow is-striped is-fullwidth">
             <thead>
                 <tr>
@@ -189,6 +189,16 @@ export default {
     },
     created: function () {
         this.document.id = this.$route.params.id || null;
+        document.addEventListener('dragover', (e) => {
+            e.preventDefault()
+        });
+        document.addEventListener('drop', this.onFileDropped);
+    },
+    beforeUnmount: function() {
+        document.removeEventListener('dragover', (e) => {
+            e.preventDefault()
+        });
+        document.removeEventListener('drop', this.onFileDropped);
     },
     mounted: function () {
         if (this.$route.params.id) {
@@ -258,6 +268,28 @@ export default {
                 } else {
                     this.pendingUploads--;
                     this.uploadErrors.push("Can not upload local file " + event.target.files[i].name + " (max upload size supported by server: " + initialState.maxUploadFileSize + " bytes, file size: " + event.target.files[i].size + " bytes)");
+                }
+            };
+        },
+        onFileDropped: function (event) {
+            event.preventDefault();
+            this.uploadErrors = [];
+            this.pendingUploads += event.dataTransfer.files.length;
+            for (let i = 0; i < event.dataTransfer.files.length; i++) {
+                if (event.dataTransfer.files[i].size <= initialState.maxUploadFileSize) {
+                    this.$api.document.addFile(this.$utils.uuid(), event.dataTransfer.files[i]).then(response => {
+                        this.pendingUploads--;
+                        this.document.files.push(response.data.data);
+                    }).catch(error => {
+                        // TODO
+                        this.uploadErrors.push("Can not upload local file " + event.dataTransfer.files[i].name + " (server error)");
+                        this.pendingUploads--;
+                        //this.$emit("showAPIError", response.getApiErrorData());
+                        this.loading = false;
+                    });
+                } else {
+                    this.pendingUploads--;
+                    this.uploadErrors.push("Can not upload local file " + event.dataTransfer.files[i].name + " (max upload size supported by server: " + initialState.maxUploadFileSize + " bytes, file size: " + event.dataTransfer.files[i].size + " bytes)");
                 }
             };
         },
