@@ -1,4 +1,5 @@
 import { createApp } from 'vue';
+import { default as i18n } from './plugins/i18n.js';
 import { default as router } from './plugins/router.js';
 import { default as axios } from './plugins/axios.js';
 import { default as api } from './plugins/api.js';
@@ -20,4 +21,4 @@ const localStorageBasilOptions = {
     expireDays: 3650
 };
 
-createApp(homeDocsApp).use(router).use(localStorage, localStorageBasilOptions).use(axios, {}).use(api).use(utils).use(validator).mount('#app');
+createApp(homeDocsApp).use(router).use(localStorage, localStorageBasilOptions).use(i18n).use(axios, {}).use(api).use(utils).use(validator).mount('#app');

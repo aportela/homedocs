@@ -10,6 +10,7 @@ module.exports = {
         alias: {
             'vue': "vue/dist/vue.esm-bundler.js",
             'vue-router': "vue-router/dist/vue-router.esm-bundler.js",
+            'vue-i18n': "vue-i18n/dist/vue-i18n.esm-bundler.js",
             'dayjs': "dayjs/dayjs.min.js",
             'basil': "basil.js/build/basil.js"
         }
@@ -19,7 +20,7 @@ module.exports = {
             import: './src-frontend/scripts/app.js',
             dependOn: 'vendor'
         },
-        'vendor': ['vue', 'vue-router', 'axios', 'dayjs', 'basil']
+        'vendor': ['vue', 'vue-router', 'vue-i18n', 'axios', 'dayjs', 'basil']
     },
     output: {
         path: path.resolve(__dirname, 'public/scripts/'),
