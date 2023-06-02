@@ -80,10 +80,8 @@ $settings['db'] = [
 
 $settings['twig'] = [
     'path' =>  dirname(__DIR__) . DIRECTORY_SEPARATOR . 'templates',
-    //'options' =>  ['cache' => $settings['environment'] == 'development' ? false : dirname(__DIR__) . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'twig_cache']
-    'options' =>  ['cache' => false]
+    'options' =>  ['auto_reload' => true, 'cache' => $settings['environment'] == 'development' ? false : dirname(__DIR__) . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'twig_cache']
 ];
-
 
 $settings['common'] = [
     'defaultResultsPage' => 64,
