@@ -61,12 +61,13 @@ const router = createRouter({
 
 router.beforeEach(async (to, from) => {
     if (!initialState.session.logged) {
-        if (to.name != 'signIn') {
-            return { name: 'signIn' }
+        if (to.name == 'signUp' && initialState.allowSignUp) {
+        } else if (to.name != 'signIn') {
+            return ({ name: 'signIn' });
         }
     } else {
         if (!to.name) {
-            return { name: 'appDashBoard' }
+            return ({ name: 'appDashBoard' });
         }
     }
 });
