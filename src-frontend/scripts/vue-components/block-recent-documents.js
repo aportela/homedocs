@@ -5,24 +5,24 @@ const template = `
         <div class="message-header">
             <p>
                 <span class="icon">
-                    <i class="fas fa-cog fa-spin fa-fw" v-if="loading" title="Loading data..."></i>
-                    <i class="fas fa-exclamation-triangle cursor-help" v-else-if="apiError" title="Error loading data"></i>
+                    <i class="fas fa-cog fa-spin fa-fw" v-if="loading" :title="$t('pages.dashBoard.labels.loadingData')"></i>
+                    <i class="fas fa-exclamation-triangle cursor-help" v-else-if="apiError" :title="$t('pages.dashBoard.labels.errorloadingData')"></i>
                     <i class="fas fa-history" v-else></i>
                 </span>
-                <span>Recent documents</span>
+                <span>{{ $t("pages.dashBoard.labels.recentDocuments") }}</span>
             </p>
-            <i class="fas fa-sync-alt cursor-pointer" title="Click here to refresh" v-on:click.prevent="onRefresh"></i>
+            <i class="fas fa-sync-alt cursor-pointer" :title="$t('pages.dashBoard.labels.clickHereToRefresh')" v-on:click.prevent="onRefresh"></i>
         </div>
         <div class="message-body has-text-centered" v-if="apiError">
-            <h5 class="title is-5"><i class="fas fa-exclamation-triangle"></i> Error loading data</h5>
+            <h5 class="title is-5"><i class="fas fa-exclamation-triangle"></i> {{ $t("pages.dashBoard.labels.errorloadingData") }}</h5>
         </div>
         <div class="message-body has-text-centered" v-else>
             <table class="table is-narrow is-striped is-fullwidth" v-if="documents.length > 0">
                 <thead>
                     <tr>
-                        <th class="has-text-left">Title</th>
-                        <th class="has-text-left">Created on</th>
-                        <th class="has-text-right">Files</th>
+                        <th class="has-text-left">{{ $t("pages.dashBoard.labels.recentDocumentsHeaderTitle") }}</th>
+                        <th class="has-text-left">{{ $t("pages.dashBoard.labels.recentDocumentsHeaderCreated") }}</th>
+                        <th class="has-text-right">{{ $t("pages.dashBoard.labels.recentDocumentsHeaderFiles") }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -33,7 +33,7 @@ const template = `
                     </tr>
                 </tbody>
             </table>
-            <p v-if="showWarningNoDocuments">No document has been created yet</p>
+            <p v-if="showWarningNoDocuments">{{ $t("pages.dashBoard.labels.recentDocumentsShowWarningNoDocuments") }}</p>
         </div>
     </article>
 `;

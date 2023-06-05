@@ -1,9 +1,11 @@
-import { default as modalAPIError } from '../vue-components/modal-api-error.js';
+//import { default as modalAPIError } from '../vue-components/modal-api-error.js';
 
 const template = `
     <section class="section">
         <div class="container is-fluid">
+            <!--
             <homedocs-modal-api-error v-if="apiError" v-bind:error="apiError" v-on:close="apiError = null"></homedocs-modal-api-error>
+            -->
             <nav class="navbar" role="navigation" aria-label="main navigation">
                 <div class="navbar-brand">
                     <a class="navbar-item is-uppercase has-text-weight-bold" href="https://github.com/aportela/homedocs" target="_blank">
@@ -21,31 +23,33 @@ const template = `
                             <span class="icon">
                                 <i class="fas fa-home"></i>
                             </span>
-                            <span>Home</span>
+                            <span>{{ $t("pages.appMenu.labels.home") }}</span>
                         </router-link>
                         <router-link v-bind:to="{ name: 'appAddDocument' }" class="navbar-item" v-bind:class="{ 'is-active': $route.name == 'appAddDocument' }">
                             <span class="icon">
                                 <i class="fas fa-folder-plus"></i>
                             </span>
-                            <span>Add</span>
+                            <span>{{ $t("pages.appMenu.labels.add") }}</span>
                         </router-link>
                         <router-link v-bind:to="{ name: 'appAdvancedSearch' }" class="navbar-item" v-bind:class="{ 'is-active': $route.name == 'appAdvancedSearch' }">
                             <span class="icon">
                             <i class="fas fa-search"></i>
                             </span>
-                            <span>Search</span>
+                            <span>{{ $t("pages.appMenu.labels.search") }}</span>
                         </router-link>
                     </div>
                     <div class="navbar-end">
                         <a class="navbar-item" v-on:click.prevent="onSignOut">
                             <span class="icon"><i class="fas fa-sign-out-alt"></i></span>
-                            <span>Sign out</span>
+                            <span>{{ $t("pages.appMenu.labels.signOut") }}</span>
                         </a>
                     </div>
                 </div>
             </nav>
             <router-view v-on:showAPIError="apiError = $event;"></router-view>
+            <!--
             <homedocs-modal-api-error v-if="apiError" v-bind:error="apiError" v-on:close="apiError = null"></homedocs-modal-api-error>
+            -->
         </div>
     </section>
 `;
@@ -67,7 +71,7 @@ export default {
         }
     },
     components: {
-        'homedocs-modal-api-error': modalAPIError
+        //'homedocs-modal-api-error': modalAPIError
     },
     methods: {
         onSignOut: function () {

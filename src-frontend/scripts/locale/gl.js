@@ -38,6 +38,32 @@ export default {
                     APIMissingEmail: 'Error de API: falta o correo electrónico',
                     APIMissingPassword: 'Error de API: falta a contrasinal'
                 }
+            },
+            appMenu: {
+                labels: {
+                    home: 'Inicio',
+                    add: 'Engadir',
+                    search: 'Procurar',
+                    signOut: 'Saír'
+                }
+            },
+            dashBoard: {
+                labels: {
+                    add: 'Engadir',
+                    addHint: 'Faga click eiquí pra engadir un novo documento',
+                    search: 'Procurar',
+                    searchHint: 'Faga click eiquí pra procurar documentos',
+                    recentDocuments: 'Documentos recentes',
+                    recentDocumentsHeaderTitle: 'Título',
+                    recentDocumentsHeaderCreated: 'Creado o',
+                    recentDocumentsHeaderFiles: 'Adxuntos',
+                    recentDocumentsShowWarningNoDocuments: 'Aínda non engadiu ningún ningún documento',
+                    browseByTags: 'Explorer por etiquetas',
+                    browseByTagsShowWarningNoTags: 'Aínda non engadiu ningunha etiqueta',
+                    clickHereToRefresh: 'Faga click eiquí pra refrescar',
+                    loadingData: 'Cargando datos...',
+                    errorloadingData: 'Error cargando datos'
+                }
             }
         }
     }

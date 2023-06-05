@@ -3,16 +3,16 @@ const template = `
         <div class="message-header">
             <p>
                 <span class="icon">
-                    <i class="fas fa-cog fa-spin fa-fw" v-if="loading" title="Loading data..."></i>
-                    <i class="fas fa-exclamation-triangle cursor-help" v-else-if="apiError" title="Error loading data"></i>
+                    <i class="fas fa-cog fa-spin fa-fw" v-if="loading" :title="$t('pages.dashBoard.labels.loadingData')"></i>
+                    <i class="fas fa-exclamation-triangle cursor-help" v-else-if="apiError" :title="$t('pages.dashBoard.labels.errorloadingData')"></i>
                     <i class="fas fa-tags" v-else></i>
                 </span>
-                <span>Browse by tags</span>
+                <span>{{ $t("pages.dashBoard.labels.browseByTags") }}</span>
             </p>
-            <i class="fas fa-sync-alt cursor-pointer" title="Click here to refresh" v-on:click.prevent="onRefresh"></i>
+            <i class="fas fa-sync-alt cursor-pointer" :title="$t('pages.dashBoard.labels.clickHereToRefresh')" v-on:click.prevent="onRefresh"></i>
         </div>
         <div class="message-body has-text-centered" v-if="apiError">
-            <h5 class="title is-5"><i class="fas fa-exclamation-triangle"></i> Error loading data</h5>
+            <h5 class="title is-5"><i class="fas fa-exclamation-triangle"></i> {{ $t("pages.dashBoard.labels.errorloadingData") }}</h5>
         </div>
         <div class="message-body has-text-centered" v-else>
             <div class="field is-grouped is-grouped-multiline" v-if="items.length > 0">
@@ -25,9 +25,7 @@ const template = `
                     </router-link>
                 </div>
             </div>
-            <div v-if="showWarningNoTags">
-                No tag has been created yet
-            </div>
+            <p v-if="showWarningNoTags">{{ $t("pages.dashBoard.labels.browseByTagsShowWarningNoTags") }}</p>
         </div>
     </article>
 `;

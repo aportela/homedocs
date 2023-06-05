@@ -38,6 +38,32 @@ export default {
                     APIMissingEmail: 'Error de API: falta el correo electrónico',
                     APIMissingPassword: 'Error de API: falta la contraseña'
                 }
+            },
+            appMenu: {
+                labels: {
+                    home: 'Inicio',
+                    add: 'Añadir',
+                    search: 'Buscar',
+                    signOut: 'Salir'
+                }
+            },
+            dashBoard: {
+                labels: {
+                    add: 'Añadir',
+                    addHint: 'Haga click aquí para añadir un nuevo documento',
+                    search: 'Buscar',
+                    searchHint: 'Haga click aquí para buscar documentos',
+                    recentDocuments: 'Documentos recientes',
+                    recentDocumentsHeaderTitle: 'Título',
+                    recentDocumentsHeaderCreated: 'Creado el',
+                    recentDocumentsHeaderFiles: 'Adjuntos',
+                    recentDocumentsShowWarningNoDocuments: 'Aún no ha creado ningún documento',
+                    browseByTags: 'Explorar por etiquetas',
+                    browseByTagsShowWarningNoTags: 'Aún no ha creado ninguna etiqueta',
+                    clickHereToRefresh: 'Haga click aquí para refrescar',
+                    loadingData: 'Cargando datos...',
+                    errorloadingData: 'Error cargando datos'
+                }
             }
         }
     }

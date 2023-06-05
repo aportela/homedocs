@@ -1,4 +1,4 @@
-import { default as modalAPIError } from '../vue-components/modal-api-error.js';
+//import { default as modalAPIError } from '../vue-components/modal-api-error.js';
 import { default as blockRecentDocuments } from '../vue-components/block-recent-documents.js';
 import { default as blockTagCloud } from '../vue-components/block-tag-cloud.js';
 
@@ -8,12 +8,12 @@ const template = `
                 <div class="column is-6">
                     <article class="message">
                         <div class="message-header">
-                            <p><span class="icon"><i class="fas fa-plus"></i></span><span>Add</span></p>
+                            <p><span class="icon"><i class="fas fa-plus"></i></span><span>{{ $t("pages.dashBoard.labels.add") }}</span></p>
                         </div>
                         <div class="message-body has-text-centered">
                             <router-link v-bind:to="{ name: 'appAddDocument' }">
                                 <i class="fas fa-plus fa-10x"></i>
-                                <h1 class="title">Click here for add new document</h1>
+                                <h1 class="title">{{ $t("pages.dashBoard.labels.addHint") }}</h1>
                             </router-link>
                         </div>
                     </article>
@@ -21,12 +21,12 @@ const template = `
                 <div class="column is-6">
                     <article class="message">
                         <div class="message-header">
-                            <p><span class="icon"><i class="fas fa-search-plus"></i></span><span>Search</span></p>
+                            <p><span class="icon"><i class="fas fa-search-plus"></i></span><span>{{ $t("pages.dashBoard.labels.search") }}</span></p>
                         </div>
                         <div class="message-body has-text-centered">
                             <router-link v-bind:to="{ name: 'appAdvancedSearch' }">
                                 <i class="fas fa-search-plus fa-10x"></i>
-                                <h1 class="title">Click here for advanced search</h1>
+                                <h1 class="title">{{ $t("pages.dashBoard.labels.searchHint") }}</h1>
                             </router-link>
                         </div>
                     </article>
@@ -47,7 +47,7 @@ export default {
     name: 'homedocs-section-app-dashboard',
     template: template,
     components: {
-        'homedocs-modal-api-error': modalAPIError,
+        //'homedocs-modal-api-error': modalAPIError,
         'homedocs-block-recent-documents': blockRecentDocuments,
         'homedocs-block-tag-cloud': blockTagCloud
     }, methods: {

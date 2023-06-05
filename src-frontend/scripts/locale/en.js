@@ -39,6 +39,32 @@ export default {
                     APIMissingEmail: 'API Error: missing email',
                     APIMissingPassword: 'API Error: missing password'
                 }
+            },
+            appMenu: {
+                labels: {
+                    home: 'Home',
+                    add: 'Add',
+                    search: 'Search',
+                    signOut: 'Sign Out'
+                }
+            },
+            dashBoard: {
+                labels: {
+                    add: 'Add',
+                    addHint: 'Click here for add new document',
+                    search: 'Search',
+                    searchHint: 'Click here for advanced search',
+                    recentDocuments: 'Recent documents',
+                    recentDocumentsHeaderTitle: 'Title',
+                    recentDocumentsHeaderCreated: 'Created on',
+                    recentDocumentsHeaderFiles: 'Files',
+                    recentDocumentsShowWarningNoDocuments: 'No document has been created yet',
+                    browseByTags: 'Browse by tags',
+                    browseByTagsShowWarningNoTags: 'No tag has been created yet',
+                    clickHereToRefresh: 'Click here to refresh',
+                    loadingData: 'Loading data...',
+                    errorloadingData: 'Error loading data'
+                }
             }
         }
     }
