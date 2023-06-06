@@ -17,7 +17,7 @@ const template = `
             </div>
         </div>
         <div class="field">
-            <label class="label">Add tag</label>
+            <label class="label">{{ $t("components.inputTags.addTag") }}</label>
             <div class="control">
                 <div class="field has-addons">
                     <p class="control is-expanded" v-bind:class="{ 'has-icons-right': warningAlreadyExists }">
@@ -28,7 +28,7 @@ const template = `
                     </p>
                     <p class="control" v-show="newTag"><button type="button" class="button is-dark cursor-help" v-on:click.prevent="onAdd" title="Click here to add tag"><i class="fas fa-check"></i></button></p>
                 </div>
-                <p class="help is-danger" v-show="warningAlreadyExists">Tag already exists</p>
+                <p class="help is-danger" v-show="warningAlreadyExists">{{ $t("components.inputTags.warningTagAlreadyExists") }}</p>
                 <div class="dropdown is-active" v-if="hasResults">
                     <div class="dropdown-menu">
                         <div class="dropdown-content is-unselectable">
@@ -44,105 +44,112 @@ const template = `
 `;
 
 export default {
-    name: 'homedocs-control-input-tags',
-    template: template,
-    data: function () {
-        return ({
-            newTag: null,
-            matchedTags: [],
-            selectedMatchTagIndex: -1,
-            warningAlreadyExists: false
+  name: "homedocs-control-input-tags",
+  template: template,
+  data: function () {
+    return {
+      newTag: null,
+      matchedTags: [],
+      selectedMatchTagIndex: -1,
+      warningAlreadyExists: false,
+    };
+  },
+  props: ["loading", "tags", "allowNavigation"],
+  computed: {
+    hasResults: function () {
+      return this.matchedTags.length > 0;
+    },
+  },
+  created: function () {
+    if (!Array.isArray(initialState.cachedTags)) {
+      this.loadCurrentTagCache();
+    }
+  },
+  methods: {
+    loadCurrentTagCache: function () {
+      this.$api.tag
+        .search()
+        .then((response) => {
+          initialState.cachedTags = response.data.tags;
+        })
+        .catch((error) => {
+          // TODO
+          //this.apiError = response.getApiErrorData();
         });
     },
-    props: [
-        'loading', 'tags', 'allowNavigation'
-    ],
-    computed: {
-        hasResults: function () {
-            return (this.matchedTags.length > 0);
-        }
-    },
-    created: function () {
-        if (!Array.isArray(initialState.cachedTags)) {
-            this.loadCurrentTagCache();
-        }
-    },
-    methods: {
-        loadCurrentTagCache: function () {
-            this.$api.tag.search().then(response => {
-                initialState.cachedTags = response.data.tags;
-            }).catch(error => {
-                // TODO
-                //this.apiError = response.getApiErrorData();
-            });
-        },
-        onKeyUp: function (event) {
-            this.warningAlreadyExists = false;
-            switch (event.code) {
-                case "Escape":
-                    this.newTag = null;
-                    this.matchedTags = [];
-                    this.selectedMatchTagIndex = -1;
-                    break;
-                case "Enter":
-                    if (this.selectedMatchTagIndex != -1) {
-                        this.newTag = this.matchedTags[this.selectedMatchTagIndex];
-                    }
-                    this.onAdd();
-                    break;
-                case "Backspace":
-                    if (!this.newTag) {
-                        /*
+    onKeyUp: function (event) {
+      this.warningAlreadyExists = false;
+      switch (event.code) {
+        case "Escape":
+          this.newTag = null;
+          this.matchedTags = [];
+          this.selectedMatchTagIndex = -1;
+          break;
+        case "Enter":
+          if (this.selectedMatchTagIndex != -1) {
+            this.newTag = this.matchedTags[this.selectedMatchTagIndex];
+          }
+          this.onAdd();
+          break;
+        case "Backspace":
+          if (!this.newTag) {
+            /*
                             if (!this.newTag && this.tags.length > 0) {
                                 this.$emit("onUpdate", this.tags.slice(0, this.tags.length - 1));
                             }
                         */
-                        this.matchedTags = [];
-                        this.selectedMatchTagIndex = -1;
-                    }
-                    break;
-                case "ArrowUp":
-                    if (this.selectedMatchTagIndex > 0) {
-                        this.selectedMatchTagIndex--;
-                    }
-                    break;
-                case "ArrowDown":
-                    if (this.selectedMatchTagIndex < this.matchedTags.length - 1) {
-                        this.selectedMatchTagIndex++;
-                    }
-                    break;
-                default:
-                    if (this.newTag) {
-                        if (!this.tags.includes(this.newTag.toLowerCase())) {
-                            if (Array.isArray(initialState.cachedTags)) {
-                                this.matchedTags = initialState.cachedTags.filter((tag) => tag.indexOf(this.newTag) !== -1);
-                            }
-                        }
-                    } else {
-                        this.matchedTags = [];
-                    }
-                    this.selectedMatchTagIndex = -1;
-                    break;
+            this.matchedTags = [];
+            this.selectedMatchTagIndex = -1;
+          }
+          break;
+        case "ArrowUp":
+          if (this.selectedMatchTagIndex > 0) {
+            this.selectedMatchTagIndex--;
+          }
+          break;
+        case "ArrowDown":
+          if (this.selectedMatchTagIndex < this.matchedTags.length - 1) {
+            this.selectedMatchTagIndex++;
+          }
+          break;
+        default:
+          if (this.newTag) {
+            if (!this.tags.includes(this.newTag.toLowerCase())) {
+              if (Array.isArray(initialState.cachedTags)) {
+                this.matchedTags = initialState.cachedTags.filter(
+                  (tag) => tag.indexOf(this.newTag) !== -1
+                );
+              }
             }
-        },
-        onAdd: function () {
-            if (this.newTag) {
-                if (!this.tags.includes(this.newTag.toLowerCase())) {
-                    this.$emit("update", { tags: this.tags.concat(Array(this.newTag.toLowerCase())) });
-                    this.newTag = null;
-                    this.matchedTags = [];
-                } else {
-                    this.warningAlreadyExists = true;
-                }
-            }
-        },
-        onSelect: function (tagName) {
-            this.warningAlreadyExists = false;
-            this.newTag = tagName;
-            this.onAdd();
-        },
-        onRemove: function (tagName) {
-            this.$emit("update", { tags: this.tags.filter(tag => tag !== tagName) });
+          } else {
+            this.matchedTags = [];
+          }
+          this.selectedMatchTagIndex = -1;
+          break;
+      }
+    },
+    onAdd: function () {
+      if (this.newTag) {
+        if (!this.tags.includes(this.newTag.toLowerCase())) {
+          this.$emit("update", {
+            tags: this.tags.concat(Array(this.newTag.toLowerCase())),
+          });
+          this.newTag = null;
+          this.matchedTags = [];
+        } else {
+          this.warningAlreadyExists = true;
         }
-    }
-}
+      }
+    },
+    onSelect: function (tagName) {
+      this.warningAlreadyExists = false;
+      this.newTag = tagName;
+      this.onAdd();
+    },
+    onRemove: function (tagName) {
+      this.$emit("update", {
+        tags: this.tags.filter((tag) => tag !== tagName),
+      });
+    },
+  },
+};

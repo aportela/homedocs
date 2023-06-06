@@ -5,45 +5,45 @@ import { default as controlTableHeaderSortable } from '../vue-components/control
 
 const template = `
     <div>
-        <h1 class="title">Advanced search</h1>
+        <h1 class="title">{{ $t("pages.search.labels.headerField") }}</h1>
         <div class="tabs">
             <ul>
                 <li v-bind:class="{ 'is-active': tab == 'conditions' }">
                     <a v-on:click.prevent="tab = 'conditions'">
                         <span class="icon is-small"><i class="fas fa-search" aria-hidden="true"></i></span>
-                        <span>Conditions</span>
+                        <span>{{ $t("pages.search.labels.conditions") }}</span>
                     </a>
                 </li>
                 <li v-bind:class="{ 'is-active': tab == 'results' }">
                 <a v-on:click.prevent="tab = 'results'">
                         <span class="icon is-small"><i class="far fa-list-alt" aria-hidden="true"></i></span>
-                        <span>Results</span>
+                        <span>{{ $t("pages.search.labels.results") }}</span>
                     </a>
                 </li>
             </ul>
         </div>
         <form v-show="tab == 'conditions'" v-on:submit.prevent="">
             <div class="field">
-                <label class="label">Search on title</label>
+                <label class="label">{{ $t("pages.search.labels.searchOnTitle") }}</label>
                 <div class="control">
-                    <input class="input" type="text" ref="titleCondition" placeholder="Title condition search" v-model.trim="titleCondition">
+                    <input class="input" type="text" ref="titleCondition" :placeholder="$t('pages.search.labels.searchOnTitleInputPlaceholder')" v-model.trim="titleCondition">
                 </div>
             </div>
             <div class="field">
-                <label class="label">Search on description</label>
+                <label class="label">{{ $t("pages.search.labels.searchOnDescription") }}</label>
                 <div class="control">
-                    <input class="input" type="text" placeholder="Description condition search" v-model.trim="descriptionCondition">
+                    <input class="input" type="text" :placeholder="$t('pages.search.labels.searchOnDescriptionInputPlaceholder')" v-model.trim="descriptionCondition">
                 </div>
             </div>
             <div class="field">
-                <label class="label">Published on</label>
+                <label class="label">{{ $t("pages.search.labels.createdOn") }}</label>
                 <homedocs-control-date-selector v-bind:disabled="loading" v-on:changed="fromTimestampCondition = $event.fromTimestamp; toTimestampCondition = $event.toTimestamp;"></homedocs-control-date-selector>
             </div>
             <div class="field">
-                <label class="label">Tags</label>
+                <label class="label">{{ $t("pages.search.labels.tags") }}</label>
                 <homedocs-control-input-tags v-bind:tags="tags" v-on:update="tags = $event.tags"></homedocs-control-input-tags>
             </div>
-            <button type="submit" class="button is-dark is-fullwidth" v-on:click.prevent="onSearch(true)">Search</button>
+            <button type="submit" class="button is-dark is-fullwidth" v-on:click.prevent="onSearch(true)"><span class="icon"><i class="fas fa-search"></i></span> <span>{{ $t("pages.search.labels.submitButton") }}</span></button>
 
         </form>
 
@@ -52,10 +52,10 @@ const template = `
         <table class="table is-narrow is-striped is-fullwidth" v-show="tab == 'results'">
             <thead>
                 <tr>
-                    <homedocs-table-header-sortable v-bind:name="'Created on'" v-bind:isSorted="sortBy == 'createdOnTimestamp'" v-bind:sortOrder="sortOrder" v-on:sortClicked="toggleSort('createdOnTimestamp');"></homedocs-table-header-sortable>
-                    <homedocs-table-header-sortable v-bind:name="'Title'" v-bind:isSorted="sortBy == 'title'" v-bind:sortOrder="sortOrder" v-on:sortClicked="toggleSort('title');"></homedocs-table-header-sortable>
-                    <homedocs-table-header-sortable v-bind:name="'Description'" v-bind:className="'is-hidden-mobile'" v-bind:isSorted="sortBy == 'description'" v-bind:sortOrder="sortOrder" v-on:sortClicked="toggleSort('description');"></homedocs-table-header-sortable>
-                    <homedocs-table-header-sortable v-bind:name="'Files'" v-bind:className="'has-text-right'" v-bind:isSorted="sortBy == 'fileCount'" v-bind:sortOrder="sortOrder" v-on:sortClicked="toggleSort('fileCount');"></homedocs-table-header-sortable>
+                    <homedocs-table-header-sortable v-bind:name="$t('pages.search.labels.resultsHeaderCreated')" v-bind:isSorted="sortBy == 'createdOnTimestamp'" v-bind:sortOrder="sortOrder" v-on:sortClicked="toggleSort('createdOnTimestamp');"></homedocs-table-header-sortable>
+                    <homedocs-table-header-sortable v-bind:name="$t('pages.search.labels.resultsHeaderTitle')" v-bind:isSorted="sortBy == 'title'" v-bind:sortOrder="sortOrder" v-on:sortClicked="toggleSort('title');"></homedocs-table-header-sortable>
+                    <homedocs-table-header-sortable v-bind:name="$t('pages.search.labels.resultsHeaderDescription')" v-bind:className="'is-hidden-mobile'" v-bind:isSorted="sortBy == 'description'" v-bind:sortOrder="sortOrder" v-on:sortClicked="toggleSort('description');"></homedocs-table-header-sortable>
+                    <homedocs-table-header-sortable v-bind:name="$t('pages.search.labels.resultsHeaderFiles')" v-bind:className="'has-text-right'" v-bind:isSorted="sortBy == 'fileCount'" v-bind:sortOrder="sortOrder" v-on:sortClicked="toggleSort('fileCount');"></homedocs-table-header-sortable>
                 </tr>
             </thead>
             <tbody>
@@ -70,10 +70,10 @@ const template = `
 
         <article class="message is-dark mt-4" v-if="noResultsWarning">
             <div class="message-header">
-                <p><i class="fas fa-exclamation-triangle"></i> Warning</p>
+                <p><i class="fas fa-exclamation-triangle"></i> {{ $t("pages.search.labels.warning") }}</p>
             </div>
             <div class="message-body">
-                No results found for current search conditions
+                {{ $t("pages.search.labels.noResultsForConditions") }}
             </div>
         </article>
 
