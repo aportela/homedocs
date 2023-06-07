@@ -89,8 +89,58 @@ export default {
             "Non existen resultados pra as condicións de procura especificadas",
         },
       },
+      document: {
+        labels: {
+          headerAddNew: "Engadir novo documento",
+          headerUpdate: "Actualizar documento",
+          headerCreatedOn: "Documento creado o",
+          title: "Título",
+          titleInputPlaceholder: "Teclee o título do documento",
+          description: "Descripción",
+          descriptionInputPlaceholder:
+            "Teclee unha descripción (opcional) pra o documento",
+          tags: "Etiquetas",
+          attachments: "Arquivos",
+          addNewAttachment: "Engadir novo",
+          uploading: "Subindo",
+          files: "arquivo/s...",
+          fileUploadedOn: "Creado o",
+          fileName: "Nome",
+          fileSize: "Tamaño",
+          fileActions: "Accións",
+          buttonFileOpenPreview: "Abrir/Previsualizar",
+          buttonFileDownload: "Descargar",
+          buttonFileRemove: "Eliminar",
+          buttonSaveDocument: "Gardar",
+          buttonDeleteDocument: "Eliminar documento",
+          modalRemoveDocumentFileHeader: "Eliminar arquivo do documento",
+          warning: "ATENCIÓN:",
+          removeDocumentFileModalMessage:
+            "Está a punto de eliminar un arquivo do documento, esta operación non se pode desfacer.",
+          modalDeleteDocumentHeader: "Eliminar documento",
+          deleteDocumentModalMessage:
+            "Está a punto de eliminar o documento e os seus arquivos, esta operación non se pode desfacer.",
+        },
+        errorMessages: {
+          invalidDocumentTitle:
+            "Título do documento inválido (campo requerido, lonxitude máxima 128 caracteres)",
+          invalidDocumentDescription:
+            "Descripción do documento inválida (campo non requerido, lonxitude máxima 4096 caracteres)",
+          errorUploadingFile: "Non se pode subir o arquivo ",
+          errorUploadingFileMaxUploadFileSize:
+            " (tamaño máximo aceptado polo servidor: ",
+          errorUploadingFileBytesFileSize: " bytes, tamaño actual do arquivo: ",
+          errorUploadingFileBytes: " bytes)",
+          errorUploadingFileServerError: " (error do servidor)",
+        },
+      },
     },
     components: {
+      confirmModal: {
+        doYouWishToContinue: "¿ Desexa continuar ?",
+        okButton: "Si",
+        cancelButton: "Non",
+      },
       dateSelector: {
         anyDate: "Calquera data",
         today: "Hoxe",
@@ -104,6 +154,8 @@ export default {
       inputTags: {
         addTag: "Engadir etiqueta",
         warningTagAlreadyExists: "A etiqueta xa existe",
+        inputPlaceholder: "Teclee a etiqueta (confirme con enter)",
+        buttonAddHint: "Faga click eiquí pra engadir etiquetas",
       },
       pager: {
         previousPage: "Páxina anterior",

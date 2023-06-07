@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 
 const template = `
     <article class="message">
@@ -39,40 +39,45 @@ const template = `
 `;
 
 export default {
-    name: 'homedocs-block-recent-documents',
-    template: template,
-    data: function () {
-        return ({
-            loading: false,
-            apiError: null,
-            documents: [],
-            showWarningNoDocuments: false
-        });
+  name: "homedocs-block-recent-documents",
+  template: template,
+  data: function () {
+    return {
+      loading: false,
+      apiError: null,
+      documents: [],
+      showWarningNoDocuments: false,
+    };
+  },
+  mounted: function () {
+    this.onRefresh();
+  },
+  methods: {
+    onRefresh: function () {
+      if (!this.loading) {
+        this.apiError = null;
+        this.loading = true;
+        this.showWarningNoDocuments = false;
+        this.$api.document
+          .searchRecent(16)
+          .then((response) => {
+            this.documents = response.data.recentDocuments.map((document) => {
+              document.created = dayjs
+                .unix(document.createdOnTimestamp)
+                .format("YYYY-MM-DD HH:mm:ss");
+              return document;
+            });
+            this.showWarningNoDocuments = this.documents.length < 1;
+            this.loading = false;
+          })
+          .catch((error) => {
+            // TODO
+            this.documents = [];
+            //this.apiError = response.getApiErrorData();
+            //this.$emit("showAPIError", this.apiError);
+            this.loading = false;
+          });
+      }
     },
-    mounted: function () {
-        this.onRefresh();
-    },
-    methods: {
-        onRefresh: function () {
-            if (!this.loading) {
-                this.apiError = null;
-                this.loading = true;
-                this.showWarningNoDocuments = false;
-                this.$api.document.searchRecent(16).then(response => {
-                    this.documents = response.data.recentDocuments.map((document) => {
-                        document.created = dayjs.unix(document.createdOnTimestamp).format("YYYY-MM-DD HH:mm:ss");
-                        return (document);
-                    });
-                    this.showWarningNoDocuments = this.documents.length < 1;
-                    this.loading = false;
-                }).catch(error => {
-                    // TODO
-                    this.documents = [];
-                    //this.apiError = response.getApiErrorData();
-                    //this.$emit("showAPIError", this.apiError);
-                    this.loading = false;
-                });
-            }
-        }
-    }
-}
+  },
+};

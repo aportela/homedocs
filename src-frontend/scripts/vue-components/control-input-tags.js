@@ -21,12 +21,12 @@ const template = `
             <div class="control">
                 <div class="field has-addons">
                     <p class="control is-expanded" v-bind:class="{ 'has-icons-right': warningAlreadyExists }">
-                        <input v-bind:disabled="loading" class="input" maxlength="32" v-bind:class="{ 'is-danger': warningAlreadyExists }" v-model.trim="newTag" v-on:keydown.enter.prevent="" v-on:keyup.prevent="onKeyUp($event)" type="text" placeholder="Type tag name (confirm with return)">
+                        <input v-bind:disabled="loading" class="input" maxlength="32" v-bind:class="{ 'is-danger': warningAlreadyExists }" v-model.trim="newTag" v-on:keydown.enter.prevent="" v-on:keyup.prevent="onKeyUp($event)" type="text" :placeholder="$t('components.inputTags.inputPlaceholder')">
                         <span class="icon is-small is-right" v-show="warningAlreadyExists">
                             <i class="fas fa-exclamation-triangle"></i>
                         </span>
                     </p>
-                    <p class="control" v-show="newTag"><button type="button" class="button is-dark cursor-help" v-on:click.prevent="onAdd" title="Click here to add tag"><i class="fas fa-check"></i></button></p>
+                    <p class="control" v-show="newTag"><button type="button" class="button is-dark cursor-help" v-on:click.prevent="onAdd" :title="$t('components.inputTags.buttonAddHint')"><i class="fas fa-check"></i></button></p>
                 </div>
                 <p class="help is-danger" v-show="warningAlreadyExists">{{ $t("components.inputTags.warningTagAlreadyExists") }}</p>
                 <div class="dropdown is-active" v-if="hasResults">

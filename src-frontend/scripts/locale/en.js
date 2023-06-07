@@ -88,8 +88,57 @@ export default {
             "No results found for current search conditions",
         },
       },
+      document: {
+        labels: {
+          headerAddNew: "Add new document",
+          headerUpdate: "Update/view document",
+          headerCreatedOn: "Document created on",
+          title: "Title",
+          titleInputPlaceholder: "Type document title",
+          description: "Description",
+          descriptionInputPlaceholder: "Type (optional) document description",
+          tags: "Tags",
+          attachments: "Files",
+          addNewAttachment: "Add new",
+          uploading: "Uploading",
+          files: "file/s...",
+          fileUploadedOn: "Created on",
+          fileName: "Name",
+          fileSize: "Size",
+          fileActions: "Actions",
+          buttonFileOpenPreview: "Open/Preview",
+          buttonFileDownload: "Download",
+          buttonFileRemove: "Remove",
+          buttonSaveDocument: "Save",
+          buttonDeleteDocument: "Delete this document",
+          modalRemoveDocumentFileHeader: "Remove document file",
+          warning: "WARNING:",
+          removeDocumentFileModalMessage:
+            "You are about to remove a file from document, this operation cannot be undone.",
+          modalDeleteDocumentHeader: "Delete document",
+          deleteDocumentModalMessage:
+            "You are about to delete the document and the files, this operation cannot be undone.",
+        },
+        errorMessages: {
+          invalidDocumentTitle:
+            "Invalid document title (field is required, max length 128 chars)",
+          invalidDocumentDescription:
+            "Invalid document description (field is not required, max length 4096 chars)",
+          errorUploadingFile: "Can not upload local file ",
+          errorUploadingFileMaxUploadFileSize:
+            " (max upload size supported by server: ",
+          errorUploadingFileBytesFileSize: " bytes, current file size: ",
+          errorUploadingFileBytes: " bytes)",
+          errorUploadingFileServerError: " (server error)",
+        },
+      },
     },
     components: {
+      confirmModal: {
+        doYouWishToContinue: "Do you wish to continue ?",
+        okButton: "Ok",
+        cancelButton: "Cancel",
+      },
       dateSelector: {
         anyDate: "Any date",
         today: "Today",
@@ -103,6 +152,8 @@ export default {
       inputTags: {
         addTag: "Add tag",
         warningTagAlreadyExists: "Tag already exists",
+        inputPlaceholder: "Type tag name (confirm with return)",
+        buttonAddHint: "Click here to add tag",
       },
       pager: {
         previousPage: "Previous page",
