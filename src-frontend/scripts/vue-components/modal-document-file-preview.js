@@ -39,71 +39,72 @@ const template = `
 `;
 
 export default {
-    name: 'homedocs-modal-document-file-preview',
-    template: template,
-    data: function () {
-        return ({
-            error: false,
-            index: 0
-        });
+  name: "homedocs-modal-document-file-preview",
+  template: template,
+  data: function () {
+    return {
+      error: false,
+      index: 0,
+    };
+  },
+  props: ["files", "previewIndex"],
+  created: function () {
+    window.addEventListener("keydown", this.onKeyPress);
+    this.index = this.previewIndex;
+  },
+  beforeUnmount: function () {
+    document.removeEventListener("keydown", this.onKeyPress);
+  },
+  computed: {
+    totalFiles: function () {
+      return this.files.length;
     },
-    props: [
-        'files', 'previewIndex'
-    ],
-    created: function () {
-        window.addEventListener('keydown', this.onKeyPress);
-        this.index = this.previewIndex;
+    fileId: function () {
+      return this.files[this.index].id;
     },
-    computed: {
-        totalFiles: function () {
-            return (this.files.length);
-        },
-        fileId: function () {
-            return (this.files[this.index].id);
-        },
-        fileName: function () {
-            return (this.files[this.index].name);
-        },
-        fileSize: function () {
-            return (this.files[this.index].size);
-        },
-        isPreviousButtonDisabled: function () {
-            return (this.index < 1);
-        },
-        isNextButtonDisabled: function () {
-            return (this.index >= this.files.length - 1);
-        },
-        hasPreviewSupport: function () {
-            return (this.$utils.isImage(this.files[this.index].name));
-        }
+    fileName: function () {
+      return this.files[this.index].name;
     },
-    methods: {
-        onPrevious: function () {
-            if (this.index > 0) {
-                this.index--;
-            }
-        },
-        onNext: function () {
-            if (this.index < this.files.length - 1) {
-                this.index++;
-            }
-        },
-        onClose: function () {
-            window.removeEventListener('keydown', this.onKeyPress);
-            this.$emit("onClose");
-        },
-        onKeyPress: function (e) {
-            switch (e.code) {
-                case "Escape":
-                    this.onClose();
-                    break;
-                case "ArrowLeft":
-                    this.onPrevious();
-                    break;
-                case "ArrowRight":
-                    this.onNext();
-                    break;
-            }
-        }
-    }
-}
+    fileSize: function () {
+      return this.files[this.index].size;
+    },
+    isPreviousButtonDisabled: function () {
+      return this.index < 1;
+    },
+    isNextButtonDisabled: function () {
+      return this.index >= this.files.length - 1;
+    },
+    hasPreviewSupport: function () {
+      return this.$utils.isImage(this.files[this.index].name);
+    },
+  },
+  methods: {
+    onPrevious: function () {
+      if (this.index > 0) {
+        this.index--;
+      }
+    },
+    onNext: function () {
+      if (this.index < this.files.length - 1) {
+        this.index++;
+      }
+    },
+    onClose: function () {
+      window.removeEventListener("keydown", this.onKeyPress);
+      this.$emit("onClose");
+    },
+    onKeyPress: function (e) {
+      switch (e.code) {
+        case "Escape":
+          this.onClose();
+          break;
+        case "ArrowLeft":
+          this.onPrevious();
+          break;
+        case "ArrowRight":
+          this.onNext();
+          break;
+      }
+    },
+  },
+};
