@@ -24,7 +24,6 @@ export default {
   name: "homedocs-modal-confirm",
   template: template,
   created: function () {
-    console.log("created");
     window.addEventListener("keydown", this.onKeyPress);
   },
   beforeUnmount: function () {
