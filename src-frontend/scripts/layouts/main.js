@@ -1,11 +1,8 @@
-//import { default as modalAPIError } from '../vue-components/modal-api-error.js';
+import { default as apiErrorNotification } from "../vue-components/notification-api-error.js";
 
 const template = `
     <section class="section">
         <div class="container is-fluid">
-            <!--
-            <homedocs-modal-api-error v-if="apiError" v-bind:error="apiError" v-on:close="apiError = null"></homedocs-modal-api-error>
-            -->
             <nav class="navbar" role="navigation" aria-label="main navigation">
                 <div class="navbar-brand">
                     <a class="navbar-item is-uppercase has-text-weight-bold" href="https://github.com/aportela/homedocs" target="_blank">
@@ -46,44 +43,43 @@ const template = `
                     </div>
                 </div>
             </nav>
+            <homedocs-notification-api-error v-if="apiError" :message="apiError"></homedocs-notification-api-error>
             <router-view v-on:showAPIError="apiError = $event;"></router-view>
-            <!--
-            <homedocs-modal-api-error v-if="apiError" v-bind:error="apiError" v-on:close="apiError = null"></homedocs-modal-api-error>
-            -->
         </div>
     </section>
 `;
 
 export default {
-    name: 'homedocs-section-app-container',
-    template: template,
-    data: function () {
-        return ({
-            loading: false,
-            apiError: null,
-            searchQuery: null,
-            showMobileMenu: false
+  name: "homedocs-section-app-container",
+  template: template,
+  data: function () {
+    return {
+      loading: false,
+      apiError: null,
+      searchQuery: null,
+      showMobileMenu: false,
+    };
+  },
+  watch: {
+    $route: function (to, from) {
+      this.showMobileMenu = false;
+    },
+  },
+  methods: {
+    onSignOut: function () {
+      this.apiError = null;
+      this.loading = true;
+      this.$api.user
+        .signOut()
+        .then((success) => {
+          this.loading = false;
+          this.$localStorage.remove("jwt");
+          this.$router.push({ name: "signIn" });
+        })
+        .catch((error) => {
+          this.loading = false;
+          this.apiError = error.response.getApiErrorData();
         });
     },
-    watch: {
-        '$route': function (to, from) {
-            this.showMobileMenu = false;
-        }
-    },
-    components: {
-        //'homedocs-modal-api-error': modalAPIError
-    },
-    methods: {
-        onSignOut: function () {
-            this.loading = true;
-            this.$api.user.signOut().then(success => {
-                this.loading = false;
-                this.$localStorage.remove("jwt");
-                this.$router.push({ name: 'signIn' });
-            }).catch(error => {
-                this.loading = false;
-                // TODO
-            });
-        }
-    }
-}
+  },
+};

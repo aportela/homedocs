@@ -1,10 +1,11 @@
-//import { default as modalAPIError } from '../vue-components/modal-api-error.js';
+import { default as apiErrorNotification } from "../vue-components/notification-api-error.js";
 
 const template = `
     <!-- template credits: daniel (https://github.com/dansup) -->
     <section class="hero is-fullheight is-light is-bold is-unselectable">
         <div class="hero-body">
             <div class="container">
+              <homedocs-notification-api-error v-if="apiError" :message="apiError"></homedocs-notification-api-error>
                 <div class="columns is-vcentered">
                     <div class="column is-4 is-offset-4">
                         <h1 class="title has-text-centered"><span class="icon is-medium"><i class="fas fa-book-reader"></i></span> HOMEDOCS <span class="icon is-medium"><i class="fas fa-book-reader"></i></span></h1>
@@ -47,78 +48,96 @@ const template = `
                 </div>
             </div>
         </div>
-        <!--
-        <homedocs-modal-api-error v-if="apiError" v-bind:error="apiError" v-on:close="apiError = null"></homedocs-modal-api-error>
-        -->
     </section>
 `;
 
 export default {
-    name: 'homedocs-section-signin',
-    template: template,
-    data: function () {
-        return ({
-            loading: false,
-            email: null,
-            password: null,
-            apiError: null
+  name: "homedocs-section-signin",
+  template: template,
+  data: function () {
+    return {
+      loading: false,
+      email: "766f6964+homedocs@gmail.com",
+      password: "as",
+      apiError: null,
+    };
+  },
+  computed: {
+    allowSignUp: function () {
+      return initialState.allowSignUp;
+    },
+    disableSubmit: function () {
+      return this.loading || !(this.email && this.password);
+    },
+  },
+  created: function () {
+    this.$validator.clear();
+  },
+  mounted: function () {
+    this.$nextTick(() => this.$refs.email.focus());
+  },
+  components: {
+    "homedocs-notification-api-error": apiErrorNotification,
+  },
+  methods: {
+    onSubmit: function () {
+      this.$validator.clear();
+      this.loading = true;
+      this.apiError = false;
+      this.$api.user
+        .signIn(this.email, this.password)
+        .then((success) => {
+          this.loading = false;
+          initialState.session.logged = true;
+          this.$router.push({ name: "appDashBoard" });
+        })
+        .catch((error) => {
+          this.loading = false;
+          switch (error.response.status) {
+            case 400:
+              if (
+                error.response.data.invalidOrMissingParams.find(function (e) {
+                  return e === "email";
+                })
+              ) {
+                this.$validator.setInvalid(
+                  "email",
+                  this.$t("pages.signIn.errorMessages.APIMissingEmail")
+                );
+                this.$nextTick(() => this.$refs.email.focus());
+              } else if (
+                error.response.data.invalidOrMissingParams.find(function (e) {
+                  return e === "password";
+                })
+              ) {
+                this.$validator.setInvalid(
+                  "password",
+                  this.$t("pages.signIn.errorMessages.APIMissingPassword")
+                );
+                this.$nextTick(() => this.$refs.password.focus());
+              } else {
+                this.apiError = error.response.getApiErrorData();
+              }
+              break;
+            case 404:
+              this.$validator.setInvalid(
+                "email",
+                this.$t("pages.signIn.errorMessages.emailNotRegistered")
+              );
+              this.$nextTick(() => this.$refs.email.focus());
+              break;
+            case 401:
+              this.$validator.setInvalid(
+                "password",
+                this.$t("pages.signIn.errorMessages.incorrectPassword")
+              );
+              this.$nextTick(() => this.$refs.password.focus());
+              break;
+            default:
+              this.apiError = error.response.getApiErrorData();
+              break;
+          }
         });
     },
-    computed: {
-        allowSignUp: function () {
-            return (initialState.allowSignUp);
-        },
-        disableSubmit: function () {
-            return (this.loading || !(this.email && this.password));
-        }
-    },
-    created: function () {
-        this.$validator.clear();
-    },
-    mounted: function () {
-        this.$nextTick(() => this.$refs.email.focus());
-    },
-    components: {
-        //'homedocs-modal-api-error': modalAPIError
-    },
-    methods: {
-        onSubmit: function () {
-            this.$validator.clear();
-            this.loading = true;
-            this.apiError = false;
-            this.$api.user.signIn(this.email, this.password).then(success => {
-                this.loading = false;
-                initialState.session.logged = true;
-                this.$router.push({ name: 'appDashBoard' });
-            }).catch(error => {
-                this.loading = false;
-                switch (error.response.status) {
-                    case 400:
-                        if (error.response.data.invalidOrMissingParams.find(function (e) { return (e === "email"); })) {
-                            this.$validator.setInvalid("email", this.$t('pages.signIn.errorMessages.APIMissingEmail'));
-                            this.$nextTick(() => this.$refs.email.focus());
-                        } else if (error.response.data.invalidOrMissingParams.find(function (e) { return (e === "password"); })) {
-                            this.$validator.setInvalid("password", this.$t('pages.signIn.errorMessages.APIMissingPassword'));
-                            this.$nextTick(() => this.$refs.password.focus());
-                        } else {
-                            // TODO
-                            //this.apiError = response.getApiErrorData();
-                        }
-                        break;
-                    case 404:
-                        this.$validator.setInvalid("email", this.$t('pages.signIn.errorMessages.emailNotRegistered'));
-                        this.$nextTick(() => this.$refs.email.focus());
-                        break;
-                    case 401:
-                        this.$validator.setInvalid("password", this.$t('pages.signIn.errorMessages.incorrectPassword'));
-                        this.$nextTick(() => this.$refs.password.focus());
-                        break;
-                    default:
-                        // TODO
-                        //this.apiError = response.getApiErrorData();
-                        break;
-                }
-            });
-        }
-    }
-}
+  },
+};

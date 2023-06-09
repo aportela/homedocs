@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import { default as controlInputTags } from "../vue-components/control-input-tags.js";
 import { default as modalDocumentFilePreview } from "../vue-components/modal-document-file-preview.js";
 import { default as modalConfirm } from "../vue-components/modal-confirm.js";
+import { default as apiErrorNotification } from "../vue-components/notification-api-error.js";
 
 const template = `
     <form>
@@ -134,6 +135,7 @@ export default {
       uploadErrors: [],
       confirmDeleteDocumentId: null,
       confirmDeleteFileIndex: -1,
+      apiError: null,
     };
   },
   computed: {
@@ -217,6 +219,7 @@ export default {
     "homedocs-control-input-tags": controlInputTags,
     "homedocs-modal-document-file-preview": modalDocumentFilePreview,
     "homedocs-modal-confirm": modalConfirm,
+    "homedocs-notification-api-error": apiErrorNotification,
   },
   methods: {
     isValid: function () {
@@ -263,14 +266,13 @@ export default {
               this.document.files.push(response.data.data);
             })
             .catch((error) => {
-              // TODO
               this.uploadErrors.push(
                 this.$t("pages.document.errorMessages.errorUploadingFile") +
                   event.target.files[i].name +
                   " (server error)"
               );
               this.pendingUploads--;
-              //this.$emit("showAPIError", response.getApiErrorData());
+              //this.apiError = error.response.getApiErrorData();
               this.loading = false;
             });
         } else {
@@ -306,7 +308,6 @@ export default {
               this.document.files.push(response.data.data);
             })
             .catch((error) => {
-              // TODO
               this.uploadErrors.push(
                 this.$t("pages.document.errorMessages.errorUploadingFile") +
                   event.dataTransfer.files[i].name +
@@ -315,7 +316,7 @@ export default {
                   )
               );
               this.pendingUploads--;
-              //this.$emit("showAPIError", response.getApiErrorData());
+              //this.apiError = error.response.getApiErrorData();
               this.loading = false;
             });
         } else {
@@ -356,9 +357,8 @@ export default {
                 this.onRefresh();
               })
               .catch((error) => {
-                // TODO
-                //this.$emit("showAPIError", response.getApiErrorData());
                 this.loading = false;
+                this.apiError = error.response.getApiErrorData();
               });
           } else {
             this.document.id = this.$utils.uuid();
@@ -376,9 +376,8 @@ export default {
                 });
               })
               .catch((error) => {
-                // TODO
                 this.loading = false;
-                //this.$emit("showAPIError", response.getApiErrorData());
+                this.apiError = error.response.getApiErrorData();
               });
           }
         }
@@ -394,9 +393,8 @@ export default {
             this.$router.push({ name: "appDashBoard" });
           })
           .catch((error) => {
-            // TODO
-            //this.$emit("showAPIError", response.getApiErrorData());
             this.loading = false;
+            this.apiError = error.response.getApiErrorData();
           });
       }
     },
@@ -418,9 +416,8 @@ export default {
             this.$nextTick(() => this.$refs.title.focus());
           })
           .catch((error) => {
-            // TODO
-            //this.$emit("showAPIError", response.getApiErrorData());
             this.loading = false;
+            this.apiError = error.response.getApiErrorData();
           });
       }
     },
