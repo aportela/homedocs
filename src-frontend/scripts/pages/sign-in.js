@@ -57,8 +57,8 @@ export default {
   data: function () {
     return {
       loading: false,
-      email: "766f6964+homedocs@gmail.com",
-      password: "as",
+      email: null,
+      password: null,
       apiError: null,
     };
   },
