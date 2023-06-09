@@ -358,7 +358,9 @@ export default {
               })
               .catch((error) => {
                 this.loading = false;
-                this.apiError = error.response.getApiErrorData();
+                this.$emit("showAPIError", {
+                  data: error.response.getApiErrorData(),
+                });
               });
           } else {
             this.document.id = this.$utils.uuid();
@@ -377,7 +379,9 @@ export default {
               })
               .catch((error) => {
                 this.loading = false;
-                this.apiError = error.response.getApiErrorData();
+                this.$emit("showAPIError", {
+                  data: error.response.getApiErrorData(),
+                });
               });
           }
         }
@@ -394,7 +398,9 @@ export default {
           })
           .catch((error) => {
             this.loading = false;
-            this.apiError = error.response.getApiErrorData();
+            this.$emit("showAPIError", {
+              data: error.response.getApiErrorData(),
+            });
           });
       }
     },
@@ -417,7 +423,9 @@ export default {
           })
           .catch((error) => {
             this.loading = false;
-            this.apiError = error.response.getApiErrorData();
+            this.$emit("showAPIError", {
+              data: error.response.getApiErrorData(),
+            });
           });
       }
     },

@@ -39,7 +39,14 @@ export default {
         };
 
         error.response.getApiErrorData = function () {
-          return JSON.stringify(error.response, null, "\t");
+          return JSON.stringify(
+            {
+              url: error.request.responseURL,
+              response: error.response,
+            },
+            null,
+            "\t"
+          );
         };
 
         return Promise.reject(error);

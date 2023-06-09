@@ -1,10 +1,8 @@
 import { default as blockRecentDocuments } from "../vue-components/block-recent-documents.js";
 import { default as blockTagCloud } from "../vue-components/block-tag-cloud.js";
-import { default as apiErrorNotification } from "../vue-components/notification-api-error.js";
 
 const template = `
         <div>
-            <homedocs-notification-api-error v-if="apiError" :message="apiError"></homedocs-notification-api-error>
             <div class="columns">
                 <div class="column is-6">
                     <article class="message">
@@ -35,10 +33,10 @@ const template = `
             </div>
             <div class="columns">
                 <div class="column is-6">
-                    <homedocs-block-recent-documents v-on:showAPIError="raiseAPIError($event)"></homedocs-block-recent-documents>
+                    <homedocs-block-recent-documents v-on:showAPIError="raiseAPIError($event.data)"></homedocs-block-recent-documents>
                 </div>
                 <div class="column is-6">
-                    <homedocs-block-tag-cloud v-on:showAPIError="raiseAPIError($event)"></homedocs-block-tag-cloud>
+                    <homedocs-block-tag-cloud v-on:showAPIError="raiseAPIError($event.data)"></homedocs-block-tag-cloud>
                 </div>
             </div>
         </div>
@@ -55,11 +53,12 @@ export default {
   components: {
     "homedocs-block-recent-documents": blockRecentDocuments,
     "homedocs-block-tag-cloud": blockTagCloud,
-    "homedocs-notification-api-error": apiErrorNotification,
   },
   methods: {
-    raiseAPIError: function (error) {
-      this.apiError = error.response.getApiErrorData();
+    raiseAPIError: function (errorData) {
+      this.$emit("showAPIError", {
+        data: errorData,
+      });
     },
   },
 };

@@ -5,7 +5,7 @@ const template = `
     <section class="hero is-fullheight is-light is-bold is-unselectable">
         <div class="hero-body">
             <div class="container">
-              <homedocs-notification-api-error v-if="apiError" :message="apiError"></homedocs-notification-api-error>
+              <homedocs-notification-api-error v-if="apiError" :message="apiError" @close="apiError = null"></homedocs-notification-api-error>
                 <div class="columns is-vcentered">
                     <div class="column is-4 is-offset-4">
                         <h1 class="title has-text-centered"><span class="icon is-medium"><i class="fas fa-book-reader"></i></span> HOMEDOCS <span class="icon is-medium"><i class="fas fa-book-reader"></i></span></h1>

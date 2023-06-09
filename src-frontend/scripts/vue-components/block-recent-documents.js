@@ -44,7 +44,7 @@ export default {
   data: function () {
     return {
       loading: false,
-      apiError: null,
+      apiError: false,
       documents: [],
       showWarningNoDocuments: false,
     };
@@ -55,7 +55,8 @@ export default {
   methods: {
     onRefresh: function () {
       if (!this.loading) {
-        this.apiError = null;
+        this.documents = [];
+        this.apiError = false;
         this.loading = true;
         this.showWarningNoDocuments = false;
         this.$api.document
@@ -71,11 +72,11 @@ export default {
             this.loading = false;
           })
           .catch((error) => {
-            // TODO
-            this.documents = [];
-            //this.apiError = response.getApiErrorData();
-            //this.$emit("showAPIError", this.apiError);
             this.loading = false;
+            this.apiError = true;
+            this.$emit("showAPIError", {
+              data: error.response.getApiErrorData(),
+            });
           });
       }
     },

@@ -43,8 +43,8 @@ const template = `
                     </div>
                 </div>
             </nav>
-            <homedocs-notification-api-error v-if="apiError" :message="apiError"></homedocs-notification-api-error>
-            <router-view v-on:showAPIError="apiError = $event;"></router-view>
+            <homedocs-notification-api-error v-if="apiError" :message="apiError" @close="apiError = null"></homedocs-notification-api-error>
+            <router-view v-on:showAPIError="apiError = $event.data;"></router-view>
         </div>
     </section>
 `;
@@ -64,6 +64,9 @@ export default {
     $route: function (to, from) {
       this.showMobileMenu = false;
     },
+  },
+  components: {
+    "homedocs-notification-api-error": apiErrorNotification,
   },
   methods: {
     onSignOut: function () {

@@ -31,36 +31,41 @@ const template = `
 `;
 
 export default {
-    name: 'homedocs-block-tag-cloud',
-    template: template,
-    data: function () {
-        return ({
-            loading: false,
-            apiError: null,
-            items: [],
-            showWarningNoTags: false
-        });
+  name: "homedocs-block-tag-cloud",
+  template: template,
+  data: function () {
+    return {
+      loading: false,
+      apiError: false,
+      items: [],
+      showWarningNoTags: false,
+    };
+  },
+  mounted: function () {
+    this.onRefresh();
+  },
+  methods: {
+    onRefresh: function () {
+      if (!this.loading) {
+        this.items = [];
+        this.apiError = false;
+        this.loading = true;
+        this.showWarningNoTags = false;
+        this.$api.tag
+          .getCloud()
+          .then((response) => {
+            this.items = response.data.tags;
+            this.showWarningNoTags = this.items.length < 1;
+            this.loading = false;
+          })
+          .catch((error) => {
+            this.loading = false;
+            this.apiError = true;
+            this.$emit("showAPIError", {
+              data: error.response.getApiErrorData(),
+            });
+          });
+      }
     },
-    mounted: function () {
-        this.onRefresh();
-    },
-    methods: {
-        onRefresh: function () {
-            if (!this.loading) {
-                this.apiError = null;
-                this.loading = true;
-                this.showWarningNoTags = false;
-                this.$api.tag.getCloud().then(response => {
-                    this.items = response.data.tags;
-                    this.showWarningNoTags = this.items.length < 1;
-                    this.loading = false;
-                }).catch(error => {
-                    // TODO
-                    //this.apiError = response.getApiErrorData();
-                    //this.$emit("showAPIError", this.apiError);
-                    this.loading = false;
-                });
-            }
-        }
-    }
-}
+  },
+};
