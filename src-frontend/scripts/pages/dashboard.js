@@ -33,10 +33,10 @@ const template = `
             </div>
             <div class="columns">
                 <div class="column is-6">
-                    <homedocs-block-recent-documents v-on:showAPIError="raiseAPIError($event.data)"></homedocs-block-recent-documents>
+                    <homedocs-block-recent-documents v-on:showAPIError="raiseAPIError($event.httpCode, $event.data)"></homedocs-block-recent-documents>
                 </div>
                 <div class="column is-6">
-                    <homedocs-block-tag-cloud v-on:showAPIError="raiseAPIError($event.data)"></homedocs-block-tag-cloud>
+                    <homedocs-block-tag-cloud v-on:showAPIError="raiseAPIError($event.httpCode, httpCode, $event.data)"></homedocs-block-tag-cloud>
                 </div>
             </div>
         </div>
@@ -55,10 +55,17 @@ export default {
     "homedocs-block-tag-cloud": blockTagCloud,
   },
   methods: {
-    raiseAPIError: function (errorData) {
-      this.$emit("showAPIError", {
-        data: errorData,
-      });
+    raiseAPIError: function (httpCode, errorData) {
+      if (httpCode != 401) {
+        this.$emit("showAPIError", {
+          httpCode: error.response.status,
+          data: errorData,
+        });
+      } else {
+        this.$router.push({
+          name: "signIn",
+        });
+      }
     },
   },
 };

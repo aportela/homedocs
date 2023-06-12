@@ -366,6 +366,7 @@ export default {
                     break;
                   default:
                     this.$emit("showAPIError", {
+                      httpCode: error.response.status,
                       data: error.response.getApiErrorData(),
                     });
                     break;
@@ -396,6 +397,7 @@ export default {
                     break;
                   default:
                     this.$emit("showAPIError", {
+                      httpCode: error.response.status,
                       data: error.response.getApiErrorData(),
                     });
                     break;
@@ -424,6 +426,7 @@ export default {
                 break;
               default:
                 this.$emit("showAPIError", {
+                  httpCode: error.response.status,
                   data: error.response.getApiErrorData(),
                 });
                 break;
@@ -458,6 +461,7 @@ export default {
                 break;
               default:
                 this.$emit("showAPIError", {
+                  httpCode: error.response.status,
                   data: error.response.getApiErrorData(),
                 });
                 break;

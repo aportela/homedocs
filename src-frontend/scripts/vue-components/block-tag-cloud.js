@@ -62,6 +62,7 @@ export default {
             this.loading = false;
             this.apiError = true;
             this.$emit("showAPIError", {
+              httpCode: error.response.status,
               data: error.response.getApiErrorData(),
             });
           });
