@@ -1,33 +1,31 @@
 <?php
 
-    declare(strict_types=1);
+declare(strict_types=1);
 
-    namespace HomeDocs\Middleware;
+namespace HomeDocs\Middleware;
 
-    class CheckAuth {
+class CheckAuth
+{
 
-        private $container;
+    public function __construct(\Psr\Container\ContainerInterface $container)
+    {
+    }
 
-        public function __construct($container) {
-            $this->container = $container;
-        }
-
-        /**
-         * middleware to check api methods with auth required
-         *
-         * @param  \Psr\Http\Message\ServerRequestInterface $request  PSR7 request
-         * @param  \Psr\Http\Message\ResponseInterface      $response PSR7 response
-         * @param  callable                                 $next     Next middleware
-         *
-         * @return \Psr\Http\Message\ResponseInterface
-         */
-        public function __invoke($request, $response, $next)
-        {
-            if (\HomeDocs\UserSession::isLogged()) {
-                $response = $next($request, $response);
-                return $response;
-            } else {
-                throw new \HomeDocs\Exception\UnauthorizedException($request->getMethod() . " " . $request->getUri()->getPath());
-            }
+    /**
+     * middleware to check api methods with auth required
+     *
+     * @param  \Psr\Http\Message\ServerRequestInterface $request  PSR7 request
+     * @param  \Psr\Http\Server\RequestHandlerInterface $handler  PSR7 request handler object
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function __invoke(\Psr\Http\Message\ServerRequestInterface $request, \Psr\Http\Server\RequestHandlerInterface $handler): \Psr\Http\Message\ResponseInterface
+    {
+        if (\HomeDocs\UserSession::isLogged()) {
+            $response = $handler->handle($request);
+            return $response;
+        } else {
+            throw new \HomeDocs\Exception\UnauthorizedException($request->getMethod() . " " . $request->getUri()->getPath());
         }
     }
+}

@@ -91,7 +91,7 @@ return function (App $app) {
                 );
                 $response->getBody()->write($payload);
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
-            });
+            })->add(\HomeDocs\Middleware\JWT::class)->add(\HomeDocs\Middleware\CheckAuth::class);
 
             $group->post('/document/search', function (Request $request, Response $response, array $args) {
                 $settings = $this->get('settings');
@@ -117,7 +117,7 @@ return function (App $app) {
                 );
                 $response->getBody()->write($payload);
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
-            });
+            })->add(\HomeDocs\Middleware\JWT::class)->add(\HomeDocs\Middleware\CheckAuth::class);
 
             $group->get('/document/{id}', function (Request $request, Response $response, array $args) {
                 $document = new \HomeDocs\Document();
@@ -131,7 +131,7 @@ return function (App $app) {
                 );
                 $response->getBody()->write($payload);
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
-            });
+            })->add(\HomeDocs\Middleware\JWT::class)->add(\HomeDocs\Middleware\CheckAuth::class);
 
             $group->post('/document/{id}', function (Request $request, Response $response, array $args) {
                 $params = $request->getParsedBody();
@@ -162,7 +162,7 @@ return function (App $app) {
                 );
                 $response->getBody()->write($payload);
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
-            });
+            })->add(\HomeDocs\Middleware\JWT::class)->add(\HomeDocs\Middleware\CheckAuth::class);
 
             $group->put('/document/{id}', function (Request $request, Response $response, array $args) {
                 $params = $request->getParsedBody();
@@ -199,7 +199,7 @@ return function (App $app) {
                 );
                 $response->getBody()->write($payload);
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
-            });
+            })->add(\HomeDocs\Middleware\JWT::class)->add(\HomeDocs\Middleware\CheckAuth::class);
 
             $group->delete('/document/{id}', function (Request $request, Response $response, array $args) {
                 $document = new \HomeDocs\Document(
@@ -216,7 +216,7 @@ return function (App $app) {
                 );
                 $response->getBody()->write($payload);
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
-            });
+            })->add(\HomeDocs\Middleware\JWT::class)->add(\HomeDocs\Middleware\CheckAuth::class);
 
             $group->get('/file/{id}', function (Request $request, Response $response, array $args) {
                 $route = $request->getAttribute('route');
@@ -262,7 +262,7 @@ return function (App $app) {
                 } else {
                     throw new \HomeDocs\Exception\NotFoundException($args['id'] ?? "");
                 }
-            });
+            })->add(\HomeDocs\Middleware\JWT::class)->add(\HomeDocs\Middleware\CheckAuth::class);
 
             $group->post('/file/{id}', function (Request $request, Response $response, array $args) {
                 $files = $request->getUploadedFiles();
@@ -286,7 +286,7 @@ return function (App $app) {
                 );
                 $response->getBody()->write($payload);
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
-            });
+            })->add(\HomeDocs\Middleware\JWT::class)->add(\HomeDocs\Middleware\CheckAuth::class);
 
             $group->get('/tag-cloud', function (Request $request, Response $response, array $args) {
                 $payload = json_encode(
@@ -297,7 +297,7 @@ return function (App $app) {
                 );
                 $response->getBody()->write($payload);
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
-            });
+            })->add(\HomeDocs\Middleware\JWT::class)->add(\HomeDocs\Middleware\CheckAuth::class);
 
             $group->post('/tag/search', function (Request $request, Response $response, array $args) {
                 $payload = json_encode(
@@ -308,7 +308,7 @@ return function (App $app) {
                 );
                 $response->getBody()->write($payload);
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
-            });
+            })->add(\HomeDocs\Middleware\JWT::class)->add(\HomeDocs\Middleware\CheckAuth::class);
         }
     )->add(\HomeDocs\Middleware\JWT::class)->add(\HomeDocs\Middleware\APIExceptionCatcher::class);
 };
