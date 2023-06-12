@@ -89,7 +89,11 @@ export default {
         .then((success) => {
           this.loading = false;
           initialState.session.logged = true;
-          this.$router.push({ name: "appDashBoard" });
+          if (window.history.length > 2) {
+            this.$router.go(-1);
+          } else {
+            this.$router.push({ name: "appDashBoard" });
+          }
         })
         .catch((error) => {
           this.loading = false;

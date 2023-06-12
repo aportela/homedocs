@@ -196,9 +196,18 @@ export default {
         })
         .catch((error) => {
           this.loading = false;
-          this.$emit("showAPIError", {
-            data: error.response.getApiErrorData(),
-          });
+          switch (error.response.status) {
+            case 401:
+              this.$router.push({
+                name: "signIn",
+              });
+              break;
+            default:
+              this.$emit("showAPIError", {
+                data: error.response.getApiErrorData(),
+              });
+              break;
+          }
         });
     },
     cutDescription: function (description) {

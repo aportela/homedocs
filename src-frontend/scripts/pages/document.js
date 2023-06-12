@@ -358,9 +358,18 @@ export default {
               })
               .catch((error) => {
                 this.loading = false;
-                this.$emit("showAPIError", {
-                  data: error.response.getApiErrorData(),
-                });
+                switch (error.response.status) {
+                  case 401:
+                    this.$router.push({
+                      name: "signIn",
+                    });
+                    break;
+                  default:
+                    this.$emit("showAPIError", {
+                      data: error.response.getApiErrorData(),
+                    });
+                    break;
+                }
               });
           } else {
             this.document.id = this.$utils.uuid();
@@ -379,9 +388,18 @@ export default {
               })
               .catch((error) => {
                 this.loading = false;
-                this.$emit("showAPIError", {
-                  data: error.response.getApiErrorData(),
-                });
+                switch (error.response.status) {
+                  case 401:
+                    this.$router.push({
+                      name: "signIn",
+                    });
+                    break;
+                  default:
+                    this.$emit("showAPIError", {
+                      data: error.response.getApiErrorData(),
+                    });
+                    break;
+                }
               });
           }
         }
@@ -398,9 +416,18 @@ export default {
           })
           .catch((error) => {
             this.loading = false;
-            this.$emit("showAPIError", {
-              data: error.response.getApiErrorData(),
-            });
+            switch (error.response.status) {
+              case 401:
+                this.$router.push({
+                  name: "signIn",
+                });
+                break;
+              default:
+                this.$emit("showAPIError", {
+                  data: error.response.getApiErrorData(),
+                });
+                break;
+            }
           });
       }
     },
@@ -423,9 +450,18 @@ export default {
           })
           .catch((error) => {
             this.loading = false;
-            this.$emit("showAPIError", {
-              data: error.response.getApiErrorData(),
-            });
+            switch (error.response.status) {
+              case 401:
+                this.$router.push({
+                  name: "signIn",
+                });
+                break;
+              default:
+                this.$emit("showAPIError", {
+                  data: error.response.getApiErrorData(),
+                });
+                break;
+            }
           });
       }
     },
