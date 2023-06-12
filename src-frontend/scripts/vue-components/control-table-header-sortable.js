@@ -5,14 +5,8 @@ const template = `
     </th>
 `;
 
-
 export default {
-    name: 'homedocs-table-header-sortable',
-    template: template,
-    props: [
-        'name',
-        'isSorted',
-        'sortOrder',
-        'className'
-    ]
-}
+  name: "homedocs-table-header-sortable",
+  template: template,
+  props: ["name", "isSorted", "sortOrder", "className"],
+};
