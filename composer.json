@@ -27,7 +27,7 @@
     },
     "autoload": {
         "psr-4": {
-            "HomeDocs\\": "src"
+            "HomeDocs\\": "src-backend\\homedocs"
         }
     }
 }
