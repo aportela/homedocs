@@ -89,7 +89,7 @@ export default {
         .then((success) => {
           this.loading = false;
           initialState.session.logged = true;
-          if (window.history.length > 2) {
+          if (this.$router.options.history.state.back) {
             this.$router.go(-1);
           } else {
             this.$router.push({ name: "appDashBoard" });
