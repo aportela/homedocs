@@ -13,6 +13,7 @@ class Document
     public $createdOnTimestamp;
     public $createdBy;
     public $files;
+    public $rootStoragePath;
     public $tags;
 
     public function __construct(string $id = "", string $title = "", string $description = "", $tags = array(), $files = array())
@@ -22,6 +23,11 @@ class Document
         $this->description = $description;
         $this->tags = $tags;
         $this->files = $files;
+    }
+
+    public function setRootStoragePath(string $rootStoragePath)
+    {
+        $this->rootStoragePath = $rootStoragePath;
     }
 
     public static function searchRecent(\aportela\DatabaseWrapper\DB $dbh, int $count = 16)
@@ -210,7 +216,7 @@ class Document
                             new \aportela\DatabaseWrapper\Param\StringParam(":file_id", mb_strtolower($originalFile->id))
                         )
                     );
-                    $file = new \HomeDocs\File($originalFile->id);
+                    $file = new \HomeDocs\File($this->rootStoragePath, $originalFile->id);
                     $file->remove($dbh);
                 }
             }
@@ -249,7 +255,7 @@ class Document
         if (!empty($this->id) && mb_strlen($this->id) == 36) {
             $originalFiles = $this->getFiles($dbh);
             foreach ($originalFiles as $file) {
-                $file = new \HomeDocs\File($file->id);
+                $file = new \HomeDocs\File($this->rootStoragePath, $file->id);
                 $file->remove($dbh);
             }
 
@@ -359,6 +365,7 @@ class Document
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $item) {
                 $files[] = new \HomeDocs\File(
+                    $this->rootStoragePath,
                     $item->id,
                     $item->name,
                     intval($item->size),

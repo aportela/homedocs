@@ -15,7 +15,13 @@ ini_set('display_errors', $settings['environment'] == 'development' ? '1' : '0')
 date_default_timezone_set('Europe/Madrid');
 
 // Path settings
-$settings['root'] = dirname(__DIR__);
+$settings['paths']['root'] = dirname(dirname(__DIR__));
+$settings['paths']['srcApp'] = dirname(__DIR__);
+$settings['paths']['vendor'] = $settings['paths']['root'] . DIRECTORY_SEPARATOR . 'vendor';
+$settings['paths']['database'] = $settings['paths']['root'] . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'homedocs2.sqlite3';
+$settings['paths']['storage'] = $settings['paths']['root'] . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'storage';
+$settings['paths']['templates'] = $settings['paths']['root'] . DIRECTORY_SEPARATOR . 'templates';
+$settings['paths']['logs'] = $settings['paths']['root'] . DIRECTORY_SEPARATOR . 'logs';
 
 // Error Handling Middleware settings
 $settings['error'] = [
@@ -24,7 +30,7 @@ $settings['error'] = [
     'display_error_details' => $settings['environment'] == 'development',
 
     // Parameter is passed to the default ErrorHandler
-    // View in rendered output by enabling the "displayErrorDetails" setting.
+    // View in rendered output by enabling the 'displayErrorDetails' setting.
     // For the console and unit tests we also disable it
     'log_errors' => true,
 
@@ -36,19 +42,19 @@ $settings['logger'] = [
     'defaultLevel' => $settings['environment'] == 'development' ? \Monolog\Logger::DEBUG : \Monolog\Logger::ERROR,
     'channels' => [
         'default'  => [
-            'path' => isset($_ENV['docker']) ? 'php://stdout' : __DIR__ . '/../logs/default.log',
+            'path' => isset($_ENV['docker']) ? 'php://stdout' : $settings['paths']['logs'] . DIRECTORY_SEPARATOR . 'default.log',
             'name' => 'Homedocs::Default'
         ],
         'http'  => [
-            'path' => isset($_ENV['docker']) ? 'php://stdout' : __DIR__ . '/../logs/http.log',
+            'path' => isset($_ENV['docker']) ? 'php://stdout' : $settings['paths']['logs'] . DIRECTORY_SEPARATOR . 'http.log',
             'name' => 'Homedocs::HTTP'
         ],
         'installer' => [
-            'path' => isset($_ENV['docker']) ? 'php://stdout' : __DIR__ . '/../logs/installer.log',
+            'path' => isset($_ENV['docker']) ? 'php://stdout' : $settings['paths']['logs'] . DIRECTORY_SEPARATOR . 'installer.log',
             'name' => 'Homedocs::Installer'
         ],
         'database' => [
-            'path' => isset($_ENV['docker']) ? 'php://stdout' : __DIR__ . '/../logs/database.log',
+            'path' => isset($_ENV['docker']) ? 'php://stdout' : $settings['paths']['logs'] . DIRECTORY_SEPARATOR . 'database.log',
             'name' => 'Homedocs::Database'
         ]
     ]
@@ -59,7 +65,7 @@ $settings['db'] = [
     'driver' => 'sqlite',
     'host' => '',
     'username' => '',
-    'database' => 'homedocs2.sqlite3',
+    'database' => $settings['paths']['database'],
     'password' => '',
     'charset' => 'utf8mb4',
     'collation' => 'utf8mb4_unicode_ci',
@@ -75,11 +81,11 @@ $settings['db'] = [
         // Set character set
         //PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci' // BUG: https://bugs.php.net/bug.php?id=81576
     ],
-    'upgradeSchemaPath' => __DIR__ . '/db-schema.php'
+    'upgradeSchemaPath' => $settings['paths']['srcApp'] . DIRECTORY_SEPARATOR . 'db-schema.php'
 ];
 
 $settings['twig'] = [
-    'path' =>  dirname(__DIR__) . DIRECTORY_SEPARATOR . 'templates',
+    'path' =>  $settings['paths']['templates'],
     'options' =>  ['auto_reload' => true, 'cache' => $settings['environment'] == 'development' ? false : dirname(__DIR__) . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'twig_cache']
 ];
 

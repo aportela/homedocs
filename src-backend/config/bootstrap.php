@@ -10,12 +10,12 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 
 $containerBuilder = new ContainerBuilder();
 
 // Set up settings
-$containerBuilder->addDefinitions(__DIR__ . '/container.php');
+$containerBuilder->addDefinitions(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'container.php');
 
 // Build PHP-DI Container instance
 $container = $containerBuilder->build();
@@ -24,9 +24,9 @@ $container = $containerBuilder->build();
 $app = $container->get(App::class);
 
 // Register routes
-(require __DIR__ . '/routes.php')($app);
+(require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'routes.php')($app);
 
 // Register middleware
-(require __DIR__ . '/middleware.php')($app);
+(require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'middleware.php')($app);
 
 return $app;

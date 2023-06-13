@@ -14,23 +14,22 @@ class File
     public $uploadedOnTimestamp;
     public $localStoragePath;
 
-    public function __construct(string $id = "", string $name = "", int $size = 0, $hash = "", $uploadedOnTimestamp = null)
+    public function __construct(string $rootStoragePath = null, string $id = "", string $name = "", int $size = 0, $hash = "", $uploadedOnTimestamp = null)
     {
         $this->id = $id;
         $this->name = $name;
         $this->size = $size;
         $this->hash = $hash;
         $this->uploadedOnTimestamp = $uploadedOnTimestamp;
-        $this->localStoragePath = $this->getFileStoragePath();
+        $this->localStoragePath = $this->getFileStoragePath($rootStoragePath);
     }
 
-    private function getFileStoragePath(): string
+    private function getFileStoragePath(string $rootStoragePath): string
     {
         if (!empty($this->id) && mb_strlen($this->id) == 36) {
-            $localStoragePath = dirname(__DIR__) . DIRECTORY_SEPARATOR  . "data" . DIRECTORY_SEPARATOR . "storage";
             return (sprintf(
                 "%s%s%s%s%s%s%s",
-                rtrim($localStoragePath, DIRECTORY_SEPARATOR),
+                $rootStoragePath,
                 DIRECTORY_SEPARATOR,
                 substr($this->id, 0, 1),
                 DIRECTORY_SEPARATOR,

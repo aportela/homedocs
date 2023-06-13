@@ -9,7 +9,6 @@ return function (App $app) {
     $app->get('/', function (Request $request, Response $response, array $args) {
         //$logger = $group->get(\Spieldose\Logger\HTTPRequestLogger::class);
         //$logger->info($request->getMethod() . " " . $request->getUri()->getPath());
-        $settings = $this->get('settings');
         return $this->get('Twig')->render($response, 'index.html.twig', [
             'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this))
         ]);
@@ -122,6 +121,7 @@ return function (App $app) {
             $group->get('/document/{id}', function (Request $request, Response $response, array $args) {
                 $document = new \HomeDocs\Document();
                 $document->id = $args['id'];
+                $document->setRootStoragePath($this->get('settings')['paths']['storage']);
                 $document->get($this->get(\aportela\DatabaseWrapper\DB::class));
                 $payload = json_encode(
                     [
@@ -136,10 +136,12 @@ return function (App $app) {
             $group->post('/document/{id}', function (Request $request, Response $response, array $args) {
                 $params = $request->getParsedBody();
                 $documentFiles = $params["files"] ?? [];
+                $rootStoragePath = $this->get('settings')['paths']['storage'];
                 $files = array();
                 if (is_array($documentFiles) && count($documentFiles) > 0) {
                     foreach ($documentFiles as $documentFile) {
                         $files[] = new \HomeDocs\File(
+                            $rootStoragePath,
                             $documentFile["id"],
                             $documentFile["name"],
                             $documentFile["size"],
@@ -154,6 +156,7 @@ return function (App $app) {
                     $params["tags"] ?? [],
                     $files
                 );
+                $document->setRootStoragePath($this->get('settings')['paths']['storage']);
                 $document->add($this->get(\aportela\DatabaseWrapper\DB::class));
                 $payload = json_encode(
                     [
@@ -167,10 +170,12 @@ return function (App $app) {
             $group->put('/document/{id}', function (Request $request, Response $response, array $args) {
                 $params = $request->getParsedBody();
                 $documentFiles = $params["files"] ?? [];
+                $rootStoragePath = $this->get('settings')['paths']['storage'];
                 $files = array();
                 if (is_array($documentFiles) && count($documentFiles) > 0) {
                     foreach ($documentFiles as $documentFile) {
                         $files[] = new \HomeDocs\File(
+                            $rootStoragePath,
                             $documentFile["id"],
                             $documentFile["name"],
                             $documentFile["size"],
@@ -182,6 +187,7 @@ return function (App $app) {
                 $document = new \HomeDocs\Document(
                     $args['id']
                 );
+                $document->setRootStoragePath($this->get('settings')['paths']['storage']);
                 // test existence && check permissions
                 $document->get($dbh);
                 $document = new \HomeDocs\Document(
@@ -191,6 +197,7 @@ return function (App $app) {
                     $params["tags"] ?? [],
                     $files
                 );
+                $document->setRootStoragePath($this->get('settings')['paths']['storage']);
                 $document->update($dbh);
                 $payload = json_encode(
                     [
@@ -205,6 +212,7 @@ return function (App $app) {
                 $document = new \HomeDocs\Document(
                     $args['id']
                 );
+                $document->setRootStoragePath($this->get('settings')['paths']['storage']);
                 $dbh = $this->get(\aportela\DatabaseWrapper\DB::class);
                 // test existence && check permissions
                 $document->get($dbh);
@@ -221,6 +229,7 @@ return function (App $app) {
             $group->get('/file/{id}', function (Request $request, Response $response, array $args) {
                 $route = $request->getAttribute('route');
                 $file = new \HomeDocs\File(
+                    $this->get('settings')['paths']['storage'],
                     $args['id']
                 );
                 $file->get($this->get(\aportela\DatabaseWrapper\DB::class));
@@ -267,6 +276,7 @@ return function (App $app) {
             $group->post('/file/{id}', function (Request $request, Response $response, array $args) {
                 $files = $request->getUploadedFiles();
                 $file = new \HomeDocs\File(
+                    $this->get('settings')['paths']['storage'],
                     $args['id'],
                     $files["file"]->getClientFilename(),
                     $files["file"]->getSize()
