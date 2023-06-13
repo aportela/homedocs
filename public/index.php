@@ -7,4 +7,4 @@ ob_start();
 session_cache_limiter("nocache");
 session_start();
 
-(require __DIR__ . '/../config/bootstrap.php')->run();
+(require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'src-backend' . DIRECTORY_SEPARATOR .  'config' . DIRECTORY_SEPARATOR . 'bootstrap.php')->run();
