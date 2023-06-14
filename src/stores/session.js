@@ -1,19 +1,22 @@
-import { defineStore } from 'pinia';
+import { defineStore } from "pinia";
 
-export const useCounterStore = defineStore('counter', {
+export const useSessionStore = defineStore("session", {
   state: () => ({
-    counter: 0
+    jwt: null,
   }),
 
   getters: {
-    doubleCount (state) {
-      return state.counter * 2
-    }
+    isLogged(state) {
+      return state.jwt != null;
+    },
   },
 
   actions: {
-    increment () {
-      this.counter++
-    }
-  }
-})
+    signIn(jwt) {
+      this.jwt = jwt;
+    },
+    signOut() {
+      this.jwt = null;
+    },
+  },
+});
