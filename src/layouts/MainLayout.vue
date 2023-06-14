@@ -1,44 +1,85 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
+  <q-layout class="bg-grey-1">
+    <q-header
+      elevated
+      class="text-white"
+      style="background: #24292e"
+      height-hint="61.59"
+    >
+      <q-toolbar class="q-py-sm q-px-md">
         <q-btn
-          flat
+          round2
           dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
+          flat
+          :ripple="false"
+          size="19px"
+          color="white"
+          class="q-mr-sm"
+          no-caps
+        >
+          <q-avatar square size="42px">
+            <img src="icons/favicon-128x128.png" />
+          </q-avatar>
+        </q-btn>
+        HomeDocs
 
-        <q-toolbar-title>
-          Quasar App
-        </q-toolbar-title>
+        <q-select
+          ref="search"
+          dark
+          dense
+          standout
+          use-input
+          hide-selected
+          class="GL__toolbar-select"
+          color="black"
+          :stack-label="false"
+          label="Search or jump to..."
+          v-model="text"
+          :options="filteredOptions"
+          @filter="filter"
+          style="width: 300px"
+        >
+          <template v-slot:append>
+            <img
+              src="https://cdn.quasar.dev/img/layout-gallery/img-github-search-key-slash.svg"
+            />
+          </template>
 
-        <div>Quasar v{{ $q.version }}</div>
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section>
+                <div class="text-center">
+                  <q-spinner-pie color="grey-5" size="24px" />
+                </div>
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
+
+        <div
+          v-if="session.isLogged && $q.screen.gt.sm"
+          class="GL__toolbar-link q-ml-xs q-gutter-md text-body2 text-weight-bold row items-center no-wrap"
+        >
+          <a href="javascript:void(0)" class="text-white">New document </a>
+          <a href="javascript:void(0)" class="text-white">Advanced search </a>
+        </div>
+        <q-space />
+
+        <a
+          href="javascript:void(0)"
+          class="text-white text-weight-bold"
+          style="text-decoration: none"
+          >SignOut
+        </a>
+        <!--
+        <q-btn dense flat no-wrap>
+          <q-avatar rounded>
+            <q-icon name="matRemoveModerator" />
+          </q-avatar>
+        </q-btn>
+          -->
       </q-toolbar>
     </q-header>
-
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-    >
-      <q-list>
-        <q-item-label
-          header
-        >
-          Essential Links
-        </q-item-label>
-
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
-    </q-drawer>
-
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -46,71 +87,25 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
-import EssentialLink from 'components/EssentialLink.vue'
+import { defineComponent, ref } from "vue";
 
-const linksList = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-]
+import { useSessionStore } from "stores/session";
 
 export default defineComponent({
-  name: 'MainLayout',
+  name: "MainLayout",
 
-  components: {
-    EssentialLink
-  },
-
-  setup () {
-    const leftDrawerOpen = ref(false)
-
+  setup() {
+    const text = ref("");
+    const session = useSessionStore();
+    session.signIn("aa");
+    session.signOut();
     return {
-      essentialLinks: linksList,
-      leftDrawerOpen,
-      toggleLeftDrawer () {
-        leftDrawerOpen.value = !leftDrawerOpen.value
-      }
-    }
-  }
-})
+      session,
+      matRemoveModerator,
+      text: null,
+      filter: null,
+      filteredOptions: null,
+    };
+  },
+});
 </script>
