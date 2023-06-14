@@ -30,7 +30,7 @@
           standout
           use-input
           hide-selected
-          class="GL__toolbar-select"
+          class="GL__toolbar-select q-mx-md"
           color="black"
           :stack-label="false"
           label="Search or jump to..."
@@ -38,6 +38,7 @@
           :options="filteredOptions"
           @filter="filter"
           style="width: 300px"
+          v-if="session.isLogged"
         >
           <template v-slot:append>
             <img
@@ -66,10 +67,12 @@
         <q-space />
 
         <a
+          v-if="session.isLogged"
           href="javascript:void(0)"
           class="text-white text-weight-bold"
           style="text-decoration: none"
-          >SignOut
+          @click="signOut"
+          >Sign Out
         </a>
         <!--
         <q-btn dense flat no-wrap>
@@ -90,6 +93,7 @@
 import { defineComponent, ref } from "vue";
 
 import { useSessionStore } from "stores/session";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "MainLayout",
@@ -97,11 +101,17 @@ export default defineComponent({
   setup() {
     const text = ref("");
     const session = useSessionStore();
-    session.signIn("aa");
-    session.signOut();
+    const router = useRouter();
+
+    function signOut() {
+      session.signOut();
+      router.push({
+        name: "signIn",
+      });
+    }
     return {
       session,
-      matRemoveModerator,
+      signOut,
       text: null,
       filter: null,
       filteredOptions: null,

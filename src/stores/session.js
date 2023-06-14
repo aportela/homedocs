@@ -6,11 +6,8 @@ export const useSessionStore = defineStore("session", {
   }),
 
   getters: {
-    isLogged(state) {
-      return state.jwt != null;
-    },
+    isLogged: (state) => state.jwt != null,
   },
-
   actions: {
     signIn(jwt) {
       this.jwt = jwt;

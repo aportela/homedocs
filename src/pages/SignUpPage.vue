@@ -4,8 +4,8 @@
       <q-card-section class="text-center">
         <h3>Homedocs</h3>
         <h5>I ASSURE YOU; WE'RE OPEN</h5>
-        <div class="text-grey-9 text-h5 text-weight-bold">Sign in</div>
-        <div class="text-grey-8">Sign in below to access your account</div>
+        <div class="text-grey-9 text-h5 text-weight-bold">Sign Up</div>
+        <div class="text-grey-8">Sign up below create new account</div>
       </q-card-section>
       <q-card-section>
         <q-input dense outlined v-model="email" label="Email Address"></q-input>
@@ -32,12 +32,12 @@
       </q-card-section>
       <q-card-section class="text-center q-pt-none">
         <div class="text-grey-8">
-          Don't have an account yet?
-          <router-link :to="{ name: 'signUp' }">
+          Already have an account ?
+          <router-link :to="{ name: 'signIn' }">
             <span
               class="text-dark text-weight-bold"
               style="text-decoration: none"
-              >Sign up.</span
+              >Sign in.</span
             >
           </router-link>
         </div>
@@ -48,32 +48,21 @@
 
 <script>
 import { ref, defineComponent, getCurrentInstance } from "vue";
-import { useRouter } from "vue-router";
-
-import { useSessionStore } from "stores/session";
 
 export default defineComponent({
-  name: "SignInPage",
+  name: "SignUpPage",
   setup() {
-    const router = useRouter();
     const app = getCurrentInstance();
 
     function onSubmit() {
-      /*
       app.appContext.config.globalProperties.$api.user
-        .signIn("foo", "bar")
+        .signUp("foo", "bar")
         .then((success) => {
           console.log(success);
         })
         .catch((error) => {
           console.log(error);
         });
-        */
-      let session = useSessionStore();
-      session.signIn("jwttest");
-      router.push({
-        name: "index",
-      });
     }
     return {
       email: ref(""),
