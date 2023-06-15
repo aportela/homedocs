@@ -4,7 +4,6 @@ import { useSessionStore } from "stores/session";
 export default boot(({ app, router, store }) => {
   router.beforeEach((to, from, next) => {
     const isLogged = useSessionStore(store).isLogged;
-    console.log(isLogged);
     if (
       // make sure the user is authenticated
       !isLogged &&
