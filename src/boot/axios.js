@@ -3,6 +3,20 @@ import { boot } from "quasar/wrappers";
 import axios from "axios";
 
 const api = {
+  common: {
+    initialState: function () {
+      return new Promise((resolve, reject) => {
+        axios
+          .get("api2/initial_state", {})
+          .then((response) => {
+            resolve(response);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    },
+  },
   user: {
     signIn: function (email, password) {
       return new Promise((resolve, reject) => {
