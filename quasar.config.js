@@ -12,6 +12,27 @@ const ESLintPlugin = require("eslint-webpack-plugin");
 
 const { configure } = require("quasar/wrappers");
 
+const path = require("path");
+
+build: {
+  chainWebpack: (chain) => {
+    chain.module
+      .rule("i18n-resource")
+      .test(/\.(json5?|ya?ml)$/)
+      .include.add(path.resolve(__dirname, "./src/i18n"))
+      .end()
+      .type("javascript/auto")
+      .use("i18n-resource")
+      .loader("@intlify/vue-i18n-loader");
+    chain.module
+      .rule("i18n")
+      .resourceQuery(/blockType=i18n/)
+      .type("javascript/auto")
+      .use("i18n")
+      .loader("@intlify/vue-i18n-loader");
+  };
+}
+
 module.exports = configure(function (ctx) {
   return {
     // https://v2.quasar.dev/quasar-cli-webpack/supporting-ts
@@ -23,7 +44,7 @@ module.exports = configure(function (ctx) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-webpack/boot-files
-    boot: ["router", "axios"],
+    boot: ["router", "axios", "i18n"],
 
     // https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js#Property%3A-css
     css: ["app.scss"],
@@ -70,6 +91,20 @@ module.exports = configure(function (ctx) {
         chain
           .plugin("eslint-webpack-plugin")
           .use(ESLintPlugin, [{ extensions: ["js", "vue"] }]);
+        chain.module
+          .rule("i18n-resource")
+          .test(/\.(json5?|ya?ml)$/)
+          .include.add(path.resolve(__dirname, "./src/i18n"))
+          .end()
+          .type("javascript/auto")
+          .use("i18n-resource")
+          .loader("@intlify/vue-i18n-loader");
+        chain.module
+          .rule("i18n")
+          .resourceQuery(/blockType=i18n/)
+          .type("javascript/auto")
+          .use("i18n")
+          .loader("@intlify/vue-i18n-loader");
       },
     },
 
@@ -86,7 +121,7 @@ module.exports = configure(function (ctx) {
           target: "http://127.0.0.1:8081",
           changeOrigin: true,
           pathRewrite: {
-            "^/api2": "",
+            //"^/api2": "/api2",
           },
         },
       },
