@@ -4,40 +4,40 @@
       <form @submit.prevent.stop="onSubmitForm" autocorrect="off" autocapitalize="off" autocomplete="off"
         spellcheck="false">
         <q-card-section class="text-center">
-          <h3>Homedocs</h3>
-          <h5>I ASSURE YOU; WE'RE OPEN</h5>
-          <div class="text-grey-9 text-h5 text-weight-bold">Sign in</div>
-          <div class="text-grey-8">Sign in below to access your account</div>
+          <h3>{{ $t('Homedocs') }}</h3>
+          <h5>{{ $t('"I ASSURE YOU; WE\'RE OPEN"') }}</h5>
+          <div class="text-grey-9 text-h5 text-weight-bold">{{ $t('Sign in') }}</div>
+          <div class="text-grey-8">{{ $t('Sign in below to access your account') }}</div>
         </q-card-section>
         <q-card-section>
-          <q-input dense outlined ref="emailRef" v-model="email" type="email" name="email"
-            :label="t('pages.signIn.labels.emailField')" :disable="loading" :autofocus="true" :rules="emailRules">
+          <q-input dense outlined ref="emailRef" v-model="email" type="email" name="email" :label="t('Email')"
+            :disable="loading" :autofocus="true" :rules="emailRules" lazy-rules>
             <template v-slot:prepend>
               <q-icon name="alternate_email" />
             </template>
           </q-input>
           <q-input dense outlined class="q-mt-md" ref="passwordRef" v-model="password" name="password" type="password"
-            :label="t('pages.signIn.labels.passwordField')" :disable="loading" :rules="passwordRules">
+            :label="t('Password')" :disable="loading" :rules="passwordRules" lazy-rules>
             <template v-slot:prepend>
               <q-icon name="key" />
             </template>
           </q-input>
         </q-card-section>
         <q-card-section>
-          <q-btn color="dark" size="md" :label="t('pages.signIn.labels.submitButton')" no-caps class="full-width"
-            icon="account_circle" :disable="loading || (!(email && password))" :loading="loading" type="submit">
+          <q-btn color="dark" size="md" :label="$t('Sign in')" no-caps class="full-width" icon="account_circle"
+            :disable="loading || (!(email && password))" :loading="loading" type="submit">
             <template v-slot:loading>
               <q-spinner-hourglass class="on-left" />
-              Loading...
+              {{ t('Loading...') }}
             </template>
           </q-btn>
         </q-card-section>
         <q-card-section class="text-center q-pt-none">
           <div class="text-grey-8">
-            {{ t("pages.signIn.labels.doNotHaveAccount") }}
+            {{ t('Don\'t have an account yet ?') }}
             <router-link :to="{ name: 'signUp' }">
               <span class="text-dark text-weight-bold" style="text-decoration: none">{{
-                t("pages.signIn.labels.createAnAccount") }}</span>
+                t("Click here to sign up") }}</span>
             </router-link>
           </div>
         </q-card-section>
@@ -48,7 +48,7 @@
 
 <script setup>
 
-import { ref, getCurrentInstance, computed } from "vue";
+import { ref, computed } from "vue";
 import { useQuasar } from "quasar";
 import { useRouter } from "vue-router";
 import { useI18n } from 'vue-i18n'
@@ -68,34 +68,43 @@ const remoteErrors = ref({
   invalidPassword: false
 });
 
-const form = ref(null)
-
-const email = ref("");
+const email = ref(null);
 const emailRef = ref(null);
-const emailRules = [
-  val => !!val || 'Field is required',
-  val => !invalidRemoteEmail.value || t("pages.signIn.errorMessages.emailNotRegistered")
-];
 const invalidRemoteEmail = computed(() => remoteErrors.value.emailNotFound);
-
-const password = ref("");
-const passwordRef = ref(null);
-const passwordRules = [
-  val => !!val || 'Field is required',
-  val => !invalidRemotePassword.value || t("pages.signIn.errorMessages.incorrectPassword")
+const emailRules = [
+  val => !!val || t('Field is required'),
+  val => !invalidRemoteEmail.value || t("Email not registered")
 ];
+
+const password = ref(null);
+const passwordRef = ref(null);
 const invalidRemotePassword = computed(() => remoteErrors.value.invalidPassword);
 
+const passwordRules = [
+  val => !!val || t('Field is required'),
+  val => !invalidRemotePassword.value || t("Invalid password")
+];
 
-function onSubmitForm() {
+function onResetForm() {
+  remoteErrors.value.emailNotFound = false;
+  remoteErrors.value.invalidPassword = false;
+  emailRef.value.resetValidation();
+  passwordRef.value.resetValidation();
+}
+
+function onValidateForm() {
   emailRef.value.validate();
   passwordRef.value.validate();
+}
+
+function onSubmitForm() {
+  onResetForm();
+  onValidateForm();
   if (!(emailRef.value.hasError || passwordRef.value.hasError)) {
     loading.value = true;
     api.user
       .signIn(email.value, password.value)
       .then((success) => {
-        console.log(2);
         $q.notify({
           color: "positive",
           icon: "announcement",
@@ -161,6 +170,7 @@ function onSubmitForm() {
         }
         loading.value = false;
       });
+  } else {
   }
 }
 
