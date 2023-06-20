@@ -11,12 +11,17 @@ const routes = [
       {
         name: "newDocument",
         path: "new_document",
-        component: () => import("pages/NewDocument.vue"),
+        component: () => import("pages/DocumentPage.vue"),
+      },
+      {
+        name: "document",
+        path: "document/:id",
+        component: () => import("pages/DocumentPage.vue"),
       },
       {
         name: "advancedSearch",
         path: "advanced_search",
-        component: () => import("pages/AdvancedSearch.vue"),
+        component: () => import("pages/AdvancedSearchPage.vue"),
       },
       {
         name: "signIn",
