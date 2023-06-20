@@ -1,5 +1,6 @@
 import { boot } from "quasar/wrappers";
 import { useSessionStore } from "stores/session";
+import { isShallow } from "vue";
 
 export default boot(({ app, router, store }) => {
   router.beforeEach((to, from, next) => {
@@ -7,18 +8,33 @@ export default boot(({ app, router, store }) => {
     session.load();
 
     const isLogged = session.isLogged;
-    if (
-      // make sure the user is authenticated
-      !isLogged &&
-      // ❗️ Avoid an infinite redirect
-      to.name !== "signIn" &&
-      to.name != "signUp"
-    ) {
-      next({
-        name: "signIn",
-      });
+
+    // TODO: not found page
+    if (isLogged) {
+      if (!to.name) {
+        // no route => index
+        next({
+          name: "index",
+        });
+      } else {
+        // go to specified route
+        next();
+      }
     } else {
-      next();
+      if (!to.name) {
+        // no route => signIn
+        next({
+          name: "signIn",
+        });
+      } else if (to.name !== "signIn" && to.name != "signUp") {
+        // not allowed route  (! signin && !signup)
+        next({
+          name: "signIn",
+        });
+      } else {
+        // allowed route (signin || signup)
+        next();
+      }
     }
   });
 });
