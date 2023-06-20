@@ -22,30 +22,15 @@ export default {
   "Already have an account ?": "Already have an account ?",
   "Click here to sign in": "Click here to sign in",
   "Your account has been created": "Your account has been created",
-
+  "API Error: missing email param": "API Error: missing email param",
+  "API Error: missing password param": "API Error: missing password param",
+  "API Error: missing param": "API Error: missing param",
+  "API Error: fatal error": "API Error: fatal error",
   pages: {
     common: {
       labels: {
         projectPage: "Project page",
         byAuthor: "by alex",
-      },
-    },
-    signIn: {
-      labels: {
-        headerField: "Sign In",
-        emailField: "Email",
-        passwordField: "Password",
-        submitButton: "Sign In",
-        doNotHaveAccount: "Don't have an account yet ?",
-        createAnAccount: "Click here to sign up",
-      },
-      errorMessages: {
-        emailNotRegistered: "Email not registered",
-        incorrectPassword: "Invalid password",
-        APIMissingEmailParam: "API Error: missing email param",
-        APIMissingPasswordParam: "API Error: missing password param",
-        APIMissingParam: "API Error: missing param",
-        APIFatalError: "API Error: fatal error",
       },
     },
     signUp: {
