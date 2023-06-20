@@ -1,6 +1,13 @@
 import { defineStore } from "pinia";
 import { default as useBasil } from "basil.js";
 
+const localStorageBasilOptions = {
+  namespace: "homedocs",
+  storages: ["local", "cookie", "session", "memory"],
+  storage: "local",
+  expireDays: 3650,
+};
+
 export const useSessionStore = defineStore("session", {
   state: () => ({
     jwt: null,
@@ -12,14 +19,14 @@ export const useSessionStore = defineStore("session", {
   },
   actions: {
     load() {
-      const basil = useBasil();
+      const basil = useBasil(localStorageBasilOptions);
       const jwt = basil.get("jwt");
       if (jwt) {
         this.jwt = jwt;
       }
     },
     save(jwt) {
-      const basil = useBasil();
+      const basil = useBasil(localStorageBasilOptions);
       basil.set("jwt", jwt);
     },
     signIn(jwt) {
