@@ -9,6 +9,16 @@ const routes = [
         component: () => import("pages/IndexPage.vue"),
       },
       {
+        name: "newDocument",
+        path: "new_document",
+        component: () => import("pages/NewDocument.vue"),
+      },
+      {
+        name: "advancedSearch",
+        path: "advanced_search",
+        component: () => import("pages/AdvancedSearch.vue"),
+      },
+      {
         name: "signIn",
         path: "sign_in",
         component: () => import("pages/SignInPage.vue"),
