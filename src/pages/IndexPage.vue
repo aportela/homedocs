@@ -17,7 +17,9 @@
               </thead>
               <tbody>
                 <tr v-for="recentDocument in recentDocuments" :key="recentDocument.id">
-                  <td class="text-left">{{ recentDocument.title }}</td>
+                  <td class="text-left"><router-link :to="{ name: 'document', params: { id: recentDocument.id } }">{{
+                    recentDocument.title }}</router-link>
+                  </td>
                   <td class="text-left">{{ recentDocument.createdOn }}</td>
                   <td class="text-right">{{ recentDocument.fileCount }}</td>
                 </tr>
