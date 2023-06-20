@@ -1,6 +1,6 @@
 <template>
   <q-page class="flex flex-center bg-grey-2">
-    <img alt="Quasar logo" src="~assets/quasar-logo-vertical.svg" style="width: 200px; height: 200px">
+    <h3>New document</h3>
   </q-page>
 </template>
 
