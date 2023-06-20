@@ -3,7 +3,10 @@ import { useSessionStore } from "stores/session";
 
 export default boot(({ app, router, store }) => {
   router.beforeEach((to, from, next) => {
-    const isLogged = useSessionStore(store).isLogged;
+    const session = useSessionStore(store);
+    session.load();
+
+    const isLogged = session.isLogged;
     if (
       // make sure the user is authenticated
       !isLogged &&
@@ -15,14 +18,6 @@ export default boot(({ app, router, store }) => {
         name: "signIn",
       });
     } else {
-      /*
-      if (!to.name || to.name == "signIn" || to.name == "signUp") {
-        next({ name: "index" });
-      } else {
-        console.log(to.name);
-        next();
-      }
-      */
       next();
     }
   });
