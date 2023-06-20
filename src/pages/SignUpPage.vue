@@ -124,7 +124,7 @@ function onSubmitForm() {
               $q.notify({
                 color: "negative",
                 icon: "error",
-                message: t("pages.signIn.errorMessages.APIMissingEmailParam"),
+                message: t("API Error: missing email param"),
               });
               emailRef.value.focus();
             } else if (
@@ -135,14 +135,14 @@ function onSubmitForm() {
               $q.notify({
                 color: "negative",
                 icon: "error",
-                message: t("pages.signIn.errorMessages.APIMissingPasswordParam"),
+                message: t("API Error: missing password param"),
               });
               passwordRef.value.focus();
             } else {
               $q.notify({
                 color: "negative",
                 icon: "error",
-                message: t("pages.signIn.errorMessages.APIMissingParam"),
+                message: t("API Error: missing param"),
               });
             }
             break;
@@ -154,7 +154,7 @@ function onSubmitForm() {
             $q.notify({
               color: "negative",
               icon: "warning",
-              message: t("pages.signIn.errorMessages.APIFatalError"),
+              message: t("API Error: fatal error"),
             });
             break;
         }
