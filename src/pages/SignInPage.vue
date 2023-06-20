@@ -53,7 +53,6 @@ import { useQuasar } from "quasar";
 import { useRouter } from "vue-router";
 import { useI18n } from 'vue-i18n'
 import { api } from 'boot/axios'
-import { useSessionStore } from "stores/session";
 
 const { t } = useI18n();
 
@@ -105,19 +104,9 @@ function onSubmitForm() {
     api.user
       .signIn(email.value, password.value)
       .then((success) => {
-        $q.notify({
-          color: "positive",
-          icon: "announcement",
-          message: "Ok",
-        });
-        loading.value = false;
-        /*
-        let session = useSessionStore();
-        session.signIn("jwttest");
         router.push({
           name: "index",
         });
-        */
       })
       .catch((error) => {
         switch (error.response.status) {
@@ -130,7 +119,7 @@ function onSubmitForm() {
               $q.notify({
                 color: "negative",
                 icon: "error",
-                message: t("pages.signIn.errorMessages.APIMissingEmailParam"),
+                message: t("API Error: missing email param"),
               });
               emailRef.value.focus();
             } else if (
@@ -141,14 +130,14 @@ function onSubmitForm() {
               $q.notify({
                 color: "negative",
                 icon: "error",
-                message: t("pages.signIn.errorMessages.APIMissingPasswordParam"),
+                message: t("API Error: missing password param"),
               });
               passwordRef.value.focus();
             } else {
               $q.notify({
                 color: "negative",
                 icon: "error",
-                message: t("pages.signIn.errorMessages.APIMissingParam"),
+                message: t("API Error: missing param"),
               });
             }
             break;
@@ -164,7 +153,7 @@ function onSubmitForm() {
             $q.notify({
               color: "negative",
               icon: "warning",
-              message: t("pages.signIn.errorMessages.APIFatalError"),
+              message: t("API Error: fatal error"),
             });
             break;
         }
