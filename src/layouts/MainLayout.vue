@@ -29,6 +29,8 @@
 
         <div v-if="session.isLogged && $q.screen.gt.sm"
           class="GL__toolbar-link q-ml-xs q-gutter-md text-body2 text-weight-bold row items-center no-wrap">
+          <router-link class="text-white text-weight-bold" style="text-decoration: none"
+            :to="{ name: 'index' }">Dashboard</router-link>
           <router-link class="text-white text-weight-bold" style="text-decoration: none" :to="{ name: 'newDocument' }">New
             document</router-link>
           <router-link class="text-white text-weight-bold" style="text-decoration: none"
