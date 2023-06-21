@@ -20,6 +20,8 @@
       </q-card-section>
       <q-card-section class="text-left">
         <h5>Files</h5>
+        <q-uploader class="q-mb-md" label="Add new file" auto-upload hide-upload-btn color="dark" field-name="file"
+          :url="newUploadURL" @added="onFileAdded" @uploaded="onFileUploaded" method="post" multiple />
         <q-markup-table>
           <thead>
             <tr>
@@ -88,11 +90,11 @@
 
 <script setup>
 
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { api } from 'boot/axios'
 import { date } from 'quasar'
-import { format } from "quasar";
+import { uid, format } from "quasar";
 
 
 const { humanStorageSize } = format
@@ -101,6 +103,12 @@ const showPreviewDialog = ref(false);
 const previewFile = ref(null);
 
 const loading = ref(false);
+
+const newFileId = ref(uid());
+
+const newUploadURL = computed(() => {
+  return ('api2/file/' + newFileId.value);
+});
 
 const document = ref({
   id: null,
@@ -186,9 +194,26 @@ function onPreviewFile(file) {
 function isImage(filename) {
   return (filename.match(/.(jpg|jpeg|png|gif)$/i));
 }
+
 const route = useRoute();
 //const router = useRouter();
 
+function onFileAdded(e) {
+  console.log(e);
+  newFileId.value = uid();
+}
+
+function onFileUploaded(e) {
+  document.value.files.push(
+    {
+      id: newFileId.value,
+      uploadedOn: date.formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss'),
+      name: e.files[0].name,
+      humanSize: format.humanStorageSize(e.files[0].size)
+    }
+  );
+  newFileId.value = uid();
+}
 
 document.value.id = route.params.id || null;
 
