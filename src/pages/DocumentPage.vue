@@ -4,12 +4,12 @@
     <h3 v-else>Document</h3>
     <form @submit.prevent.stop="onSubmitForm" autocorrect="off" autocapitalize="off" autocomplete="off"
       spellcheck="false">
-      <q-card-section class="text-left">
+      <q-card-section>
         <q-input outlined v-model="document.title" type="text" name="title" label="Título del documento"
           :disable="loading" :autofocus="true">
         </q-input>
       </q-card-section>
-      <q-card-section class="text-left">
+      <q-card-section>
         <q-input class="q-mb-sm" outlined v-model="document.description" type="textarea" autogrow name="title"
           label="Descripción del documento" :disable="loading" :autofocus="true">
         </q-input>
@@ -18,11 +18,11 @@
         <q-select label="Tags" outlined v-model="document.tags" use-input use-chips multiple hide-dropdown-icon
           input-debounce="0" new-value-mode="add-unique" clearable />
       </q-card-section>
-      <q-card-section class="text-left">
-        <h5>Files</h5>
-        <q-uploader class="q-mb-md" label="Add new file" auto-upload hide-upload-btn color="dark" field-name="file"
-          :url="newUploadURL" @added="onFileAdded" @uploaded="onFileUploaded" method="post" multiple />
-        <q-markup-table>
+      <q-card-section>
+        <q-uploader class="q-mb-md" label="Add new file" flat bordered auto-upload hide-upload-btn color="dark"
+          field-name="file" :url="newUploadURL" @added="onFileAdded" @uploaded="onFileUploaded" method="post" multiple
+          style="width: 100%;" />
+        <q-markup-table v-if="document.files.length > 0">
           <thead>
             <tr>
               <th class="text-left">Created on</th>
@@ -32,7 +32,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="file in   document.files  " :key="file.id">
+            <tr v-for="file in document.files" :key="file.id">
               <td class="text-left">{{ file.uploadedOn }}</td>
               <td class="text-left">{{ file.name }}</td>
               <td class="text-right">{{ file.humanSize }}</td>
