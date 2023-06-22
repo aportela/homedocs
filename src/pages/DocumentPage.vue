@@ -4,8 +4,8 @@
       <form @submit.prevent.stop="onSubmitForm" autocorrect="off" autocapitalize="off" autocomplete="off"
         spellcheck="false">
         <q-card-section>
-          <h3 v-if="!document.id">New document</h3>
-          <h3 v-else>Document</h3>
+          <h3 v-if="!document.id">{{ t('New document') }}</h3>
+          <h3 v-else>{{ t('Document') }}</h3>
         </q-card-section>
         <q-card-section>
           <q-input outlined v-model="document.title" type="text" name="title" label="Título del documento"
@@ -24,7 +24,7 @@
         <q-card-section>
           <q-uploader class="q-mb-md" label="Add new file" flat bordered auto-upload hide-upload-btn color="dark"
             field-name="file" :url="newUploadURL" @added="onFileAdded" @uploaded="onFileUploaded" method="post" multiple
-            style="width: 100%;" :disable="loading" />
+            style="width: 100%;" :disable="loading" batch />
           <q-markup-table v-if="document.files.length > 0">
             <thead>
               <tr>
@@ -40,13 +40,44 @@
                 <td class="text-left">{{ file.name }}</td>
                 <td class="text-right">{{ file.humanSize }}</td>
                 <td class="text-center">
-                  <q-btn-group spread>
+                  <q-btn-group spread class="desktop-only" :disable="loading">
                     <q-btn label="Open/Preview" icon="preview" @click.prevent="onPreviewFile(file)"
                       :disable="loading || !isImage(file.name)" />
-                    <q-btn label="Download" icon="download" :href="'api2/file/' + file.id" :disable="loading" />
+                    <q-btn label="Download" icon="download" :href="'api2/file/' + file.id" />
                     <q-btn label="Remove" icon="delete" :disable="loading"
                       @click.prevent="onShowFileRemoveConfirmationDialog(file, fileIndex)" />
                   </q-btn-group>
+                  <q-btn-dropdown label="Operations" class="mobile-only" :disable="loading">
+                    <q-list>
+                      <q-item clickable v-close-popup @click.prevent="onPreviewFile(file)">
+                        <q-item-section avatar>
+                          <q-icon name="preview"></q-icon>
+                        </q-item-section>
+                        <q-item-section>
+                          <q-item-label>Open/Preview</q-item-label>
+                        </q-item-section>
+                      </q-item>
+
+                      <q-item clickable v-close-popup :href="'api2/file/' + file.id">
+                        <q-item-section avatar>
+                          <q-icon name="download"></q-icon>
+                        </q-item-section>
+                        <q-item-section>
+                          <q-item-label>Download</q-item-label>
+                        </q-item-section>
+                      </q-item>
+
+                      <q-item clickable v-close-popup
+                        @click.prevent="onShowFileRemoveConfirmationDialog(file, fileIndex)">
+                        <q-item-section avatar>
+                          <q-icon name="delete"></q-icon>
+                        </q-item-section>
+                        <q-item-section>
+                          <q-item-label>Remove</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-btn-dropdown>
                 </td>
               </tr>
             </tbody>
@@ -98,6 +129,15 @@
             </q-card>
           </q-dialog>
         </q-card-section>
+        <q-card-section>
+          <q-btn label="Save changes" type="submit" icon="save" class="full-width" color="dark"
+            :disable="loading || saving">
+            <template v-slot:loading v-if="saving">
+              <q-spinner-hourglass class="on-left" />
+              {{ t('Saving...') }}
+            </template>
+          </q-btn>
+        </q-card-section>
       </form>
     </q-card>
 
@@ -111,7 +151,9 @@ import { useRoute, useRouter } from "vue-router";
 import { api } from 'boot/axios'
 import { date } from 'quasar'
 import { uid, format } from "quasar";
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n();
 
 const { humanStorageSize } = format
 
@@ -121,6 +163,7 @@ const previewFile = ref(null);
 const showConfirmDeleteFileDialog = ref(false);
 
 const loading = ref(false);
+const saving = ref(false);
 
 const newFileId = ref(uid());
 
@@ -240,6 +283,7 @@ function onFileUploaded(e) {
       humanSize: format.humanStorageSize(e.files[0].size)
     }
   );
+  console.log(e.files[0].name);
   newFileId.value = uid();
 }
 
