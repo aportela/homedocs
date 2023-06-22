@@ -26,6 +26,12 @@ export default {
   "API Error: missing password param": "API Error: missing password param",
   "API Error: missing param": "API Error: missing param",
   "API Error: fatal error": "API Error: fatal error",
+  "New document": "New document",
+  Document: "Document",
+  "Saving...": "Saving...",
+  /* advanced search */
+  "Document title": "Document title",
+  "Document description": "Document description",
   pages: {
     common: {
       labels: {
