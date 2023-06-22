@@ -2,13 +2,12 @@
   <q-layout class="bg-grey-1">
     <q-header elevated class="text-white" style="background: #24292e" height-hint="61.59">
       <q-toolbar class="q-py-sm q-px-md">
-        <q-btn flat dense round @click="leftDrawerOpen = !leftDrawerOpen" aria-label="Menu" icon="menu" />
+        <q-btn class="mobile-only" flat dense round @click="leftDrawerOpen = !leftDrawerOpen" aria-label="Menu"
+          icon="menu" v-if="session.isLogged" />
 
-        <q-btn round2 dense flat :ripple="false" size="19px" color="white" class="q-mr-sm" no-caps>
-          <q-avatar square size="42px">
-            <img src="icons/favicon-128x128.png" />
-          </q-avatar>
-        </q-btn>
+        <q-avatar square size="42px">
+          <img src="icons/favicon-128x128.png" />
+        </q-avatar>
         HomeDocs
 
         <q-select ref="search" dark dense standout use-input hide-selected class="GL__toolbar-select q-mx-md"
@@ -47,25 +46,13 @@
         -->
       </q-toolbar>
     </q-header>
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-grey-2" :width="240">
+    <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-grey-2" :width="240" v-if="session.isLogged">
       <q-scroll-area class="fit">
         <q-list padding>
-          <q-item v-if="!$q.screen.gt.sm">
-            <q-item-section avatar>
-              <img src="icons/favicon-32x32.png" />
-            </q-item-section>
-            <q-item-label header class="text-weight-bold text-uppercase">
-              Homedocs
-            </q-item-label>
-          </q-item>
-          <q-separator class="q-mt-md q-mb-xs" v-if="!$q.screen.gt.sm" />
-
           <q-item-label header class="text-weight-bold text-uppercase">
-            Actions
+            Menu
           </q-item-label>
-          <q-item
-            v-for="link in [{ icon: 'storage', text: 'Dashboard' }, { icon: 'note_add', text: 'Add' }, { icon: 'find_in_page', text: 'Advanced search' }]"
-            :key="link.text" v-ripple clickable>
+          <q-item v-for="link in menuItems" :key="link.text" v-ripple clickable :to="{ name: link.routeName }">
             <q-item-section avatar>
               <q-icon color="grey" :name="link.icon" />
             </q-item-section>
@@ -92,12 +79,18 @@ import { useQuasar } from "quasar";
 
 const $q = useQuasar();
 
-const leftDrawerOpen = ref($q.screen.gt.sm);
+const leftDrawerOpen = ref($q.screen.gt.lg);
 const text = ref("");
 const filteredOptions = ref([]);
 const filter = ref(null);
 const session = useSessionStore();
 const router = useRouter();
+
+const menuItems = ref([
+  { icon: 'storage', text: 'Dashboard', routeName: 'index' },
+  { icon: 'note_add', text: 'Add', routeName: 'newDocument' },
+  { icon: 'find_in_page', text: 'Advanced search', routeName: 'advancedSearch' }
+]);
 
 function signOut() {
   session.signOut();
