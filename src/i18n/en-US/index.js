@@ -27,6 +27,13 @@ export default {
   "API Error: missing param": "API Error: missing param",
   "API Error: fatal error": "API Error: fatal error",
   "New document": "New document",
+  "Document title": "Document title",
+  "Document description": "Document description",
+  "API Error: error loading document": "API Error: error loading document",
+  "API Error: error updating document": "API Error: error updating document",
+  "API Error: error adding document": "API Error: error adding document",
+  "API Error: missing document title param":
+    "API Error: missing document title param",
   Document: "Document",
   "Saving...": "Saving...",
   /* advanced search */
