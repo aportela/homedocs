@@ -167,9 +167,11 @@ return function (App $app) {
                 );
                 $document->setRootStoragePath($this->get('settings')['paths']['storage']);
                 $document->add($this->get(\aportela\DatabaseWrapper\DB::class));
+                $document->get($this->get(\aportela\DatabaseWrapper\DB::class));
                 $payload = json_encode(
                     [
-                        'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this))
+                        'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this)),
+                        'data' => $document
                     ]
                 );
                 $response->getBody()->write($payload);
@@ -208,9 +210,11 @@ return function (App $app) {
                 );
                 $document->setRootStoragePath($this->get('settings')['paths']['storage']);
                 $document->update($dbh);
+                $document->get($this->get(\aportela\DatabaseWrapper\DB::class));
                 $payload = json_encode(
                     [
-                        'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this))
+                        'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this)),
+                        'data' => $document
                     ]
                 );
                 $response->getBody()->write($payload);
