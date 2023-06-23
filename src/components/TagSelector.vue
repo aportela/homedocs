@@ -44,7 +44,6 @@ watch(currentTags, (newValue) => {
   emit('update:modelValue', newValue);
 });
 
-
 function onFilterTags(val, update) {
   if (val === '') {
     update(() => {
