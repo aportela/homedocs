@@ -1,67 +1,80 @@
 <template>
-  <q-select :error="loadingError" errorMessage="Error loading available tags" ref="selectRef" label="Tags" dense outlined
-    v-model="currentTags" use-input use-chips multiple hide-dropdown-icon :options="availableTags" @filter="filterFn"
-    input-debounce="0" new-value-mode="add-unique" clearable :disable="loading || loadingError" @add="onAddTag">
+  <q-select ref="selectRef" :label="t('Tags')" dense outlined v-model="currentTags" use-input use-chips multiple
+    hide-dropdown-icon :options="filteredTags" input-debounce="0" new-value-mode="add-unique" clearable
+    :disable="disabled || loading || loadingError" :loading="loading" :error="loadingError"
+    :errorMessage="t('Error loading available tags')" @filter="onFilterTags" @add="onAddTag">
+    <template v-slot:selected>
+      <q-chip removable v-for="tag, index in currentTags" :model="tag" :key="tag" @remove="removeTagAtIndex(index)"
+        color="dark" text-color="white" icon="label_important">
+        {{ tag }}
+      </q-chip>
+    </template>
   </q-select>
 </template>
 
-<script>
+<script setup>
 
+import { defineProps, defineEmits, ref, watch } from "vue";
 import { api } from 'boot/axios'
-import { ref } from "vue";
+import { useI18n } from 'vue-i18n'
 
-import { defineComponent } from 'vue'
+const { t } = useI18n();
 
-export default defineComponent({
-  name: 'TagSelector',
-  props: ['selectedTags'],
-  setup(props, context) {
-
-
-    const loading = ref(false);
-    const loadingError = ref(false);
-    const currentTags = ref(props.selectedTags || []);
-
-    const selectRef = ref('');
-
-    const availableTags = ref([]);
-    const allTags = ref([]);
-
-    function filterFn(val, update) {
-      if (val === '') {
-        update(() => {
-          availableTags.value = allTags.value;
-        })
-        return
-      }
-
-      update(() => {
-        const needle = val.toLowerCase()
-        availableTags.value = allTags.value.filter(v => v.toLowerCase().indexOf(needle) > -1)
-      })
-    }
-
-    function loadAvailableTags() {
-      loadingError.value = false;
-      api.tag.search().then((response) => {
-        allTags.value = response.data.tags;
-        loadingError.value = false;
-      }).catch((error) => {
-        loadingError.value = true;
-        loading.value = false;
-        // TODO emit error.response
-      });
-    }
-
-    function onAddTag() {
-      selectRef.value.hidePopup()
-      // TODO clear input
-    }
-
-    loadAvailableTags();
-
-    return ({ loading, loadingError, currentTags, availableTags, selectRef, onAddTag, filterFn });
-  }
-
+const props = defineProps({
+  disabled: Boolean,
+  selectedTags: Array
 });
+
+const emit = defineEmits(['change', 'error']);
+
+const selectRef = ref('');
+
+const loading = ref(false);
+const loadingError = ref(false);
+const availableTags = ref([]);
+const filteredTags = ref([]);
+const currentTags = ref(props.selectedTags || []);
+
+watch(currentTags, (newValue) => {
+  emit('change', newValue);
+});
+
+
+function onFilterTags(val, update) {
+  if (val === '') {
+    update(() => {
+      filteredTags.value = availableTags.value;
+    });
+  } else {
+    update(() => {
+      const needle = val.toLowerCase();
+      filteredTags.value = availableTags.value.filter(v => v.toLowerCase().indexOf(needle) > -1)
+    });
+  }
+}
+
+function loadAvailableTags() {
+  loadingError.value = false;
+  loading.value = true;
+  api.tag.search().then((response) => {
+    availableTags.value = response.data.tags;
+    currentTags.value = props.selectedTags || [];
+    loading.value = false;
+  }).catch((error) => {
+    loadingError.value = true;
+    loading.value = false;
+    emit('error', error.response);
+  });
+}
+
+function onAddTag() {
+  // TODO: hide select popup after adding element not working
+  selectRef.value.hidePopup()
+}
+
+function removeTagAtIndex(index) {
+  currentTags.value.splice(index, 1);
+}
+loadAvailableTags();
+
 </script>

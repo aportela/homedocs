@@ -32,6 +32,8 @@ export default {
   /* advanced search */
   "Document title": "Document title",
   "Document description": "Document description",
+  Tags: "Tags",
+  "Error loading available tags": "Error loading available tags",
   pages: {
     common: {
       labels: {
