@@ -15,19 +15,19 @@
 
             <q-card>
               <q-card-section>
-                <q-input dense outlined v-model="filter.title" type="text" name="title" clearable
+                <q-input class="q-mb-md" dense outlined v-model="filter.title" type="text" name="title" clearable
                   :label="t('Document title')" :disable="searching" :autofocus="true">
                   <template v-slot:prepend>
                     <q-icon name="search" />
                   </template>
                 </q-input>
-                <q-input dense outlined v-model="filter.description" type="text" name="description" clearable
-                  :label="t('Document description')" :disable="searching" :autofocus="true">
+                <q-input class="q-mb-md" dense outlined v-model="filter.description" type="text" name="description"
+                  clearable :label="t('Document description')" :disable="searching" :autofocus="true">
                   <template v-slot:prepend>
                     <q-icon name="search" />
                   </template>
                 </q-input>
-                <q-select dense outlined v-model="filter.dateFilterType" :options="dateFilterOptions"
+                <q-select class="q-mb-md" dense outlined v-model="filter.dateFilterType" :options="dateFilterOptions"
                   label="Document date" />
                 <!--
                 <q-input dense outlined v-model="filter.dateRange" mask="date">
@@ -44,15 +44,8 @@
                   </template>
                 </q-input>
                 -->
-              </q-card-section>
-              <!--
-              <q-card-section>
-                <q-select label="Tags" outlined v-model="filter.tags" use-input use-chips multiple hide-dropdown-icon
-                  :options="['aa', '12']" input-debounce="0" new-value-mode="add-unique" clearable />
-              </q-card-section>
-              -->
-              <q-card-section>
-                <TagSelector :selectedTags="[12]"></TagSelector>
+                <TagSelector :selectedTags="[]" :disabled="searching" @change="onTagsChanged">
+                </TagSelector>
               </q-card-section>
             </q-card>
 
@@ -98,4 +91,8 @@ const filter = ref({
   tags: []
 });
 
+function onTagsChanged(event) {
+
+  console.log(event);
+}
 </script>
