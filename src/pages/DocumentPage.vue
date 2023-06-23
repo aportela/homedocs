@@ -18,8 +18,8 @@
           </q-input>
         </q-card-section>
         <q-card-section>
-          <q-select label="Tags" outlined v-model="document.tags" use-input use-chips multiple hide-dropdown-icon
-            input-debounce="0" new-value-mode="add-unique" clearable />
+          <TagSelector :selectedTags="document.tags" :disabled="loading" @change="onTagsChanged">
+          </TagSelector>
         </q-card-section>
         <q-card-section>
           <q-uploader class="q-mb-md" label="Add new file" flat bordered auto-upload hide-upload-btn color="dark"
@@ -152,6 +152,7 @@ import { api } from 'boot/axios'
 import { date } from 'quasar'
 import { uid, format } from "quasar";
 import { useI18n } from 'vue-i18n'
+import { default as TagSelector } from "components/TagSelector.vue";
 
 const { t } = useI18n();
 
@@ -183,31 +184,6 @@ const document = ref({
 });
 
 const availableTags = ref([]);
-
-function onLoadAvailableTags() {
-  loading.value = true;
-  api.tag.search().then((response) => {
-    availableTags.value = response.data.tags;
-    loading.value = false;
-  }).catch((error) => {
-    loading.value = false;
-    switch (error.response.status) {
-      case 401:
-        this.$router.push({
-          name: "signIn",
-        });
-        break;
-      default:
-        /*
-        this.$emit("showAPIError", {
-          httpCode: error.response.status,
-          data: error.response.getApiErrorData(),
-        });
-        */
-        break;
-    }
-  });
-}
 
 function onRefresh() {
   loading.value = true;
@@ -259,6 +235,10 @@ function isImage(filename) {
 const route = useRoute();
 //const router = useRouter();
 
+function onTagsChanged(tags) {
+  console.log(tags);
+};
+
 function onFileAdded(e) {
   newFileId.value = uid();
 }
@@ -289,7 +269,7 @@ function onFileUploaded(e) {
 
 document.value.id = route.params.id || null;
 
-onLoadAvailableTags();
+
 if (document.value.id) {
   onRefresh();
 }
