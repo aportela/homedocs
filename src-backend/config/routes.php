@@ -14,22 +14,19 @@ return function (App $app) {
         ]);
     })->add(\HomeDocs\Middleware\JWT::class);
 
-    $app->get('/initial_state', function (Request $request, Response $response, array $args) {
-      $payload = json_encode(
-        [
-            'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this))
-        ]
-      );
-      $response->getBody()->write($payload);
-      return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
-    })->add(\HomeDocs\Middleware\JWT::class)
-    ->add(\HomeDocs\Middleware\APIExceptionCatcher::class);
-
     $app->group(
         '/api2',
         function (RouteCollectorProxy $group) {
 
-
+            $group->get('/initial_state', function (Request $request, Response $response, array $args) {
+              $payload = json_encode(
+                [
+                    'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this))
+                ]
+              );
+              $response->getBody()->write($payload);
+              return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+            });
             $group->post('/user/sign-up', function (Request $request, Response $response, array $args) {
                 $settings = $this->get('settings');
                 if ($settings['common']['allowSignUp']) {
