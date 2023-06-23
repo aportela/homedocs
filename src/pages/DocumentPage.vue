@@ -8,23 +8,23 @@
           <h3 v-else>{{ t('Document') }}</h3>
         </q-card-section>
         <q-card-section>
-          <q-input outlined v-model="document.title" type="text" name="title" label="Título del documento"
-            :disable="loading" :autofocus="true">
+          <q-input ref="titleRef" outlined v-model="document.title" type="text" name="title" :label="t('Document title')"
+            :disable="loading || saving" :autofocus="true">
           </q-input>
         </q-card-section>
         <q-card-section>
-          <q-input class="q-mb-sm" outlined v-model="document.description" type="textarea" autogrow name="title"
-            label="Descripción del documento" :disable="loading" :autofocus="true">
+          <q-input class="q-mb-sm" outlined v-model="document.description" type="textarea" autogrow name="description"
+            :label="t('Document description')" :disable="loading || saving" clearble>
           </q-input>
         </q-card-section>
         <q-card-section>
-          <TagSelector :selectedTags="document.tags" :disabled="loading" @change="onTagsChanged">
+          <TagSelector v-model="document.tags" :disabled="loading || saving">
           </TagSelector>
         </q-card-section>
         <q-card-section>
           <q-uploader class="q-mb-md" label="Add new file" flat bordered auto-upload hide-upload-btn color="dark"
-            field-name="file" :url="newUploadURL" @added="onFileAdded" @uploaded="onFileUploaded" method="post" multiple
-            style="width: 100%;" :disable="loading" batch />
+            field-name="file" :url="newUploadURL" :max-file-size="2097152" @added="onFileAdded" @uploaded="onFileUploaded"
+            method="post" multiple style="width: 100%;" :disable="loading || saving" no-thumbnails batch />
           <q-markup-table v-if="document.files.length > 0">
             <thead>
               <tr>
@@ -131,7 +131,7 @@
         </q-card-section>
         <q-card-section>
           <q-btn label="Save changes" type="submit" icon="save" class="full-width" color="dark"
-            :disable="loading || saving">
+            :disable="loading || saving || !document.title">
             <template v-slot:loading v-if="saving">
               <q-spinner-hourglass class="on-left" />
               {{ t('Saving...') }}
@@ -149,10 +149,12 @@
 import { ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { api } from 'boot/axios'
-import { date } from 'quasar'
+import { date, useQuasar } from 'quasar'
 import { uid, format } from "quasar";
 import { useI18n } from 'vue-i18n'
 import { default as TagSelector } from "components/TagSelector.vue";
+
+const $q = useQuasar();
 
 const { t } = useI18n();
 
@@ -163,6 +165,9 @@ const previewFile = ref(null);
 
 const showConfirmDeleteFileDialog = ref(false);
 
+const titleRef = ref(null);
+
+const isNew = ref(false);
 const loading = ref(false);
 const saving = ref(false);
 
@@ -193,6 +198,7 @@ function onRefresh() {
       document.value = response.data.data;
       document.value.createdOn = date.formatDate(document.value.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
       document.value.files.map((file) => {
+        file.isNew = false;
         file.uploadedOn = date.formatDate(file.uploadedOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
         file.humanSize = format.humanStorageSize(file.size);
         return (file);
@@ -209,18 +215,113 @@ function onRefresh() {
           });
           break;
         default:
-          /*
-          this.$emit("showAPIError", {
-            httpCode: error.response.status,
-            data: error.response.getApiErrorData(),
+          $q.notify({
+            color: "negative",
+            icon: "error",
+            message: t("API Error: error loading document"),
           });
-          */
           break;
       }
     });
 }
 
 function onSubmitForm() {
+  loading.value = true;
+  if (!isNew.value) {
+    api.document
+      .update(document.value)
+      .then((response) => {
+        document.value = response.data.data;
+        document.value.createdOn = date.formatDate(document.value.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
+        document.value.files.map((file) => {
+          file.isNew = false;
+          file.uploadedOn = date.formatDate(file.uploadedOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
+          file.humanSize = format.humanStorageSize(file.size);
+          return (file);
+        });
+        loading.value = false;
+        //this.$nextTick(() => this.$refs.title.focus());
+      })
+      .catch((error) => {
+        loading.value = false;
+        switch (error.response.status) {
+          case 400:
+            if (
+              error.response.data.invalidOrMissingParams.find(function (e) {
+                return e === "title";
+              })
+            ) {
+              $q.notify({
+                color: "negative",
+                icon: "error",
+                message: t("API Error: missing document title param"),
+              });
+              // TODO: focus not working
+              titleRef.value.focus();
+            }
+            break;
+          case 401:
+            this.$router.push({
+              name: "signIn",
+            });
+            break;
+          default:
+            $q.notify({
+              color: "negative",
+              icon: "error",
+              message: t("API Error: error updating document"),
+            });
+            break;
+        }
+      });
+  } else {
+    if (!document.value.id) {
+      document.value.id = uid();
+    }
+    api.document
+      .add(document.value)
+      .then((response) => {
+        loading.value = false;
+        router.push({
+          name: "document",
+          params: { id: document.value.id }
+        });
+      })
+      .catch((error) => {
+        document.value.id = null;
+        loading.value = false;
+        switch (error.response.status) {
+          case 400:
+            if (
+              error.response.data.invalidOrMissingParams.find(function (e) {
+                return e === "title";
+              })
+            ) {
+              $q.notify({
+                color: "negative",
+                icon: "error",
+                message: t("API Error: missing document title param"),
+              });
+              // TODO: focus not working
+              titleRef.value.focus();
+            }
+            break;
+          case 401:
+            this.$router.push({
+              name: "signIn",
+            });
+            break;
+          default:
+            $q.notify({
+              color: "negative",
+              icon: "error",
+              message: t("API Error: error adding document"),
+            });
+            break;
+        }
+      });
+  }
+
 }
 
 function onPreviewFile(file) {
@@ -233,11 +334,25 @@ function isImage(filename) {
 }
 
 const route = useRoute();
-//const router = useRouter();
+const router = useRouter();
 
-function onTagsChanged(tags) {
-  console.log(tags);
-};
+router.beforeEach(async (to, from) => {
+  if (to.name == "newDocument") {
+    document.value = {
+      id: null,
+      title: null,
+      description: null,
+      created: null,
+      createdOnTimestamp: null,
+      createdBy: null,
+      files: [],
+      tags: []
+    }
+    isNew.value = true;
+  } else if (to.name == "document") {
+    isNew.value = false;
+  }
+})
 
 function onFileAdded(e) {
   newFileId.value = uid();
@@ -260,7 +375,8 @@ function onFileUploaded(e) {
       id: newFileId.value,
       uploadedOn: date.formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss'),
       name: e.files[0].name,
-      humanSize: format.humanStorageSize(e.files[0].size)
+      humanSize: format.humanStorageSize(e.files[0].size),
+      isNew: true
     }
   );
   console.log(e.files[0].name);
@@ -268,9 +384,11 @@ function onFileUploaded(e) {
 }
 
 document.value.id = route.params.id || null;
-
-
 if (document.value.id) {
+  isNew.value = false;
   onRefresh();
+} else {
+  isNew.value = true;
 }
+
 </script>
