@@ -62,7 +62,6 @@ function loadAvailableTags() {
   loading.value = true;
   api.tag.search().then((response) => {
     availableTags.value = response.data.tags;
-    console.log("Al cargar tiene " + currentTags.value.length);
     loading.value = false;
   }).catch((error) => {
     loadingError.value = true;
