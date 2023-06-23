@@ -34,14 +34,14 @@ const loadingError = ref(false);
 const availableTags = ref([]);
 const filteredTags = ref([]);
 const currentTags = ref([]);
-const selectedTagsProp = computed(() => props.modelValue);
+const selectedTagsProp = computed(() => props.modelValue || []);
 
 watch(selectedTagsProp, (newValue) => {
-  currentTags.value = newValue;
+  currentTags.value = newValue || [];
 });
 
 watch(currentTags, (newValue) => {
-  emit('update:modelValue', newValue);
+  emit('update:modelValue', newValue || []);
 });
 
 function onFilterTags(val, update) {
