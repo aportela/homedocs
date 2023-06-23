@@ -8,23 +8,18 @@
           <h3 v-else>{{ t('Document') }}</h3>
         </q-card-section>
         <q-card-section>
-          <q-input ref="titleRef" outlined v-model="document.title" type="text" name="title" :label="t('Document title')"
-            :disable="loading || saving" :autofocus="true">
+          <q-input class="q-mb-md" ref="titleRef" outlined v-model="document.title" type="text" name="title"
+            :label="t('Document title')" :disable="loading || saving" :autofocus="true">
           </q-input>
-        </q-card-section>
-        <q-card-section>
-          <q-input class="q-mb-sm" outlined v-model="document.description" type="textarea" autogrow name="description"
+          <q-input class="q-mb-md" outlined v-model="document.description" type="textarea" autogrow name="description"
             :label="t('Document description')" :disable="loading || saving" clearble>
           </q-input>
-        </q-card-section>
-        <q-card-section>
           <TagSelector v-model="document.tags" :disabled="loading || saving">
           </TagSelector>
-        </q-card-section>
-        <q-card-section>
-          <q-uploader class="q-mb-md" label="Add new file" flat bordered auto-upload hide-upload-btn color="dark"
-            field-name="file" :url="newUploadURL" :max-file-size="2097152" @added="onFileAdded" @uploaded="onFileUploaded"
-            method="post" multiple style="width: 100%;" :disable="loading || saving" no-thumbnails batch />
+          <q-uploader class="q-mb-md" :label="t('Add new file (Drag & Drop supported)')" flat bordered auto-upload
+            hide-upload-btn color="dark" field-name="file" :url="newUploadURL" :max-file-size="maxFileSize"
+            @added="onFileAdded" @uploaded="onFileUploaded" @rejected="onUploadRejected" method="post" multiple
+            style="width: 100%;" :disable="loading || saving" no-thumbnails batch />
           <q-markup-table v-if="document.files.length > 0">
             <thead>
               <tr>
@@ -92,42 +87,7 @@
               <q-img :src="'api2/file/' + previewFile.id" />
             </q-card>
           </q-dialog>
-          <q-dialog v-model="showPreviewDialog">
-            <q-card style="width: 700px; max-width: 80vw;">
-              <q-card-section class="row items-center q-pb-none">
-                <div class="text-h6">File preview</div>
-                <q-space />
-                <q-btn icon="close" flat round dense v-close-popup />
-              </q-card-section>
-              <q-card-section class="q-pt-none">
-                <q-img :src="'api2/file/' + previewFile.id" loading="lazy" spinner-color="white">
-                  <div class="absolute-bottom text-subtitle1 text-center">
-                    {{ previewFile.name }} ({{ previewFile.humanSize }})
-                  </div>
-                </q-img>
-                <q-card-actions align="right">
-                  <q-btn outline :href="'api2/file/' + previewFile.id" label="Download" icon="download" />
-                  <q-btn outline v-close-popup label="Close" icon="close" />
-                </q-card-actions>
-              </q-card-section>
-              <!--
-            <q-card-actions align="right">
-              <q-btn flat label="Close" color="primary" v-close-popup />
-            </q-card-actions>
-            -->
-            </q-card>
-          </q-dialog>
-          <q-dialog v-model="showConfirmDeleteFileDialog">
-            <q-card>
-              <q-card-section class="row items-center q-pb-none">
-                Remove file xxx
-              </q-card-section>
-              <q-card-actions align="right">
-                <q-btn flat label="Cancel" color="primary" v-close-popup />
-                <q-btn flat label="Delete" color="primary" @click.prevent="onFileRemove(0)" />
-              </q-card-actions>
-            </q-card>
-          </q-dialog>
+
         </q-card-section>
         <q-card-section>
           <q-btn label="Save changes" type="submit" icon="save" class="full-width" color="dark"
@@ -140,7 +100,42 @@
         </q-card-section>
       </form>
     </q-card>
-
+    <q-dialog v-model="showPreviewDialog">
+      <q-card style="width: 700px; max-width: 80vw;">
+        <q-card-section class="row items-center q-pb-none">
+          <div class="text-h6">File preview</div>
+          <q-space />
+          <q-btn icon="close" flat round dense v-close-popup />
+        </q-card-section>
+        <q-card-section class="q-pt-none">
+          <q-img :src="'api2/file/' + previewFile.id" loading="lazy" spinner-color="white">
+            <div class="absolute-bottom text-subtitle1 text-center">
+              {{ previewFile.name }} ({{ previewFile.humanSize }})
+            </div>
+          </q-img>
+          <q-card-actions align="right">
+            <q-btn outline :href="'api2/file/' + previewFile.id" label="Download" icon="download" />
+            <q-btn outline v-close-popup label="Close" icon="close" />
+          </q-card-actions>
+        </q-card-section>
+        <!--
+            <q-card-actions align="right">
+              <q-btn flat label="Close" color="primary" v-close-popup />
+            </q-card-actions>
+            -->
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="showConfirmDeleteFileDialog">
+      <q-card>
+        <q-card-section class="row items-center q-pb-none">
+          Remove file xxx
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="Cancel" color="primary" v-close-popup />
+          <q-btn flat label="Delete" color="primary" @click.prevent="onFileRemove(0)" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -160,6 +155,7 @@ const { t } = useI18n();
 
 const { humanStorageSize } = format
 
+const maxFileSize = 2097152;
 const showPreviewDialog = ref(false);
 const previewFile = ref(null);
 
@@ -375,12 +371,29 @@ function onFileUploaded(e) {
       id: newFileId.value,
       uploadedOn: date.formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss'),
       name: e.files[0].name,
+      size: e.files[0].size,
+      hash: null,
       humanSize: format.humanStorageSize(e.files[0].size),
       isNew: true
     }
   );
   console.log(e.files[0].name);
   newFileId.value = uid();
+}
+
+function onUploadRejected(e) {
+  if (e[0].failedPropValidation == "max-file-size") {
+    $q.notify({
+      color: "negative",
+      icon: "error",
+      message: "Can not upload file " + e[0].file.name + ' (max upload filesize: ' + format.humanStorageSize(maxFileSize) + ', current file size: ' + format.humanStorageSize(e[0].file.size) + ')',
+    });
+  }
+  console.log(e);
+}
+
+function onDeleteDocument() {
+  // TODO:
 }
 
 document.value.id = route.params.id || null;
