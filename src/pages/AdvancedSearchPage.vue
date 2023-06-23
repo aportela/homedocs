@@ -44,7 +44,7 @@
                   </template>
                 </q-input>
                 -->
-                <TagSelector :selectedTags="[]" :disabled="searching" @change="onTagsChanged">
+                <TagSelector v-model="filter.tags" :disabled="searching">
                 </TagSelector>
               </q-card-section>
             </q-card>
@@ -91,8 +91,4 @@ const filter = ref({
   tags: []
 });
 
-function onTagsChanged(event) {
-
-  console.log(event);
-}
 </script>
