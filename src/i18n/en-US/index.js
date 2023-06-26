@@ -24,7 +24,7 @@ export default {
   "Your account has been created": "Your account has been created",
   "API Error: missing email param": "API Error: missing email param",
   "API Error: missing password param": "API Error: missing password param",
-  "API Error: missing param": "API Error: missing param",
+  "API Error: invalid/missing param": "API Error: invalid/missing param",
   "API Error: fatal error": "API Error: fatal error",
   "New document": "New document",
   "Document title": "Document title",
@@ -38,6 +38,8 @@ export default {
     "API Error: missing document title param",
   Document: "Document",
   "Saving...": "Saving...",
+  "Searching...": "Searching...",
+  Search: "Search",
   /* advanced search */
   "Document title": "Document title",
   "Document description": "Document description",

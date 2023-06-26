@@ -137,7 +137,7 @@ function onSubmitForm() {
               $q.notify({
                 color: "negative",
                 icon: "error",
-                message: t("API Error: missing param"),
+                message: t("API Error: invalid/missing param"),
               });
             }
             break;
