@@ -190,7 +190,7 @@ return function (App $app) {
                             $documentFile["id"],
                             $documentFile["name"],
                             $documentFile["size"],
-                            $documentFile["hash"]
+                            $documentFile["hash"] ?? ""
                         );
                     }
                 }
@@ -310,6 +310,31 @@ return function (App $app) {
                 $response->getBody()->write($payload);
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             })->add(\HomeDocs\Middleware\JWT::class)->add(\HomeDocs\Middleware\CheckAuth::class);
+
+            $group->post('/file', function (Request $request, Response $response, array $args) {
+              $uploadedFiles = $request->getUploadedFiles();
+              $file = new \HomeDocs\File(
+                  $this->get('settings')['paths']['storage'],
+                  (\Ramsey\Uuid\Uuid::uuid4())->toString(),
+                  $uploadedFiles["file"]->getClientFilename(),
+                  $uploadedFiles["file"]->getSize()
+              );
+              $file->add($this->get(\aportela\DatabaseWrapper\DB::class), $uploadedFiles["file"]);
+              $payload = json_encode(
+                  [
+                      'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this)),
+                      'data' => array(
+                        "id" => $file->id,
+                        "name" => $file->name,
+                        "size" => $file->size,
+                        "hash" => $file->hash,
+                        "uploadedOnTimestamp" => time()
+                    )
+                  ]
+              );
+              $response->getBody()->write($payload);
+              return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+          })->add(\HomeDocs\Middleware\JWT::class)->add(\HomeDocs\Middleware\CheckAuth::class);
 
             $group->get('/tag-cloud', function (Request $request, Response $response, array $args) {
                 $payload = json_encode(
