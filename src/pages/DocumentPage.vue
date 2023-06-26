@@ -17,9 +17,10 @@
           <TagSelector v-model="document.tags" :disabled="loading || saving">
           </TagSelector>
           <q-uploader class="q-mb-md" :label="t('Add new file (Drag & Drop supported)')" flat bordered auto-upload
-            hide-upload-btn color="dark" field-name="file" :url="newUploadURL" :max-file-size="maxFileSize"
-            @added="onFileAdded" @uploaded="onFileUploaded" @rejected="onUploadRejected" method="post" multiple
-            style="width: 100%;" :disable="loading || saving" no-thumbnails batch />
+            hide-upload-btn color="dark" field-name="file" url="api2/file" :max-file-size="maxFileSize" multiple
+            @uploaded="onFileUploaded" @rejected="onUploadRejected" @failed="onUploadFailed" method="post"
+            style="width: 100%;" :disable="loading || saving" no-thumbnails @start="onUploadsStart"
+            @finish="onUploadsFinish" />
           <q-markup-table v-if="document.files.length > 0">
             <thead>
               <tr>
@@ -91,7 +92,7 @@
         </q-card-section>
         <q-card-section>
           <q-btn label="Save changes" type="submit" icon="save" class="full-width" color="dark"
-            :disable="loading || saving || !document.title">
+            :disable="loading || saving || uploading || !document.title">
             <template v-slot:loading v-if="saving">
               <q-spinner-hourglass class="on-left" />
               {{ t('Saving...') }}
@@ -141,7 +142,7 @@
 
 <script setup>
 
-import { ref, computed } from "vue";
+import { ref, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { api } from 'boot/axios'
 import { date, useQuasar } from 'quasar'
@@ -166,12 +167,7 @@ const titleRef = ref(null);
 const isNew = ref(false);
 const loading = ref(false);
 const saving = ref(false);
-
-const newFileId = ref(uid());
-
-const newUploadURL = computed(() => {
-  return ('api2/file/' + newFileId.value);
-});
+const uploading = ref(false);
 
 const document = ref({
   id: null,
@@ -199,8 +195,9 @@ function onRefresh() {
         file.humanSize = format.humanStorageSize(file.size);
         return (file);
       });
+      // TODO: remove uploaded files after save
       loading.value = false;
-      //this.$nextTick(() => this.$refs.title.focus());
+      nextTick(() => titleRef.value.focus());
     })
     .catch((error) => {
       loading.value = false;
@@ -235,8 +232,9 @@ function onSubmitForm() {
           file.humanSize = format.humanStorageSize(file.size);
           return (file);
         });
+        // TODO: remove uploaded files after save
         loading.value = false;
-        //this.$nextTick(() => this.$refs.title.focus());
+        nextTick(() => titleRef.value.focus());
       })
       .catch((error) => {
         loading.value = false;
@@ -278,6 +276,7 @@ function onSubmitForm() {
       .add(document.value)
       .then((response) => {
         loading.value = false;
+        nextTick(() => titleRef.value.focus());
         router.push({
           name: "document",
           params: { id: document.value.id }
@@ -350,9 +349,6 @@ router.beforeEach(async (to, from) => {
   }
 })
 
-function onFileAdded(e) {
-  newFileId.value = uid();
-}
 
 function onShowFileRemoveConfirmationDialog(file, fileIndex) {
   showConfirmDeleteFileDialog.value = true;
@@ -368,7 +364,7 @@ function onFileRemove(fileIndex) {
 function onFileUploaded(e) {
   document.value.files.push(
     {
-      id: newFileId.value,
+      id: (JSON.parse(e.xhr.response).data).id,
       uploadedOn: date.formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss'),
       name: e.files[0].name,
       size: e.files[0].size,
@@ -377,8 +373,6 @@ function onFileUploaded(e) {
       isNew: true
     }
   );
-  console.log(e.files[0].name);
-  newFileId.value = uid();
 }
 
 function onUploadRejected(e) {
@@ -388,8 +382,29 @@ function onUploadRejected(e) {
       icon: "error",
       message: "Can not upload file " + e[0].file.name + ' (max upload filesize: ' + format.humanStorageSize(maxFileSize) + ', current file size: ' + format.humanStorageSize(e[0].file.size) + ')',
     });
+  } else {
+    $q.notify({
+      color: "negative",
+      icon: "error",
+      message: "Can not upload file " + e[0].file.name,
+    });
   }
-  console.log(e);
+}
+
+function onUploadFailed(e) {
+  $q.notify({
+    color: "negative",
+    icon: "error",
+    message: "Can not upload file " + e.files[0].name + ', API error: ' + e.xhr.status + ' - ' + e.xhr.statusText,
+  });
+}
+
+function onUploadsStart(e) {
+  uploading.value = true;
+}
+
+function onUploadsFinish(e) {
+  uploading.value = false;
 }
 
 function onDeleteDocument() {
