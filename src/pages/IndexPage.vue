@@ -36,7 +36,9 @@
           <q-card-section>
             <q-chip square outline text-color="dark" v-for="tag in tags" :key="tag">
               <q-avatar color="grey-9" text-color="white">{{ tag.total }}</q-avatar>
-              {{ tag.tag }}
+              <router-link :to="{ name: 'advancedSearchByTag', params: { tag: tag.tag } }" style="text-decoration: none"
+                class="text-dark">
+                {{ tag.tag }}</router-link>
             </q-chip>
           </q-card-section>
         </q-card>
