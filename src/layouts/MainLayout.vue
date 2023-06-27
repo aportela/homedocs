@@ -48,18 +48,19 @@
           <q-avatar rounded size="24px" class="q-mr-sm">
             <q-icon name="language" />
           </q-avatar>
-          EN
+          {{ selectedLanguage.shortLabel }}
           <q-icon name="arrow_drop_down" size="16px" />
           <q-menu auto-close>
             <q-list dense style="min-width: 200px">
               <q-item class="GL__menu-link-signed-in">
                 <q-item-section>
-                  <div>Selected language: <strong>English</strong></div>
+                  <div>Selected language: <strong>{{ selectedLanguage.label }}</strong></div>
                 </q-item-section>
               </q-item>
               <q-separator />
-              <q-item clickable :disable="selectedLanguage == availableLanguage.value" v-close-popup
-                v-for="availableLanguage in availableLanguages" :key="availableLanguage.value">
+              <q-item clickable :disable="selectedLanguage.value == availableLanguage.value" v-close-popup
+                v-for="availableLanguage in availableLanguages" :key="availableLanguage.value"
+                @click="onSelectLanguage(availableLanguage)">
                 <q-item-section>
                   <div>{{ availableLanguage.label }}</div>
                 </q-item-section>
@@ -93,7 +94,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 
 import { useSessionStore } from "stores/session";
 import { useRouter } from "vue-router";
@@ -127,7 +128,11 @@ const availableLanguages = ref([
   }
 ]);
 
-const selectedLanguage = ref('en');
+const selectedLanguage = ref(availableLanguages.value[0]);
+
+function onSelectLanguage(language) {
+  selectedLanguage.value = language;
+}
 
 const menuItems = ref([
   { icon: 'storage', text: 'Dashboard', routeName: 'index' },
@@ -135,10 +140,12 @@ const menuItems = ref([
   { icon: 'find_in_page', text: 'Advanced search', routeName: 'advancedSearch' }
 ]);
 
+/*
 function signOut() {
   session.signOut();
   router.push({
     name: "signIn",
   });
 }
+*/
 </script>
