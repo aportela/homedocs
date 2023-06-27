@@ -74,10 +74,9 @@
         </q-card>
         <div v-if="hasResults">
           <div class="text-h6">Search results</div>
-          <div class="q-pa-lg flex flex-center">
-            <q-pagination v-model="results.pagination.currentPage" color="dark" :max="results.pagination.totalPages"
-              :max-pages="5" boundary-numbers direction-links boundary-links @update:model-value="onPaginationChanged"
-              :disable="searching" />
+          <div class="q-pa-lg flex flex-center" v-if="pager.totalPages > 1">
+            <q-pagination v-model="pager.currentPage" color="dark" :max="pager.totalPages" :max-pages="5" boundary-numbers
+              direction-links boundary-links @update:model-value="onPaginationChanged" :disable="searching" />
           </div>
           <q-markup-table>
             <thead>
@@ -101,10 +100,9 @@
               </tr>
             </tbody>
           </q-markup-table>
-          <div class="q-pa-lg flex flex-center">
-            <q-pagination v-model="results.pagination.currentPage" color="dark" :max="results.pagination.totalPages"
-              :max-pages="5" boundary-numbers direction-links boundary-links @update:model-value="onPaginationChanged"
-              :disable="searching" />
+          <div class="q-pa-lg flex flex-center" v-if="pager.totalPages > 1">
+            <q-pagination v-model="pager.currentPage" color="dark" :max="pager.totalPages" :max-pages="5" boundary-numbers
+              direction-links boundary-links @update:model-value="onPaginationChanged" :disable="searching" />
           </div>
         </div>
       </div>
