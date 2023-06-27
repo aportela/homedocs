@@ -63,7 +63,7 @@
               <TagSelector v-model="filter.tags" :disabled="searching" dense>
               </TagSelector>
               <q-btn color="dark" size="md" :label="$t('Search')" no-caps class="full-width" icon="search"
-                :disable="searching" :loading="searching" type="submit">
+                :disable="searching" :loading="searching" type="submit" @click.stop="onSubmitForm(true)">
                 <template v-slot:loading>
                   <q-spinner-hourglass class="on-left" />
                   {{ t('Searching...') }}
@@ -238,7 +238,10 @@ watch(
   }
 )
 
-function onSubmitForm() {
+function onSubmitForm(resetPager) {
+  if (resetPager) {
+    pager.value.currentPage = 1;
+  }
   searching.value = true;
   api.document.search(pager.value.currentPage, pager.value.resultsPage, filter.value, sort.value.field, sort.value.order)
     .then((success) => {
@@ -281,7 +284,7 @@ function onSubmitForm() {
 
 function onPaginationChanged(pageIndex) {
   pager.value.currentPage = pageIndex;
-  onSubmitForm();
+  onSubmitForm(false);
 }
 
 
@@ -293,9 +296,9 @@ function onToggleSort(field) {
     sort.value.field = field;
     sort.value.order = "ASC";
   }
-  onSubmitForm();
+  onSubmitForm(false);
 }
 
-onSubmitForm();
+onSubmitForm(true);
 
 </script>
