@@ -120,9 +120,17 @@ import { date } from 'quasar'
 import { api } from 'boot/axios'
 import { useI18n } from 'vue-i18n'
 
+import { useRoute } from "vue-router";
+
 import { default as TagSelector } from "components/TagSelector.vue";
 
+import { useQuasar } from 'quasar'
+
 const { t } = useI18n();
+
+const $q = useQuasar();
+
+const route = useRoute();
 
 const sort = ref({
   field: 'createdOnTimestamp',
@@ -157,7 +165,7 @@ const filter = ref({
   toDate: null,
   fromTimestamp: null,
   toTimestamp: null,
-  tags: []
+  tags: route.params.tag !== undefined ? [route.params.tag] : []
 });
 
 const pager = ref({
@@ -299,6 +307,8 @@ function onToggleSort(field) {
   onSubmitForm(false);
 }
 
-onSubmitForm(true);
+if (filter.value.tags.length > 0) {
+  onSubmitForm(true);
+}
 
 </script>
