@@ -1,5 +1,5 @@
 <template>
-  <q-select ref="selectRef" :label="t('Tags')" v-model="currentTags" outlined use-input use-chips multiple
+  <q-select ref="selectRef" :label="t('Tags')" v-model="currentTags" :dense="dense" outlined use-input use-chips multiple
     hide-dropdown-icon :options="filteredTags" input-debounce="0" new-value-mode="add-unique" clearable
     :disable="disabled || loading || loadingError" :loading="loading" :error="loadingError"
     :errorMessage="t('Error loading available tags')" @filter="onFilterTags" @add="onAddTag">
@@ -22,7 +22,8 @@ const { t } = useI18n();
 
 const props = defineProps({
   modelValue: Array,
-  disabled: Boolean
+  disabled: Boolean,
+  dense: Boolean
 });
 
 const emit = defineEmits(['update:modelValue', 'error']);
