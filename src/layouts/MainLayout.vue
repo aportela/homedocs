@@ -44,6 +44,29 @@
           style="text-decoration: none" @click="signOut">Sign Out
         </a>
         -->
+        <q-btn dense flat no-wrap>
+          <q-avatar rounded size="24px" class="q-mr-sm">
+            <q-icon name="language" />
+          </q-avatar>
+          EN
+          <q-icon name="arrow_drop_down" size="16px" />
+          <q-menu auto-close>
+            <q-list dense style="min-width: 200px">
+              <q-item class="GL__menu-link-signed-in">
+                <q-item-section>
+                  <div>Selected language: <strong>English</strong></div>
+                </q-item-section>
+              </q-item>
+              <q-separator />
+              <q-item clickable :disable="selectedLanguage == availableLanguage.value" v-close-popup
+                v-for="availableLanguage in availableLanguages" :key="availableLanguage.value">
+                <q-item-section>
+                  <div>{{ availableLanguage.label }}</div>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </q-btn>
       </q-toolbar>
     </q-header>
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-grey-2" :width="240" v-if="session.isLogged">
@@ -85,6 +108,26 @@ const filteredOptions = ref([]);
 const filter = ref(null);
 const session = useSessionStore();
 const router = useRouter();
+
+const availableLanguages = ref([
+  {
+    shortLabel: 'EN',
+    label: 'English',
+    value: 'en'
+  },
+  {
+    shortLabel: 'ES',
+    label: 'Español',
+    value: 'es'
+  },
+  {
+    shortLabel: 'GL',
+    label: 'Galego',
+    value: 'gl'
+  }
+]);
+
+const selectedLanguage = ref('en');
 
 const menuItems = ref([
   { icon: 'storage', text: 'Dashboard', routeName: 'index' },
