@@ -24,6 +24,11 @@ const routes = [
         component: () => import("pages/AdvancedSearchPage.vue"),
       },
       {
+        name: "advancedSearchByTag",
+        path: "advanced_search/tag/:tag",
+        component: () => import("pages/AdvancedSearchPage.vue"),
+      },
+      {
         name: "signIn",
         path: "sign_in",
         component: () => import("pages/SignInPage.vue"),
