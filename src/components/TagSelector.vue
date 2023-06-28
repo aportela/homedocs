@@ -53,7 +53,7 @@ function onFilterTags(val, update) {
   } else {
     update(() => {
       const needle = val.toLowerCase();
-      filteredTags.value = availableTags.value.filter(v => v.toLowerCase().indexOf(needle) > -1)
+      filteredTags.value = availableTags.value.filter(v => v.toLowerCase().indexOf(needle) > -1);
     });
   }
 }
@@ -73,7 +73,6 @@ function loadAvailableTags() {
 }
 
 function onAddTag(tag) {
-  // TODO: hide select popup after adding element not working
   selectRef.value.hidePopup()
 }
 
