@@ -4,17 +4,13 @@
       <q-toolbar class="q-py-sm q-px-md">
         <q-btn class="mobile-only" flat dense round @click="leftDrawerOpen = !leftDrawerOpen" aria-label="Menu"
           icon="menu" v-if="session.isLogged" />
-
         <q-avatar square size="42px">
           <img src="icons/favicon-128x128.png" />
         </q-avatar>
         HomeDocs
-
         <q-select ref="search" dark dense standout use-input hide-selected class="q-mx-md" color="black"
           :stack-label="false" label="Search..." v-model="text" :options="filteredOptions" @filter="onFilter"
           style="width: 100%" v-if="session.isLogged">
-
-
           <template v-slot:no-option v-if="searching">
             <q-item>
               <q-item-section>
@@ -24,7 +20,6 @@
               </q-item-section>
             </q-item>
           </template>
-
           <template v-slot:option="scope">
             <q-list class="bg-grey-9 text-white">
               <q-item v-bind="scope.itemProps" :to="{ name: 'document', params: { id: scope.opt.id } }">
@@ -33,37 +28,12 @@
                 </q-item-section>
                 <q-item-section>
                   <q-item-label>{{ scope.opt.label }}</q-item-label>
+                  <q-item-label caption>{{ scope.opt.caption }}</q-item-label>
                 </q-item-section>
-                <!--
-                <q-item-section side :class="{ 'default-type': !scope.opt.type }">
-                  <q-btn outline dense no-caps text-color="blue-grey-5" size="12px" class="bg-grey-1 q-px-sm">
-                    {{ scope.opt.type || 'Jump to' }}
-                    <q-icon name="subdirectory_arrow_left" size="14px" />
-                  </q-btn>
-                </q-item-section>
-                -->
               </q-item>
             </q-list>
           </template>
-
         </q-select>
-
-        <!--
-        <div v-if="session.isLogged && $q.screen.gt.sm"
-          class="GL__toolbar-link q-ml-xs q-gutter-md text-body2 text-weight-bold row items-center no-wrap">
-          <router-link class="text-white text-weight-bold" style="text-decoration: none"
-            :to="{ name: 'index' }">Dashboard</router-link>
-          <router-link class="text-white text-weight-bold" style="text-decoration: none" :to="{ name: 'newDocument' }">New
-            document</router-link>
-          <router-link class="text-white text-weight-bold" style="text-decoration: none"
-            :to="{ name: 'advancedSearch' }">Advanced
-            search</router-link>
-        </div>
-        <q-space />
-        <a v-if="session.isLogged && $q.screen.gt.sm" href="javascript:void(0)" class="text-white text-weight-bold"
-          style="text-decoration: none" @click="signOut">Sign Out
-        </a>
-        -->
         <q-btn dense flat no-wrap>
           <q-avatar rounded size="24px" class="q-mr-sm">
             <q-icon name="language" />
@@ -145,7 +115,7 @@ function onFilter(val, update) {
     update(() => {
       api.document.search(1, 8, { title: val }, "title", "ASC")
         .then((success) => {
-          filteredOptions.value = success.data.results.documents.map((document) => { return ({ id: document.id, label: document.title + " (creation: " + date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss') + ", attachments: " + document.fileCount + ")" }); });
+          filteredOptions.value = success.data.results.documents.map((document) => { return ({ id: document.id, label: document.title, caption: "Created on " + date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss') + ", " + document.fileCount + " attachment/s" }); });
           searching.value = false;
           return;
         })
