@@ -10,7 +10,7 @@
         </q-avatar>
         HomeDocs
 
-        <q-select ref="search" dark dense standout use-input hide-selected class2="q-mx-md" color="black"
+        <q-select ref="search" dark dense standout use-input hide-selected class="q-mx-md" color="black"
           :stack-label="false" label="Search..." v-model="text" :options="filteredOptions" @filter="onFilter"
           style="width: 100%" v-if="session.isLogged">
 
