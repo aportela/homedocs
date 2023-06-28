@@ -45,6 +45,7 @@ export default {
   "Document description": "Document description",
   Tags: "Tags",
   "Error loading available tags": "Error loading available tags",
+  "Sign out": "Sign out",
   pages: {
     common: {
       labels: {
