@@ -109,13 +109,22 @@
           <q-btn icon="close" flat round dense v-close-popup />
         </q-card-section>
         <q-card-section class="q-pt-none">
-          <q-img :src="'api2/file/' + previewFile.id" loading="lazy" spinner-color="white">
+          <q-img :src="'api2/file/' + previewFile.id" loading="lazy" spinner-color="white"
+            @error="previewImageLoadingError = true">
+
             <div class="absolute-bottom text-subtitle1 text-center">
               {{ previewFile.name }} ({{ previewFile.humanSize }})
             </div>
           </q-img>
+          <div class=" text-subtitle1 text-center" v-if="previewImageLoadingError">
+            <q-banner inline-actions class="text-white bg-red">
+              <q-icon name="error" size="sm" />
+              Error loading <strong>{{ previewFile.name }}</strong>
+            </q-banner>
+          </div>
           <q-card-actions align="right">
-            <q-btn outline :href="'api2/file/' + previewFile.id" label="Download" icon="download" />
+            <q-btn outline :href="'api2/file/' + previewFile.id" label="Download" icon="download"
+              v-if="!previewImageLoadingError" />
             <q-btn outline v-close-popup label="Close" icon="close" />
           </q-card-actions>
         </q-card-section>
@@ -158,6 +167,7 @@ const { humanStorageSize } = format
 
 const maxFileSize = 2097152;
 const showPreviewDialog = ref(false);
+const previewImageLoadingError = ref(false);
 const previewFile = ref(null);
 
 const showConfirmDeleteFileDialog = ref(false);
@@ -320,6 +330,7 @@ function onSubmitForm() {
 
 function onPreviewFile(file) {
   previewFile.value = file;
+  previewImageLoadingError.value = false;
   showPreviewDialog.value = true;
 }
 
