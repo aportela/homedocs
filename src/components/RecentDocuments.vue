@@ -3,7 +3,7 @@
     <q-card-section>
       <q-expansion-item expand-separator icon="work_history" label="Recent documents"
         caption="Click on title to open document" :model-value="!$q.screen.lt.md">
-        <q-markup-table>
+        <q-markup-table v-if="!loading">
           <thead>
             <tr>
               <th class="text-left">Title</th>
@@ -21,6 +21,9 @@
             </tr>
           </tbody>
         </q-markup-table>
+        <p class="text-center" v-else>
+          <q-spinner-pie color="grey-5" size="md" />
+        </p>
       </q-expansion-item>
     </q-card-section>
   </q-card>
@@ -36,10 +39,12 @@ import { useI18n } from 'vue-i18n'
 
 const $q = useQuasar();
 const { t } = useI18n();
+
 const loading = ref(false);
 const recentDocuments = ref([]);
 
 function onRefreshRecentDocuments() {
+  loading.value = true;
   api.document.searchRecent(16)
     .then((success) => {
       recentDocuments.value = success.data.recentDocuments.map((document) => {
@@ -50,8 +55,14 @@ function onRefreshRecentDocuments() {
     })
     .catch((error) => {
       switch (error.response.status) {
+        // TODO
       }
       loading.value = false;
+      $q.notify({
+        color: "negative",
+        icon: "warning",
+        message: t("API Error: fatal error"),
+      });
     });
 }
 
