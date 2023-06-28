@@ -250,8 +250,7 @@ function onSubmitForm() {
                 icon: "error",
                 message: t("API Error: missing document title param"),
               });
-              // TODO: focus not working
-              titleRef.value.focus();
+              nextTick(() => titleRef.value.focus());
             }
             break;
           case 401:
@@ -333,6 +332,7 @@ const router = useRouter();
 
 router.beforeEach(async (to, from) => {
   if (to.name == "newDocument") {
+    // new document, reset form fields
     document.value = {
       id: null,
       title: null,
@@ -344,14 +344,11 @@ router.beforeEach(async (to, from) => {
       tags: []
     }
     isNew.value = true;
-  } else if (to.name == "document") {
+  } else if (to.name == "document" && route.params.id) {
+    // existent document, refresh
     isNew.value = false;
-    if (document.value.id != (route.params.id || null)) {
-      // TODO: not refreshing document properties
-      onRefresh();
-    } else {
-      isNew.value = true;
-    }
+    document.value.id = to.params.id
+    onRefresh();
   }
 })
 
