@@ -53,12 +53,15 @@ import { useQuasar } from "quasar";
 import { useRouter } from "vue-router";
 import { useI18n } from 'vue-i18n'
 import { api } from 'boot/axios'
+import { useSessionStore } from "stores/session";
 
 const { t } = useI18n();
 
 const $q = useQuasar();
 
 const router = useRouter();
+
+const session = useSessionStore();
 
 const loading = ref(false);
 
@@ -104,9 +107,12 @@ function onSubmitForm() {
     api.user
       .signIn(email.value, password.value)
       .then((success) => {
+        // TODO
+        //session.signIn();
         router.push({
           name: "index",
         });
+        loading.value = false;
       })
       .catch((error) => {
         switch (error.response.status) {
