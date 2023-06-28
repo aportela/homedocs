@@ -3,80 +3,82 @@
     <div class="q-pa-md">
       <h3>Advanced search</h3>
       <div class="q-gutter-y-md">
-        <div class="text-h6">Search conditions</div>
-        <q-card>
-          <form @submit.prevent.stop="onSubmitForm(true)" autocorrect="off" autocapitalize="off" autocomplete="off"
-            spellcheck="false">
-            <q-card-section>
-              <q-input class="q-mb-md" dense outlined v-model="filter.title" type="text" name="title" clearable
-                :label="t('Document title')" :disable="searching" :autofocus="true">
-                <template v-slot:prepend>
-                  <q-icon name="search" />
-                </template>
-              </q-input>
-              <q-input class="q-mb-md" dense outlined v-model="filter.description" type="text" name="description"
-                clearable :label="t('Document description')" :disable="searching">
-                <template v-slot:prepend>
-                  <q-icon name="search" />
-                </template>
-              </q-input>
-              <div class="row">
-                <div class="col">
-                  <q-select class="q-mb-md" dense outlined v-model="filter.dateFilterType" :options="dateFilterOptions"
-                    label="Document date" :disable="searching" @change="console.log($e)" />
+        <q-expansion-item expand-separator icon="filter_alt" label="Search conditions" :model-value="expandedFilter">
+          <q-card>
+            <form @submit.prevent.stop="onSubmitForm(true)" autocorrect="off" autocapitalize="off" autocomplete="off"
+              spellcheck="false">
+              <q-card-section>
+                <q-input class="q-mb-md" dense outlined v-model="filter.title" type="text" name="title" clearable
+                  :label="t('Document title')" :disable="searching" :autofocus="true">
+                  <template v-slot:prepend>
+                    <q-icon name="search" />
+                  </template>
+                </q-input>
+                <q-input class="q-mb-md" dense outlined v-model="filter.description" type="text" name="description"
+                  clearable :label="t('Document description')" :disable="searching">
+                  <template v-slot:prepend>
+                    <q-icon name="search" />
+                  </template>
+                </q-input>
+                <div class="row">
+                  <div class="col">
+                    <q-select class="q-mb-md" dense outlined v-model="filter.dateFilterType" :options="dateFilterOptions"
+                      label="Document date" :disable="searching" @change="console.log($e)" />
+                  </div>
+                  <div class="col">
+                    <q-input dense outlined mask="date" v-model="filter.fromDate" label="From date"
+                      :disable="searching || filter.dateFilterType.value < 7">
+                      <template v-slot:append>
+                        <q-icon name="event" class="cursor-pointer">
+                          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                            <q-date v-model="filter.fromDate" today-btn
+                              :disable="searching || filter.dateFilterType.value < 7">
+                              <div class="row items-center justify-end">
+                                <q-btn v-close-popup label="Close" color="primary" flat />
+                              </div>
+                            </q-date>
+                          </q-popup-proxy>
+                        </q-icon>
+                      </template>
+                    </q-input>
+                  </div>
+                  <div class="col">
+                    <q-input dense outlined mask="date" v-model="filter.toDate" label="To date"
+                      :disable="searching || filter.dateFilterType.value < 7">
+                      <template v-slot:append>
+                        <q-icon name="event" class="cursor-pointer">
+                          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                            <q-date v-model="filter.toDate" today-btn
+                              :disable="searching || filter.dateFilterType.value < 7">
+                              <div class="row items-center justify-end">
+                                <q-btn v-close-popup label="Close" color="primary" flat />
+                              </div>
+                            </q-date>
+                          </q-popup-proxy>
+                        </q-icon>
+                      </template>
+                    </q-input>
+                  </div>
                 </div>
-                <div class="col">
-                  <q-input dense outlined mask="date" v-model="filter.fromDate" label="From date"
-                    :disable="searching || filter.dateFilterType.value < 7">
-                    <template v-slot:append>
-                      <q-icon name="event" class="cursor-pointer">
-                        <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                          <q-date v-model="filter.fromDate" today-btn
-                            :disable="searching || filter.dateFilterType.value < 7">
-                            <div class="row items-center justify-end">
-                              <q-btn v-close-popup label="Close" color="primary" flat />
-                            </div>
-                          </q-date>
-                        </q-popup-proxy>
-                      </q-icon>
-                    </template>
-                  </q-input>
-                </div>
-                <div class="col">
-                  <q-input dense outlined mask="date" v-model="filter.toDate" label="To date"
-                    :disable="searching || filter.dateFilterType.value < 7">
-                    <template v-slot:append>
-                      <q-icon name="event" class="cursor-pointer">
-                        <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                          <q-date v-model="filter.toDate" today-btn
-                            :disable="searching || filter.dateFilterType.value < 7">
-                            <div class="row items-center justify-end">
-                              <q-btn v-close-popup label="Close" color="primary" flat />
-                            </div>
-                          </q-date>
-                        </q-popup-proxy>
-                      </q-icon>
-                    </template>
-                  </q-input>
-                </div>
-              </div>
-              <TagSelector v-model="filter.tags" :disabled="searching" dense>
-              </TagSelector>
-              <q-btn color="dark" size="md" :label="$t('Search')" no-caps class="full-width" icon="search"
-                :disable="searching" :loading="searching" type="submit">
-                <template v-slot:loading>
-                  <q-spinner-hourglass class="on-left" />
-                  {{ t('Searching...') }}
-                </template>
-              </q-btn>
-            </q-card-section>
-          </form>
-        </q-card>
-        <div v-if="hasResults">
-          <div class="text-h6">Search results</div>
+                <TagSelector v-model="filter.tags" :disabled="searching" dense>
+                </TagSelector>
+                <q-btn color="dark" size="md" :label="$t('Search')" no-caps class="full-width" icon="search"
+                  :disable="searching" :loading="searching" type="submit">
+                  <template v-slot:loading>
+                    <q-spinner-hourglass class="on-left" />
+                    {{ t('Searching...') }}
+                  </template>
+                </q-btn>
+              </q-card-section>
+            </form>
+          </q-card>
+        </q-expansion-item>
+        <q-expansion-item expand-separator icon="folder_open" :label="'Search results' + ' (' + pager.totalResults + ')'"
+          :model-value="expandedResults">
           <div class="q-pa-lg flex flex-center" v-if="pager.totalPages > 1">
-            <q-pagination v-model="pager.currentPage" color="dark" :max="pager.totalPages" :max-pages="5" boundary-numbers
-              direction-links boundary-links @update:model-value="onPaginationChanged" :disable="searching" />
+            <q-pagination v-model="pager.currentPage" color="dark" :max="pager.totalPages" :max-pages="5"
+              boundary-numbers direction-links boundary-links @update:model-value="onPaginationChanged"
+              :disable="searching" />
           </div>
           <q-markup-table>
             <thead>
@@ -86,12 +88,12 @@
                 <th style="width: 20%;" class="text-left cursor-pointer" @click="onToggleSort('createdOnTimestamp')">
                   Created
                   on<q-icon :name="sortOrderIcon" v-if="sort.field == 'createdOnTimestamp'" size="sm"></q-icon></th>
-                <th style="width: 10%;" class="text-right cursor-pointer" @click="onToggleSort('fileCount')">Files<q-icon
-                    :name="sortOrderIcon" v-if="sort.field == 'fileCount'" size="sm"></q-icon></th>
+                <th style="width: 10%;" class="text-right cursor-pointer" @click="onToggleSort('fileCount')">
+                  Files<q-icon :name="sortOrderIcon" v-if="sort.field == 'fileCount'" size="sm"></q-icon></th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="document in results.documents" :key="document.id">
+              <tr v-for=" document  in  results.documents " :key="document.id">
                 <td class="text-left"><router-link :to="{ name: 'document', params: { id: document.id } }">{{
                   document.title }}</router-link>
                 </td>
@@ -101,10 +103,11 @@
             </tbody>
           </q-markup-table>
           <div class="q-pa-lg flex flex-center" v-if="pager.totalPages > 1">
-            <q-pagination v-model="pager.currentPage" color="dark" :max="pager.totalPages" :max-pages="5" boundary-numbers
-              direction-links boundary-links @update:model-value="onPaginationChanged" :disable="searching" />
+            <q-pagination v-model="pager.currentPage" color="dark" :max="pager.totalPages" :max-pages="5"
+              boundary-numbers direction-links boundary-links @update:model-value="onPaginationChanged"
+              :disable="searching" />
           </div>
-        </div>
+        </q-expansion-item>
       </div>
     </div>
   </q-page>
@@ -135,6 +138,9 @@ const sort = ref({
   order: 'DESC'
 });
 const searching = ref(false);
+
+const expandedFilter = ref(true);
+const expandedResults = ref(true);
 
 const tab = ref('conditions');
 
