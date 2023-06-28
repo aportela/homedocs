@@ -63,6 +63,7 @@ function loadAvailableTags() {
   loading.value = true;
   api.tag.search().then((response) => {
     availableTags.value = response.data.tags;
+    currentTags.value = selectedTagsProp.value;
     loading.value = false;
   }).catch((error) => {
     loadingError.value = true;
