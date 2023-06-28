@@ -44,6 +44,8 @@ export default {
   "Document title": "Document title",
   "Document description": "Document description",
   Tags: "Tags",
+  "Click here to browse documents containing this tag":
+    "Click here to browse documents containing this tag",
   "Error loading available tags": "Error loading available tags",
   "Sign out": "Sign out",
   pages: {

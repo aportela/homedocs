@@ -33,7 +33,8 @@
           <q-card-section>
             <q-expansion-item expand-separator icon="bookmark" label="Browse by tags"
               caption="Last 32 documents sort by creation date desc" :model-value="!$q.screen.lt.md">
-              <q-chip square outline text-color="dark" v-for="tag in tags" :key="tag">
+              <q-chip square outline text-color="dark" v-for="tag in tags" :key="tag"
+                :title="t('Click here to browse documents containing this tag')">
                 <q-avatar color="grey-9" text-color="white">{{ tag.total }}</q-avatar>
                 <router-link :to="{ name: 'advancedSearchByTag', params: { tag: tag.tag } }" style="text-decoration: none"
                   class="text-dark">
@@ -53,8 +54,11 @@ import { ref } from "vue";
 import { date } from 'quasar'
 import { api } from 'boot/axios'
 import { useQuasar } from 'quasar'
+import { useI18n } from 'vue-i18n'
+
 
 const $q = useQuasar();
+const { t } = useI18n();
 const loading = ref(false);
 const recentDocuments = ref([]);
 const tags = ref([]);
