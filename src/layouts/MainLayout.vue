@@ -10,14 +10,12 @@
         </q-avatar>
         HomeDocs
 
-        <q-select ref="search" dark dense standout use-input hide-selected class="GL__toolbar-select q-mx-md"
-          color="black" :stack-label="false" label="Search..." v-model="text" :options="filteredOptions" @filter="filter"
+        <q-select ref="search" dark dense standout use-input hide-selected class2="q-mx-md" color="black"
+          :stack-label="false" label="Search..." v-model="text" :options="filteredOptions" @filter="onFilter"
           style="width: 100%" v-if="session.isLogged">
-          <template v-slot:append>
-            <img src="https://cdn.quasar.dev/img/layout-gallery/img-github-search-key-slash.svg" />
-          </template>
 
-          <template v-slot:no-option>
+
+          <template v-slot:no-option v-if="searching">
             <q-item>
               <q-item-section>
                 <div class="text-center">
@@ -26,6 +24,28 @@
               </q-item-section>
             </q-item>
           </template>
+
+          <template v-slot:option="scope">
+            <q-list class="bg-grey-9 text-white">
+              <q-item v-bind="scope.itemProps" :to="{ name: 'document', params: { id: scope.opt.id } }">
+                <q-item-section side>
+                  <q-icon name="collections_bookmark" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>{{ scope.opt.label }}</q-item-label>
+                </q-item-section>
+                <!--
+                <q-item-section side :class="{ 'default-type': !scope.opt.type }">
+                  <q-btn outline dense no-caps text-color="blue-grey-5" size="12px" class="bg-grey-1 q-px-sm">
+                    {{ scope.opt.type || 'Jump to' }}
+                    <q-icon name="subdirectory_arrow_left" size="14px" />
+                  </q-btn>
+                </q-item-section>
+                -->
+              </q-item>
+            </q-list>
+          </template>
+
         </q-select>
 
         <!--
@@ -84,6 +104,14 @@
               <q-item-label>{{ link.text }}</q-item-label>
             </q-item-section>
           </q-item>
+          <q-item v-ripple clickable @click="signOut">
+            <q-item-section avatar>
+              <q-icon color="grey" name="logout" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ t('Sign out') }}</q-item-label>
+            </q-item-section>
+          </q-item>
         </q-list>
       </q-scroll-area>
     </q-drawer>
@@ -95,18 +123,82 @@
 
 <script setup>
 import { ref, computed } from "vue";
-
+import { api } from 'boot/axios'
 import { useSessionStore } from "stores/session";
 import { useRouter } from "vue-router";
+import { useI18n } from 'vue-i18n'
+import { date, useQuasar } from "quasar";
 
-import { useQuasar } from "quasar";
-
+const { t } = useI18n();
 const $q = useQuasar();
 
 const leftDrawerOpen = ref($q.screen.gt.lg);
 const text = ref("");
 const filteredOptions = ref([]);
-const filter = ref(null);
+
+const searching = ref(false);
+
+function onFilter(val, update) {
+  if (val && val.trim().length > 0) {
+    filteredOptions.value = [];
+    searching.value = true;
+    update(() => {
+      api.document.search(1, 8, { title: val }, "title", "ASC")
+        .then((success) => {
+          filteredOptions.value = success.data.results.documents.map((document) => { return ({ id: document.id, label: document.title + " (creation: " + date.formatDate(document.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss') + ", attachments: " + document.fileCount + ")" }); });
+          searching.value = false;
+          return;
+        })
+        .catch((error) => {
+          searching.value = false;
+          $q.notify({
+            color: "negative",
+            icon: "warning",
+            message: t("API Error: fatal error"),
+          });
+          return;
+        });
+    });
+  } else {
+    update(() => {
+      filteredOptions.value = [];
+    });
+    return;
+  }
+}
+
+function onFilter2(val, update) {
+  if (val && val.trim().length > 0) {
+    console.log("es: " + val);
+    searching.value = true;
+    api.document.search(1, 4, {}, "title", "ASC")
+      .then((success) => {
+        filteredOptions.value = success.data.results.documents.map((document) => document.title);
+        //filteredOptions.value = ["uno", "dos", "tres"];
+        console.log(filteredOptions.value[0]);
+        searching.value = false;
+        update();
+        return;
+      })
+      .catch((error) => {
+        searching.value = false;
+        $q.notify({
+          color: "negative",
+          icon: "warning",
+          message: t("API Error: fatal error"),
+        });
+        update();
+        return;
+      });
+  }
+  else if (val === '') {
+    update(() => {
+      filteredOptions.value = [];
+    })
+    return
+  }
+}
+
 const session = useSessionStore();
 const router = useRouter();
 
@@ -140,12 +232,21 @@ const menuItems = ref([
   { icon: 'find_in_page', text: 'Advanced search', routeName: 'advancedSearch' }
 ]);
 
-/*
 function signOut() {
-  session.signOut();
-  router.push({
-    name: "signIn",
-  });
+  api.user
+    .signOut()
+    .then((success) => {
+      session.signOut();
+      router.push({
+        name: "signIn",
+      });
+    })
+    .catch((error) => {
+      $q.notify({
+        color: "negative",
+        icon: "warning",
+        message: t("API Error: fatal error"),
+      });
+    });
 }
-*/
 </script>
