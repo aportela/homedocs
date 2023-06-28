@@ -5,7 +5,7 @@
       <div class="q-gutter-y-md">
         <div class="text-h6">Search conditions</div>
         <q-card>
-          <form @submit.prevent.stop="onSubmitForm" autocorrect="off" autocapitalize="off" autocomplete="off"
+          <form @submit.prevent.stop="onSubmitForm(true)" autocorrect="off" autocapitalize="off" autocomplete="off"
             spellcheck="false">
             <q-card-section>
               <q-input class="q-mb-md" dense outlined v-model="filter.title" type="text" name="title" clearable
@@ -63,7 +63,7 @@
               <TagSelector v-model="filter.tags" :disabled="searching" dense>
               </TagSelector>
               <q-btn color="dark" size="md" :label="$t('Search')" no-caps class="full-width" icon="search"
-                :disable="searching" :loading="searching" type="submit" @click.stop="onSubmitForm(true)">
+                :disable="searching" :loading="searching" type="submit">
                 <template v-slot:loading>
                   <q-spinner-hourglass class="on-left" />
                   {{ t('Searching...') }}
