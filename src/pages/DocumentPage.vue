@@ -346,6 +346,12 @@ router.beforeEach(async (to, from) => {
     isNew.value = true;
   } else if (to.name == "document") {
     isNew.value = false;
+    if (document.value.id != (route.params.id || null)) {
+      // TODO: not refreshing document properties
+      onRefresh();
+    } else {
+      isNew.value = true;
+    }
   }
 })
 
