@@ -254,7 +254,7 @@ function onSubmitForm(resetPager) {
       pager.value = success.data.results.pagination;
       results.value = success.data.results;
       results.value.documents.map((document) => {
-        document.createdOn = date.formatDate(document.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
+        document.createdOn = date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
         return (document);
       });
       searching.value = false;

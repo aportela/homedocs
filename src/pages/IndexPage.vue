@@ -67,7 +67,7 @@ function onRefreshRecentDocuments() {
   api.document.searchRecent(16)
     .then((success) => {
       recentDocuments.value = success.data.recentDocuments.map((document) => {
-        document.createdOn = date.formatDate(document.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
+        document.createdOn = date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
         return (document);
       });
       loading.value = false;

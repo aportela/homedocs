@@ -188,7 +188,7 @@ function onRefresh() {
     .get(document.value.id)
     .then((response) => {
       document.value = response.data.data;
-      document.value.createdOn = date.formatDate(document.value.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
+      document.value.createdOn = date.formatDate(document.value.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
       document.value.files.map((file) => {
         file.isNew = false;
         file.uploadedOn = date.formatDate(file.uploadedOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
@@ -225,7 +225,7 @@ function onSubmitForm() {
       .update(document.value)
       .then((response) => {
         document.value = response.data.data;
-        document.value.createdOn = date.formatDate(document.value.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
+        document.value.createdOn = date.formatDate(document.value.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
         document.value.files.map((file) => {
           file.isNew = false;
           file.uploadedOn = date.formatDate(file.uploadedOnTimestamp, 'YYYY-MM-DD HH:mm:ss');

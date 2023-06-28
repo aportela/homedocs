@@ -145,7 +145,7 @@ function onFilter(val, update) {
     update(() => {
       api.document.search(1, 8, { title: val }, "title", "ASC")
         .then((success) => {
-          filteredOptions.value = success.data.results.documents.map((document) => { return ({ id: document.id, label: document.title + " (creation: " + date.formatDate(document.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss') + ", attachments: " + document.fileCount + ")" }); });
+          filteredOptions.value = success.data.results.documents.map((document) => { return ({ id: document.id, label: document.title + " (creation: " + date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss') + ", attachments: " + document.fileCount + ")" }); });
           searching.value = false;
           return;
         })
