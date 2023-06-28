@@ -134,11 +134,11 @@ const api = {
           description: filter.description,
           tags: filter.tags || [],
         };
-        if (filter.fromTimestampCondition) {
-          params.fromTimestampCondition = filter.fromTimestampCondition;
+        if (filter.fromTimestamp) {
+          params.fromTimestampCondition = filter.fromTimestamp;
         }
-        if (filter.toTimestampCondition) {
-          params.toTimestampCondition = filter.toTimestampCondition;
+        if (filter.toTimestamp) {
+          params.toTimestampCondition = filter.toTimestamp;
         }
         params.currentPage = currentPage;
         params.resultsPage = resultsPage;

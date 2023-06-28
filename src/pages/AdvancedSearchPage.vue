@@ -188,7 +188,9 @@ watch(
     switch (dateFilterType.value) {
       case 0:
         filter.value.fromDate = null;
+        filter.value.fromTimestamp = null;
         filter.value.toDate = null;
+        filter.value.toTimestamp = null;
         break;
       // TODAY
       case 1:
@@ -198,27 +200,27 @@ watch(
       // YESTERDAY
       case 2:
         filter.value.fromDate = date.formatDate(date.addToDate(Date.now(), { days: -1 }), 'YYYY/MM/DD');
-        filter.value.toDate = date.formatDate(Date.now(), 'YYYY/MM/DD');
+        filter.value.toDate = date.formatDate(date.addToDate(Date.now(), { days: -1 }), 'YYYY/MM/DD');
         break;
       // LAST 7 DAYS
       case 3:
         filter.value.fromDate = date.formatDate(date.addToDate(Date.now(), { days: -7 }), 'YYYY/MM/DD');
-        filter.value.toDate = date.formatDate(Date.now(), 'YYYY/MM/DD');
+        filter.value.fromDate = date.formatDate(date.addToDate(Date.now(), { days: -1 }), 'YYYY/MM/DD');
         break;
       // LAST 15 DAYS
       case 4:
         filter.value.fromDate = date.formatDate(date.addToDate(Date.now(), { days: -15 }), 'YYYY/MM/DD');
-        filter.value.toDate = date.formatDate(Date.now(), 'YYYY/MM/DD');
+        filter.value.fromDate = date.formatDate(date.addToDate(Date.now(), { days: -1 }), 'YYYY/MM/DD');
         break;
       // LAST 31 DAYS
       case 5:
         filter.value.fromDate = date.formatDate(date.addToDate(Date.now(), { days: -31 }), 'YYYY/MM/DD');
-        filter.value.toDate = date.formatDate(Date.now(), 'YYYY/MM/DD');
+        filter.value.fromDate = date.formatDate(date.addToDate(Date.now(), { days: -1 }), 'YYYY/MM/DD');
         break;
       // LAST 365 DAYS
       case 6:
         filter.value.fromDate = date.formatDate(date.addToDate(Date.now(), { days: -365 }), 'YYYY/MM/DD');
-        filter.value.toDate = date.formatDate(Date.now(), 'YYYY/MM/DD');
+        filter.value.fromDate = date.formatDate(date.addToDate(Date.now(), { days: -1 }), 'YYYY/MM/DD');
         break;
       // FIXED DATE
       case 7:
@@ -228,11 +230,11 @@ watch(
       // FROM DATE
       case 8:
         filter.value.fromDate = date.formatDate(Date.now(), 'YYYY/MM/DD');
-        filter.value.toDate = null;
+        filter.value.toDate = date.formatDate(Date.now(), 'YYYY/MM/DD');
         break;
       // TO DATE
       case 9:
-        filter.value.fromDate = null;
+        filter.value.fromDate = date.formatDate(Date.now(), 'YYYY/MM/DD');
         filter.value.toDate = date.formatDate(Date.now(), 'YYYY/MM/DD');
         break;
       // BETWEEN DATES
@@ -249,6 +251,16 @@ function onSubmitForm(resetPager) {
     pager.value.currentPage = 1;
   }
   searching.value = true;
+  if (date.isValid(filter.value.fromDate)) {
+    filter.value.fromTimestamp = date.formatDate(date.adjustDate(date.extractDate(filter.value.fromDate, 'YYYY/MM/DD'), { hour: 0, minute: 0, second: 0, millisecond: 0 }), 'X');
+  } else {
+    filter.value.fromTimestamp = null;
+  }
+  if (date.isValid(filter.value.toDate)) {
+    filter.value.toTimestamp = date.formatDate(date.adjustDate(date.extractDate(filter.value.toDate, 'YYYY/MM/DD'), { hour: 23, minute: 59, second: 59, millisecond: 999 }), 'X');
+  } else {
+    filter.value.toTimestamp = null;
+  }
   api.document.search(pager.value.currentPage, pager.value.resultsPage, filter.value, sort.value.field, sort.value.order)
     .then((success) => {
       pager.value = success.data.results.pagination;
