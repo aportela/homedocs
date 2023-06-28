@@ -5,7 +5,7 @@
         <q-card class="my-card fit" flat bordered>
           <q-card-section>
             <q-expansion-item expand-separator icon="work_history" label="Recent documents"
-              caption="Last 32 documents sort by creation date desc" :model-value="!$q.screen.lt.md">
+              caption="Click on title to open document" :model-value="!$q.screen.lt.md">
               <q-markup-table>
                 <thead>
                   <tr>
@@ -31,8 +31,8 @@
       <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6 flex">
         <q-card class="my-card fit" flat bordered>
           <q-card-section>
-            <q-expansion-item expand-separator icon="bookmark" label="Browse by tags"
-              caption="Last 32 documents sort by creation date desc" :model-value="!$q.screen.lt.md">
+            <q-expansion-item expand-separator icon="bookmark" label="Tag cloud" caption="Click on tag to browse by tag"
+              :model-value="!$q.screen.lt.md">
               <q-chip square outline text-color="dark" v-for="tag in tags" :key="tag"
                 :title="t('Click here to browse documents containing this tag')">
                 <q-avatar color="grey-9" text-color="white">{{ tag.total }}</q-avatar>
