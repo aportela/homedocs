@@ -13,10 +13,7 @@
 
 <script setup>
 
-import { useI18n } from 'vue-i18n'
 import { default as RecentDocuments } from "components/RecentDocuments.vue";
 import { default as TagCloud } from "components/TagCloud.vue";
-
-const { t } = useI18n();
 
 </script>
