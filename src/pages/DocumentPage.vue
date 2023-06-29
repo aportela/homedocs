@@ -1,106 +1,108 @@
 <template>
   <q-page class="bg-grey-2">
-    <q-card>
-      <form @submit.prevent.stop="onSubmitForm" autocorrect="off" autocapitalize="off" autocomplete="off"
-        spellcheck="false">
-        <q-card-section>
-          <h3 v-if="!document.id">{{ t('New document') }}</h3>
-          <h3 v-else>{{ t('Document') }}</h3>
-        </q-card-section>
-        <q-card-section>
-          <q-input class="q-mb-md" ref="titleRef" outlined v-model="document.title" type="text" name="title"
-            :label="t('Document title')" :disable="loading || saving" :autofocus="true">
-          </q-input>
-          <q-input class="q-mb-md" outlined v-model="document.description" type="textarea" autogrow name="description"
-            :label="t('Document description')" :disable="loading || saving" clearble>
-          </q-input>
-          <TagSelector v-model="document.tags" :disabled="loading || saving">
-          </TagSelector>
-          <q-uploader class="q-mb-md" :label="t('Add new file (Drag & Drop supported)')" flat bordered auto-upload
-            hide-upload-btn color="dark" field-name="file" url="api2/file" :max-file-size="maxFileSize" multiple
-            @uploaded="onFileUploaded" @rejected="onUploadRejected" @failed="onUploadFailed" method="post"
-            style="width: 100%;" :disable="loading || saving" no-thumbnails @start="onUploadsStart"
-            @finish="onUploadsFinish" />
-          <q-markup-table v-if="document.files.length > 0">
-            <thead>
-              <tr>
-                <th class="text-left">Created on</th>
-                <th class="text-left">Name</th>
-                <th class="text-right">Size</th>
-                <th class="text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="file, fileIndex in document.files" :key="file.id">
-                <td class="text-left">{{ file.uploadedOn }}</td>
-                <td class="text-left">{{ file.name }}</td>
-                <td class="text-right">{{ file.humanSize }}</td>
-                <td class="text-center">
-                  <q-btn-group spread class="desktop-only" :disable="loading">
-                    <q-btn label="Open/Preview" icon="preview" @click.prevent="onPreviewFile(file)"
-                      :disable="loading || !(isImage(file.name) || isAudio(file.name))" />
-                    <q-btn label="Download" icon="download" :href="'api2/file/' + file.id" />
-                    <q-btn label="Remove" icon="delete" :disable="loading"
-                      @click.prevent="onShowFileRemoveConfirmationDialog(file, fileIndex)" />
-                  </q-btn-group>
-                  <q-btn-dropdown label="Operations" class="mobile-only" :disable="loading">
-                    <q-list>
-                      <q-item clickable v-close-popup @click.prevent="onPreviewFile(file)">
-                        <q-item-section avatar>
-                          <q-icon name="preview"></q-icon>
-                        </q-item-section>
-                        <q-item-section>
-                          <q-item-label>Open/Preview</q-item-label>
-                        </q-item-section>
-                      </q-item>
+    <div class="q-pa-md">
+      <h3 class="q-mt-sm" v-if="!document.id">{{ t('New document') }}</h3>
+      <h3 class="q-mt-sm" v-else>{{ t('Document') }}</h3>
+      <div class="q-gutter-y-md">
+        <q-card>
+          <form @submit.prevent.stop="onSubmitForm" autocorrect="off" autocapitalize="off" autocomplete="off"
+            spellcheck="false">
+            <q-card-section>
+              <q-input class="q-mb-md" ref="titleRef" outlined v-model="document.title" type="text" name="title"
+                :label="t('Document title')" :disable="loading || saving" :autofocus="true">
+              </q-input>
+              <q-input class="q-mb-md" outlined v-model="document.description" type="textarea" autogrow name="description"
+                :label="t('Document description')" :disable="loading || saving" clearble>
+              </q-input>
+              <TagSelector v-model="document.tags" :disabled="loading || saving">
+              </TagSelector>
+              <q-uploader class="q-mb-md" :label="t('Add new file (Drag & Drop supported)')" flat bordered auto-upload
+                hide-upload-btn color="dark" field-name="file" url="api2/file" :max-file-size="maxFileSize" multiple
+                @uploaded="onFileUploaded" @rejected="onUploadRejected" @failed="onUploadFailed" method="post"
+                style="width: 100%;" :disable="loading || saving" no-thumbnails @start="onUploadsStart"
+                @finish="onUploadsFinish" />
+              <q-markup-table v-if="document.files.length > 0">
+                <thead>
+                  <tr>
+                    <th class="text-left">Created on</th>
+                    <th class="text-left">Name</th>
+                    <th class="text-right">Size</th>
+                    <th class="text-center">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="file, fileIndex in document.files" :key="file.id">
+                    <td class="text-left">{{ file.uploadedOn }}</td>
+                    <td class="text-left">{{ file.name }}</td>
+                    <td class="text-right">{{ file.humanSize }}</td>
+                    <td class="text-center">
+                      <q-btn-group spread class="desktop-only" :disable="loading">
+                        <q-btn label="Open/Preview" icon="preview" @click.prevent="onPreviewFile(file)"
+                          :disable="loading || !(isImage(file.name) || isAudio(file.name))" />
+                        <q-btn label="Download" icon="download" :href="'api2/file/' + file.id" />
+                        <q-btn label="Remove" icon="delete" :disable="loading"
+                          @click.prevent="onShowFileRemoveConfirmationDialog(file, fileIndex)" />
+                      </q-btn-group>
+                      <q-btn-dropdown label="Operations" class="mobile-only" :disable="loading">
+                        <q-list>
+                          <q-item clickable v-close-popup @click.prevent="onPreviewFile(file)">
+                            <q-item-section avatar>
+                              <q-icon name="preview"></q-icon>
+                            </q-item-section>
+                            <q-item-section>
+                              <q-item-label>Open/Preview</q-item-label>
+                            </q-item-section>
+                          </q-item>
 
-                      <q-item clickable v-close-popup :href="'api2/file/' + file.id">
-                        <q-item-section avatar>
-                          <q-icon name="download"></q-icon>
-                        </q-item-section>
-                        <q-item-section>
-                          <q-item-label>Download</q-item-label>
-                        </q-item-section>
-                      </q-item>
+                          <q-item clickable v-close-popup :href="'api2/file/' + file.id">
+                            <q-item-section avatar>
+                              <q-icon name="download"></q-icon>
+                            </q-item-section>
+                            <q-item-section>
+                              <q-item-label>Download</q-item-label>
+                            </q-item-section>
+                          </q-item>
 
-                      <q-item clickable v-close-popup
-                        @click.prevent="onShowFileRemoveConfirmationDialog(file, fileIndex)">
-                        <q-item-section avatar>
-                          <q-icon name="delete"></q-icon>
-                        </q-item-section>
-                        <q-item-section>
-                          <q-item-label>Remove</q-item-label>
-                        </q-item-section>
-                      </q-item>
-                    </q-list>
-                  </q-btn-dropdown>
-                </td>
-              </tr>
-            </tbody>
-          </q-markup-table>
-          <q-dialog>
-            <q-card style="width: 700px; max-width: 80vw;">
-              <q-card-section class="row items-center q-pb-none">
-                <div class="text-h6">{{ previewFile.name }} ({{ previewFile.humanSize }})</div>
-                <q-space />
-                <q-btn icon="close" flat round dense v-close-popup />
-              </q-card-section>
-              <q-img :src="'api2/file/' + previewFile.id" />
-            </q-card>
-          </q-dialog>
+                          <q-item clickable v-close-popup
+                            @click.prevent="onShowFileRemoveConfirmationDialog(file, fileIndex)">
+                            <q-item-section avatar>
+                              <q-icon name="delete"></q-icon>
+                            </q-item-section>
+                            <q-item-section>
+                              <q-item-label>Remove</q-item-label>
+                            </q-item-section>
+                          </q-item>
+                        </q-list>
+                      </q-btn-dropdown>
+                    </td>
+                  </tr>
+                </tbody>
+              </q-markup-table>
+              <q-dialog>
+                <q-card style="width: 700px; max-width: 80vw;">
+                  <q-card-section class="row items-center q-pb-none">
+                    <div class="text-h6">{{ previewFile.name }} ({{ previewFile.humanSize }})</div>
+                    <q-space />
+                    <q-btn icon="close" flat round dense v-close-popup />
+                  </q-card-section>
+                  <q-img :src="'api2/file/' + previewFile.id" />
+                </q-card>
+              </q-dialog>
 
-        </q-card-section>
-        <q-card-section>
-          <q-btn label="Save changes" type="submit" icon="save" class="full-width" color="dark"
-            :disable="loading || saving || uploading || !document.title">
-            <template v-slot:loading v-if="saving">
-              <q-spinner-hourglass class="on-left" />
-              {{ t('Saving...') }}
-            </template>
-          </q-btn>
-        </q-card-section>
-      </form>
-    </q-card>
+            </q-card-section>
+            <q-card-section>
+              <q-btn label="Save changes" type="submit" icon="save" class="full-width" color="dark"
+                :disable="loading || saving || uploading || !document.title">
+                <template v-slot:loading v-if="saving">
+                  <q-spinner-hourglass class="on-left" />
+                  {{ t('Saving...') }}
+                </template>
+              </q-btn>
+            </q-card-section>
+          </form>
+        </q-card>
+      </div>
+    </div>
     <q-dialog v-model="showPreviewDialog">
       <q-card style="width: 700px; max-width: 80vw;">
         <q-card-section class="row items-center q-pb-none">

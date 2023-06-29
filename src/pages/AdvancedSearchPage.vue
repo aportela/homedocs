@@ -1,7 +1,7 @@
 <template>
   <q-page class="bg-grey-2">
     <div class="q-pa-md">
-      <h3>{{ t("Advanced search") }}</h3>
+      <h3 class="q-mt-sm">{{ t("Advanced search") }}</h3>
       <div class="q-gutter-y-md">
         <q-card>
           <q-card-section>
