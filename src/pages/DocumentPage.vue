@@ -38,7 +38,7 @@
                 <td class="text-center">
                   <q-btn-group spread class="desktop-only" :disable="loading">
                     <q-btn label="Open/Preview" icon="preview" @click.prevent="onPreviewFile(file)"
-                      :disable="loading || !isImage(file.name)" />
+                      :disable="loading || !(isImage(file.name) || isAudio(file.name))" />
                     <q-btn label="Download" icon="download" :href="'api2/file/' + file.id" />
                     <q-btn label="Remove" icon="delete" :disable="loading"
                       @click.prevent="onShowFileRemoveConfirmationDialog(file, fileIndex)" />
@@ -109,18 +109,29 @@
           <q-btn icon="close" flat round dense v-close-popup />
         </q-card-section>
         <q-card-section class="q-pt-none">
-          <q-img :src="'api2/file/' + previewFile.id" loading="lazy" spinner-color="white"
-            @error="previewImageLoadingError = true">
+          <div v-if="isImage(previewFile.name)">
+            <q-img :src="'api2/file/' + previewFile.id" loading="lazy" spinner-color="white"
+              @error="previewImageLoadingError = true">
 
-            <div class="absolute-bottom text-subtitle1 text-center">
+              <div class="absolute-bottom text-subtitle1 text-center">
+                {{ previewFile.name }} ({{ previewFile.humanSize }})
+              </div>
+            </q-img>
+            <div class=" text-subtitle1 text-center" v-if="previewImageLoadingError">
+              <q-banner inline-actions class="text-white bg-red">
+                <q-icon name="error" size="sm" />
+                Error loading <strong>{{ previewFile.name }}</strong>
+              </q-banner>
+            </div>
+          </div>
+          <div v-if="isAudio(previewFile.name)">
+            <audio controls class="q-mt-md" style="width: 100%;">
+              <source :src="'api2/file/' + previewFile.id" type="audio/mpeg" />
+              Your browser does not support the audio element.
+            </audio>
+            <div class="text-subtitle1 text-center">
               {{ previewFile.name }} ({{ previewFile.humanSize }})
             </div>
-          </q-img>
-          <div class=" text-subtitle1 text-center" v-if="previewImageLoadingError">
-            <q-banner inline-actions class="text-white bg-red">
-              <q-icon name="error" size="sm" />
-              Error loading <strong>{{ previewFile.name }}</strong>
-            </q-banner>
           </div>
           <q-card-actions align="right">
             <q-btn outline :href="'api2/file/' + previewFile.id" label="Download" icon="download"
@@ -337,6 +348,12 @@ function onPreviewFile(file) {
 function isImage(filename) {
   return (filename.match(/.(jpg|jpeg|png|gif)$/i));
 }
+
+
+function isAudio(filename) {
+  return (filename.match(/.(mp3)$/i));
+}
+
 
 const route = useRoute();
 const router = useRouter();
