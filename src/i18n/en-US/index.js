@@ -29,6 +29,7 @@ export default {
   "New document": "New document",
   "Document title": "Document title",
   "Document description": "Document description",
+  "Document date": "Document date",
   "Add new file (Drag & Drop supported)":
     "Add new file (Drag & Drop supported)",
   "API Error: error loading document": "API Error: error loading document",
@@ -41,13 +42,23 @@ export default {
   "Searching...": "Searching...",
   Search: "Search",
   /* advanced search */
-  "Document title": "Document title",
-  "Document description": "Document description",
   Tags: "Tags",
+  Title: "Title",
+  Date: "Date",
+  Files: "Files",
   "Click here to browse documents containing this tag":
     "Click here to browse documents containing this tag",
   "Error loading available tags": "Error loading available tags",
   "Sign out": "Sign out",
+  "Advanced search": "Advanced search",
+  Conditions: "Conditions",
+  "From date": "From date",
+  "To date": "To date",
+  "Fixed date": "Fixed date",
+  Results: "Results",
+  "No results found with current filter":
+    "No results found with current filter",
+  /*
   pages: {
     common: {
       labels: {
@@ -199,4 +210,5 @@ export default {
       totalResults: "total result/s",
     },
   },
+  */
 };
