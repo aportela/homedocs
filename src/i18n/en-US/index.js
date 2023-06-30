@@ -46,6 +46,16 @@ export default {
   Title: "Title",
   Date: "Date",
   Files: "Files",
+  "File preview": "File preview",
+  "Error loading preview": "Error loading preview",
+  "Preview not available": "Preview not available",
+  "Your browser does not support the audio element":
+    "Your browser does not support the audio element",
+  "Remove document file": "Remove document file",
+  "Are you sure ? (You must save the document after deleting this file)":
+    "Are you sure ? (You must save the document after deleting this file)",
+  Download: "Download",
+  Close: "Close",
   "Click here to browse documents containing this tag":
     "Click here to browse documents containing this tag",
   "Error loading available tags": "Error loading available tags",
