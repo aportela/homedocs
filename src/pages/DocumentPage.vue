@@ -37,15 +37,16 @@
                     <td class="text-right">{{ file.humanSize }}</td>
                     <td class="text-center">
                       <q-btn-group spread class="desktop-only" :disable="loading">
-                        <q-btn label="Open/Preview" icon="preview" @click.prevent="onPreviewFile(file)"
-                          :disable="loading || !(isImage(file.name) || isAudio(file.name))" />
-                        <q-btn label="Download" icon="download" :href="'api2/file/' + file.id" />
+                        <q-btn label="Open/Preview" icon="preview" @click.prevent="onPreviewFile(fileIndex)"
+                          :disable="loading || !allowPreview(file.name)" />
+                        <q-btn label="Download" icon="download" :href="file.url" :disable="loading" />
                         <q-btn label="Remove" icon="delete" :disable="loading"
                           @click.prevent="onShowFileRemoveConfirmationDialog(file, fileIndex)" />
                       </q-btn-group>
                       <q-btn-dropdown label="Operations" class="mobile-only" :disable="loading">
                         <q-list>
-                          <q-item clickable v-close-popup @click.prevent="onPreviewFile(file)">
+                          <q-item clickable v-close-popup @click.prevent="onPreviewFile(fileIndex)"
+                            :disable="loading || !allowPreview(file.name)">
                             <q-item-section avatar>
                               <q-icon name="preview"></q-icon>
                             </q-item-section>
@@ -54,7 +55,7 @@
                             </q-item-section>
                           </q-item>
 
-                          <q-item clickable v-close-popup :href="'api2/file/' + file.id">
+                          <q-item clickable v-close-popup :href="file.url" :disable="loading">
                             <q-item-section avatar>
                               <q-icon name="download"></q-icon>
                             </q-item-section>
@@ -64,7 +65,7 @@
                           </q-item>
 
                           <q-item clickable v-close-popup
-                            @click.prevent="onShowFileRemoveConfirmationDialog(file, fileIndex)">
+                            @click.prevent="onShowFileRemoveConfirmationDialog(file, fileIndex)" :disable="loading">
                             <q-item-section avatar>
                               <q-icon name="delete"></q-icon>
                             </q-item-section>
@@ -81,14 +82,13 @@
               <q-dialog>
                 <q-card style="width: 700px; max-width: 80vw;">
                   <q-card-section class="row items-center q-pb-none">
-                    <div class="text-h6">{{ previewFile.name }} ({{ previewFile.humanSize }})</div>
+                    <div class="text-h6">{{ selectedFiles.name }} ({{ selectedFiles.humanSize }})</div>
                     <q-space />
                     <q-btn icon="close" flat round dense v-close-popup />
                   </q-card-section>
-                  <q-img :src="'api2/file/' + previewFile.id" />
+                  <q-img :src="'api2/file/' + selectedFiles.id" />
                 </q-card>
               </q-dialog>
-
             </q-card-section>
             <q-card-section>
               <q-btn label="Save changes" type="submit" icon="save" class="full-width" color="dark"
@@ -103,59 +103,21 @@
         </q-card>
       </div>
     </div>
-    <q-dialog v-model="showPreviewDialog">
-      <q-card style="width: 700px; max-width: 80vw;">
-        <q-card-section class="row items-center q-pb-none">
-          <div class="text-h6">File preview</div>
-          <q-space />
-          <q-btn icon="close" flat round dense v-close-popup />
-        </q-card-section>
-        <q-card-section class="q-pt-none">
-          <div v-if="isImage(previewFile.name)">
-            <q-img :src="'api2/file/' + previewFile.id" loading="lazy" spinner-color="white"
-              @error="previewImageLoadingError = true">
-
-              <div class="absolute-bottom text-subtitle1 text-center">
-                {{ previewFile.name }} ({{ previewFile.humanSize }})
-              </div>
-            </q-img>
-            <div class=" text-subtitle1 text-center" v-if="previewImageLoadingError">
-              <q-banner inline-actions class="text-white bg-red">
-                <q-icon name="error" size="sm" />
-                Error loading <strong>{{ previewFile.name }}</strong>
-              </q-banner>
-            </div>
-          </div>
-          <div v-if="isAudio(previewFile.name)">
-            <audio controls class="q-mt-md" style="width: 100%;">
-              <source :src="'api2/file/' + previewFile.id" type="audio/mpeg" />
-              Your browser does not support the audio element.
-            </audio>
-            <div class="text-subtitle1 text-center">
-              {{ previewFile.name }} ({{ previewFile.humanSize }})
-            </div>
-          </div>
-          <q-card-actions align="right">
-            <q-btn outline :href="'api2/file/' + previewFile.id" label="Download" icon="download"
-              v-if="!previewImageLoadingError" />
-            <q-btn outline v-close-popup label="Close" icon="close" />
-          </q-card-actions>
-        </q-card-section>
-        <!--
-            <q-card-actions align="right">
-              <q-btn flat label="Close" color="primary" v-close-popup />
-            </q-card-actions>
-            -->
-      </q-card>
-    </q-dialog>
+    <FilePreviewModal v-if="showPreviewFileDialog" :files="selectedFiles" :index="selectedFileIndex"
+      @close="showPreviewFileDialog = false">
+    </FilePreviewModal>
     <q-dialog v-model="showConfirmDeleteFileDialog">
       <q-card>
-        <q-card-section class="row items-center q-pb-none">
-          Remove file xxx
+        <q-card-section>
+          <div class="text-h6">{{ t("Remove document file") }}</div>
+          <div class="text-subtitle2">{{ selectedFiles[selectedFileIndex].name }}</div>
+        </q-card-section>
+        <q-card-section class="q-pb-none">
+          <strong>{{ t("Are you sure ? (You must save the document after deleting this file)") }}</strong>
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn flat label="Cancel" color="primary" v-close-popup />
-          <q-btn flat label="Delete" color="primary" @click.prevent="onFileRemove(0)" />
+          <q-btn outline v-close-popup><q-icon left name="close" />Cancel</q-btn>
+          <q-btn outline @click.stop="onRemoveSelectedFile"><q-icon left name="done" />Ok</q-btn>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -166,11 +128,11 @@
 
 import { ref, nextTick } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { api } from 'boot/axios'
-import { date, useQuasar } from 'quasar'
-import { uid, format } from "quasar";
+import { uid, format, date, useQuasar } from "quasar";
 import { useI18n } from 'vue-i18n'
+import { api } from 'boot/axios'
 import { default as TagSelector } from "components/TagSelector.vue";
+import { default as FilePreviewModal } from "components/FilePreviewModal.vue";
 
 const $q = useQuasar();
 
@@ -179,10 +141,10 @@ const { t } = useI18n();
 const { humanStorageSize } = format
 
 const maxFileSize = 2097152;
-const showPreviewDialog = ref(false);
-const previewImageLoadingError = ref(false);
-const previewFile = ref(null);
+const selectedFiles = ref(null);
+const selectedFileIndex = ref(null);
 
+const showPreviewFileDialog = ref(false);
 const showConfirmDeleteFileDialog = ref(false);
 
 const titleRef = ref(null);
@@ -216,6 +178,7 @@ function onRefresh() {
         file.isNew = false;
         file.uploadedOn = date.formatDate(file.uploadedOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
         file.humanSize = format.humanStorageSize(file.size);
+        file.url = "api2/file/" + file.id;
         return (file);
       });
       // TODO: remove uploaded files after save
@@ -341,22 +304,14 @@ function onSubmitForm() {
 
 }
 
-function onPreviewFile(file) {
-  previewFile.value = file;
-  previewImageLoadingError.value = false;
-  showPreviewDialog.value = true;
+function allowPreview(filename) {
+  return (filename.match(/.(jpg|jpeg|png|gif|mp3)$/i));
 }
-
-function isImage(filename) {
-  return (filename.match(/.(jpg|jpeg|png|gif)$/i));
+function onPreviewFile(index) {
+  selectedFiles.value = document.value.files;
+  selectedFileIndex.value = index;
+  showPreviewFileDialog.value = true;
 }
-
-
-function isAudio(filename) {
-  return (filename.match(/.(mp3)$/i));
-}
-
-
 const route = useRoute();
 const router = useRouter();
 
@@ -384,12 +339,16 @@ router.beforeEach(async (to, from) => {
 
 
 function onShowFileRemoveConfirmationDialog(file, fileIndex) {
+  selectedFiles.value = [file];
+  selectedFileIndex.value = fileIndex;
   showConfirmDeleteFileDialog.value = true;
 }
 
-function onFileRemove(fileIndex) {
-  if (fileIndex > -1) {
-    document.value.files.splice(fileIndex, 1);
+function onRemoveSelectedFile() {
+  if (selectedFileIndex.value > -1) {
+    document.value.files.splice(selectedFileIndex.value, 1);
+    selectedFiles.value = [];
+    selectedFileIndex.value = null;
     showConfirmDeleteFileDialog.value = false;
   }
 }
