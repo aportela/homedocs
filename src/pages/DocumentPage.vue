@@ -335,7 +335,12 @@ router.beforeEach(async (to, from) => {
     }
     isNew.value = true;
   } else if (from.name == "newDocument" && to.name == "document" && to.params.id) {
-    // existent document, refresh
+    // existent document from creation
+    isNew.value = false;
+    document.value.id = to.params.id
+    onRefresh();
+  } else if (from.name != "newDocument" && to.name == "document" && to.params.id) {
+    // existent document
     isNew.value = false;
     document.value.id = to.params.id
     onRefresh();
