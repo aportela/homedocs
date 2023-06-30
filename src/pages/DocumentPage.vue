@@ -8,6 +8,8 @@
           <form @submit.prevent.stop="onSubmitForm" autocorrect="off" autocapitalize="off" autocomplete="off"
             spellcheck="false">
             <q-card-section>
+              <q-input class="q-mb-md" outlined mask="date" v-model="document.date" :label="t('Document date')"
+                :disable="true" v-if="document.id"></q-input>
               <q-input class="q-mb-md" ref="titleRef" outlined v-model="document.title" type="text" name="title"
                 :label="t('Document title')" :disable="loading || saving" :autofocus="true">
               </q-input>
@@ -138,8 +140,6 @@ const $q = useQuasar();
 
 const { t } = useI18n();
 
-const { humanStorageSize } = format
-
 const maxFileSize = 2097152;
 const selectedFiles = ref(null);
 const selectedFileIndex = ref(null);
@@ -174,6 +174,7 @@ function onRefresh() {
     .then((response) => {
       document.value = response.data.data;
       document.value.createdOn = date.formatDate(document.value.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
+      document.value.date = date.formatDate(document.value.createdOnTimestamp * 1000, 'YYYY/MM/DD');
       document.value.files.map((file) => {
         file.isNew = false;
         file.uploadedOn = date.formatDate(file.uploadedOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
@@ -183,7 +184,9 @@ function onRefresh() {
       });
       // TODO: remove uploaded files after save
       loading.value = false;
-      nextTick(() => titleRef.value.focus());
+      if (titleRef.value) {
+        nextTick(() => titleRef.value.focus());
+      }
     })
     .catch((error) => {
       loading.value = false;
@@ -212,6 +215,7 @@ function onSubmitForm() {
       .then((response) => {
         document.value = response.data.data;
         document.value.createdOn = date.formatDate(document.value.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
+        document.value.date = date.formatDate(document.value.createdOnTimestamp * 1000, 'YYYY/MM/DD');
         document.value.files.map((file) => {
           file.isNew = false;
           file.uploadedOn = date.formatDate(file.uploadedOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
@@ -324,12 +328,13 @@ router.beforeEach(async (to, from) => {
       description: null,
       created: null,
       createdOnTimestamp: null,
+      date: null,
       createdBy: null,
       files: [],
       tags: []
     }
     isNew.value = true;
-  } else if (to.name == "document" && route.params.id) {
+  } else if (from.name == "newDocument" && to.name == "document" && to.params.id) {
     // existent document, refresh
     isNew.value = false;
     document.value.id = to.params.id
