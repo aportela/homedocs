@@ -291,8 +291,7 @@ function onSubmitForm() {
                 icon: "error",
                 message: t("API Error: missing document title param"),
               });
-              // TODO: focus not working
-              titleRef.value.focus();
+              nextTick(() => titleRef.value.focus());
             }
             break;
           case 401:
