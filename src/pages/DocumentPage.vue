@@ -18,11 +18,11 @@
               </q-input>
               <TagSelector v-model="document.tags" :disabled="loading || saving">
               </TagSelector>
-              <q-uploader class="q-mb-md" :label="t('Add new file (Drag & Drop supported)')" flat bordered auto-upload
-                hide-upload-btn color="dark" field-name="file" url="api2/file" :max-file-size="maxFileSize" multiple
-                @uploaded="onFileUploaded" @rejected="onUploadRejected" @failed="onUploadFailed" method="post"
-                style="width: 100%;" :disable="loading || saving" no-thumbnails @start="onUploadsStart"
-                @finish="onUploadsFinish" />
+              <q-uploader ref="uploaderRef" class="q-mb-md" :label="t('Add new file (Drag & Drop supported)')" flat
+                bordered auto-upload hide-upload-btn color="dark" field-name="file" url="api2/file"
+                :max-file-size="maxFileSize" multiple @uploaded="onFileUploaded" @rejected="onUploadRejected"
+                @failed="onUploadFailed" method="post" style="width: 100%;" :disable="loading || saving" no-thumbnails
+                @start="onUploadsStart" @finish="onUploadsFinish" />
               <q-markup-table v-if="document.files.length > 0">
                 <thead>
                   <tr>
@@ -40,15 +40,15 @@
                     <td class="text-center">
                       <q-btn-group spread class="desktop-only" :disable="loading">
                         <q-btn label="Open/Preview" icon="preview" @click.prevent="onPreviewFile(fileIndex)"
-                          :disable="loading || !allowPreview(file.name)" />
-                        <q-btn label="Download" icon="download" :href="file.url" :disable="loading" />
+                          :disable="loading || !allowPreview(file.name) || file.isNew" />
+                        <q-btn label="Download" icon="download" :href="file.url" :disable="loading || file.isNew" />
                         <q-btn label="Remove" icon="delete" :disable="loading"
                           @click.prevent="onShowFileRemoveConfirmationDialog(file, fileIndex)" />
                       </q-btn-group>
                       <q-btn-dropdown label="Operations" class="mobile-only" :disable="loading">
                         <q-list>
                           <q-item clickable v-close-popup @click.prevent="onPreviewFile(fileIndex)"
-                            :disable="loading || !allowPreview(file.name)">
+                            :disable="loading || !allowPreview(file.name) || file.isNew">
                             <q-item-section avatar>
                               <q-icon name="preview"></q-icon>
                             </q-item-section>
@@ -57,7 +57,7 @@
                             </q-item-section>
                           </q-item>
 
-                          <q-item clickable v-close-popup :href="file.url" :disable="loading">
+                          <q-item clickable v-close-popup :href="file.url" :disable="loading || file.isNew">
                             <q-item-section avatar>
                               <q-icon name="download"></q-icon>
                             </q-item-section>
@@ -140,6 +140,7 @@ const $q = useQuasar();
 
 const { t } = useI18n();
 
+const uploaderRef = ref(null);
 const maxFileSize = 2097152;
 const selectedFiles = ref(null);
 const selectedFileIndex = ref(null);
@@ -182,7 +183,6 @@ function onRefresh() {
         file.url = "api2/file/" + file.id;
         return (file);
       });
-      // TODO: remove uploaded files after save
       loading.value = false;
       if (titleRef.value) {
         nextTick(() => titleRef.value.focus());
@@ -222,9 +222,11 @@ function onSubmitForm() {
           file.humanSize = format.humanStorageSize(file.size);
           return (file);
         });
-        // TODO: remove uploaded files after save
         loading.value = false;
-        nextTick(() => titleRef.value.focus());
+        nextTick(() => {
+          uploaderRef.value.reset();
+          titleRef.value.focus();
+        });
       })
       .catch((error) => {
         loading.value = false;
@@ -265,7 +267,10 @@ function onSubmitForm() {
       .add(document.value)
       .then((response) => {
         loading.value = false;
-        nextTick(() => titleRef.value.focus());
+        nextTick(() => {
+          uploaderRef.value.reset();
+          titleRef.value.focus();
+        });
         router.push({
           name: "document",
           params: { id: document.value.id }
@@ -305,7 +310,6 @@ function onSubmitForm() {
         }
       });
   }
-
 }
 
 function allowPreview(filename) {
