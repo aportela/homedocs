@@ -45,8 +45,7 @@ function onRefreshTagCloud() {
       }
       loading.value = false;
       $q.notify({
-        color: "negative",
-        icon: "warning",
+        type: "negative",
         message: t("API Error: fatal error"),
       });
     });

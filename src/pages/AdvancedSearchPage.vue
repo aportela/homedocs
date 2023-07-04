@@ -225,8 +225,7 @@ function onSubmitForm(resetPager) {
       switch (error.response.status) {
         case 400:
           $q.notify({
-            color: "negative",
-            icon: "error",
+            type: "negative",
             message: t("API Error: invalid/missing param"),
           });
           break;
@@ -237,8 +236,7 @@ function onSubmitForm(resetPager) {
           break;
         default:
           $q.notify({
-            color: "negative",
-            icon: "warning",
+            type: "negative",
             message: t("API Error: fatal error"),
           });
           break;

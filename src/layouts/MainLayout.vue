@@ -122,8 +122,7 @@ function onFilter(val, update) {
         .catch((error) => {
           searching.value = false;
           $q.notify({
-            color: "negative",
-            icon: "warning",
+            type: "negative",
             message: t("API Error: fatal error"),
           });
           return;
@@ -153,8 +152,7 @@ function onFilter2(val, update) {
       .catch((error) => {
         searching.value = false;
         $q.notify({
-          color: "negative",
-          icon: "warning",
+          type: "negative",
           message: t("API Error: fatal error"),
         });
         update();
@@ -213,8 +211,7 @@ function signOut() {
     })
     .catch((error) => {
       $q.notify({
-        color: "negative",
-        icon: "warning",
+        type: "negative",
         message: t("API Error: fatal error"),
       });
     });
