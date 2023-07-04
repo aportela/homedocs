@@ -66,6 +66,8 @@ export default {
   Close: "Close",
   "Delete document": "Delete document",
   "Document has been removed": "Document has been removed",
+
+  "Can not upload file": "Can not upload file {filename}",
   "Click here to browse documents containing this tag":
     "Click here to browse documents containing this tag",
   "Error loading available tags": "Error loading available tags",

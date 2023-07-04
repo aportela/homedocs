@@ -411,7 +411,7 @@ function onUploadRejected(e) {
   } else {
     $q.notify({
       type: "negative",
-      message: "Can not upload file " + e[0].file.name,
+      message: t("Can not upload file", { filename: e[0].file.name })
     });
   }
 }
