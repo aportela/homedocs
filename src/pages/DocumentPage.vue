@@ -81,16 +81,6 @@
                   </tr>
                 </tbody>
               </q-markup-table>
-              <q-dialog>
-                <q-card style="width: 700px; max-width: 80vw;">
-                  <q-card-section class="row items-center q-pb-none">
-                    <div class="text-h6">{{ selectedFiles.name }} ({{ selectedFiles.humanSize }})</div>
-                    <q-space />
-                    <q-btn icon="close" flat round dense v-close-popup />
-                  </q-card-section>
-                  <q-img :src="'api2/file/' + selectedFiles.id" />
-                </q-card>
-              </q-dialog>
             </q-card-section>
             <q-card-section>
               <q-btn label="Save changes" type="submit" icon="save" class="full-width" color="dark"
@@ -105,14 +95,14 @@
         </q-card>
       </div>
     </div>
-    <FilePreviewModal v-if="showPreviewFileDialog" :files="selectedFiles" :index="selectedFileIndex"
+    <FilePreviewModal v-if="showPreviewFileDialog" :files="document.files" :index="selectedFileIndex"
       @close="showPreviewFileDialog = false">
     </FilePreviewModal>
     <q-dialog v-model="showConfirmDeleteFileDialog">
       <q-card>
         <q-card-section>
           <div class="text-h6">{{ t("Remove document file") }}</div>
-          <div class="text-subtitle2">{{ selectedFiles[selectedFileIndex].name }}</div>
+          <div class="text-subtitle2">{{ document.files[selectedFileIndex].name }}</div>
         </q-card-section>
         <q-card-section class="q-pb-none">
           <strong>{{ t("Are you sure ? (You must save the document after deleting this file)") }}</strong>
@@ -142,7 +132,6 @@ const { t } = useI18n();
 
 const uploaderRef = ref(null);
 const maxFileSize = 2097152;
-const selectedFiles = ref(null);
 const selectedFileIndex = ref(null);
 
 const showPreviewFileDialog = ref(false);
@@ -315,10 +304,10 @@ function allowPreview(filename) {
   return (filename.match(/.(jpg|jpeg|png|gif|mp3)$/i));
 }
 function onPreviewFile(index) {
-  selectedFiles.value = document.value.files;
   selectedFileIndex.value = index;
   showPreviewFileDialog.value = true;
 }
+
 const route = useRoute();
 const router = useRouter();
 
@@ -352,17 +341,26 @@ router.beforeEach(async (to, from) => {
 
 
 function onShowFileRemoveConfirmationDialog(file, fileIndex) {
-  selectedFiles.value = [file];
   selectedFileIndex.value = fileIndex;
   showConfirmDeleteFileDialog.value = true;
 }
 
 function onRemoveSelectedFile() {
   if (selectedFileIndex.value > -1) {
-    document.value.files.splice(selectedFileIndex.value, 1);
-    selectedFiles.value = [];
-    selectedFileIndex.value = null;
-    showConfirmDeleteFileDialog.value = false;
+    if (document.value.files[selectedFileIndex.value].isNew) {
+      api.document.
+        removeFile(document.value.files[selectedFileIndex.value].id)
+        .then((response) => {
+          document.value.files.splice(selectedFileIndex.value, 1);
+          selectedFileIndex.value = null;
+          showConfirmDeleteFileDialog.value = false;
+        })
+        .catch((error) => { console.log(error); });
+    } else {
+      document.value.files.splice(selectedFileIndex.value, 1);
+      selectedFileIndex.value = null;
+      showConfirmDeleteFileDialog.value = false;
+    }
   }
 }
 

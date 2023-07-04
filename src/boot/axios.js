@@ -234,6 +234,18 @@ const api = {
           });
       });
     },
+    removeFile: function (id) {
+      return new Promise((resolve, reject) => {
+        axios
+          .delete("api2/file/" + id)
+          .then((response) => {
+            resolve(response);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    },
   },
   tag: {
     getCloud: function () {
