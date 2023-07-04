@@ -1,8 +1,13 @@
 <template>
   <q-page class="bg-grey-2">
     <div class="q-pa-md">
-      <h3 class="q-mt-sm" v-if="!document.id">{{ t('New document') }}</h3>
-      <h3 class="q-mt-sm" v-else>{{ t('Document') }}</h3>
+      <div class="row items-center q-pb-md">
+        <h3 class="q-mt-sm q-mb-sm" v-if="!document.id">{{ t('New document') }}</h3>
+        <h3 class="q-mt-sm q-mb-sm" v-else>{{ t('Document') }}</h3>
+        <q-space />
+        <q-btn icon="delete" flat round title="Remove document" v-if="document.id"
+          @click="showConfirmDeleteDocumentDialog = true" />
+      </div>
       <div class="q-gutter-y-md">
         <q-card>
           <form @submit.prevent.stop="onSubmitForm" autocorrect="off" autocapitalize="off" autocomplete="off"
@@ -98,21 +103,23 @@
     <FilePreviewModal v-if="showPreviewFileDialog" :files="document.files" :index="selectedFileIndex"
       @close="showPreviewFileDialog = false">
     </FilePreviewModal>
-    <q-dialog v-model="showConfirmDeleteFileDialog">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">{{ t("Remove document file") }}</div>
-          <div class="text-subtitle2">{{ document.files[selectedFileIndex].name }}</div>
-        </q-card-section>
-        <q-card-section class="q-pb-none">
-          <strong>{{ t("Are you sure ? (You must save the document after deleting this file)") }}</strong>
-        </q-card-section>
-        <q-card-actions align="right">
-          <q-btn outline v-close-popup><q-icon left name="close" />Cancel</q-btn>
-          <q-btn outline @click.stop="onRemoveSelectedFile"><q-icon left name="done" />Ok</q-btn>
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+    <ConfirmationModal v-if="showConfirmDeleteFileDialog || showConfirmDeleteDocumentDialog"
+      @close="onCancelConfirmationModal" @ok="onSuccessConfirmationModal">
+      <template v-slot:header v-if="showConfirmDeleteFileDialog">
+        <div class="text-h6">{{ t("Remove document file") }}</div>
+        <div class="text-subtitle2">{{ document.files[selectedFileIndex].name }}</div>
+      </template>
+      <template v-slot:header v-else-if="showConfirmDeleteDocumentDialog">
+        <div class="text-h6">{{ t("Delete document") }}</div>
+        <div class="text-subtitle2">{{ document.title }}</div>
+      </template>
+      <template v-slot:body v-if="showConfirmDeleteFileDialog">
+        <strong>{{ t("Are you sure ? (You must save the document after deleting this file)") }}</strong>
+      </template>
+      <template v-slot:body v-else-if="showConfirmDeleteDocumentDialog">
+        <strong>{{ t("This operation cannot be undone. Would you like to proceed ?") }}</strong>
+      </template>
+    </ConfirmationModal>
   </q-page>
 </template>
 
@@ -124,6 +131,7 @@ import { uid, format, date, useQuasar } from "quasar";
 import { useI18n } from 'vue-i18n'
 import { api } from 'boot/axios'
 import { default as TagSelector } from "components/TagSelector.vue";
+import { default as ConfirmationModal } from "components/ConfirmationModal.vue";
 import { default as FilePreviewModal } from "components/FilePreviewModal.vue";
 
 const $q = useQuasar();
@@ -136,6 +144,7 @@ const selectedFileIndex = ref(null);
 
 const showPreviewFileDialog = ref(false);
 const showConfirmDeleteFileDialog = ref(false);
+const showConfirmDeleteDocumentDialog = ref(false);
 
 const titleRef = ref(null);
 
@@ -187,8 +196,7 @@ function onRefresh() {
           break;
         default:
           $q.notify({
-            color: "negative",
-            icon: "error",
+            type: "negative",
             message: t("API Error: error loading document"),
           });
           break;
@@ -227,8 +235,7 @@ function onSubmitForm() {
               })
             ) {
               $q.notify({
-                color: "negative",
-                icon: "error",
+                type: "negative",
                 message: t("API Error: missing document title param"),
               });
               nextTick(() => titleRef.value.focus());
@@ -241,8 +248,7 @@ function onSubmitForm() {
             break;
           default:
             $q.notify({
-              color: "negative",
-              icon: "error",
+              type: "negative",
               message: t("API Error: error updating document"),
             });
             break;
@@ -276,8 +282,7 @@ function onSubmitForm() {
               })
             ) {
               $q.notify({
-                color: "negative",
-                icon: "error",
+                type: "negative",
                 message: t("API Error: missing document title param"),
               });
               nextTick(() => titleRef.value.focus());
@@ -290,8 +295,7 @@ function onSubmitForm() {
             break;
           default:
             $q.notify({
-              color: "negative",
-              icon: "error",
+              type: "negative",
               message: t("API Error: error adding document"),
             });
             break;
@@ -339,23 +343,43 @@ router.beforeEach(async (to, from) => {
   }
 })
 
-
 function onShowFileRemoveConfirmationDialog(file, fileIndex) {
   selectedFileIndex.value = fileIndex;
   showConfirmDeleteFileDialog.value = true;
 }
 
+function onCancelConfirmationModal() {
+  showConfirmDeleteFileDialog.value = false;
+  showConfirmDeleteDocumentDialog.value = false;
+}
+
+function onSuccessConfirmationModal() {
+  if (showConfirmDeleteFileDialog.value) {
+    onRemoveSelectedFile();
+  } else if (showConfirmDeleteDocumentDialog.value) {
+    onDeleteDocument();
+  }
+}
+
 function onRemoveSelectedFile() {
   if (selectedFileIndex.value > -1) {
     if (document.value.files[selectedFileIndex.value].isNew) {
+      loading.value = true;
       api.document.
         removeFile(document.value.files[selectedFileIndex.value].id)
         .then((response) => {
           document.value.files.splice(selectedFileIndex.value, 1);
           selectedFileIndex.value = null;
           showConfirmDeleteFileDialog.value = false;
+          loading.value = false;
         })
-        .catch((error) => { console.log(error); });
+        .catch((error) => {
+          loading.value = false;
+          $q.notify({
+            type: "negative",
+            message: t("API Error: error removing file"),
+          });
+        });
     } else {
       document.value.files.splice(selectedFileIndex.value, 1);
       selectedFileIndex.value = null;
@@ -381,14 +405,12 @@ function onFileUploaded(e) {
 function onUploadRejected(e) {
   if (e[0].failedPropValidation == "max-file-size") {
     $q.notify({
-      color: "negative",
-      icon: "error",
+      type: "negative",
       message: "Can not upload file " + e[0].file.name + ' (max upload filesize: ' + format.humanStorageSize(maxFileSize) + ', current file size: ' + format.humanStorageSize(e[0].file.size) + ')',
     });
   } else {
     $q.notify({
-      color: "negative",
-      icon: "error",
+      type: "negative",
       message: "Can not upload file " + e[0].file.name,
     });
   }
@@ -396,8 +418,7 @@ function onUploadRejected(e) {
 
 function onUploadFailed(e) {
   $q.notify({
-    color: "negative",
-    icon: "error",
+    type: "negative",
     message: "Can not upload file " + e.files[0].name + ', API error: ' + e.xhr.status + ' - ' + e.xhr.statusText,
   });
 }
@@ -411,7 +432,48 @@ function onUploadsFinish(e) {
 }
 
 function onDeleteDocument() {
-  // TODO:
+  loading.value = true;
+  api.document.
+    remove(document.value.id)
+    .then((response) => {
+      loading.value = false;
+      $q.notify({
+        type: "positive",
+        message: t("Document has been removed"),
+      });
+      router.push({
+        name: "index",
+      });
+    })
+    .catch((error) => {
+      showConfirmDeleteDocumentDialog.value = false;
+      loading.value = false;
+      switch (error.response.status) {
+        case 401:
+          this.$router.push({
+            name: "signIn",
+          });
+          break;
+        case 403:
+          $q.notify({
+            type: "negative",
+            message: t("Access denied"),
+          });
+          break;
+        case 404:
+          $q.notify({
+            type: "negative",
+            message: t("Document not found"),
+          });
+          break;
+        default:
+          $q.notify({
+            type: "negative",
+            message: t("API Error: error deleting document"),
+          });
+          break;
+      }
+    });
 }
 
 document.value.id = route.params.id || null;
