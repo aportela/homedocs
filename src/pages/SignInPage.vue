@@ -1,7 +1,7 @@
 <template>
   <q-page class="flex flex-center bg-grey-2">
     <q-card class="q-pa-md shadow-2 my_card" bordered>
-      <form @submit.prevent.stop="onSubmitForm" autocorrect="off" autocapitalize="off" autocomplete="off"
+      <form @submit.prevent.stop="onValidateForm" autocorrect="off" autocapitalize="off" autocomplete="off"
         spellcheck="false">
         <q-card-section class="text-center">
           <h3>{{ $t('Homedocs') }}</h3>
@@ -11,13 +11,15 @@
         </q-card-section>
         <q-card-section>
           <q-input dense outlined ref="emailRef" v-model="email" type="email" name="email" :label="t('Email')"
-            :disable="loading" :autofocus="true" :rules="emailRules" lazy-rules>
+            :disable="loading" :autofocus="true" :rules="requiredFieldRules" lazy-rules
+            :error="remoteValidation.email.hasErrors" :errorMessage="remoteValidation.email.message">
             <template v-slot:prepend>
               <q-icon name="alternate_email" />
             </template>
           </q-input>
           <q-input dense outlined class="q-mt-md" ref="passwordRef" v-model="password" name="password" type="password"
-            :label="t('Password')" :disable="loading" :rules="passwordRules" lazy-rules>
+            :label="t('Password')" :disable="loading" :rules="requiredFieldRules" lazy-rules
+            :error="remoteValidation.password.hasErrors" :errorMessage="remoteValidation.password.message">
             <template v-slot:prepend>
               <q-icon name="key" />
             </template>
@@ -48,7 +50,7 @@
 
 <script setup>
 
-import { ref, computed } from "vue";
+import { ref, computed, nextTick } from "vue";
 import { useQuasar } from "quasar";
 import { useRouter } from "vue-router";
 import { useI18n } from 'vue-i18n'
@@ -65,108 +67,116 @@ const session = useSessionStore();
 
 const loading = ref(false);
 
-const remoteErrors = ref({
-  emailNotFound: false,
-  invalidPassword: false
+const remoteValidation = ref({
+  email: {
+    hasErrors: false,
+    message: null
+  },
+  password: {
+    hasErrors: false,
+    message: null
+  }
 });
+
+const requiredFieldRules = [
+  val => !!val || t('Field is required')
+];
 
 const email = ref(null);
 const emailRef = ref(null);
-const invalidRemoteEmail = computed(() => remoteErrors.value.emailNotFound);
-const emailRules = [
-  val => !!val || t('Field is required'),
-  val => !invalidRemoteEmail.value || t("Email not registered")
-];
 
 const password = ref(null);
 const passwordRef = ref(null);
-const invalidRemotePassword = computed(() => remoteErrors.value.invalidPassword);
-
-const passwordRules = [
-  val => !!val || t('Field is required'),
-  val => !invalidRemotePassword.value || t("Invalid password")
-];
 
 function onResetForm() {
-  remoteErrors.value.emailNotFound = false;
-  remoteErrors.value.invalidPassword = false;
+  remoteValidation.value.email.hasErrors = false;
+  remoteValidation.value.email.message = null;
+  remoteValidation.value.password.hasErrors = false;
+  remoteValidation.value.password.message = null;
   emailRef.value.resetValidation();
   passwordRef.value.resetValidation();
 }
 
 function onValidateForm() {
+  onResetForm();
   emailRef.value.validate();
   passwordRef.value.validate();
+  nextTick(() => {
+    if (!(emailRef.value.hasError || passwordRef.value.hasError)) {
+      onSubmitForm();
+    }
+  });
 }
 
 function onSubmitForm() {
-  onResetForm();
-  onValidateForm();
-  if (!(emailRef.value.hasError || passwordRef.value.hasError)) {
-    loading.value = true;
-    api.user
-      .signIn(email.value, password.value)
-      .then((success) => {
-        // TODO
-        //session.signIn();
-        router.push({
-          name: "index",
-        });
-        loading.value = false;
-      })
-      .catch((error) => {
-        switch (error.response.status) {
-          case 400:
-            if (
-              error.response.data.invalidOrMissingParams.find(function (e) {
-                return e === "email";
-              })
-            ) {
-              $q.notify({
-                color: "negative",
-                icon: "error",
-                message: t("API Error: missing email param"),
-              });
-              emailRef.value.focus();
-            } else if (
-              error.response.data.invalidOrMissingParams.find(function (e) {
-                return e === "password";
-              })
-            ) {
-              $q.notify({
-                color: "negative",
-                icon: "error",
-                message: t("API Error: missing password param"),
-              });
-              passwordRef.value.focus();
-            } else {
-              $q.notify({
-                color: "negative",
-                icon: "error",
-                message: t("API Error: invalid/missing param"),
-              });
-            }
-            break;
-          case 404:
-            remoteErrors.value.emailNotFound = true;
-            emailRef.value.validate();
-            break;
-          case 401:
-            remoteErrors.value.invalidPassword = true;
-            passwordRef.value.validate();
-            break;
-          default:
+  loading.value = true;
+  api.user
+    .signIn(email.value, password.value)
+    .then((success) => {
+      // TODO
+      //session.signIn();
+      router.push({
+        name: "index",
+      });
+      loading.value = false;
+    })
+    .catch((error) => {
+      loading.value = false;
+      switch (error.response.status) {
+        case 400:
+          if (
+            error.response.data.invalidOrMissingParams.find(function (e) {
+              return e === "email";
+            })
+          ) {
             $q.notify({
               color: "negative",
-              icon: "warning",
-              message: t("API Error: fatal error"),
+              icon: "error",
+              message: t("API Error: missing email param"),
             });
-            break;
-        }
-        loading.value = false;
-      });
-  } else {
-  }
+            emailRef.value.focus();
+          } else if (
+            error.response.data.invalidOrMissingParams.find(function (e) {
+              return e === "password";
+            })
+          ) {
+            $q.notify({
+              color: "negative",
+              icon: "error",
+              message: t("API Error: missing password param"),
+            });
+            passwordRef.value.focus();
+          } else {
+            $q.notify({
+              color: "negative",
+              icon: "error",
+              message: t("API Error: invalid/missing param"),
+            });
+          }
+          break;
+        case 404:
+          remoteValidation.value.email.hasErrors = true;
+          remoteValidation.value.email.message = t("Email not registered");
+          nextTick(() => {
+            emailRef.value.focus();
+          });
+          break;
+        case 401:
+          remoteValidation.value.password.hasErrors = true;
+          remoteValidation.value.email.message = t("Invalid password");
+          nextTick(() => {
+            passwordRef.value.focus();
+          });
+          break;
+        default:
+          $q.notify({
+            color: "negative",
+            icon: "warning",
+            message: t("API Error: fatal error"),
+          });
+          break;
+      }
+    });
 }
 
 </script>
