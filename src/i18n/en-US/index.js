@@ -26,6 +26,10 @@ export default {
   "API Error: missing password param": "API Error: missing password param",
   "API Error: invalid/missing param": "API Error: invalid/missing param",
   "API Error: fatal error": "API Error: fatal error",
+  "API Error: error removing file": "API Error: error removing file",
+  "API Error: error deleting document": "API Error: error deleting document",
+  "Document not found": "Document not found",
+  "Access denied": "Access denied",
   "New document": "New document",
   "Document title": "Document title",
   "Document description": "Document description",
@@ -54,8 +58,14 @@ export default {
   "Remove document file": "Remove document file",
   "Are you sure ? (You must save the document after deleting this file)":
     "Are you sure ? (You must save the document after deleting this file)",
+  "This operation cannot be undone. Would you like to proceed ?":
+    "This operation cannot be undone. Would you like to proceed ?",
+  Ok: "Ok",
+  Cancel: "Cancel",
   Download: "Download",
   Close: "Close",
+  "Delete document": "Delete document",
+  "Document has been removed": "Document has been removed",
   "Click here to browse documents containing this tag":
     "Click here to browse documents containing this tag",
   "Error loading available tags": "Error loading available tags",
