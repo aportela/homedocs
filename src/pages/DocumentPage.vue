@@ -5,7 +5,7 @@
         <h3 class="q-mt-sm q-mb-sm" v-if="!document.id">{{ t('New document') }}</h3>
         <h3 class="q-mt-sm q-mb-sm" v-else>{{ t('Document') }}</h3>
         <q-space />
-        <q-btn icon="delete" flat round title="Remove document" v-if="document.id"
+        <q-btn icon="delete" flat round title="Remove document" v-if="!isNew"
           @click="showConfirmDeleteDocumentDialog = true" />
       </div>
       <div class="q-gutter-y-md">
@@ -15,11 +15,11 @@
             <q-card-section>
               <q-input class="q-mb-md" outlined mask="date" v-model="document.date" :label="t('Document date')"
                 :disable="true" v-if="document.id"></q-input>
-              <q-input class="q-mb-md" ref="titleRef" outlined v-model="document.title" type="text" name="title"
-                :label="t('Document title')" :disable="loading || saving" :autofocus="true">
+              <q-input class="q-mb-md" ref="titleRef" maxlength="128" outlined v-model="document.title" type="text"
+                name="title" :label="t('Document title')" :disable="loading || saving" :autofocus="true">
               </q-input>
-              <q-input class="q-mb-md" outlined v-model="document.description" type="textarea" autogrow name="description"
-                :label="t('Document description')" :disable="loading || saving" clearble>
+              <q-input class="q-mb-md" outlined v-model="document.description" type="textarea" maxlength="4096" autogrow
+                name="description" :label="t('Document description')" :disable="loading || saving" clearble>
               </q-input>
               <TagSelector v-model="document.tags" :disabled="loading || saving">
               </TagSelector>
@@ -111,7 +111,7 @@
       </template>
       <template v-slot:header v-else-if="showConfirmDeleteDocumentDialog">
         <div class="text-h6">{{ t("Delete document") }}</div>
-        <div class="text-subtitle2">{{ document.title }}</div>
+        <div class="text-subtitle2">{{ t("Document title") + ": " + document.title }}</div>
       </template>
       <template v-slot:body v-if="showConfirmDeleteFileDialog">
         <strong>{{ t("Are you sure ? (You must save the document after deleting this file)") }}</strong>
@@ -163,8 +163,6 @@ const document = ref({
   files: [],
   tags: []
 });
-
-const availableTags = ref([]);
 
 function onRefresh() {
   loading.value = true;
@@ -307,6 +305,7 @@ function onSubmitForm() {
 function allowPreview(filename) {
   return (filename.match(/.(jpg|jpeg|png|gif|mp3)$/i));
 }
+
 function onPreviewFile(index) {
   selectedFileIndex.value = index;
   showPreviewFileDialog.value = true;
@@ -341,7 +340,7 @@ router.beforeEach(async (to, from) => {
     document.value.id = to.params.id
     onRefresh();
   }
-})
+});
 
 function onShowFileRemoveConfirmationDialog(file, fileIndex) {
   selectedFileIndex.value = fileIndex;
