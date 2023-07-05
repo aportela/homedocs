@@ -160,7 +160,7 @@ function onSubmitForm() {
           break;
         case 401:
           remoteValidation.value.password.hasErrors = true;
-          remoteValidation.value.email.message = t("Invalid password");
+          remoteValidation.value.password.message = t("Invalid password");
           nextTick(() => {
             passwordRef.value.focus();
           });
