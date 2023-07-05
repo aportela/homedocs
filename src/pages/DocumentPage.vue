@@ -5,6 +5,8 @@
         <h3 class="q-mt-sm q-mb-sm" v-if="!document.id">{{ t('New document') }}</h3>
         <h3 class="q-mt-sm q-mb-sm" v-else>{{ t('Document') }}</h3>
         <q-space />
+        <q-btn icon="save" flat round title="Save document" @click="onSubmitForm"
+          :disable="loading || saving || uploading || !document.title" />
         <q-btn icon="delete" flat round title="Remove document" v-if="!isNew"
           @click="showConfirmDeleteDocumentDialog = true" />
       </div>
