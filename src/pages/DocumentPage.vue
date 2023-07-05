@@ -213,6 +213,7 @@ function onSubmitForm() {
         document.value.date = date.formatDate(document.value.createdOnTimestamp * 1000, 'YYYY/MM/DD');
         document.value.files.map((file) => {
           file.isNew = false;
+          file.url = "api2/file/" + file.id;
           file.uploadedOn = date.formatDate(file.uploadedOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
           file.humanSize = format.humanStorageSize(file.size);
           return (file);
