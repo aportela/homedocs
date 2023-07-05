@@ -247,9 +247,10 @@ return function (App $app) {
                     $args['id']
                 );
                 $file->get($this->get(\aportela\DatabaseWrapper\DB::class));
-                if (file_exists($file->localStoragePath)) {
+                $localStoragePath = $file->getLocalStoragePath();
+                if (file_exists($localStoragePath)) {
                     $partialContent = false;
-                    $filesize = filesize($file->localStoragePath);
+                    $filesize = filesize($localStoragePath);
                     $offset = 0;
                     $length = $filesize;
                     if (isset($_SERVER['HTTP_RANGE'])) {
@@ -262,7 +263,7 @@ return function (App $app) {
                         $offset = intval($matches[1]);
                         $length = ((isset($matches[2])) ? intval($matches[2]) : $file->size) - $offset;
                     }
-                    $f = fopen($file->localStoragePath, 'r');
+                    $f = fopen($localStoragePath, 'r');
                     fseek($f, $offset);
                     $data = fread($f, $length);
                     fclose($f);

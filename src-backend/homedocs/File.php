@@ -43,6 +43,10 @@ class File
         }
     }
 
+    public function getLocalStoragePath(): string {
+      return($this->localStoragePath);
+    }
+
     public function get(\aportela\DatabaseWrapper\DB $dbh)
     {
         if (!empty($this->id) && mb_strlen($this->id) == 36) {
