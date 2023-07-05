@@ -1,14 +1,15 @@
 <template>
   <q-card class="my-card fit" flat bordered>
     <q-card-section>
-      <q-expansion-item expand-separator icon="work_history" label="Recent documents"
-        caption="Click on title to open document" :model-value="!$q.screen.lt.md">
+      <q-expansion-item :header-class="loadingError ? 'bg-red' : ''" expand-separator
+        :icon="loadingError ? 'error' : 'work_history'" :label="t('Recent documents')"
+        :caption="t(loadingError ? 'Error loading data' : 'Click on title to open document')" :model-value="expanded">
         <q-markup-table v-if="!loading">
           <thead>
             <tr>
-              <th class="text-left">Title</th>
-              <th class="text-left">Created on</th>
-              <th class="text-right">Files</th>
+              <th class="text-left">{{ t("Title") }}</th>
+              <th class="text-left">{{ t("Created on") }}</th>
+              <th class="text-right">{{ t("Files") }}</th>
             </tr>
           </thead>
           <tbody>
@@ -32,19 +33,21 @@
 <script setup>
 
 import { ref } from "vue";
-import { date } from 'quasar'
-import { api } from 'boot/axios'
-import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
+import { date, useQuasar } from 'quasar'
+import { api } from 'boot/axios'
 
-const $q = useQuasar();
 const { t } = useI18n();
-
+const $q = useQuasar();
+const loadingError = ref(false);
 const loading = ref(false);
+const expanded = ref(!$q.screen.lt.md);
 const recentDocuments = ref([]);
 
-function onRefreshRecentDocuments() {
+function refresh() {
+  recentDocuments.value = [];
   loading.value = true;
+  loadingError.value = false;
   api.document.searchRecent(16)
     .then((success) => {
       recentDocuments.value = success.data.recentDocuments.map((document) => {
@@ -54,17 +57,16 @@ function onRefreshRecentDocuments() {
       loading.value = false;
     })
     .catch((error) => {
-      switch (error.response.status) {
-        // TODO
-      }
       loading.value = false;
+      loadingError.value = true;
       $q.notify({
         type: "negative",
         message: t("API Error: fatal error"),
+        caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
       });
     });
 }
 
-onRefreshRecentDocuments();
+refresh();
 
 </script>
