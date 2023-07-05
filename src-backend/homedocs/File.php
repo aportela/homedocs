@@ -12,7 +12,7 @@ class File
     public $size;
     public $hash;
     public $uploadedOnTimestamp;
-    public $localStoragePath;
+    private $localStoragePath;
 
     public function __construct(string $rootStoragePath = null, string $id = "", string $name = "", int $size = 0, $hash = "", $uploadedOnTimestamp = null)
     {
