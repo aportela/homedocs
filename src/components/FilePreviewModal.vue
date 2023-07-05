@@ -1,7 +1,7 @@
 <template>
   <q-dialog v-model="visible" @hide="emit('close')">
     <q-card style="width: 700px; max-width: 80vw;">
-      <q-card-section class="row items-center q-pb-none">
+      <q-card-section class="row items-center bg-grey-8 text-white q-p-none">
         <div class="text-h6">{{ t("File preview") }}</div>
         <q-space />
         <q-btn icon="close" flat round dense v-close-popup />
@@ -42,8 +42,9 @@
           </div>
         </div>
         <q-card-actions align="right">
-          <q-btn outline :href="currentFile.url" :label="t('Download')" icon="download" :disable="previewLoadingError" />
-          <q-btn outline v-close-popup :label="t('Close')" icon="close" />
+          <q-btn outline :href="currentFile.url" :label="t('Download')" icon="download" :disable="previewLoadingError"
+            class="bg-grey-6 text-white" />
+          <q-btn outline v-close-popup :label="t('Close')" icon="close" class="bg-dark text-white" />
         </q-card-actions>
       </q-card-section>
     </q-card>
