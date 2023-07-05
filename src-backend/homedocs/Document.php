@@ -68,7 +68,7 @@ class Document
     {
         if (!empty($this->id) && mb_strlen($this->id) == 36) {
             if (!empty($this->title) && mb_strlen($this->title) <= 128) {
-                if ((!empty($this->description) && mb_strlen($this->title) <= 4096) || empty($this->description)) {
+                if ((!empty($this->description) && mb_strlen($this->description) <= 4096) || empty($this->description)) {
                     if (is_array($this->tags) && count($this->tags) > 0) {
                         foreach ($this->tags as $tag) {
                             if (empty($tag)) {
