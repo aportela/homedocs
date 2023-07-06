@@ -4,7 +4,10 @@
       <q-expansion-item :header-class="loadingError ? 'bg-red' : ''" expand-separator
         :icon="loadingError ? 'error' : 'bookmark'" :label="t('Tag cloud')"
         :caption="t(loadingError ? 'Error loading data' : 'Click on tag to browse by tag')" :model-value="expanded">
-        <div v-if="!loading">
+        <p class="text-center" v-if="loading">
+          <q-spinner-pie v-if="loading" color="grey-5" size="md" />
+        </p>
+        <div v-if="hasTags">
           <q-chip square outline text-color="dark" v-for=" tag  in  tags " :key="tag"
             :title="t('Click here to browse documents containing this tag')">
             <q-avatar color="grey-9" text-color="white">{{ tag.total }}</q-avatar>
@@ -13,9 +16,8 @@
               {{ tag.tag }}</router-link>
           </q-chip>
         </div>
-        <p class="text-center" v-else>
-          <q-spinner-pie color="grey-5" size="md" />
-        </p>
+        <q-banner class="bg-grey text-white" v-else><q-icon name="info" size="md" class="q-mr-sm" /> You haven't created
+          any tags yet</q-banner>
       </q-expansion-item>
     </q-card-section>
   </q-card>
@@ -23,7 +25,7 @@
 
 <script setup>
 
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
 import { api } from 'boot/axios'
@@ -34,6 +36,8 @@ const loadingError = ref(false);
 const loading = ref(false);
 const expanded = ref(!$q.screen.lt.md);
 const tags = ref([]);
+
+const hasTags = computed(() => tags.value && tags.value.length > 0);
 
 function refresh() {
   tags.value = [];
