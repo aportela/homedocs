@@ -26,8 +26,9 @@
               </tr>
             </tbody>
           </q-markup-table>
-          <q-banner class="bg-grey text-white" v-else><q-icon name="info" size="md" class="q-mr-sm" /> You haven't
-            created any documents yet</q-banner>
+          <q-banner class="bg-grey text-white" v-else><q-icon name="info" size="md" class="q-mr-sm" />
+            {{ t("You haven't created any documents yet") }}
+          </q-banner>
         </div>
       </q-expansion-item>
     </q-card-section>

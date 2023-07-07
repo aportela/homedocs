@@ -16,8 +16,9 @@
               {{ tag.tag }}</router-link>
           </q-chip>
         </div>
-        <q-banner class="bg-grey text-white" v-else><q-icon name="info" size="md" class="q-mr-sm" /> You haven't created
-          any tags yet</q-banner>
+        <q-banner class="bg-grey text-white" v-else><q-icon name="info" size="md" class="q-mr-sm" />
+          {{ t("You haven't created any tags yet") }}
+        </q-banner>
       </q-expansion-item>
     </q-card-section>
   </q-card>
