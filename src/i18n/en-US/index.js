@@ -28,9 +28,12 @@ export default {
   "API Error: fatal error": "API Error: fatal error",
   "API Error: fatal error details": "HTTP {status} ({statusText})",
   "Recent documents": "Recent documents",
+  "You haven't created any documents yet":
+    "You haven't created any documents yet",
   "Error loading data": "Error loading data",
   Title: "Title",
   "Tag cloud": "Tag cloud",
+  "You haven't created any tags yet": "You haven't created any tags yet",
   "Click on tag to browse by tag": "Click on tag to browse by tag",
   "Created on": "Created on",
   "Click on title to open document": "Click on title to open document",
