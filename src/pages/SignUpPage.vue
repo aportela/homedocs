@@ -126,6 +126,7 @@ function onSubmitForm() {
       loading.value = false;
     })
     .catch((error) => {
+      loading.value = false;
       switch (error.response.status) {
         case 400:
           if (
@@ -170,7 +171,6 @@ function onSubmitForm() {
           });
           break;
       }
-      loading.value = false;
     });
 }
 
