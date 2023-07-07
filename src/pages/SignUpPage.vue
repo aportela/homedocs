@@ -107,7 +107,13 @@ function onSubmitForm() {
           type: "positive",
           message: t("Your account has been created"),
           actions: [
-            { label: t("Sign in"), color: 'white', handler: () => { /* ... */ } }
+            {
+              label: t("Sign in"), color: 'white', handler: () => {
+                router.push({
+                  name: "index",
+                });
+              }
+            }
           ]
         });
         loading.value = false;
