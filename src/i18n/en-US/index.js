@@ -87,7 +87,6 @@ export default {
   Close: "Close",
   "Delete document": "Delete document",
   "Document has been removed": "Document has been removed",
-
   "Can not upload file": "Can not upload file {filename}",
   "Click here to browse documents containing this tag":
     "Click here to browse documents containing this tag",
@@ -101,6 +100,11 @@ export default {
   Results: "Results",
   "No results found with current filter":
     "No results found with current filter",
+  "Fast search caption":
+    "Created on {creation}, {attachmentCount} attachment/s",
+  Dashboard: "Dashboard",
+  Add: "Add",
+  "Advanced search": "Advanced search",
   /*
   pages: {
     common: {

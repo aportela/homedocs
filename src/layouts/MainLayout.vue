@@ -3,14 +3,14 @@
     <q-header elevated class="text-white" style="background: #24292e" height-hint="61.59">
       <q-toolbar class="q-py-sm q-px-md">
         <q-btn class="mobile-only" flat dense round @click="leftDrawerOpen = !leftDrawerOpen" aria-label="Menu"
-          icon="menu" v-if="session.isLogged" />
+          icon="menu" v-if="isLogged" />
         <q-avatar square size="42px">
           <img src="icons/favicon-128x128.png" />
         </q-avatar>
         HomeDocs
         <q-select ref="search" dark dense standout use-input hide-selected class="q-mx-md" color="black"
           :stack-label="false" label="Search..." v-model="text" :options="filteredOptions" @filter="onFilter"
-          style="width: 100%" v-if="session.isLogged">
+          style="width: 100%" v-if="isLogged">
           <template v-slot:no-option v-if="searching">
             <q-item>
               <q-item-section>
@@ -60,7 +60,7 @@
         </q-btn>
       </q-toolbar>
     </q-header>
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-grey-2" :width="240" v-if="session.isLogged">
+    <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-grey-2" :width="240" v-if="isLogged">
       <q-scroll-area class="fit">
         <q-list padding>
           <q-item-label header class="text-weight-bold text-uppercase">
@@ -102,6 +102,7 @@ import { date, useQuasar } from "quasar";
 const { t } = useI18n();
 const $q = useQuasar();
 
+const isLogged = computed(() => session.isLogged);
 const leftDrawerOpen = ref($q.screen.gt.lg);
 const text = ref("");
 const filteredOptions = ref([]);
@@ -115,7 +116,9 @@ function onFilter(val, update) {
     update(() => {
       api.document.search(1, 8, { title: val }, "title", "ASC")
         .then((success) => {
-          filteredOptions.value = success.data.results.documents.map((document) => { return ({ id: document.id, label: document.title, caption: "Created on " + date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss') + ", " + document.fileCount + " attachment/s" }); });
+          filteredOptions.value = success.data.results.documents.map((document) => {
+            return ({ id: document.id, label: document.title, caption: t("Fast search caption", { creation: date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss'), attachmentCount: document.fileCount }) });
+          });
           searching.value = false;
           return;
         })
@@ -197,9 +200,9 @@ function onSelectLanguage(language) {
 }
 
 const menuItems = ref([
-  { icon: 'storage', text: 'Dashboard', routeName: 'index' },
-  { icon: 'note_add', text: 'Add', routeName: 'newDocument' },
-  { icon: 'find_in_page', text: 'Advanced search', routeName: 'advancedSearch' }
+  { icon: 'storage', text: t('Dashboard'), routeName: 'index' },
+  { icon: 'note_add', text: t('Add'), routeName: 'newDocument' },
+  { icon: 'find_in_page', text: t('Advanced search'), routeName: 'advancedSearch' }
 ]);
 
 function signOut() {
