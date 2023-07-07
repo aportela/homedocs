@@ -158,7 +158,7 @@ function onSubmitForm() {
           break;
         case 409:
           remoteValidation.value.email.hasErrors = true;
-          remoteValidation.value.email.message = t("Email not registered");
+          remoteValidation.value.email.message = t("Email already used");
           nextTick(() => {
             emailRef.value.focus();
           });
