@@ -156,6 +156,7 @@ function onSubmitForm() {
             $q.notify({
               type: "negative",
               message: t("API Error: fatal error"),
+              caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
             });
             break;
         }

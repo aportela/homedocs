@@ -124,6 +124,7 @@ function onFilter(val, update) {
           $q.notify({
             type: "negative",
             message: t("API Error: fatal error"),
+            caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
           });
           return;
         });
@@ -154,6 +155,7 @@ function onFilter2(val, update) {
         $q.notify({
           type: "negative",
           message: t("API Error: fatal error"),
+          caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
         });
         update();
         return;
@@ -213,6 +215,7 @@ function signOut() {
       $q.notify({
         type: "negative",
         message: t("API Error: fatal error"),
+        caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
       });
     });
 }
