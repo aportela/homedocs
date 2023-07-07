@@ -9,7 +9,7 @@
         </q-avatar>
         HomeDocs
         <q-select ref="search" dark dense standout use-input hide-selected class="q-mx-md" color="black"
-          :stack-label="false" label="Search..." v-model="text" :options="filteredOptions" @filter="onFilter"
+          :stack-label="false" :label="t('Search...')" v-model="text" :options="filteredOptions" @filter="onFilter"
           style="width: 100%" v-if="isLogged">
           <template v-slot:no-option v-if="searching">
             <q-item>
@@ -34,6 +34,7 @@
             </q-list>
           </template>
         </q-select>
+        <q-space />
         <q-btn dense flat no-wrap>
           <q-avatar rounded size="24px" class="q-mr-sm">
             <q-icon name="language" />
@@ -71,7 +72,7 @@
               <q-icon color="grey" :name="link.icon" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>{{ link.text }}</q-item-label>
+              <q-item-label>{{ t(link.text) }}</q-item-label>
             </q-item-section>
           </q-item>
           <q-item v-ripple clickable @click="signOut">
@@ -98,6 +99,7 @@ import { useSessionStore } from "stores/session";
 import { useRouter } from "vue-router";
 import { useI18n } from 'vue-i18n'
 import { date, useQuasar } from "quasar";
+import { i18n } from "src/boot/i18n";
 
 const { t } = useI18n();
 const $q = useQuasar();
@@ -140,38 +142,6 @@ function onFilter(val, update) {
   }
 }
 
-function onFilter2(val, update) {
-  if (val && val.trim().length > 0) {
-    console.log("es: " + val);
-    searching.value = true;
-    api.document.search(1, 4, {}, "title", "ASC")
-      .then((success) => {
-        filteredOptions.value = success.data.results.documents.map((document) => document.title);
-        //filteredOptions.value = ["uno", "dos", "tres"];
-        console.log(filteredOptions.value[0]);
-        searching.value = false;
-        update();
-        return;
-      })
-      .catch((error) => {
-        searching.value = false;
-        $q.notify({
-          type: "negative",
-          message: t("API Error: fatal error"),
-          caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
-        });
-        update();
-        return;
-      });
-  }
-  else if (val === '') {
-    update(() => {
-      filteredOptions.value = [];
-    })
-    return
-  }
-}
-
 const session = useSessionStore();
 const router = useRouter();
 
@@ -179,17 +149,17 @@ const availableLanguages = ref([
   {
     shortLabel: 'EN',
     label: 'English',
-    value: 'en'
+    value: 'en-US'
   },
   {
     shortLabel: 'ES',
     label: 'Español',
-    value: 'es'
+    value: 'es-ES'
   },
   {
     shortLabel: 'GL',
     label: 'Galego',
-    value: 'gl'
+    value: 'gl-GL'
   }
 ]);
 
@@ -197,12 +167,13 @@ const selectedLanguage = ref(availableLanguages.value[0]);
 
 function onSelectLanguage(language) {
   selectedLanguage.value = language;
+  i18n.global.locale.value = language.value;
 }
 
 const menuItems = ref([
-  { icon: 'storage', text: t('Dashboard'), routeName: 'index' },
-  { icon: 'note_add', text: t('Add'), routeName: 'newDocument' },
-  { icon: 'find_in_page', text: t('Advanced search'), routeName: 'advancedSearch' }
+  { icon: 'storage', text: "Dashboard", routeName: 'index' },
+  { icon: 'note_add', text: "Add", routeName: 'newDocument' },
+  { icon: 'find_in_page', text: "Advanced search", routeName: 'advancedSearch' }
 ]);
 
 function signOut() {

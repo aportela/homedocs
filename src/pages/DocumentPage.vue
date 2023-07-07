@@ -5,9 +5,9 @@
         <h3 class="q-mt-sm q-mb-sm" v-if="!document.id">{{ t("New document") }}</h3>
         <h3 class="q-mt-sm q-mb-sm" v-else>{{ t("Document") }}</h3>
         <q-space />
-        <q-btn icon="save" flat round title="Save document" @click="onSubmitForm"
+        <q-btn icon="save" flat round :title="t('Save document')" @click="onSubmitForm"
           :disable="loading || saving || uploading || !document.title" />
-        <q-btn icon="delete" flat round title="Remove document" v-if="!isNew"
+        <q-btn icon="delete" flat round :title="t('Remove document')" v-if="!isNew"
           @click="showConfirmDeleteDocumentDialog = true" />
       </div>
       <div class="q-gutter-y-md">
@@ -46,10 +46,10 @@
                     <td class="text-right">{{ file.humanSize }}</td>
                     <td class="text-center">
                       <q-btn-group spread class="desktop-only" :disable="loading">
-                        <q-btn label="Open/Preview" icon="preview" @click.prevent="onPreviewFile(fileIndex)"
+                        <q-btn :label="t('Open/Preview')" icon="preview" @click.prevent="onPreviewFile(fileIndex)"
                           :disable="loading || !allowPreview(file.name) || file.isNew" />
-                        <q-btn label="Download" icon="download" :href="file.url" :disable="loading || file.isNew" />
-                        <q-btn label="Remove" icon="delete" :disable="loading"
+                        <q-btn :label="t('Download')" icon="download" :href="file.url" :disable="loading || file.isNew" />
+                        <q-btn :label="t('Remove')" icon="delete" :disable="loading"
                           @click.prevent="onShowFileRemoveConfirmationDialog(file, fileIndex)" />
                       </q-btn-group>
                       <q-btn-dropdown label="Operations" class="mobile-only" :disable="loading">
@@ -60,7 +60,7 @@
                               <q-icon name="preview"></q-icon>
                             </q-item-section>
                             <q-item-section>
-                              <q-item-label>Open/Preview</q-item-label>
+                              <q-item-label>{{ t("Open/Preview") }}</q-item-label>
                             </q-item-section>
                           </q-item>
 
@@ -69,7 +69,7 @@
                               <q-icon name="download"></q-icon>
                             </q-item-section>
                             <q-item-section>
-                              <q-item-label>Download</q-item-label>
+                              <q-item-label>{{ t("Download") }}</q-item-label>
                             </q-item-section>
                           </q-item>
 
@@ -79,7 +79,7 @@
                               <q-icon name="delete"></q-icon>
                             </q-item-section>
                             <q-item-section>
-                              <q-item-label>Remove</q-item-label>
+                              <q-item-label>{{ t("Remove") }}</q-item-label>
                             </q-item-section>
                           </q-item>
                         </q-list>
@@ -90,7 +90,7 @@
               </q-markup-table>
             </q-card-section>
             <q-card-section>
-              <q-btn label="Save changes" type="submit" icon="save" class="full-width" color="dark"
+              <q-btn :label="t('Save changes')" type="submit" icon="save" class="full-width" color="dark"
                 :disable="loading || saving || uploading || !document.title">
                 <template v-slot:loading v-if="saving">
                   <q-spinner-hourglass class="on-left" />
