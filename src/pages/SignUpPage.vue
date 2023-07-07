@@ -28,13 +28,13 @@
             :disable="loading || (!(email && password))" :loading="loading" type="submit">
             <template v-slot:loading>
               <q-spinner-hourglass class="on-left" />
-              {{ t('Loading...') }}
+              {{ t("Loading...") }}
             </template>
           </q-btn>
         </q-card-section>
         <q-card-section class="text-center q-pt-none">
           <div class="text-grey-8">
-            {{ t('Already have an account ?') }}
+            {{ t("Already have an account ?") }}
             <router-link :to="{ name: 'signIn' }">
               <span class="text-dark text-weight-bold" style="text-decoration: none">{{
                 t("Click here to sign in") }}</span>

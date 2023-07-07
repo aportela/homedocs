@@ -79,7 +79,7 @@
               <q-icon color="grey" name="logout" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>{{ t('Sign out') }}</q-item-label>
+              <q-item-label>{{ t("Sign out") }}</q-item-label>
             </q-item-section>
           </q-item>
         </q-list>

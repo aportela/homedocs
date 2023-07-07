@@ -2,8 +2,8 @@
   <q-page class="bg-grey-2">
     <div class="q-pa-md">
       <div class="row items-center q-pb-md">
-        <h3 class="q-mt-sm q-mb-sm" v-if="!document.id">{{ t('New document') }}</h3>
-        <h3 class="q-mt-sm q-mb-sm" v-else>{{ t('Document') }}</h3>
+        <h3 class="q-mt-sm q-mb-sm" v-if="!document.id">{{ t("New document") }}</h3>
+        <h3 class="q-mt-sm q-mb-sm" v-else>{{ t("Document") }}</h3>
         <q-space />
         <q-btn icon="save" flat round title="Save document" @click="onSubmitForm"
           :disable="loading || saving || uploading || !document.title" />
@@ -94,7 +94,7 @@
                 :disable="loading || saving || uploading || !document.title">
                 <template v-slot:loading v-if="saving">
                   <q-spinner-hourglass class="on-left" />
-                  {{ t('Saving...') }}
+                  {{ t("Saving...") }}
                 </template>
               </q-btn>
             </q-card-section>

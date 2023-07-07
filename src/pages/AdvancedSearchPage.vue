@@ -84,7 +84,7 @@
                   :disable="searching" :loading="searching" type="submit">
                   <template v-slot:loading>
                     <q-spinner-hourglass class="on-left" />
-                    {{ t('Searching...') }}
+                    {{ t("Searching...") }}
                   </template>
                 </q-btn>
               </form>
