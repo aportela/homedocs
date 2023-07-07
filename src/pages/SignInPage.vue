@@ -50,12 +50,12 @@
 
 <script setup>
 
-import { ref, computed, nextTick } from "vue";
+import { ref, nextTick } from "vue";
 import { useQuasar } from "quasar";
 import { useRouter } from "vue-router";
 import { useI18n } from 'vue-i18n'
 import { api } from 'boot/axios'
-import { useSessionStore } from "stores/session";
+//import { useSessionStore } from "stores/session";
 
 const { t } = useI18n();
 
@@ -63,7 +63,7 @@ const $q = useQuasar();
 
 const router = useRouter();
 
-const session = useSessionStore();
+//const session = useSessionStore();
 
 const loading = ref(false);
 
