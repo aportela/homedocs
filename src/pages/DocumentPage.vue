@@ -198,6 +198,7 @@ function onRefresh() {
           $q.notify({
             type: "negative",
             message: t("API Error: error loading document"),
+            caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
           });
           break;
       }
@@ -251,6 +252,7 @@ function onSubmitForm() {
             $q.notify({
               type: "negative",
               message: t("API Error: error updating document"),
+              caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
             });
             break;
         }
@@ -298,6 +300,7 @@ function onSubmitForm() {
             $q.notify({
               type: "negative",
               message: t("API Error: error adding document"),
+              caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
             });
             break;
         }
@@ -380,6 +383,7 @@ function onRemoveSelectedFile() {
           $q.notify({
             type: "negative",
             message: t("API Error: error removing file"),
+            caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
           });
         });
     } else {
@@ -472,6 +476,7 @@ function onDeleteDocument() {
           $q.notify({
             type: "negative",
             message: t("API Error: error deleting document"),
+            caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
           });
           break;
       }
