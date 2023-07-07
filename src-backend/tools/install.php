@@ -2,7 +2,7 @@
 
 use DI\ContainerBuilder;
 
-require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
+require_once dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 
 $containerBuilder = new ContainerBuilder();
 
