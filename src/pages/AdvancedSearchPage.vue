@@ -149,17 +149,16 @@
 
 <script setup>
 
-import { ref, computed, watch, registerRuntimeCompiler } from "vue";
-
+import { ref, computed, watch } from "vue";
 import { useRoute } from "vue-router";
-import { api } from 'boot/axios'
 import { date, useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
+import { api } from 'boot/axios'
 import { useAdvancedSearchData } from "stores/advancedSearchData";
 import { default as TagSelector } from "components/TagSelector.vue";
 
-const { t } = useI18n();
 const $q = useQuasar();
+const { t } = useI18n();
 const route = useRoute();
 const advancedSearchData = useAdvancedSearchData();
 
@@ -168,17 +167,17 @@ const searchLaunched = ref(false);
 const expandedFilter = ref(true);
 const expandedResults = ref(false);
 const dateFilterOptions = ref([
-  { label: 'Any date', value: 0 },
-  { label: 'today', value: 1 },
-  { label: 'yesterday', value: 2 },
-  { label: 'last 7 days', value: 3 },
-  { label: 'last 15 days', value: 4 },
-  { label: 'last 31 days', value: 5 },
-  { label: 'this 365 days', value: 6 },
-  { label: 'fixed date', value: 7 },
-  { label: 'from date', value: 8 },
-  { label: 'to date', value: 9 },
-  { label: 'between dates', value: 10 }
+  { label: t('Any date'), value: 0 },
+  { label: t('Today'), value: 1 },
+  { label: t('Yesterday'), value: 2 },
+  { label: t('Last 7 days'), value: 3 },
+  { label: t('Last 15 days'), value: 4 },
+  { label: t('Last 31 days'), value: 5 },
+  { label: t('Last 365 days'), value: 6 },
+  { label: t('Fixed date'), value: 7 },
+  { label: t('From date'), value: 8 },
+  { label: t('To date'), value: 9 },
+  { label: t('Between dates'), value: 10 }
 ]);
 
 advancedSearchData.filter.dateFilterType = dateFilterOptions.value[0];
@@ -191,7 +190,7 @@ watch(
   (dateFilterType) => {
     advancedSearchData.recalcDates(dateFilterType)
   }
-)
+);
 
 function onSubmitForm(resetPager) {
   if (resetPager) {
