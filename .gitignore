@@ -2,22 +2,22 @@
 .thumbs.db
 
 # Quasar core related directories
-.quasar
-/dist
+/quasar-frontend/.quasar
+/quasar-frontend/dist
 
 # Cordova related directories and files
-/src-cordova/node_modules
-/src-cordova/platforms
-/src-cordova/plugins
-/src-cordova/www
+/quasar-frontend/src-cordova/node_modules
+/quasar-frontend/src-cordova/platforms
+/quasar-frontend/src-cordova/plugins
+/quasar-frontend/src-cordova/www
 
 # Capacitor related directories and files
-/src-capacitor/www
-/src-capacitor/node_modules
+/quasar-frontend/src-capacitor/www
+/quasar-frontend/src-capacitor/node_modules
 
 # BEX related directories and files
-/src-bex/www
-/src-bex/js/core
+/quasar-frontend/src-bex/www
+/quasar-frontend/src-bex/js/core
 
 # Log files
 npm-debug.log*
@@ -40,5 +40,6 @@ yarn-error.log*
 !/phpslim-api/data/storage
 !/phpslim-api/data/storage/README.md
 /phpslim-api/storage/
-/node_modules/
-package-lock.json
+
+/quasar-frontend/node_modules/
+/quasar-frontend/package-lock.json
