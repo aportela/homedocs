@@ -15,8 +15,7 @@ ini_set('display_errors', $settings['environment'] == 'development' ? '1' : '0')
 date_default_timezone_set('Europe/Madrid');
 
 // Path settings
-$settings['paths']['root'] = dirname(dirname(__DIR__));
-$settings['paths']['srcApp'] = dirname(__DIR__);
+$settings['paths']['root'] = dirname(__DIR__);
 $settings['paths']['vendor'] = $settings['paths']['root'] . DIRECTORY_SEPARATOR . 'vendor';
 $settings['paths']['database'] = $settings['paths']['root'] . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'homedocs2.sqlite3';
 $settings['paths']['storage'] = $settings['paths']['root'] . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'storage';
@@ -81,7 +80,7 @@ $settings['db'] = [
         // Set character set
         //PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci' // BUG: https://bugs.php.net/bug.php?id=81576
     ],
-    'upgradeSchemaPath' => $settings['paths']['srcApp'] . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'db-schema.php'
+    'upgradeSchemaPath' => $settings['paths']['root'] . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'db-schema.php'
 ];
 
 $settings['twig'] = [
