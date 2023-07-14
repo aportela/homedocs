@@ -10,7 +10,7 @@
         <q-banner inline-actions class="text-center">
           <strong>{{ currentFile.name }} ({{ currentFile.humanSize }})</strong>
         </q-banner>
-        <div class="flex flex-center" v-if="totalFiles > 0">
+        <div class="flex flex-center" v-if="totalFiles > 1">
           <q-pagination v-model="currentIndex" :max="totalFiles" color="dark" :max-pages="5" boundary-numbers
             direction-links icon-first="skip_previous" icon-last="skip_next" icon-prev="fast_rewind"
             icon-next="fast_forward" gutter="md" v-if="files.length > 0"
