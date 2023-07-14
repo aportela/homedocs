@@ -7,25 +7,20 @@ use Slim\Routing\RouteCollectorProxy;
 
 return function (App $app) {
     $app->get('/', function (Request $request, Response $response, array $args) {
-        //$logger = $group->get(\Spieldose\Logger\HTTPRequestLogger::class);
-        //$logger->info($request->getMethod() . " " . $request->getUri()->getPath());
-        return $this->get('Twig')->render($response, 'index.html.twig', [
-            'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this))
-        ]);
+        return $this->get('Twig')->render($response, 'index-quasar.html.twig', []);
     })->add(\HomeDocs\Middleware\JWT::class);
 
     $app->group(
         '/api2',
         function (RouteCollectorProxy $group) {
-
             $group->get('/initial_state', function (Request $request, Response $response, array $args) {
-              $payload = json_encode(
-                [
-                    'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this))
-                ]
-              );
-              $response->getBody()->write($payload);
-              return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                $payload = json_encode(
+                    [
+                        'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this))
+                    ]
+                );
+                $response->getBody()->write($payload);
+                return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             });
 
             $group->post('/user/sign-up', function (Request $request, Response $response, array $args) {
@@ -314,43 +309,43 @@ return function (App $app) {
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
             $group->post('/file', function (Request $request, Response $response, array $args) {
-              $uploadedFiles = $request->getUploadedFiles();
-              $file = new \HomeDocs\File(
-                  $this->get('settings')['paths']['storage'],
-                  (\Ramsey\Uuid\Uuid::uuid4())->toString(),
-                  $uploadedFiles["file"]->getClientFilename(),
-                  $uploadedFiles["file"]->getSize()
-              );
-              $file->add($this->get(\aportela\DatabaseWrapper\DB::class), $uploadedFiles["file"]);
-              $payload = json_encode(
-                  [
-                      'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this)),
-                      'data' => array(
-                        "id" => $file->id,
-                        "name" => $file->name,
-                        "size" => $file->size,
-                        "hash" => $file->hash,
-                        "uploadedOnTimestamp" => time()
-                    )
-                  ]
-              );
-              $response->getBody()->write($payload);
-              return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                $uploadedFiles = $request->getUploadedFiles();
+                $file = new \HomeDocs\File(
+                    $this->get('settings')['paths']['storage'],
+                    (\Ramsey\Uuid\Uuid::uuid4())->toString(),
+                    $uploadedFiles["file"]->getClientFilename(),
+                    $uploadedFiles["file"]->getSize()
+                );
+                $file->add($this->get(\aportela\DatabaseWrapper\DB::class), $uploadedFiles["file"]);
+                $payload = json_encode(
+                    [
+                        'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this)),
+                        'data' => array(
+                            "id" => $file->id,
+                            "name" => $file->name,
+                            "size" => $file->size,
+                            "hash" => $file->hash,
+                            "uploadedOnTimestamp" => time()
+                        )
+                    ]
+                );
+                $response->getBody()->write($payload);
+                return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
             $group->delete('/file/{id}', function (Request $request, Response $response, array $args) {
-              $file = new \HomeDocs\File(
-                  $this->get('settings')['paths']['storage'],
-                  $args['id']
-              );
-              $file->remove($this->get(\aportela\DatabaseWrapper\DB::class));
-              $payload = json_encode(
-                  [
-                      'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this))
-                  ]
-              );
-              $response->getBody()->write($payload);
-              return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                $file = new \HomeDocs\File(
+                    $this->get('settings')['paths']['storage'],
+                    $args['id']
+                );
+                $file->remove($this->get(\aportela\DatabaseWrapper\DB::class));
+                $payload = json_encode(
+                    [
+                        'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this))
+                    ]
+                );
+                $response->getBody()->write($payload);
+                return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
             $group->get('/tag-cloud', function (Request $request, Response $response, array $args) {
