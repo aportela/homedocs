@@ -109,7 +109,10 @@ module.exports = configure(function (ctx) {
       // moved distDir to phpslim-api public dir
       distDir: ctx.mode.spa ? "../phpslim-api/public" : null,
       // move default html to twig template path
-      htmlFilename: "../templates/index-quasar.html.twig",
+      htmlFilename:
+        ctx.mode.spa && ctx.prod
+          ? "../templates/index-quasar.html.twig"
+          : "index.html",
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js#Property%3A-devServer
