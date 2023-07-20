@@ -1,12 +1,45 @@
-/vendor/
-composer.lock
-/logs/*
-!/logs/README.md
-/data/*
-!/data/README.md
-/data/storage/*
-!/data/storage
-!/data/storage/README.md
-/storage/
-/node_modules/
-package-lock.json
+.DS_Store
+.thumbs.db
+
+# Quasar core related directories
+/quasar-frontend/.quasar
+/quasar-frontend/dist
+
+# Cordova related directories and files
+/quasar-frontend/src-cordova/node_modules
+/quasar-frontend/src-cordova/platforms
+/quasar-frontend/src-cordova/plugins
+/quasar-frontend/src-cordova/www
+
+# Capacitor related directories and files
+/quasar-frontend/src-capacitor/www
+/quasar-frontend/src-capacitor/node_modules
+
+# BEX related directories and files
+/quasar-frontend/src-bex/www
+/quasar-frontend/src-bex/js/core
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor directories and files
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+/phpslim-api/vendor/
+/phpslim-api/logs/*
+!/phpslim-api/logs/README.md
+/phpslim-api/data/*
+!/phpslim-api/data/README.md
+/phpslim-api/data/storage/*
+!/phpslim-api/data/storage
+!/phpslim-api/data/storage/README.md
+/phpslim-api/storage/
+
+/quasar-frontend/node_modules/
+/quasar-frontend/package-lock.json

@@ -1,0 +1,202 @@
+<template>
+  <q-layout class="bg-grey-1">
+    <q-header elevated class="text-white" style="background: #24292e" height-hint="61.59">
+      <q-toolbar class="q-py-sm q-px-md">
+        <q-btn class="mobile-only" flat dense round @click="leftDrawerOpen = !leftDrawerOpen" aria-label="Menu"
+          icon="menu" v-if="isLogged" />
+        <q-avatar square size="42px">
+          <img src="icons/favicon-128x128.png" />
+        </q-avatar>
+        HomeDocs
+        <q-select ref="search" dark dense standout use-input hide-selected class="q-mx-md" color="black"
+          :stack-label="false" :label="t('Search...')" v-model="text" :options="filteredOptions" @filter="onFilter"
+          style="width: 100%" v-if="isLogged">
+          <template v-slot:no-option v-if="searching">
+            <q-item>
+              <q-item-section>
+                <div class="text-center">
+                  <q-spinner-pie color="grey-5" size="24px" />
+                </div>
+              </q-item-section>
+            </q-item>
+          </template>
+          <template v-slot:option="scope">
+            <q-list class="bg-grey-9 text-white">
+              <q-item v-bind="scope.itemProps" :to="{ name: 'document', params: { id: scope.opt.id } }">
+                <q-item-section side>
+                  <q-icon name="collections_bookmark" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>{{ scope.opt.label }}</q-item-label>
+                  <q-item-label caption>{{ scope.opt.caption }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </template>
+        </q-select>
+        <q-space />
+        <q-btn dense flat no-wrap>
+          <q-avatar rounded size="24px" class="q-mr-sm">
+            <q-icon name="language" />
+          </q-avatar>
+          {{ selectedLanguage.shortLabel }}
+          <q-icon name="arrow_drop_down" size="16px" />
+          <q-menu auto-close>
+            <q-list dense style="min-width: 200px">
+              <q-item class="GL__menu-link-signed-in">
+                <q-item-section>
+                  <div>{{ t("Selected language") }}: <strong>{{ selectedLanguage.label }}</strong></div>
+                </q-item-section>
+              </q-item>
+              <q-separator />
+              <q-item clickable :disable="selectedLanguage.value == availableLanguage.value" v-close-popup
+                v-for="availableLanguage in availableLanguages" :key="availableLanguage.value"
+                @click="onSelectLanguage(availableLanguage, true)">
+                <q-item-section>
+                  <div>{{ availableLanguage.label }}</div>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </q-btn>
+      </q-toolbar>
+    </q-header>
+    <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-grey-2" :width="240" v-if="isLogged">
+      <q-scroll-area class="fit">
+        <q-list padding>
+          <q-item-label header class="text-weight-bold text-uppercase">
+            Menu
+          </q-item-label>
+          <q-item v-for="link in menuItems" :key="link.text" v-ripple clickable :to="{ name: link.routeName }">
+            <q-item-section avatar>
+              <q-icon color="grey" :name="link.icon" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ t(link.text) }}</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item v-ripple clickable @click="signOut">
+            <q-item-section avatar>
+              <q-icon color="grey" name="logout" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ t("Sign out") }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-scroll-area>
+    </q-drawer>
+    <q-page-container>
+      <router-view />
+    </q-page-container>
+  </q-layout>
+</template>
+
+<script setup>
+import { ref, computed } from "vue";
+import { api } from 'boot/axios'
+import { useSessionStore } from "stores/session";
+import { useRouter } from "vue-router";
+import { useI18n } from 'vue-i18n'
+import { date, useQuasar } from "quasar";
+import { i18n } from "src/boot/i18n";
+
+const { t } = useI18n();
+const $q = useQuasar();
+
+const session = useSessionStore();
+const router = useRouter();
+
+const isLogged = computed(() => session.isLogged);
+const leftDrawerOpen = ref($q.screen.gt.lg);
+const text = ref("");
+const filteredOptions = ref([]);
+
+const searching = ref(false);
+
+const availableLanguages = ref([
+  {
+    shortLabel: 'EN',
+    label: 'English',
+    value: 'en-US'
+  },
+  {
+    shortLabel: 'ES',
+    label: 'Español',
+    value: 'es-ES'
+  },
+  {
+    shortLabel: 'GL',
+    label: 'Galego',
+    value: 'gl-GL'
+  }
+]);
+
+const previousLang = availableLanguages.value.find((lang) => lang.value == session.lang);
+
+const selectedLanguage = ref(previousLang || availableLanguages.value[0]);
+onSelectLanguage(selectedLanguage.value, false);
+
+function onFilter(val, update) {
+  if (val && val.trim().length > 0) {
+    filteredOptions.value = [];
+    searching.value = true;
+    update(() => {
+      api.document.search(1, 8, { title: val }, "title", "ASC")
+        .then((success) => {
+          filteredOptions.value = success.data.results.documents.map((document) => {
+            return ({ id: document.id, label: document.title, caption: t("Fast search caption", { creation: date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss'), attachmentCount: document.fileCount }) });
+          });
+          searching.value = false;
+          return;
+        })
+        .catch((error) => {
+          searching.value = false;
+          $q.notify({
+            type: "negative",
+            message: t("API Error: fatal error"),
+            caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
+          });
+          return;
+        });
+    });
+  } else {
+    update(() => {
+      filteredOptions.value = [];
+    });
+    return;
+  }
+}
+
+function onSelectLanguage(language, save) {
+  selectedLanguage.value = language;
+  i18n.global.locale.value = language.value;
+  if (save) {
+    session.saveLang(language.value);
+  }
+}
+
+const menuItems = ref([
+  { icon: 'storage', text: "Dashboard", routeName: 'index' },
+  { icon: 'note_add', text: "Add", routeName: 'newDocument' },
+  { icon: 'find_in_page', text: "Advanced search", routeName: 'advancedSearch' }
+]);
+
+function signOut() {
+  api.user
+    .signOut()
+    .then((success) => {
+      session.signOut();
+      router.push({
+        name: "signIn",
+      });
+    })
+    .catch((error) => {
+      $q.notify({
+        type: "negative",
+        message: t("API Error: fatal error"),
+        caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
+      });
+    });
+}
+</script>

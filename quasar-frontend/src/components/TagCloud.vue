@@ -1,0 +1,64 @@
+<template>
+  <q-card class="my-card fit" flat bordered>
+    <q-card-section>
+      <q-expansion-item :header-class="loadingError ? 'bg-red' : ''" expand-separator
+        :icon="loadingError ? 'error' : 'bookmark'" :label="t('Tag cloud')"
+        :caption="t(loadingError ? 'Error loading data' : 'Click on tag to browse by tag')" :model-value="expanded">
+        <p class="text-center" v-if="loading">
+          <q-spinner-pie v-if="loading" color="grey-5" size="md" />
+        </p>
+        <div v-if="hasTags">
+          <q-chip square outline text-color="dark" v-for=" tag  in  tags " :key="tag"
+            :title="t('Click here to browse documents containing this tag')">
+            <q-avatar color="grey-9" text-color="white">{{ tag.total }}</q-avatar>
+            <router-link :to="{ name: 'advancedSearchByTag', params: { tag: tag.tag } }" style="text-decoration: none"
+              class="text-dark">
+              {{ tag.tag }}</router-link>
+          </q-chip>
+        </div>
+        <q-banner class="bg-grey text-white" v-else><q-icon name="info" size="md" class="q-mr-sm" />
+          {{ t("You haven't created any tags yet") }}
+        </q-banner>
+      </q-expansion-item>
+    </q-card-section>
+  </q-card>
+</template>
+
+<script setup>
+
+import { ref, computed } from "vue";
+import { useI18n } from 'vue-i18n'
+import { useQuasar } from 'quasar'
+import { api } from 'boot/axios'
+
+const { t } = useI18n();
+const $q = useQuasar();
+const loadingError = ref(false);
+const loading = ref(false);
+const expanded = ref(!$q.screen.lt.md);
+const tags = ref([]);
+
+const hasTags = computed(() => tags.value && tags.value.length > 0);
+
+function refresh() {
+  tags.value = [];
+  loading.value = true;
+  loadingError.value = false;
+  api.tag.getCloud()
+    .then((success) => {
+      tags.value = success.data.tags;
+      loading.value = false;
+    })
+    .catch((error) => {
+      loading.value = false;
+      loadingError.value = true;
+      $q.notify({
+        type: "negative",
+        message: t("API Error: fatal error"),
+        caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
+      });
+    });
+}
+
+refresh();
+</script>
