@@ -1,6 +1,5 @@
 export default {
   Homedocs: "Homedocs",
-  '"I ASSURE YOU; WE\'RE OPEN"': '"I ASSURE YOU; WE\'RE OPEN"',
   "Sign in": "Iniciar sesión",
   "Sign in below to access your account":
     "Introduzca los datos para acceder a su cuenta",

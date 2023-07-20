@@ -5,7 +5,6 @@
         spellcheck="false">
         <q-card-section class="text-center">
           <h3>{{ $t('Homedocs') }}</h3>
-          <h5>{{ $t('"I ASSURE YOU; WE\'RE OPEN"') }}</h5>
           <div class="text-grey-9 text-h5 text-weight-bold">{{ $t('Sign up') }}</div>
           <div class="text-grey-8">{{ $t('Sign up below to create your account') }}</div>
         </q-card-section>
