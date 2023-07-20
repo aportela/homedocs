@@ -51,7 +51,7 @@
               <q-separator />
               <q-item clickable :disable="selectedLanguage.value == availableLanguage.value" v-close-popup
                 v-for="availableLanguage in availableLanguages" :key="availableLanguage.value"
-                @click="onSelectLanguage(availableLanguage)">
+                @click="onSelectLanguage(availableLanguage, true)">
                 <q-item-section>
                   <div>{{ availableLanguage.label }}</div>
                 </q-item-section>
@@ -104,12 +104,38 @@ import { i18n } from "src/boot/i18n";
 const { t } = useI18n();
 const $q = useQuasar();
 
+const session = useSessionStore();
+const router = useRouter();
+
 const isLogged = computed(() => session.isLogged);
 const leftDrawerOpen = ref($q.screen.gt.lg);
 const text = ref("");
 const filteredOptions = ref([]);
 
 const searching = ref(false);
+
+const availableLanguages = ref([
+  {
+    shortLabel: 'EN',
+    label: 'English',
+    value: 'en-US'
+  },
+  {
+    shortLabel: 'ES',
+    label: 'Español',
+    value: 'es-ES'
+  },
+  {
+    shortLabel: 'GL',
+    label: 'Galego',
+    value: 'gl-GL'
+  }
+]);
+
+const previousLang = availableLanguages.value.find((lang) => lang.value == session.lang);
+
+const selectedLanguage = ref(previousLang || availableLanguages.value[0]);
+onSelectLanguage(selectedLanguage.value, false);
 
 function onFilter(val, update) {
   if (val && val.trim().length > 0) {
@@ -142,32 +168,12 @@ function onFilter(val, update) {
   }
 }
 
-const session = useSessionStore();
-const router = useRouter();
-
-const availableLanguages = ref([
-  {
-    shortLabel: 'EN',
-    label: 'English',
-    value: 'en-US'
-  },
-  {
-    shortLabel: 'ES',
-    label: 'Español',
-    value: 'es-ES'
-  },
-  {
-    shortLabel: 'GL',
-    label: 'Galego',
-    value: 'gl-GL'
-  }
-]);
-
-const selectedLanguage = ref(availableLanguages.value[0]);
-
-function onSelectLanguage(language) {
+function onSelectLanguage(language, save) {
   selectedLanguage.value = language;
   i18n.global.locale.value = language.value;
+  if (save) {
+    session.saveLang(language.value);
+  }
 }
 
 const menuItems = ref([

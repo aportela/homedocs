@@ -11,6 +11,7 @@ const localStorageBasilOptions = {
 export const useSessionStore = defineStore("session", {
   state: () => ({
     jwt: null,
+    lang: "en",
   }),
 
   getters: {
@@ -24,6 +25,15 @@ export const useSessionStore = defineStore("session", {
       if (jwt) {
         this.jwt = jwt;
       }
+      const lang = basil.get("lang");
+      console.log("Cargando " + lang);
+      this.lang = lang || "en-US";
+    },
+    saveLang(lang) {
+      console.log("grabando " + lang);
+      this.lang = lang;
+      const basil = useBasil(localStorageBasilOptions);
+      basil.set("lang", lang);
     },
     save(jwt) {
       const basil = useBasil(localStorageBasilOptions);
