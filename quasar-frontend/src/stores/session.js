@@ -26,11 +26,9 @@ export const useSessionStore = defineStore("session", {
         this.jwt = jwt;
       }
       const lang = basil.get("lang");
-      console.log("Cargando " + lang);
       this.lang = lang || "en-US";
     },
     saveLang(lang) {
-      console.log("grabando " + lang);
       this.lang = lang;
       const basil = useBasil(localStorageBasilOptions);
       basil.set("lang", lang);
