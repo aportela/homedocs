@@ -1,3 +1,5 @@
+# TODO: WARNING PENDING INSTALL / UPDATE DOCUMENTATION AFTER MERGE QUASAR BRANCH, PLEASE WAIT...
+
 # HomeDocs
 
 HomeDocs was created with the simple idea of storing (for quick future searching) typical home documents.
@@ -110,14 +112,16 @@ If you want to use a virtual host, the configuration would be the following:
 
 Open file tools/migrate-from-mysql-to-sqlite.php and set database/storage settings
 
- - Old mysql server (file include/configuration.php) configuration on $oldDatabaseSettings
+- Old mysql server (file include/configuration.php) configuration on $oldDatabaseSettings
 
- - Old storage local path (file include/configuration.php, constant LOCAL_STORAGE_PATH) on $oldStoragePath
+- Old storage local path (file include/configuration.php, constant LOCAL_STORAGE_PATH) on $oldStoragePath
 
 Execute migration
+
 ```
     php tools/migrate-from-mysql-to-sqlite.php
 ```
+
 ## Backup data
 
 You really want to make (periodic) backups, all (without source code) data (sqlite database & file storage) is stored on **data/** path
@@ -125,6 +129,7 @@ You really want to make (periodic) backups, all (without source code) data (sqli
 ## Add/recover user credentials
 
 Add/update user credentials from commandline
+
 ```
     php tools\set-credential.php --email jdoe@foobar.com --password themostsecretpassword
 ```
