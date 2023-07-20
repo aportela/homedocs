@@ -107,4 +107,5 @@ export default {
   "Fast search caption": "Creado el {creation}, {attachmentCount} archivo/s",
   Dashboard: "Inicio",
   Add: "Añadir",
+  "Selected language": "Idioma seleccionado",
 };

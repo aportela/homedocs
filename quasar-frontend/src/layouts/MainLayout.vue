@@ -45,7 +45,7 @@
             <q-list dense style="min-width: 200px">
               <q-item class="GL__menu-link-signed-in">
                 <q-item-section>
-                  <div>Selected language: <strong>{{ selectedLanguage.label }}</strong></div>
+                  <div>{{ t("Selected language") }}: <strong>{{ selectedLanguage.label }}</strong></div>
                 </q-item-section>
               </q-item>
               <q-separator />

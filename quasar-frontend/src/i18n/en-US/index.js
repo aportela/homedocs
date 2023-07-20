@@ -106,4 +106,5 @@ export default {
   Dashboard: "Dashboard",
   Add: "Add",
   "Advanced search": "Advanced search",
+  "Selected language": "Selected language",
 };
