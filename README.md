@@ -1,22 +1,29 @@
-# TODO: WARNING PENDING INSTALL / UPDATE DOCUMENTATION AFTER MERGE QUASAR BRANCH, PLEASE WAIT...
-
-# HomeDocs
-
-HomeDocs was created with the simple idea of storing (for quick future searching) typical home documents.
-
-## Warning - Beta release
+# Warning - Beta release
 
 This software may contain bugs, so use under your own risk
 
+# Homedocs
+
+Homedocs is is a simple personal document manager. You can conveniently store your files by classifying them with tags for easy retrieval in the future.
+
+## Screenshots
+
 ## System requirements
 
-- PHP v7.x
+- PHP v8.x
+- composer
 - 'pdo_sqlite' & 'mbstring' php extensions
 - enough disk space for storing documents
 
 ## Setup / Installation
 
-Install dependencies
+The project currently consists of two parts
+
+**phpslim-api/** : full server api (includes latest compiled quasar web frontend). If you only want to install/use homedocs you can copy/use this path.
+
+**quasar-frontend/**: Contains the source code of the frontend (quasar). You won't need this if you only want to use homedocs (without programming or making changes).
+
+Install dependencies (under phpslim-api/ path):
 
 ```
     composer install
@@ -25,111 +32,71 @@ Install dependencies
 Execute sqlite database creation/update script
 
 ```
-    php tools\install-upgrade-db.php
+    php phpslim-api/tools/install.php
 ```
 
 Check proper permissions, web server process must read/write (files) read/write/execute (dirs) on
 
 ```
     Database file
-        data\homedocs.sqlite3
+        phpslim-api/data/homedocs2.sqlite3
 
     Storage paths
-        data\storage\*.*
+        phpslim-api/data/storage/*.*
 
     Debug files
-        logs\*.*
+        phpslim-api/logs/*.*
 ```
 
-Customize settings
+The system should work by default but if you need to modify any configuration the settings file is located at
 
 ```
-    src/AppSettings.php
+    phpslim-api/config/settings.php
 ```
 
-## Web server configurations (according to [php slim docs](https://www.slimframework.com/docs/v3/start/web-servers.html)):
+## Web server configuration:
 
-#### nginx
+The base path you should use for the web server is **phpslim-api/public/**
 
-TODO: access through sub-folder
+Customize web server settings according to php slim docs:
 
-If you want to use a virtual host, the configuration would be the following:
+https://www.slimframework.com/docs/v4/start/web-servers.html
 
-```
-server {
-    # server listening port
-    listen 80;
-    # server full qualified domain name
-    server_name www.mydomain.com;
-    index index.php;
-    # complete local path of homedocs repository
-    root /var/www/nginx/homedocs/public;
+## Migration from old (1.x) version
 
-    location / {
-        try_files $uri /index.php$is_args$args;
-    }
+**WARNING**: Before making any changes, make a backup copy of the files and database (under path **phpslim-api/data/**)
 
-    location ~ \.php {
-        try_files $uri =404;
-        fastcgi_split_path_info ^(.+\.php)(/.+)$;
-        include fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        fastcgi_param SCRIPT_NAME $fastcgi_script_name;
-        fastcgi_index index.php;
-        # uncomment this (with your address/port settings) for using php fpm connection via tcp socket
-        #fastcgi_pass 127.0.0.1:9000;
-        # uncomment this (with your path) for using php fpm via unix socket
-        fastcgi_pass unix:/var/run/php/php7.2-fpm.sock;
-    }
-}
-```
-
-#### apache
-
-If you want to access through a sub-folder of the server (example http://www.mydomain.com/homedocs) you do not have to do anything. Just unzip the package in the webserver root path folder, ex: /var/www/homedocs)
-
-If you want to use a virtual host, the configuration would be the following:
+The storage data is kept/shared from the previous version (1.0) but the database version structure has changed and you will need to run a small sqlite script from the command line (under **phpslim-api/data/** path, where old sqlite3 database is stored):
 
 ```
-<VirtualHost *:80>
-        ServerName www.mydomain.com
-
-        ServerAdmin webmaster@localhost
-        DocumentRoot /var/www/homedocs/
-
-        <Directory /var/www/homedocs/>
-                Options +Indexes +FollowSymLinks
-                AllowOverride All
-                Require all granted
-        </Directory>
-
-        ErrorLog ${APACHE_LOG_DIR}/homedocs-error.log
-        CustomLog ${APACHE_LOG_DIR}/homedocs-access.log combined
-</VirtualHost>
-```
-
-## Migration from old version
-
-Open file tools/migrate-from-mysql-to-sqlite.php and set database/storage settings
-
-- Old mysql server (file include/configuration.php) configuration on $oldDatabaseSettings
-
-- Old storage local path (file include/configuration.php, constant LOCAL_STORAGE_PATH) on $oldStoragePath
-
-Execute migration
+cat ..\tools\migrate-from-v1.sql | sqlite3 .\homedocs2.sqlite3
 
 ```
-    php tools/migrate-from-mysql-to-sqlite.php
+
+Once migrated, run the update script that applies sql version changes
+
+```
+    php phpslim-api/tools/install.php
 ```
 
 ## Backup data
 
-You really want to make (periodic) backups, all (without source code) data (sqlite database & file storage) is stored on **data/** path
+You really want to make (periodic) backups, all (without source code) data (sqlite database & file storage) is stored on **phpslim-api/data/** path
 
 ## Add/recover user credentials
 
-Add/update user credentials from commandline
+You can create/update an account from the command line with the php script
 
 ```
-    php tools\set-credential.php --email jdoe@foobar.com --password themostsecretpassword
+    php phpslim-api/tools/set-credential.php --email myuser@myserver.net --password mysecret
 ```
+
+Once migrated, run the script
+If the account already exists it will be overwritten with the data provided.
+
+## TODO
+
+- Document quasar frontend
+- Docker
+- Document API
+- Android app
