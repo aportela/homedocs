@@ -8,25 +8,25 @@ Homedocs is is a simple personal document manager. You can conveniently store yo
 
 ## Screenshots
 
-Sign In
+### Sign In
 
-![imagen](https://github.com/aportela/homedocs/assets/705838/cab38a76-8483-46b4-afb1-20ae2b495316)
+![Sign In screenshot](https://github.com/aportela/homedocs/assets/705838/cab38a76-8483-46b4-afb1-20ae2b495316)
 
-Dashboard
+### Dashboard
 
-![imagen](https://github.com/aportela/homedocs/assets/705838/bd6ada10-fac6-44dd-989d-f2f30f5e4405)
+![Dashboard screenshot](https://github.com/aportela/homedocs/assets/705838/bd6ada10-fac6-44dd-989d-f2f30f5e4405)
 
-Search
+### Search
 
-![imagen](https://github.com/aportela/homedocs/assets/705838/dc11dd33-6581-4a05-a989-d906a2a686ae)
+![Search screenshot](https://github.com/aportela/homedocs/assets/705838/dc11dd33-6581-4a05-a989-d906a2a686ae)
 
-Document
+### Document
 
-![imagen](https://github.com/aportela/homedocs/assets/705838/76439723-1be3-4c2a-8108-af3051953f44)
+![Document screenshot](https://github.com/aportela/homedocs/assets/705838/76439723-1be3-4c2a-8108-af3051953f44)
 
-Attachments preview
+### Attachments preview
 
-![imagen](https://github.com/aportela/homedocs/assets/705838/3acc3cef-165b-425e-97cf-c2935f67036c)
+![Attachments preview screenshot](https://github.com/aportela/homedocs/assets/705838/3acc3cef-165b-425e-97cf-c2935f67036c)
 
 ## System requirements
 
