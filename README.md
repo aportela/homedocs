@@ -8,25 +8,15 @@ Homedocs is is a simple personal document manager. You can conveniently store yo
 
 ## Screenshots
 
-### Sign In
+<a href="https://github.com/aportela/homedocs/assets/705838/cab38a76-8483-46b4-afb1-20ae2b495316" target="_blank"><img src="https://github.com/aportela/homedocs/assets/705838/cab38a76-8483-46b4-afb1-20ae2b495316" width="18%" alt="Sign In screenshot"></img></a>
 
-![Sign In screenshot](https://github.com/aportela/homedocs/assets/705838/cab38a76-8483-46b4-afb1-20ae2b495316)
+<a href="https://github.com/aportela/homedocs/assets/705838/bd6ada10-fac6-44dd-989d-f2f30f5e4405" target="_blank"><img src="https://github.com/aportela/homedocs/assets/705838/bd6ada10-fac6-44dd-989d-f2f30f5e4405" width="18%" alt="Dashboard screenshot"></img></a>
 
-### Dashboard
+<a href="https://github.com/aportela/homedocs/assets/705838/dc11dd33-6581-4a05-a989-d906a2a686ae" target="_blank"><img src="https://github.com/aportela/homedocs/assets/705838/dc11dd33-6581-4a05-a989-d906a2a686ae" width="18%" alt="Search screenshot"></img></a>
 
-![Dashboard screenshot](https://github.com/aportela/homedocs/assets/705838/bd6ada10-fac6-44dd-989d-f2f30f5e4405)
+<a href="https://github.com/aportela/homedocs/assets/705838/76439723-1be3-4c2a-8108-af3051953f44" target="_blank"><img src="https://github.com/aportela/homedocs/assets/705838/76439723-1be3-4c2a-8108-af3051953f44" width="18%" alt="Document screenshot"></img></a>
 
-### Search
-
-![Search screenshot](https://github.com/aportela/homedocs/assets/705838/dc11dd33-6581-4a05-a989-d906a2a686ae)
-
-### Document
-
-![Document screenshot](https://github.com/aportela/homedocs/assets/705838/76439723-1be3-4c2a-8108-af3051953f44)
-
-### Attachments preview
-
-![Attachments preview screenshot](https://github.com/aportela/homedocs/assets/705838/3acc3cef-165b-425e-97cf-c2935f67036c)
+<a href="https://github.com/aportela/homedocs/assets/705838/3acc3cef-165b-425e-97cf-c2935f67036c" target="_blank"><img src="https://github.com/aportela/homedocs/assets/705838/3acc3cef-165b-425e-97cf-c2935f67036c" width="18%" alt="Attachments preview screenshot"></img></a>
 
 ## System requirements
 
@@ -103,7 +93,7 @@ Once migrated, run the update script that applies sql version changes
 
 You really want to make (periodic) backups, all (without source code) data (sqlite database & file storage) is stored on **phpslim-api/data/** path
 
-## Add/recover user credentials
+## Add/recover user credentials from console
 
 You can create/update an account from the command line with the php script
 
@@ -111,7 +101,6 @@ You can create/update an account from the command line with the php script
     php phpslim-api/tools/set-credential.php --email myuser@myserver.net --password mysecret
 ```
 
-Once migrated, run the script
 If the account already exists it will be overwritten with the data provided.
 
 ## TODO
