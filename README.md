@@ -1,7 +1,3 @@
-# Warning - Beta release
-
-This software may contain bugs, so use under your own risk
-
 # Homedocs
 
 Homedocs is is a simple personal document manager. You can conveniently store your files by classifying them with tags for easy retrieval in the future.

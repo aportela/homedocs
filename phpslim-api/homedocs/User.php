@@ -24,7 +24,7 @@ class User
         return (password_hash($password, PASSWORD_BCRYPT, array('cost' => 12)));
     }
 
-    public function add(\aportela\DatabaseWrapper\DB $dbh)
+    public function add(\aportela\DatabaseWrapper\DB $dbh): void
     {
         if (!empty($this->id) && mb_strlen($this->id) == 36) {
             if (!empty($this->email) && mb_strlen($this->email) <= 255 && filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
@@ -34,7 +34,7 @@ class User
                         new \aportela\DatabaseWrapper\Param\StringParam(":email", mb_strtolower($this->email)),
                         new \aportela\DatabaseWrapper\Param\StringParam(":password_hash", $this->passwordHash($this->password))
                     );
-                    return ($dbh->exec(" INSERT INTO USER (id, email, password_hash) VALUES(:id, :email, :password_hash) ", $params));
+                    $dbh->exec(" INSERT INTO USER (id, email, password_hash) VALUES(:id, :email, :password_hash) ", $params);
                 } else {
                     throw new \HomeDocs\Exception\InvalidParamsException("password");
                 }
@@ -46,7 +46,7 @@ class User
         }
     }
 
-    public function update(\aportela\DatabaseWrapper\DB $dbh)
+    public function update(\aportela\DatabaseWrapper\DB $dbh): void
     {
         if (!empty($this->id) && mb_strlen($this->id) == 36) {
             if (!empty($this->email) && mb_strlen($this->email) <= 255 && filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
@@ -56,7 +56,7 @@ class User
                         new \aportela\DatabaseWrapper\Param\StringParam(":email", mb_strtolower($this->email)),
                         new \aportela\DatabaseWrapper\Param\StringParam(":password_hash", $this->passwordHash($this->password))
                     );
-                    return ($dbh->exec(" UPDATE USER SET email = :email, password_hash = :password_hash WHERE id = :id ", $params));
+                    $dbh->exec(" UPDATE USER SET email = :email, password_hash = :password_hash WHERE id = :id ", $params);
                 } else {
                     throw new \HomeDocs\Exception\InvalidParamsException("password");
                 }
@@ -68,7 +68,7 @@ class User
         }
     }
 
-    public function get(\aportela\DatabaseWrapper\DB $dbh)
+    public function get(\aportela\DatabaseWrapper\DB $dbh): void
     {
         $results = null;
         if (!empty($this->id) && mb_strlen($this->id) == 36) {

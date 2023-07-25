@@ -6,7 +6,7 @@ namespace HomeDocs;
 
 class Utils
 {
-    public static function getInitialState($container)
+    public static function getInitialState($container): array
     {
         $settings = $container->get('settings');
         return ([
@@ -28,7 +28,7 @@ class Utils
      * by svogal
      * https://www.php.net/manual/es/function.mime-content-type.php#87856
      */
-    public static function getMimeType($filename)
+    public static function getMimeType($filename): string
     {
         $mime_types = array(
             'txt' => 'text/plain',
@@ -89,7 +89,7 @@ class Utils
     /**
      * https://stackoverflow.com/a/25370978
      */
-    private static function parseIniSize($size)
+    private static function parseIniSize($size): float
     {
         $unit = preg_replace('/[^bkmgtpezy]/i', '', $size); // Remove the non-unit characters from the size.
         $size = preg_replace('/[^0-9\.]/', '', $size); // Remove the non-numeric characters from the size.
@@ -97,7 +97,7 @@ class Utils
             // Find the position of the unit in the ordered string which is the power of magnitude to multiply a kilobyte by.
             return round($size * pow(1024, stripos('bkmgtpezy', $unit[0])));
         } else {
-            return round($size);
+            return round(floatval($size));
         }
     }
 
@@ -105,7 +105,7 @@ class Utils
      * https://stackoverflow.com/a/25370978
      * Returns a file size limit in bytes based on the PHP upload_max_filesize and post_max_size
      */
-    public static function getMaxUploadFileSize()
+    public static function getMaxUploadFileSize(): float
     {
         static $max_size = -1;
         if ($max_size < 0) {
@@ -133,7 +133,7 @@ class Utils
      * @params $total
      * @params $size
      */
-    public static function showProgressBar($done, $total, $size = 30)
+    public static function showProgressBar($done, $total, $size = 30): void
     {
 
         static $start_time;
@@ -200,7 +200,7 @@ class Utils
      *
      * @return string
      */
-    public static function uuidv4()
+    public static function uuidv4(): string
     {
         return implode('-', [
             bin2hex(random_bytes(4)),

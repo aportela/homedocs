@@ -43,11 +43,12 @@ class File
         }
     }
 
-    public function getLocalStoragePath(): string {
-      return($this->localStoragePath);
+    public function getLocalStoragePath(): string
+    {
+        return ($this->localStoragePath);
     }
 
-    public function get(\aportela\DatabaseWrapper\DB $dbh)
+    public function get(\aportela\DatabaseWrapper\DB $dbh): void
     {
         if (!empty($this->id) && mb_strlen($this->id) == 36) {
             $data = $dbh->query(
@@ -83,7 +84,7 @@ class File
         return (file_exists($this->localStoragePath));
     }
 
-    private function saveStorage(\aportela\DatabaseWrapper\DB $dbh, \Psr\Http\Message\UploadedFileInterface $uploadedFile)
+    private function saveStorage(\aportela\DatabaseWrapper\DB $dbh, \Psr\Http\Message\UploadedFileInterface $uploadedFile): void
     {
         if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
             $path = pathinfo($this->localStoragePath);
@@ -97,14 +98,14 @@ class File
         }
     }
 
-    private function removeStorage()
+    private function removeStorage(): void
     {
         if (file_exists(($this->localStoragePath))) {
             unlink($this->localStoragePath);
         }
     }
 
-    public function saveMetadata(\aportela\DatabaseWrapper\DB $dbh)
+    public function saveMetadata(\aportela\DatabaseWrapper\DB $dbh): void
     {
         $params = array(
             new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id)),
@@ -113,34 +114,32 @@ class File
             new \aportela\DatabaseWrapper\Param\IntegerParam(":size", $this->size),
             new \aportela\DatabaseWrapper\Param\StringParam(":uploaded_by_user_id", \HomeDocs\UserSession::getUserId())
         );
-        return ($dbh->exec(
+        $dbh->exec(
             "
-                        INSERT INTO FILE
-                            (id, sha1_hash, name, size, uploaded_by_user_id, uploaded_on_timestamp)
-                        VALUES
-                            (:id, :sha1_hash, :name, :size, :uploaded_by_user_id, strftime('%s', 'now'))
-                    ",
+                INSERT INTO FILE
+                    (id, sha1_hash, name, size, uploaded_by_user_id, uploaded_on_timestamp)
+                VALUES
+                    (:id, :sha1_hash, :name, :size, :uploaded_by_user_id, strftime('%s', 'now'))
+            ",
             $params
-        )
         );
     }
 
-    public function removeMetadata(\aportela\DatabaseWrapper\DB $dbh)
+    public function removeMetadata(\aportela\DatabaseWrapper\DB $dbh): void
     {
         $params = array(
             new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id))
         );
-        return ($dbh->exec(
+        $dbh->exec(
             "
-                        DELETE FROM FILE WHERE id = :id
-                    ",
+                DELETE FROM FILE WHERE id = :id
+            ",
             $params
-        )
         );
     }
 
 
-    public function add(\aportela\DatabaseWrapper\DB $dbh, \Psr\Http\Message\UploadedFileInterface $uploadedFile)
+    public function add(\aportela\DatabaseWrapper\DB $dbh, \Psr\Http\Message\UploadedFileInterface $uploadedFile): void
     {
         if (!$this->exists()) {
             $this->saveStorage($dbh, $uploadedFile);
@@ -150,7 +149,7 @@ class File
         }
     }
 
-    public function remove(\aportela\DatabaseWrapper\DB $dbh)
+    public function remove(\aportela\DatabaseWrapper\DB $dbh): void
     {
         $this->removeMetadata($dbh);
         $this->removeStorage();

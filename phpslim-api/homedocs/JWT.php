@@ -45,7 +45,7 @@ class JWT
         }
     }
 
-    public function decode(string $jwt)
+    public function decode(string $jwt): \stdClass
     {
         $data = null;
         try {

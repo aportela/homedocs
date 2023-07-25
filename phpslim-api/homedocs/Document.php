@@ -25,12 +25,12 @@ class Document
         $this->files = $files;
     }
 
-    public function setRootStoragePath(string $rootStoragePath)
+    public function setRootStoragePath(string $rootStoragePath): void
     {
         $this->rootStoragePath = $rootStoragePath;
     }
 
-    public static function searchRecent(\aportela\DatabaseWrapper\DB $dbh, int $count = 16)
+    public static function searchRecent(\aportela\DatabaseWrapper\DB $dbh, int $count = 16): array
     {
         $results = $dbh->query(
             sprintf(
@@ -64,7 +64,7 @@ class Document
         return ($results);
     }
 
-    private function validate()
+    private function validate(): void
     {
         if (!empty($this->id) && mb_strlen($this->id) == 36) {
             if (!empty($this->title) && mb_strlen($this->title) <= 128) {
@@ -89,7 +89,7 @@ class Document
         }
     }
 
-    public function add(\aportela\DatabaseWrapper\DB $dbh)
+    public function add(\aportela\DatabaseWrapper\DB $dbh): void
     {
         $this->validate();
         $params = array(
@@ -148,7 +148,7 @@ class Document
         }
     }
 
-    public function update(\aportela\DatabaseWrapper\DB $dbh)
+    public function update(\aportela\DatabaseWrapper\DB $dbh): void
     {
         $this->validate();
         $params = array(
@@ -250,7 +250,7 @@ class Document
         }
     }
 
-    public function delete(\aportela\DatabaseWrapper\DB $dbh)
+    public function delete(\aportela\DatabaseWrapper\DB $dbh): void
     {
         if (!empty($this->id) && mb_strlen($this->id) == 36) {
             $originalFiles = $this->getFiles($dbh);
@@ -289,7 +289,7 @@ class Document
         }
     }
 
-    public function get(\aportela\DatabaseWrapper\DB $dbh)
+    public function get(\aportela\DatabaseWrapper\DB $dbh): void
     {
         if (!empty($this->id) && mb_strlen($this->id) == 36) {
             $data = $dbh->query(
@@ -321,7 +321,7 @@ class Document
         }
     }
 
-    private function getTags(\aportela\DatabaseWrapper\DB $dbh)
+    private function getTags(\aportela\DatabaseWrapper\DB $dbh): array
     {
         $tags = [];
         $data = $dbh->query(
@@ -345,7 +345,7 @@ class Document
         return ($tags);
     }
 
-    private function getFiles(\aportela\DatabaseWrapper\DB $dbh)
+    private function getFiles(\aportela\DatabaseWrapper\DB $dbh): array
     {
         $files = [];
         $data = $dbh->query(
@@ -377,7 +377,7 @@ class Document
         return ($files);
     }
 
-    public static function search(\aportela\DatabaseWrapper\DB $dbh, int $currentPage = 1, int $resultsPage = 16, $filter = array(), string $sortBy = "createdOnTimestamp", string $sortOrder = "DESC")
+    public static function search(\aportela\DatabaseWrapper\DB $dbh, int $currentPage = 1, int $resultsPage = 16, $filter = array(), string $sortBy = "createdOnTimestamp", string $sortOrder = "DESC"): \stdClass
     {
         $data = new \stdClass();
         $data->pagination = new \stdClass();
