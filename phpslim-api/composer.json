@@ -9,7 +9,8 @@
     }
   ],
   "config": {
-    "sort-packages": true
+    "sort-packages": true,
+    "process-timeout": 0
   },
   "require": {
     "php": ">=8.2",
@@ -32,8 +33,5 @@
   "scripts": {
     "start": "php -S 127.0.0.1:8081 -t public",
     "test": "vendor/bin/phpunit.bat --colors=always homedocs/Test/"
-  },
-  "config": {
-    "process-timeout": 0
   }
 }
