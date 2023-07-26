@@ -17,7 +17,6 @@
     "firebase/php-jwt": "^6.5",
     "monolog/monolog": "^3.3",
     "php-di/php-di": "^7.0",
-    "ramsey/uuid": "^4.7",
     "slim/psr7": "^1.6",
     "slim/slim": "^4.11",
     "slim/twig-view": "^3.3"
@@ -31,7 +30,8 @@
     }
   },
   "scripts": {
-    "start": "php -S 127.0.0.1:8081 -t public"
+    "start": "php -S 127.0.0.1:8081 -t public",
+    "test": "vendor/bin/phpunit.bat --colors=always homedocs/Test/"
   },
   "config": {
     "process-timeout": 0
