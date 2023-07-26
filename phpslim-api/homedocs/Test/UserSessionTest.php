@@ -8,16 +8,6 @@ require_once dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "vendor" . DIRECT
 
 final class UserSessionTest extends \HomeDocs\Test\BaseTest
 {
-    /**
-     * Clean up the whole test class
-     */
-    public static function tearDownAfterClass(): void
-    {
-        self::$dbh = null;
-        self::$container = null;
-        self::$app = null;
-    }
-
     public function testIsLoggedWithoutSession(): void
     {
         \HomeDocs\User::signOut();
