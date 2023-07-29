@@ -13,10 +13,12 @@ export const useInitialStateStore = defineStore("initialState", {
   state: () => ({
     initialState: {
       allowSignUp: false,
+      maxUploadFileSize: 1,
     },
   }),
   getters: {
     isSignUpAllowed: (state) => state.initialState.allowSignUp,
+    maxUploadFileSize: (state) => state.initialState.maxUploadFileSize,
   },
   actions: {
     load() {
@@ -24,6 +26,8 @@ export const useInitialStateStore = defineStore("initialState", {
         .initialState()
         .then((success) => {
           this.initialState.allowSignUp = success.data.initialState.allowSignUp;
+          this.initialState.maxUploadFileSize =
+            success.data.initialState.maxUploadFileSize;
         })
         .catch((error) => {
           $q.notify({

@@ -127,7 +127,7 @@
 
 <script setup>
 
-import { ref, nextTick } from "vue";
+import { ref, nextTick, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { uid, format, date, useQuasar } from "quasar";
 import { useI18n } from 'vue-i18n'
@@ -135,13 +135,18 @@ import { api } from 'boot/axios'
 import { default as TagSelector } from "components/TagSelector.vue";
 import { default as ConfirmationModal } from "components/ConfirmationModal.vue";
 import { default as FilePreviewModal } from "components/FilePreviewModal.vue";
+import { useInitialStateStore } from "stores/initialState";
 
 const $q = useQuasar();
 
 const { t } = useI18n();
 
+const initialState = useInitialStateStore();
+
+const maxFileSize = computed(() => initialState.maxUploadFileSize);
+
 const uploaderRef = ref(null);
-const maxFileSize = 2097152;
+
 const selectedFileIndex = ref(null);
 
 const showPreviewFileDialog = ref(false);
@@ -412,7 +417,7 @@ function onUploadRejected(e) {
   if (e[0].failedPropValidation == "max-file-size") {
     $q.notify({
       type: "negative",
-      message: "Can not upload file " + e[0].file.name + ' (max upload filesize: ' + format.humanStorageSize(maxFileSize) + ', current file size: ' + format.humanStorageSize(e[0].file.size) + ')',
+      message: "Can not upload file " + e[0].file.name + ' (max upload filesize: ' + format.humanStorageSize(maxFileSize.value) + ', current file size: ' + format.humanStorageSize(e[0].file.size) + ')',
     });
   } else {
     $q.notify({
