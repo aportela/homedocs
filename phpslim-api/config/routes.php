@@ -312,7 +312,7 @@ return function (App $app) {
                 $uploadedFiles = $request->getUploadedFiles();
                 $file = new \HomeDocs\File(
                     $this->get('settings')['paths']['storage'],
-                    (\Ramsey\Uuid\Uuid::uuid4())->toString(),
+                    \HomeDocs\Utils::uuidv4(),
                     $uploadedFiles["file"]->getClientFilename(),
                     $uploadedFiles["file"]->getSize()
                 );

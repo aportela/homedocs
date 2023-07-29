@@ -53,7 +53,7 @@ if (count($missingExtensions) > 0) {
         } else {
             //$c["logger"]->debug("Account not found -> adding credentials");
             echo "User not found, creating account...";
-            $u->id = (\Ramsey\Uuid\Uuid::uuid4())->toString();
+            $u->id = \HomeDocs\Utils::uuidv4();
             $u->add($db);
             echo "ok!" . PHP_EOL;
         }
