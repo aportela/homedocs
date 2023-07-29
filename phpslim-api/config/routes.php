@@ -16,7 +16,7 @@ return function (App $app) {
             $group->get('/initial_state', function (Request $request, Response $response, array $args) {
                 $payload = json_encode(
                     [
-                        'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this))
+                        'initialState' => \HomeDocs\Utils::getInitialState($this)
                     ]
                 );
                 $response->getBody()->write($payload);
@@ -39,7 +39,7 @@ return function (App $app) {
                         $user->add($db);
                         $payload = json_encode(
                             [
-                                'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this))
+                                'initialState' => \HomeDocs\Utils::getInitialState($this)
                             ]
                         );
                         $response->getBody()->write($payload);
@@ -62,7 +62,7 @@ return function (App $app) {
                 $user->signIn($db);
                 $payload = json_encode(
                     [
-                        'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this))
+                        'initialState' => \HomeDocs\Utils::getInitialState($this)
                     ]
                 );
                 $response->getBody()->write($payload);
@@ -74,7 +74,7 @@ return function (App $app) {
                 \HomeDocs\User::signOut();
                 $payload = json_encode(
                     [
-                        'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this))
+                        'initialState' => \HomeDocs\Utils::getInitialState($this)
                     ]
                 );
                 $response->getBody()->write($payload);
@@ -86,7 +86,7 @@ return function (App $app) {
                 $params = $request->getParsedBody();
                 $payload = json_encode(
                     [
-                        'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this)),
+                        'initialState' => \HomeDocs\Utils::getInitialState($this),
                         'recentDocuments' => \HomeDocs\Document::searchRecent(
                             $this->get(\aportela\DatabaseWrapper\DB::class),
                             $params["count"] ?? $settings["common"]["defaultResultsPage"]
@@ -102,7 +102,7 @@ return function (App $app) {
                 $params = $request->getParsedBody();
                 $payload = json_encode(
                     [
-                        'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this)),
+                        'initialState' => \HomeDocs\Utils::getInitialState($this),
                         'results' => \HomeDocs\Document::search(
                             $this->get(\aportela\DatabaseWrapper\DB::class),
                             intval($params["currentPage"] ?? 1),
@@ -130,7 +130,7 @@ return function (App $app) {
                 $document->get($this->get(\aportela\DatabaseWrapper\DB::class));
                 $payload = json_encode(
                     [
-                        'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this)),
+                        'initialState' => \HomeDocs\Utils::getInitialState($this),
                         'data' => $document
                     ]
                 );
@@ -166,7 +166,7 @@ return function (App $app) {
                 $document->get($this->get(\aportela\DatabaseWrapper\DB::class));
                 $payload = json_encode(
                     [
-                        'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this)),
+                        'initialState' => \HomeDocs\Utils::getInitialState($this),
                         'data' => $document
                     ]
                 );
@@ -209,7 +209,7 @@ return function (App $app) {
                 $document->get($this->get(\aportela\DatabaseWrapper\DB::class));
                 $payload = json_encode(
                     [
-                        'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this)),
+                        'initialState' => \HomeDocs\Utils::getInitialState($this),
                         'data' => $document
                     ]
                 );
@@ -228,7 +228,7 @@ return function (App $app) {
                 $document->delete($dbh);
                 $payload = json_encode(
                     [
-                        'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this))
+                        'initialState' => \HomeDocs\Utils::getInitialState($this)
                     ]
                 );
                 $response->getBody()->write($payload);
@@ -294,7 +294,7 @@ return function (App $app) {
                 $file->add($this->get(\aportela\DatabaseWrapper\DB::class), $files["file"]);
                 $payload = json_encode(
                     [
-                        'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this)),
+                        'initialState' => \HomeDocs\Utils::getInitialState($this),
                         'data' => array(
                             "id" => $file->id,
                             "name" => $file->name,
@@ -319,7 +319,7 @@ return function (App $app) {
                 $file->add($this->get(\aportela\DatabaseWrapper\DB::class), $uploadedFiles["file"]);
                 $payload = json_encode(
                     [
-                        'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this)),
+                        'initialState' => \HomeDocs\Utils::getInitialState($this),
                         'data' => array(
                             "id" => $file->id,
                             "name" => $file->name,
@@ -351,7 +351,7 @@ return function (App $app) {
             $group->get('/tag-cloud', function (Request $request, Response $response, array $args) {
                 $payload = json_encode(
                     [
-                        'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this)),
+                        'initialState' => \HomeDocs\Utils::getInitialState($this),
                         'tags' => \HomeDocs\Tag::getCloud($this->get(\aportela\DatabaseWrapper\DB::class))
                     ]
                 );
@@ -362,7 +362,7 @@ return function (App $app) {
             $group->post('/tag/search', function (Request $request, Response $response, array $args) {
                 $payload = json_encode(
                     [
-                        'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this)),
+                        'initialState' => \HomeDocs\Utils::getInitialState($this),
                         'tags' => \HomeDocs\Tag::search($this->get(\aportela\DatabaseWrapper\DB::class))
                     ]
                 );
