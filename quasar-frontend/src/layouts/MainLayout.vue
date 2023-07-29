@@ -96,6 +96,7 @@
 import { ref, computed } from "vue";
 import { api } from 'boot/axios'
 import { useSessionStore } from "stores/session";
+import { useInitialStateStore } from "stores/initialState";
 import { useRouter } from "vue-router";
 import { useI18n } from 'vue-i18n'
 import { date, useQuasar } from "quasar";
@@ -105,6 +106,7 @@ const { t } = useI18n();
 const $q = useQuasar();
 
 const session = useSessionStore();
+const initialState = useInitialStateStore();
 const router = useRouter();
 
 const isLogged = computed(() => session.isLogged);
@@ -181,6 +183,8 @@ const menuItems = ref([
   { icon: 'note_add', text: "Add", routeName: 'newDocument' },
   { icon: 'find_in_page', text: "Advanced search", routeName: 'advancedSearch' }
 ]);
+
+initialState.load();
 
 function signOut() {
   api.user

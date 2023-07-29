@@ -14,6 +14,8 @@ export default {
   "Sign up": "Sign up",
   "Sign up below to create your account":
     "Sign up below to create your account",
+  "New sign ups are not allowed on this system":
+    "New sign ups are not allowed on this system",
   "Email already used": "Email already used",
   "Already have an account ?": "Already have an account ?",
   "Click here to sign in": "Click here to sign in",

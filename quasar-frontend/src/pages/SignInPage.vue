@@ -33,7 +33,7 @@
             </template>
           </q-btn>
         </q-card-section>
-        <q-card-section class="text-center q-pt-none">
+        <q-card-section class="text-center q-pt-none" v-if="signUpAllowed">
           <div class="text-grey-8">
             {{ t("Don't have an account yet ?") }}
             <router-link :to="{ name: 'signUp' }">
@@ -49,12 +49,13 @@
 
 <script setup>
 
-import { ref, nextTick } from "vue";
+import { ref, nextTick, computed } from "vue";
 import { useQuasar } from "quasar";
 import { useRouter } from "vue-router";
 import { useI18n } from 'vue-i18n'
 import { api } from 'boot/axios'
 //import { useSessionStore } from "stores/session";
+import { useInitialStateStore } from "stores/initialState";
 
 const { t } = useI18n();
 
@@ -63,6 +64,10 @@ const $q = useQuasar();
 const router = useRouter();
 
 //const session = useSessionStore();
+
+const initialState = useInitialStateStore();
+
+const signUpAllowed = computed(() => initialState.isSignUpAllowed);
 
 const loading = ref(false);
 

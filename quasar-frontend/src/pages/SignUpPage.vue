@@ -26,7 +26,7 @@
         </q-card-section>
         <q-card-section>
           <q-btn color="dark" size="md" :label="$t('Sign up')" no-caps class="full-width" icon="account_circle"
-            :disable="loading || (!(email && password))" :loading="loading" type="submit">
+            :disable="loading || (!(email && password)) || ! signUpAllowed" :loading="loading" type="submit">
             <template v-slot:loading>
               <q-spinner-hourglass class="on-left" />
               {{ t("Loading...") }}
@@ -42,6 +42,12 @@
             </router-link>
           </div>
         </q-card-section>
+        <q-card-section class="text-center q-pt-none" v-if="! signUpAllowed">
+          <div class="text-red-8 text-bold">
+            <q-icon name="info" />
+            {{ t("New sign ups are not allowed on this system") }}
+          </div>
+        </q-card-section>
       </form>
     </q-card>
   </q-page>
@@ -54,6 +60,7 @@ import { uid, useQuasar } from "quasar";
 import { useRouter } from "vue-router";
 import { useI18n } from 'vue-i18n'
 import { api } from 'boot/axios'
+import { useInitialStateStore } from "stores/initialState";
 
 const { t } = useI18n();
 
@@ -62,6 +69,11 @@ const $q = useQuasar();
 const router = useRouter();
 
 const loading = ref(false);
+
+
+const initialState = useInitialStateStore();
+
+const signUpAllowed = computed(() => initialState.isSignUpAllowed);
 
 const remoteValidation = ref({
   email: {

@@ -14,6 +14,8 @@ export default {
   "Sign up": "Crear cuenta",
   "Sign up below to create your account":
     "Introduzca los datos para crear su cuenta",
+  "New sign ups are not allowed on this system":
+    "No se permiten nuevos registros en este sistema",
   "Email already used": "El correo electrónico ya está en uso",
   "Already have an account ?": "¿ Ya dispone de una cuenta ?",
   "Click here to sign in": "Haga click aquí para iniciar sesión",
