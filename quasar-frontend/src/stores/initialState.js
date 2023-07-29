@@ -1,0 +1,51 @@
+import { defineStore } from "pinia";
+import { default as useBasil } from "basil.js";
+import { api } from "boot/axios";
+
+const localStorageBasilOptions = {
+  namespace: "homedocs",
+  storages: ["local", "cookie", "session", "memory"],
+  storage: "local",
+  expireDays: 3650,
+};
+
+export const useInitialStateStore = defineStore("initialState", {
+  state: () => ({
+    initialState: {
+      allowSignUp: false,
+    },
+  }),
+  getters: {
+    isSignUpAllowed: (state) => state.initialState.allowSignUp,
+  },
+  actions: {
+    load() {
+      api.common
+        .initialState()
+        .then((success) => {
+          this.initialState.allowSignUp = success.data.initialState.allowSignUp;
+        })
+        .catch((error) => {
+          $q.notify({
+            type: "negative",
+            message: t("API Error: fatal error"),
+            caption: t("API Error: fatal error details", {
+              status: error.response.status,
+              statusText: error.response.statusText,
+            }),
+          });
+        });
+      /*
+      const basil = useBasil(localStorageBasilOptions);
+      const initialState = basil.get("initialState");
+      if (initialState) {
+        this.initialState = initialState;
+      }
+      */
+    },
+    save(initialState) {
+      const basil = useBasil(localStorageBasilOptions);
+      basil.set("initialState", initialState);
+    },
+  },
+});
