@@ -1,13 +1,14 @@
 {
   "name": "aportela/homedocs",
   "description": "mini (selfhosted) personal document manager",
-  "license": "GPL",
+  "license": "GPL-3.0-only",
   "authors": [
     {
       "name": "alex",
       "email": "766f6964+github@gmail.com"
     }
   ],
+  "homepage": "https://github.com/aportela/homedocs",
   "config": {
     "sort-packages": true,
     "process-timeout": 0
@@ -23,7 +24,7 @@
     "slim/twig-view": "^3.3"
   },
   "require-dev": {
-    "phpunit/phpunit": "^10.1"
+    "phpunit/phpunit": "^10.2"
   },
   "autoload": {
     "psr-4": {
