@@ -7,12 +7,12 @@ namespace HomeDocs;
 class File
 {
 
-    public $id;
-    public $name;
-    public $size;
-    public $hash;
-    public $uploadedOnTimestamp;
-    private $localStoragePath;
+    public ?string $id;
+    public ?string $name;
+    public ?int $size;
+    public ?string $hash;
+    public ?int $uploadedOnTimestamp;
+    private ?string $localStoragePath;
 
     public function __construct(string $rootStoragePath = null, string $id = "", string $name = "", int $size = 0, $hash = "", $uploadedOnTimestamp = null)
     {

@@ -7,14 +7,14 @@ namespace HomeDocs;
 class Document
 {
 
-    public $id;
-    public $title;
-    public $description;
-    public $createdOnTimestamp;
-    public $createdBy;
-    public $files;
-    public $rootStoragePath;
-    public $tags;
+    public ?string $id;
+    public ?string $title;
+    public ?string $description;
+    public ?int $createdOnTimestamp;
+    public ?string $createdBy;
+    public ?array $files = array();
+    public ?string $rootStoragePath;
+    public ?array $tags = array();
 
     public function __construct(string $id = "", string $title = "", string $description = "", $tags = array(), $files = array())
     {

@@ -11,7 +11,7 @@ class BaseTest extends \PHPUnit\Framework\TestCase
     static public $app = null;
     static public $container = null;
     static public $settings = null;
-    static public $dbh = null;
+    static public ?\aportela\DatabaseWrapper\DB $dbh = null;
 
     /**
      * Called once just like normal constructor
