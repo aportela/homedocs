@@ -28,7 +28,7 @@ if (count($missingExtensions) > 0) {
 } else {
     $db = $container->get(\aportela\DatabaseWrapper\DB::class);
     // try to upgrade SQL schema to last version
-    $currentVersion = $db->upgradeSchema();
+    $currentVersion = $db->upgradeSchema(true);
     if ($currentVersion !== -1) {
         echo "Database upgraded with success" . PHP_EOL;
         $logger->info("Database upgraded with success");

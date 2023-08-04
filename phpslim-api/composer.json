@@ -15,7 +15,7 @@
   },
   "require": {
     "php": ">=8.2",
-    "aportela/db-wrapper": "^1.0",
+    "aportela/db-wrapper": "^2.0",
     "firebase/php-jwt": "^6.8",
     "monolog/monolog": "^3.4",
     "php-di/php-di": "^7.0",

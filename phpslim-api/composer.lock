@@ -4,24 +4,28 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e67b5659fcb614c3661cc43183f223f1",
+    "content-hash": "323224d7ca0e5d31563892da1dd0f526",
     "packages": [
         {
             "name": "aportela/db-wrapper",
-            "version": "1.0.5",
+            "version": "2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aportela/db-wrapper.git",
-                "reference": "e9296c4c588337fbed6a69ffb2481336c33dec93"
+                "reference": "418f350e90fa0e8d7991713d25209d23b2ea5572"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aportela/db-wrapper/zipball/e9296c4c588337fbed6a69ffb2481336c33dec93",
-                "reference": "e9296c4c588337fbed6a69ffb2481336c33dec93",
+                "url": "https://api.github.com/repos/aportela/db-wrapper/zipball/418f350e90fa0e8d7991713d25209d23b2ea5572",
+                "reference": "418f350e90fa0e8d7991713d25209d23b2ea5572",
                 "shasum": ""
             },
             "require": {
+                "php": ">=8.0",
                 "psr/log": "^3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.2"
             },
             "type": "library",
             "autoload": {
@@ -39,12 +43,13 @@
                     "email": "766f6964+github@gmail.com"
                 }
             ],
-            "description": "Custom database wrapper",
+            "description": "Custom PDO database wrapper",
+            "homepage": "https://github.com/aportela/db-wrapper",
             "support": {
                 "issues": "https://github.com/aportela/db-wrapper/issues",
-                "source": "https://github.com/aportela/db-wrapper/tree/1.0.5"
+                "source": "https://github.com/aportela/db-wrapper/tree/2.0.1"
             },
-            "time": "2022-10-20T14:48:50+00:00"
+            "time": "2023-08-04T09:27:37+00:00"
         },
         {
             "name": "fig/http-message-util",
@@ -2082,16 +2087,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "10.2.7",
+            "version": "10.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "a215d9ee8bac1733796e4ddff3306811f14414e5"
+                "reference": "d442ce7c4104d5683c12e67e4dcb5058159e9804"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/a215d9ee8bac1733796e4ddff3306811f14414e5",
-                "reference": "a215d9ee8bac1733796e4ddff3306811f14414e5",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/d442ce7c4104d5683c12e67e4dcb5058159e9804",
+                "reference": "d442ce7c4104d5683c12e67e4dcb5058159e9804",
                 "shasum": ""
             },
             "require": {
@@ -2131,7 +2136,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "10.2-dev"
+                    "dev-main": "10.3-dev"
                 }
             },
             "autoload": {
@@ -2163,7 +2168,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.2.7"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/10.3.1"
             },
             "funding": [
                 {
@@ -2179,7 +2184,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-08-02T06:46:08+00:00"
+            "time": "2023-08-04T06:48:08+00:00"
         },
         {
             "name": "sebastian/cli-parser",
