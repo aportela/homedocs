@@ -60,9 +60,4 @@ class BaseTest extends \PHPUnit\Framework\TestCase
         self::$container = null;
         self::$app = null;
     }
-
-    public function test(): void
-    {
-        $this->assertTrue(true);
-    }
 }
