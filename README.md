@@ -99,3 +99,5 @@ If the account already exists it will be overwritten with the data provided.
 - Docker
 - Document API
 - Android app
+
+![PHP Composer](https://github.com/aportela/homedocs/actions/workflows/php.yml/badge.svg)
