@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="vendor/autoload.php" backupGlobals="false" backupStaticProperties="false" colors="true" processIsolation="false" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.3/phpunit.xsd">
+    <testsuites>
+        <testsuite name="homedocs-test-suite">
+            <file>homedocs/Test/UserTest.php</file>
+            <file>homedocs/Test/UserSessionTest.php</file>
+            <file>homedocs/Test/DocumentTest.php</file>
+            <file>homedocs/Test/TagTest.php</file>
+        </testsuite>
+    </testsuites>
+</phpunit>

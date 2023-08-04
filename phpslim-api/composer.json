@@ -33,6 +33,6 @@
   },
   "scripts": {
     "start": "php -S 127.0.0.1:8081 -t public",
-    "test": "vendor/bin/phpunit --colors=always homedocs/Test/"
+    "test": "vendor/bin/phpunit"
   }
 }
