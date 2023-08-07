@@ -76,7 +76,7 @@ cat ..\tools\migrate-from-v1.sql | sqlite3 .\homedocs2.sqlite3
 Once migrated, run the update script that applies sql version changes
 
 ```
-    php phpslim-api/tools/install.php
+    php phpslim-api/tools/update.php
 ```
 
 ## Backup data
