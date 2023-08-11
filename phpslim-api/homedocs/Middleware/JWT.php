@@ -6,7 +6,6 @@ namespace HomeDocs\Middleware;
 
 class JWT
 {
-
     protected $logger;
     private $passphrase;
 
@@ -46,15 +45,15 @@ class JWT
             }
         } else {
             if (empty($clientHeaderJWT)) {
-              $response = $handler->handle($request);
-              if (\HomeDocs\UserSession::isLogged()) {
-                $payload = array(
-                      "userId" => isset($_SESSION["userId"]) ? $_SESSION["userId"] : null,
-                      "email" => isset($_SESSION["email"]) ? $_SESSION["email"] : null
-                );
-                $jwt = new \HomeDocs\JWT($this->logger, $this->passphrase);
-                $clientHeaderJWT = $jwt->encode($payload);
-              }
+                $response = $handler->handle($request);
+                if (\HomeDocs\UserSession::isLogged()) {
+                    $payload = array(
+                          "userId" => isset($_SESSION["userId"]) ? $_SESSION["userId"] : null,
+                          "email" => isset($_SESSION["email"]) ? $_SESSION["email"] : null
+                    );
+                    $jwt = new \HomeDocs\JWT($this->logger, $this->passphrase);
+                    $clientHeaderJWT = $jwt->encode($payload);
+                }
             }
 
             if ($clientHeaderJWT && \HomeDocs\UserSession::isLogged()) {

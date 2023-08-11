@@ -4,7 +4,7 @@ namespace HomeDocs;
 
 class JWT
 {
-    const ALGORITHM = 'HS256';
+    public const ALGORITHM = 'HS256';
 
     private \Psr\Log\LoggerInterface $logger;
     private string $passphrase;

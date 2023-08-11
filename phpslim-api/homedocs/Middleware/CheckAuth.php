@@ -6,7 +6,6 @@ namespace HomeDocs\Middleware;
 
 class CheckAuth
 {
-
     public function __construct(\Psr\Container\ContainerInterface $container)
     {
     }

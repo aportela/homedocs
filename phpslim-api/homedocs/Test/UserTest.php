@@ -8,7 +8,6 @@ require_once dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "vendor" . DIRECT
 
 final class UserTest extends \HomeDocs\Test\BaseTest
 {
-
     public function testAddWithoutId(): void
     {
         if (self::$settings['common']['allowSignUp']) {

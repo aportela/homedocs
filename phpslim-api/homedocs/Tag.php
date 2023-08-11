@@ -6,7 +6,6 @@ namespace HomeDocs;
 
 class Tag
 {
-
     public static function getCloud(\aportela\DatabaseWrapper\DB $dbh): array
     {
         $results = $dbh->query(

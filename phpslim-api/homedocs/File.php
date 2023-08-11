@@ -6,7 +6,6 @@ namespace HomeDocs;
 
 class File
 {
-
     public ?string $id;
     public ?string $name;
     public ?int $size;

@@ -41,6 +41,7 @@ yarn-error.log*
 !/phpslim-api/data/storage/README.md
 /phpslim-api/storage/
 /phpslim-api/.phpunit.result.cache
+/phpslim-api/.php-cs-fixer.cache
 
 /quasar-frontend/node_modules/
 /quasar-frontend/package-lock.json

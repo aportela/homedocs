@@ -6,7 +6,6 @@ namespace HomeDocs;
 
 class Document
 {
-
     public ?string $id;
     public ?string $title;
     public ?string $description;
@@ -73,7 +72,7 @@ class Document
                         foreach ($this->tags as $tag) {
                             if (empty($tag)) {
                                 throw new \HomeDocs\Exception\InvalidParamsException("tags");
-                            } else if (mb_strlen($tag) > 32) {
+                            } elseif (mb_strlen($tag) > 32) {
                                 throw new \HomeDocs\Exception\InvalidParamsException("tags");
                             }
                         }
