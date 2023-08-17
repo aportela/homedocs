@@ -128,7 +128,7 @@ function onSubmitForm() {
           {
             label: t("Sign in"), color: 'white', handler: () => {
               router.push({
-                name: "index",
+                name: "signIn",
               });
             }
           }
