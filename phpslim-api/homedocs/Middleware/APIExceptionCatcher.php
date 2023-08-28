@@ -59,12 +59,19 @@ class APIExceptionCatcher
         } catch (\Throwable $e) {
             $this->logger->debug(sprintf("Exception caught (%s) - Message: %s", get_class($e), $e->getMessage()));
             $response = new \Slim\Psr7\Response();
-            $payload = json_encode([
-                'exceptionDetails' => $e->getMessage(),
-                'file' => $e->getLine(),
-                'line' => $e->getFile()
-            ]);
-            $response->getBody()->write($payload);
+            $payload = [
+                'exception' => [
+                    'type' => get_class($e),
+                    'message' => $e->getMessage(),
+                    'file' => $e->getLine(),
+                    'line' => $e->getFile()
+                ]
+            ];
+            $parent = $e->getPrevious();
+            if ($parent) {
+                $payload['exception']['parent'] = ['type' => get_class($parent), 'message' => $parent->getMessage(), 'file' => $parent->getFile(), 'line' => $parent->getLine()];
+            }
+            $response->getBody()->write(json_encode($payload));
             return ($response)->withStatus(500);
         }
     }
