@@ -91,7 +91,7 @@ export const useAdvancedSearchData = defineStore("advancedSearchData", {
             date.addToDate(Date.now(), { days: -7 }),
             "YYYY/MM/DD"
           );
-          this.filter.fromDate = date.formatDate(
+          this.filter.toDate = date.formatDate(
             date.addToDate(Date.now(), { days: -1 }),
             "YYYY/MM/DD"
           );
@@ -102,7 +102,7 @@ export const useAdvancedSearchData = defineStore("advancedSearchData", {
             date.addToDate(Date.now(), { days: -15 }),
             "YYYY/MM/DD"
           );
-          this.filter.fromDate = date.formatDate(
+          this.filter.toDate = date.formatDate(
             date.addToDate(Date.now(), { days: -1 }),
             "YYYY/MM/DD"
           );
@@ -113,7 +113,7 @@ export const useAdvancedSearchData = defineStore("advancedSearchData", {
             date.addToDate(Date.now(), { days: -31 }),
             "YYYY/MM/DD"
           );
-          this.filter.fromDate = date.formatDate(
+          this.filter.toDate = date.formatDate(
             date.addToDate(Date.now(), { days: -1 }),
             "YYYY/MM/DD"
           );
@@ -124,7 +124,7 @@ export const useAdvancedSearchData = defineStore("advancedSearchData", {
             date.addToDate(Date.now(), { days: -365 }),
             "YYYY/MM/DD"
           );
-          this.filter.fromDate = date.formatDate(
+          this.filter.toDate = date.formatDate(
             date.addToDate(Date.now(), { days: -1 }),
             "YYYY/MM/DD"
           );
