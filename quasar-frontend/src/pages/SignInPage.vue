@@ -5,7 +5,6 @@
         spellcheck="false">
         <q-card-section class="text-center">
           <h3>{{ $t('Homedocs') }}</h3>
-          <div class="text-grey-9 text-h5 text-weight-bold">{{ $t('Sign in') }}</div>
           <div class="text-grey-8">{{ $t('Sign in below to access your account') }}</div>
         </q-card-section>
         <q-card-section>
