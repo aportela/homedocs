@@ -39,19 +39,19 @@
           <q-avatar rounded size="24px" class="q-mr-sm">
             <q-icon name="language" />
           </q-avatar>
-          {{ selectedLanguage.shortLabel }}
+          {{ selectedLocale.shortLabel }}
           <q-icon name="arrow_drop_down" size="16px" />
           <q-menu auto-close>
             <q-list dense style="min-width: 200px">
               <q-item class="GL__menu-link-signed-in">
                 <q-item-section>
-                  <div>{{ t("Selected language") }}: <strong>{{ selectedLanguage.label }}</strong></div>
+                  <div>{{ t("Selected language") }}: <strong>{{ selectedLocale.label }}</strong></div>
                 </q-item-section>
               </q-item>
               <q-separator />
-              <q-item clickable :disable="selectedLanguage.value == availableLanguage.value" v-close-popup
-                v-for="availableLanguage in availableLanguages" :key="availableLanguage.value"
-                @click="onSelectLanguage(availableLanguage, true)">
+              <q-item clickable :disable="selectedLocale.value == availableLanguage.value" v-close-popup
+                v-for="availableLanguage in availableLocales" :key="availableLanguage.value"
+                @click="onSelectLocale(availableLanguage, true)">
                 <q-item-section>
                   <div>{{ availableLanguage.label }}</div>
                 </q-item-section>
@@ -100,7 +100,7 @@ import { useInitialStateStore } from "stores/initialState";
 import { useRouter } from "vue-router";
 import { useI18n } from 'vue-i18n'
 import { date, useQuasar } from "quasar";
-import { i18n } from "src/boot/i18n";
+import { i18n, defaultLocale } from "src/boot/i18n";
 
 const { t } = useI18n();
 const $q = useQuasar();
@@ -116,7 +116,7 @@ const filteredOptions = ref([]);
 
 const searching = ref(false);
 
-const availableLanguages = ref([
+const availableLocales = ref([
   {
     shortLabel: 'EN',
     label: 'English',
@@ -134,10 +134,9 @@ const availableLanguages = ref([
   }
 ]);
 
-const previousLang = availableLanguages.value.find((lang) => lang.value == session.lang);
+const defaultBrowserLocale = availableLocales.value.find((lang) => lang.value == defaultLocale);
 
-const selectedLanguage = ref(previousLang || availableLanguages.value[0]);
-onSelectLanguage(selectedLanguage.value, false);
+const selectedLocale = ref(defaultBrowserLocale || availableLocales.value[0]);
 
 function onFilter(val, update) {
   if (val && val.trim().length > 0) {
@@ -170,11 +169,11 @@ function onFilter(val, update) {
   }
 }
 
-function onSelectLanguage(language, save) {
-  selectedLanguage.value = language;
-  i18n.global.locale.value = language.value;
+function onSelectLocale(locale, save) {
+  selectedLocale.value = locale;
+  i18n.global.locale.value = locale.value;
   if (save) {
-    session.saveLang(language.value);
+    session.saveLocale(locale.value);
   }
 }
 
