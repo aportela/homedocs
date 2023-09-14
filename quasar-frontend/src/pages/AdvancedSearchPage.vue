@@ -151,17 +151,15 @@
 
 import { ref, computed, watch } from "vue";
 import { useRoute } from "vue-router";
-import { date, useQuasar } from 'quasar'
-import { useI18n } from 'vue-i18n'
-import { api } from 'boot/axios'
+import { date, useQuasar } from "quasar";
+import { useI18n } from "vue-i18n";
+import { api } from "boot/axios";
 import { useAdvancedSearchData } from "stores/advancedSearchData";
 import { default as TagSelector } from "components/TagSelector.vue";
 
 const $q = useQuasar();
 const { t } = useI18n();
 const route = useRoute();
-const advancedSearchData = useAdvancedSearchData();
-
 const searching = ref(false);
 const searchLaunched = ref(false);
 const expandedFilter = ref(true);
@@ -179,7 +177,7 @@ const dateFilterOptions = ref([
   { label: t('To date'), value: 9 },
   { label: t('Between dates'), value: 10 }
 ]);
-
+const advancedSearchData = useAdvancedSearchData();
 advancedSearchData.filter.dateFilterType = dateFilterOptions.value[0];
 advancedSearchData.filter.tags = route.params.tag !== undefined ? [route.params.tag] : [];
 
@@ -191,6 +189,16 @@ watch(
     advancedSearchData.recalcDates(dateFilterType)
   }
 );
+
+function onPaginationChanged(pageIndex) {
+  advancedSearchData.setCurrentPage(pageIndex);
+  onSubmitForm(false);
+}
+
+function onToggleSort(field) {
+  advancedSearchData.toggleSort(field);
+  onSubmitForm(false);
+}
 
 function onSubmitForm(resetPager) {
   if (resetPager) {
@@ -243,17 +251,6 @@ function onSubmitForm(resetPager) {
       }
       searching.value = false;
     });
-}
-
-function onPaginationChanged(pageIndex) {
-  advancedSearchData.setCurrentPage(pageIndex);
-  onSubmitForm(false);
-}
-
-
-function onToggleSort(field) {
-  advancedSearchData.toggleSort(field);
-  onSubmitForm(false);
 }
 
 if (advancedSearchData.filter.tags.length > 0) {
