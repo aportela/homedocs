@@ -94,29 +94,26 @@
 
 <script setup>
 import { ref, computed } from "vue";
-import { api } from 'boot/axios'
+import { api } from "boot/axios";
 import { useSessionStore } from "stores/session";
 import { useInitialStateStore } from "stores/initialState";
 import { useRouter } from "vue-router";
-import { useI18n } from 'vue-i18n'
+import { useI18n } from "vue-i18n";
 import { date, useQuasar } from "quasar";
 import { i18n, defaultLocale } from "src/boot/i18n";
 
 const { t } = useI18n();
 const $q = useQuasar();
-
 const session = useSessionStore();
 const initialState = useInitialStateStore();
 const router = useRouter();
-
 const isLogged = computed(() => session.isLogged);
 const leftDrawerOpen = ref($q.screen.gt.lg);
 const text = ref("");
 const filteredOptions = ref([]);
-
 const searching = ref(false);
 
-const availableLocales = ref([
+const availableLocales = [
   {
     shortLabel: 'EN',
     label: 'English',
@@ -132,11 +129,16 @@ const availableLocales = ref([
     label: 'Galego',
     value: 'gl-GL'
   }
-]);
+];
 
-const defaultBrowserLocale = availableLocales.value.find((lang) => lang.value == defaultLocale);
+const menuItems = [
+  { icon: 'storage', text: "Dashboard", routeName: 'index' },
+  { icon: 'note_add', text: "Add", routeName: 'newDocument' },
+  { icon: 'find_in_page', text: "Advanced search", routeName: 'advancedSearch' }
+];
 
-const selectedLocale = ref(defaultBrowserLocale || availableLocales.value[0]);
+const defaultBrowserLocale = availableLocales.find((lang) => lang.value == defaultLocale);
+const selectedLocale = ref(defaultBrowserLocale || availableLocales[0]);
 
 function onFilter(val, update) {
   if (val && val.trim().length > 0) {
@@ -177,14 +179,6 @@ function onSelectLocale(locale, save) {
   }
 }
 
-const menuItems = ref([
-  { icon: 'storage', text: "Dashboard", routeName: 'index' },
-  { icon: 'note_add', text: "Add", routeName: 'newDocument' },
-  { icon: 'find_in_page', text: "Advanced search", routeName: 'advancedSearch' }
-]);
-
-initialState.load();
-
 function signOut() {
   api.user
     .signOut()
@@ -202,4 +196,7 @@ function signOut() {
       });
     });
 }
+
+initialState.load();
+
 </script>
