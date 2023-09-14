@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="visible" @hide="emit('close')">
+  <q-dialog v-model="visible" @hide="onClose">
     <q-card>
       <q-card-section class="bg-grey-8 text-white q-p-none">
         <slot name="header"></slot>
@@ -8,9 +8,9 @@
         <slot name="body"></slot>
       </q-card-section>
       <q-card-actions align="right">
-        <q-btn outline v-close-popup class="bg-grey-6 text-white"><q-icon left name="close" />{{ t("Cancel")
+        <q-btn outline @click.stop="onCancel" class="bg-grey-6 text-white"><q-icon left name="close" />{{ t("Cancel")
         }}</q-btn>
-        <q-btn outline @click.stop="emit('ok')" class="bg-dark text-white"><q-icon left name="done" />{{ t("Ok")
+        <q-btn outline @click.stop="onOK" class="bg-dark text-white"><q-icon left name="done" />{{ t("Ok")
         }}</q-btn>
       </q-card-actions>
     </q-card>
@@ -26,5 +26,20 @@ const { t } = useI18n();
 const emit = defineEmits(['close', 'ok']);
 
 const visible = ref(true);
+
+function onClose() {
+  visible.value = false;
+  emit('close');
+}
+
+function onCancel() {
+  visible.value = false;
+  emit('cancel');
+}
+
+function onOK() {
+  visible.value = false;
+  emit('ok');
+}
 
 </script>

@@ -106,7 +106,7 @@
       @close="showPreviewFileDialog = false">
     </FilePreviewModal>
     <ConfirmationModal v-if="showConfirmDeleteFileDialog || showConfirmDeleteDocumentDialog"
-      @close="onCancelConfirmationModal" @ok="onSuccessConfirmationModal">
+      @close="onCancelConfirmationModal" @cancel="onCancelConfirmationModal" @ok="onSuccessConfirmationModal">
       <template v-slot:header v-if="showConfirmDeleteFileDialog">
         <div class="text-h6">{{ t("Remove document file") }}</div>
         <div class="text-subtitle2">{{ document.files[selectedFileIndex].name }}</div>
