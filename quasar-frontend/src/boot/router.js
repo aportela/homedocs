@@ -1,6 +1,5 @@
 import { boot } from "quasar/wrappers";
 import { useSessionStore } from "stores/session";
-import { isShallow } from "vue";
 
 export default boot(({ app, router, store }) => {
   router.beforeEach((to, from, next) => {
