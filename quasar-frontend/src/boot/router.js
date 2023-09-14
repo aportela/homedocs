@@ -16,8 +16,14 @@ export default boot(({ app, router, store }) => {
           name: "index",
         });
       } else {
-        // go to specified route
-        next();
+        if (to.name !== "signIn" && to.name != "signUp") {
+          // go to specified route
+          next();
+        } else {
+          next({
+            name: "index",
+          });
+        }
       }
     } else {
       if (!to.name) {
