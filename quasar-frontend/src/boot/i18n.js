@@ -1,6 +1,5 @@
 import { createI18n } from "vue-i18n";
 import messages from "src/i18n";
-
 import { useSessionStore } from "stores/session";
 
 const session = useSessionStore();

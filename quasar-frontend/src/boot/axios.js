@@ -1,5 +1,4 @@
 import { boot } from "quasar/wrappers";
-
 import axios from "axios";
 import { useSessionStore } from "stores/session";
 
