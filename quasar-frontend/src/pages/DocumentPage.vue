@@ -138,23 +138,17 @@ import { default as FilePreviewModal } from "components/FilePreviewModal.vue";
 import { useInitialStateStore } from "stores/initialState";
 
 const $q = useQuasar();
-
 const { t } = useI18n();
-
+const route = useRoute();
+const router = useRouter();
 const initialState = useInitialStateStore();
-
 const maxFileSize = computed(() => initialState.maxUploadFileSize);
-
 const uploaderRef = ref(null);
-
 const selectedFileIndex = ref(null);
-
 const showPreviewFileDialog = ref(false);
 const showConfirmDeleteFileDialog = ref(false);
 const showConfirmDeleteDocumentDialog = ref(false);
-
 const titleRef = ref(null);
-
 const isNew = ref(false);
 const loading = ref(false);
 const saving = ref(false);
@@ -169,6 +163,34 @@ const document = ref({
   createdBy: null,
   files: [],
   tags: []
+});
+
+router.beforeEach(async (to, from) => {
+  if (to.name == "newDocument") {
+    // new document, reset form fields
+    document.value = {
+      id: null,
+      title: null,
+      description: null,
+      created: null,
+      createdOnTimestamp: null,
+      date: null,
+      createdBy: null,
+      files: [],
+      tags: []
+    }
+    isNew.value = true;
+  } else if (from.name == "newDocument" && to.name == "document" && to.params.id) {
+    // existent document from creation
+    isNew.value = false;
+    document.value.id = to.params.id
+    onRefresh();
+  } else if (from.name != "newDocument" && to.name == "document" && to.params.id) {
+    // existent document
+    isNew.value = false;
+    document.value.id = to.params.id
+    onRefresh();
+  }
 });
 
 function onRefresh() {
@@ -321,37 +343,6 @@ function onPreviewFile(index) {
   selectedFileIndex.value = index;
   showPreviewFileDialog.value = true;
 }
-
-const route = useRoute();
-const router = useRouter();
-
-router.beforeEach(async (to, from) => {
-  if (to.name == "newDocument") {
-    // new document, reset form fields
-    document.value = {
-      id: null,
-      title: null,
-      description: null,
-      created: null,
-      createdOnTimestamp: null,
-      date: null,
-      createdBy: null,
-      files: [],
-      tags: []
-    }
-    isNew.value = true;
-  } else if (from.name == "newDocument" && to.name == "document" && to.params.id) {
-    // existent document from creation
-    isNew.value = false;
-    document.value.id = to.params.id
-    onRefresh();
-  } else if (from.name != "newDocument" && to.name == "document" && to.params.id) {
-    // existent document
-    isNew.value = false;
-    document.value.id = to.params.id
-    onRefresh();
-  }
-});
 
 function onShowFileRemoveConfirmationDialog(file, fileIndex) {
   selectedFileIndex.value = fileIndex;
