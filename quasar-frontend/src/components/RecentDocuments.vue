@@ -26,7 +26,7 @@
               </tr>
             </tbody>
           </q-markup-table>
-          <q-banner class="bg-grey text-white" v-else><q-icon name="info" size="md" class="q-mr-sm" />
+          <q-banner class="bg-grey text-white" v-else-if="!loadingError"><q-icon name="info" size="md" class="q-mr-sm" />
             {{ t("You haven't created any documents yet") }}
           </q-banner>
         </div>
@@ -37,32 +37,32 @@
 
 <script setup>
 
-import { ref, computed } from "vue";
-import { useI18n } from 'vue-i18n'
-import { date, useQuasar } from 'quasar'
-import { api } from 'boot/axios'
+import { ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { date, useQuasar } from "quasar";
+import { api } from "boot/axios";
 
 const { t } = useI18n();
 const $q = useQuasar();
 const loadingError = ref(false);
 const loading = ref(false);
-const expanded = ref(!$q.screen.lt.md);
-const recentDocuments = ref([]);
 
-const hasRecentDocuments = computed(
-  () => recentDocuments.value && recentDocuments.value.length > 0
-);
+let expanded = !$q.screen.lt.md;
+let recentDocuments = [];
+let hasRecentDocuments = false;
 
 function refresh() {
-  recentDocuments.value = [];
+  recentDocuments = [];
+  hasRecentDocuments = false;
   loading.value = true;
   loadingError.value = false;
   api.document.searchRecent(16)
     .then((success) => {
-      recentDocuments.value = success.data.recentDocuments.map((document) => {
+      recentDocuments = success.data.recentDocuments.map((document) => {
         document.createdOn = date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
         return (document);
       });
+      hasRecentDocuments = recentDocuments.length > 0;
       loading.value = false;
     })
     .catch((error) => {

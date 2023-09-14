@@ -8,7 +8,7 @@
           <q-spinner-pie v-if="loading" color="grey-5" size="md" />
         </p>
         <div v-if="hasTags">
-          <q-chip square outline text-color="dark" v-for=" tag  in  tags " :key="tag"
+          <q-chip square outline text-color="dark" v-for="tag in tags " :key="tag.tag"
             :title="t('Click here to browse documents containing this tag')">
             <q-avatar color="grey-9" text-color="white">{{ tag.total }}</q-avatar>
             <router-link :to="{ name: 'advancedSearchByTag', params: { tag: tag.tag } }" style="text-decoration: none"
@@ -16,7 +16,7 @@
               {{ tag.tag }}</router-link>
           </q-chip>
         </div>
-        <q-banner class="bg-grey text-white" v-else><q-icon name="info" size="md" class="q-mr-sm" />
+        <q-banner class="bg-grey text-white" v-else-if="!loadingError"><q-icon name="info" size="md" class="q-mr-sm" />
           {{ t("You haven't created any tags yet") }}
         </q-banner>
       </q-expansion-item>
@@ -26,27 +26,29 @@
 
 <script setup>
 
-import { ref, computed } from "vue";
-import { useI18n } from 'vue-i18n'
-import { useQuasar } from 'quasar'
-import { api } from 'boot/axios'
+import { ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { useQuasar } from "quasar"
+import { api } from "boot/axios";
 
 const { t } = useI18n();
 const $q = useQuasar();
 const loadingError = ref(false);
 const loading = ref(false);
-const expanded = ref(!$q.screen.lt.md);
-const tags = ref([]);
 
-const hasTags = computed(() => tags.value && tags.value.length > 0);
+let expanded = !$q.screen.lt.md;
+let tags = [];
+let hasTags = false;
 
 function refresh() {
-  tags.value = [];
+  tags = [];
+  hasTags = false;
   loading.value = true;
   loadingError.value = false;
   api.tag.getCloud()
     .then((success) => {
-      tags.value = success.data.tags;
+      tags = success.data.tags;
+      hasTags = tags.length > 0;
       loading.value = false;
     })
     .catch((error) => {
