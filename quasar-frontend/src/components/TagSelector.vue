@@ -14,7 +14,7 @@
 
 <script setup>
 
-import { defineProps, defineEmits, ref, watch, computed } from "vue";
+import { ref, watch, computed } from "vue";
 import { api } from 'boot/axios'
 import { useI18n } from 'vue-i18n'
 
