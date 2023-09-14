@@ -15,8 +15,8 @@
 <script setup>
 
 import { ref, watch, computed } from "vue";
-import { api } from 'boot/axios'
-import { useI18n } from 'vue-i18n'
+import { api } from "boot/axios";
+import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 
@@ -29,13 +29,13 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'error']);
 
 const selectRef = ref('');
-
 const loading = ref(false);
 const loadingError = ref(false);
-const availableTags = ref([]);
 const filteredTags = ref([]);
 const currentTags = ref([]);
 const selectedTagsProp = computed(() => props.modelValue || []);
+
+let availableTags = [];
 
 watch(selectedTagsProp, (newValue) => {
   currentTags.value = newValue || [];
@@ -53,7 +53,7 @@ function onFilterTags(val, update) {
   } else {
     update(() => {
       const needle = val.toLowerCase();
-      filteredTags.value = availableTags.value.filter(v => v.toLowerCase().indexOf(needle) > -1);
+      filteredTags.value = availableTags.filter(v => v.toLowerCase().indexOf(needle) > -1);
     });
   }
 }
@@ -62,7 +62,7 @@ function loadAvailableTags() {
   loadingError.value = false;
   loading.value = true;
   api.tag.search().then((response) => {
-    availableTags.value = response.data.tags;
+    availableTags = response.data.tags;
     currentTags.value = selectedTagsProp.value;
     loading.value = false;
   }).catch((error) => {
