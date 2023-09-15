@@ -59,6 +59,7 @@
             </q-list>
           </q-menu>
         </q-btn>
+        <q-btn round dense flat :ripple="false" :icon="fabGithub" size="md" color="white" class="q-ml-sm" no-caps href="http://github.com/aportela/homedocs" target="_blank" />
       </q-toolbar>
     </q-header>
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-grey-2" :width="240" v-if="isLogged">
@@ -101,6 +102,7 @@ import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { date, useQuasar } from "quasar";
 import { i18n, defaultLocale } from "src/boot/i18n";
+import { fabGithub } from "@quasar/extras/fontawesome-v6";
 
 const { t } = useI18n();
 const $q = useQuasar();
