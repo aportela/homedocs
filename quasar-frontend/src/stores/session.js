@@ -10,11 +10,13 @@ const localStorageBasilOptions = {
 
 export const useSessionStore = defineStore("session", {
   state: () => ({
+    loaded: false,
     jwt: null,
     locale: null,
   }),
 
   getters: {
+    isLoaded: (state) => state.loaded,
     isLogged: (state) => state.jwt != null,
     getJWT: (state) => state.jwt,
     getLocale: (state) => state.locale,
@@ -30,6 +32,7 @@ export const useSessionStore = defineStore("session", {
       if (locale) {
         this.locale = locale;
       }
+      this.loaded = true;
     },
     saveLocale(locale) {
       this.locale = locale;

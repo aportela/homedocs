@@ -3,6 +3,9 @@ import axios from "axios";
 import { useSessionStore } from "stores/session";
 
 const session = useSessionStore();
+if (!session.isLoaded) {
+  session.load();
+}
 const jwt = session.getJWT;
 
 axios.interceptors.request.use(

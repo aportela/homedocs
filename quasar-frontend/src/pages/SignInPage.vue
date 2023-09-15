@@ -62,7 +62,12 @@ const $q = useQuasar();
 
 const router = useRouter();
 
-//const session = useSessionStore();
+/*
+const session = useSessionStore();
+if (!session.isLoaded) {
+  session.load();
+}
+*/
 
 const initialState = useInitialStateStore();
 

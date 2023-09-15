@@ -105,6 +105,9 @@ import { i18n, defaultLocale } from "src/boot/i18n";
 const { t } = useI18n();
 const $q = useQuasar();
 const session = useSessionStore();
+if (!session.isLoaded) {
+  session.load();
+}
 const initialState = useInitialStateStore();
 const router = useRouter();
 const isLogged = computed(() => session.isLogged);
