@@ -44,18 +44,17 @@ class JWT
                 return ($response);
             }
         } else {
+            $response = $handler->handle($request);
             if (empty($clientHeaderJWT)) {
-                $response = $handler->handle($request);
                 if (\HomeDocs\UserSession::isLogged()) {
                     $payload = array(
-                          "userId" => isset($_SESSION["userId"]) ? $_SESSION["userId"] : null,
-                          "email" => isset($_SESSION["email"]) ? $_SESSION["email"] : null
+                        "userId" => isset($_SESSION["userId"]) ? $_SESSION["userId"] : null,
+                        "email" => isset($_SESSION["email"]) ? $_SESSION["email"] : null
                     );
                     $jwt = new \HomeDocs\JWT($this->logger, $this->passphrase);
                     $clientHeaderJWT = $jwt->encode($payload);
                 }
             }
-
             if ($clientHeaderJWT && \HomeDocs\UserSession::isLogged()) {
                 return $response->withHeader("HOMEDOCS-JWT", $clientHeaderJWT);
             } else {
