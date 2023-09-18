@@ -68,7 +68,7 @@ final class UserTest extends \HomeDocs\Test\BaseTest
         }
     }
 
-    public function testAddUserAccount(): void
+    public function testAdd(): void
     {
         if (self::$settings['common']['allowSignUp']) {
             $this->expectNotToPerformAssertions();
@@ -111,17 +111,7 @@ final class UserTest extends \HomeDocs\Test\BaseTest
         (new \HomeDocs\User($id, $id, "secret"))->update(self::$dbh);
     }
 
-    public function testUpdateMyProfile(): void
-    {
-        $this->expectNotToPerformAssertions();
-        $id = \HomeDocs\Utils::uuidv4();
-        $u = new \HomeDocs\User($id, $id . "@server.com", "secret");
-        $u->add(self::$dbh);
-        $u->signIn(self::$dbh);
-        $u->update(self::$dbh);
-    }
-
-    public function testUpdateAdministratorAccountAccount(): void
+    public function testUpdate(): void
     {
         $this->expectNotToPerformAssertions();
         $id = \HomeDocs\Utils::uuidv4();
