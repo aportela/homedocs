@@ -1,8 +1,13 @@
 import { defineStore } from "pinia";
 import { default as useBasil } from "basil.js";
 
+const hashedSite = Array.from(window.location.host).reduce(
+  (hash, char) => 0 | (31 * hash + char.charCodeAt(0)),
+  0
+);
+
 const localStorageBasilOptions = {
-  namespace: "homedocs",
+  namespace: "homedocs" + hashedSite,
   storages: ["local", "cookie", "session", "memory"],
   storage: "local",
   expireDays: 3650,
