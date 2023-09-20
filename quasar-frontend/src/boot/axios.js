@@ -6,12 +6,11 @@ const session = useSessionStore();
 if (!session.isLoaded) {
   session.load();
 }
-const jwt = session.getJWT;
 
 axios.interceptors.request.use(
   (config) => {
-    if (jwt) {
-      config.headers["HOMEDOCS-JWT"] = jwt;
+    if (session.getJWT) {
+      config.headers["HOMEDOCS-JWT"] = session.getJWT;
       config.withCredentials = true;
     }
     return config;
@@ -26,7 +25,7 @@ axios.interceptors.response.use(
     // warning: axios lowercase received header names
     const apiResponseJWT = response.headers["homedocs-jwt"] || null;
     if (apiResponseJWT) {
-      if (apiResponseJWT && apiResponseJWT != jwt) {
+      if (apiResponseJWT && apiResponseJWT != session.getJWT) {
         session.signIn(apiResponseJWT);
       }
     }
