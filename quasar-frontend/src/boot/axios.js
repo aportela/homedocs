@@ -32,21 +32,22 @@ axios.interceptors.response.use(
     return response;
   },
   (error) => {
-    // helper for checking invalid fields on api response
-    error.isFieldInvalid = function (fieldName) {
-      return error.response.data.invalidOrMissingParams.indexOf(fieldName) > -1;
-    };
-    error.response.getApiErrorData = function () {
-      return JSON.stringify(
-        {
-          url: error.request.responseURL,
-          response: error.response,
+    if (!error) {
+      return Promise.reject({
+        response: {
+          status: 0,
+          statusText: "undefined",
         },
-        null,
-        "\t"
-      );
-    };
-    return Promise.reject(error);
+      });
+    } else {
+      if (!error.response) {
+        error.response = {
+          status: 0,
+          statusText: "undefined",
+        };
+      }
+      return Promise.reject(error);
+    }
   }
 );
 
