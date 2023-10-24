@@ -69,7 +69,7 @@ https://www.slimframework.com/docs/v4/start/web-servers.html
 The storage data is kept/shared from the previous version (1.0) but the database version structure has changed and you will need to run a small sqlite script from the command line (under **phpslim-api/data/** path, where old sqlite3 database is stored):
 
 ```
-cat ..\tools\migrate-from-v1.sql | sqlite3 .\homedocs2.sqlite3
+cat ../tools/migrate-from-v1.sql | sqlite3 ./homedocs2.sqlite3
 
 ```
 
