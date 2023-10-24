@@ -58,6 +58,7 @@ export default {
   Name: "Nombre",
   Size: "Tamaño",
   Actions: "Acciones",
+  Operations: "Operaciones",
   "Save document": "Guardar documento",
   "Remove document": "Eliminar documento",
   "Open/Preview": "Abrir/Previsualizar",

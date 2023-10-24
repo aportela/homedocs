@@ -52,7 +52,7 @@
                         <q-btn :label="t('Remove')" icon="delete" :disable="loading"
                           @click.prevent="onShowFileRemoveConfirmationDialog(file, fileIndex)" />
                       </q-btn-group>
-                      <q-btn-dropdown label="Operations" class="mobile-only" :disable="loading">
+                      <q-btn-dropdown :label="t('Operations')" class="mobile-only" :disable="loading">
                         <q-list>
                           <q-item clickable v-close-popup @click.prevent="onPreviewFile(fileIndex)"
                             :disable="loading || !allowPreview(file.name) || file.isNew">
@@ -63,7 +63,6 @@
                               <q-item-label>{{ t("Open/Preview") }}</q-item-label>
                             </q-item-section>
                           </q-item>
-
                           <q-item clickable v-close-popup :href="file.url" :disable="loading || file.isNew">
                             <q-item-section avatar>
                               <q-icon name="download"></q-icon>
@@ -72,7 +71,6 @@
                               <q-item-label>{{ t("Download") }}</q-item-label>
                             </q-item-section>
                           </q-item>
-
                           <q-item clickable v-close-popup
                             @click.prevent="onShowFileRemoveConfirmationDialog(file, fileIndex)" :disable="loading">
                             <q-item-section avatar>

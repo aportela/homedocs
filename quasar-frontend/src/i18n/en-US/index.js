@@ -54,6 +54,7 @@ export default {
   Name: "Name",
   Size: "Size",
   Actions: "Actions",
+  Operations: "Operations",
   "Save document": "Save document",
   "Remove document": "Remove document",
   "Open/Preview": "Open/Preview",
