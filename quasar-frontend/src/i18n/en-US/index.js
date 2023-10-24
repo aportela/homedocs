@@ -51,6 +51,9 @@ export default {
   "API Error: missing document title param":
     "API Error: missing document title param",
   Document: "Document",
+  Name: "Name",
+  Size: "Size",
+  Actions: "Actions",
   "Save document": "Save document",
   "Remove document": "Remove document",
   "Open/Preview": "Open/Preview",
