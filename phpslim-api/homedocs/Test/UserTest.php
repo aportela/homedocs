@@ -168,6 +168,21 @@ final class UserTest extends \HomeDocs\Test\BaseTest
         $this->assertTrue($id == $u->id);
     }
 
+    public function testExists(): void
+    {
+        $id = \HomeDocs\Utils::uuidv4();
+        $u = new \HomeDocs\User($id, $id . "@server.com", "secret");
+        $u->add(self::$dbh);
+        $this->assertTrue($u->exists(self::$dbh));
+    }
+
+    public function testNotExists(): void
+    {
+        $id = \HomeDocs\Utils::uuidv4();
+        $u = new \HomeDocs\User($id, $id . "@server.com", "secret");
+        $this->assertFalse($u->exists(self::$dbh));
+    }
+
     public function testExistsEmailWithNonExistentEmail(): void
     {
         $id = \HomeDocs\Utils::uuidv4();

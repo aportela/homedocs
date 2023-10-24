@@ -106,6 +106,18 @@ class User
         }
     }
 
+    public function exists(\aportela\DatabaseWrapper\DB $dbh): bool
+    {
+        $exists = false;
+        try {
+            $this->get($dbh);
+            $exists = true;
+        } catch (\HomeDocs\Exception\NotFoundException $e) {
+        } finally {
+            return ($exists);
+        }
+    }
+
     public static function isEmailUsed(\aportela\DatabaseWrapper\DB $dbh, string $email): bool
     {
         $results = null;
