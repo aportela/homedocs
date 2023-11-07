@@ -438,7 +438,7 @@ class Document
                 );
             }
         }
-        $whereCondition = count($queryConditions) > 0 ? " WHERE " .  implode(" AND ", $queryConditions) : "";
+        $whereCondition = " WHERE " .  implode(" AND ", $queryConditions);
 
         $queryCount = sprintf('
                 SELECT
