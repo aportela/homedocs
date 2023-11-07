@@ -8,7 +8,7 @@ require_once dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "vendor" . DIRECT
 
 class BaseTest extends \PHPUnit\Framework\TestCase
 {
-    public static $app = null;
+    public static \Slim\App $app;
     public static \Psr\Container\ContainerInterface $container;
     public static $settings = null;
     public static ?\aportela\DatabaseWrapper\DB $dbh = null;
@@ -57,7 +57,6 @@ class BaseTest extends \PHPUnit\Framework\TestCase
     public static function tearDownAfterClass(): void
     {
         self::$dbh = null;
-        self::$container = null;
         self::$app = null;
     }
 }
