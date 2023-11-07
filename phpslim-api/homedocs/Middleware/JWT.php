@@ -6,9 +6,9 @@ namespace HomeDocs\Middleware;
 
 class JWT
 {
-    protected $logger;
-    private $passphrase;
-    protected $dbh;
+    protected \Psr\Log\LoggerInterface $logger;
+    private string $passphrase;
+    protected \aportela\DatabaseWrapper\DB $dbh;
 
     public function __construct(\Psr\Container\ContainerInterface $container)
     {
