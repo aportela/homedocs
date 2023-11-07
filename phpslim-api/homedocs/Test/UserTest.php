@@ -92,7 +92,7 @@ final class UserTest extends \HomeDocs\Test\BaseTest
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("email");
         $id = \HomeDocs\Utils::uuidv4();
-        (new \HomeDocs\User($id, "", "name of " . $id, "secret"))->update(self::$dbh);
+        (new \HomeDocs\User($id, "", "secret"))->update(self::$dbh);
     }
 
     public function testUpdateWithoutValidEmailLength(): void
