@@ -268,7 +268,7 @@ return function (App $app) {
                         return $response->withStatus(206)
                             ->withHeader('Content-Type', \HomeDocs\Utils::getMimeType($file->name))
                             ->withHeader('Content-Disposition', 'attachment; filename="' . basename($file->name) . '"')
-                            ->withHeader('Content-Length', $filesize)
+                            ->withHeader('Content-Length', (string) $filesize)
                             ->withHeader('Content-Range', 'bytes ' . $offset . '-' . ($offset + $length - 1) . '/' . $filesize)
                             ->withHeader('Accept-Ranges', 'bytes');
                     } else {
