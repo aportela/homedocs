@@ -6,7 +6,7 @@ namespace HomeDocs;
 
 class UserSession
 {
-    public static function set($userId = "", string $email = ""): void
+    public static function set(string $userId = "", string $email = ""): void
     {
         $_SESSION["userId"] = $userId;
         $_SESSION["email"] = $email;
