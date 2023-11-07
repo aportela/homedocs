@@ -33,7 +33,7 @@ class JWT
             // try decoding jwt data
             $jwt = new \HomeDocs\JWT($this->logger, $this->passphrase);
             $decoded = $jwt->decode($clientHeaderJWT);
-            if (isset($decoded) && isset($decoded->data) && isset($decoded->data->userId) && isset($decoded->data->email)) {
+            if (isset($decoded->data) && isset($decoded->data->userId) && isset($decoded->data->email)) {
                 $this->logger->notice("JWT valid data decoded", [print_r($decoded->data, true)]);
                 $user = new \HomeDocs\User($decoded->data->userId);
                 if ($user->exists($this->dbh)) {
