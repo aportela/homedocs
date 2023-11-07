@@ -6,7 +6,7 @@ namespace HomeDocs;
 
 class Utils
 {
-    public static function getInitialState($container): array
+    public static function getInitialState(\Psr\Container\ContainerInterface $container): array
     {
         $settings = $container->get('settings');
         return ([
