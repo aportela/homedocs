@@ -6,7 +6,7 @@ namespace HomeDocs\Middleware;
 
 class APIExceptionCatcher
 {
-    protected $logger;
+    protected \Psr\Log\LoggerInterface $logger;
 
     public function __construct(\HomeDocs\Logger\HTTPRequestLogger $logger)
     {
