@@ -35,6 +35,9 @@
           </template>
         </q-select>
         <q-space />
+        <!--
+        <q-btn :icon="iconDarkMode" @click="toggleDarkMode"></q-btn>
+        -->
         <q-btn dense flat no-wrap>
           <q-avatar rounded size="24px" class="q-mr-sm">
             <q-icon name="language" />
@@ -142,8 +145,16 @@ const menuItems = [
   { icon: 'find_in_page', text: "Advanced search", routeName: 'advancedSearch' }
 ];
 
+const iconDarkMode = computed(() => {
+  return($q.dark.isActive ? "dark_mode": "light_mode");
+});
+
 const defaultBrowserLocale = availableLocales.find((lang) => lang.value == defaultLocale);
 const selectedLocale = ref(defaultBrowserLocale || availableLocales[0]);
+
+function toggleDarkMode() {
+  $q.dark.toggle();
+}
 
 function onFilter(val, update) {
   if (val && val.trim().length > 0) {
