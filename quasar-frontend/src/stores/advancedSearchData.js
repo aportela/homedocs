@@ -59,7 +59,7 @@ export const useAdvancedSearchData = defineStore("advancedSearchData", {
       }
     },
     setCurrentPage(page) {
-      advancedSearchData.pager.currentPage = page;
+      this.pager.currentPage = page;
     },
     recalcDates(dateFilterType) {
       switch (dateFilterType.value) {
@@ -78,55 +78,55 @@ export const useAdvancedSearchData = defineStore("advancedSearchData", {
         case 2:
           this.filter.fromDate = date.formatDate(
             date.addToDate(Date.now(), { days: -1 }),
-            "YYYY/MM/DD"
+            "YYYY/MM/DD",
           );
           this.filter.toDate = date.formatDate(
             date.addToDate(Date.now(), { days: -1 }),
-            "YYYY/MM/DD"
+            "YYYY/MM/DD",
           );
           break;
         // LAST 7 DAYS
         case 3:
           this.filter.fromDate = date.formatDate(
             date.addToDate(Date.now(), { days: -7 }),
-            "YYYY/MM/DD"
+            "YYYY/MM/DD",
           );
           this.filter.toDate = date.formatDate(
             date.addToDate(Date.now(), { days: -1 }),
-            "YYYY/MM/DD"
+            "YYYY/MM/DD",
           );
           break;
         // LAST 15 DAYS
         case 4:
           this.filter.fromDate = date.formatDate(
             date.addToDate(Date.now(), { days: -15 }),
-            "YYYY/MM/DD"
+            "YYYY/MM/DD",
           );
           this.filter.toDate = date.formatDate(
             date.addToDate(Date.now(), { days: -1 }),
-            "YYYY/MM/DD"
+            "YYYY/MM/DD",
           );
           break;
         // LAST 31 DAYS
         case 5:
           this.filter.fromDate = date.formatDate(
             date.addToDate(Date.now(), { days: -31 }),
-            "YYYY/MM/DD"
+            "YYYY/MM/DD",
           );
           this.filter.toDate = date.formatDate(
             date.addToDate(Date.now(), { days: -1 }),
-            "YYYY/MM/DD"
+            "YYYY/MM/DD",
           );
           break;
         // LAST 365 DAYS
         case 6:
           this.filter.fromDate = date.formatDate(
             date.addToDate(Date.now(), { days: -365 }),
-            "YYYY/MM/DD"
+            "YYYY/MM/DD",
           );
           this.filter.toDate = date.formatDate(
             date.addToDate(Date.now(), { days: -1 }),
-            "YYYY/MM/DD"
+            "YYYY/MM/DD",
           );
           break;
         // FIXED DATE
