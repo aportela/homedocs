@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "47d3046108bb9f22a47f6e5ab8880bf0",
+    "content-hash": "d2e0aaecf721103454f9aed16aacc401",
     "packages": [
         {
             "name": "aportela/db-wrapper",
@@ -4541,7 +4541,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=8.1"
+        "php": ">=8.2"
     },
     "platform-dev": [],
     "plugin-api-version": "2.3.0"
