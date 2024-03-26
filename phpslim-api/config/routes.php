@@ -150,7 +150,7 @@ return function (App $app) {
                             $documentFile["id"],
                             $documentFile["name"],
                             $documentFile["size"],
-                            $documentFile["hash"]
+                            $documentFile["hash"] ?? ""
                         );
                     }
                 }
