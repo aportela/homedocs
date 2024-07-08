@@ -17,16 +17,16 @@
     "php": ">=8.1",
     "aportela/db-wrapper": "^2.0",
     "firebase/php-jwt": "^6.10",
-    "monolog/monolog": "^3.5",
+    "monolog/monolog": "^3.7",
     "php-di/php-di": "^7.0",
-    "slim/psr7": "^1.6",
+    "slim/psr7": "^1.7",
     "slim/slim": "^4.14",
     "slim/twig-view": "^3.4"
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^3.59",
     "phpstan/phpstan": "^1.11",
-    "phpunit/phpunit": "^10.5"
+    "phpunit/phpunit": "^11.2"
   },
   "autoload": {
     "psr-4": {
