@@ -48,7 +48,8 @@
                       <q-btn-group spread class="desktop-only" :disable="loading">
                         <q-btn :label="t('Open/Preview')" icon="preview" @click.prevent="onPreviewFile(fileIndex)"
                           :disable="loading || !allowPreview(file.name) || file.isNew" />
-                        <q-btn :label="t('Download')" icon="download" :href="file.url" :disable="loading || file.isNew" />
+                        <q-btn :label="t('Download')" icon="download" :href="file.url"
+                          :disable="loading || file.isNew" />
                         <q-btn :label="t('Remove')" icon="delete" :disable="loading"
                           @click.prevent="onShowFileRemoveConfirmationDialog(file, fileIndex)" />
                       </q-btn-group>
@@ -201,7 +202,7 @@ function onRefresh() {
       document.value.date = date.formatDate(document.value.createdOnTimestamp * 1000, 'YYYY/MM/DD');
       document.value.files.map((file) => {
         file.isNew = false;
-        file.uploadedOn = date.formatDate(file.uploadedOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
+        file.uploadedOn = date.formatDate(file.uploadedOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
         file.humanSize = format.humanStorageSize(file.size);
         file.url = "api2/file/" + file.id;
         return (file);
@@ -242,7 +243,7 @@ function onSubmitForm() {
         document.value.files.map((file) => {
           file.isNew = false;
           file.url = "api2/file/" + file.id;
-          file.uploadedOn = date.formatDate(file.uploadedOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
+          file.uploadedOn = date.formatDate(file.uploadedOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
           file.humanSize = format.humanStorageSize(file.size);
           return (file);
         });
