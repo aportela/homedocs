@@ -34,18 +34,38 @@ class Document
         $results = $dbh->query(
             sprintf(
                 "
-                        SELECT
-                            id, title, CAST(created_on_timestamp AS INT) AS createdOnTimestamp, TMP_FILE.fileCount
-                        FROM DOCUMENT
-                        LEFT JOIN (
-                            SELECT COUNT(*) AS fileCount, document_id
-                            FROM DOCUMENT_FILE
-                            GROUP BY document_id
-                        ) TMP_FILE ON TMP_FILE.document_id = DOCUMENT.id
-                        WHERE created_by_user_id = :session_user_id
-                        ORDER BY created_on_timestamp DESC
-                        LIMIT %d;
-                    ",
+                    WITH DOCUMENTS_FILES AS (
+                        SELECT document_id, COUNT(*) AS fileCount
+                        FROM DOCUMENT_FILE
+                        JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_FILE.document_id
+                        WHERE DOCUMENT.created_by_user_id = :session_user_id
+                        GROUP BY document_id
+                    ),
+                    DOCUMENTS_TAGS AS (
+                        SELECT document_id, GROUP_CONCAT(tag, ',') AS tags
+                        FROM (
+                            SELECT document_id, tag
+                            FROM DOCUMENT_TAG
+                            JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_TAG.document_id
+                            WHERE DOCUMENT.created_by_user_id = :session_user_id
+                            GROUP BY document_id, tag  -- DISTINCT tags
+                            ORDER BY tag
+                        )
+                        GROUP BY document_id
+                    )
+                    SELECT
+                        DOCUMENT.id,
+                        DOCUMENT.title,
+                        CAST(DOCUMENT.created_on_timestamp AS INT) AS createdOnTimestamp,
+                        COALESCE(DOCUMENTS_FILES.fileCount, 0) AS fileCount,
+                        DOCUMENTS_TAGS.tags
+                    FROM DOCUMENT
+                    LEFT JOIN DOCUMENTS_FILES ON DOCUMENTS_FILES.document_id = DOCUMENT.id
+                    LEFT JOIN DOCUMENTS_TAGS ON DOCUMENTS_TAGS.document_id = DOCUMENT.id
+                    WHERE DOCUMENT.created_by_user_id = :session_user_id
+                    ORDER BY DOCUMENT.created_on_timestamp DESC
+                    LIMIT %d;
+                ",
                 $count
             ),
             array(
@@ -56,6 +76,7 @@ class Document
             function ($item) {
                 $item->createdOnTimestamp = intval($item->createdOnTimestamp);
                 $item->fileCount = intval($item->fileCount);
+                $item->tags = explode(",", $item->tags);
                 return ($item);
             },
             $results
