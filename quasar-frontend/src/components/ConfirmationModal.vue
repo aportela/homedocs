@@ -1,16 +1,16 @@
 <template>
   <q-dialog v-model="visible" @hide="onClose">
     <q-card>
-      <q-card-section class="bg-grey-8 text-white q-p-none">
+      <q-card-section class="q-p-none">
         <slot name="header"></slot>
       </q-card-section>
       <q-card-section class="q-p-none">
         <slot name="body"></slot>
       </q-card-section>
       <q-card-actions align="right">
-        <q-btn outline @click.stop="onCancel" class="bg-grey-6 text-white"><q-icon left name="close" />{{ t("Cancel")
+        <q-btn outline @click.stop="onCancel"><q-icon left name="close" />{{ t("Cancel")
         }}</q-btn>
-        <q-btn outline @click.stop="onOK" class="bg-dark text-white"><q-icon left name="done" />{{ t("Ok")
+        <q-btn outline @click.stop="onOK"><q-icon left name="done" />{{ t("Ok")
         }}</q-btn>
       </q-card-actions>
     </q-card>

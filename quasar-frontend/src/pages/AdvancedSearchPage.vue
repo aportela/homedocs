@@ -1,5 +1,5 @@
 <template>
-  <q-page class="bg-grey-2">
+  <q-page class="_bg-grey-2">
     <div class="q-pa-md">
       <h3 class="q-mt-sm">{{ t("Advanced search") }}</h3>
       <div class="q-gutter-y-md">
@@ -8,8 +8,8 @@
             <q-expansion-item expand-separator icon="filter_alt" :label="t('Conditions')" :model-value="expandedFilter">
               <form @submit.prevent.stop="onSubmitForm(true)" autocorrect="off" autocapitalize="off" autocomplete="off"
                 spellcheck="false" class="q-mt-md">
-                <q-input class="q-mb-md" dense outlined v-model="advancedSearchData.filter.title" type="text" name="title"
-                  clearable :label="t('Document title')" :disable="searching" :autofocus="true">
+                <q-input class="q-mb-md" dense outlined v-model="advancedSearchData.filter.title" type="text"
+                  name="title" clearable :label="t('Document title')" :disable="searching" :autofocus="true">
                   <template v-slot:prepend>
                     <q-icon name="search" />
                   </template>
@@ -106,21 +106,23 @@
                   <tr>
                     <th style="width: 60%;" class="text-left cursor-pointer" @click="onToggleSort('title')">{{
                       t("Title") }}
-                      <q-icon :name="sortOrderIcon" v-if="advancedSearchData.isSortedByField('title')" size="sm"></q-icon>
+                      <q-icon :name="sortOrderIcon" v-if="advancedSearchData.isSortedByField('title')"
+                        size="sm"></q-icon>
                     </th>
-                    <th style="width: 20%;" class="text-left cursor-pointer" @click="onToggleSort('createdOnTimestamp')">
+                    <th style="width: 20%;" class="text-left cursor-pointer"
+                      @click="onToggleSort('createdOnTimestamp')">
                       {{ t("Date") }}
                       <q-icon :name="sortOrderIcon" v-if="advancedSearchData.isSortedByField('createdOnTimestamp')"
                         size=" sm"></q-icon>
                     </th>
                     <th style="width: 10%;" class="text-right cursor-pointer" @click="onToggleSort('fileCount')">
-                      {{ t("Files") }}<q-icon :name="sortOrderIcon" v-if="advancedSearchData.isSortedByField('fileCount')"
-                        size="sm"></q-icon>
+                      {{ t("Files") }}<q-icon :name="sortOrderIcon"
+                        v-if="advancedSearchData.isSortedByField('fileCount')" size="sm"></q-icon>
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for=" document in advancedSearchData.results " :key="document.id">
+                  <tr v-for="document in advancedSearchData.results" :key="document.id">
                     <td class="text-left"><router-link :to="{ name: 'document', params: { id: document.id } }">{{
                       document.title }}</router-link>
                     </td>

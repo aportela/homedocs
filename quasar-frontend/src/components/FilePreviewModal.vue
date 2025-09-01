@@ -1,7 +1,7 @@
 <template>
   <q-dialog v-model="visible" @hide="emit('close')">
     <q-card style="width: 700px; max-width: 80vw;">
-      <q-card-section class="row items-center bg-grey-8 text-white q-p-none">
+      <q-card-section class="row items-center q-p-none">
         <div class="text-h6">{{ t("File preview") }}</div>
         <q-space />
         <q-btn icon="close" flat round dense v-close-popup />
@@ -29,22 +29,22 @@
             </audio>
           </div>
           <div v-else>
-            <q-banner inline-actions class="text-white bg-grey">
+            <q-banner inline-actions>
               <q-icon name="error" size="sm" />
               {{ t("Preview not available") }}
             </q-banner>
           </div>
           <div class="text-subtitle1 text-center" v-if="previewLoadingError">
-            <q-banner inline-actions class="text-white bg-red">
+            <q-banner inline-actions>
               <q-icon name="error" size="sm" />
               {{ t("Error loading preview") }}
             </q-banner>
           </div>
         </div>
         <q-card-actions align="right">
-          <q-btn outline :href="currentFile.url" :label="t('Download')" icon="download" :disable="previewLoadingError"
-            class="bg-grey-6 text-white" />
-          <q-btn outline v-close-popup :label="t('Close')" icon="close" class="bg-dark text-white" />
+          <q-btn outline :href="currentFile.url" :label="t('Download')" icon="download"
+            :disable="previewLoadingError" />
+          <q-btn outline v-close-popup :label="t('Close')" icon="close" />
         </q-card-actions>
       </q-card-section>
     </q-card>

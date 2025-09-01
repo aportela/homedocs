@@ -9,15 +9,15 @@
         </p>
         <div v-else>
           <div v-if="hasTags">
-            <q-chip square outline text-color="dark" v-for="tag in tags " :key="tag.tag"
+            <q-chip square outline text-color="dark" v-for="tag in tags" :key="tag.tag"
               :title="t('Click here to browse documents containing this tag')">
               <q-avatar color="grey-9" text-color="white">{{ tag.total }}</q-avatar>
-              <router-link :to="{ name: 'advancedSearchByTag', params: { tag: tag.tag } }" style="text-decoration: none"
-                class="text-dark">
+              <router-link :to="{ name: 'advancedSearchByTag', params: { tag: tag.tag } }"
+                style="text-decoration: none">
                 {{ tag.tag }}</router-link>
             </q-chip>
           </div>
-          <q-banner class="bg-grey text-white" v-else-if="!loadingError"><q-icon name="info" size="md" class="q-mr-sm" />
+          <q-banner v-else-if="!loadingError"><q-icon name="info" size="md" class="q-mr-sm" />
             {{ t("You haven't created any tags yet") }}
           </q-banner>
         </div>

@@ -26,7 +26,7 @@
               </tr>
             </tbody>
           </q-markup-table>
-          <q-banner class="bg-grey text-white" v-else-if="!loadingError"><q-icon name="info" size="md" class="q-mr-sm" />
+          <q-banner v-else-if="!loadingError"><q-icon name="info" size="md" class="q-mr-sm" />
             {{ t("You haven't created any documents yet") }}
           </q-banner>
         </div>

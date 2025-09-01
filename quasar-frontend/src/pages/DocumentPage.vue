@@ -1,5 +1,5 @@
 <template>
-  <q-page class="bg-grey-2">
+  <q-page class="_bg-grey-2">
     <div class="q-pa-md">
       <div class="row items-center q-pb-md">
         <h3 class="q-mt-sm q-mb-sm" v-if="!document.id">{{ t("New document") }}</h3>
