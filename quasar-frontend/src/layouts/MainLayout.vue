@@ -1,13 +1,9 @@
 <template>
-  <q-layout class="bg-grey-1">
+  <q-layout class="_bg-grey-1">
     <q-header elevated class="text-white" style="background: #24292e" height-hint="61.59">
       <q-toolbar class="q-py-sm q-px-md">
         <q-btn class="mobile-only" flat dense round @click="leftDrawerOpen = !leftDrawerOpen" aria-label="Menu"
           icon="menu" v-if="isLogged" />
-        <q-avatar square size="42px">
-          <img src="icons/favicon-128x128.png" />
-        </q-avatar>
-        HomeDocs
         <q-select ref="search" dark dense standout use-input hide-selected class="q-mx-md" color="black"
           :stack-label="false" :label="t('Search...')" v-model="text" :options="filteredOptions" @filter="onFilter"
           style="width: 100%" v-if="isLogged">
@@ -21,7 +17,7 @@
             </q-item>
           </template>
           <template v-slot:option="scope">
-            <q-list class="bg-grey-9 text-white">
+            <q-list>
               <q-item v-bind="scope.itemProps" :to="{ name: 'document', params: { id: scope.opt.id } }">
                 <q-item-section side>
                   <q-icon name="collections_bookmark" />
@@ -35,9 +31,7 @@
           </template>
         </q-select>
         <q-space />
-        <!--
         <q-btn :icon="iconDarkMode" @click="toggleDarkMode"></q-btn>
-        -->
         <q-btn dense flat no-wrap>
           <q-avatar rounded size="24px" class="q-mr-sm">
             <q-icon name="language" />
@@ -62,10 +56,11 @@
             </q-list>
           </q-menu>
         </q-btn>
-        <q-btn round dense flat :ripple="false" :icon="fabGithub" size="md" color="white" class="q-ml-sm" no-caps href="http://github.com/aportela/homedocs" target="_blank" />
+        <q-btn round dense flat :ripple="false" :icon="fabGithub" size="md" color="white" class="q-ml-sm" no-caps
+          href="http://github.com/aportela/homedocs" target="_blank" />
       </q-toolbar>
     </q-header>
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-grey-2" :width="240" v-if="isLogged">
+    <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="_bg-grey-2" :width="240" v-if="isLogged">
       <q-scroll-area class="fit">
         <q-list padding>
           <q-item-label header class="text-weight-bold text-uppercase">
@@ -97,13 +92,14 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { api } from "boot/axios";
 import { useSessionStore } from "stores/session";
 import { useInitialStateStore } from "stores/initialState";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { date, useQuasar } from "quasar";
+import { LocalStorage, date, useQuasar } from "quasar";
+
 import { i18n, defaultLocale } from "src/boot/i18n";
 import { fabGithub } from "@quasar/extras/fontawesome-v6";
 
@@ -146,11 +142,22 @@ const menuItems = [
 ];
 
 const iconDarkMode = computed(() => {
-  return($q.dark.isActive ? "dark_mode": "light_mode");
+  return ($q.dark.isActive ? "dark_mode" : "light_mode");
 });
 
 const defaultBrowserLocale = availableLocales.find((lang) => lang.value == defaultLocale);
 const selectedLocale = ref(defaultBrowserLocale || availableLocales[0]);
+
+watch(
+  () => $q.dark.isActive,
+  val => LocalStorage.set('darkMode', val)
+)
+
+if (LocalStorage.has('darkMode')) {
+  $q.dark.set(LocalStorage.getItem('darkMode'))
+} else {
+  $q.dark.set(false)
+}
 
 function toggleDarkMode() {
   $q.dark.toggle();
