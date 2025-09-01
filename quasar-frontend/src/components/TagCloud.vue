@@ -1,29 +1,31 @@
 <template>
-  <q-card class="my-card fit" flat bordered>
-    <q-card-section>
-      <q-expansion-item :header-class="loadingError ? 'bg-red' : ''" expand-separator
-        :icon="loadingError ? 'error' : 'bookmark'" :label="t('Tag cloud')"
-        :caption="t(loadingError ? 'Error loading data' : 'Click on tag to browse by tag')" :model-value="expanded">
-        <p class="text-center" v-if="loading">
-          <q-spinner-pie v-if="loading" color="grey-5" size="md" />
-        </p>
-        <div v-else>
-          <div v-if="hasTags">
-            <q-chip square outline text-color="dark" v-for="tag in tags" :key="tag.tag"
-              :title="t('Click here to browse documents containing this tag')">
-              <q-avatar color="grey-9" text-color="white">{{ tag.total }}</q-avatar>
-              <router-link :to="{ name: 'advancedSearchByTag', params: { tag: tag.tag } }"
-                style="text-decoration: none">
-                {{ tag.tag }}</router-link>
-            </q-chip>
+  <div class="fit">
+    <q-card class="my-card q-ma-xs" flat bordered>
+      <q-card-section>
+        <q-expansion-item :header-class="loadingError ? 'bg-red' : ''" expand-separator
+          :icon="loadingError ? 'error' : 'bookmark'" :label="t('Tag cloud')"
+          :caption="t(loadingError ? 'Error loading data' : 'Click on tag to browse by tag')" :model-value="expanded">
+          <p class="text-center" v-if="loading">
+            <q-spinner-pie v-if="loading" color="grey-5" size="md" />
+          </p>
+          <div v-else>
+            <div v-if="hasTags">
+              <q-chip square outline text-color="dark" v-for="tag in tags" :key="tag.tag"
+                :title="t('Click here to browse documents containing this tag')">
+                <q-avatar color="grey-9" text-color="white">{{ tag.total }}</q-avatar>
+                <router-link :to="{ name: 'advancedSearchByTag', params: { tag: tag.tag } }"
+                  style="text-decoration: none">
+                  {{ tag.tag }}</router-link>
+              </q-chip>
+            </div>
+            <q-banner v-else-if="!loadingError"><q-icon name="info" size="md" class="q-mr-sm" />
+              {{ t("You haven't created any tags yet") }}
+            </q-banner>
           </div>
-          <q-banner v-else-if="!loadingError"><q-icon name="info" size="md" class="q-mr-sm" />
-            {{ t("You haven't created any tags yet") }}
-          </q-banner>
-        </div>
-      </q-expansion-item>
-    </q-card-section>
-  </q-card>
+        </q-expansion-item>
+      </q-card-section>
+    </q-card>
+  </div>
 </template>
 
 <script setup>
