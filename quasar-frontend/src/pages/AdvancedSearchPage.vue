@@ -6,6 +6,14 @@
         <q-card>
           <q-card-section>
             <q-expansion-item expand-separator icon="filter_alt" :label="t('Conditions')" :model-value="expandedFilter">
+              <template v-slot:header>
+                <q-item-section>
+                  <q-item-label>{{ t('Conditions') }}
+                    <q-chip size="sm" color="dark" text-color="white" v-if="totalSearchConditions">{{
+                      totalSearchConditions }}</q-chip>
+                  </q-item-label>
+                </q-item-section>
+              </template>
               <form @submit.prevent.stop="onSubmitForm(true)" autocorrect="off" autocapitalize="off" autocomplete="off"
                 spellcheck="false" class="q-mt-md">
                 <q-input class="q-mb-md" dense outlined v-model="advancedSearchData.filter.title" type="text"
@@ -184,6 +192,20 @@ advancedSearchData.filter.dateFilterType = dateFilterOptions.value[0];
 advancedSearchData.filter.tags = route.params.tag !== undefined ? [route.params.tag] : [];
 
 const sortOrderIcon = computed(() => advancedSearchData.isSortAscending ? "keyboard_double_arrow_up" : "keyboard_double_arrow_down");
+
+const totalSearchConditions = computed(() => {
+  let total = 0;
+  if (advancedSearchData.filter.title) {
+    total++;
+  }
+  if (advancedSearchData.filter.description) {
+    total++;
+  }
+  if (advancedSearchData.filter.tags && advancedSearchData.filter.tags.length > 0) {
+    total += advancedSearchData.filter.tags.length;
+  }
+  return (total);
+});
 
 watch(
   () => advancedSearchData.filter.dateFilterType,
