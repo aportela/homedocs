@@ -56,6 +56,7 @@ class Document
                     SELECT
                         DOCUMENT.id,
                         DOCUMENT.title,
+                        DOCUMENT.description,
                         CAST(DOCUMENT.created_on_timestamp AS INT) AS createdOnTimestamp,
                         COALESCE(DOCUMENTS_FILES.fileCount, 0) AS fileCount,
                         DOCUMENTS_TAGS.tags
