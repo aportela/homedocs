@@ -48,8 +48,8 @@
                       <q-btn-group spread class="desktop-only" :disable="loading">
                         <q-btn :label="t('Open/Preview')" icon="preview" @click.prevent="onPreviewFile(fileIndex)"
                           :disable="loading || !allowPreview(file.name) || file.isNew" />
-                        <q-btn :label="t('Download')" icon="download" :href="file.url"
-                          :disable="loading || file.isNew" />
+                        <q-btn :label="t('Download')" icon="download" :href="file.url" :disable="loading || file.isNew"
+                          download />
                         <q-btn :label="t('Remove')" icon="delete" :disable="loading"
                           @click.prevent="onShowFileRemoveConfirmationDialog(file, fileIndex)" />
                       </q-btn-group>
@@ -335,7 +335,7 @@ function onSubmitForm() {
 }
 
 function allowPreview(filename) {
-  return (filename.match(/.(jpg|jpeg|png|gif|mp3)$/i));
+  return (filename.match(/.(jpg|jpeg|png|gif|mp3|pdf)$/i));
 }
 
 function onPreviewFile(index) {

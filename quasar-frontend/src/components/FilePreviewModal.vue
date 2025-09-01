@@ -19,14 +19,17 @@
       </q-card-section>
       <q-card-section class="q-pt-none">
         <div>
-          <q-img v-if="isImage(currentFile.name)" :src="currentFile.url" loading="lazy" spinner-color="white"
-            @error="previewLoadingError = true">
+          <q-img v-if="isImage(currentFile.name)" :src="currentFile.url + ('/inline')" loading="lazy"
+            spinner-color="white" @error="previewLoadingError = true">
           </q-img>
           <div v-else-if="isAudio(currentFile.name)">
             <audio controls class="q-mt-md" style="width: 100%;">
-              <source :src="currentFile.url" type="audio/mpeg" />
+              <source :src="currentFile.url + ('/inline')" type="audio/mpeg" />
               {{ t("Your browser does not support the audio element") }}
             </audio>
+          </div>
+          <div v-else-if="isPDF(currentFile.name)">
+            <q-pdfviewer :src="currentFile.url + ('/inline')" type="html5" />
           </div>
           <div v-else>
             <q-banner inline-actions class="text-white bg-grey">
@@ -82,6 +85,10 @@ function isImage(filename) {
 
 function isAudio(filename) {
   return (filename.match(/.(mp3)$/i));
+}
+
+function isPDF(filename) {
+  return (filename.match(/.(pdf)$/i));
 }
 
 </script>
