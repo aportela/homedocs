@@ -1,6 +1,6 @@
 <template>
-  <q-layout view="lHh lpR lFf" class="_bg-grey-1">
-    <q-header elevated height-hint="61.59" :class="{ 'q-ml-lg': !miniState }">
+  <q-layout view="lHh lpR lFf">
+    <q-header elevated height-hint="61.59">
       <q-toolbar class="q-py-sm q-px-md">
         <q-btn flat dense round @click="leftDrawerOpen = !leftDrawerOpen" aria-label="Menu" icon="menu"
           v-if="isLogged" />
@@ -66,7 +66,7 @@
       :mini="!leftDrawerOpen || miniState" @click.capture="drawerClick">
       <q-scroll-area class="fit">
         <q-list padding>
-          <q-item>
+          <q-item class="cursor-pointer non-selectable">
             <q-item-section avatar>
               <q-avatar square size="24px">
                 <img src="icons/favicon-128x128.png" />
@@ -100,7 +100,7 @@
       </div>
     </q-drawer>
     <q-page-container>
-      <router-view />
+      <router-view class="q-pa-md" />
     </q-page-container>
   </q-layout>
 </template>
