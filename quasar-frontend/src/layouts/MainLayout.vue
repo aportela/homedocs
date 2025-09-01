@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh lpR lFf" class="_bg-grey-1">
-    <q-header elevated height-hint="61.59">
+    <q-header elevated height-hint="61.59" :class="{ 'q-ml-lg': !miniState }">
       <q-toolbar class="q-py-sm q-px-md">
         <q-btn flat dense round @click="leftDrawerOpen = !leftDrawerOpen" aria-label="Menu" icon="menu"
           v-if="isLogged" />
@@ -62,7 +62,8 @@
           href="http://github.com/aportela/homedocs" target="_blank" />
       </q-toolbar>
     </q-header>
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="_bg-grey-2" :width="240" v-if="isLogged">
+    <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="_bg-grey-2" :width="240" v-if="isLogged"
+      :mini="!leftDrawerOpen || miniState" @click.capture="drawerClick">
       <q-scroll-area class="fit">
         <q-list padding>
           <q-item>
@@ -93,6 +94,10 @@
           </q-item>
         </q-list>
       </q-scroll-area>
+      <div class="q-mini-drawer-hide absolute" style="top: 15px; right: -17px">
+        <q-btn dense round unelevated color="accent" icon="chevron_left" @click="miniState = true"
+          style="background-color: rgb(105, 108, 255); color: white; border: 6px solid rgb(242, 242, 247);" />
+      </div>
     </q-drawer>
     <q-page-container>
       <router-view />
@@ -125,6 +130,8 @@ const leftDrawerOpen = ref($q.screen.gt.lg);
 const text = ref("");
 const filteredOptions = ref([]);
 const searching = ref(false);
+
+const miniState = ref(false);
 
 const availableLocales = [
   {
@@ -170,6 +177,17 @@ if (LocalStorage.has('darkMode')) {
 
 function toggleDarkMode() {
   $q.dark.toggle();
+}
+
+function drawerClick(e) {
+  if (miniState.value) {
+    miniState.value = false
+
+    // notice we have registered an event with capture flag;
+    // we need to stop further propagation as this click is
+    // intended for switching drawer to "normal" mode only
+    e.stopPropagation()
+  }
 }
 
 function onFilter(val, update) {
