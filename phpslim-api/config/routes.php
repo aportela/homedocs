@@ -235,8 +235,7 @@ return function (App $app) {
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $group->get('/file/{id}', function (Request $request, Response $response, array $args) {
-                $route = $request->getAttribute('route');
+            $group->get('/file/{id}[/{inline}]', function (Request $request, Response $response, array $args) {
                 $file = new \HomeDocs\File(
                     $this->get('settings')['paths']['storage'],
                     $args['id']
@@ -267,14 +266,14 @@ return function (App $app) {
                         // output the right headers for partial content
                         return $response->withStatus(206)
                             ->withHeader('Content-Type', \HomeDocs\Utils::getMimeType($file->name))
-                            ->withHeader('Content-Disposition', 'attachment; filename="' . basename($file->name) . '"')
+                            ->withHeader('Content-Disposition', ($args['inline'] ? 'inline' : 'attachment') . '; filename="' . basename($file->name) . '"')
                             ->withHeader('Content-Length', (string) $filesize)
                             ->withHeader('Content-Range', 'bytes ' . $offset . '-' . ($offset + $length - 1) . '/' . $filesize)
                             ->withHeader('Accept-Ranges', 'bytes');
                     } else {
                         return $response->withStatus(200)
                             ->withHeader('Content-Type', \HomeDocs\Utils::getMimeType($file->name))
-                            ->withHeader('Content-Disposition', 'attachment; filename="' . basename($file->name) . '"')
+                            ->withHeader('Content-Disposition', ($args['inline'] ? 'inline' : 'attachment') . '; filename="' . basename($file->name) . '"')
                             ->withHeader('Content-Length', (string) $filesize)
                             ->withHeader('Accept-Ranges', 'bytes');
                     }
