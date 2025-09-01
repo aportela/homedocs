@@ -1,35 +1,6 @@
 <template>
   <q-card class="my-card fit" flat bordered>
-    <q-card-section>
-      <div class="text-h6">{{ t('Recent documents') }}</div>
-    </q-card-section>
     <q-card-section v-if="!loading">
-      <q-list>
-        <q-item v-for="recentDocument in recentDocuments" :key="recentDocument.id">
-          <q-item-section>
-
-            <q-item-label><router-link :to="{ name: 'document', params: { id: recentDocument.id } }"><q-icon name="save"
-                  size="sm"></q-icon> {{
-                    recentDocument.title }}</router-link></q-item-label>
-            <q-item-label>
-              <q-chip v-for="tag in recentDocument.tags" :key="tag" size="sm" clickable @click="onClick" color="primary"
-                text-color="white" icon="tag">
-                {{ tag }}
-              </q-chip>
-            </q-item-label>
-
-          </q-item-section>
-
-          <q-item-section side top>
-            <q-item-label caption>{{ recentDocument.createdOn }}
-            </q-item-label>
-            <div>
-              <q-icon name="save" size="xs" />{{ t("Files") }}: {{ recentDocument.fileCount }}
-            </div>
-          </q-item-section>
-        </q-item>
-      </q-list>
-      <!--
       <q-expansion-item :header-class="loadingError ? 'bg-red' : ''" expand-separator
         :icon="loadingError ? 'error' : 'work_history'" :label="t('Recent documents')"
         :caption="t(loadingError ? 'Error loading data' : 'Click on title to open document')" :model-value="expanded">
@@ -37,30 +8,39 @@
           <q-spinner-pie v-if="loading" color="grey-5" size="md" />
         </p>
         <div v-else>
-          <q-markup-table v-if="hasRecentDocuments">
-            <thead>
-              <tr>
-                <th class="text-left">{{ t("Title") }}</th>
-                <th class="text-left">{{ t("Created on") }}</th>
-                <th class="text-right">{{ t("Files") }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="recentDocument in recentDocuments" :key="recentDocument.id">
-                <td class="text-left"><router-link :to="{ name: 'document', params: { id: recentDocument.id } }">{{
-                  recentDocument.title }}</router-link>
-                </td>
-                <td class="text-left">{{ recentDocument.createdOn }}</td>
-                <td class="text-right">{{ recentDocument.fileCount }}</td>
-              </tr>
-            </tbody>
-          </q-markup-table>
+          <q-list v-if="hasRecentDocuments">
+            <q-item v-for="recentDocument in recentDocuments" :key="recentDocument.id">
+              <q-item-section top avatar>
+                <q-avatar square icon="work" size="64px" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label><router-link :to="{ name: 'document', params: { id: recentDocument.id } }"
+                    class="text-decoration-none text-dark">{{ recentDocument.title }}</router-link>
+                </q-item-label>
+                <q-item-label caption lines="2">{{ recentDocument.description }}</q-item-label>
+                <q-item-label>
+                  <router-link v-for="tag in recentDocument.tags" :key="tag"
+                    :to="{ name: 'advancedSearchByTag', params: { tag: tag } }">
+                    <q-chip size="sm" clickable @click="onClick" color="dark" text-color="white" icon="tag">
+                      {{ tag }}
+                    </q-chip>
+                  </router-link>
+                </q-item-label>
+              </q-item-section>
+              <q-item-section side top>
+                <q-item-label caption>{{ recentDocument.createdOn }}
+                </q-item-label>
+                <div>
+                  <q-icon name="save" size="xs" />{{ t("Files") }}: {{ recentDocument.fileCount }}
+                </div>
+              </q-item-section>
+            </q-item>
+          </q-list>
           <q-banner v-else-if="!loadingError"><q-icon name="info" size="md" class="q-mr-sm" />
             {{ t("You haven't created any documents yet") }}
           </q-banner>
         </div>
       </q-expansion-item>
-      -->
     </q-card-section>
   </q-card>
 </template>
