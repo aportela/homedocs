@@ -1,12 +1,14 @@
 <template>
-  <q-layout class="_bg-grey-1">
-    <q-header elevated class="text-white" style="background: #24292e" height-hint="61.59">
+  <q-layout view="lHh lpR lFf" class="_bg-grey-1">
+    <q-header elevated height-hint="61.59">
       <q-toolbar class="q-py-sm q-px-md">
-        <q-btn class="mobile-only" flat dense round @click="leftDrawerOpen = !leftDrawerOpen" aria-label="Menu"
-          icon="menu" v-if="isLogged" />
-        <q-select ref="search" dark dense standout use-input hide-selected class="q-mx-md" color="black"
-          :stack-label="false" :label="t('Search...')" v-model="text" :options="filteredOptions" @filter="onFilter"
-          style="width: 100%" v-if="isLogged">
+        <q-btn flat dense round @click="leftDrawerOpen = !leftDrawerOpen" aria-label="Menu" icon="menu"
+          v-if="isLogged" />
+        <q-select ref="search" dense standout use-input hide-selected class="q-mx-md" :placeholder="t('Search...')"
+          v-model="text" :options="filteredOptions" @filter="onFilter" style="width: 100%" v-if="isLogged">
+          <template v-slot:prepend>
+            <q-icon name="search" />
+          </template>
           <template v-slot:no-option v-if="searching">
             <q-item>
               <q-item-section>
@@ -63,9 +65,16 @@
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="_bg-grey-2" :width="240" v-if="isLogged">
       <q-scroll-area class="fit">
         <q-list padding>
-          <q-item-label header class="text-weight-bold text-uppercase">
-            Menu
-          </q-item-label>
+          <q-item>
+            <q-item-section avatar>
+              <q-avatar square size="24px">
+                <img src="icons/favicon-128x128.png" />
+              </q-avatar>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label class="text-weight-bold text-uppercase">HomeDocs</q-item-label>
+            </q-item-section>
+          </q-item>
           <q-item v-for="link in menuItems" :key="link.text" v-ripple clickable :to="{ name: link.routeName }">
             <q-item-section avatar>
               <q-icon color="grey" :name="link.icon" />
