@@ -1,11 +1,14 @@
 <template>
-  <q-page class="flex flex-center bg-grey-2">
+  <q-page class="flex flex-center _bg-grey-2">
     <q-card class="q-pa-md shadow-2 my_card" bordered>
       <form @submit.prevent.stop="onValidateForm" autocorrect="off" autocapitalize="off" autocomplete="off"
         spellcheck="false">
         <q-card-section class="text-center">
-          <h3>{{ $t('Homedocs') }}</h3>
-          <div class="text-grey-8">{{ $t('Sign up below to create your account') }}</div>
+          <q-avatar square size="128px">
+            <img src="icons/favicon-128x128.png" />
+          </q-avatar>
+          <h3 class="q-mt-sm q-mb-md">{{ $t('Homedocs') }}</h3>
+          <div>{{ $t('Sign up below to create your account') }}</div>
         </q-card-section>
         <q-card-section>
           <q-input dense outlined ref="emailRef" v-model="email" type="email" name="email" :label="t('Email')"
@@ -25,7 +28,7 @@
         </q-card-section>
         <q-card-section>
           <q-btn color="dark" size="md" :label="$t('Sign up')" no-caps class="full-width" icon="account_circle"
-            :disable="loading || (!(email && password)) || ! signUpAllowed" :loading="loading" type="submit">
+            :disable="loading || (!(email && password)) || !signUpAllowed" :loading="loading" type="submit">
             <template v-slot:loading>
               <q-spinner-hourglass class="on-left" />
               {{ t("Loading...") }}
@@ -33,16 +36,16 @@
           </q-btn>
         </q-card-section>
         <q-card-section class="text-center q-pt-none">
-          <div class="text-grey-8">
+          <div>
             {{ t("Already have an account ?") }}
             <router-link :to="{ name: 'signIn' }">
-              <span class="text-dark text-weight-bold" style="text-decoration: none">{{
+              <span class="text-weight-bold" style="text-decoration: none">{{
                 t("Click here to sign in") }}</span>
             </router-link>
           </div>
         </q-card-section>
-        <q-card-section class="text-center q-pt-none" v-if="! signUpAllowed">
-          <div class="text-red-8 text-bold">
+        <q-card-section class="text-center q-pt-none" v-if="!signUpAllowed">
+          <div class="text-bold">
             <q-icon name="info" />
             {{ t("New sign ups are not allowed on this system") }}
           </div>

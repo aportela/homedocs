@@ -1,11 +1,14 @@
 <template>
-  <q-page class="flex flex-center bg-grey-2">
+  <q-page class="flex flex-center _bg-grey-2">
     <q-card class="q-pa-md shadow-2 my_card" bordered>
       <form @submit.prevent.stop="onValidateForm" autocorrect="off" autocapitalize="off" autocomplete="off"
         spellcheck="false">
         <q-card-section class="text-center">
-          <h3>{{ $t('Homedocs') }}</h3>
-          <div class="text-grey-8">{{ $t('Sign in below to access your account') }}</div>
+          <q-avatar square size="128px">
+            <img src="icons/favicon-128x128.png" />
+          </q-avatar>
+          <h3 class="q-mt-sm q-mb-md">{{ $t('Homedocs') }}</h3>
+          <div>{{ $t('Sign in below to access your account') }}</div>
         </q-card-section>
         <q-card-section>
           <q-input dense outlined ref="emailRef" v-model="email" type="email" name="email" :label="t('Email')"
@@ -33,10 +36,10 @@
           </q-btn>
         </q-card-section>
         <q-card-section class="text-center q-pt-none" v-if="signUpAllowed">
-          <div class="text-grey-8">
+          <div>
             {{ t("Don't have an account yet ?") }}
             <router-link :to="{ name: 'signUp' }">
-              <span class="text-dark text-weight-bold" style="text-decoration: none">{{
+              <span class="text-weight-bold" style="text-decoration: none">{{
                 t("Click here to sign up") }}</span>
             </router-link>
           </div>
