@@ -100,7 +100,7 @@
       </div>
     </q-drawer>
     <q-page-container>
-      <router-view class="q-pa-md" />
+      <router-view class="q-pa-sm" />
     </q-page-container>
   </q-layout>
 </template>
