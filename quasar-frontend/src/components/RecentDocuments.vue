@@ -1,6 +1,35 @@
 <template>
   <q-card class="my-card fit" flat bordered>
     <q-card-section>
+      <div class="text-h6">{{ t('Recent documents') }}</div>
+    </q-card-section>
+    <q-card-section v-if="!loading">
+      <q-list>
+        <q-item v-for="recentDocument in recentDocuments" :key="recentDocument.id">
+          <q-item-section>
+
+            <q-item-label><router-link :to="{ name: 'document', params: { id: recentDocument.id } }"><q-icon name="save"
+                  size="sm"></q-icon> {{
+                    recentDocument.title }}</router-link></q-item-label>
+            <q-item-label>
+              <q-chip v-for="tag in recentDocument.tags" :key="tag" size="sm" clickable @click="onClick" color="primary"
+                text-color="white" icon="tag">
+                {{ tag }}
+              </q-chip>
+            </q-item-label>
+
+          </q-item-section>
+
+          <q-item-section side top>
+            <q-item-label caption>{{ recentDocument.createdOn }}
+            </q-item-label>
+            <div>
+              <q-icon name="save" size="xs" />{{ t("Files") }}: {{ recentDocument.fileCount }}
+            </div>
+          </q-item-section>
+        </q-item>
+      </q-list>
+      <!--
       <q-expansion-item :header-class="loadingError ? 'bg-red' : ''" expand-separator
         :icon="loadingError ? 'error' : 'work_history'" :label="t('Recent documents')"
         :caption="t(loadingError ? 'Error loading data' : 'Click on title to open document')" :model-value="expanded">
@@ -31,6 +60,7 @@
           </q-banner>
         </div>
       </q-expansion-item>
+      -->
     </q-card-section>
   </q-card>
 </template>
