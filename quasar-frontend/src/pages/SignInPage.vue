@@ -44,6 +44,33 @@
             </router-link>
           </div>
         </q-card-section>
+        <hr color="grey-5" />
+        <q-card-section class="text-center q-pt-none">
+
+          <q-btn :ripple="false" flat label="English" icon="language" icon-right="unfold_more" no-caps>
+            <q-tooltip class="bg-dark-2">Switch language</q-tooltip>
+            <q-menu fit anchor="top left" self="bottom left">
+              <q-item clickable>
+                <q-item-section>English</q-item-section>
+                <q-item-section avatar>
+                  <q-icon name="check" />
+                </q-item-section>
+              </q-item>
+              <q-item clickable>
+                <q-item-section>Spanish</q-item-section>
+              </q-item>
+              <q-item clickable>
+                <q-item-section>Galician</q-item-section>
+              </q-item>
+            </q-menu>
+          </q-btn>
+          <q-btn :ripple="false" flat icon="dark_mode">
+            <q-tooltip class="bg-dark-2">Switch light/dark mode</q-tooltip>
+          </q-btn>
+          <q-btn :ripple="false" flat :icon="fabGithub" label="@ 2025 HomeDocs" no-caps
+            href="http://github.com/aportela/homedocs" target="_blank">
+          </q-btn>
+        </q-card-section>
       </form>
     </q-card>
   </q-page>
@@ -58,6 +85,7 @@ import { useI18n } from 'vue-i18n'
 import { api } from 'boot/axios'
 //import { useSessionStore } from "stores/session";
 import { useInitialStateStore } from "stores/initialState";
+import { fabGithub } from "@quasar/extras/fontawesome-v6";
 
 const { t } = useI18n();
 
