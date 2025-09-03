@@ -33,9 +33,11 @@
           </template>
         </q-select>
         <q-space />
-        <DarkModeButton round flat dense />
-        <SwitchLanguageButton :short-labels="true" />
-        <GitHubButton round flat dense :href="GITHUB_PROJECT_URL" />
+        <q-btn-group flat>
+          <DarkModeButton dense />
+          <SwitchLanguageButton :short-labels="true" />
+          <GitHubButton dense :href="GITHUB_PROJECT_URL" />
+        </q-btn-group>
       </q-toolbar>
     </q-header>
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="_bg-grey-2" :width="240" v-if="isLogged"
