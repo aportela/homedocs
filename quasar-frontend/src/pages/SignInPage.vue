@@ -46,7 +46,7 @@
         </q-card-section>
         <hr color="grey-5" />
         <q-card-section class="text-center q-pt-none">
-          <SwitchLanguageButton></SwitchLanguageButton>
+          <SwitchLanguageButton short_labels="true"></SwitchLanguageButton>
           <DarkModeButton></DarkModeButton>
           <q-btn :ripple="false" flat :icon="fabGithub" label="@ 2025 HomeDocs" no-caps
             href="http://github.com/aportela/homedocs" target="_blank">
