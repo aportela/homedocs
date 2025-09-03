@@ -15,8 +15,8 @@
 </template>
 
 <script setup>
-import { computed, watch, useAttrs } from "vue";
-import { i18n, defaultLocale } from "src/boot/i18n";
+import { computed, watch, useAttrs, ref } from "vue";
+import { i18n } from "src/boot/i18n";
 import { LocalStorage } from "quasar";
 import { useI18n } from "vue-i18n";
 
@@ -34,18 +34,15 @@ const availableLocales = [
   { shortLabel: "GL", label: "Galego", value: "gl-GL" },
 ];
 
-const savedLocale = LocalStorage.getItem("locale");
-const defaultBrowserLocale = availableLocales.find((lang) => lang.value === defaultLocale);
-const selectedLocale = computed(() => {
-  const localeValue = i18n.global.locale.value || savedLocale || defaultBrowserLocale?.value;
-  return availableLocales.find((locale) => locale.value === localeValue) || availableLocales[0];
-});
+const selectedLocale = ref(availableLocales[0]);
 
 watch(
   () => i18n.global.locale.value,
   (newLocale) => {
     LocalStorage.set("locale", newLocale);
-  }
+    selectedLocale.value = availableLocales.find((locale) => locale.value === newLocale) || availableLocales[0];
+  },
+  { immediate: true }
 );
 
 function onSelectLocale(locale) {
