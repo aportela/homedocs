@@ -1,27 +1,28 @@
 <template>
-  <q-btn :ripple="false" flat :icon="iconDarkMode" @click="toggleDarkMode">
-    <q-tooltip class="bg-dark-2">Switch light/dark mode</q-tooltip>
+  <q-btn v-bind="attrs" :icon="currentDarkModeIcon" @click="toggleDarkMode">
+    <q-tooltip>Switch light/dark mode</q-tooltip>
+    <slot></slot>
   </q-btn>
 </template>
 
 <script setup>
 
-import { computed, watch } from "vue";
-import { LocalStorage, useQuasar } from "quasar";
+import { useAttrs, computed, watch } from "vue";
+import { Dark, LocalStorage } from "quasar";
 
-const $q = useQuasar();
+const attrs = useAttrs();
 
-const iconDarkMode = computed(() => {
-  return ($q.dark.isActive ? "dark_mode" : "light_mode");
+const currentDarkModeIcon = computed(() => {
+  return (Dark.isActive ? "dark_mode" : "light_mode");
 });
 
 watch(
-  () => $q.dark.isActive,
+  () => Dark.isActive,
   val => LocalStorage.set('darkMode', val)
 )
 
 function toggleDarkMode() {
-  $q.dark.toggle();
+  Dark.toggle();
 }
 
 </script>
