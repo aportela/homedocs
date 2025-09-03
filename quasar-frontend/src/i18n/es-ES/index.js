@@ -1,5 +1,6 @@
 export default {
   Homedocs: "Homedocs",
+  "Switch language": "Cambiar idioma",
   "Sign in": "Iniciar sesión",
   "Sign in below to access your account":
     "Introduzca los datos para acceder a su cuenta",
