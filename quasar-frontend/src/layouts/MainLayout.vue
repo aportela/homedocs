@@ -33,7 +33,7 @@
           </template>
         </q-select>
         <q-space />
-        <q-btn :icon="iconDarkMode" @click="toggleDarkMode"></q-btn>
+        <DarkModeButton :ripple="false" round flat dense></DarkModeButton>
         <SwitchLanguageButton short_labels></SwitchLanguageButton>
         <GitHubButton round flat dense :href="GITHUB_PROJECT_URL" />
       </q-toolbar>
@@ -82,14 +82,15 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed } from "vue";
 import { api } from "boot/axios";
 import { useSessionStore } from "stores/session";
 import { useInitialStateStore } from "stores/initialState";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { LocalStorage, date, useQuasar } from "quasar";
+import { date, LocalStorage, useQuasar } from "quasar";
 
+import { default as DarkModeButton } from "components/DarkModeButton.vue"
 import { default as SwitchLanguageButton } from "components/SwitchLanguageButton.vue"
 import { default as GitHubButton } from "components/GitHubButton.vue"
 import { GITHUB_PROJECT_URL } from "src/constants"
@@ -116,23 +117,11 @@ const menuItems = [
   { icon: 'find_in_page', text: "Advanced search", routeName: 'advancedSearch' }
 ];
 
-const iconDarkMode = computed(() => {
-  return ($q.dark.isActive ? "dark_mode" : "light_mode");
-});
-
-watch(
-  () => $q.dark.isActive,
-  val => LocalStorage.set('darkMode', val)
-)
 
 if (LocalStorage.has('darkMode')) {
   $q.dark.set(LocalStorage.getItem('darkMode'))
 } else {
   $q.dark.set(false)
-}
-
-function toggleDarkMode() {
-  $q.dark.toggle();
 }
 
 function drawerClick(e) {
