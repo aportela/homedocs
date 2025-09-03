@@ -1,7 +1,7 @@
 <template>
-  <q-btn :ripple="false" flat :label="short_labels ? selectedLocale.shortLabel : selectedLocale.label" icon="language"
+  <q-btn v-bind="attrs" flat :label="shortLabels ? selectedLocale.shortLabel : selectedLocale.label" icon="language"
     icon-right="unfold_more" no-caps>
-    <q-tooltip class="bg-dark-2">Switch language</q-tooltip>
+    <q-tooltip>Switch language</q-tooltip>
     <q-menu fit anchor="top left" self="bottom left">
       <q-item dense clickable v-close-popup v-for="availableLanguage in availableLocales" :key="availableLanguage.value"
         @click="onSelectLocale(availableLanguage, true)">
@@ -16,11 +16,13 @@
 
 <script setup>
 
-import { ref, defineProps } from "vue";
+import { useAttrs, ref } from "vue";
 import { i18n, defaultLocale } from "src/boot/i18n";
 import { useSessionStore } from "stores/session";
 
-const props = defineProps(['short_labels']);
+const attrs = useAttrs();
+
+const props = defineProps(['shortLabels']);
 
 const availableLocales = [
   {
