@@ -46,24 +46,7 @@
         </q-card-section>
         <hr color="grey-5" />
         <q-card-section class="text-center q-pt-none">
-
-          <q-btn :ripple="false" flat label="English" icon="language" icon-right="unfold_more" no-caps>
-            <q-tooltip class="bg-dark-2">Switch language</q-tooltip>
-            <q-menu fit anchor="top left" self="bottom left">
-              <q-item clickable>
-                <q-item-section>English</q-item-section>
-                <q-item-section avatar>
-                  <q-icon name="check" />
-                </q-item-section>
-              </q-item>
-              <q-item clickable>
-                <q-item-section>Spanish</q-item-section>
-              </q-item>
-              <q-item clickable>
-                <q-item-section>Galician</q-item-section>
-              </q-item>
-            </q-menu>
-          </q-btn>
+          <SwitchLanguageButton></SwitchLanguageButton>
           <DarkModeButton></DarkModeButton>
           <q-btn :ripple="false" flat :icon="fabGithub" label="@ 2025 HomeDocs" no-caps
             href="http://github.com/aportela/homedocs" target="_blank">
@@ -86,6 +69,7 @@ import { useInitialStateStore } from "stores/initialState";
 import { fabGithub } from "@quasar/extras/fontawesome-v6";
 
 import { default as DarkModeButton } from "components/DarkModeButton.vue"
+import { default as SwitchLanguageButton } from "components/SwitchLanguageButton.vue"
 
 const { t } = useI18n();
 
