@@ -47,8 +47,8 @@
         <hr color="grey-5" />
         <q-card-section class="text-center q-pt-none">
           <q-btn-group flat square>
-            <SwitchLanguageButton short_labels="true"></SwitchLanguageButton>
-            <DarkModeButton :ripple="false"></DarkModeButton>
+            <SwitchLanguageButton />
+            <DarkModeButton />
             <GitHubButton label="@2025 HomeDocs" :href="GITHUB_PROJECT_URL" />
           </q-btn-group>
         </q-card-section>

@@ -33,8 +33,8 @@
           </template>
         </q-select>
         <q-space />
-        <DarkModeButton :ripple="false" round flat dense></DarkModeButton>
-        <SwitchLanguageButton short_labels></SwitchLanguageButton>
+        <DarkModeButton round flat dense />
+        <SwitchLanguageButton :short-labels="true" />
         <GitHubButton round flat dense :href="GITHUB_PROJECT_URL" />
       </q-toolbar>
     </q-header>
