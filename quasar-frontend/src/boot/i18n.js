@@ -1,28 +1,15 @@
 import { createI18n } from "vue-i18n";
 import messages from "src/i18n";
-import { useSessionStore } from "stores/session";
+import { LocalStorage } from "quasar";
 
-const session = useSessionStore();
-if (!session.isLoaded) {
-  session.load();
-}
-let defaultLocale = "en-US";
+const availableLocales = [
+  { shortLabel: "EN", label: "English", value: "en-US" },
+  { shortLabel: "ES", label: "Español", value: "es-ES" },
+  { shortLabel: "GL", label: "Galego", value: "gl-GL" },
+];
 
-if (session.getLocale) {
-  defaultLocale = session.getLocale;
-} else {
-  switch ((navigator.language || navigator.userLanguage).substring(0, 2)) {
-    case "es":
-      defaultLocale = "es-ES";
-      break;
-    case "gl":
-      defaultLocale = "gl-GL";
-      break;
-    default:
-      defaultLocale = "en-US";
-      break;
-  }
-}
+const preferedLocaleValue = LocalStorage.getItem("locale") || defaultBrowserLocale?.value || "en-US";
+let defaultLocale = (availableLocales.find((locale) => locale.value === preferedLocaleValue) || availableLocales[0]).value;
 
 // Create I18n instance
 const i18n = createI18n({
