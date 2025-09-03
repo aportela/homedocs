@@ -44,8 +44,8 @@
             </router-link>
           </div>
         </q-card-section>
-        <hr color="grey-5" />
-        <q-card-section class="text-center q-pt-none">
+        <q-separator color="grey-5 q-mb-sm" />
+        <q-card-section class="text-center q-py-none">
           <q-btn-group flat square>
             <DarkModeButton />
             <SwitchLanguageButton />
