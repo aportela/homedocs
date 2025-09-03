@@ -64,9 +64,7 @@
               </q-item>
             </q-menu>
           </q-btn>
-          <q-btn :ripple="false" flat icon="dark_mode">
-            <q-tooltip class="bg-dark-2">Switch light/dark mode</q-tooltip>
-          </q-btn>
+          <DarkModeButton></DarkModeButton>
           <q-btn :ripple="false" flat :icon="fabGithub" label="@ 2025 HomeDocs" no-caps
             href="http://github.com/aportela/homedocs" target="_blank">
           </q-btn>
@@ -86,6 +84,8 @@ import { api } from 'boot/axios'
 //import { useSessionStore } from "stores/session";
 import { useInitialStateStore } from "stores/initialState";
 import { fabGithub } from "@quasar/extras/fontawesome-v6";
+
+import { default as DarkModeButton } from "components/DarkModeButton.vue"
 
 const { t } = useI18n();
 
