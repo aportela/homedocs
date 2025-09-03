@@ -34,30 +34,7 @@
         </q-select>
         <q-space />
         <q-btn :icon="iconDarkMode" @click="toggleDarkMode"></q-btn>
-        <q-btn dense flat no-wrap>
-          <q-avatar rounded size="24px" class="q-mr-sm">
-            <q-icon name="language" />
-          </q-avatar>
-          {{ selectedLocale.shortLabel }}
-          <q-icon name="arrow_drop_down" size="16px" />
-          <q-menu auto-close>
-            <q-list dense style="min-width: 200px">
-              <q-item class="GL__menu-link-signed-in">
-                <q-item-section>
-                  <div>{{ t("Selected language") }}: <strong>{{ selectedLocale.label }}</strong></div>
-                </q-item-section>
-              </q-item>
-              <q-separator />
-              <q-item clickable :disable="selectedLocale.value == availableLanguage.value" v-close-popup
-                v-for="availableLanguage in availableLocales" :key="availableLanguage.value"
-                @click="onSelectLocale(availableLanguage, true)">
-                <q-item-section>
-                  <div>{{ availableLanguage.label }}</div>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-menu>
-        </q-btn>
+        <SwitchLanguageButton short_labels></SwitchLanguageButton>
         <q-btn round dense flat :ripple="false" :icon="fabGithub" size="md" color="white" class="q-ml-sm" no-caps
           href="http://github.com/aportela/homedocs" target="_blank" />
       </q-toolbar>
@@ -117,6 +94,8 @@ import { LocalStorage, date, useQuasar } from "quasar";
 import { i18n, defaultLocale } from "src/boot/i18n";
 import { fabGithub } from "@quasar/extras/fontawesome-v6";
 
+import { default as SwitchLanguageButton } from "components/SwitchLanguageButton.vue"
+
 const { t } = useI18n();
 const $q = useQuasar();
 const session = useSessionStore();
@@ -133,24 +112,6 @@ const searching = ref(false);
 
 const miniState = ref(false);
 
-const availableLocales = [
-  {
-    shortLabel: 'EN',
-    label: 'English',
-    value: 'en-US'
-  },
-  {
-    shortLabel: 'ES',
-    label: 'Español',
-    value: 'es-ES'
-  },
-  {
-    shortLabel: 'GL',
-    label: 'Galego',
-    value: 'gl-GL'
-  }
-];
-
 const menuItems = [
   { icon: 'storage', text: "Dashboard", routeName: 'index' },
   { icon: 'note_add', text: "Add", routeName: 'newDocument' },
@@ -160,9 +121,6 @@ const menuItems = [
 const iconDarkMode = computed(() => {
   return ($q.dark.isActive ? "dark_mode" : "light_mode");
 });
-
-const defaultBrowserLocale = availableLocales.find((lang) => lang.value == defaultLocale);
-const selectedLocale = ref(defaultBrowserLocale || availableLocales[0]);
 
 watch(
   () => $q.dark.isActive,
@@ -218,14 +176,6 @@ function onFilter(val, update) {
       filteredOptions.value = [];
     });
     return;
-  }
-}
-
-function onSelectLocale(locale, save) {
-  selectedLocale.value = locale;
-  i18n.global.locale.value = locale.value;
-  if (save) {
-    session.saveLocale(locale.value);
   }
 }
 
