@@ -1,6 +1,8 @@
 export default {
   Homedocs: "Homedocs",
   "Switch language": "Tornar idioma",
+  "Switch to light mode": "Tornar a modo claro",
+  "Switch to dark mode": "Tornar a modo oscuro",
   "Sign in": "Iniciar sesión",
   "Sign in below to access your account":
     "Introduzca os datos pra acceder a súa conta",
