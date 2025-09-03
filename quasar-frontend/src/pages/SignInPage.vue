@@ -48,9 +48,8 @@
         <q-card-section class="text-center q-pt-none">
           <SwitchLanguageButton short_labels="true"></SwitchLanguageButton>
           <DarkModeButton></DarkModeButton>
-          <q-btn :ripple="false" flat :icon="fabGithub" label="@ 2025 HomeDocs" no-caps
-            href="http://github.com/aportela/homedocs" target="_blank">
-          </q-btn>
+          <GithubButton square flat label="@2025 HomeDocs" href="http://github.com/aportela/homedocs">
+          </GithubButton>
         </q-card-section>
       </form>
     </q-card>
@@ -66,10 +65,10 @@ import { useI18n } from 'vue-i18n'
 import { api } from 'boot/axios'
 //import { useSessionStore } from "stores/session";
 import { useInitialStateStore } from "stores/initialState";
-import { fabGithub } from "@quasar/extras/fontawesome-v6";
 
 import { default as DarkModeButton } from "components/DarkModeButton.vue"
 import { default as SwitchLanguageButton } from "components/SwitchLanguageButton.vue"
+import { default as GithubButton } from "components/GithubButton.vue"
 
 const { t } = useI18n();
 

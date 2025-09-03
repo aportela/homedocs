@@ -35,8 +35,7 @@
         <q-space />
         <q-btn :icon="iconDarkMode" @click="toggleDarkMode"></q-btn>
         <SwitchLanguageButton short_labels></SwitchLanguageButton>
-        <q-btn round dense flat :ripple="false" :icon="fabGithub" size="md" color="white" class="q-ml-sm" no-caps
-          href="http://github.com/aportela/homedocs" target="_blank" />
+        <GithubButton round flat dense href="http://github.com/aportela/homedocs"></GithubButton>
       </q-toolbar>
     </q-header>
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="_bg-grey-2" :width="240" v-if="isLogged"
@@ -91,10 +90,8 @@ import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { LocalStorage, date, useQuasar } from "quasar";
 
-import { i18n, defaultLocale } from "src/boot/i18n";
-import { fabGithub } from "@quasar/extras/fontawesome-v6";
-
 import { default as SwitchLanguageButton } from "components/SwitchLanguageButton.vue"
+import { default as GithubButton } from "components/GithubButton.vue"
 
 const { t } = useI18n();
 const $q = useQuasar();
