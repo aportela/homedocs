@@ -3,9 +3,11 @@ import messages from "src/i18n";
 import { LocalStorage } from "quasar";
 
 const availableLocales = Object.keys(messages);
-const savedLocale = LocalStorage.getItem('locale');
+const savedLocale = LocalStorage.getItem("locale");
 let currentLocale = savedLocale || navigator.language || navigator.userLanguage;
-currentLocale = availableLocales.includes(currentLocale) ? currentLocale : "en-US";
+currentLocale = availableLocales.includes(currentLocale)
+  ? currentLocale
+  : "en-US";
 
 // Create I18n instance
 const i18n = createI18n({
