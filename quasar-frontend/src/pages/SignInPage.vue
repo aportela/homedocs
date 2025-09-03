@@ -48,7 +48,7 @@
         <q-card-section class="text-center q-pt-none">
           <SwitchLanguageButton short_labels="true"></SwitchLanguageButton>
           <DarkModeButton></DarkModeButton>
-          <GithubButton square flat label="@2025 HomeDocs" href="http://github.com/aportela/homedocs">
+          <GithubButton square flat label="@2025 HomeDocs" :href="GITHUB_PROJECT_URL">
           </GithubButton>
         </q-card-section>
       </form>
@@ -69,7 +69,7 @@ import { useInitialStateStore } from "stores/initialState";
 import { default as DarkModeButton } from "components/DarkModeButton.vue"
 import { default as SwitchLanguageButton } from "components/SwitchLanguageButton.vue"
 import { default as GithubButton } from "components/GithubButton.vue"
-
+import { GITHUB_PROJECT_URL } from "src/constants"
 const { t } = useI18n();
 
 const $q = useQuasar();
