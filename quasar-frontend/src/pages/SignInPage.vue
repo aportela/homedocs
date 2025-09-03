@@ -101,6 +101,9 @@ const remoteValidation = ref({
   }
 });
 
+// TODO: not refreshing on requiredFieldRules
+const fieldIsRequiredLabel = computed(() => t('Field is required'));
+
 const requiredFieldRules = [
   val => !!val || t('Field is required')
 ];
