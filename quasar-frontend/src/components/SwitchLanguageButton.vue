@@ -1,10 +1,10 @@
 <template>
   <q-btn v-bind="attrs" flat :label="shortLabels ? selectedLocale.shortLabel : selectedLocale.label" icon="language"
     icon-right="unfold_more" no-caps>
-    <q-tooltip>Switch language</q-tooltip>
+    <q-tooltip>{{ tooltip }}</q-tooltip>
     <q-menu fit anchor="top left" self="bottom left">
       <q-item dense clickable v-close-popup v-for="availableLanguage in availableLocales" :key="availableLanguage.value"
-        @click="onSelectLocale(availableLanguage, true)">
+        @click="onSelectLocale(availableLanguage)">
         <q-item-section>{{ availableLanguage.label }}</q-item-section>
         <q-item-section avatar v-if="availableLanguage.value == selectedLocale.value">
           <q-icon name="check" />
@@ -16,13 +16,19 @@
 
 <script setup>
 
-import { useAttrs, ref } from "vue";
+import { useAttrs, ref, watch, computed } from "vue";
 import { i18n, defaultLocale } from "src/boot/i18n";
-import { useSessionStore } from "stores/session";
+import { LocalStorage } from "quasar";
+
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n();
 
 const attrs = useAttrs();
 
 const props = defineProps(['shortLabels']);
+
+const tooltip = computed(() => t('Switch language'));
 
 const availableLocales = [
   {
@@ -45,17 +51,24 @@ const availableLocales = [
 const defaultBrowserLocale = availableLocales.find((lang) => lang.value == defaultLocale);
 const selectedLocale = ref(defaultBrowserLocale || availableLocales[0]);
 
-const session = useSessionStore();
-if (!session.isLoaded) {
-  session.load();
-}
+watch(
+  () => selectedLocale.value,
+  val => LocalStorage.set('locale', val.value)
+)
 
-function onSelectLocale(locale, save) {
-  selectedLocale.value = locale;
-  i18n.global.locale.value = locale.value;
-  if (save) {
-    session.saveLocale(locale.value);
+watch(
+  () => i18n.global.locale.value,
+  (newLocale) => {
+    const locale = availableLocales.find((locale) => locale.value === newLocale);
+    if (locale) {
+      selectedLocale.value = locale;
+      LocalStorage.set("locale", newLocale);
+    }
   }
+);
+
+function onSelectLocale(locale) {
+  i18n.global.locale.value = locale.value;
 }
 
 </script>
