@@ -1,13 +1,14 @@
 <template>
-  <q-btn :square="square" :round="round" :dense="dense" :flat="flat" :ripple="ripple" :label="label" :icon="fabGithub"
-    size="md" :color="color" class="q-ml-sm" no-caps :href="href" target="_blank" />
+  <q-btn v-bind="attrs" :icon="fabGithub" no-caps target="_blank">
+    <slot></slot>
+  </q-btn>
 </template>
 
 <script setup>
 
-import { defineProps } from "vue";
+import { useAttrs } from "vue";
 import { fabGithub } from "@quasar/extras/fontawesome-v6";
 
-const props = defineProps({ 'round': Boolean, 'square': Boolean, 'dense': Boolean, 'flat': Boolean, 'ripple': Boolean, 'color': String, 'label': String, 'href': String });
+const attrs = useAttrs();
 
 </script>
