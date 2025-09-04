@@ -64,25 +64,18 @@ import { useQuasar } from "quasar";
 import { useRouter } from "vue-router";
 import { useI18n } from 'vue-i18n'
 import { api } from 'boot/axios'
-//import { useSessionStore } from "stores/session";
 import { useInitialStateStore } from "stores/initialState";
 
 import { default as DarkModeButton } from "components/DarkModeButton.vue"
 import { default as SwitchLanguageButton } from "components/SwitchLanguageButton.vue"
 import { default as GitHubButton } from "components/GitHubButton.vue"
 import { GITHUB_PROJECT_URL } from "src/constants"
+
 const { t } = useI18n();
 
 const $q = useQuasar();
 
 const router = useRouter();
-
-/*
-const session = useSessionStore();
-if (!session.isLoaded) {
-  session.load();
-}
-*/
 
 const initialState = useInitialStateStore();
 
@@ -139,8 +132,6 @@ function onSubmitForm() {
   api.user
     .signIn(email.value, password.value)
     .then((success) => {
-      // TODO
-      //session.signIn();
       router.push({
         name: "index",
       });
