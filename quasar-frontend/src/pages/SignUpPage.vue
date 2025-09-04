@@ -50,6 +50,14 @@
             {{ t("New sign ups are not allowed on this system") }}
           </div>
         </q-card-section>
+        <q-separator color="grey-5 q-mb-sm" />
+        <q-card-section class="text-center q-py-none">
+          <q-btn-group flat square>
+            <DarkModeButton />
+            <SwitchLanguageButton />
+            <GitHubButton label="@2025 HomeDocs" :href="GITHUB_PROJECT_URL" />
+          </q-btn-group>
+        </q-card-section>
       </form>
     </q-card>
   </q-page>
@@ -63,6 +71,11 @@ import { useRouter } from "vue-router";
 import { useI18n } from 'vue-i18n'
 import { api } from 'boot/axios'
 import { useInitialStateStore } from "stores/initialState";
+
+import { default as DarkModeButton } from "components/DarkModeButton.vue"
+import { default as SwitchLanguageButton } from "components/SwitchLanguageButton.vue"
+import { default as GitHubButton } from "components/GitHubButton.vue"
+import { GITHUB_PROJECT_URL } from "src/constants"
 
 const { t } = useI18n();
 
