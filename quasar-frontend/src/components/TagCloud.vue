@@ -1,6 +1,6 @@
 <template>
   <div class="fit">
-    <q-card class="my-card q-ma-xs" flat bordered>
+    <q-card class="q-ma-xs" flat bordered>
       <q-card-section>
         <q-expansion-item :header-class="loadingError ? 'bg-red' : ''" expand-separator
           :icon="loadingError ? 'error' : 'tag'" :label="t('Tag cloud')"

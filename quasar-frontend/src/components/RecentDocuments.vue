@@ -1,6 +1,6 @@
 <template>
   <div class="fit">
-    <q-card class="my-card q-ma-xs" flat bordered>
+    <q-card class="q-ma-xs" flat bordered>
       <q-card-section v-if="!loading">
         <q-expansion-item :header-class="loadingError ? 'bg-red' : ''" expand-separator
           :icon="loadingError ? 'error' : 'work_history'" :label="t('Recent documents')"
