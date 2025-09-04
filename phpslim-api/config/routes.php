@@ -369,6 +369,39 @@ return function (App $app) {
                 $response->getBody()->write($payload);
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             })->add(\HomeDocs\Middleware\CheckAuth::class);
+
+            $group->get('/stats/total_documents', function (Request $request, Response $response, array $args) {
+                $payload = json_encode(
+                    [
+                        'initialState' => \HomeDocs\Utils::getInitialState($this),
+                        'count' => \HomeDocs\Stats::documentsCount($this->get(\aportela\DatabaseWrapper\DB::class))
+                    ]
+                );
+                $response->getBody()->write($payload);
+                return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+            })->add(\HomeDocs\Middleware\CheckAuth::class);
+
+            $group->get('/stats/total_attachments', function (Request $request, Response $response, array $args) {
+                $payload = json_encode(
+                    [
+                        'initialState' => \HomeDocs\Utils::getInitialState($this),
+                        'count' => \HomeDocs\Stats::attachmentsCount($this->get(\aportela\DatabaseWrapper\DB::class))
+                    ]
+                );
+                $response->getBody()->write($payload);
+                return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+            })->add(\HomeDocs\Middleware\CheckAuth::class);
+
+            $group->get('/stats/total_attachment_disk_size', function (Request $request, Response $response, array $args) {
+                $payload = json_encode(
+                    [
+                        'initialState' => \HomeDocs\Utils::getInitialState($this),
+                        'size' => \HomeDocs\Stats::attachmentsDiskSize($this->get(\aportela\DatabaseWrapper\DB::class))
+                    ]
+                );
+                $response->getBody()->write($payload);
+                return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+            })->add(\HomeDocs\Middleware\CheckAuth::class);
         }
     )->add(\HomeDocs\Middleware\JWT::class)->add(\HomeDocs\Middleware\APIExceptionCatcher::class);
 };

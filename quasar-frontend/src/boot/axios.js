@@ -275,6 +275,44 @@ const api = {
       });
     },
   },
+  stats: {
+    documentCount: function () {
+      return new Promise((resolve, reject) => {
+        axios
+          .get("api2/stats/total_documents", {})
+          .then((response) => {
+            resolve(response);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    },
+    attachmentCount: function () {
+      return new Promise((resolve, reject) => {
+        axios
+          .get("api2/stats/total_attachments", {})
+          .then((response) => {
+            resolve(response);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    },
+    attachmentDiskSize: function () {
+      return new Promise((resolve, reject) => {
+        axios
+          .get("api2/stats/total_attachment_disk_size", {})
+          .then((response) => {
+            resolve(response);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    },
+  }
 };
 
 export default boot(({ app }) => {
