@@ -17,16 +17,6 @@
           </div>
         </q-expansion-item>
         <div id="cal-heatmap"></div>
-        <a className="button button--sm button--secondary margin-top--sm" href="#" @click.prevent="cal.previous()">←
-          Previous</a>
-        <a className="button button--sm button--secondary margin-top--sm margin-left--xs" href="#"
-          @click.prevent="cal.next()">Next →
-        </a>
-        <div style="{ float: 'right' , fontSize: 12 }">
-          <span style="{ color: '#768390' }">Less</span>
-          <div id="ex-ghDay-legend" style="display: 'inline-block'; margin: '0 4px'"></div>
-          <span style=" { color: '#768390' , fontSize: 12 }">More</span>
-        </div>
       </q-card-section>
     </q-card>
   </div>
@@ -179,21 +169,10 @@ cal.paint(
         text: function (date, value, dayjsDate) {
           return (
             (value ? value : 'No') +
-            ' activity on ' +
+            ' changes on ' +
             dayjsDate.format('dddd, MMMM D, YYYY')
           );
         },
-      },
-    ],
-    [
-      LegendLite,
-      {
-        includeBlank: true,
-        itemSelector: '#ex-ghDay-legend',
-        radius: 2,
-        width: 11,
-        height: 11,
-        gutter: 4,
       },
     ],
     [
