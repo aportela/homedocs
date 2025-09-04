@@ -1,6 +1,6 @@
 <template>
-  <q-select ref="search" dense standout use-input hide-selected class="full-width" :placeholder="t('Search...')"
-    v-model="text" :options="filteredOptions" @filter="onFilter">
+  <q-select v-bind="attrs" ref="search" standout use-input hide-selected class="full-width"
+    :placeholder="t('Search...')" v-model="text" :options="filteredOptions" @filter="onFilter">
     <template v-slot:prepend>
       <q-icon name="search" />
     </template>
@@ -32,11 +32,12 @@
 
 <script setup>
 
-import { ref } from "vue";
+import { ref, useAttrs } from "vue";
 import { api } from "boot/axios";
 import { useI18n } from "vue-i18n";
 import { date } from "quasar";
 
+const attrs = useAttrs();
 const { t } = useI18n();
 const text = ref("");
 const filteredOptions = ref([]);

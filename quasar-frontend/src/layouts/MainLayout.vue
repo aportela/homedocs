@@ -4,7 +4,7 @@
       <q-toolbar class="q-py-sm q-px-md">
         <q-btn flat dense round @click="leftDrawerOpen = !leftDrawerOpen" aria-label="Toggle drawer" icon="menu"
           class="q-mr-md" />
-        <FastSearchSelector></FastSearchSelector>
+        <FastSearchSelector dense></FastSearchSelector>
         <q-btn-group flat class="q-ml-md">
           <DarkModeButton dense />
           <SwitchLanguageButton :short-labels="true" style="min-width: 9em" />
@@ -56,13 +56,13 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, useAttrs } from "vue";
 import { api } from "boot/axios";
 import { useSessionStore } from "stores/session";
 import { useInitialStateStore } from "stores/initialState";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { date, useQuasar } from "quasar";
+import { useQuasar } from "quasar";
 
 import { default as FastSearchSelector } from "components/FastSearchSelector.vue"
 import { default as DarkModeButton } from "components/DarkModeButton.vue"
@@ -70,6 +70,7 @@ import { default as SwitchLanguageButton } from "components/SwitchLanguageButton
 import { default as GitHubButton } from "components/GitHubButton.vue"
 import { GITHUB_PROJECT_URL } from "src/constants"
 
+const attrs = useAttrs();
 const { t } = useI18n();
 const $q = useQuasar();
 const session = useSessionStore();
