@@ -121,7 +121,7 @@
                       @click="onToggleSort('createdOnTimestamp')">
                       {{ t("Date") }}
                       <q-icon :name="sortOrderIcon" v-if="advancedSearchData.isSortedByField('createdOnTimestamp')"
-                        size=" sm"></q-icon>
+                        size="sm"></q-icon>
                     </th>
                     <th style="width: 10%;" class="text-right cursor-pointer" @click="onToggleSort('fileCount')">
                       {{ t("Files") }}<q-icon :name="sortOrderIcon"
