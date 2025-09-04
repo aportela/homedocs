@@ -3,7 +3,7 @@
     <q-card class="my-card q-ma-xs" flat bordered>
       <q-card-section>
         <q-expansion-item :header-class="loadingError ? 'bg-red' : ''" expand-separator
-          :icon="loadingError ? 'error' : 'bookmark'" :label="t('Tag cloud')"
+          :icon="loadingError ? 'error' : 'tag'" :label="t('Tag cloud')"
           :caption="t(loadingError ? 'Error loading data' : 'Click on tag to browse by tag')" :model-value="expanded">
           <p class="text-center" v-if="loading">
             <q-spinner-pie v-if="loading" color="grey-5" size="md" />
