@@ -1,80 +1,67 @@
 <template>
   <q-page>
-    <div class="row items-start" style=" height: 100vh">
-      <div class="col-6 slogan-image-cover shadow-box shadow-8">
-        <div class="overlay text-white">
-          <div class="q-pa-xl text-center">
-            <h2 class="text-h3 text-weight-bold q-mb-md">Welcome to HomeDocs
-            </h2>
-            <div class="text-h5">Where your documents find their place.</div>
-          </div>
-        </div>
-      </div>
-      <div class="col-6">
-        <q-card class="q-pa-md" flat>
-          <form @submit.prevent.stop="onValidateForm" autocorrect="off" autocapitalize="off" autocomplete="off"
-            spellcheck="false">
-            <q-card-section class="text-center">
-              <q-avatar square size="128px">
-                <img src="icons/favicon-128x128.png" />
-              </q-avatar>
-              <h3 class="q-mt-sm q-mb-md">
-                <!-- {{ $t('Homedocs') }} -->
-                Glad to see you again!
-              </h3>
-              <div>
-                <!--
+    <q-card class="q-pa-md" flat>
+      <form @submit.prevent.stop="onValidateForm" autocorrect="off" autocapitalize="off" autocomplete="off"
+        spellcheck="false">
+        <q-card-section class="text-center">
+          <q-avatar square size="128px">
+            <img src="icons/favicon-128x128.png" />
+          </q-avatar>
+          <h3 class="q-mt-sm q-mb-md">
+            <!-- {{ $t('Homedocs') }} -->
+            Glad to see you again!
+          </h3>
+          <div>
+            <!--
                   {{ $t('Sign in below to access your account') }}
                    -->
-                Let's get back to organizing.
-              </div>
-            </q-card-section>
-            <q-card-section>
-              <q-input dense outlined ref="emailRef" v-model="email" type="email" name="email" :label="t('Email')"
-                :disable="loading" :autofocus="true" :rules="requiredFieldRules" lazy-rules
-                :error="remoteValidation.email.hasErrors" :errorMessage="remoteValidation.email.message">
-                <template v-slot:prepend>
-                  <q-icon name="alternate_email" />
-                </template>
-              </q-input>
-              <q-input dense outlined class="q-mt-md" ref="passwordRef" v-model="password" name="password"
-                type="password" :label="t('Password')" :disable="loading" :rules="requiredFieldRules" lazy-rules
-                :error="remoteValidation.password.hasErrors" :errorMessage="remoteValidation.password.message">
-                <template v-slot:prepend>
-                  <q-icon name="key" />
-                </template>
-              </q-input>
-            </q-card-section>
-            <q-card-section>
-              <q-btn color="dark" size="md" :label="$t('Sign in')" no-caps class="full-width" icon="account_circle"
-                :disable="loading || (!(email && password))" :loading="loading" type="submit">
-                <template v-slot:loading>
-                  <q-spinner-hourglass class="on-left" />
-                  {{ t("Loading...") }}
-                </template>
-              </q-btn>
-            </q-card-section>
-            <q-card-section class="text-center q-pt-none" v-if="signUpAllowed">
-              <div>
-                {{ t("Don't have an account yet ?") }}
-                <router-link :to="{ name: 'signUp' }">
-                  <span class="text-weight-bold" style="text-decoration: none">{{
-                    t("Click here to sign up") }}</span>
-                </router-link>
-              </div>
-            </q-card-section>
-            <q-separator color="grey-5 q-mb-sm" />
-            <q-card-section class="text-center q-py-none">
-              <q-btn-group flat square>
-                <DarkModeButton />
-                <SwitchLanguageButton />
-                <GitHubButton label="@2025 HomeDocs" :href="GITHUB_PROJECT_URL" />
-              </q-btn-group>
-            </q-card-section>
-          </form>
-        </q-card>
-      </div>
-    </div>
+            Let's get back to organizing.
+          </div>
+        </q-card-section>
+        <q-card-section>
+          <q-input dense outlined ref="emailRef" v-model="email" type="email" name="email" :label="t('Email')"
+            :disable="loading" :autofocus="true" :rules="requiredFieldRules" lazy-rules
+            :error="remoteValidation.email.hasErrors" :errorMessage="remoteValidation.email.message">
+            <template v-slot:prepend>
+              <q-icon name="alternate_email" />
+            </template>
+          </q-input>
+          <q-input dense outlined class="q-mt-md" ref="passwordRef" v-model="password" name="password" type="password"
+            :label="t('Password')" :disable="loading" :rules="requiredFieldRules" lazy-rules
+            :error="remoteValidation.password.hasErrors" :errorMessage="remoteValidation.password.message">
+            <template v-slot:prepend>
+              <q-icon name="key" />
+            </template>
+          </q-input>
+        </q-card-section>
+        <q-card-section>
+          <q-btn color="dark" size="md" :label="$t('Sign in')" no-caps class="full-width" icon="account_circle"
+            :disable="loading || (!(email && password))" :loading="loading" type="submit">
+            <template v-slot:loading>
+              <q-spinner-hourglass class="on-left" />
+              {{ t("Loading...") }}
+            </template>
+          </q-btn>
+        </q-card-section>
+        <q-card-section class="text-center q-pt-none" v-if="signUpAllowed">
+          <div>
+            {{ t("Don't have an account yet ?") }}
+            <router-link :to="{ name: 'signUp' }">
+              <span class="text-weight-bold" style="text-decoration: none">{{
+                t("Click here to sign up") }}</span>
+            </router-link>
+          </div>
+        </q-card-section>
+        <q-separator color="grey-5 q-mb-sm" />
+        <q-card-section class="text-center q-py-none">
+          <q-btn-group flat square>
+            <DarkModeButton />
+            <SwitchLanguageButton />
+            <GitHubButton label="@2025 HomeDocs" :href="GITHUB_PROJECT_URL" />
+          </q-btn-group>
+        </q-card-section>
+      </form>
+    </q-card>
   </q-page>
 </template>
 
@@ -215,38 +202,3 @@ function onSubmitForm() {
 }
 
 </script>
-
-<style scoped>
-.slogan-image-cover {
-  background-image: url('https://images.pexels.com/photos/3184460/pexels-photo-3184460.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
-  background-size: cover;
-  background-position: center;
-  min-height: 90vh;
-  border-radius: 10px;
-  position: relative;
-}
-
-.overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(16, 0, 43, 0) 0%, rgba(52, 0, 87, 0.6) 100%);
-  border-radius: 10px;
-}
-
-@media (max-width: 768px) {
-  .slogan-image-cover {
-    min-height: 40vh;
-    border-radius: 0 0 0 0;
-  }
-}
-
-@media (max-width: 1180px) {
-  .slogan-image-cover {
-    min-height: 40vh;
-  }
-
-}
-</style>
