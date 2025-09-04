@@ -22,7 +22,7 @@
                   <q-item-label>
                     <router-link v-for="tag in recentDocument.tags" :key="tag"
                       :to="{ name: 'advancedSearchByTag', params: { tag: tag } }">
-                      <q-chip size="md" clickable icon="tag">
+                      <q-chip square size="md" clickable icon="tag">
                         {{ tag }}
                       </q-chip>
                     </router-link>

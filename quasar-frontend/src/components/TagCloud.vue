@@ -10,11 +10,11 @@
           </p>
           <div v-else>
             <div v-if="hasTags">
-              <q-chip square outline text-color="dark" v-for="tag in tags" :key="tag.tag"
+              <q-chip square text-color="dark" v-for="tag in tags" :key="tag.tag"
                 :title="t('Click here to browse documents containing this tag')">
                 <q-avatar color="grey-9" text-color="white">{{ tag.total }}</q-avatar>
                 <router-link :to="{ name: 'advancedSearchByTag', params: { tag: tag.tag } }"
-                  style="text-decoration: none">
+                  style="text-decoration: none" class="text-dark">
                   {{ tag.tag }}</router-link>
               </q-chip>
             </div>
