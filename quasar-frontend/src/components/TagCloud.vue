@@ -6,7 +6,7 @@
           :icon="loadingError ? 'error' : 'tag'" :label="t('Tag cloud')"
           :caption="t(loadingError ? 'Error loading data' : 'Click on tag to browse by tag')" :model-value="expanded">
           <p class="text-center" v-if="loading">
-            <q-spinner-pie v-if="loading" color="grey-5" size="md" />
+            <q-spinner-pie color="grey-5" size="md" />
           </p>
           <div v-else>
             <div v-if="hasTags">
@@ -30,7 +30,7 @@
 
 <script setup>
 
-import { ref } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useQuasar } from "quasar"
 import { api } from "boot/axios";
@@ -40,31 +40,34 @@ const $q = useQuasar();
 const loadingError = ref(false);
 const loading = ref(false);
 
-let expanded = !$q.screen.lt.md;
-let tags = [];
-let hasTags = false;
+const expanded = ref(!$q.screen.lt.md);
+const tags = ref([]);
+const hasTags = computed(() => tags.value.length > 0);
 
 function refresh() {
-  tags = [];
-  hasTags = false;
+  tags.value = [];
   loading.value = true;
   loadingError.value = false;
   api.tag.getCloud()
     .then((success) => {
-      tags = success.data.tags;
-      hasTags = tags.length > 0;
+      tags.value = success.data.tags;
       loading.value = false;
     })
     .catch((error) => {
       loading.value = false;
       loadingError.value = true;
+      const status = error.response?.status || 'N/A';
+      const statusText = error.response?.statusText || 'Unknown error';
       $q.notify({
         type: "negative",
         message: t("API Error: fatal error"),
-        caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
+        caption: t("API Error: fatal error details", { status, statusText })
       });
     });
 }
 
-refresh();
+onMounted(() => {
+  refresh();
+});
+
 </script>

@@ -6,7 +6,7 @@
           :icon="loadingError ? 'error' : 'work_history'" :label="t('Recent documents')"
           :caption="t(loadingError ? 'Error loading data' : 'Click on title to open document')" :model-value="expanded">
           <p class="text-center" v-if="loading">
-            <q-spinner-pie v-if="loading" color="grey-5" size="md" />
+            <q-spinner-pie color="grey-5" size="md" />
           </p>
           <div v-else>
             <q-list v-if="hasRecentDocuments">
@@ -49,7 +49,7 @@
 
 <script setup>
 
-import { ref } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { date, useQuasar } from "quasar";
 import { api } from "boot/axios";
@@ -59,35 +59,37 @@ const $q = useQuasar();
 const loadingError = ref(false);
 const loading = ref(false);
 
-let expanded = !$q.screen.lt.md;
-let recentDocuments = [];
-let hasRecentDocuments = false;
+const expanded = ref(!$q.screen.lt.md);
+const recentDocuments = ref([]);
+const hasRecentDocuments = computed(() => recentDocuments.value.length > 0);
 
 function refresh() {
-  recentDocuments = [];
-  hasRecentDocuments = false;
+  recentDocuments.value = [];
   loading.value = true;
   loadingError.value = false;
   api.document.searchRecent(16)
     .then((success) => {
-      recentDocuments = success.data.recentDocuments.map((document) => {
+      recentDocuments.value = success.data.recentDocuments.map((document) => {
         document.createdOn = date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
         return (document);
       });
-      hasRecentDocuments = recentDocuments.length > 0;
       loading.value = false;
     })
     .catch((error) => {
       loading.value = false;
       loadingError.value = true;
+      const status = error.response?.status || 'N/A';
+      const statusText = error.response?.statusText || 'Unknown error';
       $q.notify({
         type: "negative",
         message: t("API Error: fatal error"),
-        caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
+        caption: t("API Error: fatal error details", { status, statusText })
       });
     });
 }
 
-refresh();
+onMounted(() => {
+  refresh();
+});
 
 </script>
