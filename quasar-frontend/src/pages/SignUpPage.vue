@@ -1,6 +1,6 @@
 <template>
-  <q-page class="flex flex-center _bg-grey-2">
-    <q-card class="q-pa-md shadow-2 my_card" bordered>
+  <q-page class="flex flex-center">
+    <q-card class="q-pa-md shadow-2" bordered>
       <form @submit.prevent.stop="onValidateForm" autocorrect="off" autocapitalize="off" autocomplete="off"
         spellcheck="false">
         <q-card-section class="text-center">
