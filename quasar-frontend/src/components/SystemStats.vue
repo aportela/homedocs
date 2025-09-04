@@ -16,6 +16,17 @@
             </ul>
           </div>
         </q-expansion-item>
+        <div id="cal-heatmap"></div>
+        <a className="button button--sm button--secondary margin-top--sm" href="#" @click.prevent="cal.previous()">←
+          Previous</a>
+        <a className="button button--sm button--secondary margin-top--sm margin-left--xs" href="#"
+          @click.prevent="cal.next()">Next →
+        </a>
+        <div style="{ float: 'right' , fontSize: 12 }">
+          <span style="{ color: '#768390' }">Less</span>
+          <div id="ex-ghDay-legend" style="display: 'inline-block'; margin: '0 4px'"></div>
+          <span style=" { color: '#768390' , fontSize: 12 }">More</span>
+        </div>
       </q-card-section>
     </q-card>
   </div>
@@ -27,6 +38,12 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { format, useQuasar } from "quasar"
 import { api } from "boot/axios";
+
+import CalHeatmap from "cal-heatmap";
+import "cal-heatmap/cal-heatmap.css";
+import Tooltip from 'cal-heatmap/plugins/Tooltip';
+import LegendLite from 'cal-heatmap/plugins/LegendLite';
+import CalendarLabel from 'cal-heatmap/plugins/CalendarLabel';
 
 const { t } = useI18n();
 const $q = useQuasar();
@@ -101,4 +118,94 @@ function refreshTotalAttachmentsDiskUsage() {
 refreshTotalDocuments();
 refreshTotalAttachments();
 refreshTotalAttachmentsDiskUsage();
+
+function generateRandomData() {
+  const data = [];
+  const now = new Date();
+
+  for (let i = 0; i < 365; i++) {
+    const date = new Date(now);
+    date.setDate(now.getDate() - i);
+
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+
+    const value = Math.floor(Math.random() * 4); // entre 0 y 3
+
+    data.push({
+      date: `${yyyy}-${mm}-${dd}`,
+      value: value,
+    });
+  }
+  return data.sort((a, b) => new Date(a.date) - new Date(b.date));
+}
+
+const cal = new CalHeatmap();
+cal.paint(
+  {
+    data: {
+      source: generateRandomData(),
+      x: "date",
+      y: "value",
+      type: "json",
+    },
+    date: {
+      start: new Date(new Date().setFullYear(new Date().getFullYear() - 1)),
+      end: new Date(),
+      max: new Date()
+    },
+    range: 12,
+    scale: {
+      color: {
+        scheme: "Cool",
+        type: 'threshold',
+        range: ['#14432a', '#166b34', '#37a446', '#4dd05a'],
+        domain: [0, 1, 2, 3],
+      },
+    },
+    domain: {
+      type: 'month',
+      gutter: 4,
+      label: { text: 'MMM', textAlign: 'start', position: 'top' },
+    },
+    subDomain: { type: 'ghDay', radius: 2, width: 11, height: 11, gutter: 4 },
+    itemSelector: '#cal-heatmap',
+  },
+  [
+    [
+      Tooltip,
+      {
+        text: function (date, value, dayjsDate) {
+          return (
+            (value ? value : 'No') +
+            ' activity on ' +
+            dayjsDate.format('dddd, MMMM D, YYYY')
+          );
+        },
+      },
+    ],
+    [
+      LegendLite,
+      {
+        includeBlank: true,
+        itemSelector: '#ex-ghDay-legend',
+        radius: 2,
+        width: 11,
+        height: 11,
+        gutter: 4,
+      },
+    ],
+    [
+      CalendarLabel,
+      {
+        width: 30,
+        textAlign: 'start',
+        text: () => dayjs.weekdaysShort().map((d, i) => (i % 2 == 0 ? '' : d)),
+        padding: [25, 0, 0, 0],
+      },
+    ],
+  ]
+);
+
 </script>
