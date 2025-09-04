@@ -2,10 +2,10 @@
   <q-layout view="lHh lpR lFf">
     <q-header elevated height-hint="61.59">
       <q-toolbar class="q-py-sm q-px-md">
-        <q-btn flat dense round @click="leftDrawerOpen = !leftDrawerOpen" aria-label="Menu" icon="menu"
-          v-if="isLogged" />
-        <q-select ref="search" dense standout use-input hide-selected class="q-mx-md" :placeholder="t('Search...')"
-          v-model="text" :options="filteredOptions" @filter="onFilter" style="width: 100%" v-if="isLogged">
+        <q-btn flat dense round @click="leftDrawerOpen = !leftDrawerOpen" aria-label="Toggle drawer" icon="menu"
+          class="q-mr-md" />
+        <q-select ref="search" dense standout use-input hide-selected class="full-width" :placeholder="t('Search...')"
+          v-model="text" :options="filteredOptions" @filter="onFilter">
           <template v-slot:prepend>
             <q-icon name="search" />
           </template>
@@ -32,15 +32,14 @@
             </q-list>
           </template>
         </q-select>
-        <q-space />
-        <q-btn-group flat>
+        <q-btn-group flat class="q-ml-md">
           <DarkModeButton dense />
-          <SwitchLanguageButton :short-labels="true" />
+          <SwitchLanguageButton :short-labels="true" style="min-width: 9em" />
           <GitHubButton dense :href="GITHUB_PROJECT_URL" />
         </q-btn-group>
       </q-toolbar>
     </q-header>
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="_bg-grey-2" :width="240" v-if="isLogged"
+    <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="_bg-grey-2" :width="240"
       :mini="!leftDrawerOpen || miniState" @click.capture="drawerClick">
       <q-scroll-area class="fit">
         <q-list padding>
@@ -90,7 +89,7 @@ import { useSessionStore } from "stores/session";
 import { useInitialStateStore } from "stores/initialState";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { date, LocalStorage, useQuasar } from "quasar";
+import { date, useQuasar } from "quasar";
 
 import { default as DarkModeButton } from "components/DarkModeButton.vue"
 import { default as SwitchLanguageButton } from "components/SwitchLanguageButton.vue"
@@ -105,7 +104,6 @@ if (!session.isLoaded) {
 }
 const initialState = useInitialStateStore();
 const router = useRouter();
-const isLogged = computed(() => session.isLogged);
 const leftDrawerOpen = ref($q.screen.gt.lg);
 const text = ref("");
 const filteredOptions = ref([]);
@@ -119,12 +117,6 @@ const menuItems = [
   { icon: 'find_in_page', text: "Advanced search", routeName: 'advancedSearch' }
 ];
 
-
-if (LocalStorage.has('darkMode')) {
-  $q.dark.set(LocalStorage.getItem('darkMode'))
-} else {
-  $q.dark.set(false)
-}
 
 function drawerClick(e) {
   if (miniState.value) {

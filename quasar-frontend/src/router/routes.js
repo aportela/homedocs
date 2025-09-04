@@ -1,5 +1,21 @@
 const routes = [
   {
+    path: "/auth",
+    component: () => import("layouts/AuthRegisterLayout.vue"),
+    children: [
+      {
+        name: "signIn",
+        path: "sign_in",
+        component: () => import("pages/SignInPage.vue"),
+      },
+      {
+        name: "signUp",
+        path: "sign_up",
+        component: () => import("pages/SignUpPage.vue"),
+      },
+    ],
+  },
+  {
     path: "/",
     component: () => import("layouts/MainLayout.vue"),
     children: [
@@ -27,16 +43,6 @@ const routes = [
         name: "advancedSearchByTag",
         path: "advanced_search/tag/:tag",
         component: () => import("pages/AdvancedSearchPage.vue"),
-      },
-      {
-        name: "signIn",
-        path: "sign_in",
-        component: () => import("pages/SignInPage.vue"),
-      },
-      {
-        name: "signUp",
-        path: "sign_up",
-        component: () => import("pages/SignUpPage.vue"),
       },
     ],
   },
