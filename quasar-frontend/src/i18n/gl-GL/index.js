@@ -49,6 +49,7 @@ export default {
   "Document title": "Título do documento",
   "Document description": "Descripción do documento",
   "Document date": "Data do documento",
+  Attachments: "Arquivos",
   "Add new file (Drag & Drop supported)":
     "Engadir novo arquivo (pode arrastrar e soltar)",
   "API Error: error loading document": "Error de API: error cargando documento",
