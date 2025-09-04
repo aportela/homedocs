@@ -1,6 +1,6 @@
 <template>
-  <q-select v-bind="attrs" ref="search" standout use-input hide-selected class="full-width"
-    :placeholder="t('Search...')" v-model="text" :options="filteredOptions" @filter="onFilter">
+  <q-select v-bind="attrs" ref="search" standout use-input hide-selected :placeholder="t('Search...')" v-model="text"
+    :options="filteredOptions" @filter="onFilter">
     <template v-slot:prepend>
       <q-icon name="search" />
     </template>

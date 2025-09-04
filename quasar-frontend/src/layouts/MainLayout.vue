@@ -4,7 +4,7 @@
       <q-toolbar class="q-py-sm q-px-md">
         <q-btn flat dense round @click="leftDrawerOpen = !leftDrawerOpen" aria-label="Toggle drawer" icon="menu"
           class="q-mr-md" />
-        <FastSearchSelector dense></FastSearchSelector>
+        <FastSearchSelector dense class="full-width"></FastSearchSelector>
         <q-btn-group flat class="q-ml-md">
           <DarkModeButton dense />
           <SwitchLanguageButton :short-labels="true" style="min-width: 9em" />
