@@ -56,7 +56,7 @@
 </template>
 
 <script setup>
-import { ref, useAttrs } from "vue";
+import { ref } from "vue";
 import { api } from "boot/axios";
 import { useSessionStore } from "stores/session";
 import { useInitialStateStore } from "stores/initialState";
@@ -70,7 +70,7 @@ import { default as SwitchLanguageButton } from "components/SwitchLanguageButton
 import { default as GitHubButton } from "components/GitHubButton.vue"
 import { GITHUB_PROJECT_URL } from "src/constants"
 
-const attrs = useAttrs();
+
 const { t } = useI18n();
 const $q = useQuasar();
 const session = useSessionStore();
