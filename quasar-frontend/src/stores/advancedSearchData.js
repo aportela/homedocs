@@ -28,8 +28,8 @@ export const useAdvancedSearchData = defineStore("advancedSearchData", {
     results: [],
   }),
   getters: {
-    isSortAscending: (state) => state.sort == "ASC",
-    isSortDescending: (state) => state.sort == "DESC",
+    isSortAscending: (state) => state.sort.order == "ASC",
+    isSortDescending: (state) => state.sort.order == "DESC",
     sortField: (state) => state.sort.field,
     sortOrder: (state) => state.sort.order,
     hasResults: (state) => state.results && state.results.length > 0,

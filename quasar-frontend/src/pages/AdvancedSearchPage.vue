@@ -191,7 +191,7 @@ const advancedSearchData = useAdvancedSearchData();
 advancedSearchData.filter.dateFilterType = dateFilterOptions.value[0];
 advancedSearchData.filter.tags = route.params.tag !== undefined ? [route.params.tag] : [];
 
-const sortOrderIcon = computed(() => advancedSearchData.isSortAscending ? "keyboard_double_arrow_up" : "keyboard_double_arrow_down");
+const sortOrderIcon = computed(() => advancedSearchData.sortOrder == "ASC" ? "keyboard_double_arrow_up" : "keyboard_double_arrow_down");
 
 const totalSearchConditions = computed(() => {
   let total = 0;
