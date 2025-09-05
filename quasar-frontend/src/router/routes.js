@@ -5,12 +5,12 @@ const routes = [
     children: [
       {
         name: "signIn",
-        path: "sign_in",
+        path: "sign-in",
         component: () => import("pages/SignInPage.vue"),
       },
       {
         name: "signUp",
-        path: "sign_up",
+        path: "sign-up",
         component: () => import("pages/SignUpPage.vue"),
       },
     ],
@@ -26,7 +26,7 @@ const routes = [
       },
       {
         name: "newDocument",
-        path: "new_document",
+        path: "new-document",
         component: () => import("pages/DocumentPage.vue"),
       },
       {
@@ -36,17 +36,17 @@ const routes = [
       },
       {
         name: "advancedSearch",
-        path: "advanced_search",
+        path: "advanced-search",
         component: () => import("pages/AdvancedSearchPage.vue"),
       },
       {
         name: "advancedSearchByTag",
-        path: "advanced_search/tag/:tag",
+        path: "advanced-search/tag/:tag",
         component: () => import("pages/AdvancedSearchPage.vue"),
       },
       {
         name: "advancedSearchByFixedDate",
-        path: "advanced_search/fixed-date/:fixedDate",
+        path: "advanced-search/fixed-date/:fixedDate",
         component: () => import("pages/AdvancedSearchPage.vue"),
       },
     ],
