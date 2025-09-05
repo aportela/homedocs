@@ -193,7 +193,7 @@ const advancedSearchData = useAdvancedSearchData();
 advancedSearchData.filter.dateFilterType = dateFilterOptions.value[0];
 advancedSearchData.filter.tags = route.params.tag !== undefined ? [route.params.tag] : [];
 
-advancedSearchData.filter.fixedDate = route.params.fixedDate !== undefined ? route.params.fixedDate : null;
+advancedSearchData.filter.fixedDate = route.params.fixedDate !== undefined ? route.params.fixedDate.replaceAll("-", "/") : null;
 advancedSearchData.filter.dateFilterType = advancedSearchData.filter.fixedDate ? dateFilterOptions.value[7] : dateFilterOptions.value[0]
 
 const disableFilterDatesByRouteParams = computed(() => route.params.fixedDate !== undefined);

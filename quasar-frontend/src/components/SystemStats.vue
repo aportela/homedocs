@@ -139,7 +139,7 @@ cal.on('click', (event, timestamp, value) => {
     router.push({
       name: "advancedSearchByFixedDate",
       params: {
-        fixedDate: new Date(timestamp).toISOString().split('T')[0].replaceAll("-", "/")
+        fixedDate: new Date(timestamp).toISOString().split('T')[0]
       }
     });
   }
