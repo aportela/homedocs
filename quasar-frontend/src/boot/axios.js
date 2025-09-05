@@ -312,6 +312,18 @@ const api = {
           });
       });
     },
+    activityHeatMapData: function () {
+      return new Promise((resolve, reject) => {
+        axios
+          .get("api2/stats/activity_heatmap_data", {})
+          .then((response) => {
+            resolve(response);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    },
   }
 };
 

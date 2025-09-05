@@ -32,7 +32,6 @@ import { api } from "boot/axios";
 import CalHeatmap from "cal-heatmap";
 import "cal-heatmap/cal-heatmap.css";
 import Tooltip from 'cal-heatmap/plugins/Tooltip';
-import LegendLite from 'cal-heatmap/plugins/LegendLite';
 import CalendarLabel from 'cal-heatmap/plugins/CalendarLabel';
 
 const { t } = useI18n();
@@ -44,6 +43,7 @@ let expanded = !$q.screen.lt.md;
 const totalDocuments = ref(0);
 const totalAttachments = ref(0);
 const totalAttachmentsDiskUsage = ref(0);
+const activityHeatmapData = ref([]);
 
 function refreshTotalDocuments() {
   totalDocuments.value = 0;
@@ -105,9 +105,86 @@ function refreshTotalAttachmentsDiskUsage() {
     });
 }
 
+function refreshActivityHeatmapData() {
+  activityHeatmapData.value = [];
+  loading.value = true;
+  loadingError.value = false;
+  api.stats.activityHeatMapData()
+    .then((success) => {
+      activityHeatmapData.value = success.data.heatmap;
+      const cal = new CalHeatmap();
+      cal.paint(
+        {
+          data: {
+            source: activityHeatmapData.value,
+            x: "date",
+            y: "count",
+            type: "json",
+          },
+          date: {
+            start: new Date(new Date().setFullYear(new Date().getFullYear() - 1)),
+            end: new Date(),
+            max: new Date()
+          },
+          range: 12,
+          scale: {
+            color: {
+              scheme: "Cool",
+              type: 'threshold',
+              range: ['#14432a', '#166b34', '#37a446', '#4dd05a'],
+              domain: [0, 1, 2, 3],
+            },
+          },
+          domain: {
+            type: 'month',
+            gutter: 4,
+            label: { text: 'MMM', textAlign: 'start', position: 'top' },
+          },
+          subDomain: { type: 'ghDay', radius: 2, width: 11, height: 11, gutter: 4 },
+          itemSelector: '#cal-heatmap',
+        },
+        [
+          [
+            Tooltip,
+            {
+              text: function (date, value, dayjsDate) {
+                return (
+                  (value ? value : 'No') +
+                  ' changes on ' +
+                  dayjsDate.format('dddd, MMMM D, YYYY')
+                );
+              },
+            },
+          ],
+          [
+            CalendarLabel,
+            {
+              width: 30,
+              textAlign: 'start',
+              text: () => dayjs.weekdaysShort().map((d, i) => (i % 2 == 0 ? '' : d)),
+              padding: [25, 0, 0, 0],
+            },
+          ],
+        ]
+      );
+
+      loading.value = false;
+    })
+    .catch((error) => {
+      loading.value = false;
+      loadingError.value = true;
+      $q.notify({
+        type: "negative",
+        message: t("API Error: fatal error"),
+        caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
+      });
+    });
+}
+
 refreshTotalDocuments();
 refreshTotalAttachments();
 refreshTotalAttachmentsDiskUsage();
+refreshActivityHeatmapData();
 
 function generateRandomData() {
   const data = [];
@@ -130,61 +207,5 @@ function generateRandomData() {
   }
   return data.sort((a, b) => new Date(a.date) - new Date(b.date));
 }
-
-const cal = new CalHeatmap();
-cal.paint(
-  {
-    data: {
-      source: generateRandomData(),
-      x: "date",
-      y: "value",
-      type: "json",
-    },
-    date: {
-      start: new Date(new Date().setFullYear(new Date().getFullYear() - 1)),
-      end: new Date(),
-      max: new Date()
-    },
-    range: 12,
-    scale: {
-      color: {
-        scheme: "Cool",
-        type: 'threshold',
-        range: ['#14432a', '#166b34', '#37a446', '#4dd05a'],
-        domain: [0, 1, 2, 3],
-      },
-    },
-    domain: {
-      type: 'month',
-      gutter: 4,
-      label: { text: 'MMM', textAlign: 'start', position: 'top' },
-    },
-    subDomain: { type: 'ghDay', radius: 2, width: 11, height: 11, gutter: 4 },
-    itemSelector: '#cal-heatmap',
-  },
-  [
-    [
-      Tooltip,
-      {
-        text: function (date, value, dayjsDate) {
-          return (
-            (value ? value : 'No') +
-            ' changes on ' +
-            dayjsDate.format('dddd, MMMM D, YYYY')
-          );
-        },
-      },
-    ],
-    [
-      CalendarLabel,
-      {
-        width: 30,
-        textAlign: 'start',
-        text: () => dayjs.weekdaysShort().map((d, i) => (i % 2 == 0 ? '' : d)),
-        padding: [25, 0, 0, 0],
-      },
-    ],
-  ]
-);
 
 </script>

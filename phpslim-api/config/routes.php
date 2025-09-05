@@ -407,7 +407,7 @@ return function (App $app) {
                 $payload = json_encode(
                     [
                         'initialState' => \HomeDocs\Utils::getInitialState($this),
-                        'data' => \HomeDocs\Stats::activityHeatMapData($this->get(\aportela\DatabaseWrapper\DB::class))
+                        'heatmap' => \HomeDocs\Stats::activityHeatMapData($this->get(\aportela\DatabaseWrapper\DB::class))
                     ]
                 );
                 $response->getBody()->write($payload);
