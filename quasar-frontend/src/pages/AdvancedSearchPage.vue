@@ -68,12 +68,12 @@
                     </q-input>
                   </div>
                   <div class="col" v-if="advancedSearchData.hasFixedDateFilter">
-                    <q-input dense outlined mask="date" v-model="advancedSearchData.filter.fromDate"
+                    <q-input dense outlined mask="date" v-model="advancedSearchData.filter.fixedDate"
                       :label="t('Fixed date')" :disable="searching || advancedSearchData.denyChangeDateFilters">
                       <template v-slot:append>
                         <q-icon name="event" class="cursor-pointer">
                           <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                            <q-date v-model="advancedSearchData.filter.fromDate" today-btn
+                            <q-date v-model="advancedSearchData.filter.fixedDate" today-btn
                               :disable="searching || advancedSearchData.denyChangeDateFilters">
                               <div class="row items-center justify-end">
                                 <q-btn v-close-popup label="Close" color="primary" flat />
@@ -229,15 +229,20 @@ function onSubmitForm(resetPager) {
     advancedSearchData.pager.currentPage = 1;
   }
   searching.value = true;
-  if (date.isValid(advancedSearchData.filter.fromDate)) {
-    advancedSearchData.filter.fromTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.fromDate, 'YYYY/MM/DD'), { hour: 0, minute: 0, second: 0, millisecond: 0 }), 'X');
+  if (date.isValid(advancedSearchData.filter.fixedDate)) {
+    advancedSearchData.filter.fromTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.fixedDate, 'YYYY/MM/DD'), { hour: 0, minute: 0, second: 0, millisecond: 0 }), 'X');
+    advancedSearchData.filter.toTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.fixedDate, 'YYYY/MM/DD'), { hour: 23, minute: 59, second: 59, millisecond: 999 }), 'X');
   } else {
-    advancedSearchData.filter.fromTimestamp = null;
-  }
-  if (date.isValid(advancedSearchData.filter.toDate)) {
-    advancedSearchData.filter.toTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.toDate, 'YYYY/MM/DD'), { hour: 23, minute: 59, second: 59, millisecond: 999 }), 'X');
-  } else {
-    advancedSearchData.filter.toTimestamp = null;
+    if (date.isValid(advancedSearchData.filter.fromDate)) {
+      advancedSearchData.filter.fromTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.fromDate, 'YYYY/MM/DD'), { hour: 0, minute: 0, second: 0, millisecond: 0 }), 'X');
+    } else {
+      advancedSearchData.filter.fromTimestamp = null;
+    }
+    if (date.isValid(advancedSearchData.filter.toDate)) {
+      advancedSearchData.filter.toTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.toDate, 'YYYY/MM/DD'), { hour: 23, minute: 59, second: 59, millisecond: 999 }), 'X');
+    } else {
+      advancedSearchData.filter.toTimestamp = null;
+    }
   }
   api.document.search(advancedSearchData.pager.currentPage, advancedSearchData.pager.resultsPage, advancedSearchData.filter, advancedSearchData.sortField, advancedSearchData.sortOrder)
     .then((success) => {

@@ -10,6 +10,7 @@ export const useAdvancedSearchData = defineStore("advancedSearchData", {
       dateFilterType: null,
       dateRange: null,
       fromDate: null,
+      fixedDate: null,
       toDate: null,
       fromTimestamp: null,
       toTimestamp: null,
@@ -62,25 +63,22 @@ export const useAdvancedSearchData = defineStore("advancedSearchData", {
       this.pager.currentPage = page;
     },
     recalcDates(dateFilterType) {
+      this.filter.fromDate = null;
+      this.filter.fromTimestamp = null;
+      this.filter.fixedDate = null;
+      this.filter.toDate = null;
+      this.filter.toTimestamp = null;
       switch (dateFilterType.value) {
+        // NONE
         case 0:
-          this.filter.fromDate = null;
-          this.filter.fromTimestamp = null;
-          this.filter.toDate = null;
-          this.filter.toTimestamp = null;
           break;
         // TODAY
         case 1:
-          this.filter.fromDate = date.formatDate(Date.now(), "YYYY/MM/DD");
-          this.filter.toDate = date.formatDate(Date.now(), "YYYY/MM/DD");
+          this.filter.fixedDate = date.formatDate(Date.now(), "YYYY/MM/DD");
           break;
         // YESTERDAY
         case 2:
-          this.filter.fromDate = date.formatDate(
-            date.addToDate(Date.now(), { days: -1 }),
-            "YYYY/MM/DD",
-          );
-          this.filter.toDate = date.formatDate(
+          this.filter.fixedDate = date.formatDate(
             date.addToDate(Date.now(), { days: -1 }),
             "YYYY/MM/DD",
           );
@@ -131,17 +129,13 @@ export const useAdvancedSearchData = defineStore("advancedSearchData", {
           break;
         // FIXED DATE
         case 7:
-          this.filter.fromDate = date.formatDate(Date.now(), "YYYY/MM/DD");
-          this.filter.toDate = date.formatDate(Date.now(), "YYYY/MM/DD");
           break;
         // FROM DATE
         case 8:
           this.filter.fromDate = date.formatDate(Date.now(), "YYYY/MM/DD");
-          this.filter.toDate = date.formatDate(Date.now(), "YYYY/MM/DD");
           break;
         // TO DATE
         case 9:
-          this.filter.fromDate = date.formatDate(Date.now(), "YYYY/MM/DD");
           this.filter.toDate = date.formatDate(Date.now(), "YYYY/MM/DD");
           break;
         // BETWEEN DATES
