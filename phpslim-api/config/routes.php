@@ -402,6 +402,17 @@ return function (App $app) {
                 $response->getBody()->write($payload);
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             })->add(\HomeDocs\Middleware\CheckAuth::class);
+
+            $group->get('/stats/activity_heatmap_data', function (Request $request, Response $response, array $args) {
+                $payload = json_encode(
+                    [
+                        'initialState' => \HomeDocs\Utils::getInitialState($this),
+                        'data' => \HomeDocs\Stats::activityHeatMapData($this->get(\aportela\DatabaseWrapper\DB::class))
+                    ]
+                );
+                $response->getBody()->write($payload);
+                return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+            })->add(\HomeDocs\Middleware\CheckAuth::class);
         }
     )->add(\HomeDocs\Middleware\JWT::class)->add(\HomeDocs\Middleware\APIExceptionCatcher::class);
 };

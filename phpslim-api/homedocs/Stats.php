@@ -59,4 +59,27 @@ class Stats
         );
         return (intval($result[0]->total));
     }
+
+    public static function activityHeatMapData(\aportela\DatabaseWrapper\DB $dbh): array
+    {
+        $results = $dbh->query(
+            "
+                SELECT DATE(DOCUMENT.created_on_timestamp, 'unixepoch') AS activity_date, COUNT(*) AS total
+                FROM DOCUMENT
+                WHERE DOCUMENT.created_by_user_id = :session_user_id
+                GROUP BY activity_date
+                ORDER BY activity_date
+            ",
+            array(
+                new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
+            )
+        );
+        $results = array_map(
+            function ($item) {
+                return (["date" => $item->activity_date, "count" => $item->total]);
+            },
+            $results
+        );
+        return ($results);
+    }
 }

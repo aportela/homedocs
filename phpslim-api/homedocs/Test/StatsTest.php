@@ -28,4 +28,11 @@ final class StatsTest extends \HomeDocs\Test\BaseTest
         $this->assertIsInt($total);
         $this->assertTrue($total >= 0);
     }
+
+    public function testActivityHeatMapData(): void
+    {
+        $data = \HomeDocs\Stats::activityHeatMapData(self::$dbh);
+        $this->assertIsArray($data);
+        $this->assertTrue(count($data) >= 0);
+    }
 }
