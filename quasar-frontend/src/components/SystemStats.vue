@@ -17,6 +17,10 @@
           </div>
         </q-expansion-item>
         <div id="cal-heatmap"></div>
+        <q-btn-group flat dense class="q-mt-sm">
+          <q-btn icon="arrow_left" @click.prevent="cal.previous()">Previous</q-btn>
+          <q-btn icon-right="arrow_right" @click.prevent="cal.next()">Next</q-btn>
+        </q-btn-group>
       </q-card-section>
     </q-card>
   </div>
@@ -105,6 +109,8 @@ function refreshTotalAttachmentsDiskUsage() {
     });
 }
 
+const cal = new CalHeatmap();
+
 function refreshActivityHeatmapData() {
   activityHeatMapData.value = [];
   loading.value = true;
@@ -112,7 +118,6 @@ function refreshActivityHeatmapData() {
   api.stats.getActivityHeatMapData()
     .then((success) => {
       activityHeatMapData.value = success.data.heatmap;
-      const cal = new CalHeatmap();
       cal.paint(
         {
           data: {
