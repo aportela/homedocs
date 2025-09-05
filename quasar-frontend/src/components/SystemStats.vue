@@ -9,11 +9,29 @@
             <q-spinner-pie v-if="loading" color="grey-5" size="md" />
           </p>
           <div v-else>
-            <ul>
-              <li>Total documents: {{ totalDocuments }}</li>
-              <li>Total attachments: {{ totalAttachments }}</li>
-              <li>Total attachments disk usage: {{ totalAttachmentsDiskUsage }}</li>
-            </ul>
+            <div class="row q-gutter-sm">
+              <div class="col-2">
+                <q-card background="grey-2">
+                  <q-card-section class="text-center text-h5">Total documents</q-card-section>
+                  <q-separator inset />
+                  <q-card-section class="text-center text-h3">{{ totalDocuments }}</q-card-section>
+                </q-card>
+              </div>
+              <div class="col-2">
+                <q-card background="grey-2">
+                  <q-card-section class="text-center text-h5">Total attachments</q-card-section>
+                  <q-separator inset />
+                  <q-card-section class="text-center text-h3">{{ totalAttachments }}</q-card-section>
+                </q-card>
+              </div>
+              <div class="col-2">
+                <q-card background="grey-2">
+                  <q-card-section class="text-center text-h5">Disk usage</q-card-section>
+                  <q-separator inset />
+                  <q-card-section class="text-center text-h3">{{ totalAttachmentsDiskUsage }}</q-card-section>
+                </q-card>
+              </div>
+            </div>
           </div>
         </q-expansion-item>
         <div id="cal-heatmap"></div>
