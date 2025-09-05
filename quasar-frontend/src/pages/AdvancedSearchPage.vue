@@ -31,7 +31,8 @@
                 <div class="row">
                   <div class="col">
                     <q-select class="q-mb-md" dense outlined v-model="advancedSearchData.filter.dateFilterType"
-                      :options="dateFilterOptions" :label="t('Document date')" :disable="searching" />
+                      :options="dateFilterOptions" :label="t('Document date')"
+                      :disable="searching || disableFilterDatesByRouteParams" />
                   </div>
                   <div class="col" v-if="advancedSearchData.hasFromDateFilter">
                     <q-input dense outlined mask="date" v-model="advancedSearchData.filter.fromDate"
@@ -69,7 +70,8 @@
                   </div>
                   <div class="col" v-if="advancedSearchData.hasFixedDateFilter">
                     <q-input dense outlined mask="date" v-model="advancedSearchData.filter.fixedDate"
-                      :label="t('Fixed date')" :disable="searching || advancedSearchData.denyChangeDateFilters">
+                      :label="t('Fixed date')"
+                      :disable="searching || advancedSearchData.denyChangeDateFilters || disableFilterDatesByRouteParams">
                       <template v-slot:append>
                         <q-icon name="event" class="cursor-pointer">
                           <q-popup-proxy cover transition-show="scale" transition-hide="scale">
@@ -191,6 +193,10 @@ const advancedSearchData = useAdvancedSearchData();
 advancedSearchData.filter.dateFilterType = dateFilterOptions.value[0];
 advancedSearchData.filter.tags = route.params.tag !== undefined ? [route.params.tag] : [];
 
+advancedSearchData.filter.fixedDate = route.params.fixedDate !== undefined ? route.params.fixedDate : null;
+advancedSearchData.filter.dateFilterType = advancedSearchData.filter.fixedDate ? dateFilterOptions.value[7] : dateFilterOptions.value[0]
+
+const disableFilterDatesByRouteParams = computed(() => route.params.fixedDate !== undefined);
 const sortOrderIcon = computed(() => advancedSearchData.sortOrder == "ASC" ? "keyboard_double_arrow_up" : "keyboard_double_arrow_down");
 
 const totalSearchConditions = computed(() => {
@@ -228,6 +234,7 @@ function onSubmitForm(resetPager) {
   if (resetPager) {
     advancedSearchData.pager.currentPage = 1;
   }
+
   searching.value = true;
   if (date.isValid(advancedSearchData.filter.fixedDate)) {
     advancedSearchData.filter.fromTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.fixedDate, 'YYYY/MM/DD'), { hour: 0, minute: 0, second: 0, millisecond: 0 }), 'X');
@@ -282,7 +289,7 @@ function onSubmitForm(resetPager) {
     });
 }
 
-if (advancedSearchData.filter.tags.length > 0) {
+if (advancedSearchData.filter.tags.length > 0 || disableFilterDatesByRouteParams) {
   onSubmitForm(true);
 }
 

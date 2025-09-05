@@ -44,6 +44,11 @@ const routes = [
         path: "advanced_search/tag/:tag",
         component: () => import("pages/AdvancedSearchPage.vue"),
       },
+      {
+        name: "advancedSearchByFixedDate",
+        path: "advanced_search/fixed-date/:fixedDate",
+        component: () => import("pages/AdvancedSearchPage.vue"),
+      },
     ],
   },
 

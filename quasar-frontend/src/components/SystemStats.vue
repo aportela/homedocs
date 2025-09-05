@@ -11,21 +11,21 @@
           <div v-else>
             <div class="row q-gutter-sm">
               <div class="col-2">
-                <q-card background="grey-2">
+                <q-card class="bg-grey-3">
                   <q-card-section class="text-center text-h5">Total documents</q-card-section>
                   <q-separator inset />
                   <q-card-section class="text-center text-h3">{{ totalDocuments }}</q-card-section>
                 </q-card>
               </div>
               <div class="col-2">
-                <q-card background="grey-2">
+                <q-card class="bg-grey-3">
                   <q-card-section class="text-center text-h5">Total attachments</q-card-section>
                   <q-separator inset />
                   <q-card-section class="text-center text-h3">{{ totalAttachments }}</q-card-section>
                 </q-card>
               </div>
               <div class="col-2">
-                <q-card background="grey-2">
+                <q-card class="bg-grey-3">
                   <q-card-section class="text-center text-h5">Disk usage</q-card-section>
                   <q-separator inset />
                   <q-card-section class="text-center text-h3">{{ totalAttachmentsDiskUsage }}</q-card-section>
@@ -49,6 +49,7 @@
 <script setup>
 
 import { ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { format, useQuasar } from "quasar"
 import { api } from "boot/axios";
@@ -68,6 +69,8 @@ const totalDocuments = ref(0);
 const totalAttachments = ref(0);
 const totalAttachmentsDiskUsage = ref(0);
 const activityHeatMapData = ref([]);
+
+const router = useRouter();
 
 function refreshTotalDocuments() {
   totalDocuments.value = 0;
@@ -132,13 +135,14 @@ function refreshTotalAttachmentsDiskUsage() {
 const cal = new CalHeatmap();
 
 cal.on('click', (event, timestamp, value) => {
-  console.log(
-    'On <b>' +
-    new Date(timestamp).toLocaleDateString() +
-    '</b>, the max temperature was ' +
-    value +
-    '°C'
-  );
+  if (value > 0) {
+    router.push({
+      name: "advancedSearchByFixedDate",
+      params: {
+        fixedDate: new Date(timestamp).toISOString().split('T')[0].replaceAll("-", "/")
+      }
+    });
+  }
 });
 
 function refreshActivityHeatmapData() {
