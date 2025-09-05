@@ -17,10 +17,12 @@
           </div>
         </q-expansion-item>
         <div id="cal-heatmap"></div>
+        <!--
         <q-btn-group flat dense class="q-mt-sm">
           <q-btn icon="arrow_left" @click.prevent="cal.previous()">Previous</q-btn>
           <q-btn icon-right="arrow_right" @click.prevent="cal.next()">Next</q-btn>
         </q-btn-group>
+        -->
       </q-card-section>
     </q-card>
   </div>
@@ -111,6 +113,16 @@ function refreshTotalAttachmentsDiskUsage() {
 
 const cal = new CalHeatmap();
 
+cal.on('click', (event, timestamp, value) => {
+  console.log(
+    'On <b>' +
+    new Date(timestamp).toLocaleDateString() +
+    '</b>, the max temperature was ' +
+    value +
+    '°C'
+  );
+});
+
 function refreshActivityHeatmapData() {
   activityHeatMapData.value = [];
   loading.value = true;
@@ -118,6 +130,7 @@ function refreshActivityHeatmapData() {
   api.stats.getActivityHeatMapData()
     .then((success) => {
       activityHeatMapData.value = success.data.heatmap;
+      const maxValue = activityHeatMapData.value.reduce((max, obj) => (obj.count > max ? obj.count : max), -Infinity)
       cal.paint(
         {
           data: {
@@ -134,10 +147,9 @@ function refreshActivityHeatmapData() {
           range: 12,
           scale: {
             color: {
-              scheme: "Cool",
-              type: 'threshold',
-              range: ['#14432a', '#166b34', '#37a446', '#4dd05a'],
-              domain: [0, 1, 2, 3],
+              scheme: 'Greens',
+              type: "linear",
+              domain: [0, maxValue],
             },
           },
           domain: {
@@ -190,27 +202,5 @@ refreshTotalDocuments();
 refreshTotalAttachments();
 refreshTotalAttachmentsDiskUsage();
 refreshActivityHeatmapData();
-
-function generateRandomData() {
-  const data = [];
-  const now = new Date();
-
-  for (let i = 0; i < 365; i++) {
-    const date = new Date(now);
-    date.setDate(now.getDate() - i);
-
-    const yyyy = date.getFullYear();
-    const mm = String(date.getMonth() + 1).padStart(2, '0');
-    const dd = String(date.getDate()).padStart(2, '0');
-
-    const value = Math.floor(Math.random() * 4); // entre 0 y 3
-
-    data.push({
-      date: `${yyyy}-${mm}-${dd}`,
-      value: value,
-    });
-  }
-  return data.sort((a, b) => new Date(a.date) - new Date(b.date));
-}
 
 </script>

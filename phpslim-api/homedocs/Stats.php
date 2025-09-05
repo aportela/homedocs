@@ -64,9 +64,13 @@ class Stats
     {
         $results = $dbh->query(
             "
-                SELECT DATE(DOCUMENT.created_on_timestamp, 'unixepoch') AS activity_date, COUNT(*) AS total
+                SELECT
+                    DATE(DOCUMENT.created_on_timestamp, 'unixepoch') AS activity_date, COUNT(*) AS total
                 FROM DOCUMENT
-                WHERE DOCUMENT.created_by_user_id = :session_user_id
+                WHERE
+                    DOCUMENT.created_by_user_id = :session_user_id
+                AND
+                    DOCUMENT.created_on_timestamp >= strftime('%s', 'now', '-1 year')
                 GROUP BY activity_date
                 ORDER BY activity_date
             ",
