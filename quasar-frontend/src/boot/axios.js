@@ -279,7 +279,7 @@ const api = {
     documentCount: function () {
       return new Promise((resolve, reject) => {
         axios
-          .get("api2/stats/total_documents", {})
+          .get("api2/stats/total-published-documents", {})
           .then((response) => {
             resolve(response);
           })
@@ -291,7 +291,7 @@ const api = {
     attachmentCount: function () {
       return new Promise((resolve, reject) => {
         axios
-          .get("api2/stats/total_attachments", {})
+          .get("api2/stats/total-uploaded-attachments", {})
           .then((response) => {
             resolve(response);
           })
@@ -303,7 +303,7 @@ const api = {
     attachmentDiskSize: function () {
       return new Promise((resolve, reject) => {
         axios
-          .get("api2/stats/total_attachment_disk_size", {})
+          .get("api2/stats/total-uploaded-attachments-disk-usage", {})
           .then((response) => {
             resolve(response);
           })
@@ -312,10 +312,10 @@ const api = {
           });
       });
     },
-    activityHeatMapData: function () {
+    getActivityHeatMapData: function () {
       return new Promise((resolve, reject) => {
         axios
-          .get("api2/stats/activity_heatmap_data", {})
+          .get("api2/stats/heatmap-activity-data", {})
           .then((response) => {
             resolve(response);
           })

@@ -43,7 +43,7 @@ let expanded = !$q.screen.lt.md;
 const totalDocuments = ref(0);
 const totalAttachments = ref(0);
 const totalAttachmentsDiskUsage = ref(0);
-const activityHeatmapData = ref([]);
+const activityHeatMapData = ref([]);
 
 function refreshTotalDocuments() {
   totalDocuments.value = 0;
@@ -106,17 +106,17 @@ function refreshTotalAttachmentsDiskUsage() {
 }
 
 function refreshActivityHeatmapData() {
-  activityHeatmapData.value = [];
+  activityHeatMapData.value = [];
   loading.value = true;
   loadingError.value = false;
-  api.stats.activityHeatMapData()
+  api.stats.getActivityHeatMapData()
     .then((success) => {
-      activityHeatmapData.value = success.data.heatmap;
+      activityHeatMapData.value = success.data.heatmap;
       const cal = new CalHeatmap();
       cal.paint(
         {
           data: {
-            source: activityHeatmapData.value,
+            source: activityHeatMapData.value,
             x: "date",
             y: "count",
             type: "json",

@@ -6,7 +6,7 @@ namespace HomeDocs;
 
 class Stats
 {
-    public static function documentsCount(\aportela\DatabaseWrapper\DB $dbh): int
+    public static function getTotalPublishedDocuments(\aportela\DatabaseWrapper\DB $dbh): int
     {
         $result = $dbh->query(
             "
@@ -23,7 +23,7 @@ class Stats
         return (intval($result[0]->total));
     }
 
-    public static function attachmentsCount(\aportela\DatabaseWrapper\DB $dbh): int
+    public static function getTotalUploadedAttachments(\aportela\DatabaseWrapper\DB $dbh): int
     {
         $result = $dbh->query(
             "
@@ -41,7 +41,7 @@ class Stats
         return (intval($result[0]->total));
     }
 
-    public static function attachmentsDiskSize(\aportela\DatabaseWrapper\DB $dbh): int
+    public static function getTotalUploadedAttachmentsDiskUsage(\aportela\DatabaseWrapper\DB $dbh): int
     {
         $result = $dbh->query(
             "
@@ -60,7 +60,7 @@ class Stats
         return (intval($result[0]->total));
     }
 
-    public static function activityHeatMapData(\aportela\DatabaseWrapper\DB $dbh): array
+    public static function getActivityHeatMapData(\aportela\DatabaseWrapper\DB $dbh): array
     {
         $results = $dbh->query(
             "

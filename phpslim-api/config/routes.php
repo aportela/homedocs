@@ -370,44 +370,44 @@ return function (App $app) {
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $group->get('/stats/total_documents', function (Request $request, Response $response, array $args) {
+            $group->get('/stats/total-published-documents', function (Request $request, Response $response, array $args) {
                 $payload = json_encode(
                     [
                         'initialState' => \HomeDocs\Utils::getInitialState($this),
-                        'count' => \HomeDocs\Stats::documentsCount($this->get(\aportela\DatabaseWrapper\DB::class))
+                        'count' => \HomeDocs\Stats::getTotalPublishedDocuments($this->get(\aportela\DatabaseWrapper\DB::class))
                     ]
                 );
                 $response->getBody()->write($payload);
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $group->get('/stats/total_attachments', function (Request $request, Response $response, array $args) {
+            $group->get('/stats/total-uploaded-attachments', function (Request $request, Response $response, array $args) {
                 $payload = json_encode(
                     [
                         'initialState' => \HomeDocs\Utils::getInitialState($this),
-                        'count' => \HomeDocs\Stats::attachmentsCount($this->get(\aportela\DatabaseWrapper\DB::class))
+                        'count' => \HomeDocs\Stats::getTotalUploadedAttachments($this->get(\aportela\DatabaseWrapper\DB::class))
                     ]
                 );
                 $response->getBody()->write($payload);
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $group->get('/stats/total_attachment_disk_size', function (Request $request, Response $response, array $args) {
+            $group->get('/stats/total-uploaded-attachments-disk-usage', function (Request $request, Response $response, array $args) {
                 $payload = json_encode(
                     [
                         'initialState' => \HomeDocs\Utils::getInitialState($this),
-                        'size' => \HomeDocs\Stats::attachmentsDiskSize($this->get(\aportela\DatabaseWrapper\DB::class))
+                        'size' => \HomeDocs\Stats::getTotalUploadedAttachmentsDiskUsage($this->get(\aportela\DatabaseWrapper\DB::class))
                     ]
                 );
                 $response->getBody()->write($payload);
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $group->get('/stats/activity_heatmap_data', function (Request $request, Response $response, array $args) {
+            $group->get('/stats/heatmap-activity-data', function (Request $request, Response $response, array $args) {
                 $payload = json_encode(
                     [
                         'initialState' => \HomeDocs\Utils::getInitialState($this),
-                        'heatmap' => \HomeDocs\Stats::activityHeatMapData($this->get(\aportela\DatabaseWrapper\DB::class))
+                        'heatmap' => \HomeDocs\Stats::getActivityHeatMapData($this->get(\aportela\DatabaseWrapper\DB::class))
                     ]
                 );
                 $response->getBody()->write($payload);

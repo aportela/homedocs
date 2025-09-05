@@ -8,30 +8,30 @@ require_once dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "vendor" . DIRECT
 
 final class StatsTest extends \HomeDocs\Test\BaseTest
 {
-    public function testDocumentsCount(): void
+    public function testGetTotalPublishedDocuments(): void
     {
-        $total = \HomeDocs\Stats::documentsCount(self::$dbh);
+        $total = \HomeDocs\Stats::getTotalPublishedDocuments(self::$dbh);
         $this->assertIsInt($total);
         $this->assertTrue($total >= 0);
     }
 
-    public function testAttachmentsCount(): void
+    public function testGetTotalUploadedAttachments(): void
     {
-        $total = \HomeDocs\Stats::attachmentsCount(self::$dbh);
+        $total = \HomeDocs\Stats::getTotalUploadedAttachments(self::$dbh);
         $this->assertIsInt($total);
         $this->assertTrue($total >= 0);
     }
 
-    public function testAttachmentsDiskSize(): void
+    public function testGetTotalUploadedAttachmentsDiskUsage(): void
     {
-        $total = \HomeDocs\Stats::attachmentsDiskSize(self::$dbh);
+        $total = \HomeDocs\Stats::getTotalUploadedAttachmentsDiskUsage(self::$dbh);
         $this->assertIsInt($total);
         $this->assertTrue($total >= 0);
     }
 
-    public function testActivityHeatMapData(): void
+    public function testGetActivityHeatMapData(): void
     {
-        $data = \HomeDocs\Stats::activityHeatMapData(self::$dbh);
+        $data = \HomeDocs\Stats::getActivityHeatMapData(self::$dbh);
         $this->assertIsArray($data);
         $this->assertTrue(count($data) >= 0);
     }
