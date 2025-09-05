@@ -193,8 +193,6 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
         $this->assertTrue($results->pagination->totalResults >= count($results->documents));
     }
 
-
-
     public function testSearchWithoutPager(): void
     {
         $results = \HomeDocs\Document::search(self::$dbh, 1, 0, [], "createdOnTimestamp", "DESC");
