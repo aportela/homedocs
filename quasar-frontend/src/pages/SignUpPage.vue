@@ -101,8 +101,10 @@ const remoteValidation = ref({
   }
 });
 
+const fieldIsRequiredLabel = computed(() => t('Field is required'));
+
 const requiredFieldRules = [
-  val => !!val || t('Field is required')
+  val => !!val || fieldIsRequiredLabel.value
 ];
 
 const email = ref(null);
