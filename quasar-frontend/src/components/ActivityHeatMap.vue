@@ -39,7 +39,7 @@ cal.on('click', (event, timestamp, value) => {
   }
 });
 
-function refreshActivityHeatmapData() {
+function refresh() {
   activityHeatMapData.value = [];
   loading.value = true;
   loadingError.value = false;
@@ -115,7 +115,7 @@ function refreshActivityHeatmapData() {
 }
 
 onMounted(() => {
-  refreshActivityHeatmapData();
+  refresh();
 });
 
 </script>
