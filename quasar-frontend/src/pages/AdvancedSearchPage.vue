@@ -210,6 +210,9 @@ const totalSearchConditions = computed(() => {
   if (advancedSearchData.filter.tags && advancedSearchData.filter.tags.length > 0) {
     total += advancedSearchData.filter.tags.length;
   }
+  if (advancedSearchData.filter.dateFilterType != 0) {
+    total++;
+  }
   return (total);
 });
 
