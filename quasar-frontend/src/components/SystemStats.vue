@@ -12,21 +12,24 @@
             <div class="row q-gutter-sm">
               <div class="col-2">
                 <q-card class="bg-grey-3">
-                  <q-card-section class="text-center text-h5">Total documents</q-card-section>
+                  <q-card-section class="text-center text-h5"><q-icon name="shelves"></q-icon> Total
+                    documents</q-card-section>
                   <q-separator inset />
                   <q-card-section class="text-center text-h3">{{ totalDocuments }}</q-card-section>
                 </q-card>
               </div>
               <div class="col-2">
                 <q-card class="bg-grey-3">
-                  <q-card-section class="text-center text-h5">Total attachments</q-card-section>
+                  <q-card-section class="text-center text-h5"><q-icon name="attachment"></q-icon> Total
+                    attachments</q-card-section>
                   <q-separator inset />
                   <q-card-section class="text-center text-h3">{{ totalAttachments }}</q-card-section>
                 </q-card>
               </div>
               <div class="col-2">
                 <q-card class="bg-grey-3">
-                  <q-card-section class="text-center text-h5">Disk usage</q-card-section>
+                  <q-card-section class="text-center text-h5"><q-icon name="data_usage"></q-icon> Disk
+                    usage</q-card-section>
                   <q-separator inset />
                   <q-card-section class="text-center text-h3">{{ totalAttachmentsDiskUsage }}</q-card-section>
                 </q-card>
@@ -49,7 +52,7 @@
 <script setup>
 
 import { ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { format, useQuasar } from "quasar"
 import { api } from "boot/axios";
