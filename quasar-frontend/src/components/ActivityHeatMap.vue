@@ -119,3 +119,10 @@ onMounted(() => {
 });
 
 </script>
+
+<style scoped>
+#cal-heatmap {
+  width: 810px;
+  height: 136px;
+}
+</style>
