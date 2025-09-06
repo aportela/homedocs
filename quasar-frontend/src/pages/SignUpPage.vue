@@ -13,14 +13,14 @@
         <q-card-section>
           <q-input dense outlined ref="emailRef" v-model="email" type="email" name="email" :label="t('Email')"
             :disable="loading" :autofocus="true" :rules="requiredFieldRules" lazy-rules
-            :error="remoteValidation.email.hasErrors" :errorMessage="remoteValidation.email.message">
+            :error="remoteValidation.email.hasErrors" :errorMessage="t(remoteValidation.email.message || '')">
             <template v-slot:prepend>
               <q-icon name="alternate_email" />
             </template>
           </q-input>
           <q-input dense outlined class="q-mt-md" ref="passwordRef" v-model="password" name="password" type="password"
             :label="t('Password')" :disable="loading" :rules="requiredFieldRules" lazy-rules
-            :error="remoteValidation.password.hasErrors" :errorMessage="remoteValidation.password.message">
+            :error="remoteValidation.password.hasErrors" :errorMessage="t(remoteValidation.password.message || '')">
             <template v-slot:prepend>
               <q-icon name="key" />
             </template>
@@ -186,7 +186,7 @@ function onSubmitForm() {
           break;
         case 409:
           remoteValidation.value.email.hasErrors = true;
-          remoteValidation.value.email.message = t("Email already used");
+          remoteValidation.value.email.message = "Email already used";
           nextTick(() => {
             emailRef.value.focus();
           });
