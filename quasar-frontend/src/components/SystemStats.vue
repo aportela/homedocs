@@ -9,26 +9,32 @@
             <q-spinner-pie v-if="loading" color="grey-5" size="md" />
           </p>
           <div v-else>
-            <ActivityHeatMap class="q-mb-sm"></ActivityHeatMap>
-            <div class="row q-gutter-sm">
-              <div class="col-2">
-                <q-card class="bg-grey-3">
+            <q-card class="bg-grey-3 q-ma-sm">
+              <q-card-section class="text-center text-h5"><q-icon name="insights"></q-icon> Activity
+                Heatmap</q-card-section>
+              <q-card-section class="bg-white">
+                <ActivityHeatMap class="q-mx-auto"></ActivityHeatMap>
+              </q-card-section>
+            </q-card>
+            <div class="row">
+              <div class="col-4">
+                <q-card class="bg-grey-3 q-ma-sm">
                   <q-card-section class="text-center text-h5"><q-icon name="shelves"></q-icon> Total
                     documents</q-card-section>
                   <q-separator inset />
                   <q-card-section class="text-center text-h3">{{ totalDocuments }}</q-card-section>
                 </q-card>
               </div>
-              <div class="col-2">
-                <q-card class="bg-grey-3">
+              <div class="col-4">
+                <q-card class="bg-grey-3 q-ma-sm">
                   <q-card-section class="text-center text-h5"><q-icon name="attachment"></q-icon> Total
                     attachments</q-card-section>
                   <q-separator inset />
                   <q-card-section class="text-center text-h3">{{ totalAttachments }}</q-card-section>
                 </q-card>
               </div>
-              <div class="col-2">
-                <q-card class="bg-grey-3">
+              <div class="col-4">
+                <q-card class="bg-grey-3 q-ma-sm ">
                   <q-card-section class="text-center text-h5"><q-icon name="data_usage"></q-icon> Disk
                     usage</q-card-section>
                   <q-separator inset />
