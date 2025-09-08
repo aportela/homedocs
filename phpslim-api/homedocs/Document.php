@@ -77,7 +77,7 @@ class Document
             function ($item) {
                 $item->createdOnTimestamp = intval($item->createdOnTimestamp);
                 $item->fileCount = intval($item->fileCount);
-                $item->tags = explode(",", $item->tags);
+                $item->tags = $item->tags ? explode(",", $item->tags) : [];
                 return ($item);
             },
             $results
