@@ -529,9 +529,7 @@ function onAddNote(newNote) {
 function onUpdateNote(updatedNote) {
   const idx = document.value.notes.findIndex((note) => note.id == updatedNote.id)
   if (idx >= 0) {
-    console.log(document.value.notes[idx].body);
     document.value.notes[idx].body = updatedNote.body;
-    console.log(document.value.notes[idx].body);
   }
 }
 
