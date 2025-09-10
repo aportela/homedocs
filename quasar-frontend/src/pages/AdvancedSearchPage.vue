@@ -30,9 +30,9 @@
                 </q-input>
                 <div class="row">
                   <div class="col">
-                    <q-select class="q-mb-md" dense outlined v-model="advancedSearchData.filter.dateFilterType"
-                      :options="dateFilterOptions" :label="t('Document date')"
-                      :disable="searching || disableFilterDatesByRouteParams" />
+                    <q-select class="q-mb-md" dense outlined clearable
+                      v-model="advancedSearchData.filter.dateFilterType" :options="dateFilterOptions"
+                      :label="t('Document date')" :disable="searching || disableFilterDatesByRouteParams" />
                   </div>
                   <div class="col" v-if="advancedSearchData.hasFromDateFilter">
                     <q-input dense outlined mask="date" v-model="advancedSearchData.filter.fromDate"
@@ -210,7 +210,7 @@ const totalSearchConditions = computed(() => {
   if (advancedSearchData.filter.tags && advancedSearchData.filter.tags.length > 0) {
     total += advancedSearchData.filter.tags.length;
   }
-  if (advancedSearchData.filter.dateFilterType.value != 0) {
+  if (advancedSearchData.filter.dateFilterType && advancedSearchData.filter.dateFilterType.value != 0) {
     total++;
   }
   return (total);
@@ -219,7 +219,7 @@ const totalSearchConditions = computed(() => {
 watch(
   () => advancedSearchData.filter.dateFilterType,
   (dateFilterType) => {
-    advancedSearchData.recalcDates(dateFilterType)
+    advancedSearchData.recalcDates(dateFilterType || 0)
   }
 );
 
