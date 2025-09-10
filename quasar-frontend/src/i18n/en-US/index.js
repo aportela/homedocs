@@ -98,6 +98,7 @@ export default {
   Cancel: "Cancel",
   Download: "Download",
   Close: "Close",
+  Save: "Save",
   "Delete document": "Delete document",
   "Document has been removed": "Document has been removed",
   "Can not upload file": "Can not upload file {filename}",

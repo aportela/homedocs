@@ -100,6 +100,7 @@ export default {
   Ok: "Ok",
   Cancel: "Cancelar",
   Close: "Pechar",
+  Save: "Gardar",
   "Delete document": "Eliminar documento",
   "Document has been removed": "O documento foi eliminado",
   "Can not upload file": "Non se puede subir o arquivo {filename}",
