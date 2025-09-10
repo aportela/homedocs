@@ -229,153 +229,166 @@ class Document
                 ",
             $params
         )) {
-            $dbh->exec(
-                "
-                        DELETE FROM DOCUMENT_TAG
-                        WHERE document_id = :document_id
-                    ",
-                array(
-                    new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
-                )
-            );
-            $tagsQuery = "
-                    INSERT INTO DOCUMENT_TAG
-                        (document_id, tag)
-                    VALUES
-                        (:document_id, :tag)
-                ";
-            foreach ($this->tags as $tag) {
-                if (!empty($tag)) {
-                    $params = array(
+            // TODO: fail with multiple updates on same timestamp
+            $historyQuery = "
+                INSERT INTO DOCUMENT_HISTORY
+                    (document_id, operation_date, operation_type, operation_user_id)
+                VALUES
+                    (:document_id, strftime('%s', 'now'), 2, :created_by_user_id)
+            ";
+            $params = [
+                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
+                (new \aportela\DatabaseWrapper\Param\StringParam(":created_by_user_id", \HomeDocs\UserSession::getUserId()))
+            ];
+            if ($dbh->exec($historyQuery, $params)) {
+                $dbh->exec(
+                    "
+                            DELETE FROM DOCUMENT_TAG
+                            WHERE document_id = :document_id
+                        ",
+                    array(
                         new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
-                        new \aportela\DatabaseWrapper\Param\StringParam(":tag", mb_strtolower($tag))
-                    );
-                    $dbh->exec($tagsQuery, $params);
-                } else {
-                    throw new \HomeDocs\Exception\InvalidParamsException("tag");
-                }
-            }
-            $originalFiles = $this->getFiles($dbh);
-            foreach ($originalFiles as $originalFile) {
-                $notFound = true;
-                foreach ($this->files as $file) {
-                    if ($file->id == $originalFile->id) {
-                        $notFound = false;
+                    )
+                );
+                $tagsQuery = "
+                        INSERT INTO DOCUMENT_TAG
+                            (document_id, tag)
+                        VALUES
+                            (:document_id, :tag)
+                    ";
+                foreach ($this->tags as $tag) {
+                    if (!empty($tag)) {
+                        $params = array(
+                            new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
+                            new \aportela\DatabaseWrapper\Param\StringParam(":tag", mb_strtolower($tag))
+                        );
+                        $dbh->exec($tagsQuery, $params);
+                    } else {
+                        throw new \HomeDocs\Exception\InvalidParamsException("tag");
                     }
                 }
-                if ($notFound) {
-                    $dbh->exec(
-                        "
-                                DELETE FROM DOCUMENT_FILE
-                                WHERE document_id = :document_id
-                                AND file_id = :file_id
-                            ",
-                        array(
-                            new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
-                            new \aportela\DatabaseWrapper\Param\StringParam(":file_id", mb_strtolower($originalFile->id))
-                        )
-                    );
-                    $file = new \HomeDocs\File($this->rootStoragePath, $originalFile->id);
-                    $file->remove($dbh);
-                }
-            }
-            foreach ($this->files as $file) {
-                if (!empty($file->id)) {
+                $originalFiles = $this->getFiles($dbh);
+                foreach ($originalFiles as $originalFile) {
                     $notFound = true;
-                    foreach ($originalFiles as $originalFile) {
+                    foreach ($this->files as $file) {
                         if ($file->id == $originalFile->id) {
                             $notFound = false;
                         }
                     }
                     if ($notFound) {
+                        $dbh->exec(
+                            "
+                                    DELETE FROM DOCUMENT_FILE
+                                    WHERE document_id = :document_id
+                                    AND file_id = :file_id
+                                ",
+                            array(
+                                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
+                                new \aportela\DatabaseWrapper\Param\StringParam(":file_id", mb_strtolower($originalFile->id))
+                            )
+                        );
+                        $file = new \HomeDocs\File($this->rootStoragePath, $originalFile->id);
+                        $file->remove($dbh);
+                    }
+                }
+                foreach ($this->files as $file) {
+                    if (!empty($file->id)) {
+                        $notFound = true;
+                        foreach ($originalFiles as $originalFile) {
+                            if ($file->id == $originalFile->id) {
+                                $notFound = false;
+                            }
+                        }
+                        if ($notFound) {
+                            $params = array(
+                                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
+                                new \aportela\DatabaseWrapper\Param\StringParam(":file_id", mb_strtolower($file->id))
+                            );
+                            $dbh->exec(
+                                "
+                                        INSERT INTO DOCUMENT_FILE
+                                            (document_id, file_id)
+                                        VALUES
+                                            (:document_id, :file_id)
+                                    ",
+                                $params
+                            );
+                        }
+                    } else {
+                        throw new \HomeDocs\Exception\InvalidParamsException("fileId");
+                    }
+                }
+                $originalNotes = $this->getNotes($dbh);
+                foreach ($originalNotes as $originalNote) {
+                    $notFound = true;
+                    foreach ($this->notes as $note) {
+                        if ($note->id == $originalNote->id) {
+                            $notFound = false;
+                        }
+                    }
+                    if ($notFound) {
+                        $dbh->exec(
+                            "
+                                    DELETE FROM DOCUMENT_NOTE
+                                    WHERE document_id = :document_id
+                                    AND note_id = :note_id
+                                ",
+                            array(
+                                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
+                                new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower($originalNote->id))
+                            )
+                        );
+                    }
+                }
+                foreach ($this->notes as $note) {
+                    if (empty($note->id)) {
+                        $note->id = \HomeDocs\Utils::uuidv4();
+                    }
+                    $notFound = true;
+                    foreach ($originalNotes as $originalNote) {
+                        if ($note->id == $originalNote->id) {
+                            $notFound = false;
+                            if ($note->body !== $originalNote->body) {
+                                $noteQuery = "
+                                    UPDATE DOCUMENT_NOTE SET
+                                        body = :note_body
+                                    WHERE
+                                        note_id = :note_id
+                                    AND
+                                        document_id =:document_id
+                                    AND
+                                        created_by_user_id = :created_by_user_id
+                                ";
+                                $params = array(
+                                    new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower($note->id)),
+                                    new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
+                                    new \aportela\DatabaseWrapper\Param\StringParam(":created_by_user_id", \HomeDocs\UserSession::getUserId()),
+                                    new \aportela\DatabaseWrapper\Param\StringParam(":note_body", $note->body),
+                                );
+                                $dbh->exec($noteQuery, $params);
+                                break;
+                            } else {
+                                break;
+                            }
+                        }
+                    }
+                    if ($notFound) {
                         $params = array(
+                            new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower($note->id)),
                             new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
-                            new \aportela\DatabaseWrapper\Param\StringParam(":file_id", mb_strtolower($file->id))
+                            new \aportela\DatabaseWrapper\Param\StringParam(":created_by_user_id", \HomeDocs\UserSession::getUserId()),
+                            new \aportela\DatabaseWrapper\Param\StringParam(":note_body", $note->body),
                         );
                         $dbh->exec(
                             "
-                                    INSERT INTO DOCUMENT_FILE
-                                        (document_id, file_id)
-                                    VALUES
-                                        (:document_id, :file_id)
-                                ",
+                                INSERT INTO DOCUMENT_NOTE
+                                    (note_id, document_id, created_on_timestamp, created_by_user_id, body)
+                                VALUES
+                                    (:note_id, :document_id, strftime('%s', 'now'), :created_by_user_id, :note_body)
+                            ",
                             $params
                         );
                     }
-                } else {
-                    throw new \HomeDocs\Exception\InvalidParamsException("fileId");
-                }
-            }
-            $originalNotes = $this->getNotes($dbh);
-            foreach ($originalNotes as $originalNote) {
-                $notFound = true;
-                foreach ($this->notes as $note) {
-                    if ($note->id == $originalNote->id) {
-                        $notFound = false;
-                    }
-                }
-                if ($notFound) {
-                    $dbh->exec(
-                        "
-                                DELETE FROM DOCUMENT_NOTE
-                                WHERE document_id = :document_id
-                                AND note_id = :note_id
-                            ",
-                        array(
-                            new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
-                            new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower($originalNote->id))
-                        )
-                    );
-                }
-            }
-            foreach ($this->notes as $note) {
-                if (empty($note->id)) {
-                    $note->id = \HomeDocs\Utils::uuidv4();
-                }
-                $notFound = true;
-                foreach ($originalNotes as $originalNote) {
-                    if ($note->id == $originalNote->id) {
-                        $notFound = false;
-                        if ($note->body !== $originalNote->body) {
-                            $noteQuery = "
-                                UPDATE DOCUMENT_NOTE SET
-                                    body = :note_body
-                                WHERE
-                                    note_id = :note_id
-                                AND
-                                    document_id =:document_id
-                                AND
-                                    created_by_user_id = :created_by_user_id
-                            ";
-                            $params = array(
-                                new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower($note->id)),
-                                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
-                                new \aportela\DatabaseWrapper\Param\StringParam(":created_by_user_id", \HomeDocs\UserSession::getUserId()),
-                                new \aportela\DatabaseWrapper\Param\StringParam(":note_body", $note->body),
-                            );
-                            $dbh->exec($noteQuery, $params);
-                            break;
-                        } else {
-                            break;
-                        }
-                    }
-                }
-                if ($notFound) {
-                    $params = array(
-                        new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower($note->id)),
-                        new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
-                        new \aportela\DatabaseWrapper\Param\StringParam(":created_by_user_id", \HomeDocs\UserSession::getUserId()),
-                        new \aportela\DatabaseWrapper\Param\StringParam(":note_body", $note->body),
-                    );
-                    $dbh->exec(
-                        "
-                            INSERT INTO DOCUMENT_NOTE
-                                (note_id, document_id, created_on_timestamp, created_by_user_id, body)
-                            VALUES
-                                (:note_id, :document_id, strftime('%s', 'now'), :created_by_user_id, :note_body)
-                        ",
-                        $params
-                    );
                 }
             }
         }
