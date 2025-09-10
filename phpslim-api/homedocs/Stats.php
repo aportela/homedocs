@@ -11,10 +11,12 @@ class Stats
         $result = $dbh->query(
             "
                 SELECT
-                    COALESCE(COUNT(DOCUMENT.id), 0) AS total
-                FROM DOCUMENT
+                    COALESCE(COUNT(DOCUMENT_HISTORY.document_id), 0) AS total
+                FROM DOCUMENT_HISTORY
                 WHERE
-                    DOCUMENT.created_by_user_id = :session_user_id
+                    DOCUMENT_HISTORY.operation_type = 1
+                AND
+                    DOCUMENT_HISTORY.operation_user_id = :session_user_id
             ",
             array(
                 new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
@@ -30,9 +32,11 @@ class Stats
                 SELECT
                     COALESCE(COUNT(DOCUMENT_FILE.file_id), 0) AS total
                 FROM DOCUMENT_FILE
-                INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_FILE.document_id
+                INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_FILE.document_id
                 WHERE
-                    DOCUMENT.created_by_user_id = :session_user_id
+                    DOCUMENT_HISTORY.operation_type = 1
+                AND
+                    DOCUMENT_HISTORY.operation_user_id = :session_user_id
             ",
             array(
                 new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
@@ -48,10 +52,12 @@ class Stats
                 SELECT
                     COALESCE(SUM(FILE.size), 0) AS total
                 FROM DOCUMENT_FILE
-                INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_FILE.document_id
+                INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_FILE.document_id
                 INNER JOIN FILE ON FILE.id = DOCUMENT_FILE.file_id
                 WHERE
-                    DOCUMENT.created_by_user_id = :session_user_id
+                    DOCUMENT_HISTORY.operation_type = 1
+                AND
+                    DOCUMENT_HISTORY.operation_user_id = :session_user_id
             ",
             array(
                 new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
@@ -65,12 +71,15 @@ class Stats
         $results = $dbh->query(
             "
                 SELECT
-                    DATE(DOCUMENT.created_on_timestamp, 'unixepoch') AS activity_date, COUNT(*) AS total
-                FROM DOCUMENT
+                    DATE(DOCUMENT_HISTORY.operation_date, 'unixepoch') AS activity_date, COUNT(*) AS total
+                FROM
+                    DOCUMENT_HISTORY
                 WHERE
-                    DOCUMENT.created_by_user_id = :session_user_id
+                    DOCUMENT_HISTORY.operation_type = 1
                 AND
-                    DOCUMENT.created_on_timestamp >= strftime('%s', 'now', '-1 year')
+                    DOCUMENT_HISTORY.operation_user_id = :session_user_id
+                AND
+                    DOCUMENT_HISTORY.operation_date >= strftime('%s', 'now', '-1 year')
                 GROUP BY activity_date
                 ORDER BY activity_date
             ",
