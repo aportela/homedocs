@@ -29,11 +29,9 @@
                 <q-tab name="attachments" icon="attach_file" :label="t('Attachments')">
                   <q-badge floating>{{ document.files.length }}</q-badge>
                 </q-tab>
-                <!--
                 <q-tab name="notes" icon="forum" label="Notes">
-                  <q-badge floating>0</q-badge>
+                  <q-badge floating>{{ document.notes.length }}</q-badge>
                 </q-tab>
-                -->
               </q-tabs>
               <q-separator />
               <q-tab-panels v-model="tab" animated>
@@ -101,9 +99,28 @@
                     </tbody>
                   </q-markup-table>
                 </q-tab-panel>
-                <!--
-                <q-tab-panel name="notes">TODO</q-tab-panel>
-                -->
+                <q-tab-panel name="notes">
+                  <q-btn label="Add note" @click="showNoteDialog = true"></q-btn>
+                  <q-list>
+                    <q-item clickable hint="click to open note" v-for="note, noteIndex in document.notes" :key="note.id"
+                      class="q-mb-lg">
+                      <q-item-section>
+                        <q-item-label>
+                          {{ note.createdOn }}
+                        </q-item-label>
+                        <q-item-label caption lines="2">
+                          {{ note.body }}
+                        </q-item-label>
+                      </q-item-section>
+                      <q-item-section side top>
+                        <q-item-label caption>
+                          <q-btn flat size="sm" icon="delete"
+                            @click.prevent="onShowNoteRemoveConfirmationDialog(note, noteIndex)"></q-btn>
+                        </q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </q-list>
+                </q-tab-panel>
               </q-tab-panels>
             </q-card-section>
             <q-card-section>
@@ -122,7 +139,11 @@
     <FilePreviewModal v-if="showPreviewFileDialog" :files="document.files" :index="selectedFileIndex"
       @close="showPreviewFileDialog = false">
     </FilePreviewModal>
-    <ConfirmationModal v-if="showConfirmDeleteFileDialog || showConfirmDeleteDocumentDialog"
+    <NoteModal v-if="showNoteDialog" @close="showNoteDialog = false" @cancel="showNoteDialog = false"
+      @add="showNoteDialog = false" @update="showNoteDialog = false" :note="currentNote">
+    </NoteModal>
+    <ConfirmationModal
+      v-if="showConfirmDeleteFileDialog || showConfirmDeleteDocumentDialog || showConfirmDeleteNoteDialog"
       @close="onCancelConfirmationModal" @cancel="onCancelConfirmationModal" @ok="onSuccessConfirmationModal">
       <template v-slot:header v-if="showConfirmDeleteFileDialog">
         <div class="text-h6">{{ t("Remove document file") }}</div>
@@ -132,8 +153,21 @@
         <div class="text-h6">{{ t("Delete document") }}</div>
         <div class="text-subtitle2">{{ t("Document title") + ": " + document.title }}</div>
       </template>
+      <template v-slot:header v-else-if="showConfirmDeleteNoteDialog">
+        <div class="text-h6">{{ t("Delete note") }}</div>
+      </template>
       <template v-slot:body v-if="showConfirmDeleteFileDialog">
         <strong>{{ t("Are you sure ? (You must save the document after deleting this file)") }}</strong>
+      </template>
+      <template v-slot:body v-else-if="showConfirmDeleteNoteDialog">
+        <q-card>
+          <q-card-section class="pre-line">
+            {{ document.notes[selectedNoteIndex].body }}
+          </q-card-section>
+        </q-card>
+        <p class="q-mt-md">
+          <strong>{{ t("Are you sure ? (You must save the document after deleting this note)") }}</strong>
+        </p>
       </template>
       <template v-slot:body v-else-if="showConfirmDeleteDocumentDialog">
         <strong>{{ t("This operation cannot be undone. Would you like to proceed ?") }}</strong>
@@ -152,6 +186,7 @@ import { api } from 'boot/axios'
 import { default as TagSelector } from "components/TagSelector.vue";
 import { default as ConfirmationModal } from "components/ConfirmationModal.vue";
 import { default as FilePreviewModal } from "components/FilePreviewModal.vue";
+import { default as NoteModal } from "components/NoteModal.vue";
 import { useInitialStateStore } from "stores/initialState";
 
 const tab = ref("attachments");
@@ -164,14 +199,18 @@ const initialState = useInitialStateStore();
 const maxFileSize = computed(() => initialState.maxUploadFileSize);
 const uploaderRef = ref(null);
 const selectedFileIndex = ref(null);
+const selectedNoteIndex = ref(null);
 const showPreviewFileDialog = ref(false);
 const showConfirmDeleteFileDialog = ref(false);
 const showConfirmDeleteDocumentDialog = ref(false);
+const showConfirmDeleteNoteDialog = ref(false);
+const showNoteDialog = ref(false);
 const titleRef = ref(null);
 const isNew = ref(false);
 const loading = ref(false);
 const saving = ref(false);
 const uploading = ref(false);
+const currentNote = ref({ id: null, body: null });
 
 const document = ref({
   id: null,
@@ -181,7 +220,8 @@ const document = ref({
   createdOnTimestamp: null,
   createdBy: null,
   files: [],
-  tags: []
+  tags: [],
+  notes: []
 });
 
 router.beforeEach(async (to, from) => {
@@ -196,7 +236,8 @@ router.beforeEach(async (to, from) => {
       date: null,
       createdBy: null,
       files: [],
-      tags: []
+      tags: [],
+      notes: []
     }
     isNew.value = true;
   } else if (from.name == "newDocument" && to.name == "document" && to.params.id) {
@@ -226,6 +267,11 @@ function onRefresh() {
         file.humanSize = format.humanStorageSize(file.size);
         file.url = "api2/file/" + file.id;
         return (file);
+      });
+      document.value.notes.map((note) => {
+        note.isNew = false;
+        note.createdOn = date.formatDate(note.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
+        return (note);
       });
       loading.value = false;
       if (titleRef.value) {
@@ -266,6 +312,11 @@ function onSubmitForm() {
           file.uploadedOn = date.formatDate(file.uploadedOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
           file.humanSize = format.humanStorageSize(file.size);
           return (file);
+        });
+        document.value.notes.map((note) => {
+          note.isNew = false;
+          note.createdOn = date.formatDate(note.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
+          return (note);
         });
         loading.value = false;
         nextTick(() => {
@@ -371,11 +422,14 @@ function onShowFileRemoveConfirmationDialog(file, fileIndex) {
 function onCancelConfirmationModal() {
   showConfirmDeleteFileDialog.value = false;
   showConfirmDeleteDocumentDialog.value = false;
+  showConfirmDeleteNoteDialog.value = false;
 }
 
 function onSuccessConfirmationModal() {
   if (showConfirmDeleteFileDialog.value) {
     onRemoveSelectedFile();
+  } else if (showConfirmDeleteNoteDialog.value) {
+    onRemoveSelectedNote();
   } else if (showConfirmDeleteDocumentDialog.value) {
     onDeleteDocument();
   }
@@ -452,6 +506,19 @@ function onUploadsFinish(e) {
   uploading.value = false;
 }
 
+function onShowNoteRemoveConfirmationDialog(note, noteIndex) {
+  selectedNoteIndex.value = noteIndex;
+  showConfirmDeleteNoteDialog.value = true;
+}
+
+function onRemoveSelectedNote() {
+  if (selectedNoteIndex.value > -1) {
+    document.value.notes.splice(selectedNoteIndex.value, 1);
+    selectedNoteIndex.value = null;
+    showConfirmDeleteNoteDialog.value = false;
+  }
+}
+
 function onDeleteDocument() {
   loading.value = true;
   api.document.
@@ -507,3 +574,9 @@ if (document.value.id) {
 }
 
 </script>
+
+<style scoped>
+.pre-line {
+  white-space: pre-line;
+}
+</style>

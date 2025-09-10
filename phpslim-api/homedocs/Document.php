@@ -12,16 +12,18 @@ class Document
     public ?int $createdOnTimestamp;
     public ?string $createdBy;
     public ?array $files = array();
+    public ?array $notes = array();
     public ?string $rootStoragePath;
     public ?array $tags = array();
 
-    public function __construct(string $id = "", string $title = "", string $description = "", $tags = array(), $files = array())
+    public function __construct(string $id = "", string $title = "", string $description = "", $tags = array(), $files = array(), $notes = array())
     {
         $this->id = $id;
         $this->title = $title;
         $this->description = $description;
         $this->tags = $tags;
         $this->files = $files;
+        $this->notes = $notes;
     }
 
     public function setRootStoragePath(string $rootStoragePath): void
@@ -35,21 +37,19 @@ class Document
             sprintf(
                 "
                     WITH DOCUMENTS_FILES AS (
-                        SELECT document_id, COUNT(*) AS fileCount
+                        SELECT DOCUMENT_FILE.document_id, COUNT(*) AS fileCount
                         FROM DOCUMENT_FILE
-                        JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_FILE.document_id
-                        WHERE DOCUMENT.created_by_user_id = :session_user_id
-                        GROUP BY document_id
+                        INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_FILE.document_id AND DOCUMENT_HISTORY.operation_type = 1 AND DOCUMENT_HISTORY.operation_user_id = :session_user_id
+                        GROUP BY DOCUMENT_FILE.document_id
                     ),
                     DOCUMENTS_TAGS AS (
                         SELECT document_id, GROUP_CONCAT(tag, ',') AS tags
                         FROM (
-                            SELECT document_id, tag
+                            SELECT DOCUMENT_TAG.document_id, DOCUMENT_TAG.tag
                             FROM DOCUMENT_TAG
-                            JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_TAG.document_id
-                            WHERE DOCUMENT.created_by_user_id = :session_user_id
-                            GROUP BY document_id, tag  -- DISTINCT tags
-                            ORDER BY tag
+                            INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_TAG.document_id AND DOCUMENT_HISTORY.operation_type = 1 AND DOCUMENT_HISTORY.operation_user_id = :session_user_id
+                            GROUP BY DOCUMENT_TAG.document_id, DOCUMENT_TAG.tag
+                            ORDER BY DOCUMENT_TAG.tag
                         )
                         GROUP BY document_id
                     )
@@ -57,14 +57,14 @@ class Document
                         DOCUMENT.id,
                         DOCUMENT.title,
                         DOCUMENT.description,
-                        CAST(DOCUMENT.created_on_timestamp AS INT) AS createdOnTimestamp,
+                        CAST(DOCUMENT_HISTORY.operation_date AS INT) AS createdOnTimestamp,
                         COALESCE(DOCUMENTS_FILES.fileCount, 0) AS fileCount,
                         DOCUMENTS_TAGS.tags
                     FROM DOCUMENT
+                    INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT.id AND DOCUMENT_HISTORY.operation_type = 1 AND DOCUMENT_HISTORY.operation_user_id = :session_user_id
                     LEFT JOIN DOCUMENTS_FILES ON DOCUMENTS_FILES.document_id = DOCUMENT.id
                     LEFT JOIN DOCUMENTS_TAGS ON DOCUMENTS_TAGS.document_id = DOCUMENT.id
-                    WHERE DOCUMENT.created_by_user_id = :session_user_id
-                    ORDER BY DOCUMENT.created_on_timestamp DESC
+                    ORDER BY DOCUMENT_HISTORY.operation_date DESC
                     LIMIT %d;
                 ",
                 $count
@@ -85,6 +85,7 @@ class Document
         return ($results);
     }
 
+    // TODO: define MAX_LENGTH FOR TITLE/DESCRIPTION/TAG/NOTE_BODY consts
     private function validate(): void
     {
         if (!empty($this->id) && mb_strlen($this->id) == 36) {
@@ -96,6 +97,17 @@ class Document
                                 throw new \HomeDocs\Exception\InvalidParamsException("tags");
                             } elseif (mb_strlen($tag) > 32) {
                                 throw new \HomeDocs\Exception\InvalidParamsException("tags");
+                            }
+                        }
+                    }
+                    if (is_array($this->notes) && count($this->notes) > 0) {
+                        foreach ($this->notes as $note) {
+                            if (! empty($note->id) && mb_strlen($note->id) == 36) {
+                                if (! (!empty($note->body) && mb_strlen($note->body) <= 16384)) {
+                                    throw new \HomeDocs\Exception\InvalidParamsException("note_body");
+                                }
+                            } else {
+                                $note->id = \HomeDocs\Utils::uuidv4();
                             }
                         }
                     }
@@ -116,7 +128,6 @@ class Document
         $params = array(
             (new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id))),
             (new \aportela\DatabaseWrapper\Param\StringParam(":title", $this->title)),
-            (new \aportela\DatabaseWrapper\Param\StringParam(":created_by_user_id", \HomeDocs\UserSession::getUserId()))
         );
         if (!empty($this->description)) {
             $params[] = (new \aportela\DatabaseWrapper\Param\StringParam(":description", $this->description));
@@ -126,44 +137,68 @@ class Document
         if ($dbh->exec(
             "
                     INSERT INTO DOCUMENT
-                        (id, title, description, created_by_user_id, created_on_timestamp)
+                        (id, title, description)
                     VALUES
-                        (:id, :title, :description, :created_by_user_id, strftime('%s', 'now'))
+                        (:id, :title, :description)
                 ",
             $params
         )) {
-            $tagsQuery = "
-                    INSERT INTO DOCUMENT_TAG
-                        (document_id, tag)
-                    VALUES
-                        (:document_id, :tag)
-                ";
-            foreach ($this->tags as $tag) {
-                if (!empty($tag)) {
-                    $params = array(
-                        new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
-                        new \aportela\DatabaseWrapper\Param\StringParam(":tag", mb_strtolower($tag))
-                    );
-                    $dbh->exec($tagsQuery, $params);
-                } else {
-                    throw new \HomeDocs\Exception\InvalidParamsException("tag");
+            $historyQuery = "
+                INSERT INTO DOCUMENT_HISTORY
+                    (document_id, operation_date, 1, operation_user_id)
+                VALUES
+                    (:document_id, strftime('%s', 'now'), 1, :created_by_user_id)
+            ";
+            $params[] = (new \aportela\DatabaseWrapper\Param\StringParam(":created_by_user_id", \HomeDocs\UserSession::getUserId()));
+            if ($dbh->exec($historyQuery, $params)) {
+                $tagsQuery = "
+                        INSERT INTO DOCUMENT_TAG
+                            (document_id, tag)
+                        VALUES
+                            (:document_id, :tag)
+                    ";
+                foreach ($this->tags as $tag) {
+                    if (!empty($tag)) {
+                        $params = array(
+                            new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
+                            new \aportela\DatabaseWrapper\Param\StringParam(":tag", mb_strtolower($tag))
+                        );
+                        $dbh->exec($tagsQuery, $params);
+                    } else {
+                        throw new \HomeDocs\Exception\InvalidParamsException("tag");
+                    }
                 }
-            }
-            $filesQuery = "
-                    INSERT INTO DOCUMENT_FILE
-                        (document_id, file_id)
+                $filesQuery = "
+                        INSERT INTO DOCUMENT_FILE
+                            (document_id, file_id)
+                        VALUES
+                            (:document_id, :file_id)
+                    ";
+                foreach ($this->files as $file) {
+                    if (!empty($file->id)) {
+                        $params = array(
+                            new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
+                            new \aportela\DatabaseWrapper\Param\StringParam(":file_id", mb_strtolower($file->id))
+                        );
+                        $dbh->exec($filesQuery, $params);
+                    } else {
+                        throw new \HomeDocs\Exception\InvalidParamsException("fileId");
+                    }
+                }
+                $notesQuery = "
+                    INSERT INTO DOCUMENT_NOTE
+                        (note_id, document_id, created_on_timestamp, created_by_user_id, body)
                     VALUES
-                        (:document_id, :file_id)
+                        (:note_id, :document_id, strftime('%s', 'now'), :created_by_user_id, :note_body)
                 ";
-            foreach ($this->files as $file) {
-                if (!empty($file->id)) {
+                foreach ($this->notes as $note) {
                     $params = array(
+                        new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower($note->id)),
                         new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
-                        new \aportela\DatabaseWrapper\Param\StringParam(":file_id", mb_strtolower($file->id))
+                        new \aportela\DatabaseWrapper\Param\StringParam(":created_by_user_id", \HomeDocs\UserSession::getUserId()),
+                        new \aportela\DatabaseWrapper\Param\StringParam(":note_body", $note->body),
                     );
-                    $dbh->exec($filesQuery, $params);
-                } else {
-                    throw new \HomeDocs\Exception\InvalidParamsException("fileId");
+                    $dbh->exec($notesQuery, $params);
                 }
             }
         }
@@ -268,6 +303,78 @@ class Document
                     throw new \HomeDocs\Exception\InvalidParamsException("fileId");
                 }
             }
+            $originalNotes = $this->getNotes($dbh);
+            foreach ($originalNotes as $originalNote) {
+                $notFound = true;
+                foreach ($this->notes as $note) {
+                    if ($note->id == $originalNote->id) {
+                        $notFound = false;
+                    }
+                }
+                if ($notFound) {
+                    $dbh->exec(
+                        "
+                                DELETE FROM DOCUMENT_NOTE
+                                WHERE document_id = :document_id
+                                AND note_id = :note_id
+                            ",
+                        array(
+                            new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
+                            new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower($originalNote->id))
+                        )
+                    );
+                }
+            }
+            foreach ($this->notes as $note) {
+                if (empty($note->id)) {
+                    $note->id = \HomeDocs\Utils::uuidv4();
+                }
+                $notFound = true;
+                foreach ($originalNotes as $originalNote) {
+                    if ($note->id == $originalNote->id) {
+                        $notFound = false;
+                        if ($note->body !== $originalNote->body) {
+                            $noteQuery = "
+                                UPDATE DOCUMENT_NOTE SET
+                                    body = :note_body
+                                WHERE
+                                    note_id = :note_id
+                                AND
+                                    document_id =:document_id
+                                AND
+                                    created_by_user_id = :created_by_user_id
+                            ";
+                            $params = array(
+                                new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower($note->id)),
+                                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
+                                new \aportela\DatabaseWrapper\Param\StringParam(":created_by_user_id", \HomeDocs\UserSession::getUserId()),
+                                new \aportela\DatabaseWrapper\Param\StringParam(":note_body", $note->body),
+                            );
+                            $dbh->exec($noteQuery, $params);
+                            break;
+                        } else {
+                            break;
+                        }
+                    }
+                }
+                if ($notFound) {
+                    $params = array(
+                        new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower($note->id)),
+                        new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
+                        new \aportela\DatabaseWrapper\Param\StringParam(":created_by_user_id", \HomeDocs\UserSession::getUserId()),
+                        new \aportela\DatabaseWrapper\Param\StringParam(":note_body", $note->body),
+                    );
+                    $dbh->exec(
+                        "
+                            INSERT INTO DOCUMENT_NOTE
+                                (note_id, document_id, created_on_timestamp, created_by_user_id, body)
+                            VALUES
+                                (:note_id, :document_id, strftime('%s', 'now'), :created_by_user_id, :note_body)
+                        ",
+                        $params
+                    );
+                }
+            }
         }
     }
 
@@ -316,8 +423,9 @@ class Document
             $data = $dbh->query(
                 "
                         SELECT
-                            title, description, created_on_timestamp AS createdOnTimestamp, created_by_user_id AS createdByUserId
+                            title, description, DOCUMENT_HISTORY.operation_date AS createdOnTimestamp, DOCUMENT_HISTORY.operation_user_id AS createdByUserId
                         FROM DOCUMENT
+                        INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT.id AND DOCUMENT_HISTORY.operation_type = 1
                         WHERE id = :id
                 ",
                 array(
@@ -331,6 +439,7 @@ class Document
                     $this->createdOnTimestamp = intval($data[0]->createdOnTimestamp);
                     $this->tags = $this->getTags($dbh);
                     $this->files = $this->getFiles($dbh);
+                    $this->notes = $this->getNotes($dbh);
                 } else {
                     throw new \HomeDocs\Exception\AccessDeniedException("id");
                 }
@@ -398,14 +507,39 @@ class Document
         return ($files);
     }
 
+    private function getNotes(\aportela\DatabaseWrapper\DB $dbh): array
+    {
+        $notes = [];
+        $data = $dbh->query(
+            "
+                    SELECT
+                        DOCUMENT_NOTE.note_id AS noteId, DOCUMENT_NOTE.created_on_timestamp AS createdOnTimestamp, DOCUMENT_NOTE.body
+                    FROM DOCUMENT_NOTE
+                    WHERE DOCUMENT_NOTE.document_id = :document_id
+                    ORDER BY DOCUMENT_NOTE.created_on_timestamp DESC
+                ",
+            array(
+                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id))
+            )
+        );
+        if (is_array($data) && count($data) > 0) {
+            foreach ($data as $item) {
+                $notes[] = new \HomeDocs\Note(
+                    $item->noteId,
+                    $item->createdOnTimestamp,
+                    $item->body
+                );
+            }
+        }
+        return ($notes);
+    }
+
     public static function search(\aportela\DatabaseWrapper\DB $dbh, int $currentPage = 1, int $resultsPage = 16, $filter = array(), string $sortBy = "createdOnTimestamp", string $sortOrder = "DESC"): \stdClass
     {
         $data = new \stdClass();
         $data->pagination = new \stdClass();
         $data->documents = array();
-        $queryConditions = array(
-            " DOCUMENT.created_by_user_id = :session_user_id "
-        );
+        $queryConditions = array();
         $params = array(
             new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
         );
@@ -437,11 +571,11 @@ class Document
         }
         if (isset($filter["fromTimestampCondition"]) && $filter["fromTimestampCondition"] > 0) {
             $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":fromTimestamp", $filter["fromTimestampCondition"]);
-            $queryConditions[] = " DOCUMENT.created_on_timestamp >= :fromTimestamp ";
+            $queryConditions[] = " DOCUMENT_HISTORY.operation_date >= :fromTimestamp ";
         }
         if (isset($filter["toTimestampCondition"]) && $filter["toTimestampCondition"] > 0) {
             $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":toTimestamp", $filter["toTimestampCondition"]);
-            $queryConditions[] = " DOCUMENT.created_on_timestamp <= :toTimestamp ";
+            $queryConditions[] = " DOCUMENT_HISTORY.operation_date <= :toTimestamp ";
         }
         if (isset($filter["tags"]) && is_array($filter["tags"]) && count($filter["tags"]) > 0) {
             foreach ($filter["tags"] as $i => $tag) {
@@ -466,6 +600,7 @@ class Document
                 SELECT
                     COUNT (DOCUMENT.id) AS total
                 FROM DOCUMENT
+                INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT.id AND DOCUMENT_HISTORY.operation_user_id = :session_user_id
                 %s
             ', $whereCondition);
         $result = $dbh->query($queryCount, $params);
@@ -499,6 +634,7 @@ class Document
                             SELECT
                                 DOCUMENT.id, DOCUMENT.title, DOCUMENT.description, DOCUMENT.created_on_timestamp AS createdOnTimestamp, TMP_FILE.fileCount
                             FROM DOCUMENT
+                            INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT.id AND DOCUMENT_HISTORY.operation_user_id = :session_user_id
                             LEFT JOIN (
                                 SELECT COUNT(*) AS fileCount, document_id
                                 FROM DOCUMENT_FILE

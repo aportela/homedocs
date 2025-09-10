@@ -154,12 +154,24 @@ return function (App $app) {
                         );
                     }
                 }
+                $documentNotes = $params["notes"] ?? [];
+                $notes = array();
+                if (is_array($documentNotes) && count($documentNotes) > 0) {
+                    foreach ($documentNotes as $documentNote) {
+                        $notes[] = new \HomeDocs\Note(
+                            $documentNote["id"],
+                            $documentNote["createdOnTimestamp"],
+                            $documentNote["body"]
+                        );
+                    }
+                }
                 $document = new \HomeDocs\Document(
                     $args['id'],
                     $params["title"] ?? "",
                     $params["description"] ?? "",
                     $params["tags"] ?? [],
-                    $files
+                    $files,
+                    $notes,
                 );
                 $document->setRootStoragePath($this->get('settings')['paths']['storage']);
                 $document->add($this->get(\aportela\DatabaseWrapper\DB::class));
@@ -190,6 +202,17 @@ return function (App $app) {
                         );
                     }
                 }
+                $documentNotes = $params["notes"] ?? [];
+                $notes = array();
+                if (is_array($documentNotes) && count($documentNotes) > 0) {
+                    foreach ($documentNotes as $documentNote) {
+                        $notes[] = new \HomeDocs\Note(
+                            $documentNote["id"],
+                            $documentNote["createdOnTimestamp"],
+                            $documentNote["body"]
+                        );
+                    }
+                }
                 $dbh = $this->get(\aportela\DatabaseWrapper\DB::class);
                 $document = new \HomeDocs\Document(
                     $args['id']
@@ -202,7 +225,8 @@ return function (App $app) {
                     $params["title"] ?? "",
                     $params["description"] ?? "",
                     $params["tags"] ?? [],
-                    $files
+                    $files,
+                    $notes
                 );
                 $document->setRootStoragePath($this->get('settings')['paths']['storage']);
                 $document->update($dbh);
