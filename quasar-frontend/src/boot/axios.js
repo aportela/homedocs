@@ -163,6 +163,7 @@ const api = {
           title: document.title,
           tags: document.tags || [],
           files: document.files || [],
+          notes: document.notes || [],
         };
         if (document.description) {
           params.description = document.description;
@@ -184,6 +185,7 @@ const api = {
           title: document.title,
           tags: document.tags || [],
           files: document.files || [],
+          notes: document.notes || [],
         };
         if (document.description) {
           params.description = document.description;
