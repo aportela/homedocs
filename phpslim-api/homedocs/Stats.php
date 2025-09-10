@@ -75,8 +75,6 @@ class Stats
                 FROM
                     DOCUMENT_HISTORY
                 WHERE
-                    DOCUMENT_HISTORY.operation_type = 1
-                AND
                     DOCUMENT_HISTORY.operation_user_id = :session_user_id
                 AND
                     DOCUMENT_HISTORY.operation_date >= strftime('%s', 'now', '-1 year')
