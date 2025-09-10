@@ -100,10 +100,10 @@
                   </q-markup-table>
                 </q-tab-panel>
                 <q-tab-panel name="notes">
-                  <q-btn label="Add note" @click="showNoteDialog = true"></q-btn>
+                  <q-btn label="Add note" @click="onShowAddNoteDialog"></q-btn>
                   <q-list>
                     <q-item clickable hint="click to open note" v-for="note, noteIndex in document.notes" :key="note.id"
-                      class="q-mb-lg">
+                      class="q-mb-lg" @click="currentNote = { id: note.id, body: note.body }; showNoteDialog = true">
                       <q-item-section>
                         <q-item-label>
                           {{ note.createdOn }}
@@ -139,8 +139,8 @@
     <FilePreviewModal v-if="showPreviewFileDialog" :files="document.files" :index="selectedFileIndex"
       @close="showPreviewFileDialog = false">
     </FilePreviewModal>
-    <NoteModal v-if="showNoteDialog" @close="showNoteDialog = false" @cancel="showNoteDialog = false"
-      @add="showNoteDialog = false" @update="showNoteDialog = false" :note="currentNote">
+    <NoteModal v-if="showNoteDialog" @close="showNoteDialog = false" @cancel="showNoteDialog = false" @add="onAddNote"
+      @update="onUpdateNote" :note="currentNote">
     </NoteModal>
     <ConfirmationModal
       v-if="showConfirmDeleteFileDialog || showConfirmDeleteDocumentDialog || showConfirmDeleteNoteDialog"
@@ -320,7 +320,8 @@ function onSubmitForm() {
         });
         loading.value = false;
         nextTick(() => {
-          uploaderRef.value.reset();
+          //TODO: FAIL with hidden tab
+          //uploaderRef.value.reset();
           titleRef.value.focus();
         });
       })
@@ -363,7 +364,8 @@ function onSubmitForm() {
       .then((response) => {
         loading.value = false;
         nextTick(() => {
-          uploaderRef.value.reset();
+          //TODO: FAIL with hidden tab
+          //uploaderRef.value.reset();
           titleRef.value.focus();
         });
         router.push({
@@ -416,7 +418,8 @@ function onPreviewFile(index) {
 
 function onShowFileRemoveConfirmationDialog(file, fileIndex) {
   selectedFileIndex.value = fileIndex;
-  showConfirmDeleteFileDialog.value = true;
+  //showConfirmDeleteFileDialog.value = true;
+  onRemoveSelectedFile();
 }
 
 function onCancelConfirmationModal() {
@@ -508,7 +511,27 @@ function onUploadsFinish(e) {
 
 function onShowNoteRemoveConfirmationDialog(note, noteIndex) {
   selectedNoteIndex.value = noteIndex;
-  showConfirmDeleteNoteDialog.value = true;
+  //showConfirmDeleteNoteDialog.value = true;
+  onRemoveSelectedNote();
+}
+
+function onShowAddNoteDialog() {
+  currentNote.value.id = null;
+  currentNote.value.body = null;
+  currentNote.value.createdOn = null;
+  showNoteDialog.value = true
+}
+function onAddNote(newNote) {
+  document.value.notes.push(newNote);
+}
+
+function onUpdateNote(updatedNote) {
+  const idx = document.value.notes.findIndex((note) => note.id == updatedNote.id)
+  if (idx >= 0) {
+    console.log(document.value.notes[idx].body);
+    document.value.notes[idx].body = updatedNote.body;
+    console.log(document.value.notes[idx].body);
+  }
 }
 
 function onRemoveSelectedNote() {
