@@ -641,14 +641,14 @@ class Document
                     $sqlSortBy = "TMP_FILE.fileCount";
                     break;
                 default:
-                    $sqlSortBy = "DOCUMENT.created_on_timestamp";
+                    $sqlSortBy = "DOCUMENT_HISTORY.operation_date";
                     break;
             }
             $data->documents = $dbh->query(
                 sprintf(
                     "
                             SELECT
-                                DOCUMENT.id, DOCUMENT.title, DOCUMENT.description, DOCUMENT.created_on_timestamp AS createdOnTimestamp, TMP_FILE.fileCount
+                                DOCUMENT.id, DOCUMENT.title, DOCUMENT.description, DOCUMENT_HISTORY.operation_date AS createdOnTimestamp, TMP_FILE.fileCount
                             FROM DOCUMENT
                             INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT.id AND DOCUMENT_HISTORY.operation_user_id = :session_user_id
                             LEFT JOIN (
