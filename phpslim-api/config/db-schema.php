@@ -107,5 +107,42 @@ return (array(
         '
             CREATE INDEX idx_tag_name ON DOCUMENT_TAG (tag);
         '
+    ),
+    3 => array(
+        '
+            CREATE TABLE `DOCUMENT_NOTE` (
+                `note_id` VARCHAR(36) NOT NULL,
+                `document_id` VARCHAR(36) NOT NULL,
+                `created_on_timestamp` INTEGER NOT NULL,
+                `created_by_user_id` VARCHAR(36) NOT NULL,
+                `body` VARCHAR(16384) NULL,
+                PRIMARY KEY (`note_id`)
+            )
+        ',
+        '
+            CREATE TABLE `DOCUMENT_HISTORY` (
+                `document_id` VARCHAR(36) NOT NULL,
+                `operation_date` INTEGER NOT NULL,
+                `operation_type` INTEGER NOT NULL,
+                `operation_user_id` VARCHAR(36) NOT NULL,
+                PRIMARY KEY (`document_id`, `operation_date`, `operation_type`, `operation_user_id`)
+            )
+        ',
+        '
+            INSERT INTO
+                DOCUMENT_HISTORY
+            (document_id, operation_date, operation_type, operation_user_id)
+
+            SELECT
+                DOCUMENT.id, DOCUMENT.created_on_timestamp, 1, DOCUMENT.created_by_user_id
+            FROM DOCUMENT
+            ORDER BY DOCUMENT.created_on_timestamp
+        ',
+        '
+            ALTER TABLE DOCUMENT DROP COLUMN created_by_user_id;
+        ',
+        '
+            ALTER TABLE DOCUMENT DROP COLUMN created_on_timestamp;
+        '
     )
 ));
