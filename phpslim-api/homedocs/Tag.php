@@ -16,8 +16,11 @@ class Tag
                     SELECT
                         COUNT(*) AS total, tag
                     FROM DOCUMENT_TAG
-                    INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_TAG.document_id
-                    WHERE DOCUMENT.created_by_user_id = :session_user_id
+                    INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_TAG.document_id
+                    WHERE
+                        DOCUMENT_HISTORY.operation_user_id = :session_user_id
+                    AND
+                        DOCUMENT_HISTORY.operation_type = 1
                     GROUP BY tag
                     ORDER BY tag
                 ",
@@ -45,8 +48,11 @@ class Tag
                     SELECT
                         DISTINCT tag
                     FROM DOCUMENT_TAG
-                    INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_TAG.document_id
-                    WHERE DOCUMENT.created_by_user_id = :session_user_id
+                    INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_TAG.document_id
+                    WHERE
+                        DOCUMENT_HISTORY.operation_user_id = :session_user_id
+                    AND
+                        DOCUMENT_HISTORY.operation_type = 1
                     ORDER BY tag
                 ",
             array(
