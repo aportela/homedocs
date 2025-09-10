@@ -120,6 +120,24 @@ return (array(
             )
         ',
         '
+            CREATE TABLE `DOCUMENT2` (
+                `id` VARCHAR(36) NOT NULL,
+                `title` VARCHAR(128) NOT NULL,
+                `description` VARCHAR(4096) NULL,
+                PRIMARY KEY (`id`)
+            );
+        ',
+        '
+            INSERT INTO
+                DOCUMENT2
+            (id, title, description)
+
+            SELECT
+                id, title, description
+            FROM DOCUMENT
+            ORDER BY DOCUMENT.created_by_user_id
+        ',
+        '
             CREATE TABLE `DOCUMENT_HISTORY` (
                 `document_id` VARCHAR(36) NOT NULL,
                 `operation_date` INTEGER NOT NULL,
@@ -139,10 +157,10 @@ return (array(
             ORDER BY DOCUMENT.created_on_timestamp
         ',
         '
-            ALTER TABLE DOCUMENT DROP COLUMN created_by_user_id;
+            DROP TABLE DOCUMENT;
         ',
         '
-            ALTER TABLE DOCUMENT DROP COLUMN created_on_timestamp;
+            ALTER TABLE DOCUMENT2 RENAME TO DOCUMENT;
         '
     )
 ));
