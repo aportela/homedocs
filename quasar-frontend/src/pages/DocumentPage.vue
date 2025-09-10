@@ -521,8 +521,9 @@ function onShowAddNoteDialog() {
   currentNote.value.createdOn = null;
   showNoteDialog.value = true
 }
+
 function onAddNote(newNote) {
-  document.value.notes.push(newNote);
+  document.value.notes.unshift(newNote);
 }
 
 function onUpdateNote(updatedNote) {
