@@ -145,11 +145,14 @@ class Document
         )) {
             $historyQuery = "
                 INSERT INTO DOCUMENT_HISTORY
-                    (document_id, operation_date, 1, operation_user_id)
+                    (document_id, operation_date, operation_type, operation_user_id)
                 VALUES
                     (:document_id, strftime('%s', 'now'), 1, :created_by_user_id)
             ";
-            $params[] = (new \aportela\DatabaseWrapper\Param\StringParam(":created_by_user_id", \HomeDocs\UserSession::getUserId()));
+            $params = [
+                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
+                (new \aportela\DatabaseWrapper\Param\StringParam(":created_by_user_id", \HomeDocs\UserSession::getUserId()))
+            ];
             if ($dbh->exec($historyQuery, $params)) {
                 $tagsQuery = "
                         INSERT INTO DOCUMENT_TAG
