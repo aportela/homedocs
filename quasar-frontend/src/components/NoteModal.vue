@@ -1,14 +1,19 @@
 <template>
   <q-dialog v-model="visible" @hide="onClose">
     <q-card>
-      <q-card-section class="q-p-none">
-        <slot name="header"></slot>
+      <q-card-section>
+        <div class=" text-h6">Document note</div>
       </q-card-section>
-      <q-card-section class="q-p-none">
+      <q-separator />
+      <q-card-section style="max-height: 50vh" class="scroll">
         <slot name="body">
+          <div class="pre-line">{{ body }}</div>
+          <!--
           <q-input filled type="textarea" v-model="body" maxlength="16384"></q-input>
+          -->
         </slot>
       </q-card-section>
+      <q-separator />
       <q-card-actions align="right">
         <q-btn outline @click.stop="onCancel"><q-icon left name="close" />{{ t("Cancel")
         }}</q-btn>
@@ -56,3 +61,9 @@ function onSave() {
 }
 
 </script>
+
+<style scoped>
+.pre-line {
+  white-space: pre-line;
+}
+</style>
