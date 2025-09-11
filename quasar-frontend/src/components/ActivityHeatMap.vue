@@ -11,6 +11,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
 
 import { api } from "boot/axios";
 
@@ -20,6 +21,8 @@ import Tooltip from 'cal-heatmap/plugins/Tooltip';
 import CalendarLabel from 'cal-heatmap/plugins/CalendarLabel';
 
 const router = useRouter();
+
+const { t } = useI18n();
 
 const activityHeatMapData = ref([]);
 
@@ -81,11 +84,9 @@ function refresh() {
             Tooltip,
             {
               text: function (date, value, dayjsDate) {
-                return (
-                  (value ? value : 'No') +
-                  ' changes on ' +
-                  dayjsDate.format('dddd, MMMM D, YYYY')
-                );
+                return (value
+                  ? `${value} ${t(" change/s on date ")} ${dayjsDate.format('dddd, MMMM D, YYYY')}`
+                  : `${t("No activity on date ")} ${dayjsDate.format('dddd, MMMM D, YYYY')}`);
               },
             },
           ],

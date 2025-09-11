@@ -88,6 +88,7 @@ export default {
   Title: "Título",
   Date: "Fecha",
   Files: "Archivos",
+  Notes: "Notas",
   "File preview": "Previsualizar archivo",
   "Error loading preview": "Error cargando la previsualización",
   "Preview not available": "Previsualización no disponible",
@@ -118,4 +119,10 @@ export default {
   Dashboard: "Inicio",
   Add: "Añadir",
   "Selected language": "Idioma seleccionado",
+  "Your system stats": "Tus estadísticas del sistema",
+  "Small resume of your platform usage":
+    "Pequeño resumen de tu uso de la plataforma",
+  "Activity Heatmap": "Mapa de calor de actividad",
+  "No activity on date ": "Sin actividad en la fecha ",
+  " change/s on date ": " cambio/s en la fecha ",
 };

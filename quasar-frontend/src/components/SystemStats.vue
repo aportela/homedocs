@@ -3,15 +3,16 @@
     <q-card class="q-ma-xs" flat bordered>
       <q-card-section>
         <q-expansion-item :header-class="loadingError ? 'bg-red' : ''" expand-separator
-          :icon="loadingError ? 'error' : 'analytics'" :label="t('System stats')"
-          :caption="t(loadingError ? 'Error loading data' : 'Your detailed data info')" :model-value="expanded">
+          :icon="loadingError ? 'error' : 'analytics'" :label="t('Your system stats')"
+          :caption="t(loadingError ? 'Error loading data' : 'Small resume of your platform usage')"
+          :model-value="expanded">
           <p class="text-center" v-if="loading">
             <q-spinner-pie v-if="loading" color="grey-5" size="md" />
           </p>
           <div v-else>
             <q-card class="bg-grey-3 q-ma-sm">
-              <q-card-section class="text-center text-h5"><q-icon name="insights"></q-icon> Activity
-                Heatmap</q-card-section>
+              <q-card-section class="text-center text-h5"><q-icon name="insights"></q-icon> {{ t("Activity Heatmap")
+                }}</q-card-section>
               <q-card-section class="bg-white">
                 <ActivityHeatMap class="q-mx-auto"></ActivityHeatMap>
               </q-card-section>

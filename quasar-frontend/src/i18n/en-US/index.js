@@ -84,6 +84,7 @@ export default {
   Title: "Title",
   Date: "Date",
   Files: "Files",
+  Notes: "Notes",
   "File preview": "File preview",
   "Error loading preview": "Error loading preview",
   "Preview not available": "Preview not available",
@@ -117,4 +118,9 @@ export default {
   Add: "Add",
   "Advanced search": "Advanced search",
   "Selected language": "Selected language",
+  "Your system stats": "Your system stats",
+  "Small resume of your platform usage": "Small resume of your platform usage",
+  "Activity Heatmap": "Activity Heatmap",
+  "No activity on date ": "No activity on date ",
+  " change/s on date ": " change/s on date ",
 };
