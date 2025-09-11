@@ -349,6 +349,21 @@ function onSubmitForm() {
             note.createdOn = date.formatDate(note.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
             return (note);
           });
+          document.value.history.map((operation) => {
+            operation.date = date.formatDate(operation.operationTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
+            switch (operation.operationType) {
+              case 1:
+                operation.label = t("Document created");
+                break;
+              case 2:
+                operation.label = t("Document updated");
+                break;
+              default:
+                operation.label = t("Unknown operation");
+                break;
+            }
+            return (operation);
+          });
           loading.value = false;
           nextTick(() => {
             //TODO: FAIL with hidden tab
