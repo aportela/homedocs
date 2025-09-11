@@ -10,14 +10,14 @@
         <div class="cursor-pointer pre-line" v-if="readOnly" @click="readOnly = false">{{
           body }}
         </div>
-        <q-input v-else filled type="textarea" v-model="body" maxlength="16384"></q-input>
+        <q-input v-else filled type="textarea" v-model="body" maxlength="16384" autofocus></q-input>
       </q-card-section>
       <q-separator />
       <q-card-actions align="right">
         <q-btn flat @click.stop="onCancel"><q-icon left name="close" />{{ t("Cancel")
-        }}</q-btn>
+          }}</q-btn>
         <q-btn flat @click.stop="onSave"><q-icon left name="done" />{{ t("Save")
-        }}</q-btn>
+          }}</q-btn>
       </q-card-actions>
     </q-card>
   </q-dialog>
