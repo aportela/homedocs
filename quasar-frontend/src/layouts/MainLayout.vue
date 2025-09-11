@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lHh lpR lFf">
-    <q-header bordered height-hint="61.59" class="q-mt-sm q-ml-sm bg-grey-2 text-grey-10">
-      <q-toolbar class="q-py-sm q-px-md bordered">
+    <q-header height-hint="61.59" class="q-mb-md q-mx-sm bg-white text-grey-10 q-pa-sm">
+      <q-toolbar class="q-py-sm q-px-md my_toolbar bg-grey-2">
         <q-btn flat dense round @click="visibleSidebar = !visibleSidebar" aria-label="Toggle drawer" icon="menu"
           class="q-mr-md" />
         <FastSearchSelector dense class="full-width"></FastSearchSelector>
@@ -39,3 +39,10 @@ if (!session.isLoaded) {
 const visibleSidebar = ref($q.screen.gt.lg);
 
 </script>
+
+<style scoped>
+.my_toolbar {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+}
+</style>
