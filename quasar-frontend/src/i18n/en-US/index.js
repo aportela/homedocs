@@ -49,7 +49,8 @@ export default {
   "New document": "New document",
   "Document title": "Document title",
   "Document description": "Document description",
-  "Document date": "Document date",
+  "Document creation date": "Document creation date",
+  "Document last update date": "Document last update date",
   Attachments: "Attachments",
   "Add new file (Drag & Drop supported)":
     "Add new file (Drag & Drop supported)",

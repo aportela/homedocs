@@ -15,8 +15,17 @@
           <form @submit.prevent.stop="onSubmitForm" autocorrect="off" autocapitalize="off" autocomplete="off"
             spellcheck="false">
             <q-card-section>
-              <q-input class="q-mb-md" outlined mask="date" v-model="document.date" :label="t('Document date')"
-                :disable="true" v-if="document.id"></q-input>
+              <div class="row">
+                <div
+                  :class="{ 'col-6': document.creationDate != document.lastUpdate, 'col-12': document.creationDate == document.lastUpdate }">
+                  <q-input class="q-mb-md" outlined mask="date" v-model="document.creationDate"
+                    :label="t('Document creation date')" :disable="true" v-if="document.id"></q-input>
+                </div>
+                <div class="col-6" v-if="document.creationDate != document.lastUpdate">
+                  <q-input class="q-mb-md" outlined mask="date" v-model="document.lastUpdate"
+                    :label="t('Document last update date')" :disable="true" v-if="document.id"></q-input>
+                </div>
+              </div>
               <q-input class="q-mb-md" ref="titleRef" maxlength="128" outlined v-model="document.title" type="text"
                 name="title" :label="t('Document title')" :disable="loading || saving" :autofocus="true">
               </q-input>
@@ -233,6 +242,7 @@ const document = ref({
   created: null,
   createdOnTimestamp: null,
   createdBy: null,
+  lastUpdate: null,
   files: [],
   tags: [],
   notes: [],
@@ -274,8 +284,8 @@ function onRefresh() {
     .get(document.value.id)
     .then((response) => {
       document.value = response.data.data;
-      document.value.createdOn = date.formatDate(document.value.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
-      document.value.date = date.formatDate(document.value.createdOnTimestamp * 1000, 'YYYY/MM/DD');
+      document.value.creationDate = date.formatDate(document.value.createdOnTimestamp * 1000, 'YYYY/MM/DD');
+      document.value.lastUpdate = date.formatDate(document.value.lastUpdateTimestamp * 1000, 'YYYY/MM/DD');
       document.value.files.map((file) => {
         file.isNew = false;
         file.uploadedOn = date.formatDate(file.uploadedOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
@@ -335,8 +345,8 @@ function onSubmitForm() {
       .then((response) => {
         if (response.data.data) {
           document.value = response.data.data;
-          document.value.createdOn = date.formatDate(document.value.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
-          document.value.date = date.formatDate(document.value.createdOnTimestamp * 1000, 'YYYY/MM/DD');
+          document.value.creationDate = date.formatDate(document.value.createdOnTimestamp * 1000, 'YYYY/MM/DD');
+          document.value.lastUpdate = date.formatDate(document.value.lastUpdateTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
           document.value.files.map((file) => {
             file.isNew = false;
             file.url = "api2/file/" + file.id;

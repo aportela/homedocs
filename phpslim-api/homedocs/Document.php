@@ -10,6 +10,7 @@ class Document
     public ?string $title;
     public ?string $description;
     public ?int $createdOnTimestamp;
+    public ?int $lastUpdateTimestamp;
     public ?string $createdBy;
     public ?array $files = array();
     public ?array $notes = array();
@@ -455,9 +456,16 @@ class Document
             $data = $dbh->query(
                 "
                         SELECT
-                            title, description, DOCUMENT_HISTORY.operation_date AS createdOnTimestamp, DOCUMENT_HISTORY.operation_user_id AS createdByUserId
+                            title, description, DOCUMENT_HISTORY.operation_date AS createdOnTimestamp, COALESCE(HISTORY_LAST_UPDATE.document_last_update, DOCUMENT_HISTORY.operation_date) AS lastUpdateTimestamp, DOCUMENT_HISTORY.operation_user_id AS createdByUserId
                         FROM DOCUMENT
                         INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT.id AND DOCUMENT_HISTORY.operation_type = :history_operation_add
+                        LEFT JOIN (
+                            SELECT DOCUMENT_HISTORY.document_id, MAX(DOCUMENT_HISTORY.operation_date) AS document_last_update
+                            FROM DOCUMENT_HISTORY
+                            WHERE DOCUMENT_HISTORY.document_id = :id
+                            AND DOCUMENT_HISTORY.operation_type <> :history_operation_add
+                            GROUP BY DOCUMENT_HISTORY.document_id
+                        ) HISTORY_LAST_UPDATE ON HISTORY_LAST_UPDATE.document_id = DOCUMENT.id
                         WHERE id = :id
                 ",
                 array(
@@ -470,6 +478,7 @@ class Document
                     $this->title = $data[0]->title;
                     $this->description = $data[0]->description;
                     $this->createdOnTimestamp = intval($data[0]->createdOnTimestamp);
+                    $this->lastUpdateTimestamp = intval($data[0]->lastUpdateTimestamp);
                     $this->tags = $this->getTags($dbh);
                     $this->files = $this->getFiles($dbh);
                     $this->notes = $this->getNotes($dbh);

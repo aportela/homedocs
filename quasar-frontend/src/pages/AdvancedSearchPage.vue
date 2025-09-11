@@ -32,7 +32,7 @@
                   <div class="col">
                     <q-select class="q-mb-md" dense outlined clearable
                       v-model="advancedSearchData.filter.dateFilterType" :options="dateFilterOptions"
-                      :label="t('Document date')" :disable="searching || disableFilterDatesByRouteParams" />
+                      :label="t('Document creation date')" :disable="searching || disableFilterDatesByRouteParams" />
                   </div>
                   <div class="col" v-if="advancedSearchData.hasFromDateFilter">
                     <q-input dense outlined mask="date" v-model="advancedSearchData.filter.fromDate"
