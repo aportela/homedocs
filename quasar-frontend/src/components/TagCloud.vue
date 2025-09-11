@@ -14,7 +14,7 @@
                 :title="t('Click here to browse documents containing this tag')">
                 <q-avatar color="grey-9" text-color="white">{{ tag.total }}</q-avatar>
                 <router-link :to="{ name: 'advancedSearchByTag', params: { tag: tag.tag } }"
-                  style="text-decoration: none; width: 10em; text-align: center" class="text-dark ">
+                  style="text-decoration: none; width: 10em; text-align: center" class="text-dark">
                   <div class="ellipsis">
                     {{ tag.tag }}
                     <q-tooltip>{{ tag.tag }}</q-tooltip>
