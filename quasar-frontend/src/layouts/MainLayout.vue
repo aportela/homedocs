@@ -1,11 +1,12 @@
 <template>
   <q-layout view="lHh lpR lFf">
-    <q-header height-hint="61.59" class="q-mb-md q-mx-sm bg-white text-grey-10 q-pa-sm">
-      <q-toolbar class="q-py-sm q-px-md my_toolbar bg-grey-2">
-        <q-btn flat dense round @click="visibleSidebar = !visibleSidebar" aria-label="Toggle drawer" icon="menu"
+    <q-header height-hint="61.59" class="bg-white text-grey-10" bordered>
+      <q-toolbar class="my_toolbar bg-white">
+        <q-btn flat dense round @click="visibleSidebar = !visibleSidebar;" aria-label="Toggle drawer" icon="menu"
           v-show="!visibleSidebar" class="q-mr-md" />
-        <q-btn flat dense round @click="miniSidebar = !miniSidebar" aria-label="Toggle drawer"
-          :icon="miniSidebar ? 'arrow_forward_ios' : 'arrow_back_ios_new'" class="q-mr-md" v-show="visibleSidebar" />
+        <q-btn flat dense round @click="miniSidebar = !miniSidebar; miniSidebarChangedManually = true"
+          aria-label="Toggle drawer" :icon="miniSidebar ? 'arrow_forward_ios' : 'arrow_back_ios_new'" class="q-mr-md"
+          v-show="visibleSidebar" />
         <q-input type="text" standout dense :label="t('Search...')" class="force_cursor_pointer full-width"
           @click.prevent="console.log(1)">
           <template v-slot:prepend>
@@ -30,7 +31,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, watch, computed } from "vue";
 import { useQuasar } from "quasar";
 import { useSessionStore } from "stores/session";
 import { useI18n } from "vue-i18n";
@@ -50,17 +51,23 @@ if (!session.isLoaded) {
   session.load();
 }
 
-const miniSidebar = ref($q.screen.gt.lg);
+const miniSidebarChangedManually = ref(false);
 
-const visibleSidebar = ref($q.screen.gt.lg);
+const visibleSidebar = ref($q.screen.gt.sm);
+
+const miniSidebar = ref($q.screen.md);
+
+const currentScreenSize = computed(() => $q.screen.name);
+
+watch(currentScreenSize, (newValue) => {
+  if (!miniSidebarChangedManually.value) {
+    miniSidebar.value = $q.screen.lt.lg;
+  }
+});
+
 </script>
 
 <style scoped>
-.my_toolbar {
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 4px;
-}
-
 .force_cursor_pointer * {
   cursor: pointer !important;
 }
