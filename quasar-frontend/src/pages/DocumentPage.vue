@@ -41,7 +41,7 @@
                 <q-tab name="notes" icon="forum" :label="t('Notes')">
                   <q-badge floating>{{ document.notes.length }}</q-badge>
                 </q-tab>
-                <q-tab name="history" icon="view_timeline" :label="t('History')">
+                <q-tab name="history" icon="view_timeline" :label="t('History')" v-if="document.id">
                   <q-badge floating>{{ document.history.length }}</q-badge>
                 </q-tab>
               </q-tabs>
@@ -133,7 +133,7 @@
                     </q-item>
                   </q-list>
                 </q-tab-panel>
-                <q-tab-panel name="history">
+                <q-tab-panel name="history" v-if="document.id">
                   <q-list>
                     <q-item v-for="operation in document.history" :key="operation.operationTimestamp">
                       <q-item-section>
