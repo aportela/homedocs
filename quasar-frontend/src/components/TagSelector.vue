@@ -6,7 +6,10 @@
     <template v-slot:selected>
       <q-chip removable v-for="tag, index in currentTags" :key="tag" @remove="removeTagAtIndex(index)" color="dark"
         text-color="white" icon="label_important" :dense="dense">
-        {{ tag }}
+        <router-link :to="{ name: 'advancedSearchByTag', params: { tag: tag } }"
+          style="text-decoration: none; color: white;">
+          {{ tag }}
+        </router-link>
       </q-chip>
     </template>
   </q-select>
