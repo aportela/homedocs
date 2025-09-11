@@ -5,7 +5,7 @@
     :errorMessage="t('Error loading available tags')" @filter="onFilterTags" @add="onAddTag">
     <template v-slot:selected>
       <q-chip removable v-for="tag, index in currentTags" :key="tag" @remove="removeTagAtIndex(index)" color="dark"
-        text-color="white" icon="label_important" :dense="dense">
+        text-color="white" icon="label_important">
         <router-link :to="{ name: 'advancedSearchByTag', params: { tag: tag } }"
           style="text-decoration: none; color: white;">
           {{ tag }}
