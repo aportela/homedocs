@@ -14,9 +14,9 @@
       <q-separator />
       <q-card-actions align="right">
         <q-btn outline @click.stop="onCancel"><q-icon left name="close" />{{ t("Cancel")
-          }}</q-btn>
+        }}</q-btn>
         <q-btn outline @click.stop="onSave"><q-icon left name="done" />{{ t("Save")
-          }}</q-btn>
+        }}</q-btn>
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -54,7 +54,7 @@ function onCancel() {
 function onSave() {
   visible.value = false;
   if (props.note.id == null) {
-    emit('add', { id: uid(), body: body, createdOn: date.formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss') });
+    emit('add', { id: uid(), body: body, createdOnTimestamp: date.formatDate(new Date(), 'X'), createdOn: date.formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss') });
   } else {
     emit('update', { id: props.note.id, body: body });
   }
