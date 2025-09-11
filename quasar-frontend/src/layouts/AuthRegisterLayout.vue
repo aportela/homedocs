@@ -3,12 +3,8 @@
     <div class="row" style="height: 100vh">
       <div class="col-12 col-lg-8 col-md-12 col-sm-12 slogan-image-cover flex flex-center">
         <div class="q-pa-xl text-center text-white">
-          <h2 class="text-h2 text-weight-bold q-mb-md">
-            Welcome to HomeDocs
-          </h2>
-          <div class="text-h5">
-            Where your documents find their place.
-          </div>
+          <h2 class="text-h2 text-weight-bold q-mb-md">{{ t("Welcome to HomeDocs") }}</h2>
+          <div class="text-h5">{{ t("Where your documents find their place.") }}</div>
         </div>
       </div>
       <div class="col-12 col-lg-4 justify-center q-pa-xl">
@@ -19,6 +15,12 @@
     </div>
   </q-layout>
 </template>
+
+<script setup>
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
+</script>
 
 <style scoped>
 .slogan-image-cover {
