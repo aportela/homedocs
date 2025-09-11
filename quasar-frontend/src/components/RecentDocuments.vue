@@ -12,7 +12,7 @@
             <q-list v-if="hasRecentDocuments">
               <div v-for="recentDocument, index in recentDocuments" :key="recentDocument.id">
                 <q-item>
-                  <q-item-section top avatar>
+                  <q-item-section top avatar class="gt-xs">
                     <q-avatar square icon="work" size="64px" />
                   </q-item-section>
                   <q-item-section>
