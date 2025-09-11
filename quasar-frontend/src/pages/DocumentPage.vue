@@ -100,7 +100,7 @@
                   </q-markup-table>
                 </q-tab-panel>
                 <q-tab-panel name="notes">
-                  <q-btn label="Add note" @click="onShowAddNoteDialog"></q-btn>
+                  <q-btn class="full-width q-mb-md" :label="t('Add note')" @click="onShowAddNoteDialog"></q-btn>
                   <q-list>
                     <q-item clickable hint="click to open note" v-for="note, noteIndex in document.notes" :key="note.id"
                       class="q-mb-lg" @click="currentNote = { id: note.id, body: note.body }; showNoteDialog = true">
