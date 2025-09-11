@@ -54,6 +54,7 @@ export default {
   "API Error: error adding document": "API Error: error adding document",
   "API Error: missing document title param":
     "API Error: missing document title param",
+  "API Error: invalid response data": "API Error: invalid response data",
   Document: "Document",
   Name: "Name",
   Size: "Size",

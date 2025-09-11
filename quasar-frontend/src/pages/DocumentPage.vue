@@ -303,27 +303,36 @@ function onSubmitForm() {
     api.document
       .update(document.value)
       .then((response) => {
-        document.value = response.data.data;
-        document.value.createdOn = date.formatDate(document.value.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
-        document.value.date = date.formatDate(document.value.createdOnTimestamp * 1000, 'YYYY/MM/DD');
-        document.value.files.map((file) => {
-          file.isNew = false;
-          file.url = "api2/file/" + file.id;
-          file.uploadedOn = date.formatDate(file.uploadedOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
-          file.humanSize = format.humanStorageSize(file.size);
-          return (file);
-        });
-        document.value.notes.map((note) => {
-          note.isNew = false;
-          note.createdOn = date.formatDate(note.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
-          return (note);
-        });
-        loading.value = false;
-        nextTick(() => {
-          //TODO: FAIL with hidden tab
-          //uploaderRef.value.reset();
-          titleRef.value.focus();
-        });
+        if (response.data.data) {
+          document.value = response.data.data;
+          document.value.createdOn = date.formatDate(document.value.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
+          document.value.date = date.formatDate(document.value.createdOnTimestamp * 1000, 'YYYY/MM/DD');
+          document.value.files.map((file) => {
+            file.isNew = false;
+            file.url = "api2/file/" + file.id;
+            file.uploadedOn = date.formatDate(file.uploadedOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
+            file.humanSize = format.humanStorageSize(file.size);
+            return (file);
+          });
+          document.value.notes.map((note) => {
+            note.isNew = false;
+            note.createdOn = date.formatDate(note.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
+            return (note);
+          });
+          loading.value = false;
+          nextTick(() => {
+            //TODO: FAIL with hidden tab
+            //uploaderRef.value.reset();
+            titleRef.value.focus();
+          });
+        } else {
+          loading.value = false;
+          $q.notify({
+            type: "negative",
+            message: t("API Error: error updating document"),
+            caption: t("API Error: invalid response data")
+          });
+        }
       })
       .catch((error) => {
         loading.value = false;
@@ -470,6 +479,7 @@ function onFileUploaded(e) {
   document.value.files.push(
     {
       id: (JSON.parse(e.xhr.response).data).id,
+      uploadedOnTimestamp: date.formatDate(new Date(), 'X'),
       uploadedOn: date.formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss'),
       name: e.files[0].name,
       size: e.files[0].size,
