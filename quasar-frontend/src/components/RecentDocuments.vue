@@ -10,35 +10,40 @@
           </p>
           <div v-else>
             <q-list v-if="hasRecentDocuments">
-              <q-item v-for="recentDocument in recentDocuments" :key="recentDocument.id">
-                <q-item-section top avatar>
-                  <q-avatar square icon="work" size="64px" />
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label><router-link :to="{ name: 'document', params: { id: recentDocument.id } }"
-                      class="text-decoration-none text-dark">{{ recentDocument.title }}</router-link>
-                  </q-item-label>
-                  <q-item-label caption lines="2">{{ recentDocument.description }}</q-item-label>
-                  <q-item-label>
-                    <router-link v-for="tag in recentDocument.tags" :key="tag"
-                      :to="{ name: 'advancedSearchByTag', params: { tag: tag } }">
-                      <q-chip square size="md" clickable icon="tag">
-                        {{ tag }}
-                      </q-chip>
-                    </router-link>
-                  </q-item-label>
-                </q-item-section>
-                <q-item-section side top>
-                  <q-item-label caption>{{ recentDocument.createdOn }}
-                  </q-item-label>
-                  <div>
-                    <q-icon name="save" size="xs" />{{ t("Files") }}: {{ recentDocument.fileCount }}
-                  </div>
-                  <div>
-                    <q-icon name="forum" size="xs" />{{ t("Notes") }}: {{ recentDocument.noteCount }}
-                  </div>
-                </q-item-section>
-              </q-item>
+              <div v-for="recentDocument, index in recentDocuments" :key="recentDocument.id">
+                <q-item>
+                  <q-item-section top avatar>
+                    <q-avatar square icon="work" size="64px" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label><router-link :to="{ name: 'document', params: { id: recentDocument.id } }"
+                        class="text-decoration-none text-dark">{{ recentDocument.title }}</router-link>
+                    </q-item-label>
+                    <q-item-label caption lines="2">{{ recentDocument.description }}</q-item-label>
+                    <q-item-label>
+                      <router-link v-for="tag in recentDocument.tags" :key="tag"
+                        :to="{ name: 'advancedSearchByTag', params: { tag: tag } }">
+                        <q-chip square size="md" clickable icon="tag">
+                          {{ tag }}
+                        </q-chip>
+                      </router-link>
+                    </q-item-label>
+                  </q-item-section>
+                  <q-item-section side top>
+                    <q-item-label caption>{{ recentDocument.createdOn }}
+                    </q-item-label>
+                    <q-chip size="md" square text-color="dark" class="full-width">
+                      <q-avatar color="grey-9" text-color="white">{{ recentDocument.fileCount }}</q-avatar>
+                      {{ t("Files") }}
+                    </q-chip>
+                    <q-chip size="md" square text-color="dark" class="full-width">
+                      <q-avatar color="grey-9" text-color="white">{{ recentDocument.noteCount }}</q-avatar>
+                      {{ t("Notes") }}
+                    </q-chip>
+                  </q-item-section>
+                </q-item>
+                <q-separator v-if="index !== recentDocuments.length - 1" class="q-my-md" />
+              </div>
             </q-list>
             <q-banner v-else-if="!loadingError"><q-icon name="info" size="md" class="q-mr-sm" />
               {{ t("You haven't created any documents yet") }}
