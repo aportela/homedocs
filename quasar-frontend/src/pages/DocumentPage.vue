@@ -29,7 +29,7 @@
                 <q-tab name="attachments" icon="attach_file" :label="t('Attachments')">
                   <q-badge floating>{{ document.files.length }}</q-badge>
                 </q-tab>
-                <q-tab name="notes" icon="forum" label="Notes">
+                <q-tab name="notes" icon="forum" :label="t('Notes')">
                   <q-badge floating>{{ document.notes.length }}</q-badge>
                 </q-tab>
               </q-tabs>
