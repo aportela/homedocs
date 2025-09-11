@@ -128,4 +128,8 @@ export default {
     "Document note (click on body to update)",
   "Add note": "Add note",
   "Add document note": "Add document note",
+  History: "History",
+  "Document created": "Document created",
+  "Document updated": "Document updated",
+  "Unknown operation": "Unknown operation",
 };

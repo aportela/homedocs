@@ -15,6 +15,7 @@ class Document
     public ?array $notes = array();
     public ?string $rootStoragePath;
     public ?array $tags = array();
+    public ?array $history = array();
 
     public function __construct(string $id = "", string $title = "", string $description = "", $tags = array(), $files = array(), $notes = array())
     {
@@ -464,6 +465,7 @@ class Document
                     $this->tags = $this->getTags($dbh);
                     $this->files = $this->getFiles($dbh);
                     $this->notes = $this->getNotes($dbh);
+                    $this->history = $this->getHistory($dbh);
                 } else {
                     throw new \HomeDocs\Exception\AccessDeniedException("id");
                 }
@@ -556,6 +558,24 @@ class Document
             }
         }
         return ($notes);
+    }
+
+    private function getHistory(\aportela\DatabaseWrapper\DB $dbh): array
+    {
+        $operations = [];
+        $operations = $dbh->query(
+            "
+                    SELECT
+                        DOCUMENT_HISTORY.operation_date AS operationTimestamp, DOCUMENT_HISTORY.operation_type AS operationType
+                    FROM DOCUMENT_HISTORY
+                    WHERE DOCUMENT_HISTORY.document_id = :document_id
+                    ORDER BY DOCUMENT_HISTORY.operation_date DESC
+                ",
+            array(
+                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id))
+            )
+        );
+        return ($operations);
     }
 
     public static function search(\aportela\DatabaseWrapper\DB $dbh, int $currentPage = 1, int $resultsPage = 16, $filter = array(), string $sortBy = "createdOnTimestamp", string $sortOrder = "DESC"): \stdClass

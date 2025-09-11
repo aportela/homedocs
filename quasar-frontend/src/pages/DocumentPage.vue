@@ -32,6 +32,9 @@
                 <q-tab name="notes" icon="forum" :label="t('Notes')">
                   <q-badge floating>{{ document.notes.length }}</q-badge>
                 </q-tab>
+                <q-tab name="history" icon="view_timeline" :label="t('History')">
+                  <q-badge floating>{{ document.history.length }}</q-badge>
+                </q-tab>
               </q-tabs>
               <q-separator />
               <q-tab-panels v-model="tab" animated>
@@ -116,6 +119,17 @@
                         <q-item-label caption>
                           <q-btn flat size="sm" icon="delete"
                             @click.prevent="onShowNoteRemoveConfirmationDialog(note, noteIndex)"></q-btn>
+                        </q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </q-list>
+                </q-tab-panel>
+                <q-tab-panel name="history">
+                  <q-list>
+                    <q-item v-for="operation in document.history" :key="operation.operationTimestamp">
+                      <q-item-section>
+                        <q-item-label>
+                          {{ operation.date }} - {{ operation.label }}
                         </q-item-label>
                       </q-item-section>
                     </q-item>
@@ -221,7 +235,8 @@ const document = ref({
   createdBy: null,
   files: [],
   tags: [],
-  notes: []
+  notes: [],
+  history: [],
 });
 
 router.beforeEach(async (to, from) => {
@@ -272,6 +287,21 @@ function onRefresh() {
         note.isNew = false;
         note.createdOn = date.formatDate(note.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
         return (note);
+      });
+      document.value.history.map((operation) => {
+        operation.date = date.formatDate(operation.operationTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
+        switch (operation.operationType) {
+          case 1:
+            operation.label = t("Document created");
+            break;
+          case 2:
+            operation.label = t("Document updated");
+            break;
+          default:
+            operation.label = t("Unknown operation");
+            break;
+        }
+        return (operation);
       });
       loading.value = false;
       if (titleRef.value) {

@@ -131,4 +131,8 @@ export default {
     "Nota del documento (haga click en el cuerpo para editar)",
   "Add note": "Añadir nota",
   "Add document note": "Añadir nota al documento",
+  History: "Historial",
+  "Document created": "Documento creado",
+  "Document updated": "Documento actualizado",
+  "Unknown operation": "Operación desconocida",
 };
