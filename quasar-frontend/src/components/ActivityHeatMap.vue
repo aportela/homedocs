@@ -50,6 +50,12 @@ function refresh() {
     .then((success) => {
       activityHeatMapData.value = success.data.heatmap;
       const maxValue = activityHeatMapData.value.reduce((max, obj) => (obj.count > max ? obj.count : max), -Infinity)
+      const counts = activityHeatMapData.value.map(d => d.count);
+      let ddomain = [...new Set(counts)];
+      ddomain.unshift(0);
+      ddomain.sort(function (a, b) { return a - b; });
+      //const min = Math.min(...counts);
+      //const max = Math.max(...counts);
       cal.paint(
         {
           data: {
@@ -66,9 +72,10 @@ function refresh() {
           range: 13,
           scale: {
             color: {
-              scheme: 'Greens',
-              type: "linear",
-              domain: [0, maxValue],
+              scheme: 'greens',
+              type: 'threshold',
+              //domain: [0, min, 2, 5, 10, max], // TODO: create dynamic domain from values
+              domain: ddomain,
             },
           },
           domain: {
