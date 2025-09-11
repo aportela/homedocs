@@ -59,6 +59,11 @@ class Document
                             ORDER BY DOCUMENT_TAG.tag
                         )
                         GROUP BY document_id
+                    ),
+                    DOCUMENTS_LAST_HISTORY_OPERATION AS (
+                        SELECT document_id, MAX(operation_date) AS max_operation_date
+                        FROM DOCUMENT_HISTORY
+                        GROUP BY document_id
                     )
                     SELECT
                         DOCUMENT.id,
@@ -73,7 +78,8 @@ class Document
                     LEFT JOIN DOCUMENTS_FILES ON DOCUMENTS_FILES.document_id = DOCUMENT.id
                     LEFT JOIN DOCUMENTS_TAGS ON DOCUMENTS_TAGS.document_id = DOCUMENT.id
                     LEFT JOIN DOCUMENTS_NOTES ON DOCUMENTS_NOTES.document_id = DOCUMENT.id
-                    ORDER BY DOCUMENT_HISTORY.operation_date DESC
+                    LEFT JOIN DOCUMENTS_LAST_HISTORY_OPERATION ON DOCUMENTS_LAST_HISTORY_OPERATION.document_id = DOCUMENT.id
+                    ORDER BY DOCUMENTS_LAST_HISTORY_OPERATION.max_operation_date DESC
                     LIMIT %d;
                 ",
                 $count
