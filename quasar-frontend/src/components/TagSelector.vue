@@ -6,10 +6,11 @@
     <template v-slot:selected>
       <q-chip removable v-for="tag, index in currentTags" :key="tag" @remove="removeTagAtIndex(index)" color="dark"
         text-color="white" icon="label_important">
-        <router-link :to="{ name: 'advancedSearchByTag', params: { tag: tag } }"
+        <router-link v-if="props.link" :to="{ name: 'advancedSearchByTag', params: { tag: tag } }"
           style="text-decoration: none; color: white;">
           {{ tag }}
         </router-link>
+        <span v-else>{{ tag }}</span>
       </q-chip>
     </template>
   </q-select>
@@ -26,7 +27,8 @@ const { t } = useI18n();
 const props = defineProps({
   modelValue: Array,
   disabled: Boolean,
-  dense: Boolean
+  dense: Boolean,
+  link: Boolean
 });
 
 const emit = defineEmits(['update:modelValue', 'error']);

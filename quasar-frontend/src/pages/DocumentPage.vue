@@ -32,7 +32,7 @@
               <q-input class="q-mb-md" outlined v-model="document.description" type="textarea" maxlength="4096" autogrow
                 name="description" :label="t('Document description')" :disable="loading || saving" clearable>
               </q-input>
-              <TagSelector v-model="document.tags" :disabled="loading || saving" class="q-pb-none">
+              <TagSelector v-model="document.tags" :disabled="loading || saving" :link="true" class="q-pb-none">
               </TagSelector>
               <q-tabs v-model="tab" dense align="left" class="q-mt-md">
                 <q-tab name="attachments" icon="attach_file" :label="t('Attachments')">
