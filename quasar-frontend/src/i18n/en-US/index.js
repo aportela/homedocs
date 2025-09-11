@@ -124,4 +124,8 @@ export default {
   "Activity Heatmap": "Activity Heatmap",
   "No activity on date ": "No activity on date ",
   " change/s on date ": " change/s on date ",
+  "Document note (click on body to update)":
+    "Document note (click on body to update)",
+  "Add note": "Add note",
+  "Add document note": "Add document note",
 };

@@ -127,4 +127,8 @@ export default {
   "Activity Heatmap": "Mapa de calor de actividad",
   "No activity on date ": "Sin actividad en la fecha ",
   " change/s on date ": " cambio/s en la fecha ",
+  "Document note (click on body to update)":
+    "Nota del documento (haga click en el cuerpo para editar)",
+  "Add note": "Añadir nota",
+  "Add document note": "Añadir nota al documento",
 };
