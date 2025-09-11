@@ -122,6 +122,9 @@ export default {
   "Your system stats": "Your system stats",
   "Small resume of your platform usage": "Small resume of your platform usage",
   "Activity Heatmap": "Activity Heatmap",
+  "Total documents": "Total documents",
+  "Total attachments": "Total attachments",
+  "Disk usage": "Disk usage",
   "No activity on date ": "No activity on date ",
   " change/s on date ": " change/s on date ",
   "Document note (click on body to update)":

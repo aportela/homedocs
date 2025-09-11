@@ -124,6 +124,9 @@ export default {
   "Small resume of your platform usage":
     "Pequeno resumen do teu uso da plataforma",
   "Activity Heatmap": "Mapa de calor de actividade",
+  "Total documents": "Documentos totales",
+  "Total attachments": "Adxuntos totales",
+  "Disk usage": "Uso en disco",
   "No activity on date ": "Sen actividade na data ",
   " change/s on date ": " cambio/s na data ",
   "Document note (click on body to update)":

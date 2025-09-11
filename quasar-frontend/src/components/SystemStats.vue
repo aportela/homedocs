@@ -20,24 +20,30 @@
             <div class="row">
               <div class="col-4">
                 <q-card class="bg-grey-3 q-ma-sm">
-                  <q-card-section class="text-center text-h5"><q-icon name="shelves"></q-icon> Total
-                    documents</q-card-section>
+                  <q-card-section class="text-center text-h5">
+                    <q-icon name="shelves"></q-icon>
+                    {{ t("Total documents") }}
+                  </q-card-section>
                   <q-separator inset />
                   <q-card-section class="text-center text-h3">{{ totalDocuments }}</q-card-section>
                 </q-card>
               </div>
               <div class="col-4">
                 <q-card class="bg-grey-3 q-ma-sm">
-                  <q-card-section class="text-center text-h5"><q-icon name="attachment"></q-icon> Total
-                    attachments</q-card-section>
+                  <q-card-section class="text-center text-h5">
+                    <q-icon name="attachment"></q-icon>
+                    {{ t("Total attachments") }}
+                  </q-card-section>
                   <q-separator inset />
                   <q-card-section class="text-center text-h3">{{ totalAttachments }}</q-card-section>
                 </q-card>
               </div>
               <div class="col-4">
                 <q-card class="bg-grey-3 q-ma-sm ">
-                  <q-card-section class="text-center text-h5"><q-icon name="data_usage"></q-icon> Disk
-                    usage</q-card-section>
+                  <q-card-section class="text-center text-h5">
+                    <q-icon name="data_usage"></q-icon>
+                    {{ t("Disk usage") }}
+                  </q-card-section>
                   <q-separator inset />
                   <q-card-section class="text-center text-h3">{{ totalAttachmentsDiskUsage }}</q-card-section>
                 </q-card>
