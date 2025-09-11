@@ -15,7 +15,7 @@
           <form @submit.prevent.stop="onSubmitForm" autocorrect="off" autocapitalize="off" autocomplete="off"
             spellcheck="false">
             <q-card-section>
-              <div class="row">
+              <div class="row q-col-gutter-sm">
                 <div
                   :class="{ 'col-6': document.creationDate != document.lastUpdate, 'col-12': document.creationDate == document.lastUpdate }">
                   <q-input class="q-mb-md" outlined mask="date" v-model="document.creationDate"
