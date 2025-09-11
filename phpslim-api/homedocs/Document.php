@@ -42,6 +42,12 @@ class Document
                         INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_FILE.document_id AND DOCUMENT_HISTORY.operation_type = 1 AND DOCUMENT_HISTORY.operation_user_id = :session_user_id
                         GROUP BY DOCUMENT_FILE.document_id
                     ),
+                    DOCUMENTS_NOTES AS (
+                        SELECT DOCUMENT_NOTE.document_id, COUNT(*) AS noteCount
+                        FROM DOCUMENT_NOTE
+                        INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_NOTE.document_id AND DOCUMENT_HISTORY.operation_type = 1 AND DOCUMENT_HISTORY.operation_user_id = :session_user_id
+                        GROUP BY DOCUMENT_NOTE.document_id
+                    ),
                     DOCUMENTS_TAGS AS (
                         SELECT document_id, GROUP_CONCAT(tag, ',') AS tags
                         FROM (
@@ -59,11 +65,13 @@ class Document
                         DOCUMENT.description,
                         CAST(DOCUMENT_HISTORY.operation_date AS INT) AS createdOnTimestamp,
                         COALESCE(DOCUMENTS_FILES.fileCount, 0) AS fileCount,
+                        COALESCE(DOCUMENTS_NOTES.noteCount, 0) AS noteCount,
                         DOCUMENTS_TAGS.tags
                     FROM DOCUMENT
                     INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT.id AND DOCUMENT_HISTORY.operation_type = 1 AND DOCUMENT_HISTORY.operation_user_id = :session_user_id
                     LEFT JOIN DOCUMENTS_FILES ON DOCUMENTS_FILES.document_id = DOCUMENT.id
                     LEFT JOIN DOCUMENTS_TAGS ON DOCUMENTS_TAGS.document_id = DOCUMENT.id
+                    LEFT JOIN DOCUMENTS_NOTES ON DOCUMENTS_NOTES.document_id = DOCUMENT.id
                     ORDER BY DOCUMENT_HISTORY.operation_date DESC
                     LIMIT %d;
                 ",

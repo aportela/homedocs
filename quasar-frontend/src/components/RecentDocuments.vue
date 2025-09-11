@@ -34,6 +34,9 @@
                   <div>
                     <q-icon name="save" size="xs" />{{ t("Files") }}: {{ recentDocument.fileCount }}
                   </div>
+                  <div>
+                    <q-icon name="forum" size="xs" />{{ t("Notes") }}: {{ recentDocument.noteCount }}
+                  </div>
                 </q-item-section>
               </q-item>
             </q-list>
