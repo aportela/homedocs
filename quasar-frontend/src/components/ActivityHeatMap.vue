@@ -1,11 +1,11 @@
 <template>
   <div id="cal-heatmap"></div>
   <!--
-    <q-btn-group flat dense class="q-mt-sm">
-      <q-btn icon="arrow_left" @click.prevent="cal.previous()">Previous</q-btn>
-      <q-btn icon-right="arrow_right" @click.prevent="cal.next()">Next</q-btn>
-    </q-btn-group>
-    -->
+  <q-btn-group flat dense class="q-mt-sm">
+    <q-btn icon="arrow_left" @click.prevent="cal.previous()">Previous</q-btn>
+    <q-btn icon-right="arrow_right" @click.prevent="cal.next()">Next</q-btn>
+  </q-btn-group>
+  -->
 </template>
 
 <script setup>
@@ -61,9 +61,9 @@ function refresh() {
           date: {
             start: new Date(new Date().setFullYear(new Date().getFullYear() - 1)),
             end: new Date(),
-            max: new Date()
+            max: new Date(),
           },
-          range: 12,
+          range: 13,
           scale: {
             color: {
               scheme: 'Greens',
