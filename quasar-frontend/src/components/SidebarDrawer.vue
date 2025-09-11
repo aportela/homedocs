@@ -32,15 +32,17 @@
         </q-item>
       </q-list>
     </q-scroll-area>
+    <!--
     <div class="q-mini-drawer-hide absolute" style="top: 22px; right: -17px">
       <q-btn dense round unelevated color="accent" icon="chevron_left" @click="mini = true"
         style="background-color: rgb(105, 108, 255); color: white; border: 6px solid rgb(242, 242, 247);" />
     </div>
+    -->
   </q-drawer>
 </template>
 
 <script setup>
-import { ref, useAttrs } from "vue";
+import { computed, useAttrs } from "vue";
 import { api } from "boot/axios";
 import { useSessionStore } from "stores/session";
 import { useRouter } from "vue-router";
@@ -57,10 +59,14 @@ if (!session.isLoaded) {
 }
 const router = useRouter();
 
-const mini = ref(false);
+const props = defineProps({
+  mini: Boolean
+});
+
+const mini = computed(() => props.mini);
 
 const menuItems = [
-  { icon: 'storage', text: "Dashboard", routeName: 'index' },
+  { icon: 'home', text: "Dashboard", routeName: 'index' },
   { icon: 'note_add', text: "Add", routeName: 'newDocument' },
   { icon: 'find_in_page', text: "Advanced search", routeName: 'advancedSearch' }
 ];
