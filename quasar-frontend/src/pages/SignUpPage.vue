@@ -7,8 +7,8 @@
           <q-avatar square size="128px">
             <img src="icons/favicon-128x128.png" />
           </q-avatar>
-          <h3 class="q-mt-sm q-mb-md">{{ $t('Homedocs') }}</h3>
-          <div>{{ $t('Sign up below to create your account') }}</div>
+          <h3 class="q-mt-sm q-mb-md">{{ t("Sign up now and take control.") }}</h3>
+          <div>{{ t("The first step to a more organized you starts here!") }}</div>
         </q-card-section>
         <q-card-section>
           <q-input dense outlined ref="emailRef" v-model="email" type="email" name="email" :label="t('Email')"

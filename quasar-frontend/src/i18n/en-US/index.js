@@ -3,9 +3,12 @@ export default {
   "Switch language": "Switch language",
   "Switch to light mode": "Switch to light mode",
   "Switch to dark mode": "Switch to dark mode",
+  "Glad to see you again!": "Glad to see you again!",
+  "Let's get back to organizing.": "Let's get back to organizing.",
+  "Sign up now and take control.": "Sign up now and take control.",
+  "The first step to a more organized you starts here!":
+    "The first step to a more organized you starts here!",
   "Sign in": "Sign in",
-  "Sign in below to access your account":
-    "Sign in below to access your account",
   Email: "Email",
   Password: "Password",
   "Loading...": "Loading...",
@@ -15,8 +18,6 @@ export default {
   "Email not registered": "Email not registered",
   "Invalid password": "Invalid password",
   "Sign up": "Sign up",
-  "Sign up below to create your account":
-    "Sign up below to create your account",
   "New sign ups are not allowed on this system":
     "New sign ups are not allowed on this system",
   "Email already used": "Email already used",

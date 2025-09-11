@@ -3,9 +3,12 @@ export default {
   "Switch language": "Tornar idioma",
   "Switch to light mode": "Tornar a modo claro",
   "Switch to dark mode": "Tornar a modo oscuro",
+  "Glad to see you again!": "¡Alégranos verte de novo!",
+  "Let's get back to organizing.": "É momento de retoma-la organización.",
+  "Sign up now and take control.": "Rexístrate agora e toma o control.",
+  "The first step to a more organized you starts here!":
+    "¡O primeiro paso ata un ti máis organizado comenza eiquí!",
   "Sign in": "Iniciar sesión",
-  "Sign in below to access your account":
-    "Introduzca os datos pra acceder a súa conta",
   Email: "Correo electrónico",
   Password: "Contrasinal",
   "Loading...": "Cargando...",
@@ -15,8 +18,6 @@ export default {
   "Email not registered": "O correo electrónico non está asociado",
   "Invalid password": "Contrasinal incorrecta",
   "Sign up": "Crear conta",
-  "Sign up below to create your account":
-    "Introduzca os datos pra crear a súa conta",
   "New sign ups are not allowed on this system":
     "Non se permiten novos rexistros neste sistema",
   "Email already used": "O correo electrónico xa está en uso",
