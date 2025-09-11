@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lHh lpR lFf">
-    <q-header elevated height-hint="61.59">
-      <q-toolbar class="q-py-sm q-px-md">
+    <q-header bordered height-hint="61.59" class="q-mt-sm q-ml-sm bg-grey-2 text-grey-10">
+      <q-toolbar class="q-py-sm q-px-md bordered">
         <q-btn flat dense round @click="visibleSidebar = !visibleSidebar" aria-label="Toggle drawer" icon="menu"
           class="q-mr-md" />
         <FastSearchSelector dense class="full-width"></FastSearchSelector>
