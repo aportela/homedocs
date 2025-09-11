@@ -20,11 +20,12 @@ class Tag
                     WHERE
                         DOCUMENT_HISTORY.operation_user_id = :session_user_id
                     AND
-                        DOCUMENT_HISTORY.operation_type = 1
+                        DOCUMENT_HISTORY.operation_type = :history_operation_add
                     GROUP BY tag
                     ORDER BY tag
                 ",
             array(
+                new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
                 new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
             )
         );
@@ -52,10 +53,11 @@ class Tag
                     WHERE
                         DOCUMENT_HISTORY.operation_user_id = :session_user_id
                     AND
-                        DOCUMENT_HISTORY.operation_type = 1
+                        DOCUMENT_HISTORY.operation_type = :history_operation_add
                     ORDER BY tag
                 ",
             array(
+                new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
                 new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
             )
         );

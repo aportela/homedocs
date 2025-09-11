@@ -14,11 +14,12 @@ class Stats
                     COALESCE(COUNT(DOCUMENT_HISTORY.document_id), 0) AS total
                 FROM DOCUMENT_HISTORY
                 WHERE
-                    DOCUMENT_HISTORY.operation_type = 1
+                    DOCUMENT_HISTORY.operation_type = :history_operation_add
                 AND
                     DOCUMENT_HISTORY.operation_user_id = :session_user_id
             ",
             array(
+                new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
                 new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
             )
         );
@@ -34,11 +35,12 @@ class Stats
                 FROM DOCUMENT_FILE
                 INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_FILE.document_id
                 WHERE
-                    DOCUMENT_HISTORY.operation_type = 1
+                    DOCUMENT_HISTORY.operation_type = :history_operation_add
                 AND
                     DOCUMENT_HISTORY.operation_user_id = :session_user_id
             ",
             array(
+                new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
                 new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
             )
         );
@@ -55,11 +57,12 @@ class Stats
                 INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_FILE.document_id
                 INNER JOIN FILE ON FILE.id = DOCUMENT_FILE.file_id
                 WHERE
-                    DOCUMENT_HISTORY.operation_type = 1
+                    DOCUMENT_HISTORY.operation_type = :history_operation_add
                 AND
                     DOCUMENT_HISTORY.operation_user_id = :session_user_id
             ",
             array(
+                new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
                 new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
             )
         );

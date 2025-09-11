@@ -40,13 +40,13 @@ class Document
                     WITH DOCUMENTS_FILES AS (
                         SELECT DOCUMENT_FILE.document_id, COUNT(*) AS fileCount
                         FROM DOCUMENT_FILE
-                        INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_FILE.document_id AND DOCUMENT_HISTORY.operation_type = 1 AND DOCUMENT_HISTORY.operation_user_id = :session_user_id
+                        INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_FILE.document_id AND DOCUMENT_HISTORY.operation_type = :history_operation_add AND DOCUMENT_HISTORY.operation_user_id = :session_user_id
                         GROUP BY DOCUMENT_FILE.document_id
                     ),
                     DOCUMENTS_NOTES AS (
                         SELECT DOCUMENT_NOTE.document_id, COUNT(*) AS noteCount
                         FROM DOCUMENT_NOTE
-                        INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_NOTE.document_id AND DOCUMENT_HISTORY.operation_type = 1 AND DOCUMENT_HISTORY.operation_user_id = :session_user_id
+                        INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_NOTE.document_id AND DOCUMENT_HISTORY.operation_type = :history_operation_add AND DOCUMENT_HISTORY.operation_user_id = :session_user_id
                         GROUP BY DOCUMENT_NOTE.document_id
                     ),
                     DOCUMENTS_TAGS AS (
@@ -54,7 +54,7 @@ class Document
                         FROM (
                             SELECT DOCUMENT_TAG.document_id, DOCUMENT_TAG.tag
                             FROM DOCUMENT_TAG
-                            INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_TAG.document_id AND DOCUMENT_HISTORY.operation_type = 1 AND DOCUMENT_HISTORY.operation_user_id = :session_user_id
+                            INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_TAG.document_id AND DOCUMENT_HISTORY.operation_type = :history_operation_add AND DOCUMENT_HISTORY.operation_user_id = :session_user_id
                             GROUP BY DOCUMENT_TAG.document_id, DOCUMENT_TAG.tag
                             ORDER BY DOCUMENT_TAG.tag
                         )
@@ -74,7 +74,7 @@ class Document
                         COALESCE(DOCUMENTS_NOTES.noteCount, 0) AS noteCount,
                         DOCUMENTS_TAGS.tags
                     FROM DOCUMENT
-                    INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT.id AND DOCUMENT_HISTORY.operation_type = 1 AND DOCUMENT_HISTORY.operation_user_id = :session_user_id
+                    INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT.id AND DOCUMENT_HISTORY.operation_type = :history_operation_add AND DOCUMENT_HISTORY.operation_user_id = :session_user_id
                     LEFT JOIN DOCUMENTS_FILES ON DOCUMENTS_FILES.document_id = DOCUMENT.id
                     LEFT JOIN DOCUMENTS_TAGS ON DOCUMENTS_TAGS.document_id = DOCUMENT.id
                     LEFT JOIN DOCUMENTS_NOTES ON DOCUMENTS_NOTES.document_id = DOCUMENT.id
@@ -85,6 +85,7 @@ class Document
                 $count
             ),
             array(
+                new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
                 new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
             )
         );
@@ -456,10 +457,11 @@ class Document
                         SELECT
                             title, description, DOCUMENT_HISTORY.operation_date AS createdOnTimestamp, DOCUMENT_HISTORY.operation_user_id AS createdByUserId
                         FROM DOCUMENT
-                        INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT.id AND DOCUMENT_HISTORY.operation_type = 1
+                        INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT.id AND DOCUMENT_HISTORY.operation_type = :history_operation_add
                         WHERE id = :id
                 ",
                 array(
+                    new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
                     new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id))
                 )
             );
@@ -590,9 +592,10 @@ class Document
         $data->pagination = new \stdClass();
         $data->documents = array();
         $queryConditions = array(
-            "DOCUMENT_HISTORY.operation_type = 1"
+            "DOCUMENT_HISTORY.operation_type = :history_operation_add"
         );
         $params = array(
+            new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
             new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
         );
         if (isset($filter["title"]) && !empty($filter["title"])) {
