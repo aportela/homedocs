@@ -30,7 +30,7 @@
                     </q-item-label>
                   </q-item-section>
                   <q-item-section side top>
-                    <q-item-label caption>{{ recentDocument.createdOn }}
+                    <q-item-label caption>{{ recentDocument.lastUpdate }}
                     </q-item-label>
                     <q-chip size="md" square text-color="dark" class="full-width">
                       <q-avatar color="grey-9" text-color="white">{{ recentDocument.fileCount }}</q-avatar>
@@ -79,6 +79,7 @@ function refresh() {
     .then((success) => {
       recentDocuments.value = success.data.recentDocuments.map((document) => {
         document.createdOn = date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
+        document.lastUpdate = date.formatDate(document.lastUpdateTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
         return (document);
       });
       loading.value = false;

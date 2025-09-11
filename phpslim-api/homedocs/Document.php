@@ -71,6 +71,7 @@ class Document
                         DOCUMENT.title,
                         DOCUMENT.description,
                         CAST(DOCUMENT_HISTORY.operation_date AS INT) AS createdOnTimestamp,
+                        CAST(DOCUMENTS_LAST_HISTORY_OPERATION.max_operation_date AS INT) AS lastUpdateTimestamp,
                         COALESCE(DOCUMENTS_FILES.fileCount, 0) AS fileCount,
                         COALESCE(DOCUMENTS_NOTES.noteCount, 0) AS noteCount,
                         DOCUMENTS_TAGS.tags
@@ -93,6 +94,7 @@ class Document
         $results = array_map(
             function ($item) {
                 $item->createdOnTimestamp = intval($item->createdOnTimestamp);
+                $item->lastUpdateTimestamp = intval($item->lastUpdateTimestamp);
                 $item->fileCount = intval($item->fileCount);
                 $item->tags = $item->tags ? explode(",", $item->tags) : [];
                 return ($item);
