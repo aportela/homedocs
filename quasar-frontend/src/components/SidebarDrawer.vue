@@ -1,5 +1,5 @@
 <template>
-  <q-drawer v-bind="attrs" show-if-above bordered :width="240" :mini="mini" @click.capture="drawerClick">
+  <q-drawer v-bind="attrs" show-if-above bordered :width="240" :mini="mini" @click.capture="drawerClick" class="fixed">
     <q-scroll-area class="fit">
       <q-list padding>
         <q-item class="cursor-pointer non-selectable rounded-borders q-ma-sm sidebar_item">
