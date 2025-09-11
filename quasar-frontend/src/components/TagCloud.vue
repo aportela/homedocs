@@ -1,10 +1,11 @@
 <template>
   <div class="fit">
-    <q-card class="q-ma-xs" flat bordered>
-      <q-card-section>
-        <q-expansion-item :header-class="loadingError ? 'bg-red' : ''" expand-separator
+    <q-card class="q-ma-xs" flat>
+      <q-card-section v-if="!loading" class="q-pa-none">
+        <q-expansion-item :header-class="loadingError ? 'bg-red' : 'bg-grey-4'" expand-separator
           :icon="loadingError ? 'error' : 'tag'" :label="t('Tag cloud')"
-          :caption="t(loadingError ? 'Error loading data' : 'Click on tag to browse by tag')" :model-value="expanded">
+          :caption="t(loadingError ? 'Error loading data' : 'Click on tag to browse by tag')" :model-value="expanded"
+          class="bg-grey-2 rounded-borders">
           <p class="text-center" v-if="loading">
             <q-spinner-pie color="grey-5" size="md" />
           </p>
