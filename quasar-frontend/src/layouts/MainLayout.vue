@@ -8,7 +8,7 @@
           aria-label="Toggle drawer" :icon="miniSidebar ? 'arrow_forward_ios' : 'arrow_back_ios_new'" class="q-mr-md"
           v-show="visibleSidebar" />
         <q-input type="text" standout dense :label="t('Search...')" class="force_cursor_pointer full-width"
-          @click.prevent="console.log(1)">
+          @click.prevent="visibleFastSearch = true">
           <template v-slot:prepend>
             <q-icon name="search" />
           </template>
@@ -24,6 +24,7 @@
       </q-toolbar>
     </q-header>
     <SidebarDrawer v-model="visibleSidebar" :mini="miniSidebar"></SidebarDrawer>
+    <FastSearchModal v-model="visibleFastSearch" @close="visibleFastSearch = false"></FastSearchModal>
     <q-page-container>
       <router-view class="q-pa-sm" />
     </q-page-container>
@@ -38,6 +39,7 @@ import { useI18n } from "vue-i18n";
 
 import { default as SidebarDrawer } from "components/SidebarDrawer.vue"
 //import { default as FastSearchSelector } from "components/FastSearchSelector.vue"
+import { default as FastSearchModal } from "components/FastSearchModal.vue"
 import { default as DarkModeButton } from "components/DarkModeButton.vue"
 import { default as SwitchLanguageButton } from "components/SwitchLanguageButton.vue"
 import { default as GitHubButton } from "components/GitHubButton.vue"
@@ -50,6 +52,8 @@ const session = useSessionStore();
 if (!session.isLoaded) {
   session.load();
 }
+
+const visibleFastSearch = ref(false);
 
 const miniSidebarChangedManually = ref(false);
 
