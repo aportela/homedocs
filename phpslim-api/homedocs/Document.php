@@ -589,7 +589,9 @@ class Document
         $data = new \stdClass();
         $data->pagination = new \stdClass();
         $data->documents = array();
-        $queryConditions = array();
+        $queryConditions = array(
+            "DOCUMENT_HISTORY.operation_type = 1"
+        );
         $params = array(
             new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
         );
