@@ -729,6 +729,9 @@ class Document
                 case "createdOnTimestamp":
                     $sqlSortBy = "DOCUMENT_HISTORY.operation_date";
                     break;
+                case "lastUpdateTimestamp":
+                    $sqlSortBy = "DOCUMENT_HISTORY_LAST_UPDATE.lastUpdateTimestamp";
+                    break;
                 default:
                     $sqlSortBy = "DOCUMENT_HISTORY.operation_date";
                     break;
