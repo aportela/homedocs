@@ -726,17 +726,28 @@ class Document
                 case "noteCount":
                     $sqlSortBy = "TMP_NOTE.noteCount";
                     break;
+                case "createdOnTimestamp":
+                    $sqlSortBy = "DOCUMENT_HISTORY.operation_date";
+                    break;
                 default:
                     $sqlSortBy = "DOCUMENT_HISTORY.operation_date";
                     break;
             }
+            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_update", \HomeDocs\DocumentHistoryOperation::OPERATION_UPDATE_DOCUMENT);
             $data->documents = $dbh->query(
                 sprintf(
                     "
                             SELECT
-                                DOCUMENT.id, DOCUMENT.title, DOCUMENT.description, DOCUMENT_HISTORY.operation_date AS createdOnTimestamp, TMP_FILE.fileCount, TMP_NOTE.noteCount
+                                DOCUMENT.id, DOCUMENT.title, DOCUMENT.description, DOCUMENT_HISTORY.operation_date AS createdOnTimestamp, DOCUMENT_HISTORY_LAST_UPDATE.lastUpdateTimestamp, TMP_FILE.fileCount, TMP_NOTE.noteCount
                             FROM DOCUMENT
                             INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT.id AND DOCUMENT_HISTORY.operation_user_id = :session_user_id
+                            LEFT JOIN (
+                                SELECT
+                                    DOCUMENT_HISTORY.document_id, MAX(DOCUMENT_HISTORY.operation_date) AS lastUpdateTimestamp
+                                FROM DOCUMENT_HISTORY
+                                WHERE DOCUMENT_HISTORY.operation_type = :history_operation_update
+                                GROUP BY DOCUMENT_HISTORY.document_id
+                            ) DOCUMENT_HISTORY_LAST_UPDATE ON DOCUMENT_HISTORY_LAST_UPDATE.document_id = DOCUMENT.id
                             LEFT JOIN (
                                 SELECT COUNT(*) AS fileCount, document_id
                                 FROM DOCUMENT_FILE

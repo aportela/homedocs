@@ -120,15 +120,21 @@
               <q-markup-table>
                 <thead>
                   <tr>
-                    <th style="width: 60%;" class="text-left cursor-pointer" @click="onToggleSort('title')">{{
+                    <th style="width: 40%;" class="text-left cursor-pointer" @click="onToggleSort('title')">{{
                       t("Title") }}
                       <q-icon :name="sortOrderIcon" v-if="advancedSearchData.isSortedByField('title')"
                         size="sm"></q-icon>
                     </th>
                     <th style="width: 20%;" class="text-left cursor-pointer"
                       @click="onToggleSort('createdOnTimestamp')">
-                      {{ t("Date") }}
+                      {{ t("Creation date") }}
                       <q-icon :name="sortOrderIcon" v-if="advancedSearchData.isSortedByField('createdOnTimestamp')"
+                        size="sm"></q-icon>
+                    </th>
+                    <th style="width: 20%;" class="text-left cursor-pointer"
+                      @click="onToggleSort('lastUpdateTimestamp')">
+                      {{ t("Last update") }}
+                      <q-icon :name="sortOrderIcon" v-if="advancedSearchData.isSortedByField('lastUpdateTimestamp')"
                         size="sm"></q-icon>
                     </th>
                     <th style="width: 10%;" class="text-right cursor-pointer" @click="onToggleSort('fileCount')">
@@ -147,6 +153,7 @@
                       document.title }}</router-link>
                     </td>
                     <td class="text-left">{{ document.createdOn }}</td>
+                    <td class="text-left">{{ document.lastUpdate }}</td>
                     <td class="text-right">{{ document.fileCount }}</td>
                     <td class="text-right">{{ document.noteCount }}</td>
                   </tr>
@@ -273,6 +280,7 @@ function onSubmitForm(resetPager) {
       advancedSearchData.pager = success.data.results.pagination;
       advancedSearchData.results = success.data.results.documents.map((document) => {
         document.createdOn = date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
+        document.lastUpdate = document.lastUpdateTimestamp ? date.formatDate(document.lastUpdateTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss') : null;
         return (document);
       });
       searching.value = false;
