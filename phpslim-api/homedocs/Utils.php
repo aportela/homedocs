@@ -169,7 +169,7 @@ class Utils
                 return ($text);
             } else {
                 $len =  $text_len - $pos;
-                return substr($text, $pos, $maxFragmentLength > $len ? $len : $maxFragmentLength) . "...";
+                return ($pos > 0 ? "..." : "") . trim(substr($text, $pos, $maxFragmentLength > $len ? $len : $maxFragmentLength)) . "...";
             }
         } else {
             return null;
