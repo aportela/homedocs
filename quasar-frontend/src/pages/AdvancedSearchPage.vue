@@ -36,7 +36,7 @@
                 </q-input>
                 <div class="row">
                   <div class="col">
-                    <q-select class="q-mb-md" dense outlined clearable
+                    <q-select class="q-mb-md" dense options-dense outlined clearable
                       v-model="advancedSearchData.filter.dateFilterType" :options="dateFilterOptions"
                       :label="t('Document creation date')" :disable="searching || disableFilterDatesByRouteParams" />
                   </div>
