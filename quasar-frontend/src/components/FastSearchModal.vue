@@ -55,6 +55,9 @@
                 </q-chip>
               </q-item-section>
             </q-item>
+            <!--
+            <q-separator v-if="index !== searchResults.length - 1" class="q-my-md" />
+            -->
           </template>
         </q-virtual-scroll>
       </q-card-section>
