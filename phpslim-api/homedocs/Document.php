@@ -96,6 +96,7 @@ class Document
                 $item->createdOnTimestamp = intval($item->createdOnTimestamp);
                 $item->lastUpdateTimestamp = intval($item->lastUpdateTimestamp);
                 $item->fileCount = intval($item->fileCount);
+                $item->noteCount = intval($item->noteCount);
                 $item->tags = $item->tags ? explode(",", $item->tags) : [];
                 return ($item);
             },
