@@ -42,7 +42,7 @@ export default {
   "You haven't created any tags yet": "Aínda non creou ningunha etiqueta",
   "Click on tag to browse by tag":
     "Faga click nunha etiqueta pra navegar por ela",
-  "Created on": "Creado en",
+  "Uploaded on": "Subido en",
   "Click on title to open document":
     "Faga click no título pra abrir o documento",
   "API Error: error removing file": "Error de API: error eliminando o arquivo",

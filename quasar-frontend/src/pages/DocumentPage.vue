@@ -56,7 +56,7 @@
                   <q-markup-table v-if="document.files.length > 0">
                     <thead>
                       <tr>
-                        <th class="text-left">{{ t('Created on') }}</th>
+                        <th class="text-left">{{ t('Uploaded on') }}</th>
                         <th class="text-left">{{ t('Name') }}</th>
                         <th class="text-right">{{ t('Size') }}</th>
                         <th class="text-center">{{ t('Actions') }}</th>
