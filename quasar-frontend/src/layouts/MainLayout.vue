@@ -4,11 +4,11 @@
       <q-toolbar class="my_toolbar bg-white">
         <q-btn flat dense round @click="visibleSidebar = !visibleSidebar;" aria-label="Toggle drawer" icon="menu"
           v-show="!visibleSidebar" class="q-mr-md" />
-        <q-btn flat dense round @click="miniSidebar = !miniSidebar; miniSidebarChangedManually = true"
-          aria-label="Toggle drawer" :icon="miniSidebar ? 'arrow_forward_ios' : 'arrow_back_ios_new'" class="q-mr-md"
+        <q-btn flat dense round @click="onToggleminiSidebarCurrentMode" aria-label="Toggle drawer"
+          :icon="miniSidebarCurrentMode ? 'arrow_forward_ios' : 'arrow_back_ios_new'" class="q-mr-md"
           v-show="visibleSidebar" />
         <q-btn type="button" no-caps no-wrap align="left" flat :label="t('Search on HomeDocs...')" icon-right="search"
-          class="full-width no-caps text-grey-8" @click.prevent="visibleFastSearch = true">
+          class="full-width no-caps text-grey-8" @click.prevent="visibleFastSearchModal = true">
           <q-tooltip anchor="bottom middle" self="top middle">{{ t("Click to open fast search")
             }}</q-tooltip>
         </q-btn>
@@ -22,8 +22,8 @@
         </q-btn-group>
       </q-toolbar>
     </q-header>
-    <SidebarDrawer v-model="visibleSidebar" :mini="miniSidebar"></SidebarDrawer>
-    <FastSearchModal v-model="visibleFastSearch" @close="visibleFastSearch = false"></FastSearchModal>
+    <SidebarDrawer v-model="visibleSidebar" :mini="miniSidebarCurrentMode"></SidebarDrawer>
+    <FastSearchModal v-model="visibleFastSearchModal" @close="visibleFastSearchModal = false"></FastSearchModal>
     <q-page-container>
       <router-view class="q-pa-sm" />
     </q-page-container>
@@ -32,7 +32,7 @@
 
 <script setup>
 import { ref, watch, computed } from "vue";
-import { useQuasar } from "quasar";
+import { useQuasar, LocalStorage } from "quasar";
 import { useSessionStore } from "stores/session";
 import { useI18n } from "vue-i18n";
 
@@ -52,20 +52,37 @@ if (!session.isLoaded) {
   session.load();
 }
 
-const visibleFastSearch = ref(false);
+const visibleFastSearchModal = ref(false);
 
-const miniSidebarChangedManually = ref(false);
+const lockminiSidebarCurrentModeMode = ref(false);
 
 const visibleSidebar = ref($q.screen.gt.sm);
 
-const miniSidebar = ref($q.screen.md);
+// toggle this for using current mini sidebar saved mode
+const saveMiniSidebarMode = false;
+
+const miniSidebarCurrentModeSavedMode = saveMiniSidebarMode ? LocalStorage.getItem("miniSidebarCurrentMode") : null;
+
+if (saveMiniSidebarMode && miniSidebarCurrentModeSavedMode != null) {
+  lockminiSidebarCurrentModeMode.value = true;
+}
+
+const miniSidebarCurrentMode = ref(miniSidebarCurrentModeSavedMode != null ? miniSidebarCurrentModeSavedMode == true : $q.screen.md);
 
 const currentScreenSize = computed(() => $q.screen.name);
 
 watch(currentScreenSize, (newValue) => {
-  if (!miniSidebarChangedManually.value) {
-    miniSidebar.value = $q.screen.lt.lg;
+  if (!lockminiSidebarCurrentModeMode.value) {
+    miniSidebarCurrentMode.value = $q.screen.lt.lg;
   }
 });
+
+const onToggleminiSidebarCurrentMode = (value) => {
+  miniSidebarCurrentMode.value = !miniSidebarCurrentMode.value;
+  lockminiSidebarCurrentModeMode.value = true;
+  if (saveMiniSidebarMode) {
+    LocalStorage.set("miniSidebarCurrentMode", miniSidebarCurrentMode.value);
+  }
+}
 
 </script>
