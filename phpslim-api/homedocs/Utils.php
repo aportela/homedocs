@@ -162,14 +162,14 @@ class Utils
      */
     public static function getStringFragment(string $text, string $search, int $maxFragmentLength, bool $ignoreCase)
     {
-        $pos = $ignoreCase ? stripos($text, $search) : strpos($text, $search);
+        $pos = $ignoreCase ? mb_stripos($text, $search) : mb_strpos($text, $search);
         if ($pos !== false) {
-            $text_len = strlen($text);
+            $text_len = mb_strlen($text);
             if ($text_len <= $maxFragmentLength) {
                 return ($text);
             } else {
                 $len =  $text_len - $pos;
-                return ($pos > 0 ? "..." : "") . trim(substr($text, $pos, $maxFragmentLength > $len ? $len : $maxFragmentLength)) . "...";
+                return ($pos > 0 ? "..." : "") . trim(mb_substr($text, $pos, $maxFragmentLength > $len ? $len : $maxFragmentLength)) . "...";
             }
         } else {
             return null;
