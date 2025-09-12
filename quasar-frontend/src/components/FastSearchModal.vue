@@ -15,19 +15,22 @@
         </q-input>
       </q-card-section>
       <q-separator />
-      <q-card-section style="height: 50vh; max-height: 50vh" class="scroll">
-        <q-list>
-          <q-item v-for="opt, index in searchResults" :key="opt.id" :to="{ name: 'document', params: { id: opt.id } }"
-            :class="{ 'bg-grey-5': currentSearchResultSelectedIndex == index }">
-            <q-item-section side>
-              <q-icon name="collections_bookmark" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ opt.label }}</q-item-label>
-              <q-item-label caption>{{ opt.caption }}</q-item-label>
-            </q-item-section>
-          </q-item>
-        </q-list>
+      <q-card-section>
+        <q-virtual-scroll component="q-list" :items="searchResults" item-size="20" @virtual-scroll="onVirtualScroll"
+          ref="virtualListRef" style="height: 50vh; max-height: 50vh">
+          <template v-slot="{ item, index }">
+            <q-item :key="item.id" :class="{ 'bg-grey-5': currentSearchResultSelectedIndex === index }"
+              @click="selectItem(index)">
+              <q-item-section side>
+                <q-icon name="collections_bookmark" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ item.label }}</q-item-label>
+                <q-item-label caption>{{ item.caption }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-virtual-scroll>
       </q-card-section>
       <q-separator />
     </q-card>
@@ -36,7 +39,7 @@
 
 <script setup>
 
-import { ref, useAttrs } from "vue";
+import { ref } from "vue";
 import { api } from "boot/axios";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
@@ -46,15 +49,15 @@ const visible = ref(true);
 
 const router = useRouter();
 
-const attrs = useAttrs();
-
 const { t } = useI18n();
 
 const emit = defineEmits(['close']);
 
+const virtualListRef = ref(null);
 const text = ref("");
 const searchResults = ref([]);
 const currentSearchResultSelectedIndex = ref(-1);
+const virtualListIndex = ref(0);
 const searching = ref(false);
 
 function onFilter(val) {
@@ -84,11 +87,20 @@ function onFilter(val) {
   }
 }
 
+const onVirtualScroll = (index) => {
+  virtualListIndex.value = index
+};
+
+const scrollToItem = (index) => {
+  virtualListRef.value.scrollTo(index, "start-force");
+};
+
 function onKeyDown(event) {
   if (event.key === "ArrowUp") {
     if (searchResults.value.length > 0) {
       if (currentSearchResultSelectedIndex.value > 0) {
         currentSearchResultSelectedIndex.value--;
+        scrollToItem(currentSearchResultSelectedIndex.value);
         event.preventDefault();
         event.stopPropagation();
       }
@@ -97,6 +109,7 @@ function onKeyDown(event) {
     if (searchResults.value.length > 0) {
       if (currentSearchResultSelectedIndex.value < searchResults.value.length - 1) {
         currentSearchResultSelectedIndex.value++;
+        scrollToItem(currentSearchResultSelectedIndex.value);
         event.preventDefault();
         event.stopPropagation();
       }
@@ -114,6 +127,7 @@ function onKeyDown(event) {
     }
   }
 };
+
 function onShow() {
   window.addEventListener('keydown', onKeyDown);
 }
