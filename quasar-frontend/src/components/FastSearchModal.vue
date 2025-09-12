@@ -16,11 +16,12 @@
       </q-card-section>
       <q-separator />
       <q-card-section>
-        <q-virtual-scroll component="q-list" :items="searchResults" item-size="20" @virtual-scroll="onVirtualScroll"
+        <q-virtual-scroll component="q-list" :items="searchResults" @virtual-scroll="onVirtualScroll"
           ref="virtualListRef" style="height: 50vh; max-height: 50vh">
           <template v-slot="{ item, index }">
-            <q-item :key="item.id" :class="{ 'bg-grey-5': currentSearchResultSelectedIndex === index }"
-              @click="selectItem(index)">
+            <q-item :key="item.id" class="cursor-pointer"
+              :class="{ 'bg-grey-5': currentSearchResultSelectedIndex === index }"
+              :to="{ name: 'document', params: { id: item.id } }">
               <q-item-section side>
                 <q-icon name="collections_bookmark" />
               </q-item-section>
@@ -92,7 +93,9 @@ const onVirtualScroll = (index) => {
 };
 
 const scrollToItem = (index) => {
-  virtualListRef.value.scrollTo(index, "start-force");
+  if (virtualListRef.value) {
+    virtualListRef.value.scrollTo(index, "start-force");
+  }
 };
 
 function onKeyDown(event) {
