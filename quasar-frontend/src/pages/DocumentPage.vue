@@ -18,21 +18,21 @@
               <div class="row q-col-gutter-sm">
                 <div
                   :class="{ 'col-6': document.creationDate != document.lastUpdate, 'col-12': document.creationDate == document.lastUpdate }">
-                  <q-input class="q-mb-md" outlined mask="date" v-model="document.creationDate"
-                    :label="t('Document creation date')" :disable="true" v-if="document.id"></q-input>
+                  <q-input dense class="q-mb-md" outlined mask="date" v-model="document.creationDate"
+                    :label="t('Document created on')" :disable="true" v-if="document.id"></q-input>
                 </div>
                 <div class="col-6" v-if="document.creationDate != document.lastUpdate">
-                  <q-input class="q-mb-md" outlined mask="date" v-model="document.lastUpdate"
-                    :label="t('Document last update date')" :disable="true" v-if="document.id"></q-input>
+                  <q-input dense class="q-mb-md" outlined mask="date" v-model="document.lastUpdate"
+                    :label="t('Document last update')" :disable="true" v-if="document.id"></q-input>
                 </div>
               </div>
-              <q-input class="q-mb-md" ref="titleRef" maxlength="128" outlined v-model="document.title" type="text"
-                name="title" :label="t('Document title')" :disable="loading || saving" :autofocus="true">
+              <q-input dense class="q-mb-md" ref="titleRef" maxlength="128" outlined v-model="document.title"
+                type="text" name="title" :label="t('Document title')" :disable="loading || saving" :autofocus="true">
               </q-input>
-              <q-input class="q-mb-md" outlined v-model="document.description" type="textarea" maxlength="4096" autogrow
-                name="description" :label="t('Document description')" :disable="loading || saving" clearable>
+              <q-input dense class="q-mb-md" outlined v-model="document.description" type="textarea" maxlength="4096"
+                autogrow name="description" :label="t('Document description')" :disable="loading || saving" clearable>
               </q-input>
-              <TagSelector v-model="document.tags" :disabled="loading || saving" :link="true" class="q-pb-none">
+              <TagSelector dense v-model="document.tags" :disabled="loading || saving" :link="true" class="q-pb-none">
               </TagSelector>
               <q-tabs v-model="tab" dense align="left" class="q-mt-md">
                 <q-tab name="attachments" icon="attach_file" :label="t('Attachments')">
