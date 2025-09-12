@@ -7,12 +7,11 @@
         <q-btn flat dense round @click="miniSidebar = !miniSidebar; miniSidebarChangedManually = true"
           aria-label="Toggle drawer" :icon="miniSidebar ? 'arrow_forward_ios' : 'arrow_back_ios_new'" class="q-mr-md"
           v-show="visibleSidebar" />
-        <q-input type="text" standout dense :label="t('Search...')" class="force_cursor_pointer full-width"
-          @click.prevent="visibleFastSearch = true">
-          <template v-slot:prepend>
-            <q-icon name="search" />
-          </template>
-        </q-input>
+        <q-btn type="button" no-caps no-wrap align="left" flat :label="t('Search on HomeDocs...')" icon-right="search"
+          class="full-width no-caps text-grey-8" @click.prevent="visibleFastSearch = true">
+          <q-tooltip anchor="bottom middle" self="top middle">{{ t("Click to open fast search")
+            }}</q-tooltip>
+        </q-btn>
         <!--
         <FastSearchSelector dense class="full-width"></FastSearchSelector>
         -->
@@ -70,9 +69,3 @@ watch(currentScreenSize, (newValue) => {
 });
 
 </script>
-
-<style scoped>
-.force_cursor_pointer * {
-  cursor: pointer !important;
-}
-</style>
