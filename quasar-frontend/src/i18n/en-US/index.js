@@ -37,6 +37,7 @@ export default {
     "You haven't created any documents yet",
   "Error loading data": "Error loading data",
   Title: "Title",
+  Description: "Description",
   "Tag cloud": "Tag cloud",
   "You haven't created any tags yet": "You haven't created any tags yet",
   "Click on tag to browse by tag": "Click on tag to browse by tag",
@@ -76,8 +77,9 @@ export default {
   Search: "Search",
   "Search on HomeDocs...": "Search on HomeDocs...",
   "Click to open fast search": "Click to open fast search",
-  "Search text on title, description & notes":
-    "Search text on title, description & notes",
+  "Search on": "Search on",
+  "Search text...":
+    "Search text...",
   "Any date": "Any date",
   Today: "Today",
   Yesterday: "Yesterday",

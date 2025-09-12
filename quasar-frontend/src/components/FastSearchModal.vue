@@ -7,13 +7,20 @@
         <q-btn icon="close" flat round dense v-close-popup />
       </q-card-section>
       <q-card-section>
-        <q-input type="text" dense color="grey-3" label-color="grey-7"
-          :label="t('Search text on title, description & notes')" v-model="text" @update:model-value="onFilter"
-          autofocus="" clearable outlined>
-          <template v-slot:prepend>
-            <q-icon name="search" />
-          </template>
-        </q-input>
+        <div class="row items-center q-gutter-sm">
+          <q-col class="col-auto">
+            <q-select v-model="searchOn" :options="options" :display-value="`${searchOn ? t(searchOn.label) : ''}`"
+              dense outlined style="min-width: 8em;" :label="t('Search on')" @update:model-value="onFilter(text)" />
+          </q-col>
+          <q-col style="flex-grow: 1;">
+            <q-input type="text" dense color="grey-3" label-color="grey-7" :label="t('Search text...')" v-model="text"
+              @update:model-value="onFilter" autofocus="" clearable outlined>
+              <template v-slot:prepend>
+                <q-icon name="search" />
+              </template>
+            </q-input>
+          </q-col>
+        </div>
       </q-card-section>
       <q-separator />
       <q-card-section>
@@ -41,11 +48,11 @@
 
 <script setup>
 
-import { ref } from "vue";
-import { api } from "boot/axios";
+import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { date } from "quasar";
+import { api } from "boot/axios";
 
 const visible = ref(true);
 
@@ -61,14 +68,33 @@ const searchResults = ref([]);
 const currentSearchResultSelectedIndex = ref(-1);
 const virtualListIndex = ref(0);
 const searching = ref(false);
+const options = computed(() => [
+  { label: 'Title', value: 'title' },
+  { label: 'Description', value: 'description' },
+  { label: 'Notes', value: 'notes' },
+]);
+
+const searchOn = ref(options.value[0]);
 
 function onFilter(val) {
   if (val && val.trim().length > 0) {
     searchResults.value = [];
     currentSearchResultSelectedIndex.value = -1;
     searching.value = true;
+    let params = {};
+    switch (searchOn.value.value) {
+      case "title":
+        params.title = val;
+        break;
+      case "description":
+        params.description = val;
+        break;
+      case "notes":
+        params.notesBody = val;
+        break;
+    }
     // TODO: SEARCH ON TITLE, DESCRIPTION OR NOTES BODY!!!
-    api.document.search(1, 16, { title: val }, "title", "ASC")
+    api.document.search(1, 16, params, "title", "ASC")
       .then((success) => {
         searchResults.value = success.data.results.documents.map((document) => {
           return ({ id: document.id, label: document.title, caption: t("Fast search caption", { creation: date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss'), attachmentCount: document.fileCount, noteCount: document.noteCount }) });

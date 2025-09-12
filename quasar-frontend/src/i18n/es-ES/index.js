@@ -37,6 +37,7 @@ export default {
   "You haven't created any documents yet": "Aún no ha creado ningún documento",
   "Error loading data": "Error cargando datos",
   Title: "Título",
+  Description: "Descripción",
   "Tag cloud": "Nube de etiquetas",
   "You haven't created any tags yet": "Aún no ha creado ninguna etiqueta",
   "Click on tag to browse by tag":
@@ -81,8 +82,9 @@ export default {
   Search: "Buscar",
   "Search on HomeDocs...": "Buscar en HomeDocs...",
   "Click to open fast search": "Haga click para abrir la búsqueda rápida",
-  "Search text on title, description & notes":
-    "Buscar en título, descripción y notas",
+  "Search on": "Buscar en",
+  "Search text...":
+    "Buscar texto...",
   "Any date": "Cualquier fecha",
   Today: "Hoy",
   Yesterday: "Ayer",
