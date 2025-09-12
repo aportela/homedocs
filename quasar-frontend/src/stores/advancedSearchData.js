@@ -7,6 +7,7 @@ export const useAdvancedSearchData = defineStore("advancedSearchData", {
     filter: {
       title: null,
       description: null,
+      noteBody: null,
       dateFilterType: null,
       dateRange: null,
       fromDate: null,

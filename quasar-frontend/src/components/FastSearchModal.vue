@@ -67,6 +67,7 @@ function onFilter(val) {
     searchResults.value = [];
     currentSearchResultSelectedIndex.value = -1;
     searching.value = true;
+    // TODO: SEARCH ON TITLE, DESCRIPTION OR NOTES BODY!!!
     api.document.search(1, 16, { title: val }, "title", "ASC")
       .then((success) => {
         searchResults.value = success.data.results.documents.map((document) => {

@@ -28,6 +28,12 @@
                     <q-icon name="search" />
                   </template>
                 </q-input>
+                <q-input class="q-mb-md" dense outlined v-model="advancedSearchData.filter.notesBody" type="text"
+                  name="notesBody" clearable :label="t('Document notes body')" :disable="searching">
+                  <template v-slot:prepend>
+                    <q-icon name="search" />
+                  </template>
+                </q-input>
                 <div class="row">
                   <div class="col">
                     <q-select class="q-mb-md" dense outlined clearable
@@ -210,6 +216,9 @@ const totalSearchConditions = computed(() => {
     total++;
   }
   if (advancedSearchData.filter.description) {
+    total++;
+  }
+  if (advancedSearchData.filter.notesBody) {
     total++;
   }
   if (advancedSearchData.filter.tags && advancedSearchData.filter.tags.length > 0) {

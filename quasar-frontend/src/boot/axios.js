@@ -17,7 +17,7 @@ axios.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 axios.interceptors.response.use(
@@ -48,7 +48,7 @@ axios.interceptors.response.use(
       }
       return Promise.reject(error);
     }
-  }
+  },
 );
 
 const api = {
@@ -134,6 +134,7 @@ const api = {
         const params = {
           title: filter.title,
           description: filter.description,
+          notesBody: filter.notesBody,
           tags: filter.tags || [],
         };
         if (filter.fromTimestamp) {
@@ -326,7 +327,7 @@ const api = {
           });
       });
     },
-  }
+  },
 };
 
 export default boot(({ app }) => {

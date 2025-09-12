@@ -110,6 +110,7 @@ return function (App $app) {
                             [
                                 "title" => $params["title"] ?? null,
                                 "description" => $params["description"] ?? null,
+                                "notesBody" => $params["notesBody"] ?? null,
                                 "fromTimestampCondition" => intval($params["fromTimestampCondition"] ?? 0),
                                 "toTimestampCondition" => intval($params["toTimestampCondition"] ?? 0),
                                 "tags" => $params["tags"] ?? [],

@@ -646,6 +646,28 @@ class Document
                 }
             }
         }
+        if (isset($filter["notesBody"]) && !empty($filter["notesBody"])) {
+            // explode into words, remove duplicated & empty elements
+            $words = array_filter(array_unique(explode(" ", trim(mb_strtolower($filter["notesBody"])))));
+            $totalWords = count($words);
+            if ($totalWords > 0) {
+                $notesConditions = [];
+                foreach ($words as $word) {
+                    $paramName = sprintf(":NOTES_BODY_%03d", $totalWords);
+                    $params[] = new \aportela\DatabaseWrapper\Param\StringParam($paramName, "%" . $word . "%");
+                    $notesConditions[] = sprintf(" DOCUMENT_NOTE.body LIKE %s ", $paramName);
+                    $totalWords--;
+                }
+                $queryConditions[] = sprintf("
+                    EXISTS (
+                        SELECT DOCUMENT_NOTE.document_id
+                        FROM DOCUMENT_NOTE
+                        WHERE DOCUMENT_NOTE.DOCUMENT_ID = DOCUMENT.id
+                        AND (%s)
+                    )
+                ", implode(" AND ", $notesConditions));
+            }
+        }
         if (isset($filter["fromTimestampCondition"]) && $filter["fromTimestampCondition"] > 0) {
             $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":fromTimestamp", $filter["fromTimestampCondition"]);
             $queryConditions[] = " DOCUMENT_HISTORY.operation_date >= :fromTimestamp ";
