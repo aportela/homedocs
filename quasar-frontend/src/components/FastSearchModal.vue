@@ -68,7 +68,7 @@
 
 <script setup>
 
-import { ref, computed, watch } from "vue";
+import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useQuasar, date } from "quasar";
@@ -79,6 +79,7 @@ const visible = ref(true);
 const router = useRouter();
 
 const $q = useQuasar();
+
 const { t } = useI18n();
 
 const emit = defineEmits(['close']);
