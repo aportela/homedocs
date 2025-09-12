@@ -730,7 +730,7 @@ class Document
                     $sqlSortBy = "DOCUMENT_HISTORY.operation_date";
                     break;
                 case "lastUpdateTimestamp":
-                    $sqlSortBy = "DOCUMENT_HISTORY_LAST_UPDATE.lastUpdateTimestamp";
+                    $sqlSortBy = "COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.lastUpdateTimestamp, DOCUMENT_HISTORY.operation_date)";
                     break;
                 default:
                     $sqlSortBy = "DOCUMENT_HISTORY.operation_date";
