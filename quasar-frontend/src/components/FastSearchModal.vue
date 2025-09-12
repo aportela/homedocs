@@ -7,8 +7,9 @@
         <q-btn icon="close" flat round dense v-close-popup />
       </q-card-section>
       <q-card-section>
-        <q-input type="text" standout dense :label="t('Search text on title, description & notes')" v-model="text"
-          @update:model-value="onFilter" autofocus="">
+        <q-input type="text" dense color="grey-3" label-color="grey-7"
+          :label="t('Search text on title, description & notes')" v-model="text" @update:model-value="onFilter"
+          autofocus="" clearable outlined>
           <template v-slot:prepend>
             <q-icon name="search" />
           </template>
