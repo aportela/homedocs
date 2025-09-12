@@ -122,7 +122,7 @@ function onFilter(val) {
         params.notesBody = val;
         break;
     }
-    api.document.search(1, 16, params, "title", "ASC")
+    api.document.search(1, 16, params, "lastUpdateTimestamp", "DESC")
       .then((success) => {
         searchResults.value = success.data.results.documents.map((document) => {
           document.createdOn = date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
