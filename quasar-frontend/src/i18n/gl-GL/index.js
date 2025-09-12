@@ -128,6 +128,8 @@ export default {
     "Non hai resultados pra as condicións de filtro especificadas",
   "Fast search caption":
     "Creado o {creation}, {attachmentCount} arquivo/s, {noteCount} nota/s",
+  "Fast search match fragment":
+    "Coincidencia atopada en: {fragment}",
   Dashboard: "Inicio",
   Add: "Engadir",
   "Selected language": "Língua seleccionada",

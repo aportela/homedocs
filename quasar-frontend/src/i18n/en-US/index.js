@@ -125,6 +125,8 @@ export default {
     "No results found with current filter",
   "Fast search caption":
     "Created on {creation}, {attachmentCount} attachment/s, {noteCount} note/s",
+  "Fast search match fragment":
+    "Fragment matched on: {fragment}",
   Dashboard: "Dashboard",
   Add: "Add",
   "Advanced search": "Advanced search",

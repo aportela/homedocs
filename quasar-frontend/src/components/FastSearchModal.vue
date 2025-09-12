@@ -71,13 +71,14 @@
 import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
-import { date } from "quasar";
+import { useQuasar, date } from "quasar";
 import { api } from "boot/axios";
 
 const visible = ref(true);
 
 const router = useRouter();
 
+const $q = useQuasar();
 const { t } = useI18n();
 
 const emit = defineEmits(['close']);
@@ -139,7 +140,11 @@ function onFilter(val) {
               createdOn: document.createdOn,
               fileCount: document.fileCount,
               noteCount: document.noteCount,
-              fragment: document.fragment ? `Found on: ${boldStringMatch(document.fragment, val)}` : ''
+              fragment: t(
+                "Fast search match fragment", {
+                fragment: document.fragment ? `${boldStringMatch(document.fragment, val)}` : ''
+              }
+              )
             });
         });
         searching.value = false;
