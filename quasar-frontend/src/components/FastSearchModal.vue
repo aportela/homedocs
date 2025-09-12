@@ -59,7 +59,19 @@
             <q-separator v-if="index !== searchResults.length - 1" class="q-my-md" />
             -->
           </template>
+          <template v-slot:before>
+            <q-item v-show="showNoSearchResults">
+              <q-item-section side>
+                <q-icon name="warning" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>Unfortunately, your search didn't return any results. You might want to modify your
+                  filters or search terms</q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
         </q-virtual-scroll>
+
       </q-card-section>
       <q-separator />
     </q-card>
@@ -98,6 +110,8 @@ const options = computed(() => [
 
 const searchOn = ref(options.value[0]);
 
+const showNoSearchResults = ref(false);
+
 const boldStringMatch = (str, matchWord) => {
   return str.replace(
     new RegExp(matchWord, "gi"),
@@ -106,6 +120,7 @@ const boldStringMatch = (str, matchWord) => {
 };
 
 function onFilter(val) {
+  showNoSearchResults.value = false;
   if (val && val.trim().length > 0) {
     searchResults.value = [];
     currentSearchResultSelectedIndex.value = -1;
@@ -149,6 +164,7 @@ function onFilter(val) {
             });
         });
         searching.value = false;
+        showNoSearchResults.value = success.data.results.documents.length <= 0;
         return;
       })
       .catch((error) => {
