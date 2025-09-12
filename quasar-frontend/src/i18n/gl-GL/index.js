@@ -80,6 +80,8 @@ export default {
   Search: "Procurar",
   "Search on HomeDocs...": "Procurar en HomeDocs...",
   "Click to open fast search": "Faga click pra abrir a procura rápida",
+  "Search text on title, description & notes":
+    "Procurar en título, descripción e notas",
   "Any date": "Cualquera data",
   Today: "Hoxe",
   Yesterday: "Onte",

@@ -76,6 +76,8 @@ export default {
   Search: "Search",
   "Search on HomeDocs...": "Search on HomeDocs...",
   "Click to open fast search": "Click to open fast search",
+  "Search text on title, description & notes":
+    "Search text on title, description & notes",
   "Any date": "Any date",
   Today: "Today",
   Yesterday: "Yesterday",
