@@ -1,8 +1,8 @@
 <template>
-  <q-select ref="selectRef" :label="t('Tags')" v-model="currentTags" :dense="dense" outlined use-input use-chips
-    multiple hide-dropdown-icon :options="filteredTags" input-debounce="0" new-value-mode="add-unique" clearable
-    :disable="disabled || loading || loadingError" :loading="loading" :error="loadingError"
-    :errorMessage="t('Error loading available tags')" @filter="onFilterTags" @add="onAddTag">
+  <q-select ref="selectRef" :label="t('Tags')" v-model="currentTags" :dense="dense" :options-dense="dense" outlined
+    use-input use-chips multiple hide-dropdown-icon :options="filteredTags" input-debounce="0"
+    new-value-mode="add-unique" clearable :disable="disabled || loading || loadingError" :loading="loading"
+    :error="loadingError" :errorMessage="t('Error loading available tags')" @filter="onFilterTags" @add="onAddTag">
     <template v-slot:selected>
       <q-chip removable v-for="tag, index in currentTags" :key="tag" @remove="removeTagAtIndex(index)" color="dark"
         text-color="white" icon="label_important">
