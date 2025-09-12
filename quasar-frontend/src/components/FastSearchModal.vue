@@ -8,18 +8,29 @@
       </q-card-section>
       <q-card-section>
         <div class="row items-center q-gutter-sm">
-          <q-col class="col-auto">
+          <div class="col-auto">
             <q-select v-model="searchOn" :options="options" :display-value="`${searchOn ? t(searchOn.label) : ''}`"
-              dense outlined style="min-width: 8em;" :label="t('Search on')" @update:model-value="onFilter(text)" />
-          </q-col>
-          <q-col style="flex-grow: 1;">
+              dense options-dense outlined style="min-width: 8em;" :label="t('Search on')"
+              @update:model-value="onFilter(text)">
+              <template v-slot:option="scope">
+                <q-item v-bind="scope.itemProps">
+                  <q-item-section>
+                    <q-item-label>
+                      {{ t(scope.label) }}
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
+          </div>
+          <div style="flex-grow: 1;">
             <q-input type="text" dense color="grey-3" label-color="grey-7" :label="t('Search text...')" v-model="text"
               @update:model-value="onFilter" autofocus="" clearable outlined>
               <template v-slot:prepend>
                 <q-icon name="search" />
               </template>
             </q-input>
-          </q-col>
+          </div>
         </div>
       </q-card-section>
       <q-separator />
