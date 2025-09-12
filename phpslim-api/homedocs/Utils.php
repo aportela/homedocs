@@ -156,4 +156,23 @@ class Utils
             bin2hex(random_bytes(6))
         ]);
     }
+
+    /**
+     * return (if found) matched fragment of string
+     */
+    public static function getStringFragment(string $text, string $search, int $maxFragmentLength, bool $ignoreCase)
+    {
+        $pos = $ignoreCase ? stripos($text, $search) : strpos($text, $search);
+        if ($pos !== false) {
+            $text_len = strlen($text);
+            if ($text_len <= $maxFragmentLength) {
+                return ($text);
+            } else {
+                $len =  $text_len - $pos;
+                return substr($text, $pos, $maxFragmentLength > $len ? $len : $maxFragmentLength) . "...";
+            }
+        } else {
+            return null;
+        }
+    }
 }

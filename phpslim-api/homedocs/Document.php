@@ -759,10 +759,18 @@ class Document
                 $params
             );
             $data->documents = array_map(
-                function ($item) {
+                function ($item) use ($filter) {
                     $item->createdOnTimestamp = intval($item->createdOnTimestamp);
                     $item->fileCount = intval($item->fileCount);
                     $item->noteCount = intval($item->noteCount);
+                    $item->fragment = null;
+                    if (isset($filter["title"]) && !empty($filter["title"])) {
+                        $item->fragment = \HomeDocs\Utils::getStringFragment($item->title, $filter["title"], 64, true);
+                    } else if (isset($filter["description"]) && !empty($filter["description"])) {
+                        $item->fragment = \HomeDocs\Utils::getStringFragment($item->description, $filter["description"], 64, true);
+                    } else if (isset($filter["notesBody"]) && !empty($filter["notesBody"])) {
+                        $item->fragment = null;
+                    }
                     return ($item);
                 },
                 $data->documents

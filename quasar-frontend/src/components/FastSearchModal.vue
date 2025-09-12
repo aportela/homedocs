@@ -35,7 +35,24 @@
               </q-item-section>
               <q-item-section>
                 <q-item-label>{{ item.label }}</q-item-label>
+                <!--
                 <q-item-label caption>{{ item.caption }}</q-item-label>
+                -->
+                <q-item-label caption v-if="item.fragment">
+                  <div v-html="item.fragment"></div>
+                </q-item-label>
+              </q-item-section>
+              <q-item-section side top>
+                <q-item-label caption>{{ item.createdOn }}
+                </q-item-label>
+                <q-chip size="sm" square text-color="dark" class="full-width">
+                  <q-avatar color="grey-9" text-color="white">{{ item.fileCount }}</q-avatar>
+                  {{ t("Files") }}
+                </q-chip>
+                <q-chip size="sm" square text-color="dark" class="full-width">
+                  <q-avatar color="grey-9" text-color="white">{{ item.noteCount }}</q-avatar>
+                  {{ t("Notes") }}
+                </q-chip>
               </q-item-section>
             </q-item>
           </template>
@@ -76,6 +93,13 @@ const options = computed(() => [
 
 const searchOn = ref(options.value[0]);
 
+const boldStringMatch = (str, matchWord) => {
+  return str.replace(
+    new RegExp(matchWord, "gi"),
+    (match) => `<strong>${match}</strong>`
+  );
+};
+
 function onFilter(val) {
   if (val && val.trim().length > 0) {
     searchResults.value = [];
@@ -93,11 +117,27 @@ function onFilter(val) {
         params.notesBody = val;
         break;
     }
-    // TODO: SEARCH ON TITLE, DESCRIPTION OR NOTES BODY!!!
     api.document.search(1, 16, params, "title", "ASC")
       .then((success) => {
         searchResults.value = success.data.results.documents.map((document) => {
-          return ({ id: document.id, label: document.title, caption: t("Fast search caption", { creation: date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss'), attachmentCount: document.fileCount, noteCount: document.noteCount }) });
+          document.createdOn = date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
+          document.lastUpdate = null; //date.formatDate(document.lastUpdateTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
+          return (
+            {
+              id: document.id,
+              label: document.title,
+              caption: t(
+                "Fast search caption", {
+                creation: date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss'),
+                attachmentCount: document.fileCount,
+                noteCount: document.noteCount
+              }
+              ),
+              createdOn: document.createdOn,
+              fileCount: document.fileCount,
+              noteCount: document.noteCount,
+              fragment: document.fragment ? `Found on: ${boldStringMatch(document.fragment, val)}` : ''
+            });
         });
         searching.value = false;
         return;
