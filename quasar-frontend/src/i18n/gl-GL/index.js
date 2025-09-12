@@ -146,4 +146,5 @@ export default {
   "Document created": "Documento creado",
   "Document updated": "Documento actualizado",
   "Unknown operation": "Operación desconocida",
+  "Document notes": "Notas do documento",
 };

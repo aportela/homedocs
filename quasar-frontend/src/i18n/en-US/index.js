@@ -143,4 +143,5 @@ export default {
   "Document created": "Document created",
   "Document updated": "Document updated",
   "Unknown operation": "Unknown operation",
+  "Document notes": "Document notes",
 };

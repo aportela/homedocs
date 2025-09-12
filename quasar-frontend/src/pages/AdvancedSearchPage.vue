@@ -29,7 +29,7 @@
                   </template>
                 </q-input>
                 <q-input class="q-mb-md" dense outlined v-model="advancedSearchData.filter.notesBody" type="text"
-                  name="notesBody" clearable :label="t('Document notes body')" :disable="searching">
+                  name="notesBody" clearable :label="t('Document notes')" :disable="searching">
                   <template v-slot:prepend>
                     <q-icon name="search" />
                   </template>
