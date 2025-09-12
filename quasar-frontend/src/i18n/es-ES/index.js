@@ -125,7 +125,8 @@ export default {
   Results: "Resultados",
   "No results found with current filter":
     "No hay resultados para las condiciones de filtro especificadas",
-  "Fast search caption": "Creado el {creation}, {attachmentCount} archivo/s",
+  "Fast search caption":
+    "Creado el {creation}, {attachmentCount} archivo/s, {noteCount} nota/s",
   Dashboard: "Inicio",
   Add: "Añadir",
   "Selected language": "Idioma seleccionado",

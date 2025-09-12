@@ -122,7 +122,7 @@ export default {
   "No results found with current filter":
     "No results found with current filter",
   "Fast search caption":
-    "Created on {creation}, {attachmentCount} attachment/s",
+    "Created on {creation}, {attachmentCount} attachment/s, {noteCount} note/s",
   Dashboard: "Dashboard",
   Add: "Add",
   "Advanced search": "Advanced search",

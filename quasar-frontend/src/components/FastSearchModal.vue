@@ -70,7 +70,7 @@ function onFilter(val) {
     api.document.search(1, 16, { title: val }, "title", "ASC")
       .then((success) => {
         searchResults.value = success.data.results.documents.map((document) => {
-          return ({ id: document.id, label: document.title, caption: t("Fast search caption", { creation: date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss'), attachmentCount: document.fileCount }) });
+          return ({ id: document.id, label: document.title, caption: t("Fast search caption", { creation: date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss'), attachmentCount: document.fileCount, noteCount: document.noteCount }) });
         });
         searching.value = false;
         return;

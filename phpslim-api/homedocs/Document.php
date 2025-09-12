@@ -701,6 +701,9 @@ class Document
                 case "fileCount":
                     $sqlSortBy = "TMP_FILE.fileCount";
                     break;
+                case "noteCount":
+                    $sqlSortBy = "TMP_NOTE.noteCount";
+                    break;
                 default:
                     $sqlSortBy = "DOCUMENT_HISTORY.operation_date";
                     break;
@@ -709,7 +712,7 @@ class Document
                 sprintf(
                     "
                             SELECT
-                                DOCUMENT.id, DOCUMENT.title, DOCUMENT.description, DOCUMENT_HISTORY.operation_date AS createdOnTimestamp, TMP_FILE.fileCount
+                                DOCUMENT.id, DOCUMENT.title, DOCUMENT.description, DOCUMENT_HISTORY.operation_date AS createdOnTimestamp, TMP_FILE.fileCount, TMP_NOTE.noteCount
                             FROM DOCUMENT
                             INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT.id AND DOCUMENT_HISTORY.operation_user_id = :session_user_id
                             LEFT JOIN (
@@ -717,6 +720,11 @@ class Document
                                 FROM DOCUMENT_FILE
                                 GROUP BY document_id
                             ) TMP_FILE ON TMP_FILE.document_id = DOCUMENT.id
+                            LEFT JOIN (
+                                SELECT COUNT(*) AS noteCount, document_id
+                                FROM DOCUMENT_NOTE
+                                GROUP BY document_id
+                            ) TMP_NOTE ON TMP_NOTE.document_id = DOCUMENT.id
                             %s
                             ORDER BY %s COLLATE NOCASE %s
                             %s;
@@ -732,6 +740,7 @@ class Document
                 function ($item) {
                     $item->createdOnTimestamp = intval($item->createdOnTimestamp);
                     $item->fileCount = intval($item->fileCount);
+                    $item->noteCount = intval($item->noteCount);
                     return ($item);
                 },
                 $data->documents

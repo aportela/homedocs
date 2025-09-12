@@ -129,6 +129,10 @@
                       {{ t("Files") }}<q-icon :name="sortOrderIcon"
                         v-if="advancedSearchData.isSortedByField('fileCount')" size="sm"></q-icon>
                     </th>
+                    <th style="width: 10%;" class="text-right cursor-pointer" @click="onToggleSort('noteCount')">
+                      {{ t("Notes") }}<q-icon :name="sortOrderIcon"
+                        v-if="advancedSearchData.isSortedByField('noteCount')" size="sm"></q-icon>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -138,6 +142,7 @@
                     </td>
                     <td class="text-left">{{ document.createdOn }}</td>
                     <td class="text-right">{{ document.fileCount }}</td>
+                    <td class="text-right">{{ document.noteCount }}</td>
                   </tr>
                 </tbody>
               </q-markup-table>
