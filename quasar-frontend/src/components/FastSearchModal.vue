@@ -65,8 +65,7 @@
                 <q-icon name="warning" />
               </q-item-section>
               <q-item-section>
-                <q-item-label>Unfortunately, your search didn't return any results. You might want to modify your
-                  filters or search terms</q-item-label>
+                <q-item-label>{{ t("Unfortunately, your search didn't return any results. You might want to modify your filters or search terms") }}</q-item-label>
               </q-item-section>
             </q-item>
           </template>
