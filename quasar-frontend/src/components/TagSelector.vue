@@ -4,8 +4,8 @@
     new-value-mode="add-unique" clearable :disable="disabled || loading || loadingError" :loading="loading"
     :error="loadingError" :errorMessage="t('Error loading available tags')" @filter="onFilterTags" @add="onAddTag">
     <template v-slot:selected>
-      <q-chip removable v-for="tag, index in currentTags" :key="tag" @remove="removeTagAtIndex(index)" color="dark"
-        text-color="white" icon="label_important">
+      <q-chip removable :dense="dense" v-for="tag, index in currentTags" :key="tag" @remove="removeTagAtIndex(index)"
+        color="dark" text-color="white" icon="label_important">
         <router-link v-if="props.link" :to="{ name: 'advancedSearchByTag', params: { tag: tag } }"
           style="text-decoration: none; color: white;">
           {{ tag }}
