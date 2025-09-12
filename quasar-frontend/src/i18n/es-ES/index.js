@@ -53,8 +53,8 @@ export default {
   "New document": "Nuevo documento",
   "Document title": "Título del documento",
   "Document description": "Descripción del documento",
-  "Document creation date": "Fecha de alta del documento",
-  "Document last update date": "Fecha de última modificación del documento",
+  "Document created on": "Fecha de alta del documento",
+  "Document last update": "Fecha de última modificación del documento",
   Attachments: "Archivos",
   "Add new file (Drag & Drop supported)":
     "Añadir nuevo archivo (puede arrastrar y soltar)",
