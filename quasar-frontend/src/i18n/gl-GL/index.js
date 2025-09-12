@@ -81,8 +81,7 @@ export default {
   Search: "Procurar",
   "Search on HomeDocs...": "Procurar en HomeDocs...",
   "Click to open fast search": "Faga click pra abrir a procura rápida",
-  "Search text...":
-    "Procurar texto...",
+  "Search text...": "Procurar texto...",
   "Search on": "Procurar en",
   "Any date": "Cualquera data",
   Today: "Hoxe",
@@ -128,8 +127,7 @@ export default {
     "Non hai resultados pra as condicións de filtro especificadas",
   "Fast search caption":
     "Creado o {creation}, {attachmentCount} arquivo/s, {noteCount} nota/s",
-  "Fast search match fragment":
-    "Coincidencia atopada en: {fragment}",
+  "Fast search match fragment": "Coincidencia atopada en: {fragment}",
   Dashboard: "Inicio",
   Add: "Engadir",
   "Selected language": "Língua seleccionada",
@@ -151,4 +149,6 @@ export default {
   "Document updated": "Documento actualizado",
   "Unknown operation": "Operación desconocida",
   "Document notes": "Notas do documento",
+  "Unfortunately, your search didn't return any results. You might want to modify your filters or search terms":
+    "Desafortunadamente, a túa procura non devolveu ningún resultado. Quizais queiras modificar os filtros ou os termos de procura.",
 };

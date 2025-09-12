@@ -78,8 +78,7 @@ export default {
   "Search on HomeDocs...": "Search on HomeDocs...",
   "Click to open fast search": "Click to open fast search",
   "Search on": "Search on",
-  "Search text...":
-    "Search text...",
+  "Search text...": "Search text...",
   "Any date": "Any date",
   Today: "Today",
   Yesterday: "Yesterday",
@@ -125,8 +124,7 @@ export default {
     "No results found with current filter",
   "Fast search caption":
     "Created on {creation}, {attachmentCount} attachment/s, {noteCount} note/s",
-  "Fast search match fragment":
-    "Fragment matched on: {fragment}",
+  "Fast search match fragment": "Fragment matched on: {fragment}",
   Dashboard: "Dashboard",
   Add: "Add",
   "Advanced search": "Advanced search",
@@ -148,4 +146,6 @@ export default {
   "Document updated": "Document updated",
   "Unknown operation": "Unknown operation",
   "Document notes": "Document notes",
+  "Unfortunately, your search didn't return any results. You might want to modify your filters or search terms":
+    "Unfortunately, your search didn't return any results. You might want to modify your filters or search terms",
 };

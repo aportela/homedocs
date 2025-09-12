@@ -65,7 +65,8 @@
                 <q-icon name="warning" />
               </q-item-section>
               <q-item-section>
-                <q-item-label>{{ t("Unfortunately, your search didn't return any results. You might want to modify your filters or search terms") }}</q-item-label>
+                <!-- prettier-ignore -->
+                <q-item-label>{{ t(noResultsMessage) }}</q-item-label>
               </q-item-section>
             </q-item>
           </template>
@@ -110,6 +111,8 @@ const options = computed(() => [
 const searchOn = ref(options.value[0]);
 
 const showNoSearchResults = ref(false);
+
+const noResultsMessage = "Unfortunately, your search didn't return any results. You might want to modify your filters or search terms";
 
 const boldStringMatch = (str, matchWord) => {
   return str.replace(
@@ -231,6 +234,7 @@ function onClose() {
   visible.value = false;
   searchResults.value = [];
   text.value = null;
+  showNoSearchResults.value = false;
   window.removeEventListener('keydown', onKeyDown);
   emit('close');
 }

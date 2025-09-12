@@ -83,8 +83,7 @@ export default {
   "Search on HomeDocs...": "Buscar en HomeDocs...",
   "Click to open fast search": "Haga click para abrir la búsqueda rápida",
   "Search on": "Buscar en",
-  "Search text...":
-    "Buscar texto...",
+  "Search text...": "Buscar texto...",
   "Any date": "Cualquier fecha",
   Today: "Hoy",
   Yesterday: "Ayer",
@@ -129,8 +128,7 @@ export default {
     "No hay resultados para las condiciones de filtro especificadas",
   "Fast search caption":
     "Creado el {creation}, {attachmentCount} archivo/s, {noteCount} nota/s",
-  "Fast search match fragment":
-    "Coincidencia encontrada en: {fragment}",
+  "Fast search match fragment": "Coincidencia encontrada en: {fragment}",
   Dashboard: "Inicio",
   Add: "Añadir",
   "Selected language": "Idioma seleccionado",
@@ -152,4 +150,6 @@ export default {
   "Document updated": "Documento actualizado",
   "Unknown operation": "Operación desconocida",
   "Document notes": "Notas del documento",
+  "Unfortunately, your search didn't return any results. You might want to modify your filters or search terms":
+    "Desafortunadamente, tu búsqueda no devolvió ningún resultado. Quizá quieras modificar tus filtros o términos de búsqueda.",
 };
