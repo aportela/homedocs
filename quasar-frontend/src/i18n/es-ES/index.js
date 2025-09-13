@@ -128,8 +128,6 @@ export default {
   Results: "Resultados",
   "No results found with current filter":
     "No hay resultados para las condiciones de filtro especificadas",
-  "Fast search caption":
-    "Creado el {creation}, {attachmentCount} archivo/s, {noteCount} nota/s",
   "Fast search match fragment":
     "Coincidencia encontrada en {matchedOn}: {fragment}",
   Dashboard: "Inicio",

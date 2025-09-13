@@ -24,8 +24,8 @@
             </q-select>
           </div>
           <div style="flex-grow: 1;">
-            <q-input type="text" dense color="grey-3" label-color="grey-7" :label="t('Search text...')" v-model="text"
-              @update:model-value="onFilter" autofocus="" clearable outlined>
+            <q-input type="text" dense color="grey-3" label-color="grey-7" :label="t('Search text...')"
+              v-model.trim="text" @update:model-value="onFilter" autofocus="" clearable outlined>
               <template v-slot:prepend>
                 <q-icon name="search" />
               </template>
@@ -46,11 +46,8 @@
               </q-item-section>
               <q-item-section>
                 <q-item-label>{{ item.label }}</q-item-label>
-                <!--
-                <q-item-label caption>{{ item.caption }}</q-item-label>
-                -->
-                <q-item-label caption v-if="item.fragment">
-                  <div v-html="item.fragment"></div>
+                <q-item-label caption v-if="item.matchedOnFragment">
+                  <div v-html="item.matchedOnFragment"></div>
                 </q-item-label>
               </q-item-section>
               <q-item-section side top>
@@ -91,7 +88,7 @@
 
 <script setup>
 
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useQuasar, date } from "quasar";
@@ -153,28 +150,24 @@ function onFilter(val) {
     api.document.search(1, 16, params, "lastUpdateTimestamp", "DESC")
       .then((success) => {
         searchResults.value = success.data.results.documents.map((document) => {
-          document.createdOn = date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
-          document.lastUpdate = date.formatDate(document.lastUpdateTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
+          document.matchedOnFragment = null;
+          if (Array.isArray(document.matchedFragments) && document.matchedFragments.length > 0) {
+            document.matchedOnFragment = t("Fast search match fragment",
+              {
+                fragment: document.matchedFragments[0].fragment ? `${boldStringMatch(document.matchedFragments[0].fragment, val)}` : '',
+                matchedOn: t(document.matchedFragments[0].matchedOn)
+              }
+            );
+          }
           return (
             {
               id: document.id,
               label: document.title,
-              caption: t(
-                "Fast search caption", {
-                creation: date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss'),
-                attachmentCount: document.fileCount,
-                noteCount: document.noteCount
-              }
-              ),
-              createdOn: document.createdOn,
+              createdOn: date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss'),
+              lastUpdate: date.formatDate(document.lastUpdateTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss'),
               fileCount: document.fileCount,
               noteCount: document.noteCount,
-              fragment: t(
-                "Fast search match fragment", {
-                fragment: document.fragment ? `${boldStringMatch(document.fragment, val)}` : '',
-                matchedOn: t(searchOn.value.value)
-              }
-              )
+              matchedOnFragment: document.matchedOnFragment
             });
         });
         searching.value = false;

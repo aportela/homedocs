@@ -563,20 +563,45 @@ class Document
         return ($files);
     }
 
-    private function getNotes(\aportela\DatabaseWrapper\DB $dbh): array
+    private function getNotes(\aportela\DatabaseWrapper\DB $dbh, string $search = null): array
     {
         $notes = [];
+        $params = array(
+            new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id))
+        );
+        $queryConditions = [];
+        if (! empty($search)) {
+            // explode into words, remove duplicated & empty elements
+            $words = array_filter(array_unique(explode(" ", trim(mb_strtolower($search)))));
+            $totalWords = count($words);
+            if ($totalWords > 0) {
+                foreach ($words as $word) {
+                    $paramName = sprintf(":BODY_%03d", $totalWords);
+                    $params[] = new \aportela\DatabaseWrapper\Param\StringParam($paramName, "%" . $word . "%");
+                    $queryConditions[] = sprintf(" DOCUMENT_NOTE.body LIKE %s ", $paramName);
+                    $totalWords--;
+                }
+            }
+        }
         $data = $dbh->query(
-            "
+            sprintf(
+                "
                     SELECT
                         DOCUMENT_NOTE.note_id AS noteId, DOCUMENT_NOTE.created_on_timestamp AS createdOnTimestamp, DOCUMENT_NOTE.body
                     FROM DOCUMENT_NOTE
                     WHERE DOCUMENT_NOTE.document_id = :document_id
+                    %s
                     ORDER BY DOCUMENT_NOTE.created_on_timestamp DESC
                 ",
-            array(
-                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id))
-            )
+                ! empty($search) ?
+                    "
+                    AND (
+                        " .  implode(" AND ", $queryConditions) . "
+                    )"
+                    :
+                    ""
+            ),
+            $params
         );
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $item) {
@@ -721,10 +746,10 @@ class Document
                     $sqlSortBy = "DOCUMENT.description";
                     break;
                 case "fileCount":
-                    $sqlSortBy = "TMP_FILE.fileCount";
+                    $sqlSortBy = "TMP_FILE_COUNT.fileCount";
                     break;
                 case "noteCount":
-                    $sqlSortBy = "TMP_NOTE.noteCount";
+                    $sqlSortBy = "TMP_NOTE_COUNT.noteCount";
                     break;
                 case "createdOnTimestamp":
                     $sqlSortBy = "DOCUMENT_HISTORY.operation_date";
@@ -741,7 +766,7 @@ class Document
                 sprintf(
                     "
                             SELECT
-                                DOCUMENT.id, DOCUMENT.title, DOCUMENT.description, DOCUMENT_HISTORY.operation_date AS createdOnTimestamp, DOCUMENT_HISTORY_LAST_UPDATE.lastUpdateTimestamp, TMP_FILE.fileCount, TMP_NOTE.noteCount
+                                DOCUMENT.id, DOCUMENT.title, DOCUMENT.description, DOCUMENT_HISTORY.operation_date AS createdOnTimestamp, DOCUMENT_HISTORY_LAST_UPDATE.lastUpdateTimestamp, TMP_FILE_COUNT.fileCount, TMP_NOTE_COUNT.noteCount
                             FROM DOCUMENT
                             INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT.id AND DOCUMENT_HISTORY.operation_user_id = :session_user_id
                             LEFT JOIN (
@@ -755,12 +780,12 @@ class Document
                                 SELECT COUNT(*) AS fileCount, document_id
                                 FROM DOCUMENT_FILE
                                 GROUP BY document_id
-                            ) TMP_FILE ON TMP_FILE.document_id = DOCUMENT.id
+                            ) TMP_FILE_COUNT ON TMP_FILE_COUNT.document_id = DOCUMENT.id
                             LEFT JOIN (
                                 SELECT COUNT(*) AS noteCount, document_id
                                 FROM DOCUMENT_NOTE
                                 GROUP BY document_id
-                            ) TMP_NOTE ON TMP_NOTE.document_id = DOCUMENT.id
+                            ) TMP_NOTE_COUNT ON TMP_NOTE_COUNT.document_id = DOCUMENT.id
                             %s
                             ORDER BY %s COLLATE NOCASE %s
                             %s;
@@ -773,17 +798,41 @@ class Document
                 $params
             );
             $data->documents = array_map(
-                function ($item) use ($filter) {
+                function ($item) use ($filter, $dbh) {
                     $item->createdOnTimestamp = intval($item->createdOnTimestamp);
                     $item->fileCount = intval($item->fileCount);
                     $item->noteCount = intval($item->noteCount);
-                    $item->fragment = null;
+                    $item->matchedFragments = [];
                     if (isset($filter["title"]) && !empty($filter["title"])) {
-                        $item->fragment = \HomeDocs\Utils::getStringFragment($item->title, $filter["title"], 64, true);
-                    } else if (isset($filter["description"]) && !empty($filter["description"])) {
-                        $item->fragment = \HomeDocs\Utils::getStringFragment($item->description, $filter["description"], 64, true);
-                    } else if (isset($filter["notesBody"]) && !empty($filter["notesBody"])) {
-                        $item->fragment = null;
+                        $fragment = \HomeDocs\Utils::getStringFragment($item->title, $filter["title"], 64, true);
+                        if (! empty($fragment)) {
+                            $item->matchedFragments[] = [
+                                "matchedOn" => "title",
+                                "fragment" => $fragment
+                            ];
+                        }
+                    }
+                    if (isset($filter["description"]) && !empty($filter["description"])) {
+                        $fragment = \HomeDocs\Utils::getStringFragment($item->description, $filter["description"], 64, true);
+                        if (! empty($fragment)) {
+                            $item->matchedFragments[] = [
+                                "matchedOn" => "description",
+                                "fragment" => $fragment
+                            ];
+                        }
+                    }
+                    if (isset($filter["notesBody"]) && !empty($filter["notesBody"])) {
+                        // TODO: this NEEDS to be rewritten with more efficient method
+                        $notes = (new Document($item->id))->getNotes($dbh);
+                        foreach ($notes as $note) {
+                            $fragment = \HomeDocs\Utils::getStringFragment($note->body, $filter["notesBody"], 64, true);
+                            if (! empty($fragment)) {
+                                $item->matchedFragments[] = [
+                                    "matchedOn" => "note",
+                                    "fragment" => $fragment
+                                ];
+                            }
+                        }
                     }
                     return ($item);
                 },
