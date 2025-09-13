@@ -54,7 +54,7 @@
                 </q-item-label>
               </q-item-section>
               <q-item-section side top>
-                <q-item-label caption>{{ item.createdOn }}
+                <q-item-label caption>{{ item.lastUpdate }}
                 </q-item-label>
                 <q-chip size="sm" square text-color="dark" class="full-width">
                   <q-avatar color="grey-9" text-color="white">{{ item.fileCount }}</q-avatar>
@@ -154,7 +154,7 @@ function onFilter(val) {
       .then((success) => {
         searchResults.value = success.data.results.documents.map((document) => {
           document.createdOn = date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
-          document.lastUpdate = null; //date.formatDate(document.lastUpdateTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
+          document.lastUpdate = date.formatDate(document.lastUpdateTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
           return (
             {
               id: document.id,
