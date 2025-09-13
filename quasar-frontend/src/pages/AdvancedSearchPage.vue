@@ -277,16 +277,25 @@ function onSubmitForm(resetPager) {
   }
   api.document.search(advancedSearchData.pager.currentPage, advancedSearchData.pager.resultsPage, advancedSearchData.filter, advancedSearchData.sortField, advancedSearchData.sortOrder)
     .then((success) => {
-      advancedSearchData.pager = success.data.results.pagination;
-      advancedSearchData.results = success.data.results.documents.map((document) => {
-        document.createdOn = date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
-        document.lastUpdate = document.lastUpdateTimestamp ? date.formatDate(document.lastUpdateTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss') : null;
-        return (document);
-      });
-      searching.value = false;
-      searchLaunched.value = true;
-      if (advancedSearchData.hasResults) {
-        expandedResults.value = true;
+      if (success.data.results) {
+        advancedSearchData.pager = success.data.results.pagination;
+        advancedSearchData.results = success.data.results.documents.map((document) => {
+          document.createdOn = date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
+          document.lastUpdate = document.lastUpdateTimestamp ? date.formatDate(document.lastUpdateTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss') : null;
+          return (document);
+        });
+        searching.value = false;
+        searchLaunched.value = true;
+        if (advancedSearchData.hasResults) {
+          expandedResults.value = true;
+        }
+      } else {
+        $q.notify({
+          type: "negative",
+          message: t("API Error: fatal error"),
+          caption: t("API Error: invalid JSON response")
+        });
+        searching.value = false;
       }
     })
     .catch((error) => {
