@@ -37,7 +37,8 @@ export default {
   "You haven't created any documents yet": "Aínda non creou ningún documento",
   "Error loading data": "Error cargando datos",
   Title: "Título",
-  Description: "Descripción",
+  title: "título",
+  description: "descripción",
   "Tag cloud": "Nube de etiquetas",
   "You haven't created any tags yet": "Aínda non creou ningunha etiqueta",
   "Click on tag to browse by tag":
@@ -99,6 +100,7 @@ export default {
   Date: "Data",
   Files: "Arquivos",
   Notes: "Notas",
+  notes: "notas",
   "File preview": "Previsualizar arquivo",
   "Error loading preview": "Error cargando a previsualización",
   "Preview not available": "Previsualización non dispoñible",
@@ -127,7 +129,8 @@ export default {
     "Non hai resultados pra as condicións de filtro especificadas",
   "Fast search caption":
     "Creado o {creation}, {attachmentCount} arquivo/s, {noteCount} nota/s",
-  "Fast search match fragment": "Coincidencia atopada en: {fragment}",
+  "Fast search match fragment":
+    "Coincidencia atopada en {matchedOn}: {fragment}",
   Dashboard: "Inicio",
   Add: "Engadir",
   "Selected language": "Língua seleccionada",

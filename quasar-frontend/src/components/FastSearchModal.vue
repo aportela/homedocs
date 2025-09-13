@@ -2,7 +2,7 @@
   <q-dialog v-model="visible" @show="onShow" @hide="onClose">
     <q-card style="width: 60%; max-width: 80vw;">
       <q-card-section class="row items-center q-pb-none">
-        <div class="text-h6">{{ t('Search') }}</div>
+        <div class="text-h6">{{ t('Search on HomeDocs...') }}</div>
         <q-space />
         <q-btn icon="close" flat round dense v-close-popup />
       </q-card-section>
@@ -171,7 +171,8 @@ function onFilter(val) {
               noteCount: document.noteCount,
               fragment: t(
                 "Fast search match fragment", {
-                fragment: document.fragment ? `${boldStringMatch(document.fragment, val)}` : ''
+                fragment: document.fragment ? `${boldStringMatch(document.fragment, val)}` : '',
+                matchedOn: t(searchOn.value.value)
               }
               )
             });
