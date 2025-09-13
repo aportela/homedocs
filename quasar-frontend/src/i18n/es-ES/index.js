@@ -38,6 +38,7 @@ export default {
   "Error loading data": "Error cargando datos",
   Title: "Título",
   title: "título",
+  Description: "Descripción",
   description: "descripción",
   "Tag cloud": "Nube de etiquetas",
   "You haven't created any tags yet": "Aún no ha creado ninguna etiqueta",
