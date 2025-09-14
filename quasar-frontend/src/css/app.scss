@@ -15,6 +15,14 @@
   color: $primary !important;
 }
 
+.main-app-text-link-hover {
+  text-decoration: none !important;
+  color: $primary !important;
+}
+.main-app-text-link-hover:hover {
+  text-decoration: underline !important;
+}
+
 // app global css in SCSS form
 :root {
 

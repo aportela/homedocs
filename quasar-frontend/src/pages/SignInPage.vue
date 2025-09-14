@@ -44,7 +44,7 @@
         <q-card-section class="text-center q-pt-none" v-if="signUpAllowed">
           <div>
             {{ t("Don't have an account yet ?") }}
-            <router-link :to="{ name: 'signUp' }" class="text-decoration-none">{{ t("Click here to sign up") }}
+            <router-link :to="{ name: 'signUp' }" class="main-app-text-link-hover">{{ t("Click here to sign up") }}
             </router-link>
           </div>
         </q-card-section>
