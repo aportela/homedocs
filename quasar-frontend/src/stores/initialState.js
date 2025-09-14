@@ -6,11 +6,16 @@ export const useInitialStateStore = defineStore("initialState", {
     initialState: {
       allowSignUp: false,
       maxUploadFileSize: 1,
+      session: {
+        id: null,
+        email: null,
+      },
     },
   }),
   getters: {
     isSignUpAllowed: (state) => state.initialState.allowSignUp,
     maxUploadFileSize: (state) => state.initialState.maxUploadFileSize,
+    session: (state) => state.initialState.session,
   },
   actions: {
     async load() {
@@ -19,6 +24,8 @@ export const useInitialStateStore = defineStore("initialState", {
         this.initialState.allowSignUp = success.data.initialState.allowSignUp;
         this.initialState.maxUploadFileSize =
           success.data.initialState.maxUploadFileSize;
+        this.session.id = success.data.initialState.session.id;
+        this.session.email = success.data.initialState.session.email;
       } catch (error) {
         console.error(error.response);
       }
