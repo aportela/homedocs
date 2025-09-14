@@ -131,6 +131,7 @@ export default {
   "Fast search match fragment": "Fragment matched on {matchedOn}: {fragment}",
   Dashboard: "Dashboard",
   "My profile": "My profile",
+  "Personal information": "Personal information",
   "Update profile": "Update profile",
   Add: "Add",
   "Advanced search": "Advanced search",

@@ -13,7 +13,7 @@
 
     <q-card class="q-mx-auto" style="width: 90%;">
       <q-card-section class="text-center">
-        <h4>Personal information</h4>
+        <h4>{{ t("Personal information") }}</h4>
         <q-input dense outlined ref="emailRef" v-model="email" type="email" name="email" :label="t('Email')" disable>
           <template v-slot:prepend>
             <q-icon name="alternate_email" />

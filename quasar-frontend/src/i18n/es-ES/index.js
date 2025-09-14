@@ -136,6 +136,7 @@ export default {
     "Coincidencia encontrada en {matchedOn}: {fragment}",
   Dashboard: "Inicio",
   "My profile": "Mi perfil",
+  "Personal information": "Información personal",
   "Update profile": "Actualizar perfil",
   Add: "Añadir",
   "Selected language": "Idioma seleccionado",
