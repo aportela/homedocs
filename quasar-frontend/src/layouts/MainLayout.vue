@@ -7,7 +7,7 @@
         <q-btn flat dense round @click="onToggleminiSidebarCurrentMode" aria-label="Toggle drawer"
           :icon="miniSidebarCurrentMode ? 'arrow_forward_ios' : 'arrow_back_ios_new'" class="q-mr-md"
           v-show="visibleSidebar" />
-        <q-btn type="button" no-caps no-wrap align="left" flat :label="t('Search on HomeDocs...')" icon-right="search"
+        <q-btn type="button" no-caps no-wrap align="left" flat :label="searchButtonLabel" icon-right="search"
           class="full-width no-caps text-grey-8" @click.prevent="visibleFastSearchModal = true">
           <q-tooltip anchor="bottom middle" self="top middle">{{ t("Click to open fast search")
             }}</q-tooltip>
@@ -76,6 +76,8 @@ watch(currentScreenSize, (newValue) => {
     miniSidebarCurrentMode.value = $q.screen.lt.lg;
   }
 });
+
+const searchButtonLabel = computed(() => $q.screen.gt.xs ? t('Search on HomeDocs...') : '');
 
 const onToggleminiSidebarCurrentMode = (value) => {
   miniSidebarCurrentMode.value = !miniSidebarCurrentMode.value;
