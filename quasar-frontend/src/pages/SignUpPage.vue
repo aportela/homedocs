@@ -19,12 +19,16 @@
               <q-icon name="alternate_email" />
             </template>
           </q-input>
-          <q-input dense outlined class="q-mt-md" ref="passwordRef" v-model="password" name="password" type="password"
-            :label="t('Password')" :disable="loading" :rules="requiredFieldRules" lazy-rules
-            :error="remoteValidation.password.hasErrors"
+          <q-input dense outlined class="q-mt-md" ref="passwordRef" v-model="password" name="password"
+            :type="visiblePassword ? 'text' : 'password'" :label="t('Password')" :disable="loading"
+            :rules="requiredFieldRules" lazy-rules :error="remoteValidation.password.hasErrors"
             :errorMessage="remoteValidation.password.message ? t(remoteValidation.password.message) : ''">
             <template v-slot:prepend>
               <q-icon name="key" />
+            </template>
+            <template v-slot:append>
+              <q-icon :name="visiblePassword ? 'visibility_off' : 'visibility'" class="cursor-pointer"
+                @click="visiblePassword = !visiblePassword" />
             </template>
           </q-input>
         </q-card-section>
@@ -112,6 +116,7 @@ const emailRef = ref(null);
 
 const password = ref(null);
 const passwordRef = ref(null);
+const visiblePassword = ref(false);
 
 function onResetForm() {
   remoteValidation.value.email.hasErrors = false;
