@@ -48,7 +48,7 @@
             </router-link>
           </div>
         </q-card-section>
-        <q-separator color="grey-5 q-mb-sm" />
+        <q-separator class="q-mb-sm" />
         <q-card-section class="text-center q-py-none">
           <q-btn-group flat square>
             <DarkModeButton />
