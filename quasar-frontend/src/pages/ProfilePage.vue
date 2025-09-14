@@ -14,9 +14,8 @@
     <q-card class="q-mx-auto" style="width: 90%;">
       <q-card-section class="text-center">
         <h4>Personal information</h4>
-        <q-input dense outlined ref="emailRef" v-model="email" type="email" name="email" :label="t('Email')"
-          :disable="loading" :autofocus="true" :rules="requiredFieldRules" lazy-rules
-          :error="remoteValidation.email.hasErrors"
+        <q-input dense outlined ref="emailRef" v-model="email" type="email" name="email" :label="t('Email')" disable
+          :rules="requiredFieldRules" lazy-rules :error="remoteValidation.email.hasErrors"
           :errorMessage="remoteValidation.email.message ? t(remoteValidation.email.message) : ''">
           <template v-slot:prepend>
             <q-icon name="alternate_email" />
@@ -24,7 +23,7 @@
         </q-input>
         <q-input dense outlined class="q-mt-md" ref="passwordRef" v-model="password" name="password"
           :type="visiblePassword ? 'text' : 'password'" :label="t('Password')" :disable="loading"
-          :rules="requiredFieldRules" lazy-rules :error="remoteValidation.password.hasErrors"
+          :rules="requiredFieldRules" lazy-rules :error="remoteValidation.password.hasErrors" :autofocus="true"
           :errorMessage="remoteValidation.password.message ? t(remoteValidation.password.message) : ''">
           <template v-slot:prepend>
             <q-icon name="key" />
@@ -34,7 +33,7 @@
               @click="visiblePassword = !visiblePassword" />
           </template>
           <q-tooltip anchor="bottom right" self="top end">{{ t(visiblePassword ? "Hide password" : "Show password")
-            }}</q-tooltip>
+          }}</q-tooltip>
         </q-input>
 
       </q-card-section>
@@ -46,10 +45,16 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useI18n } from 'vue-i18n'
+import { useInitialStateStore } from "stores/initialState";
 
 const { t } = useI18n();
 
-const email = ref(null);
+const initialState = useInitialStateStore();
+
+const loading = ref(false);
+
+const email = computed(() => initialState.session.email);
+
 const password = ref(null);
 const emailRef = ref(null);
 const passwordRef = ref(null);
