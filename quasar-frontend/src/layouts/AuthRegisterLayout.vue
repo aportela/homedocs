@@ -3,8 +3,8 @@
     <div class="row" style="height: 100vh">
       <div class="col-12 col-lg-8 col-md-12 col-sm-12 slogan-image-cover flex flex-center">
         <div class="q-pa-xl text-center text-white">
-          <h2 class="text-h2 text-weight-bold q-mb-md">{{ t("Welcome to HomeDocs") }}</h2>
-          <div class="text-h5">{{ t("Where your documents find their place.") }}</div>
+          <h2 class="text-h2 text-weight-bolder q-mb-md">{{ t("Welcome to HomeDocs") }}</h2>
+          <h4 class="text-grey-4 text-h4">{{ t("Where your documents find their place.") }}</h4>
         </div>
       </div>
       <div class="col-12 col-lg-4 justify-center q-pa-xl">
