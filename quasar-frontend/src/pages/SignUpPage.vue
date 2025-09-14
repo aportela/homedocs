@@ -33,7 +33,7 @@
           </q-input>
         </q-card-section>
         <q-card-section>
-          <q-btn color="dark" size="md" :label="$t('Sign up')" no-caps class="full-width" icon="account_circle"
+          <q-btn color="primary" size="md" :label="$t('Sign up')" no-caps class="full-width" icon="account_circle"
             :disable="loading || (!(email && password)) || !signUpAllowed" :loading="loading" type="submit">
             <template v-slot:loading>
               <q-spinner-hourglass class="on-left" />
