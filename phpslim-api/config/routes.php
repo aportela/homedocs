@@ -51,7 +51,6 @@ return function (App $app) {
             });
 
             $group->post('/user/sign-in', function (Request $request, Response $response, array $args) {
-                $settings = $this->get('settings');
                 $params = $request->getParsedBody();
                 $db = $this->get(\aportela\DatabaseWrapper\DB::class);
                 $user = new \HomeDocs\User(
@@ -80,6 +79,26 @@ return function (App $app) {
                 $response->getBody()->write($payload);
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             });
+
+            $group->post('/user/update-profile', function (Request $request, Response $response, array $args) {
+                $params = $request->getParsedBody();
+                $db = $this->get(\aportela\DatabaseWrapper\DB::class);
+                $user = new \HomeDocs\User(
+                    \HomeDocs\UserSession::getUserId(),
+                    "",
+                    ""
+                );
+                $user->get($db);
+                $user->password = $params["password"] ?? "";
+                $user->update($db);
+                $payload = json_encode(
+                    [
+                        'initialState' => \HomeDocs\Utils::getInitialState($this)
+                    ]
+                );
+                $response->getBody()->write($payload);
+                return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+            })->add(\HomeDocs\Middleware\CheckAuth::class);
 
             $group->post('/document/search-recent', function (Request $request, Response $response, array $args) {
                 $settings = $this->get('settings');

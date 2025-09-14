@@ -112,6 +112,22 @@ const api = {
           });
       });
     },
+    updateProfile: function (email, password) {
+      return new Promise((resolve, reject) => {
+        const params = {
+          email: email,
+          password: password,
+        };
+        axios
+          .post("api2/user/update-profile", params)
+          .then((response) => {
+            resolve(response);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    }
   },
   document: {
     searchRecent: function (count) {
