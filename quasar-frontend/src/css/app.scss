@@ -19,6 +19,7 @@
   text-decoration: none !important;
   color: $primary !important;
 }
+
 .main-app-text-link-hover:hover {
   text-decoration: underline !important;
 }
@@ -82,6 +83,10 @@ body {
 
 .body--light {
 
+  .layout-signin-signup {
+    background-color: var(--color-zinc-100);
+  }
+
   .q-card {
     background-color: $default-component-bg-light;
   }
@@ -97,6 +102,10 @@ body {
 }
 
 .body--dark {
+
+  .layout-signin-signup {
+    background-color: var(--color-zinc-800);
+  }
 
   .q-card {
     background-color: $default-component-bg-dark;

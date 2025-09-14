@@ -7,7 +7,7 @@
           <h4 class="text-grey-4 text-h4">{{ t("Where your documents find their place.") }}</h4>
         </div>
       </div>
-      <div class="col-12 col-lg-4 justify-center q-pa-xl">
+      <div class="col-12 col-lg-4 justify-center q-pa-xl layout-signin-signup">
         <q-page-container>
           <router-view />
         </q-page-container>
