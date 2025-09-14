@@ -30,6 +30,8 @@
               <q-icon :name="visiblePassword ? 'visibility_off' : 'visibility'" class="cursor-pointer"
                 @click="visiblePassword = !visiblePassword" />
             </template>
+            <q-tooltip anchor="bottom right" self="top end">{{ t(visiblePassword ? "Hide password" : "Show password")
+            }}</q-tooltip>
           </q-input>
         </q-card-section>
         <q-card-section>

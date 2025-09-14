@@ -14,6 +14,8 @@ export default {
   "Sign in": "Iniciar sesión",
   Email: "Correo electrónico",
   Password: "Contrasinal",
+  "Show password": "Mostrar Contrasinal",
+  "Hide password": "Ocultar Contrasinal",
   "Loading...": "Cargando...",
   "Don't have an account yet ?": "¿ Aínda non dispón dunha conta ?",
   "Click here to sign up": "Faga click eiquí pra crear unha",

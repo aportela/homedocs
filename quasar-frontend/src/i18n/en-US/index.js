@@ -14,6 +14,8 @@ export default {
   "Sign in": "Sign in",
   Email: "Email",
   Password: "Password",
+  "Show password": "Show password",
+  "Hide password": "Hide password",
   "Loading...": "Loading...",
   "Don't have an account yet ?": "Don't have an account yet ?",
   "Click here to sign up": "Click here to sign up",
