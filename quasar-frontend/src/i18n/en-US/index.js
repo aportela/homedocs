@@ -129,6 +129,7 @@ export default {
     "No results found with current filter",
   "Fast search match fragment": "Fragment matched on {matchedOn}: {fragment}",
   Dashboard: "Dashboard",
+  "My profile": "My profile",
   Add: "Add",
   "Advanced search": "Advanced search",
   "Selected language": "Selected language",

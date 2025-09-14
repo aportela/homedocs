@@ -25,6 +25,11 @@ const routes = [
         component: () => import("pages/IndexPage.vue"),
       },
       {
+        name: "profile",
+        path: "profile",
+        component: () => import("pages/ProfilePage.vue"),
+      },
+      {
         name: "newDocument",
         path: "new-document",
         component: () => import("pages/DocumentPage.vue"),

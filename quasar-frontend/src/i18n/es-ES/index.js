@@ -134,6 +134,7 @@ export default {
   "Fast search match fragment":
     "Coincidencia encontrada en {matchedOn}: {fragment}",
   Dashboard: "Inicio",
+  "My profile": "Mi perfil",
   Add: "Añadir",
   "Selected language": "Idioma seleccionado",
   "Your system stats": "Tus estadísticas del sistema",
