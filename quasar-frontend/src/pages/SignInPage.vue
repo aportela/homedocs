@@ -12,8 +12,7 @@
         </q-card-section>
         <q-card-section>
           <q-input dense outlined ref="emailRef" v-model="email" type="email" name="email" :label="t('Email')"
-            :disable="loading" :autofocus="true" :rules="requiredFieldRules" lazy-rules
-            :error="remoteValidation.email.hasErrors"
+            :disable="loading" :rules="requiredFieldRules" lazy-rules :error="remoteValidation.email.hasErrors"
             :errorMessage="remoteValidation.email.message ? t(remoteValidation.email.message) : ''">
             <template v-slot:prepend>
               <q-icon name="alternate_email" />
@@ -65,8 +64,8 @@
 
 <script setup>
 
-import { ref, nextTick, computed } from "vue";
-import { useQuasar } from "quasar";
+import { ref, nextTick, computed, onMounted } from "vue";
+import { useQuasar, LocalStorage } from "quasar";
 import { useRouter } from "vue-router";
 import { useI18n } from 'vue-i18n'
 import { api } from 'boot/axios'
@@ -100,18 +99,28 @@ const remoteValidation = ref({
   }
 });
 
+const savedEmail = LocalStorage.getItem("email");
+
 const fieldIsRequiredLabel = computed(() => t('Field is required'));
 
 const requiredFieldRules = [
   val => !!val || fieldIsRequiredLabel.value
 ];
 
-const email = ref(null);
+const email = ref(savedEmail || null);
 const emailRef = ref(null);
 
 const password = ref(null);
 const passwordRef = ref(null);
 const visiblePassword = ref(false);
+
+onMounted(() => {
+  if (savedEmail) {
+    passwordRef.value.focus();
+  } else {
+    emailRef.value.focus();
+  }
+});
 
 function onResetForm() {
   remoteValidation.value.email.hasErrors = false;
@@ -138,6 +147,7 @@ function onSubmitForm() {
   api.user
     .signIn(email.value, password.value)
     .then((success) => {
+      LocalStorage.set("email", email.value);
       router.push({
         name: "index",
       });
