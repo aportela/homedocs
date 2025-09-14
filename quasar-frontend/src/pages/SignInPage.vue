@@ -7,8 +7,8 @@
           <q-avatar square size="128px">
             <img src="icons/favicon-128x128.png" />
           </q-avatar>
-          <h3 class="q-mt-sm q-mb-md">{{ t("Glad to see you again!") }}</h3>
-          <div>{{ t("Let's get back to organizing.") }}</div>
+          <h4 class="q-mt-sm q-mb-md text-h4 text-weight-bolder">{{ t("Glad to see you again!") }}</h4>
+          <div class="text-grey-6">{{ t("Let's get back to organizing.") }}</div>
         </q-card-section>
         <q-card-section>
           <q-input dense outlined ref="emailRef" v-model="email" type="email" name="email" :label="t('Email')"
@@ -29,7 +29,7 @@
           </q-input>
         </q-card-section>
         <q-card-section>
-          <q-btn color="dark" size="md" :label="$t('Sign in')" no-caps class="full-width" icon="account_circle"
+          <q-btn color="primary" size="md" :label="$t('Sign in')" no-caps class="full-width" icon="account_circle"
             :disable="loading || (!(email && password))" :loading="loading" type="submit">
             <template v-slot:loading>
               <q-spinner-hourglass class="on-left" />
@@ -40,9 +40,7 @@
         <q-card-section class="text-center q-pt-none" v-if="signUpAllowed">
           <div>
             {{ t("Don't have an account yet ?") }}
-            <router-link :to="{ name: 'signUp' }">
-              <span class="text-weight-bold" style="text-decoration: none">{{
-                t("Click here to sign up") }}</span>
+            <router-link :to="{ name: 'signUp' }" class="text-decoration-none">{{ t("Click here to sign up") }}
             </router-link>
           </div>
         </q-card-section>

@@ -1,1 +1,104 @@
+// custom style taken / inspired by https://github.com/bekaku/quasar-starter-template/blob/main/src/css/quasar.variables.scss
+
+@font-face {
+  font-family: "TwemojiMozilla";
+  src: local("TwemojiMozilla"), url("../assets/font/TwemojiMozilla.ttf") format("truetype");
+  font-weight: normal;
+}
+
+.input-emoji {
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, "TwemojiMozilla";
+}
+
+.text-decoration-none {
+  text-decoration: none !important;
+  color: $primary !important;
+}
+
 // app global css in SCSS form
+:root {
+
+  --app-main-bg-color: #fff;
+
+  --app-main-bg-color-theme-dark: var(--color-zinc-900);
+  --app-second-bg-color-theme-dark: var(--color-zinc-900);
+  --third-bg-color-theme-dark: #18191d;
+
+  --main-bg-color: var(--app-main-bg-color);
+  --second-bg-color: #fff;
+
+  --app-main-border-color: #dcdcdc;
+  --app-main-border-color-theme-dark: #687782;
+
+
+  --app-main-border-light-color: #ededed;
+  --app-main-border-lighter-color: #f8f8f8;
+  --border-lighter-color: #f8f8f8;
+  --app-main-border-light-color-theme-dark: var(--app-main-border-color-theme-dark);
+
+  --app-color-white: #fff;
+  --app-text-muted: var(--color-zinc-500);
+
+  --v-main-text-icon: #797f8f;
+  --v-main-text-icon-theme-dark: #8e8e93;
+
+  --v-main-text-head: #1a2d39;
+  --v-main-text-head-theme-dark: #fff;
+
+  --v-main-text-title: #62738d;
+  --v-main-text-title-theme-dark: #8e8e93;
+
+  --v-main-text-body: #000;
+  --v-main-text-body-theme-dark: #fff;
+
+  --v-text-black: #000;
+  --emoji-icon-bg: #f7f7f7;
+  --emoji-icon-bg-black: #000;
+  --wee-default-font: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", Arial, sans-serif;
+
+}
+
+
+$default-component-bg-light: transparent;
+$default-component-bg-dark: transparent;
+
+
+body {
+  ::selection {
+    background-color: var(--color-primary-600);
+    color: #fff;
+  }
+
+}
+
+
+.body--light {
+
+  .q-card {
+    background-color: $default-component-bg-light;
+  }
+
+  .q-field--outlined .q-field__control::before {
+    border: 1px solid $separator-color !important;
+    box-shadow:
+      0 0 #0000,
+      0 0 #0000,
+      0 1px 2px 0 rgb(0 0 0 / 0.05);
+  }
+
+}
+
+.body--dark {
+
+  .q-card {
+    background-color: $default-component-bg-dark;
+  }
+
+  .q-field--outlined .q-field__control::before {
+    box-shadow:
+      0 0 $elevation-dark-ambient,
+      0 0 $elevation-dark-ambient,
+      0 1px 2px 0 $elevation-dark-ambient !important;
+  }
+
+}

@@ -7,8 +7,8 @@
           <q-avatar square size="128px">
             <img src="icons/favicon-128x128.png" />
           </q-avatar>
-          <h3 class="q-mt-sm q-mb-md">{{ t("Sign up now and take control.") }}</h3>
-          <div>{{ t("The first step to a more organized you starts here!") }}</div>
+          <h4 class="q-mt-sm q-mb-md text-h4 text-weight-bolder">{{ t("Sign up now and take control.") }}</h4>
+          <div class="text-grey-6">{{ t("The first step to a more organized you starts here!") }}</div>
         </q-card-section>
         <q-card-section>
           <q-input dense outlined ref="emailRef" v-model="email" type="email" name="email" :label="t('Email')"
@@ -40,9 +40,7 @@
         <q-card-section class="text-center q-pt-none">
           <div>
             {{ t("Already have an account ?") }}
-            <router-link :to="{ name: 'signIn' }">
-              <span class="text-weight-bold" style="text-decoration: none">{{
-                t("Click here to sign in") }}</span>
+            <router-link :to="{ name: 'signIn' }" class="text-decoration-none">{{ t("Click here to sign in") }}
             </router-link>
           </div>
         </q-card-section>
