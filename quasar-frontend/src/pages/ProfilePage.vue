@@ -14,16 +14,14 @@
     <q-card class="q-mx-auto" style="width: 90%;">
       <q-card-section class="text-center">
         <h4>Personal information</h4>
-        <q-input dense outlined ref="emailRef" v-model="email" type="email" name="email" :label="t('Email')" disable
-          :rules="requiredFieldRules" lazy-rules :error="remoteValidation.email.hasErrors"
-          :errorMessage="remoteValidation.email.message ? t(remoteValidation.email.message) : ''">
+        <q-input dense outlined ref="emailRef" v-model="email" type="email" name="email" :label="t('Email')" disable>
           <template v-slot:prepend>
             <q-icon name="alternate_email" />
           </template>
         </q-input>
         <q-input dense outlined class="q-mt-md" ref="passwordRef" v-model="password" name="password"
-          :type="visiblePassword ? 'text' : 'password'" :label="t('Password')" :disable="loading"
-          :rules="requiredFieldRules" lazy-rules :error="remoteValidation.password.hasErrors" :autofocus="true"
+          :type="visiblePassword ? 'text' : 'password'" :label="t('New password')" :disable="loading"
+          :error="remoteValidation.password.hasErrors"
           :errorMessage="remoteValidation.password.message ? t(remoteValidation.password.message) : ''">
           <template v-slot:prepend>
             <q-icon name="key" />
@@ -35,7 +33,16 @@
           <q-tooltip anchor="bottom right" self="top end">{{ t(visiblePassword ? "Hide password" : "Show password")
           }}</q-tooltip>
         </q-input>
+      </q-card-section>
+      <q-card-section>
 
+        <q-btn color="primary" size="md" :label="$t('Update profile')" no-caps class="full-width" icon="account_circle"
+          :disable="loading || !password" :loading="loading" type="submit">
+          <template v-slot:loading>
+            <q-spinner-hourglass class="on-left" />
+            {{ t('Update profile') }}
+          </template>
+        </q-btn>
       </q-card-section>
     </q-card>
 
@@ -61,10 +68,6 @@ const passwordRef = ref(null);
 const visiblePassword = ref(false);
 
 const remoteValidation = ref({
-  email: {
-    hasErrors: false,
-    message: null
-  },
   password: {
     hasErrors: false,
     message: null
@@ -72,10 +75,6 @@ const remoteValidation = ref({
 });
 
 const fieldIsRequiredLabel = computed(() => t('Field is required'));
-
-const requiredFieldRules = [
-  val => !!val || fieldIsRequiredLabel.value
-];
 
 </script>
 
