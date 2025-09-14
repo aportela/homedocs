@@ -37,7 +37,7 @@
             :disable="loading || (!(email && password)) || !signUpAllowed" :loading="loading" type="submit">
             <template v-slot:loading>
               <q-spinner-hourglass class="on-left" />
-              {{ t("Loading...") }}
+              {{ t('Sign up') }}
             </template>
           </q-btn>
         </q-card-section>
