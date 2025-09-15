@@ -7,8 +7,13 @@
           <q-avatar square size="128px">
             <img src="icons/favicon-128x128.png" />
           </q-avatar>
-          <h4 class="q-mt-sm q-mb-md text-h4 text-weight-bolder">{{ t("Glad to see you again!") }}</h4>
-          <div class="text-grey-6">{{ t("Let's get back to organizing.") }}</div>
+          <h4 class="q-mt-sm q-mb-md text-h4 text-weight-bolder">{{
+            t(!!savedEmail ? "Glad to see you again!" : "Welcome aboard!")
+          }}</h4>
+          <div class="text-grey-6">{{
+            t(!!savedEmail ? "Let's get back to organizing." : "Let's start organizing.")
+            }}
+          </div>
         </q-card-section>
         <q-card-section>
           <q-input dense outlined ref="emailRef" v-model="email" type="email" name="email" :label="t('Email')"

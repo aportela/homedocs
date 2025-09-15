@@ -6,7 +6,9 @@ export default {
   "Switch language": "Switch language",
   "Switch to light mode": "Switch to light mode",
   "Switch to dark mode": "Switch to dark mode",
+  "Welcome aboard!": "Welcome aboard!",
   "Glad to see you again!": "Glad to see you again!",
+  "Let's start organizing.": "Let's start organizing.",
   "Let's get back to organizing.": "Let's get back to organizing.",
   "Sign up now and take control.": "Sign up now and take control.",
   "The first step to a more organized you starts here!":
