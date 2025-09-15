@@ -3,6 +3,7 @@ export default {
   "Welcome to HomeDocs": "Benvido a HomeDocs",
   "Where your documents find their place.":
     "Onde os teus  documentos atopan o seu lugar.",
+  "Browse project page": "Visitar páxina do proxecto",
   "Switch language": "Tornar idioma",
   "Switch to light mode": "Tornar a modo claro",
   "Switch to dark mode": "Tornar a modo oscuro",
