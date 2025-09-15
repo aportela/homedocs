@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh lpR lFf">
+  <q-layout view="lHh lpR lFf" class="q-layout-main">
     <q-header height-hint="61.59" class="bg-white text-grey-10" bordered>
       <q-toolbar class="my_toolbar bg-white">
         <q-btn flat dense round @click="visibleSidebar = !visibleSidebar;" aria-label="Toggle drawer" icon="menu"
@@ -88,3 +88,17 @@ const onToggleminiSidebarCurrentMode = (value) => {
 }
 
 </script>
+
+<style>
+.body--light {
+  .q-layout-main {
+    background-color: var(--color-zinc-50);
+  }
+}
+
+.body--dark {
+  .q-layout-main {
+    background-color: var(--color-zinc-800);
+  }
+}
+</style>
