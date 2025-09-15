@@ -31,7 +31,6 @@ export const useInitialStateStore = defineStore("initialState", {
       }
     },
     set(initialState) {
-      console.log("setting ", initialState);
       this.initialState.allowSignUp = initialState.allowSignUp;
       this.initialState.maxUploadFileSize = initialState.maxUploadFileSize;
       this.session.id = initialState.session.id;
