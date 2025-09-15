@@ -30,5 +30,12 @@ export const useInitialStateStore = defineStore("initialState", {
         console.error(error.response);
       }
     },
+    set(initialState) {
+      console.log("setting ", initialState);
+      this.initialState.allowSignUp = initialState.allowSignUp;
+      this.initialState.maxUploadFileSize = initialState.maxUploadFileSize;
+      this.session.id = initialState.session.id;
+      this.session.email = initialState.session.email;
+    },
   },
 });
