@@ -37,17 +37,17 @@
                 <div class="row">
                   <div class="col">
                     <q-select class="q-mb-md" dense options-dense outlined clearable
-                      v-model="advancedSearchData.filter.dateFilterType" :options="dateFilterOptions"
+                      v-model="advancedSearchData.filter.creationDateFilterType" :options="dateFilterOptions"
                       :label="t('Document created on')" :disable="searching || disableFilterDatesByRouteParams" />
                   </div>
-                  <div class="col" v-if="advancedSearchData.hasFromDateFilter">
-                    <q-input dense outlined mask="date" v-model="advancedSearchData.filter.fromDate"
-                      :label="t('From date')" :disable="searching || advancedSearchData.denyChangeDateFilters">
+                  <div class="col" v-if="advancedSearchData.hasfromCreationDateFilter">
+                    <q-input dense outlined mask="date" v-model="advancedSearchData.filter.fromCreationDate"
+                      :label="t('From date')" :disable="searching || advancedSearchData.denyChangeCreationDateFilters">
                       <template v-slot:append>
                         <q-icon name="event" class="cursor-pointer">
                           <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                            <q-date v-model="advancedSearchData.filter.fromDate" today-btn
-                              :disable="searching || advancedSearchData.denyChangeDateFilters">
+                            <q-date v-model="advancedSearchData.filter.fromCreationDate" today-btn
+                              :disable="searching || advancedSearchData.denyChangeCreationDateFilters">
                               <div class="row items-center justify-end">
                                 <q-btn v-close-popup label="Close" color="primary" flat />
                               </div>
@@ -57,14 +57,14 @@
                       </template>
                     </q-input>
                   </div>
-                  <div class="col" v-if="advancedSearchData.hasToDateFilter">
-                    <q-input dense outlined mask="date" v-model="advancedSearchData.filter.toDate" :label="t('To date')"
-                      :disable="searching || advancedSearchData.denyChangeDateFilters">
+                  <div class="col" v-if="advancedSearchData.hasToCreationDateFilter">
+                    <q-input dense outlined mask="date" v-model="advancedSearchData.filter.toCreationDate"
+                      :label="t('To date')" :disable="searching || advancedSearchData.denyChangeCreationDateFilters">
                       <template v-slot:append>
                         <q-icon name="event" class="cursor-pointer">
                           <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                            <q-date v-model="advancedSearchData.filter.toDate" today-btn
-                              :disable="searching || advancedSearchData.denyChangeDateFilters">
+                            <q-date v-model="advancedSearchData.filter.toCreationDate" today-btn
+                              :disable="searching || advancedSearchData.denyChangeCreationDateFilters">
                               <div class="row items-center justify-end">
                                 <q-btn v-close-popup label="Close" color="primary" flat />
                               </div>
@@ -74,15 +74,15 @@
                       </template>
                     </q-input>
                   </div>
-                  <div class="col" v-if="advancedSearchData.hasFixedDateFilter">
-                    <q-input dense outlined mask="date" v-model="advancedSearchData.filter.fixedDate"
+                  <div class="col" v-if="advancedSearchData.hasfixedCreationDateFilter">
+                    <q-input dense outlined mask="date" v-model="advancedSearchData.filter.fixedCreationDate"
                       :label="t('Fixed date')"
-                      :disable="searching || advancedSearchData.denyChangeDateFilters || disableFilterDatesByRouteParams">
+                      :disable="searching || advancedSearchData.denyChangeCreationDateFilters || disableFilterDatesByRouteParams">
                       <template v-slot:append>
                         <q-icon name="event" class="cursor-pointer">
                           <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                            <q-date v-model="advancedSearchData.filter.fixedDate" today-btn
-                              :disable="searching || advancedSearchData.denyChangeDateFilters">
+                            <q-date v-model="advancedSearchData.filter.fixedCreationDate" today-btn
+                              :disable="searching || advancedSearchData.denyChangeCreationDateFilters">
                               <div class="row items-center justify-end">
                                 <q-btn v-close-popup label="Close" color="primary" flat />
                               </div>
@@ -94,7 +94,7 @@
                   </div>
                 </div>
                 <TagSelector v-model="advancedSearchData.filter.tags"
-                  :disabled="searching || advancedSearchData.denyChangeDateFilters" dense>
+                  :disabled="searching || advancedSearchData.denyChangeCreationDateFilters" dense>
                 </TagSelector>
                 <q-btn color="dark" size="md" :label="$t('Search')" no-caps class="full-width" icon="search"
                   :disable="searching" :loading="searching" type="submit">
@@ -208,13 +208,13 @@ const dateFilterOptions = ref([
   { label: t('Between dates'), value: 10 }
 ]);
 const advancedSearchData = useAdvancedSearchData();
-advancedSearchData.filter.dateFilterType = dateFilterOptions.value[0];
+advancedSearchData.filter.creationDateFilterType = dateFilterOptions.value[0];
 advancedSearchData.filter.tags = route.params.tag !== undefined ? [route.params.tag] : [];
 
-advancedSearchData.filter.fixedDate = route.params.fixedDate !== undefined ? route.params.fixedDate.replaceAll("-", "/") : null;
-advancedSearchData.filter.dateFilterType = advancedSearchData.filter.fixedDate ? dateFilterOptions.value[7] : dateFilterOptions.value[0]
+advancedSearchData.filter.fixedCreationDate = route.params.fixedCreationDate !== undefined ? route.params.fixedCreationDate.replaceAll("-", "/") : null;
+advancedSearchData.filter.creationDateFilterType = advancedSearchData.filter.fixedCreationDate ? dateFilterOptions.value[7] : dateFilterOptions.value[0]
 
-const disableFilterDatesByRouteParams = computed(() => route.params.fixedDate !== undefined);
+const disableFilterDatesByRouteParams = computed(() => route.params.fixedCreationDate !== undefined);
 const sortOrderIcon = computed(() => advancedSearchData.sortOrder == "ASC" ? "keyboard_double_arrow_up" : "keyboard_double_arrow_down");
 
 const totalSearchConditions = computed(() => {
@@ -231,16 +231,16 @@ const totalSearchConditions = computed(() => {
   if (advancedSearchData.filter.tags && advancedSearchData.filter.tags.length > 0) {
     total += advancedSearchData.filter.tags.length;
   }
-  if (advancedSearchData.filter.dateFilterType && advancedSearchData.filter.dateFilterType.value != 0) {
+  if (advancedSearchData.filter.creationDateFilterType && advancedSearchData.filter.creationDateFilterType.value != 0) {
     total++;
   }
   return (total);
 });
 
 watch(
-  () => advancedSearchData.filter.dateFilterType,
-  (dateFilterType) => {
-    advancedSearchData.recalcDates(dateFilterType || 0)
+  () => advancedSearchData.filter.creationDateFilterType,
+  (creationDateFilterType) => {
+    advancedSearchData.recalcCreationDates(creationDateFilterType || 0)
   }
 );
 
@@ -258,21 +258,20 @@ function onSubmitForm(resetPager) {
   if (resetPager) {
     advancedSearchData.pager.currentPage = 1;
   }
-
   searching.value = true;
-  if (date.isValid(advancedSearchData.filter.fixedDate)) {
-    advancedSearchData.filter.fromTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.fixedDate, 'YYYY/MM/DD'), { hour: 0, minute: 0, second: 0, millisecond: 0 }), 'X');
-    advancedSearchData.filter.toTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.fixedDate, 'YYYY/MM/DD'), { hour: 23, minute: 59, second: 59, millisecond: 999 }), 'X');
+  if (date.isValid(advancedSearchData.filter.fixedCreationDate)) {
+    advancedSearchData.filter.fromCreationTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.fixedCreationDate, 'YYYY/MM/DD'), { hour: 0, minute: 0, second: 0, millisecond: 0 }), 'X');
+    advancedSearchData.filter.toCreationTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.fixedCreationDate, 'YYYY/MM/DD'), { hour: 23, minute: 59, second: 59, millisecond: 999 }), 'X');
   } else {
     if (date.isValid(advancedSearchData.filter.fromDate)) {
-      advancedSearchData.filter.fromTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.fromDate, 'YYYY/MM/DD'), { hour: 0, minute: 0, second: 0, millisecond: 0 }), 'X');
+      advancedSearchData.filter.fromCreationTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.fromDate, 'YYYY/MM/DD'), { hour: 0, minute: 0, second: 0, millisecond: 0 }), 'X');
     } else {
-      advancedSearchData.filter.fromTimestamp = null;
+      advancedSearchData.filter.fromCreationTimestamp = null;
     }
     if (date.isValid(advancedSearchData.filter.toDate)) {
-      advancedSearchData.filter.toTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.toDate, 'YYYY/MM/DD'), { hour: 23, minute: 59, second: 59, millisecond: 999 }), 'X');
+      advancedSearchData.filter.toCreationTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.toDate, 'YYYY/MM/DD'), { hour: 23, minute: 59, second: 59, millisecond: 999 }), 'X');
     } else {
-      advancedSearchData.filter.toTimestamp = null;
+      advancedSearchData.filter.toCreationTimestamp = null;
     }
   }
   api.document.search(advancedSearchData.pager.currentPage, advancedSearchData.pager.resultsPage, advancedSearchData.filter, advancedSearchData.sortField, advancedSearchData.sortOrder)

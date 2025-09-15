@@ -160,11 +160,11 @@ const api = {
           notesBody: filter.notesBody,
           tags: filter.tags || [],
         };
-        if (filter.fromTimestamp) {
-          params.fromCreationTimestampCondition = filter.fromTimestamp;
+        if (filter.fromCreationTimestamp) {
+          params.fromCreationTimestampCondition = filter.fromCreationTimestamp;
         }
-        if (filter.toTimestamp) {
-          params.toCreationTimestampCondition = filter.toTimestamp;
+        if (filter.toCreationTimestamp) {
+          params.toCreationTimestampCondition = filter.toCreationTimestamp;
         }
         params.currentPage = currentPage;
         params.resultsPage = resultsPage;
