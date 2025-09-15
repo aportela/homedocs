@@ -17,8 +17,10 @@
                     <q-avatar square icon="work" size="64px" />
                   </q-item-section>
                   <q-item-section>
-                    <q-item-label><router-link :to="{ name: 'document', params: { id: recentDocument.id } }"
-                        class="text-decoration-none text-dark">{{ recentDocument.title }}</router-link>
+                    <q-item-label>
+                      <router-link :to="{ name: 'document', params: { id: recentDocument.id } }"
+                        class="text-decoration-none text-dark">{{ recentDocument.title }}
+                      </router-link>
                     </q-item-label>
                     <q-item-label caption lines="2">{{ recentDocument.description }}</q-item-label>
                     <q-item-label>
@@ -26,6 +28,7 @@
                         :to="{ name: 'advancedSearchByTag', params: { tag: tag } }">
                         <q-chip square size="md" clickable icon="tag" class="q-chip-themed">
                           {{ tag }}
+                          <q-tooltip>{{ t("Browse by tag: ", { tag: tag }) }}</q-tooltip>
                         </q-chip>
                       </router-link>
                     </q-item-label>
