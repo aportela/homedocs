@@ -20,6 +20,9 @@
   text-decoration: underline !important;
 }
 
+$separator-color: var(--color-zinc-200) !default;
+$separator-dark-color: var(--color-zinc-700) !default;
+
 // app global css in SCSS form
 :root {
 
