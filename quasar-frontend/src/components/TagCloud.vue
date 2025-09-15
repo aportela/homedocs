@@ -11,14 +11,13 @@
           </p>
           <div v-else>
             <div v-if="hasTags">
-              <q-chip square class="q-chip-themed" text-color="dark" v-for="tag in tags" :key="tag.tag"
-                :title="t('Click here to browse documents containing this tag')">
+              <q-chip square class="q-chip-themed" text-color="dark" v-for="tag in tags" :key="tag.tag">
                 <q-avatar class="q-avatar-themed">{{ tag.total }}</q-avatar>
                 <router-link :to="{ name: 'advancedSearchByTag', params: { tag: tag.tag } }"
                   style="text-decoration: none; width: 10em; text-align: center">
                   <div class="ellipsis">
                     {{ tag.tag }}
-                    <q-tooltip>{{ tag.tag }}</q-tooltip>
+                    <q-tooltip>{{ t("Brose by tag: ", { tag: tag.tag }) }}</q-tooltip>
                   </div>
                 </router-link>
               </q-chip>

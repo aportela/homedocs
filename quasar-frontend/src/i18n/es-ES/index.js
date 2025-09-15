@@ -46,6 +46,7 @@ export default {
   Description: "Descripción",
   description: "descripción",
   "Tag cloud": "Nube de etiquetas",
+  "Brose by tag: ": "Navegar por etiqueta: {tag}",
   "You haven't created any tags yet": "Aún no ha creado ninguna etiqueta",
   "Click on tag to browse by tag":
     "Haga click en una etiqueta para navegar por ella",
@@ -125,8 +126,6 @@ export default {
   "Delete document": "Eliminar documento",
   "Document has been removed": "El documento ha sido eliminado",
   "Can not upload file": "No se puede subir el archivo {filename}",
-  "Click here to browse documents containing this tag":
-    "Haga click aquí para navegar entre los documentos con esta etiqueta",
   "Error loading available tags": "Error cargando las etiquetas disponibles",
   "Sign out": "Cerrar sesión",
   "Advanced search": "Búsqueda avanzada",

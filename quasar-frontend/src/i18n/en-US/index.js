@@ -46,6 +46,7 @@ export default {
   Description: "Description",
   description: "description",
   "Tag cloud": "Tag cloud",
+  "Brose by tag: ": "Brose by tag: {tag}",
   "You haven't created any tags yet": "You haven't created any tags yet",
   "Click on tag to browse by tag": "Click on tag to browse by tag",
   "Uploaded on": "Uploaded on",
@@ -121,8 +122,6 @@ export default {
   "Delete document": "Delete document",
   "Document has been removed": "Document has been removed",
   "Can not upload file": "Can not upload file {filename}",
-  "Click here to browse documents containing this tag":
-    "Click here to browse documents containing this tag",
   "Error loading available tags": "Error loading available tags",
   "Sign out": "Sign out",
   "Advanced search": "Advanced search",
