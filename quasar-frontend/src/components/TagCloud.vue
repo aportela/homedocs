@@ -1,9 +1,8 @@
 <template>
   <div class="fit">
-    <q-expansion-item :header-class="loadingError ? 'bg-red' : ''" expand-separator
-      :icon="loadingError ? 'error' : 'tag'" :label="t('Tag cloud')"
-      :caption="t(loadingError ? 'Error loading data' : 'Click on tag to browse by tag')" :model-value="expanded"
-      class="rounded-borders q-expansion-item-themed">
+    <q-expansion-item :header-class="{ 'bg-red': loadingError }" expand-separator :icon="loadingError ? 'error' : 'tag'"
+      :label="t('Tag cloud')" :caption="t(loadingError ? 'Error loading data' : 'Click on tag to browse by tag')"
+      :model-value="expanded" class="rounded-borders q-expansion-item-themed">
       <q-card class="q-ma-xs" flat>
         <q-card-section class="q-pa-none">
           <p class="text-center" v-if="loading">
@@ -100,6 +99,11 @@ a {
 }
 
 .body--dark {
+
+  .q-expansion-item-themed {
+    border: 1px solid var(--color-zinc-600);
+  }
+
   .q-chip-themed {
     background: #ddd;
     color: #fff;

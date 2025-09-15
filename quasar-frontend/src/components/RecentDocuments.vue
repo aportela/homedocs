@@ -1,9 +1,9 @@
 <template>
   <div class="fit">
-    <q-expansion-item :header-class="loadingError ? 'bg-red' : 'bg-grey-4'" expand-separator
+    <q-expansion-item :header-class="{ 'bg-red': loadingError }" expand-separator
       :icon="loadingError ? 'error' : 'work_history'" :label="t('Recent documents')"
       :caption="t(loadingError ? 'Error loading data' : 'Click on title to open document')" :model-value="expanded"
-      class="bg-grey-2 rounded-borders" bordered>
+      class="rounded-borders q-expansion-item-themed" bordered>
       <q-card class="q-ma-xs" flat>
         <q-card-section class="q-pa-none">
           <p class="text-center" v-if="loading">
@@ -103,3 +103,21 @@ onMounted(() => {
 });
 
 </script>
+
+<style scoped>
+.body--light {
+
+  .q-expansion-item-themed {
+    border: 1px solid var(--color-zinc-300);
+  }
+
+}
+
+.body--dark {
+
+  .q-expansion-item-themed {
+    border: 1px solid var(--color-zinc-600);
+  }
+
+}
+</style>

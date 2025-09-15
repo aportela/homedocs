@@ -27,6 +27,9 @@ $separator-dark-color: var(--color-zinc-700) !default;
 $default-light-primary-bg-color: var(--color-zinc-100);
 $default-dark-primary-bg-color: var(--color-zinc-800);
 
+$default-light-secondary-bg-color: var(--color-zinc-300);
+$default-dark-secondary-bg-color: var(--color-zinc-700);
+
 // default text colors
 $default-light-primary-text-color:var(--color-zinc-950);
 $default-dark-primary-text-color:var(--color-zinc-100);
@@ -54,6 +57,10 @@ body {
    background: $default-light-primary-bg-color !important;
   }
 
+  .q-item {
+    background: $default-light-secondary-bg-color ;
+  }
+
   .q-field--outlined .q-field__control::before {
     border: 1px solid $separator-color !important;
     box-shadow:
@@ -71,8 +78,13 @@ body {
   .text-color-secondary {
     color: $default-dark-secondary-text-color !important;
   }
+
   .q-card {
    background: $default-dark-primary-bg-color !important;
+  }
+
+  .q-item {
+    background: $default-dark-secondary-bg-color ;
   }
 
   .q-field--outlined .q-field__control::before {
