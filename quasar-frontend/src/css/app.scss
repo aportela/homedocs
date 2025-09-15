@@ -1,4 +1,5 @@
 // custom style taken / inspired by https://github.com/bekaku/quasar-starter-template/blob/main/src/css/quasar.variables.scss
+@import 'utilities';
 
 @font-face {
   font-family: "TwemojiMozilla";
@@ -8,10 +9,6 @@
 
 .input-emoji {
   font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, "TwemojiMozilla";
-}
-
-.text-decoration-none {
-  text-decoration: none !important;
 }
 
 .main-app-text-link-hover {
