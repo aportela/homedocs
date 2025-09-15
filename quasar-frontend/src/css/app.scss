@@ -46,8 +46,8 @@ body {
 
 .body--light {
   // default main color/background
-  background: $default-light-primary-bg-color;
-  color: $default-light-primary-text-color;
+  background: $default-light-primary-bg-color !important;
+  color: $default-light-primary-text-color !important;
 
   .text-color-primary {
     color: $default-light-primary-text-color !important;
@@ -76,8 +76,8 @@ body {
 
 .body--dark {
   // default main color/background
-  background: $default-dark-primary-bg-color;
-  color: $default-dark-primary-text-color;
+  background: $default-dark-primary-bg-color !important;
+  color: $default-dark-primary-text-color !important;
 
   .text-color-primary {
     color: $default-dark-primary-text-color;
