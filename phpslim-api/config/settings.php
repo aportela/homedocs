@@ -90,8 +90,7 @@ $settings['twig'] = [
 
 $settings['common'] = [
     'defaultResultsPage' => 64,
-    'allowSignUp' => true,
-    'locale' => 'en' // (en | es | gl)
+    'allowSignUp' => true
 ];
 
 $settings['jwt'] = [

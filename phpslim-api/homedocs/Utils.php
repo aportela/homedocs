@@ -10,7 +10,6 @@ class Utils
     {
         $settings = $container->get('settings');
         return ([
-            'locale' => $settings['common']['locale'],
             'allowSignUp' => $settings['common']['allowSignUp'],
             'defaultResultsPage' => $settings['common']['defaultResultsPage'],
             'environment' => $settings['environment'],
