@@ -49,12 +49,16 @@ body {
   background: $default-light-primary-bg-color;
   color: $default-light-primary-text-color;
 
+  .text-color-primary {
+    color: $default-light-primary-text-color !important;
+  }
+
   .text-color-secondary {
     color: $default-light-secondary-text-color !important;
   }
 
   .q-card {
-   background: $default-light-primary-bg-color !important;
+   background: $default-light-primary-bg-color;
   }
 
   .q-item {
@@ -75,12 +79,16 @@ body {
   background: $default-dark-primary-bg-color;
   color: $default-dark-primary-text-color;
 
+  .text-color-primary {
+    color: $default-dark-primary-text-color;
+  }
+
   .text-color-secondary {
     color: $default-dark-secondary-text-color !important;
   }
 
   .q-card {
-   background: $default-dark-primary-bg-color !important;
+   background: $default-dark-primary-bg-color;
   }
 
   .q-item {

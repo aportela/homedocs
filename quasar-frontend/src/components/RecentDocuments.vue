@@ -4,7 +4,7 @@
       :icon="loadingError ? 'error' : 'work_history'" :label="t('Recent documents')"
       :caption="t(loadingError ? 'Error loading data' : 'Click on title to open document')" :model-value="expanded"
       class="rounded-borders q-expansion-item-themed" bordered>
-      <q-card class="q-ma-xs" flat>
+      <q-card class="q-ma-xs transparent-background" flat>
         <q-card-section class="q-pa-none">
           <p class="text-center" v-if="loading">
             <q-spinner-pie color="grey-5" size="md" />
@@ -12,7 +12,7 @@
           <div v-else>
             <q-list v-if="hasRecentDocuments">
               <div v-for="recentDocument, index in recentDocuments" :key="recentDocument.id">
-                <q-item>
+                <q-item class="transparent-background text-color-primary">
                   <q-item-section top avatar class="gt-xs">
                     <q-avatar square icon="work" size="64px" />
                   </q-item-section>
@@ -24,7 +24,7 @@
                     <q-item-label>
                       <router-link v-for="tag in recentDocument.tags" :key="tag"
                         :to="{ name: 'advancedSearchByTag', params: { tag: tag } }">
-                        <q-chip square size="md" clickable icon="tag">
+                        <q-chip square size="md" clickable icon="tag" class="q-chip-themed">
                           {{ tag }}
                         </q-chip>
                       </router-link>
@@ -33,12 +33,12 @@
                   <q-item-section side top>
                     <q-item-label caption>{{ recentDocument.lastUpdate }}
                     </q-item-label>
-                    <q-chip size="md" square text-color="dark" class="full-width">
-                      <q-avatar color="grey-9" text-color="white">{{ recentDocument.fileCount }}</q-avatar>
+                    <q-chip size="md" square class="full-width q-chip-themed">
+                      <q-avatar class="q-avatar-themed">{{ recentDocument.fileCount }}</q-avatar>
                       {{ t("Files") }}
                     </q-chip>
-                    <q-chip size="md" square text-color="dark" class="full-width">
-                      <q-avatar color="grey-9" text-color="white">{{ recentDocument.noteCount }}</q-avatar>
+                    <q-chip size="md" square class="full-width q-chip-themed">
+                      <q-avatar class="q-avatar-themed">{{ recentDocument.noteCount }}</q-avatar>
                       {{ t("Notes") }}
                     </q-chip>
                   </q-item-section>
@@ -107,16 +107,43 @@ onMounted(() => {
 <style scoped>
 .body--light {
 
+  a {
+    color: var(--color-zinc-950) !important;
+  }
+
   .q-expansion-item-themed {
     border: 1px solid var(--color-zinc-300);
+  }
+
+  .q-chip-themed {
+    color: #222;
+  }
+
+  .q-avatar-themed {
+    background: #444;
+    color: #fff;
   }
 
 }
 
 .body--dark {
 
+  a {
+    color: var(--color-zinc-100) !important;
+  }
+
   .q-expansion-item-themed {
     border: 1px solid var(--color-zinc-600);
+  }
+
+  .q-chip-themed {
+    background: #ddd;
+    color: var(--color-zinc-950);
+  }
+
+  .q-avatar-themed {
+    background: #ccc;
+    color: #333;
   }
 
 }
