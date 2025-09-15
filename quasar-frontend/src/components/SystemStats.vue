@@ -10,9 +10,9 @@
             <q-spinner-pie v-if="loading" color="grey-5" size="md" />
           </p>
           <div v-else>
-            <q-card class="bg-grey-3 q-ma-sm">
+            <q-card class="bg-grey-3 q-ma-sm scroll">
               <q-card-section class="text-center text-h6"><q-icon name="insights"></q-icon> {{ t("Activity Heatmap")
-              }}</q-card-section>
+                }}</q-card-section>
               <q-card-section class="bg-white">
                 <ActivityHeatMap class="q-mx-auto"></ActivityHeatMap>
               </q-card-section>
