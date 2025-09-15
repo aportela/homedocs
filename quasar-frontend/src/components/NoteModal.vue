@@ -7,7 +7,7 @@
       </q-card-section>
       <q-separator />
       <q-card-section style="max-height: 50vh" class="scroll">
-        <div class="cursor-pointer pre-line" v-if="readOnly" @click="readOnly = false">{{
+        <div class="cursor-pointer white-space-pre-line" v-if="readOnly" @click="readOnly = false">{{
           body }}
         </div>
         <q-input v-else filled type="textarea" v-model="body" maxlength="16384" autofocus></q-input>
@@ -62,9 +62,3 @@ function onSave() {
 }
 
 </script>
-
-<style scoped>
-.pre-line {
-  white-space: pre-line;
-}
-</style>
