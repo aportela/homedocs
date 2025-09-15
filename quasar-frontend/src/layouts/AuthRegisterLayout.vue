@@ -1,5 +1,5 @@
 <template>
-  <q-layout>
+  <q-layout class="q-layout-themed-signin-signup">
     <div class="row" style="height: 100vh">
       <div class="col-12 col-lg-8 col-md-12 col-sm-12 slogan-image-cover flex flex-center">
         <div class="q-pa-xl text-center text-white">
@@ -28,5 +28,21 @@ const { t } = useI18n();
   background-size: cover;
   background-position: center;
   filter: grayscale(100%);
+}
+</style>
+
+<style>
+.body--light {
+  .q-layout-themed-signin-signup {
+    background-color: var(--color-zinc-100);
+  }
+
+}
+
+.body--dark {
+  .q-layout-themed-signin-signup {
+    background-color: var(--color-zinc-800);
+  }
+
 }
 </style>

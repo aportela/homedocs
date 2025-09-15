@@ -1,9 +1,9 @@
 <template>
   <div class="fit">
-    <q-expansion-item :header-class="loadingError ? 'bg-red' : 'bg-grey-4'" expand-separator
+    <q-expansion-item :header-class="loadingError ? 'bg-red' : ''" expand-separator
       :icon="loadingError ? 'error' : 'tag'" :label="t('Tag cloud')"
       :caption="t(loadingError ? 'Error loading data' : 'Click on tag to browse by tag')" :model-value="expanded"
-      class="bg-grey-2 rounded-borders">
+      class="rounded-borders q-expansion-item-themed">
       <q-card class="q-ma-xs" flat>
         <q-card-section class="q-pa-none">
           <p class="text-center" v-if="loading">
@@ -11,11 +11,11 @@
           </p>
           <div v-else>
             <div v-if="hasTags">
-              <q-chip square text-color="dark" v-for="tag in tags" :key="tag.tag"
+              <q-chip square class="q-chip-themed" text-color="dark" v-for="tag in tags" :key="tag.tag"
                 :title="t('Click here to browse documents containing this tag')">
-                <q-avatar color="grey-9" text-color="white">{{ tag.total }}</q-avatar>
+                <q-avatar class="q-avatar-themed">{{ tag.total }}</q-avatar>
                 <router-link :to="{ name: 'advancedSearchByTag', params: { tag: tag.tag } }"
-                  style="text-decoration: none; width: 10em; text-align: center" class="text-dark">
+                  style="text-decoration: none; width: 10em; text-align: center">
                   <div class="ellipsis">
                     {{ tag.tag }}
                     <q-tooltip>{{ tag.tag }}</q-tooltip>
@@ -76,3 +76,41 @@ onMounted(() => {
 });
 
 </script>
+
+<style scoped>
+a {
+  color: #222;
+}
+
+.body--light {
+
+  .q-expansion-item-themed {
+    border: 1px solid var(--color-zinc-300);
+  }
+
+  .q-chip-themed {
+    color: #222;
+  }
+
+  .q-avatar-themed {
+    background: #444;
+    color: #fff;
+  }
+
+
+}
+
+.body--dark {
+  .q-chip-themed {
+    background: #ddd;
+    color: #fff;
+  }
+
+  .q-avatar-themed {
+    background: #ccc;
+    color: #333;
+  }
+
+
+}
+</style>

@@ -1,14 +1,14 @@
 <template>
-  <q-layout view="lHh lpR lFf" class="q-layout-main">
-    <q-header height-hint="61.59" class="bg-white text-grey-10" bordered>
-      <q-toolbar class="my_toolbar bg-white">
+  <q-layout view="lHh lpR lFf" class="q-layout-themed-main">
+    <q-header height-hint="61.59" class="q-header-themed-main" bordered>
+      <q-toolbar>
         <q-btn flat dense round @click="visibleSidebar = !visibleSidebar;" aria-label="Toggle drawer" icon="menu"
           v-show="!visibleSidebar" class="q-mr-md" />
         <q-btn flat dense round @click="onToggleminiSidebarCurrentMode" aria-label="Toggle drawer"
           :icon="miniSidebarCurrentMode ? 'arrow_forward_ios' : 'arrow_back_ios_new'" class="q-mr-md"
           v-show="visibleSidebar" />
         <q-btn type="button" no-caps no-wrap align="left" flat :label="searchButtonLabel" icon-right="search"
-          class="full-width no-caps text-grey-8" @click.prevent="visibleFastSearchModal = true">
+          class="full-width no-caps" @click.prevent="visibleFastSearchModal = true">
           <q-tooltip anchor="bottom middle" self="top middle">{{ t("Click to open fast search")
             }}</q-tooltip>
         </q-btn>
@@ -22,7 +22,7 @@
         </q-btn-group>
       </q-toolbar>
     </q-header>
-    <SidebarDrawer v-model="visibleSidebar" :mini="miniSidebarCurrentMode"></SidebarDrawer>
+    <SidebarDrawer v-model="visibleSidebar" :mini="miniSidebarCurrentMode" class="q-drawer-sidebar"></SidebarDrawer>
     <FastSearchModal v-model="visibleFastSearchModal" @close="visibleFastSearchModal = false"></FastSearchModal>
     <q-page-container>
       <router-view class="q-pa-sm" />
@@ -91,14 +91,24 @@ const onToggleminiSidebarCurrentMode = (value) => {
 
 <style>
 .body--light {
-  .q-layout-main {
+  .q-layout-themed-main {
     background-color: var(--color-zinc-50);
+  }
+
+  .q-header-themed-main {
+    background-color: var(--color-zinc-100);
+    color: var(--q-color-grey-2);
   }
 }
 
 .body--dark {
-  .q-layout-main {
+  .q-layout-themed-main {
     background-color: var(--color-zinc-800);
+  }
+
+  .q-header-themed-main {
+    background-color: var(--color-zinc-900);
+    color: var(--q-color-grey-7);
   }
 }
 </style>

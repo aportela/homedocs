@@ -79,12 +79,7 @@ body {
 
 }
 
-
 .body--light {
-
-  .layout-signin-signup {
-    background-color: var(--color-zinc-100);
-  }
 
   .layout-signin-signup .q-card {
     background-color: $default-component-bg-light;
@@ -102,15 +97,9 @@ body {
 
 .body--dark {
 
-  .layout-signin-signup {
-    background-color: var(--color-zinc-800);
-
-  }
-
   .layout-signin-signup .q-card {
     background-color: $default-component-bg-dark;
   }
-
 
   .q-field--outlined .q-field__control::before {
     box-shadow:
