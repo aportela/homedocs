@@ -158,4 +158,6 @@ export default {
     "Unfortunately, your search didn't return any results. You might want to modify your filters or search terms",
   "Profile has been successfully updated":
     "Profile has been successfully updated",
+  "Creation date": "Creation date",
+  "Last update": "Last update",
 };

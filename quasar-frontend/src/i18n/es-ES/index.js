@@ -163,4 +163,6 @@ export default {
     "Desafortunadamente, tu búsqueda no devolvió ningún resultado. Quizá quieras modificar tus filtros o términos de búsqueda.",
   "Profile has been successfully updated":
     "El perfil se ha actualizado con éxito",
+  "Creation date": "Fecha de creación",
+  "Last update": "Fecha del último cambio",
 };
