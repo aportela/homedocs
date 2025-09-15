@@ -101,12 +101,12 @@ body {
   // q-chip component
   .theme-default-q-chip {
     background: #ddd;
-    color: #fff;
+    color: var(--color-zinc-950);
   }
 
   // q-avatar inside q-chip component
   .theme-default-q-chip .theme-default-q-avatar {
-    background: #ccc;
+    background: var(--color-zinc-400);
     color: #333;
   }
 
