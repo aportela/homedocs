@@ -12,7 +12,8 @@
         </q-card-section>
         <q-card-section>
           <q-input dense outlined ref="emailRef" v-model="email" type="email" name="email" :label="t('Email')"
-            :disable="loading" :rules="requiredFieldRules" lazy-rules :error="remoteValidation.email.hasErrors"
+            :disable="loading" :autofocus="!savedEmail" :rules="requiredFieldRules" lazy-rules
+            :error="remoteValidation.email.hasErrors"
             :errorMessage="remoteValidation.email.message ? t(remoteValidation.email.message) : ''">
             <template v-slot:prepend>
               <q-icon name="alternate_email" />
@@ -20,7 +21,8 @@
           </q-input>
           <q-input dense outlined class="q-mt-md" ref="passwordRef" v-model="password" name="password"
             :type="visiblePassword ? 'text' : 'password'" :label="t('Password')" :disable="loading"
-            :rules="requiredFieldRules" lazy-rules :error="remoteValidation.password.hasErrors"
+            :autofocus="!!savedEmail" :rules="requiredFieldRules" lazy-rules
+            :error="remoteValidation.password.hasErrors"
             :errorMessage="remoteValidation.password.message ? t(remoteValidation.password.message) : ''">
             <template v-slot:prepend>
               <q-icon name="key" />
@@ -113,14 +115,6 @@ const emailRef = ref(null);
 const password = ref(null);
 const passwordRef = ref(null);
 const visiblePassword = ref(false);
-
-onMounted(() => {
-  if (savedEmail) {
-    passwordRef.value.focus();
-  } else {
-    emailRef.value.focus();
-  }
-});
 
 function onResetForm() {
   remoteValidation.value.email.hasErrors = false;
