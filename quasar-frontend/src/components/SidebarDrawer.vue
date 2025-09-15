@@ -2,7 +2,7 @@
   <q-drawer v-bind="attrs" show-if-above bordered :width="240" :mini="mini" @click.capture="onDrawerClick"
     class="fit q-drawer-sidebar">
     <q-list>
-      <q-item class="cursor-pointer non-selectable rounded-borders q-ma-sm drawer-q-item">
+      <q-item class="cursor-pointer non-selectable rounded-borders q-ma-sm">
         <q-item-section avatar>
           <q-avatar square size="24px">
             <img src="icons/favicon-128x128.png" />
@@ -13,18 +13,17 @@
         </q-item-section>
       </q-item>
       <q-item v-for="link in menuItems" :key="link.text" v-ripple clickable :to="{ name: link.routeName }"
-        class="rounded-borders q-ma-sm drawer-q-item" :active="$route.name === link.routeName"
-        active-class="drawer-q-item-active">
+        class="rounded-borders q-ma-sm" :active="$route.name === link.routeName" active-class="drawer-q-item-active">
         <q-item-section avatar>
-          <q-icon color="grey" :name="link.icon" />
+          <q-icon :name="link.icon" />
         </q-item-section>
         <q-item-section>
           <q-item-label>{{ t(link.text) }}</q-item-label>
         </q-item-section>
       </q-item>
-      <q-item v-ripple clickable @click="signOut" class="rounded-borders q-ma-sm drawer-q-item">
+      <q-item v-ripple clickable @click="signOut" class="rounded-borders q-ma-sm">
         <q-item-section avatar>
-          <q-icon color="grey" name="logout" />
+          <q-icon name="logout" />
         </q-item-section>
         <q-item-section>
           <q-item-label>{{ t("Sign out") }}</q-item-label>
@@ -97,19 +96,15 @@ function signOut() {
 </script>
 
 <style>
-.q-drawer-sidebar {
-  background-color: var(--color-zinc-100);
-}
+.body--light {
+  .q-drawer-sidebar {
+    background-color: var(--color-zinc-100);
+  }
 
-.drawer-q-item {
-  border: 1px solid var(--color-zinc-300);
-  background-color: var(--color-zinc-100);
-  color: #000;
-}
-
-.drawer-q-item-active {
-  background-color: var(--color-zinc-300);
-  color: #000;
+  .drawer-q-item-active {
+    background-color: var(--color-zinc-400);
+    color: var(--color-zinc-950);
+  }
 }
 
 .body--dark {
@@ -117,15 +112,9 @@ function signOut() {
     background-color: var(--color-zinc-900);
   }
 
-  .drawer-q-item {
-    border: 1px solid #eee;
-    background-color: var(--color-zinc-500);
-    color: #000;
-  }
-
   .drawer-q-item-active {
-    background-color: var(--color-zinc-600);
-    color: #000;
+    background-color: var(--color-zinc-400);
+    color: var(--color-zinc-100)
   }
 }
 </style>
