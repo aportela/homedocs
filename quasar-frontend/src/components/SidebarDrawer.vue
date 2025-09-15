@@ -121,7 +121,10 @@ function signOut() {
 
   .drawer-q-item-active {
     background-color: var(--color-zinc-400);
-    color: var(--color-zinc-100)
+    color: var(--color-zinc-100);
+    background-color: var(--color-primary-900);
+    color: #fff;
+
   }
 }
 </style>
