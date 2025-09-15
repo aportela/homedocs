@@ -161,10 +161,10 @@ const api = {
           tags: filter.tags || [],
         };
         if (filter.fromTimestamp) {
-          params.fromTimestampCondition = filter.fromTimestamp;
+          params.fromCreationTimestampCondition = filter.fromTimestamp;
         }
         if (filter.toTimestamp) {
-          params.toTimestampCondition = filter.toTimestamp;
+          params.toCreationTimestampCondition = filter.toTimestamp;
         }
         params.currentPage = currentPage;
         params.resultsPage = resultsPage;

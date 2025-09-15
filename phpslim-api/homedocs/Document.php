@@ -693,13 +693,13 @@ class Document
                 ", implode(" AND ", $notesConditions));
             }
         }
-        if (isset($filter["fromTimestampCondition"]) && $filter["fromTimestampCondition"] > 0) {
-            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":fromTimestamp", $filter["fromTimestampCondition"]);
-            $queryConditions[] = " DOCUMENT_HISTORY.operation_date >= :fromTimestamp ";
+        if (isset($filter["fromCreationTimestampCondition"]) && $filter["fromCreationTimestampCondition"] > 0) {
+            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":fromCreationTimestamp", $filter["fromCreationTimestampCondition"]);
+            $queryConditions[] = " DOCUMENT_HISTORY.operation_date >= :fromCreationTimestamp ";
         }
-        if (isset($filter["toTimestampCondition"]) && $filter["toTimestampCondition"] > 0) {
-            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":toTimestamp", $filter["toTimestampCondition"]);
-            $queryConditions[] = " DOCUMENT_HISTORY.operation_date <= :toTimestamp ";
+        if (isset($filter["toCreationTimestampCondition"]) && $filter["toCreationTimestampCondition"] > 0) {
+            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":toCreationTimestamp", $filter["toCreationTimestampCondition"]);
+            $queryConditions[] = " DOCUMENT_HISTORY.operation_date <= :toCreationTimestamp ";
         }
         if (isset($filter["tags"]) && is_array($filter["tags"]) && count($filter["tags"]) > 0) {
             foreach ($filter["tags"] as $i => $tag) {

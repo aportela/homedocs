@@ -159,7 +159,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
 
     public function testSearchWithPagerAndFromTimestampFilter(): void
     {
-        $results = \HomeDocs\Document::search(self::$dbh, 1, 16, ["fromTimestampCondition" => 1690236000], "createdOnTimestamp", "DESC");
+        $results = \HomeDocs\Document::search(self::$dbh, 1, 16, ["fromCreationTimestampCondition" => 1690236000], "createdOnTimestamp", "DESC");
         $this->assertIsObject($results);
         $this->assertIsObject($results->pagination);
         $this->assertIsArray($results->documents);
@@ -168,7 +168,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
 
     public function testSearchWithPagerAndToTimestampFilter(): void
     {
-        $results = \HomeDocs\Document::search(self::$dbh, 1, 16, ["toTimestampCondition" => 1690408799], "createdOnTimestamp", "DESC");
+        $results = \HomeDocs\Document::search(self::$dbh, 1, 16, ["toCreationTimestampCondition" => 1690408799], "createdOnTimestamp", "DESC");
         $this->assertIsObject($results);
         $this->assertIsObject($results->pagination);
         $this->assertIsArray($results->documents);
