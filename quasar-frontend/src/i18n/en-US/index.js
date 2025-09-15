@@ -46,7 +46,7 @@ export default {
   Description: "Description",
   description: "description",
   "Tag cloud": "Tag cloud",
-  "Brose by tag: ": "Brose by tag: {tag}",
+  "Browse by tag: ": "Browse by tag: {tag}",
   "You haven't created any tags yet": "You haven't created any tags yet",
   "Click on tag to browse by tag": "Click on tag to browse by tag",
   "Uploaded on": "Uploaded on",

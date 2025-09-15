@@ -46,7 +46,7 @@ export default {
   Description: "Descripción",
   description: "descripción",
   "Tag cloud": "Nube de etiquetas",
-  "Brose by tag: ": "Navegar por etiqueta: {tag}",
+  "Browse by tag: ": "Navegar por etiqueta: {tag}",
   "You haven't created any tags yet": "Aínda non creou ningunha etiqueta",
   "Click on tag to browse by tag":
     "Faga click nunha etiqueta pra navegar por ela",

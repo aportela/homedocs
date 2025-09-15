@@ -16,7 +16,7 @@
                   style="text-decoration: none; width: 10em; text-align: center">
                   <div class="ellipsis">
                     {{ tag.tag }}
-                    <q-tooltip>{{ t("Brose by tag: ", { tag: tag.tag }) }}</q-tooltip>
+                    <q-tooltip>{{ t("Browse by tag: ", { tag: tag.tag }) }}</q-tooltip>
                   </div>
                 </router-link>
               </q-chip>
