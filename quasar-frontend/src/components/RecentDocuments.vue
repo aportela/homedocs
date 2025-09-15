@@ -1,6 +1,6 @@
 <template>
   <div class="fit">
-    <q-expansion-item :header-class="{ 'bg-red': loadingError }" expand-separator
+    <q-expansion-item :header-class="{ 'bg-red': loadingError, 'q-expansion-item-header': true }" expand-separator
       :icon="loadingError ? 'error' : 'work_history'" :label="t('Recent documents')"
       :caption="t(loadingError ? 'Error loading data' : 'Click on title to open document')" :model-value="expanded"
       class="rounded-borders q-expansion-item-themed" bordered>
@@ -19,7 +19,7 @@
                   <q-item-section>
                     <q-item-label>
                       <router-link :to="{ name: 'document', params: { id: recentDocument.id } }"
-                        class="text-decoration-none text-dark">{{ recentDocument.title }}
+                        class="text-decoration-none text-weight-bold">{{ recentDocument.title }}
                       </router-link>
                     </q-item-label>
                     <q-item-label caption lines="2">{{ recentDocument.description }}</q-item-label>

@@ -101,9 +101,16 @@ function signOut() {
     background-color: var(--color-zinc-100);
   }
 
+  .q-item {
+    background-color: var(--color-primary-600);
+    color: #fff;
+  }
+
   .drawer-q-item-active {
     background-color: var(--color-zinc-400);
     color: var(--color-zinc-950);
+    background-color: var(--color-primary-900);
+    color: #fff;
   }
 }
 
