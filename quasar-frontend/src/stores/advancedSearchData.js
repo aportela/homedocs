@@ -18,7 +18,7 @@ export const useAdvancedSearchData = defineStore("advancedSearchData", {
       tags: [],
     },
     sort: {
-      field: "createdOnTimestamp",
+      field: "lastUpdateTimestamp",
       order: "DESC",
     },
     pager: {
