@@ -638,11 +638,10 @@ class Document
         $data = new \stdClass();
         $data->pagination = new \stdClass();
         $data->documents = array();
-        $queryConditions = array(
-            "DOCUMENT_HISTORY.operation_type = :history_operation_add"
-        );
+        $queryConditions = array();
         $params = array(
             new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
+            new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_update", \HomeDocs\DocumentHistoryOperation::OPERATION_UPDATE_DOCUMENT),
             new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
         );
         if (isset($filter["title"]) && !empty($filter["title"])) {
@@ -695,11 +694,19 @@ class Document
         }
         if (isset($filter["fromCreationTimestampCondition"]) && $filter["fromCreationTimestampCondition"] > 0) {
             $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":fromCreationTimestamp", $filter["fromCreationTimestampCondition"]);
-            $queryConditions[] = " DOCUMENT_HISTORY.operation_date >= :fromCreationTimestamp ";
+            $queryConditions[] = " DOCUMENT_HISTORY_CREATION_DATE.operation_date >= :fromCreationTimestamp ";
         }
         if (isset($filter["toCreationTimestampCondition"]) && $filter["toCreationTimestampCondition"] > 0) {
             $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":toCreationTimestamp", $filter["toCreationTimestampCondition"]);
-            $queryConditions[] = " DOCUMENT_HISTORY.operation_date <= :toCreationTimestamp ";
+            $queryConditions[] = " DOCUMENT_HISTORY_CREATION_DATE.operation_date <= :toCreationTimestamp ";
+        }
+        if (isset($filter["fromLastUpdateTimestampCondition"]) && $filter["fromLastUpdateTimestampCondition"] > 0) {
+            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":fromLastUpdateTimestamp", $filter["fromLastUpdateTimestampCondition"]);
+            $queryConditions[] = " DOCUMENT_HISTORY_LAST_UPDATE.lastUpdateTimestamp >= :fromLastUpdateTimestamp ";
+        }
+        if (isset($filter["toLastUpdateTimestampCondition"]) && $filter["toLastUpdateTimestampCondition"] > 0) {
+            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":toLastUpdateTimestamp", $filter["toLastUpdateTimestampCondition"]);
+            $queryConditions[] = " DOCUMENT_HISTORY_LAST_UPDATE.operation_date <= :toLastUpdateTimestamp ";
         }
         if (isset($filter["tags"]) && is_array($filter["tags"]) && count($filter["tags"]) > 0) {
             foreach ($filter["tags"] as $i => $tag) {
@@ -718,13 +725,25 @@ class Document
                 );
             }
         }
-        $whereCondition = " WHERE " .  implode(" AND ", $queryConditions);
+        $whereCondition = count($queryConditions) > 0 ? " WHERE " .  implode(" AND ", $queryConditions) : "";
 
+        // TODO: only LEFT JOIN LAST UPDATE IF REQUIRED BY FILTERS
         $queryCount = sprintf('
                 SELECT
                     COUNT (DOCUMENT.id) AS total
                 FROM DOCUMENT
-                INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT.id AND DOCUMENT_HISTORY.operation_user_id = :session_user_id
+                INNER JOIN DOCUMENT_HISTORY AS DOCUMENT_HISTORY_CREATION_DATE ON (
+                    DOCUMENT_HISTORY_CREATION_DATE.document_id = DOCUMENT.id
+                    AND DOCUMENT_HISTORY_CREATION_DATE.operation_user_id = :session_user_id
+                    AND DOCUMENT_HISTORY_CREATION_DATE.operation_type = :history_operation_add
+                )
+                LEFT JOIN (
+                    SELECT
+                        DOCUMENT_HISTORY.document_id, MAX(DOCUMENT_HISTORY.operation_date) AS lastUpdateTimestamp
+                    FROM DOCUMENT_HISTORY
+                    WHERE DOCUMENT_HISTORY.operation_type = :history_operation_update
+                    GROUP BY DOCUMENT_HISTORY.document_id
+                ) DOCUMENT_HISTORY_LAST_UPDATE ON DOCUMENT_HISTORY_LAST_UPDATE.document_id = DOCUMENT.id
                 %s
             ', $whereCondition);
         $result = $dbh->query($queryCount, $params);
@@ -752,23 +771,26 @@ class Document
                     $sqlSortBy = "TMP_NOTE_COUNT.noteCount";
                     break;
                 case "createdOnTimestamp":
-                    $sqlSortBy = "DOCUMENT_HISTORY.operation_date";
+                    $sqlSortBy = "DOCUMENT_HISTORY_CREATION_DATE.operation_date";
                     break;
                 case "lastUpdateTimestamp":
-                    $sqlSortBy = "COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.lastUpdateTimestamp, DOCUMENT_HISTORY.operation_date)";
+                    $sqlSortBy = "COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.lastUpdateTimestamp, DOCUMENT_HISTORY_CREATION_DATE.operation_date)";
                     break;
                 default:
-                    $sqlSortBy = "DOCUMENT_HISTORY.operation_date";
+                    $sqlSortBy = "DOCUMENT_HISTORY_CREATION_DATE.operation_date";
                     break;
             }
-            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_update", \HomeDocs\DocumentHistoryOperation::OPERATION_UPDATE_DOCUMENT);
             $data->documents = $dbh->query(
                 sprintf(
                     "
                             SELECT
-                                DOCUMENT.id, DOCUMENT.title, DOCUMENT.description, DOCUMENT_HISTORY.operation_date AS createdOnTimestamp, DOCUMENT_HISTORY_LAST_UPDATE.lastUpdateTimestamp, TMP_FILE_COUNT.fileCount, TMP_NOTE_COUNT.noteCount
+                                DOCUMENT.id, DOCUMENT.title, DOCUMENT.description, DOCUMENT_HISTORY_CREATION_DATE.operation_date AS createdOnTimestamp, DOCUMENT_HISTORY_LAST_UPDATE.lastUpdateTimestamp, TMP_FILE_COUNT.fileCount, TMP_NOTE_COUNT.noteCount
                             FROM DOCUMENT
-                            INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT.id AND DOCUMENT_HISTORY.operation_user_id = :session_user_id
+                            INNER JOIN DOCUMENT_HISTORY AS DOCUMENT_HISTORY_CREATION_DATE ON (
+                                DOCUMENT_HISTORY_CREATION_DATE.document_id = DOCUMENT.id
+                                AND DOCUMENT_HISTORY_CREATION_DATE.operation_user_id = :session_user_id
+                                AND DOCUMENT_HISTORY_CREATION_DATE.operation_type = :history_operation_add
+                            )
                             LEFT JOIN (
                                 SELECT
                                     DOCUMENT_HISTORY.document_id, MAX(DOCUMENT_HISTORY.operation_date) AS lastUpdateTimestamp

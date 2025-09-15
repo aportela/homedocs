@@ -166,6 +166,12 @@ const api = {
         if (filter.toCreationTimestamp) {
           params.toCreationTimestampCondition = filter.toCreationTimestamp;
         }
+        if (filter.fromLastUpdateTimestamp) {
+          params.fromLastUpdateTimestampCondition = filter.fromLastUpdateTimestamp;
+        }
+        if (filter.toLastUpdateTimestamp) {
+          params.toLastUpdateTimestampCondition = filter.toLastUpdateTimestamp;
+        }
         params.currentPage = currentPage;
         params.resultsPage = resultsPage;
         params.sortBy = sortBy;

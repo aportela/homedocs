@@ -38,9 +38,10 @@
                   <div class="col">
                     <q-select class="q-mb-md" dense options-dense outlined clearable
                       v-model="advancedSearchData.filter.creationDateFilterType" :options="dateFilterOptions"
-                      :label="t('Document created on')" :disable="searching || disableFilterDatesByRouteParams" />
+                      :label="t('Document created on')"
+                      :disable="searching || disableCreationDateFilterByRouteParams" />
                   </div>
-                  <div class="col" v-if="advancedSearchData.hasfromCreationDateFilter">
+                  <div class="col" v-if="advancedSearchData.hasFromCreationDateFilter">
                     <q-input dense outlined mask="date" v-model="advancedSearchData.filter.fromCreationDate"
                       :label="t('From date')" :disable="searching || advancedSearchData.denyChangeCreationDateFilters">
                       <template v-slot:append>
@@ -74,10 +75,10 @@
                       </template>
                     </q-input>
                   </div>
-                  <div class="col" v-if="advancedSearchData.hasfixedCreationDateFilter">
+                  <div class="col" v-if="advancedSearchData.hasFixedCreationDateFilter">
                     <q-input dense outlined mask="date" v-model="advancedSearchData.filter.fixedCreationDate"
                       :label="t('Fixed date')"
-                      :disable="searching || advancedSearchData.denyChangeCreationDateFilters || disableFilterDatesByRouteParams">
+                      :disable="searching || advancedSearchData.denyChangeCreationDateFilters || disableCreationDateFilterByRouteParams">
                       <template v-slot:append>
                         <q-icon name="event" class="cursor-pointer">
                           <q-popup-proxy cover transition-show="scale" transition-hide="scale">
@@ -93,6 +94,72 @@
                     </q-input>
                   </div>
                 </div>
+
+
+
+                <div class="row">
+                  <div class="col">
+                    <q-select class="q-mb-md" dense options-dense outlined clearable
+                      v-model="advancedSearchData.filter.lastUpdateFilterType" :options="dateFilterOptions"
+                      :label="t('Document last update')" :disable="searching || disableLastUpdateFilterByRouteParams" />
+                  </div>
+                  <div class="col" v-if="advancedSearchData.hasFromLastUpdateFilter">
+                    <q-input dense outlined mask="date" v-model="advancedSearchData.filter.fromLastUpdate"
+                      :label="t('From date')" :disable="searching || advancedSearchData.denyChangeLastUpdateFilters">
+                      <template v-slot:append>
+                        <q-icon name="event" class="cursor-pointer">
+                          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                            <q-date v-model="advancedSearchData.filter.fromLastUpdate" today-btn
+                              :disable="searching || advancedSearchData.denyChangeLastUpdateFilters">
+                              <div class="row items-center justify-end">
+                                <q-btn v-close-popup label="Close" color="primary" flat />
+                              </div>
+                            </q-date>
+                          </q-popup-proxy>
+                        </q-icon>
+                      </template>
+                    </q-input>
+                  </div>
+                  <div class="col" v-if="advancedSearchData.hasToLastUpdateFilter">
+                    <q-input dense outlined mask="date" v-model="advancedSearchData.filter.toLastUpdate"
+                      :label="t('To date')" :disable="searching || advancedSearchData.denyChangeLastUpdateFilters">
+                      <template v-slot:append>
+                        <q-icon name="event" class="cursor-pointer">
+                          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                            <q-date v-model="advancedSearchData.filter.toLastUpdate" today-btn
+                              :disable="searching || advancedSearchData.denyChangeLastUpdateFilters">
+                              <div class="row items-center justify-end">
+                                <q-btn v-close-popup label="Close" color="primary" flat />
+                              </div>
+                            </q-date>
+                          </q-popup-proxy>
+                        </q-icon>
+                      </template>
+                    </q-input>
+                  </div>
+                  <div class="col" v-if="advancedSearchData.hasFixedLastUpdateFilter">
+                    <q-input dense outlined mask="date" v-model="advancedSearchData.filter.fixedLastUpdate"
+                      :label="t('Fixed date')"
+                      :disable="searching || advancedSearchData.denyChangeLastUpdateFilters || disableLastUpdateFilterByRouteParams">
+                      <template v-slot:append>
+                        <q-icon name="event" class="cursor-pointer">
+                          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                            <q-date v-model="advancedSearchData.filter.fixedLastUpdate" today-btn
+                              :disable="searching || advancedSearchData.denyChangeLastUpdateFilters">
+                              <div class="row items-center justify-end">
+                                <q-btn v-close-popup label="Close" color="primary" flat />
+                              </div>
+                            </q-date>
+                          </q-popup-proxy>
+                        </q-icon>
+                      </template>
+                    </q-input>
+                  </div>
+                </div>
+
+
+
+
                 <TagSelector v-model="advancedSearchData.filter.tags"
                   :disabled="searching || advancedSearchData.denyChangeCreationDateFilters" dense>
                 </TagSelector>
@@ -207,14 +274,20 @@ const dateFilterOptions = ref([
   { label: t('To date'), value: 9 },
   { label: t('Between dates'), value: 10 }
 ]);
-const advancedSearchData = useAdvancedSearchData();
-advancedSearchData.filter.creationDateFilterType = dateFilterOptions.value[0];
-advancedSearchData.filter.tags = route.params.tag !== undefined ? [route.params.tag] : [];
 
+const advancedSearchData = useAdvancedSearchData();
+advancedSearchData.filter.tags = route.params.tag !== undefined ? [route.params.tag] : [];
+advancedSearchData.filter.creationDateFilterType = dateFilterOptions.value[0];
 advancedSearchData.filter.fixedCreationDate = route.params.fixedCreationDate !== undefined ? route.params.fixedCreationDate.replaceAll("-", "/") : null;
 advancedSearchData.filter.creationDateFilterType = advancedSearchData.filter.fixedCreationDate ? dateFilterOptions.value[7] : dateFilterOptions.value[0]
 
-const disableFilterDatesByRouteParams = computed(() => route.params.fixedCreationDate !== undefined);
+advancedSearchData.filter.lastUpdateFilterType = dateFilterOptions.value[0];
+advancedSearchData.filter.fixedLastUpdate = route.params.fixedLastUpdate !== undefined ? route.params.lastUpdateFilterType.replaceAll("-", "/") : null;
+advancedSearchData.filter.lastUpdateFilterType = advancedSearchData.filter.fixedLastUpdate ? dateFilterOptions.value[7] : dateFilterOptions.value[0]
+
+const disableCreationDateFilterByRouteParams = computed(() => route.params.fixedCreationDate !== undefined);
+const disableLastUpdateFilterByRouteParams = computed(() => route.params.fixedLastUpdate !== undefined);
+
 const sortOrderIcon = computed(() => advancedSearchData.sortOrder == "ASC" ? "keyboard_double_arrow_up" : "keyboard_double_arrow_down");
 
 const totalSearchConditions = computed(() => {
@@ -234,6 +307,9 @@ const totalSearchConditions = computed(() => {
   if (advancedSearchData.filter.creationDateFilterType && advancedSearchData.filter.creationDateFilterType.value != 0) {
     total++;
   }
+  if (advancedSearchData.filter.lastUpdateFilterType && advancedSearchData.filter.lastUpdateFilterType.value != 0) {
+    total++;
+  }
   return (total);
 });
 
@@ -241,6 +317,13 @@ watch(
   () => advancedSearchData.filter.creationDateFilterType,
   (creationDateFilterType) => {
     advancedSearchData.recalcCreationDates(creationDateFilterType || 0)
+  }
+);
+
+watch(
+  () => advancedSearchData.filter.lastUpdateFilterType,
+  (lastUpdateFilterType) => {
+    advancedSearchData.recalcLastUpdates(lastUpdateFilterType || 0)
   }
 );
 
@@ -272,6 +355,21 @@ function onSubmitForm(resetPager) {
       advancedSearchData.filter.toCreationTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.toDate, 'YYYY/MM/DD'), { hour: 23, minute: 59, second: 59, millisecond: 999 }), 'X');
     } else {
       advancedSearchData.filter.toCreationTimestamp = null;
+    }
+  }
+  if (date.isValid(advancedSearchData.filter.fixedLastUpdate)) {
+    advancedSearchData.filter.fromLastUpdateTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.fixedLastUpdate, 'YYYY/MM/DD'), { hour: 0, minute: 0, second: 0, millisecond: 0 }), 'X');
+    advancedSearchData.filter.toLastUpdateTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.fixedLastUpdate, 'YYYY/MM/DD'), { hour: 23, minute: 59, second: 59, millisecond: 999 }), 'X');
+  } else {
+    if (date.isValid(advancedSearchData.filter.fromLastUpdate)) {
+      advancedSearchData.filter.fromLastUpdateTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.fromLastUpdate, 'YYYY/MM/DD'), { hour: 0, minute: 0, second: 0, millisecond: 0 }), 'X');
+    } else {
+      advancedSearchData.filter.fromLastUpdateTimestamp = null;
+    }
+    if (date.isValid(advancedSearchData.filter.toLastUpdate)) {
+      advancedSearchData.filter.toLastUpdateTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.toLastUpdate, 'YYYY/MM/DD'), { hour: 23, minute: 59, second: 59, millisecond: 999 }), 'X');
+    } else {
+      advancedSearchData.filter.toLastUpdateTimestamp = null;
     }
   }
   api.document.search(advancedSearchData.pager.currentPage, advancedSearchData.pager.resultsPage, advancedSearchData.filter, advancedSearchData.sortField, advancedSearchData.sortOrder)
@@ -322,7 +420,7 @@ function onSubmitForm(resetPager) {
     });
 }
 
-if (advancedSearchData.filter.tags.length > 0 || disableFilterDatesByRouteParams.value) {
+if (advancedSearchData.filter.tags.length > 0 || disableCreationDateFilterByRouteParams.value) {
   onSubmitForm(true);
 }
 
