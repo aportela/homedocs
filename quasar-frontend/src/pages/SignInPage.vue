@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <q-card class="q-pa-md" flat>
+    <q-card class="q-pa-xl" flat>
       <form @submit.prevent.stop="onValidateForm" autocorrect="off" autocapitalize="off" autocomplete="off"
         spellcheck="false">
         <q-card-section class="text-center">
@@ -9,10 +9,10 @@
           </q-avatar>
           <h4 class="q-mt-sm q-mb-md text-h4 text-weight-bolder">{{
             t(!!savedEmail ? "Glad to see you again!" : "Welcome aboard!")
-          }}</h4>
+            }}</h4>
           <div class="text-grey-6">{{
             t(!!savedEmail ? "Let's get back to organizing." : "Let's start organizing.")
-            }}
+          }}
           </div>
         </q-card-section>
         <q-card-section>
@@ -37,7 +37,7 @@
                 @click="visiblePassword = !visiblePassword" />
             </template>
             <q-tooltip anchor="bottom right" self="top end">{{ t(visiblePassword ? "Hide password" : "Show password")
-            }}</q-tooltip>
+              }}</q-tooltip>
           </q-input>
         </q-card-section>
         <q-card-section>
@@ -71,7 +71,7 @@
 
 <script setup>
 
-import { ref, nextTick, computed, onMounted } from "vue";
+import { ref, nextTick, computed } from "vue";
 import { useQuasar, LocalStorage } from "quasar";
 import { useRouter } from "vue-router";
 import { useI18n } from 'vue-i18n'

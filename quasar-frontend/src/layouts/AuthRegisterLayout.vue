@@ -1,13 +1,13 @@
 <template>
   <q-layout>
-    <div class="row" style="height: 100vh">
+    <div class="row">
       <div class="col-12 col-lg-8 col-md-12 col-sm-12 slogan-background-image-cover flex flex-center">
         <div class="q-pa-xl text-center text-white">
           <h2 class="text-h2 text-weight-bolder q-mb-md">{{ t("Welcome to HomeDocs") }}</h2>
           <h4 class="text-grey-4 text-h4">{{ t("Where your documents find their place.") }}</h4>
         </div>
       </div>
-      <div class="col-12 col-lg-4 justify-center q-pa-xl layout-signin-signup">
+      <div class="col-12 col-lg-4">
         <q-page-container>
           <router-view />
         </q-page-container>

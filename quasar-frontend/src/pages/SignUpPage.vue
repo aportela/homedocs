@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <q-card class="q-pa-md" flat>
+    <q-card class="q-pa-xl" flat>
       <form @submit.prevent.stop="onValidateForm" autocorrect="off" autocapitalize="off" autocomplete="off"
         spellcheck="false">
         <q-card-section class="text-center">
