@@ -1,11 +1,11 @@
 <template>
   <div class="fit">
-    <q-card class="q-ma-xs" flat>
-      <q-card-section v-if="!loading" class="q-pa-none">
-        <q-expansion-item :header-class="loadingError ? 'bg-red' : 'bg-grey-4'" expand-separator
-          :icon="loadingError ? 'error' : 'tag'" :label="t('Tag cloud')"
-          :caption="t(loadingError ? 'Error loading data' : 'Click on tag to browse by tag')" :model-value="expanded"
-          class="bg-grey-2 rounded-borders">
+    <q-expansion-item :header-class="loadingError ? 'bg-red' : 'bg-grey-4'" expand-separator
+      :icon="loadingError ? 'error' : 'tag'" :label="t('Tag cloud')"
+      :caption="t(loadingError ? 'Error loading data' : 'Click on tag to browse by tag')" :model-value="expanded"
+      class="bg-grey-2 rounded-borders">
+      <q-card class="q-ma-xs" flat>
+        <q-card-section class="q-pa-none">
           <p class="text-center" v-if="loading">
             <q-spinner-pie color="grey-5" size="md" />
           </p>
@@ -27,9 +27,9 @@
               {{ t("You haven't created any tags yet") }}
             </q-banner>
           </div>
-        </q-expansion-item>
-      </q-card-section>
-    </q-card>
+        </q-card-section>
+      </q-card>
+    </q-expansion-item>
   </div>
 </template>
 

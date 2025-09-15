@@ -1,7 +1,6 @@
 <template>
   <q-page>
-
-    <div class="row">
+    <div class="row q-col-gutter-sm">
       <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6 flex">
         <RecentDocuments></RecentDocuments>
       </div>
