@@ -159,4 +159,5 @@ export default {
   "Document notes": "Notas do documento",
   "Unfortunately, your search didn't return any results. You might want to modify your filters or search terms":
     "Desafortunadamente, a túa procura non devolveu ningún resultado. Quizais queiras modificar os filtros ou os termos de procura.",
+  "Profile has been successfully updated": "O perfil actualizouse con éxito",
 };
