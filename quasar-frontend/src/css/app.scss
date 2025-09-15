@@ -31,13 +31,15 @@ body {
     background-color: var(--color-primary-600);
     color: #fff;
   }
-
 }
 
 .body--light {
+  // default main color/background
+  background: var(--color-zinc-100) !important;
+  color: var(--q-color-grey-2) !important;
 
-  .layout-signin-signup .q-card {
-    background-color: $default-component-bg-light;
+  .q-card {
+   background: var(--color-zinc-100) !important;
   }
 
   .q-field--outlined .q-field__control::before {
@@ -47,13 +49,15 @@ body {
       0 0 #0000,
       0 1px 2px 0 rgb(0 0 0 / 0.05);
   }
-
 }
 
 .body--dark {
+  // default main color/background
+  background: var(--color-zinc-800) !important;
+  color: var(--q-color-grey-7) !important;
 
-  .layout-signin-signup .q-card {
-    background-color: $default-component-bg-dark;
+  .q-card {
+   background: var(--color-zinc-800) !important;
   }
 
   .q-field--outlined .q-field__control::before {
@@ -62,5 +66,4 @@ body {
       0 0 $elevation-dark-ambient,
       0 1px 2px 0 $elevation-dark-ambient !important;
   }
-
 }
