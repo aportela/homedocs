@@ -10,8 +10,8 @@
           </p>
           <div v-else>
             <div v-if="hasTags">
-              <q-chip square class="q-chip-themed" v-for="tag in tags" :key="tag.tag">
-                <q-avatar class="q-avatar-themed">{{ tag.total }}</q-avatar>
+              <q-chip square class="theme-default-q-chip" v-for="tag in tags" :key="tag.tag">
+                <q-avatar class="theme-default-q-avatar">{{ tag.total }}</q-avatar>
                 <router-link :to="{ name: 'advancedSearchByTag', params: { tag: tag.tag } }"
                   style="text-decoration: none; width: 10em; text-align: center">
                   <div class="ellipsis">
@@ -86,31 +86,12 @@ a {
     border: 1px solid var(--color-zinc-300);
   }
 
-  .q-chip-themed {
-    color: #222;
-  }
-
-  .q-avatar-themed {
-    background: #444;
-    color: #fff;
-  }
-
 }
 
 .body--dark {
 
   .q-expansion-item-themed {
     border: 1px solid var(--color-zinc-600);
-  }
-
-  .q-chip-themed {
-    background: #ddd;
-    color: #fff;
-  }
-
-  .q-avatar-themed {
-    background: #ccc;
-    color: #333;
   }
 
 }

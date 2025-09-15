@@ -31,11 +31,11 @@ $default-light-secondary-bg-color: var(--color-zinc-300);
 $default-dark-secondary-bg-color: var(--color-zinc-700);
 
 // default text colors
-$default-light-primary-text-color:var(--color-zinc-950);
-$default-dark-primary-text-color:var(--color-zinc-100);
+$default-light-primary-text-color: var(--color-zinc-950);
+$default-dark-primary-text-color: var(--color-zinc-100);
 
-$default-light-secondary-text-color:var(--color-zinc-600);
-$default-dark-secondary-text-color:var(--color-zinc-300);
+$default-light-secondary-text-color: var(--color-zinc-600);
+$default-dark-secondary-text-color: var(--color-zinc-300);
 
 body {
   ::selection {
@@ -57,8 +57,19 @@ body {
     color: $default-light-secondary-text-color !important;
   }
 
+  // q-chip component
+  .theme-default-q-chip {
+    color: #222;
+  }
+
+  // q-avatar inside q-chip component
+  .theme-default-q-chip .theme-default-q-avatar {
+    background: #444;
+    color: #fff;
+  }
+
   .q-card {
-   background: $default-light-primary-bg-color;
+    background: $default-light-primary-bg-color;
   }
 
   .q-item {
@@ -87,8 +98,20 @@ body {
     color: $default-dark-secondary-text-color !important;
   }
 
+  // q-chip component
+  .theme-default-q-chip {
+    background: #ddd;
+    color: #fff;
+  }
+
+  // q-avatar inside q-chip component
+  .theme-default-q-chip .theme-default-q-avatar {
+    background: #ccc;
+    color: #333;
+  }
+
   .q-card {
-   background: $default-dark-primary-bg-color;
+    background: $default-dark-primary-bg-color;
   }
 
   .q-item {

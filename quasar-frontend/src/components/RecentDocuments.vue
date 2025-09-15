@@ -36,12 +36,12 @@
                   <q-item-section side top>
                     <q-item-label caption>{{ recentDocument.lastUpdate }}
                     </q-item-label>
-                    <q-chip size="md" square class="full-width q-chip-themed">
-                      <q-avatar class="q-avatar-themed">{{ recentDocument.fileCount }}</q-avatar>
+                    <q-chip size="md" square class="full-width theme-default-q-chip">
+                      <q-avatar class="theme-default-q-avatar">{{ recentDocument.fileCount }}</q-avatar>
                       {{ t("Files") }}
                     </q-chip>
-                    <q-chip size="md" square class="full-width q-chip-themed">
-                      <q-avatar class="q-avatar-themed">{{ recentDocument.noteCount }}</q-avatar>
+                    <q-chip size="md" square class="full-width theme-default-q-chip">
+                      <q-avatar class="theme-default-q-avatar">{{ recentDocument.noteCount }}</q-avatar>
                       {{ t("Notes") }}
                     </q-chip>
                   </q-item-section>
@@ -118,15 +118,6 @@ onMounted(() => {
     border: 1px solid var(--color-zinc-300);
   }
 
-  .q-chip-themed {
-    color: #222;
-  }
-
-  .q-avatar-themed {
-    background: #444;
-    color: #fff;
-  }
-
 }
 
 .body--dark {
@@ -137,16 +128,6 @@ onMounted(() => {
 
   .q-expansion-item-themed {
     border: 1px solid var(--color-zinc-600);
-  }
-
-  .q-chip-themed {
-    background: #ddd;
-    color: var(--color-zinc-950);
-  }
-
-  .q-avatar-themed {
-    background: #ccc;
-    color: #333;
   }
 
 }
