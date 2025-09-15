@@ -4,49 +4,62 @@
       <q-avatar icon="edit" size="48px" class="bg-dark text-white"
         style="position: absolute; top: 16px; right: 16px;" />
       <h2 class="text-h2 text-white text-weight-bolder q-my-none">My profile</h2>
-
     </div>
     <div class="text-center">
       <q-avatar icon="account_circle" size="200px" class="bg-grey-4 q-mx-auto"
-        style="position: re1lative; top: -100px;" />
+        style="position: relative; top: -100px;" />
     </div>
 
-    <q-card class="q-mx-auto" style="width: 90%;">
-      <form @submit.prevent.stop="onValidateForm" autocorrect="off" autocapitalize="off" autocomplete="off"
-        spellcheck="false">
-        <q-card-section class="text-center">
-          <h4>{{ t("Personal information") }}</h4>
-          <q-input dense outlined ref="emailRef" v-model="email" type="email" name="email" :label="t('Email')" disable>
-            <template v-slot:prepend>
-              <q-icon name="alternate_email" />
-            </template>
-          </q-input>
-          <q-input dense outlined class="q-mt-md" ref="passwordRef" v-model="password" name="password"
-            :type="visiblePassword ? 'text' : 'password'" :label="t('New password')" :disable="loading" autofocus
-            :error="remoteValidation.password.hasErrors"
-            :errorMessage="remoteValidation.password.message ? t(remoteValidation.password.message) : ''">
-            <template v-slot:prepend>
-              <q-icon name="key" />
-            </template>
-            <template v-slot:append>
-              <q-icon :name="visiblePassword ? 'visibility_off' : 'visibility'" class="cursor-pointer"
-                @click="visiblePassword = !visiblePassword" />
-            </template>
-            <q-tooltip anchor="bottom right" self="top end">{{ t(visiblePassword ? "Hide password" : "Show password")
-              }}</q-tooltip>
-          </q-input>
-        </q-card-section>
-        <q-card-section>
-          <q-btn color="primary" size="md" :label="$t('Update profile')" no-caps class="full-width"
-            icon="account_circle" :disable="loading || !password" :loading="loading" type="submit">
-            <template v-slot:loading>
-              <q-spinner-hourglass class="on-left" />
-              {{ t('Update profile') }}
-            </template>
-          </q-btn>
-        </q-card-section>
-      </form>
-    </q-card>
+    <div class="row" style="margin-top: -50px;">
+      <div class="col-lg-4 col-xl-4 col-12">
+        <q-expansion-item expand-separator header-class="bg-grey-4" icon="contact_mail"
+          :label="t('Personal information')" cation="update profile" :model-value="profileFormExpanded"
+          class="bg-grey-2 rounded-borders">
+          <q-card class="q-mx-auto">
+            <form @submit.prevent.stop="onValidateForm" autocorrect="off" autocapitalize="off" autocomplete="off"
+              spellcheck="false">
+
+              <q-card-section>
+                <q-input dense outlined ref="emailRef" v-model="email" type="email" name="email" :label="t('Email')"
+                  disable>
+                  <template v-slot:prepend>
+                    <q-icon name="alternate_email" />
+                  </template>
+                </q-input>
+                <q-input dense outlined class="q-mt-md" ref="passwordRef" v-model="password" name="password"
+                  :type="visiblePassword ? 'text' : 'password'" :label="t('New password')" :disable="loading" autofocus
+                  :error="remoteValidation.password.hasErrors"
+                  :errorMessage="remoteValidation.password.message ? t(remoteValidation.password.message) : ''">
+                  <template v-slot:prepend>
+                    <q-icon name="key" />
+                  </template>
+                  <template v-slot:append>
+                    <q-icon :name="visiblePassword ? 'visibility_off' : 'visibility'" class="cursor-pointer"
+                      @click="visiblePassword = !visiblePassword" />
+                  </template>
+                  <q-tooltip anchor="bottom right" self="top end">
+                    {{
+                      t(visiblePassword ? "Hide password" : "Show password")
+                    }}</q-tooltip>
+                </q-input>
+              </q-card-section>
+              <q-card-section>
+                <q-btn color="primary" size="md" :label="$t('Update profile')" no-caps class="full-width"
+                  icon="account_circle" :disable="loading || !password" :loading="loading" type="submit">
+                  <template v-slot:loading>
+                    <q-spinner-hourglass class="on-left" />
+                    {{ t('Update profile') }}
+                  </template>
+                </q-btn>
+              </q-card-section>
+            </form>
+          </q-card>
+        </q-expansion-item>
+      </div>
+      <div class="col-lg-8 col-xl-8 col-12">
+        <SystemStats></SystemStats>
+      </div>
+    </div>
 
   </q-page>
 </template>
@@ -59,12 +72,16 @@ import { useInitialStateStore } from "stores/initialState";
 
 import { api } from 'boot/axios'
 
+import { default as SystemStats } from "src/components/SystemStats.vue";
+
 const { t } = useI18n();
 
 const $q = useQuasar();
 const initialState = useInitialStateStore();
 
 const loading = ref(false);
+
+const profileFormExpanded = ref(true);
 
 const email = computed(() => initialState.session.email);
 
