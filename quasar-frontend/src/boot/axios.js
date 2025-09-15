@@ -1,8 +1,12 @@
 import { boot } from "quasar/wrappers";
 import axios from "axios";
 import { useSessionStore } from "stores/session";
+import { useInitialStateStore } from "src/stores/initialState";
 
 const session = useSessionStore();
+
+const initialStateStore = useInitialStateStore();
+
 if (!session.isLoaded) {
   session.load();
 }
@@ -28,6 +32,9 @@ axios.interceptors.response.use(
       if (apiResponseJWT && apiResponseJWT != session.getJWT) {
         session.signIn(apiResponseJWT);
       }
+    }
+    if (response.data.initialState) {
+      initialStateStore.set(response.data.initialState);
     }
     return response;
   },
@@ -127,7 +134,7 @@ const api = {
             reject(error);
           });
       });
-    }
+    },
   },
   document: {
     searchRecent: function (count) {
