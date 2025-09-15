@@ -184,7 +184,7 @@
       </template>
       <template v-slot:body v-else-if="showConfirmDeleteNoteDialog">
         <q-card>
-          <q-card-section class="pre-line">
+          <q-card-section class="white-space-pre-line">
             {{ document.notes[selectedNoteIndex].body }}
           </q-card-section>
         </q-card>
@@ -661,9 +661,3 @@ if (document.value.id) {
 }
 
 </script>
-
-<style scoped>
-.pre-line {
-  white-space: pre-line;
-}
-</style>
