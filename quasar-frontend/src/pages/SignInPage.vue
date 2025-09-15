@@ -9,10 +9,10 @@
           </q-avatar>
           <h4 class="q-mt-sm q-mb-md text-h4 text-weight-bolder">{{
             t(!!savedEmail ? "Glad to see you again!" : "Welcome aboard!")
-            }}</h4>
-          <div class="text-grey-6">{{
+          }}</h4>
+          <div class="text-color-secondary">{{
             t(!!savedEmail ? "Let's get back to organizing." : "Let's start organizing.")
-          }}
+            }}
           </div>
         </q-card-section>
         <q-card-section>
@@ -38,7 +38,7 @@
               <q-tooltip anchor="bottom right" self="top end">{{ t(visiblePassword ? "Hide password"
                 :
                 "Show password")
-              }}</q-tooltip>
+                }}</q-tooltip>
             </template>
 
           </q-input>

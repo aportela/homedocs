@@ -24,13 +24,15 @@ $separator-color: var(--color-zinc-200) !default;
 $separator-dark-color: var(--color-zinc-700) !default;
 
 // default background colors
-$default-light-bg-color: var(--color-zinc-100);
-$default-dark-bg-color: var(--color-zinc-800);
+$default-light-primary-bg-color: var(--color-zinc-100);
+$default-dark-primary-bg-color: var(--color-zinc-800);
 
 // default text colors
-$default-light-color:var(--q-color-grey-2);
-$default-dark-color:var(--q-color-grey-7);
+$default-light-primary-text-color:var(--color-zinc-950);
+$default-dark-primary-text-color:var(--color-zinc-100);
 
+$default-light-secondary-text-color:var(--color-zinc-600);
+$default-dark-secondary-text-color:var(--color-zinc-300);
 
 body {
   ::selection {
@@ -41,11 +43,15 @@ body {
 
 .body--light {
   // default main color/background
-  background: $default-light-bg-color !important;
-  color: $default-light-color !important;
+  background: $default-light-primary-bg-color;
+  color: $default-light-primary-text-color;
+
+  .text-color-secondary {
+    color: $default-light-secondary-text-color !important;
+  }
 
   .q-card {
-   background: $default-light-bg-color !important;
+   background: $default-light-primary-bg-color !important;
   }
 
   .q-field--outlined .q-field__control::before {
@@ -59,11 +65,14 @@ body {
 
 .body--dark {
   // default main color/background
-  background: $default-dark-bg-color !important;
-  color: $default-dark-color !important;
+  background: $default-dark-primary-bg-color;
+  color: $default-dark-primary-text-color;
 
+  .text-color-secondary {
+    color: $default-dark-secondary-text-color !important;
+  }
   .q-card {
-   background: $default-dark-bg-color !important;
+   background: $default-dark-primary-bg-color !important;
   }
 
   .q-field--outlined .q-field__control::before {
