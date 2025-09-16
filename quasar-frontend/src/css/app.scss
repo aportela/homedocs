@@ -58,6 +58,17 @@ body {
     color: $default-light-secondary-text-color !important;
   }
 
+  // default (auth app) layout
+  .theme-default-q-layout-main {
+    background-color: var(--color-zinc-50);
+  }
+
+  // main layout header
+  .theme-default-q-header {
+    background-color: var(--color-zinc-100);
+    color: var(--q-color-grey-2);
+  }
+
   // sidebar drawer
   .theme-default-q-drawer {
     background-color: var(--color-zinc-100);
@@ -125,6 +136,17 @@ body {
 
   .text-color-secondary {
     color: $default-dark-secondary-text-color !important;
+  }
+
+  // default (auth app) layout
+  .theme-default-q-layout-main {
+    background-color: var(--color-zinc-800);
+  }
+
+    // main layout header
+  .theme-default-q-header {
+    background-color: var(--color-zinc-900);
+    color: var(--q-color-grey-7);
   }
 
   // sidebar drawer

@@ -1,6 +1,6 @@
 <template>
-  <q-layout view="lHh lpR lFf" class="q-layout-themed-main">
-    <q-header height-hint="61.59" class="q-header-themed-main" bordered>
+  <q-layout view="lHh lpR lFf" class="theme-default-q-layout-main">
+    <q-header height-hint="61.59" class="theme-default-q-header" bordered>
       <q-toolbar>
         <q-btn flat dense round @click="visibleSidebar = !visibleSidebar;" aria-label="Toggle drawer" icon="menu"
           v-show="!visibleSidebar" class="q-mr-md" />
@@ -88,27 +88,3 @@ const onToggleminiSidebarCurrentMode = (value) => {
 }
 
 </script>
-
-<style>
-.body--light {
-  .q-layout-themed-main {
-    background-color: var(--color-zinc-50);
-  }
-
-  .q-header-themed-main {
-    background-color: var(--color-zinc-100);
-    color: var(--q-color-grey-2);
-  }
-}
-
-.body--dark {
-  .q-layout-themed-main {
-    background-color: var(--color-zinc-800);
-  }
-
-  .q-header-themed-main {
-    background-color: var(--color-zinc-900);
-    color: var(--q-color-grey-7);
-  }
-}
-</style>
