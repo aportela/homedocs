@@ -22,7 +22,7 @@
         </q-btn-group>
       </q-toolbar>
     </q-header>
-    <SidebarDrawer v-model="visibleSidebar" :mini="miniSidebarCurrentMode" class="q-drawer-sidebar"></SidebarDrawer>
+    <SidebarDrawer v-model="visibleSidebar" :mini="miniSidebarCurrentMode"></SidebarDrawer>
     <FastSearchModal v-model="visibleFastSearchModal" @close="visibleFastSearchModal = false"></FastSearchModal>
     <q-page-container>
       <router-view class="q-pa-sm" />
@@ -43,7 +43,6 @@ import { default as DarkModeButton } from "components/DarkModeButton.vue"
 import { default as SwitchLanguageButton } from "components/SwitchLanguageButton.vue"
 import { default as GitHubButton } from "components/GitHubButton.vue"
 import { GITHUB_PROJECT_URL } from "src/constants"
-
 
 const $q = useQuasar();
 const { t } = useI18n();
