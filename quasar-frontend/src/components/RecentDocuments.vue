@@ -64,7 +64,10 @@
                   <q-item-section top>
                     <q-item-label>
                       <router-link :to="{ name: 'document', params: { id: recentDocument.id } }"
-                        class="text-decoration-hover text-color-primary text-weight-bold">{{ recentDocument.title }}
+                        class="text-decoration-hover text-color-primary"><span class="text-weight-bold">{{ t("Title")
+                        }}:</span> {{
+                            recentDocument.title
+                          }}
                       </router-link>
                     </q-item-label>
                     <q-item-label caption lines="2">{{ recentDocument.description }}</q-item-label>
