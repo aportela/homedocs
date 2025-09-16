@@ -21,7 +21,7 @@
 
               <q-card-section>
                 <q-input dense outlined ref="emailRef" v-model="email" type="email" name="email" :label="t('Email')"
-                  disable>
+                  readonly>
                   <template v-slot:prepend>
                     <q-icon name="alternate_email" />
                   </template>
