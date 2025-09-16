@@ -176,4 +176,5 @@ export default {
   "Most recent activity": "Actividad mais recente",
   "Click to refresh data": "Faga click pra refresca-los datos",
   "Total documents": "{count} documento|{count} documentos",
+  "Total tags": "{count} etiqueta|{count} etiquetas",
 };

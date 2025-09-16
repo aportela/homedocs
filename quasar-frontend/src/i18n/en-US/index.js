@@ -173,4 +173,5 @@ export default {
   "Most recent activity": "Most recent activity",
   "Click to refresh data": "Click to refresh data",
   "Total documents": "{count} document|{count} documents",
+  "Total tags": "{count} tag|{count} tags",
 };
