@@ -3,7 +3,6 @@
     <div class="q-pa-md">
       <div class="row items-center q-pb-md">
         <h3 class="q-mt-sm q-mb-sm" v-if="!document.id">{{ t("New document") }}</h3>
-        <h3 class="q-mt-sm q-mb-sm" v-else>{{ t("Document") }}</h3>
         <q-space />
         <q-btn icon="delete" flat square size="xl" :title="t('Remove document')" v-if="!isNew"
           @click="showConfirmDeleteDocumentDialog = true" />
@@ -14,161 +13,169 @@
         <q-card>
           <form @submit.prevent.stop="onSubmitForm" autocorrect="off" autocapitalize="off" autocomplete="off"
             spellcheck="false">
-            <q-card-section>
-              <div class="row q-col-gutter-sm">
-                <div
-                  :class="{ 'col-6': document.createdOnTimestamp != document.lastUpdateTimestamp, 'col-12': document.createdOnTimestamp == document.lastUpdateTimestamp }">
-                  <q-input dense class="q-mb-md" outlined v-model="document.creationDate"
-                    :label="t('Document created on')" :disable="true" v-if="document.id">
-                    <template v-slot:append v-if="screengtxs">
-                      <span style="font-size: 14px;">
-                        {{ timeAgo(document.createdOnTimestamp * 1000) }}
-                      </span>
-                    </template>
-                  </q-input>
+            <q-card-section class="row">
+              <div class="col-12 col-lg-6 col-xl-6 scroll" style="max-height: 70vh;">
+                <q-tabs align="left">
+                  <q-tab icon="description" :label="t('Document metadata')" disable class="cursor-default"></q-tab>
+                </q-tabs>
+                <div class="row q-col-gutter-sm">
+                  <div
+                    :class="{ 'col-6': document.createdOnTimestamp != document.lastUpdateTimestamp, 'col-12': document.createdOnTimestamp == document.lastUpdateTimestamp }">
+                    <q-input dense class="q-mb-md" outlined v-model="document.creationDate"
+                      :label="t('Document created on')" :disable="true" v-if="document.id">
+                      <template v-slot:append v-if="screengtxs">
+                        <span style="font-size: 14px;">
+                          {{ timeAgo(document.createdOnTimestamp * 1000) }}
+                        </span>
+                      </template>
+                    </q-input>
+                  </div>
+                  <div class="col-6" v-if="document.createdOnTimestamp != document.lastUpdateTimestamp">
+                    <q-input dense class="q-mb-md" outlined v-model="document.lastUpdate"
+                      :label="t('Document last update')" :disable="true" v-if="document.id">
+                      <template v-slot:append v-if="screengtxs">
+                        <span style="font-size: 14px;">
+                          {{ timeAgo(document.lastUpdateTimestamp * 1000) }}
+                        </span>
+                      </template>
+                    </q-input>
+                  </div>
                 </div>
-                <div class="col-6" v-if="document.createdOnTimestamp != document.lastUpdateTimestamp">
-                  <q-input dense class="q-mb-md" outlined v-model="document.lastUpdate"
-                    :label="t('Document last update')" :disable="true" v-if="document.id">
-                    <template v-slot:append v-if="screengtxs">
-                      <span style="font-size: 14px;">
-                        {{ timeAgo(document.lastUpdateTimestamp * 1000) }}
-                      </span>
-                    </template>
-                  </q-input>
-                </div>
+                <q-input dense class="q-mb-md" ref="titleRef" maxlength="128" outlined v-model.trim="document.title"
+                  type="text" name="title" :label="t('Document title')" :disable="loading || saving" :autofocus="true">
+                </q-input>
+                <q-input dense class="q-mb-md" outlined v-model.trim="document.description" type="textarea"
+                  maxlength="4096" autogrow name="description" :label="t('Document description')"
+                  :disable="loading || saving" clearable>
+                </q-input>
+                <TagSelector dense v-model="document.tags" :disabled="loading || saving" :link="true" class="q-pb-none">
+                </TagSelector>
               </div>
-              <q-input dense class="q-mb-md" ref="titleRef" maxlength="128" outlined v-model.trim="document.title"
-                type="text" name="title" :label="t('Document title')" :disable="loading || saving" :autofocus="true">
-              </q-input>
-              <q-input dense class="q-mb-md" outlined v-model.trim="document.description" type="textarea"
-                maxlength="4096" autogrow name="description" :label="t('Document description')"
-                :disable="loading || saving" clearable>
-              </q-input>
-              <TagSelector dense v-model="document.tags" :disabled="loading || saving" :link="true" class="q-pb-none">
-              </TagSelector>
-              <q-tabs v-model="tab" dense align="left" class="q-mt-md">
-                <q-tab name="attachments" icon="attach_file" :label="t('Attachments')">
-                  <q-badge floating>{{ document.files.length }}</q-badge>
-                </q-tab>
-                <q-tab name="notes" icon="forum" :label="t('Notes')">
-                  <q-badge floating>{{ document.notes.length }}</q-badge>
-                </q-tab>
-                <q-tab name="history" icon="view_timeline" :label="t('History')" v-if="document.id">
-                  <q-badge floating>{{ document.history.length }}</q-badge>
-                </q-tab>
-              </q-tabs>
-              <q-separator />
-              <q-tab-panels v-model="tab" animated>
-                <q-tab-panel name="attachments">
-                  <q-uploader ref="uploaderRef" class="q-mb-md" :label="t('Add new file (Drag & Drop supported)')" flat
-                    bordered auto-upload hide-upload-btn color="dark" field-name="file" url="api2/file"
-                    :max-file-size="maxFileSize" multiple @uploaded="onFileUploaded" @rejected="onUploadRejected"
-                    @failed="onUploadFailed" method="post" style="width: 100%;" :disable="loading || saving"
-                    no-thumbnails @start="onUploadsStart" @finish="onUploadsFinish" />
-                  <q-markup-table v-if="document.files.length > 0">
-                    <thead>
-                      <tr>
-                        <th class="text-left">{{ t('Uploaded on') }}</th>
-                        <th class="text-left">{{ t('Name') }}</th>
-                        <th class="text-right">{{ t('Size') }}</th>
-                        <th class="text-center">{{ t('Actions') }}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr v-for="file, fileIndex in document.files" :key="file.id">
-                        <td class="text-left">{{ file.uploadedOn }}</td>
-                        <td class="text-left">{{ file.name }}</td>
-                        <td class="text-right">{{ file.humanSize }}</td>
-                        <td class="text-center">
-                          <q-btn-group spread class="desktop-only" :disable="loading">
-                            <q-btn :label="t('Open/Preview')" icon="preview" @click.prevent="onPreviewFile(fileIndex)"
-                              :disable="loading || !allowPreview(file.name) || file.isNew" />
-                            <q-btn :label="t('Download')" icon="download" :href="file.url"
-                              :disable="loading || file.isNew" />
-                            <q-btn :label="t('Remove')" icon="delete" :disable="loading"
-                              @click.prevent="onShowFileRemoveConfirmationDialog(file, fileIndex)" />
-                          </q-btn-group>
-                          <q-btn-dropdown :label="t('Operations')" class="mobile-only" :disable="loading">
-                            <q-list>
-                              <q-item clickable v-close-popup @click.prevent="onPreviewFile(fileIndex)"
-                                :disable="loading || !allowPreview(file.name) || file.isNew">
-                                <q-item-section avatar>
-                                  <q-icon name="preview"></q-icon>
-                                </q-item-section>
-                                <q-item-section>
-                                  <q-item-label>{{ t("Open/Preview") }}</q-item-label>
-                                </q-item-section>
-                              </q-item>
-                              <q-item clickable v-close-popup :href="file.url" :disable="loading || file.isNew">
-                                <q-item-section avatar>
-                                  <q-icon name="download"></q-icon>
-                                </q-item-section>
-                                <q-item-section>
-                                  <q-item-label>{{ t("Download") }}</q-item-label>
-                                </q-item-section>
-                              </q-item>
-                              <q-item clickable v-close-popup
-                                @click.prevent="onShowFileRemoveConfirmationDialog(file, fileIndex)" :disable="loading">
-                                <q-item-section avatar>
-                                  <q-icon name="delete"></q-icon>
-                                </q-item-section>
-                                <q-item-section>
-                                  <q-item-label>{{ t("Remove") }}</q-item-label>
-                                </q-item-section>
-                              </q-item>
-                            </q-list>
-                          </q-btn-dropdown>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </q-markup-table>
-                </q-tab-panel>
-                <q-tab-panel name="notes">
-                  <q-btn class="full-width q-mb-md" :label="t('Add note')" @click="onShowAddNoteDialog"></q-btn>
-                  <q-list>
-                    <q-item hint="click to open note" v-for="note, noteIndex in document.notes" :key="note.id"
-                      class="q-mb-lg">
-                      <q-item-section>
-                        <q-item-label class="font-weight-bold">
-                          {{ note.createdOn }} ({{ timeAgo(note.createdOnTimestamp * 1000) }})
-                        </q-item-label>
-                        <q-item-label caption class="white-space-pre-line" :lines="note.expanded ? undefined : 4"
-                          ref="el => noteBodyRefs[note.id] = el">
-                          {{ note.body }}
-                        </q-item-label>
-                        <q-item-label>
-                        </q-item-label>
-                      </q-item-section>
-                      <q-item-section side top>
-                        <q-item-label caption>
-                          <q-btn-group flat>
-                            <q-btn size="sm" icon="expand" @click="note.expanded = !note.expanded"></q-btn>
-                            <q-btn size="sm" icon="edit" @click=" currentNote = {
-                              id: note.id, body: note.body,
-                              createdOn: note.createdOn, createdOnTimestamp: note.createdOnTimestamp
-                            };
-                            showNoteDialog = true"></q-btn>
-                            <q-btn size="sm" icon="delete"
-                              @click.prevent="onShowNoteRemoveConfirmationDialog(note, noteIndex)"></q-btn>
-                          </q-btn-group>
-                        </q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
-                </q-tab-panel>
-                <q-tab-panel name="history" v-if="document.id">
-                  <q-list>
-                    <q-item v-for="operation in document.history" :key="operation.operationTimestamp">
-                      <q-item-section>
-                        <q-item-label>
-                          {{ operation.date }} - {{ operation.label }}
-                        </q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
-                </q-tab-panel>
-              </q-tab-panels>
+              <div class="col-12 col-lg-6 col-xl-6 scroll" style="max-height: 70vh;">
+                <q-tabs v-model="tab" dense align="left" class="q-mt-md">
+                  <q-tab name="attachments" icon="attach_file" :label="t('Attachments')">
+                    <q-badge floating>{{ document.files.length }}</q-badge>
+                  </q-tab>
+                  <q-tab name="notes" icon="forum" :label="t('Notes')">
+                    <q-badge floating>{{ document.notes.length }}</q-badge>
+                  </q-tab>
+                  <q-tab name="history" icon="view_timeline" :label="t('History')" v-if="document.id">
+                    <q-badge floating>{{ document.history.length }}</q-badge>
+                  </q-tab>
+                </q-tabs>
+                <q-separator />
+                <q-tab-panels v-model="tab" animated>
+                  <q-tab-panel name="attachments">
+                    <q-uploader ref="uploaderRef" class="q-mb-md" :label="t('Add new file (Drag & Drop supported)')"
+                      flat bordered auto-upload hide-upload-btn color="dark" field-name="file" url="api2/file"
+                      :max-file-size="maxFileSize" multiple @uploaded="onFileUploaded" @rejected="onUploadRejected"
+                      @failed="onUploadFailed" method="post" style="width: 100%;" :disable="loading || saving"
+                      no-thumbnails @start="onUploadsStart" @finish="onUploadsFinish" />
+                    <q-markup-table v-if="document.files.length > 0">
+                      <thead>
+                        <tr>
+                          <th class="text-left">{{ t('Uploaded on') }}</th>
+                          <th class="text-left">{{ t('Name') }}</th>
+                          <th class="text-right">{{ t('Size') }}</th>
+                          <th class="text-center">{{ t('Actions') }}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="file, fileIndex in document.files" :key="file.id">
+                          <td class="text-left">{{ file.uploadedOn }}</td>
+                          <td class="text-left">{{ file.name }}</td>
+                          <td class="text-right">{{ file.humanSize }}</td>
+                          <td class="text-center">
+                            <q-btn-group spread class="desktop-only" :disable="loading">
+                              <q-btn :label="t('Open/Preview')" icon="preview" @click.prevent="onPreviewFile(fileIndex)"
+                                :disable="loading || !allowPreview(file.name) || file.isNew" />
+                              <q-btn :label="t('Download')" icon="download" :href="file.url"
+                                :disable="loading || file.isNew" />
+                              <q-btn :label="t('Remove')" icon="delete" :disable="loading"
+                                @click.prevent="onShowFileRemoveConfirmationDialog(file, fileIndex)" />
+                            </q-btn-group>
+                            <q-btn-dropdown :label="t('Operations')" class="mobile-only" :disable="loading">
+                              <q-list>
+                                <q-item clickable v-close-popup @click.prevent="onPreviewFile(fileIndex)"
+                                  :disable="loading || !allowPreview(file.name) || file.isNew">
+                                  <q-item-section avatar>
+                                    <q-icon name="preview"></q-icon>
+                                  </q-item-section>
+                                  <q-item-section>
+                                    <q-item-label>{{ t("Open/Preview") }}</q-item-label>
+                                  </q-item-section>
+                                </q-item>
+                                <q-item clickable v-close-popup :href="file.url" :disable="loading || file.isNew">
+                                  <q-item-section avatar>
+                                    <q-icon name="download"></q-icon>
+                                  </q-item-section>
+                                  <q-item-section>
+                                    <q-item-label>{{ t("Download") }}</q-item-label>
+                                  </q-item-section>
+                                </q-item>
+                                <q-item clickable v-close-popup
+                                  @click.prevent="onShowFileRemoveConfirmationDialog(file, fileIndex)"
+                                  :disable="loading">
+                                  <q-item-section avatar>
+                                    <q-icon name="delete"></q-icon>
+                                  </q-item-section>
+                                  <q-item-section>
+                                    <q-item-label>{{ t("Remove") }}</q-item-label>
+                                  </q-item-section>
+                                </q-item>
+                              </q-list>
+                            </q-btn-dropdown>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </q-markup-table>
+                  </q-tab-panel>
+                  <q-tab-panel name="notes">
+                    <q-btn class="full-width q-mb-md" :label="t('Add note')" @click="onShowAddNoteDialog"></q-btn>
+                    <q-list>
+                      <q-item hint="click to open note" v-for="note, noteIndex in document.notes" :key="note.id"
+                        class="q-mb-lg">
+                        <q-item-section>
+                          <q-item-label class="font-weight-bold">
+                            {{ note.createdOn }} ({{ timeAgo(note.createdOnTimestamp * 1000) }})
+                          </q-item-label>
+                          <q-item-label caption class="white-space-pre-line" :lines="note.expanded ? undefined : 4"
+                            ref="el => noteBodyRefs[note.id] = el">
+                            {{ note.body }}
+                          </q-item-label>
+                          <q-item-label>
+                          </q-item-label>
+                        </q-item-section>
+                        <q-item-section side top>
+                          <q-item-label caption>
+                            <q-btn-group flat>
+                              <q-btn size="sm" icon="expand" @click="note.expanded = !note.expanded"></q-btn>
+                              <q-btn size="sm" icon="edit" @click=" currentNote = {
+                                id: note.id, body: note.body,
+                                createdOn: note.createdOn, createdOnTimestamp: note.createdOnTimestamp
+                              };
+                              showNoteDialog = true"></q-btn>
+                              <q-btn size="sm" icon="delete"
+                                @click.prevent="onShowNoteRemoveConfirmationDialog(note, noteIndex)"></q-btn>
+                            </q-btn-group>
+                          </q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-tab-panel>
+                  <q-tab-panel name="history" v-if="document.id">
+                    <q-list>
+                      <q-item v-for="operation in document.history" :key="operation.operationTimestamp">
+                        <q-item-section>
+                          <q-item-label>
+                            {{ operation.date }} - {{ operation.label }}
+                          </q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-tab-panel>
+                </q-tab-panels>
+              </div>
             </q-card-section>
             <q-card-section>
               <q-btn :label="t('Save changes')" type="submit" icon="save" class="full-width" color="dark"

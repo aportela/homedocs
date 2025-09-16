@@ -74,7 +74,7 @@ export default {
     "Error de API: falta o parámetro do título",
   "API Error: invalid response data":
     "Error de API: datos de resposta non válidos",
-  Document: "Documento",
+  "Document metadata": "Metadatos do documento",
   Name: "Nome",
   Size: "Tamaño",
   Actions: "Accións",

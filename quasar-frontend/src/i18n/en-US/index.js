@@ -70,7 +70,7 @@ export default {
   "API Error: missing document title param":
     "API Error: missing document title param",
   "API Error: invalid response data": "API Error: invalid response data",
-  Document: "Document",
+  "Document metadata": "Document metadata",
   Name: "Name",
   Size: "Size",
   Actions: "Actions",
