@@ -1,28 +1,34 @@
 <template>
   <q-page class="_bg-grey-2">
     <div class="q-pa-md">
-      <div class="row items-center q-pb-md">
-        <h3 class="q-mt-sm q-mb-sm" v-if="!document.id">{{ t("New document") }}</h3>
-        <q-space />
-        <q-btn icon="delete" flat square size="xl" :title="t('Remove document')" v-if="!isNew"
-          @click="showConfirmDeleteDocumentDialog = true" />
-        <q-btn icon="save" flat round size="xl" :title="t('Save document')" @click="onSubmitForm"
-          :disable="loading || saving || uploading || !document.title" />
-      </div>
       <div class="q-gutter-y-md">
         <q-card>
+          <q-card-section>
+            <div class="row items-center">
+              <h3 class="q-mt-sm q-mb-sm" v-if="!document.id">{{ t("New document") }}</h3>
+              <h3 class="q-mt-sm q-mb-sm" v-else>{{ t("Document card") }}</h3>
+              <q-space />
+              <q-btn icon="delete" flat square size="xl" :title="t('Remove document')" v-if="!isNew"
+                @click="showConfirmDeleteDocumentDialog = true" />
+              <q-btn icon="save" flat round size="xl" :title="t('Save document')" @click="onSubmitForm"
+                :disable="loading || saving || uploading || !document.title" />
+
+            </div>
+            <q-separator />
+          </q-card-section>
           <form @submit.prevent.stop="onSubmitForm" autocorrect="off" autocapitalize="off" autocomplete="off"
             spellcheck="false">
             <q-card-section class="row">
-              <div class="col-12 col-lg-6 col-xl-6 scroll" style="max-height: 70vh;">
-                <q-tabs align="left">
-                  <q-tab icon="description" :label="t('Document metadata')" disable class="cursor-default"></q-tab>
+              <div class="col-12 col-lg-6 col-xl-6 scroll q-px-sm" style="min-height: 50vh; max-height: 70vh;">
+                <q-tabs v-model="leftTab" align="left" class="q-mb-sm">
+                  <q-tab name="metadata" icon="description" :label="t('Document metadata')"
+                    class="cursor-default full-width"></q-tab>
                 </q-tabs>
                 <div class="row q-col-gutter-sm">
                   <div
                     :class="{ 'col-6': document.createdOnTimestamp != document.lastUpdateTimestamp, 'col-12': document.createdOnTimestamp == document.lastUpdateTimestamp }">
-                    <q-input dense class="q-mb-md" outlined v-model="document.creationDate"
-                      :label="t('Document created on')" :disable="true" v-if="document.id">
+                    <q-input dense class="q-mb-md" outlined v-model="document.creationDate" :label="t('Created on')"
+                      :readonly="true" v-if="document.id">
                       <template v-slot:append v-if="screengtxs">
                         <span style="font-size: 14px;">
                           {{ timeAgo(document.createdOnTimestamp * 1000) }}
@@ -31,8 +37,8 @@
                     </q-input>
                   </div>
                   <div class="col-6" v-if="document.createdOnTimestamp != document.lastUpdateTimestamp">
-                    <q-input dense class="q-mb-md" outlined v-model="document.lastUpdate"
-                      :label="t('Document last update')" :disable="true" v-if="document.id">
+                    <q-input dense class="q-mb-md" outlined v-model="document.lastUpdate" :label="t('Last update')"
+                      :readonly="true" v-if="document.id">
                       <template v-slot:append v-if="screengtxs">
                         <span style="font-size: 14px;">
                           {{ timeAgo(document.lastUpdateTimestamp * 1000) }}
@@ -42,7 +48,8 @@
                   </div>
                 </div>
                 <q-input dense class="q-mb-md" ref="titleRef" maxlength="128" outlined v-model.trim="document.title"
-                  type="text" name="title" :label="t('Document title')" :disable="loading || saving" :autofocus="true">
+                  type="text" name="title" :label="t('Document title')" :disable="loading || saving" :autofocus="true"
+                  clearable>
                 </q-input>
                 <q-input dense class="q-mb-md" outlined v-model.trim="document.description" type="textarea"
                   maxlength="4096" autogrow name="description" :label="t('Document description')"
@@ -51,16 +58,16 @@
                 <TagSelector dense v-model="document.tags" :disabled="loading || saving" :link="true" class="q-pb-none">
                 </TagSelector>
               </div>
-              <div class="col-12 col-lg-6 col-xl-6 scroll" style="max-height: 70vh;">
-                <q-tabs v-model="tab" dense align="left" class="q-mt-md">
+              <div class="col-12 col-lg-6 col-xl-6 scroll q-px-sm" style="min-height: 50vh; max-height: 70vh;">
+                <q-tabs v-model="tab" align="left" class="q-mb-sm full-width">
                   <q-tab name="attachments" icon="attach_file" :label="t('Attachments')">
-                    <q-badge floating>{{ document.files.length }}</q-badge>
+                    <q-badge floating v-show="document.files.length > 0">{{ document.files.length }}</q-badge>
                   </q-tab>
                   <q-tab name="notes" icon="forum" :label="t('Notes')">
-                    <q-badge floating>{{ document.notes.length }}</q-badge>
+                    <q-badge floating v-show="document.notes.length > 0">{{ document.notes.length }}</q-badge>
                   </q-tab>
                   <q-tab name="history" icon="view_timeline" :label="t('History')" v-if="document.id">
-                    <q-badge floating>{{ document.history.length }}</q-badge>
+                    <q-badge floating v-show="document.history.length > 0">{{ document.history.length }}</q-badge>
                   </q-tab>
                 </q-tabs>
                 <q-separator />
@@ -272,6 +279,7 @@ const saving = ref(false);
 const uploading = ref(false);
 const currentNote = ref({ id: null, body: null });
 
+const leftTab = ref("metadata");
 const screengtxs = computed(() => $q.screen.gt.xs);
 
 const document = ref({

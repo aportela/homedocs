@@ -59,11 +59,10 @@ export default {
     "Error de API: error eliminando o documento",
   "Document not found": "Documento non atopado",
   "Access denied": "Acceso denegado",
+  "Document card": "Ficha do documento",
   "New document": "Novo documento",
   "Document title": "Título do documento",
   "Document description": "Descripción do documento",
-  "Document created on": "Data de alta do documento",
-  "Document last update": "Data da última modificación do documento",
   Attachments: "Arquivos",
   "Add new file (Drag & Drop supported)":
     "Engadir novo arquivo (pode arrastrar e soltar)",
@@ -163,6 +162,7 @@ export default {
     "Desafortunadamente, a túa procura non devolveu ningún resultado. Quizais queiras modificar os filtros ou os termos de procura.",
   "Profile has been successfully updated": "O perfil actualizouse con éxito",
   "Creation date": "Data de creación",
+  "Created on": "Data de creación",
   "Last update": "Data do último cambio",
   timeAgo: {
     now: "agora",

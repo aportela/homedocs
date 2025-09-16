@@ -56,11 +56,10 @@ export default {
   "API Error: error deleting document": "API Error: error deleting document",
   "Document not found": "Document not found",
   "Access denied": "Access denied",
+  "Document card": "Document card",
   "New document": "New document",
   "Document title": "Document title",
   "Document description": "Document description",
-  "Document created on": "Document created on",
-  "Document last update": "Document last update",
   Attachments: "Attachments",
   "Add new file (Drag & Drop supported)":
     "Add new file (Drag & Drop supported)",
@@ -160,6 +159,7 @@ export default {
   "Profile has been successfully updated":
     "Profile has been successfully updated",
   "Creation date": "Creation date",
+  "Created on": "Created on",
   "Last update": "Last update",
   timeAgo: {
     now: "now",
