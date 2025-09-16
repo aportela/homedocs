@@ -127,21 +127,31 @@
                 <q-tab-panel name="notes">
                   <q-btn class="full-width q-mb-md" :label="t('Add note')" @click="onShowAddNoteDialog"></q-btn>
                   <q-list>
-                    <q-item clickable hint="click to open note" v-for="note, noteIndex in document.notes" :key="note.id"
-                      class="q-mb-lg"
-                      @click="currentNote = { id: note.id, body: note.body, createdOn: note.createdOn, createdOnTimestamp: note.createdOnTimestamp }; showNoteDialog = true">
+                    <q-item hint="click to open note" v-for="note, noteIndex in document.notes" :key="note.id"
+                      class="q-mb-lg">
                       <q-item-section>
-                        <q-item-label>
+                        <q-item-label class="font-weight-bold">
                           {{ note.createdOn }} ({{ timeAgo(note.createdOnTimestamp * 1000) }})
                         </q-item-label>
-                        <q-item-label caption lines="2">
+                        <q-item-label caption class="white-space-pre-line" :lines="note.expanded ? undefined : 4"
+                          ref="el => noteBodyRefs[note.id] = el">
                           {{ note.body }}
+                        </q-item-label>
+                        <q-item-label>
                         </q-item-label>
                       </q-item-section>
                       <q-item-section side top>
                         <q-item-label caption>
-                          <q-btn flat size="sm" icon="delete"
-                            @click.prevent="onShowNoteRemoveConfirmationDialog(note, noteIndex)"></q-btn>
+                          <q-btn-group flat>
+                            <q-btn size="sm" icon="expand" @click="note.expanded = !note.expanded"></q-btn>
+                            <q-btn size="sm" icon="edit" @click=" currentNote = {
+                              id: note.id, body: note.body,
+                              createdOn: note.createdOn, createdOnTimestamp: note.createdOnTimestamp
+                            };
+                            showNoteDialog = true"></q-btn>
+                            <q-btn size="sm" icon="delete"
+                              @click.prevent="onShowNoteRemoveConfirmationDialog(note, noteIndex)"></q-btn>
+                          </q-btn-group>
                         </q-item-label>
                       </q-item-section>
                     </q-item>
@@ -228,7 +238,7 @@ import { useInitialStateStore } from "stores/initialState";
 
 import { useFormatDates } from "src/composables/formatDate"
 
-const tab = ref("attachments");
+const tab = ref("notes");
 
 const $q = useQuasar();
 const { t } = useI18n();
@@ -318,6 +328,7 @@ function onRefresh() {
       document.value.notes.map((note) => {
         note.isNew = false;
         note.createdOn = date.formatDate(note.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
+        note.expanded = false;
         return (note);
       });
       document.value.history.map((operation) => {
