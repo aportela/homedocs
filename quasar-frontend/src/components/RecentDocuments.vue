@@ -1,10 +1,10 @@
 <template>
   <div class="fit">
-    <q-expansion-item :header-class="{ 'bg-red': loadingError, 'q-expansion-item-header': true }" expand-separator
+    <q-expansion-item header-class="theme-default-q-expansion-item-header" expand-separator
       :icon="loadingError ? 'error' : 'work_history'" :label="t('Recent documents')"
       :caption="t(loadingError ? 'Error loading data' : 'Click on title to open document')" :model-value="expanded"
-      class="rounded-borders q-expansion-item-themed" bordered>
-      <q-card class="q-ma-xs transparent-background" flat>
+      class="theme-default-q-expansion-item">
+      <q-card class="q-ma-xs" flat>
         <q-card-section class="q-pa-none">
           <p class="text-center" v-if="loading">
             <q-spinner-pie color="grey-5" size="md" />
@@ -79,7 +79,7 @@ const hasRecentDocuments = computed(() => recentDocuments.value.length > 0);
 function refresh() {
   recentDocuments.value = [];
   loading.value = true;
-  loadingError.value = false;
+  loadingError.value = true;
   api.document.searchRecent(16)
     .then((success) => {
       recentDocuments.value = success.data.recentDocuments.map((document) => {

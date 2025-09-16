@@ -40,6 +40,8 @@ $default-dark-secondary-text-color: var(--color-zinc-300);
 $default-light-third-text-color: var(--color-zinc-400);
 $default-dark-third-text-color: var(--color-zinc-400);
 
+$default-widget-border-radius: 10px;
+
 body {
   ::selection {
     background-color: var(--color-primary-600);
@@ -91,6 +93,18 @@ body {
   .theme-default-q-drawer .theme-default-q-item-active {
     background-color: var(--color-primary-600);
     color: #fff;
+  }
+
+  .theme-default-q-expansion-item-header {
+    background-color: transparent !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+  .theme-default-q-expansion-item {
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: $default-widget-border-radius;
+    background-color: $default-light-primary-bg-color !important;
+    overflow: hidden; // this fix :hover without border-radius
   }
 
   // q-chip component
