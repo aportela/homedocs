@@ -28,7 +28,7 @@
                   <div
                     :class="{ 'col-6': document.createdOnTimestamp != document.lastUpdateTimestamp, 'col-12': document.createdOnTimestamp == document.lastUpdateTimestamp }">
                     <q-input dense class="q-mb-md" outlined v-model="document.creationDate" :label="t('Created on')"
-                      :readonly="true" v-if="document.id">
+                      readonly v-if="document.id">
                       <template v-slot:append v-if="screengtxs">
                         <span style="font-size: 14px;">
                           {{ timeAgo(document.createdOnTimestamp * 1000) }}
@@ -38,7 +38,7 @@
                   </div>
                   <div class="col-6" v-if="document.createdOnTimestamp != document.lastUpdateTimestamp">
                     <q-input dense class="q-mb-md" outlined v-model="document.lastUpdate" :label="t('Last update')"
-                      :readonly="true" v-if="document.id">
+                      readonly v-if="document.id">
                       <template v-slot:append v-if="screengtxs">
                         <span style="font-size: 14px;">
                           {{ timeAgo(document.lastUpdateTimestamp * 1000) }}
