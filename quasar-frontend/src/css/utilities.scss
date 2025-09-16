@@ -2,6 +2,14 @@
   text-decoration: none !important;
 }
 
+.text-decoration-hover {
+  text-decoration: none !important;
+}
+
+.text-decoration-hover:hover {
+  text-decoration: underline !important;
+}
+
 .white-space-pre-line {
   white-space: pre-line;
 }

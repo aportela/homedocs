@@ -61,10 +61,10 @@
                   <q-item-section top avatar class="gt-xs">
                     <q-avatar square icon="work" size="64px" />
                   </q-item-section>
-                  <q-item-section>
+                  <q-item-section top>
                     <q-item-label>
                       <router-link :to="{ name: 'document', params: { id: recentDocument.id } }"
-                        class="text-decoration-none text-color-primary text-weight-bold">{{ recentDocument.title }}
+                        class="text-decoration-hover text-color-primary text-weight-bold">{{ recentDocument.title }}
                       </router-link>
                     </q-item-label>
                     <q-item-label caption lines="2">{{ recentDocument.description }}</q-item-label>
