@@ -34,8 +34,7 @@
                     </q-item-label>
                   </q-item-section>
                   <q-item-section side top>
-                    <q-item-label caption>{{ recentDocument.lastUpdate }}
-                    </q-item-label>
+                    <q-item-label caption>{{ timeAgo(recentDocument.timestamp * 1000) }}</q-item-label>
                     <q-chip size="md" square class="full-width theme-default-q-chip">
                       <q-avatar class="theme-default-q-avatar">{{ recentDocument.fileCount }}</q-avatar>
                       {{ t("Files") }}
@@ -75,6 +74,34 @@ const expanded = ref(!$q.screen.lt.md);
 const recentDocuments = ref([]);
 const hasRecentDocuments = computed(() => recentDocuments.value.length > 0);
 
+function timeAgo(timestamp) {
+  const now = Date.now();
+  const diff = now - new Date(timestamp).getTime();
+
+  const seconds = Math.floor(diff / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  const months = Math.floor(days / 30);  // WARNING: NOT EXACT (30 days / month)
+  const years = Math.floor(days / 365);  // WARNING: NOT EXACT (365 days / year)
+
+  if (years > 0) {
+    return (t("timeAgo.year", { count: years }));
+  } else if (months > 0) {
+    return (t("timeAgo.month", { count: months }));
+  } else if (days > 0) {
+    return (t("timeAgo.day", { count: days }));
+  } else if (hours > 0) {
+    return (t("timeAgo.hour", { count: hours }));
+  } else if (minutes > 0) {
+    return (t("timeAgo.minute", { count: minutes }));
+  } else if (seconds > 0) {
+    return (t("timeAgo.second", { count: seconds }));
+  } else {
+    return (t("timeAgo.now"));
+  }
+}
+
 function refresh() {
   recentDocuments.value = [];
   loading.value = true;
@@ -82,8 +109,7 @@ function refresh() {
   api.document.searchRecent(16)
     .then((success) => {
       recentDocuments.value = success.data.recentDocuments.map((document) => {
-        document.createdOn = date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
-        document.lastUpdate = date.formatDate(document.lastUpdateTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
+        document.timestamp = document.lastUpdateTimestamp;
         return (document);
       });
       loading.value = false;

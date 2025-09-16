@@ -161,4 +161,13 @@ export default {
     "Profile has been successfully updated",
   "Creation date": "Creation date",
   "Last update": "Last update",
+  timeAgo: {
+    now: "now",
+    year: "{count} year ago | {count} years ago",
+    month: "{count} month ago | {count} months ago",
+    day: "{count} day ago | {count} days ago",
+    hour: "{count} hour ago | {count} hours ago",
+    minute: "{count} minute ago | {count} minutes ago",
+    second: "{count} second ago | {count} seconds ago",
+  },
 };

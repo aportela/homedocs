@@ -166,4 +166,13 @@ export default {
     "El perfil se ha actualizado con éxito",
   "Creation date": "Fecha de creación",
   "Last update": "Fecha del último cambio",
+  timeAgo: {
+    now: "ahora",
+    year: "hace {count} año | hace {count} años",
+    month: "hace {count} mes | hace {count} meses",
+    day: "hace {count} día | hace {count} días",
+    hour: "hace {count} hora | hace {count} horas",
+    minute: "hace {count} minuto | hace {count} minutos",
+    second: "hace {count} segundo | hace {count} segundos",
+  },
 };
