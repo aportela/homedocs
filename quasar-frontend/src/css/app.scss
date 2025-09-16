@@ -84,19 +84,12 @@ body {
 
   // sidebar items
   .theme-default-q-drawer .theme-default-q-item {
-    background-color: var(--color-primary-600);
-    color: #fff;
-  }
-
-  .theme-default-q-drawer .theme-default-q-item {
-    background-color: var(--color-primary-600);
-    color: #fff;
+    background-color: var(--color-zinc-200);
+    color: $default-light-primary-text-color;
   }
 
   .theme-default-q-drawer .theme-default-q-item-active {
-    background-color: var(--color-zinc-400);
-    color: var(--color-zinc-950);
-    background-color: var(--color-primary-900);
+    background-color: var(--color-primary-600);
     color: #fff;
   }
 
@@ -168,12 +161,9 @@ body {
   }
 
   .theme-default-q-drawer .theme-default-q-item-active {
-    background-color: var(--color-zinc-400);
-    color: var(--color-zinc-100);
-    background-color: var(--color-primary-900);
+    background-color: var(--color-primary-600);
     color: #fff;
   }
-
 
   // q-chip component
   .theme-default-q-chip {
