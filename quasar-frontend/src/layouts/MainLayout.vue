@@ -1,14 +1,14 @@
 <template>
   <q-layout view="lHh lpR lFf" class="theme-default-q-layout">
     <q-header height-hint="61.59" class="theme-default-q-header" bordered>
-      <q-toolbar>
+      <q-toolbar class="theme-default-q-toolbar">
         <q-btn flat dense round @click="visibleSidebar = !visibleSidebar;" aria-label="Toggle drawer" icon="menu"
           v-show="!visibleSidebar" class="q-mr-md" />
         <q-btn flat dense round @click="onToggleminiSidebarCurrentMode" aria-label="Toggle drawer"
           :icon="miniSidebarCurrentMode ? 'arrow_forward_ios' : 'arrow_back_ios_new'" class="q-mr-md"
           v-show="visibleSidebar" />
-        <q-btn type="button" no-caps no-wrap align="left" flat :label="searchButtonLabel" icon-right="search"
-          class="full-width no-caps" @click.prevent="visibleFastSearchModal = true">
+        <q-btn type="button" no-caps no-wrap align="left" outline :label="searchButtonLabel" icon-right="search"
+          class="full-width no-caps theme-default-q-btn" @click.prevent="visibleFastSearchModal = true">
           <q-tooltip anchor="bottom middle" self="top middle">{{ t("Click to open fast search")
           }}</q-tooltip>
         </q-btn>

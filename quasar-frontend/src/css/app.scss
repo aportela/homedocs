@@ -37,6 +37,9 @@ $default-dark-primary-text-color: var(--color-zinc-100);
 $default-light-secondary-text-color: var(--color-zinc-600);
 $default-dark-secondary-text-color: var(--color-zinc-300);
 
+$default-light-third-text-color: var(--color-zinc-400);
+$default-dark-third-text-color: var(--color-zinc-400);
+
 body {
   ::selection {
     background-color: var(--color-primary-600);
@@ -66,7 +69,12 @@ body {
   // main layout header
   .theme-default-q-header {
     background-color: var(--color-zinc-100);
-    color: var(--q-color-grey-2);
+    color: $default-light-primary-text-color;
+  }
+
+  // main layout (top) toolbar search button
+  .theme-default-q-toolbar .theme-default-q-btn {
+    color: $default-light-third-text-color;
   }
 
   // sidebar drawer
@@ -143,10 +151,15 @@ body {
     background-color: var(--color-zinc-800);
   }
 
-    // main layout header
+  // main layout header
   .theme-default-q-header {
     background-color: var(--color-zinc-900);
     color: var(--q-color-grey-7);
+  }
+
+  // main layout (top) toolbar search button
+  .theme-default-q-toolbar .theme-default-q-btn {
+    color: $default-dark-third-text-color;
   }
 
   // sidebar drawer
