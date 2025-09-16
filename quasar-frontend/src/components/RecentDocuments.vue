@@ -22,8 +22,38 @@
       </template>
       <q-card class="q-ma-xs" flat>
         <q-card-section class="q-pa-none">
-          <div v-if="loading" style="min-height: 20vh;">
-
+          <div v-if="loading">
+            <q-list>
+              <div v-for="i in [1, 2, 3]" :key="i">
+                <q-item class="transparent-background text-color-primary">
+                  <q-item-section top avatar class="gt-xs q-mt-lg">
+                    <q-skeleton type="QAvatar" square size="32px"></q-skeleton>
+                  </q-item-section>
+                  <q-item-section class="q-mx-md">
+                    <q-item-label>
+                      <q-skeleton type="text" />
+                    </q-item-label>
+                    <q-item-label caption lines="2">
+                      <q-skeleton type="text" height="2em" />
+                    </q-item-label>
+                    <q-item-label>
+                      <div class="row items-left q-gutter-sm">
+                        <q-skeleton square width="6em" height="2em" class="" v-for="j in [1, 2, 3, 4]"
+                          :key="j"></q-skeleton>
+                      </div>
+                    </q-item-label>
+                  </q-item-section>
+                  <q-item-section side top>
+                    <q-item-label caption>
+                      <q-skeleton type="text" width="8em" height="2em"></q-skeleton>
+                      <q-skeleton square width="8em" height="2em" class="q-mt-sm"></q-skeleton>
+                      <q-skeleton square width="8em" height="2em" class="q-mt-sm"></q-skeleton>
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-separator inset v-if="i < 3" class="q-my-md" />
+              </div>
+            </q-list>
           </div>
           <div v-else>
             <q-banner v-if="loadingError" class="transparent-background text-red">
