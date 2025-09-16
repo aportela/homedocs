@@ -17,13 +17,25 @@
             <q-card-section>
               <div class="row q-col-gutter-sm">
                 <div
-                  :class="{ 'col-6': document.creationDate != document.lastUpdate, 'col-12': document.creationDate == document.lastUpdate }">
-                  <q-input dense class="q-mb-md" outlined mask="date" v-model="document.creationDate"
-                    :label="t('Document created on')" :disable="true" v-if="document.id"></q-input>
+                  :class="{ 'col-6': document.createdOnTimestamp != document.lastUpdateTimestamp, 'col-12': document.createdOnTimestamp == document.lastUpdateTimestamp }">
+                  <q-input dense class="q-mb-md" outlined v-model="document.creationDate"
+                    :label="t('Document created on')" :disable="true" v-if="document.id">
+                    <template v-slot:append v-if="screengtxs">
+                      <span style="font-size: 14px;">
+                        {{ timeAgo(document.createdOnTimestamp * 1000) }}
+                      </span>
+                    </template>
+                  </q-input>
                 </div>
-                <div class="col-6" v-if="document.creationDate != document.lastUpdate">
-                  <q-input dense class="q-mb-md" outlined mask="date" v-model="document.lastUpdate"
-                    :label="t('Document last update')" :disable="true" v-if="document.id"></q-input>
+                <div class="col-6" v-if="document.createdOnTimestamp != document.lastUpdateTimestamp">
+                  <q-input dense class="q-mb-md" outlined v-model="document.lastUpdate"
+                    :label="t('Document last update')" :disable="true" v-if="document.id">
+                    <template v-slot:append v-if="screengtxs">
+                      <span style="font-size: 14px;">
+                        {{ timeAgo(document.lastUpdateTimestamp * 1000) }}
+                      </span>
+                    </template>
+                  </q-input>
                 </div>
               </div>
               <q-input dense class="q-mb-md" ref="titleRef" maxlength="128" outlined v-model="document.title"
@@ -212,13 +224,19 @@ import { default as FilePreviewModal } from "components/FilePreviewModal.vue";
 import { default as NoteModal } from "components/NoteModal.vue";
 import { useInitialStateStore } from "stores/initialState";
 
+import { useFormatDates } from "src/composables/formatDate"
+
 const tab = ref("attachments");
 
 const $q = useQuasar();
 const { t } = useI18n();
+
 const route = useRoute();
 const router = useRouter();
 const initialState = useInitialStateStore();
+
+const { timeAgo } = useFormatDates();
+
 const maxFileSize = computed(() => initialState.maxUploadFileSize);
 const uploaderRef = ref(null);
 const selectedFileIndex = ref(null);
@@ -234,6 +252,8 @@ const loading = ref(false);
 const saving = ref(false);
 const uploading = ref(false);
 const currentNote = ref({ id: null, body: null });
+
+const screengtxs = computed(() => $q.screen.gt.xs);
 
 const document = ref({
   id: null,
@@ -284,8 +304,8 @@ function onRefresh() {
     .get(document.value.id)
     .then((response) => {
       document.value = response.data.data;
-      document.value.creationDate = date.formatDate(document.value.createdOnTimestamp * 1000, 'YYYY/MM/DD');
-      document.value.lastUpdate = date.formatDate(document.value.lastUpdateTimestamp * 1000, 'YYYY/MM/DD');
+      document.value.creationDate = date.formatDate(document.value.createdOnTimestamp * 1000, 'YYYY/MM/DD HH:mm:ss');
+      document.value.lastUpdate = date.formatDate(document.value.lastUpdateTimestamp * 1000, 'YYYY/MM/DD HH:mm:ss');
       document.value.files.map((file) => {
         file.isNew = false;
         file.uploadedOn = date.formatDate(file.uploadedOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
