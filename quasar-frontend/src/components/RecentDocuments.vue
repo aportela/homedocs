@@ -19,7 +19,7 @@
                   <q-item-section>
                     <q-item-label>
                       <router-link :to="{ name: 'document', params: { id: recentDocument.id } }"
-                        class="text-decoration-none text-weight-bold">{{ recentDocument.title }}
+                        class="text-decoration-none text-color-primary text-weight-bold">{{ recentDocument.title }}
                       </router-link>
                     </q-item-label>
                     <q-item-label caption lines="2">{{ recentDocument.description }}</q-item-label>
@@ -106,29 +106,3 @@ onMounted(() => {
 });
 
 </script>
-
-<style scoped>
-.body--light {
-
-  a {
-    color: var(--color-zinc-950) !important;
-  }
-
-  .q-expansion-item-themed {
-    border: 1px solid var(--color-zinc-300);
-  }
-
-}
-
-.body--dark {
-
-  a {
-    color: var(--color-zinc-100) !important;
-  }
-
-  .q-expansion-item-themed {
-    border: 1px solid var(--color-zinc-600);
-  }
-
-}
-</style>

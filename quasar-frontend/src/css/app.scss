@@ -49,6 +49,7 @@ body {
   background: $default-light-primary-bg-color !important;
   color: $default-light-primary-text-color !important;
 
+
   .text-color-primary {
     color: $default-light-primary-text-color !important;
   }
@@ -60,6 +61,11 @@ body {
   // q-chip component
   .theme-default-q-chip {
     color: #222;
+  }
+
+  // q-avatar inside q-chip component
+  .theme-default-q-chip a {
+    color: var(--color-zinc-950);
   }
 
   // q-avatar inside q-chip component

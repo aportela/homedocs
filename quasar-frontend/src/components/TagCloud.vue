@@ -74,25 +74,3 @@ onMounted(() => {
 });
 
 </script>
-
-<style scoped>
-a {
-  color: var(--color-zinc-950);
-}
-
-.body--light {
-
-  .q-expansion-item-themed {
-    border: 1px solid var(--color-zinc-300);
-  }
-
-}
-
-.body--dark {
-
-  .q-expansion-item-themed {
-    border: 1px solid var(--color-zinc-600);
-  }
-
-}
-</style>
