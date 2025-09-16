@@ -38,11 +38,12 @@
                   </q-input>
                 </div>
               </div>
-              <q-input dense class="q-mb-md" ref="titleRef" maxlength="128" outlined v-model="document.title"
+              <q-input dense class="q-mb-md" ref="titleRef" maxlength="128" outlined v-model.trim="document.title"
                 type="text" name="title" :label="t('Document title')" :disable="loading || saving" :autofocus="true">
               </q-input>
-              <q-input dense class="q-mb-md" outlined v-model="document.description" type="textarea" maxlength="4096"
-                autogrow name="description" :label="t('Document description')" :disable="loading || saving" clearable>
+              <q-input dense class="q-mb-md" outlined v-model.trim="document.description" type="textarea"
+                maxlength="4096" autogrow name="description" :label="t('Document description')"
+                :disable="loading || saving" clearable>
               </q-input>
               <TagSelector dense v-model="document.tags" :disabled="loading || saving" :link="true" class="q-pb-none">
               </TagSelector>
