@@ -98,7 +98,7 @@ body {
     color: #222;
   }
 
-  // q-avatar inside q-chip component
+  // link inside q-chip component
   .theme-default-q-chip a {
     color: var(--color-zinc-950);
   }
@@ -168,6 +168,11 @@ body {
   // q-chip component
   .theme-default-q-chip {
     background: #ddd;
+    color: var(--color-zinc-950);
+  }
+
+  // link inside q-chip component
+  .theme-default-q-chip a {
     color: var(--color-zinc-950);
   }
 
