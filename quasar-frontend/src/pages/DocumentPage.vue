@@ -131,7 +131,7 @@
                       class="q-mb-lg" @click="currentNote = { id: note.id, body: note.body }; showNoteDialog = true">
                       <q-item-section>
                         <q-item-label>
-                          {{ note.createdOn }}
+                          {{ note.createdOn }} ({{ timeAgo(note.createdOnTimestamp * 1000) }})
                         </q-item-label>
                         <q-item-label caption lines="2">
                           {{ note.body }}
