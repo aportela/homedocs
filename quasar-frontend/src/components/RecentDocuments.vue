@@ -3,16 +3,14 @@
     <q-expansion-item class="theme-default-q-expansion-item q-my-lg"
       header-class="theme-default-q-expansion-item-header" expand-separator :model-value="expanded">
       <template v-slot:header>
-        <q-item class="full-width theme-default-q-expansion-item-header2">
-          <q-item-section avatar>
-            <q-icon name="work_history"></q-icon>
-          </q-item-section>
-          <q-item-section class="">
-            <q-item-label>{{ t("Most recent activity") }} <q-chip size="sm" color="primary" text-color="white">2
-                documents</q-chip></q-item-label>
-            <q-item-label caption>{{ t('Click on title to open document') }}</q-item-label>
-          </q-item-section>
-        </q-item>
+        <q-item-section avatar>
+          <q-icon name="work_history"></q-icon>
+        </q-item-section>
+        <q-item-section class="">
+          <q-item-label>{{ t("Most recent activity") }} <q-chip size="sm" color="primary" text-color="white">2
+              documents</q-chip></q-item-label>
+          <q-item-label caption>{{ t('Click on title to open document') }}</q-item-label>
+        </q-item-section>
       </template>
       <q-card class="q-ma-xs" flat>
         <q-card-section class="q-pa-none">
@@ -165,7 +163,7 @@ function refresh() {
         document.timestamp = document.lastUpdateTimestamp * 1000;
         return (document);
       });
-      loading.value = false;
+      //loading.value = false;
     })
     .catch((error) => {
       loading.value = false;
