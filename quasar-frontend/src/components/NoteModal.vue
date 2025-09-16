@@ -6,6 +6,7 @@
         </div>
       </q-card-section>
       <q-separator />
+      <q-card-section v-if="props.note.id">{{ creationDate }} ({{ timeAgo(timestamp * 1000) }})</q-card-section>
       <q-card-section style="max-height: 50vh" class="scroll">
         <div class="cursor-pointer white-space-pre-line" v-if="readOnly" @click="readOnly = false">{{
           body }}
@@ -28,7 +29,11 @@ import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { uid, date } from "quasar";
 
+import { useFormatDates } from "src/composables/formatDate"
+
 const { t } = useI18n();
+
+const { timeAgo } = useFormatDates();
 
 const props = defineProps({
   note: Object,
@@ -37,6 +42,10 @@ const props = defineProps({
 const emit = defineEmits(['close', 'cancel', 'add', 'update']);
 
 const visible = ref(true);
+
+const creationDate = ref(props.note ? props.note.createdOn : date.formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss'));
+
+const timestamp = ref(props.note ? props.note.createdOnTimestamp : 0)
 
 const body = ref(props.note ? props.note.body : null);
 

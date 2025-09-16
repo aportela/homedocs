@@ -128,7 +128,8 @@
                   <q-btn class="full-width q-mb-md" :label="t('Add note')" @click="onShowAddNoteDialog"></q-btn>
                   <q-list>
                     <q-item clickable hint="click to open note" v-for="note, noteIndex in document.notes" :key="note.id"
-                      class="q-mb-lg" @click="currentNote = { id: note.id, body: note.body }; showNoteDialog = true">
+                      class="q-mb-lg"
+                      @click="currentNote = { id: note.id, body: note.body, createdOn: note.createdOn, createdOnTimestamp: note.createdOnTimestamp }; showNoteDialog = true">
                       <q-item-section>
                         <q-item-label>
                           {{ note.createdOn }} ({{ timeAgo(note.createdOnTimestamp * 1000) }})
