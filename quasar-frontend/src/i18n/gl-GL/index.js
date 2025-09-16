@@ -173,4 +173,7 @@ export default {
     minute: "fai {count} minuto | fai {count} minutos",
     second: "fai {count} segundo | fai {count} segundos",
   },
+  "Most recent activity": "Actividad mais recente",
+  "Click to refresh data": "Faga click pra refresca-los datos",
+  "Total documents": "{count} documento|{count} documentos",
 };

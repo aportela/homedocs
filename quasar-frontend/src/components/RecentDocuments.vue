@@ -1,84 +1,30 @@
 <template>
   <div class="fit">
-    <q-expansion-item class="theme-default-q-expansion-item q-my-lg"
-      header-class="theme-default-q-expansion-item-header" expand-separator :model-value="expanded">
+    <q-expansion-item class="theme-default-q-expansion-item" header-class="theme-default-q-expansion-item-header"
+      expand-separator :model-value="expanded">
       <template v-slot:header>
         <q-item-section avatar>
-          <q-icon name="work_history"></q-icon>
+          <q-icon v-if="loading" name="settings" class="animation-spin"></q-icon>
+          <q-icon v-else-if="loadingError" name="error" color="red"></q-icon>
+          <q-icon v-else name="work_history" class="cursor-pointer" @click.stop="refresh">
+            <q-tooltip>{{ t("Click to refresh data") }}</q-tooltip>
+          </q-icon>
         </q-item-section>
         <q-item-section class="">
-          <q-item-label>{{ t("Most recent activity") }} <q-chip size="sm" color="primary" text-color="white">2
-              documents</q-chip></q-item-label>
-          <q-item-label caption>{{ t('Click on title to open document') }}</q-item-label>
+          <q-item-label>{{ t("Most recent activity") }}
+            <q-chip square size="sm" color="primary" text-color="white">{{ t("Total documents", {
+              count:
+                recentDocuments.length
+            }) }}</q-chip>
+          </q-item-label>
+          <q-item-label caption>{{ t(loading ? 'Loading...' : 'Click on title to open document') }}</q-item-label>
         </q-item-section>
       </template>
       <q-card class="q-ma-xs" flat>
         <q-card-section class="q-pa-none">
-          <p class="text-center" v-if="loading">
-            <q-spinner-pie color="grey-5" size="md" />
-          </p>
-          <div v-else>
-            <q-banner v-if="loadingError" class="transparent-background text-red">
-              <q-icon name="error" size="sm" class="q-mr-sm" />
-              {{ t("Error loading data") }}
-            </q-banner>
-            <div v-else>
-              <q-list v-if="hasRecentDocuments">
-                <div v-for="recentDocument, index in recentDocuments" :key="recentDocument.id">
-                  <q-item class="transparent-background text-color-primary">
-                    <q-item-section top avatar class="gt-xs">
-                      <q-avatar square icon="work" size="64px" />
-                    </q-item-section>
-                    <q-item-section>
-                      <q-item-label>
-                        <router-link :to="{ name: 'document', params: { id: recentDocument.id } }"
-                          class="text-decoration-none text-color-primary text-weight-bold">{{ recentDocument.title }}
-                        </router-link>
-                      </q-item-label>
-                      <q-item-label caption lines="2">{{ recentDocument.description }}</q-item-label>
-                      <q-item-label>
-                        <router-link v-for="tag in recentDocument.tags" :key="tag"
-                          :to="{ name: 'advancedSearchByTag', params: { tag: tag } }">
-                          <q-chip square size="md" clickable icon="tag" class="q-chip-themed">
-                            {{ tag }}
-                            <q-tooltip>{{ t("Browse by tag: ", { tag: tag }) }}</q-tooltip>
-                          </q-chip>
-                        </router-link>
-                      </q-item-label>
-                    </q-item-section>
-                    <q-item-section side top>
-                      <q-item-label caption>{{ timeAgo(recentDocument.timestamp) }}</q-item-label>
-                      <q-chip size="md" square class="full-width theme-default-q-chip">
-                        <q-avatar class="theme-default-q-avatar">{{ recentDocument.fileCount }}</q-avatar>
-                        {{ t("Files") }}
-                      </q-chip>
-                      <q-chip size="md" square class="full-width theme-default-q-chip">
-                        <q-avatar class="theme-default-q-avatar">{{ recentDocument.noteCount }}</q-avatar>
-                        {{ t("Notes") }}
-                      </q-chip>
-                    </q-item-section>
-                  </q-item>
-                  <q-separator inset v-if="index !== recentDocuments.length - 1" class="q-my-md" />
-                </div>
-              </q-list>
-              <q-banner v-else class="transparent-background">
-                <q-icon name="warning" size="sm" class="q-mr-sm" />
-                {{ t("You haven't created any documents yet") }}
-              </q-banner>
-            </div>
-          </div>
-        </q-card-section>
-      </q-card>
-    </q-expansion-item>
+          <div v-if="loading" style="min-height: 20vh;">
 
-    <q-expansion-item header-class="theme-default-q-expansion-item-header" expand-separator icon="work_history"
-      :label="t('Recent documents')" :caption="t('Click on title to open document')" :model-value="expanded"
-      class="theme-default-q-expansion-item">
-      <q-card class="q-ma-xs" flat>
-        <q-card-section class="q-pa-none">
-          <p class="text-center" v-if="loading">
-            <q-spinner-pie color="grey-5" size="md" />
-          </p>
+          </div>
           <div v-else>
             <q-banner v-if="loadingError" class="transparent-background text-red">
               <q-icon name="error" size="sm" class="q-mr-sm" />
@@ -163,7 +109,7 @@ function refresh() {
         document.timestamp = document.lastUpdateTimestamp * 1000;
         return (document);
       });
-      //loading.value = false;
+      loading.value = false;
     })
     .catch((error) => {
       loading.value = false;

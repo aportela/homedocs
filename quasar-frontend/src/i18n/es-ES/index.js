@@ -175,4 +175,7 @@ export default {
     minute: "hace {count} minuto | hace {count} minutos",
     second: "hace {count} segundo | hace {count} segundos",
   },
+  "Most recent activity": "Actividad más reciente",
+  "Click to refresh data": "Haga click para refrescar los datos",
+  "Total documents": "{count} documento|{count} documentos",
 };
