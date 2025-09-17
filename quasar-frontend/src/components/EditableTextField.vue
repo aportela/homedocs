@@ -1,7 +1,7 @@
 <template>
   <div v-if="readOnly" class="cursor-pointer q-pa-sm q-mb-md relative-position white-space-pre-line"
     style="border: 1px solid rgba(0, 0, 0, 0.12); border-radius: 4px;" @mouseenter="showUpdateHoverIcon = true"
-    @mouseleave="showUpdateHoverIcon = false" @click="readOnly = !readOnly">
+    @mouseleave="showUpdateHoverIcon = false" @click="onToggleReadOnly">
     <div style="font-size: 12px; color: rgba(0, 0, 0, 0.6); margin-left: 0px; margin-bottom: 4px;">
       {{ props.label }}</div>
     <q-icon name="expand" size="sm" class="absolute-top-right text-grey cursor-pointer q-mr-sm q-mt-sm"
@@ -18,7 +18,7 @@
   </div>
   <q-input v-else v-bind="attrs" ref="myref" :label="label" v-model.trim="model">
     <template v-slot:append v-if="model">
-      <q-icon name="done" class="cursor-pointer" @click="readOnly = !readOnly">
+      <q-icon name="done" class="cursor-pointer" @click="onToggleReadOnly">
         <q-tooltip>{{ t("Click to toggle edit mode") }}</q-tooltip>
       </q-icon>
     </template>
@@ -62,8 +62,15 @@ defineExpose({
   focus
 });
 
-watch(() => props.modelValue, val => model.value = val)
-watch(model, val => emit('update:modelValue', val))
+watch(() => props.modelValue, val => model.value = val);
+watch(model, val => emit('update:modelValue', val));
+
+function onToggleReadOnly() {
+  readOnly.value = !readOnly.value;
+  if (!readOnly.value) {
+    focus();
+  }
+}
 
 </script>
 
