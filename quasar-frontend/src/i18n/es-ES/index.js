@@ -181,4 +181,6 @@ export default {
   "Total tags": "{count} etiqueta|{count} etiquetas",
   "Click to toggle edit mode": "Haga click para alternar el modo de edición",
   "Click to expand/collapse": "Haga click para expandir/contraer",
+  "Document creation date": "Fecha de creación del documento",
+  "Document last update": "Fecha del último cambio del documento",
 };

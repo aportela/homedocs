@@ -38,7 +38,7 @@
                   <div class="col">
                     <q-select class="q-mb-md" dense options-dense outlined clearable
                       v-model="advancedSearchData.filter.creationDateFilterType" :options="dateFilterOptions"
-                      :label="t('Document created on')"
+                      :label="t('Document creation date')"
                       :disable="searching || disableCreationDateFilterByRouteParams" />
                   </div>
                   <div class="col" v-if="advancedSearchData.hasFromCreationDateFilter">
@@ -94,9 +94,6 @@
                     </q-input>
                   </div>
                 </div>
-
-
-
                 <div class="row">
                   <div class="col">
                     <q-select class="q-mb-md" dense options-dense outlined clearable
