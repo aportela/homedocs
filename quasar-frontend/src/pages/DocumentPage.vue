@@ -332,42 +332,46 @@ router.beforeEach(async (to, from) => {
   }
 });
 
+function parseDocumentJSONResponse(documentData) {
+  document.value = documentData;
+  document.value.creationDate = date.formatDate(document.value.createdOnTimestamp * 1000, 'YYYY/MM/DD HH:mm:ss');
+  document.value.lastUpdate = date.formatDate(document.value.lastUpdateTimestamp * 1000, 'YYYY/MM/DD HH:mm:ss');
+  document.value.files.map((file) => {
+    file.isNew = false;
+    file.uploadedOn = date.formatDate(file.uploadedOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
+    file.humanSize = format.humanStorageSize(file.size);
+    file.url = "api2/file/" + file.id;
+    return (file);
+  });
+  document.value.notes.map((note) => {
+    note.isNew = false;
+    note.createdOn = date.formatDate(note.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
+    note.expanded = false;
+    return (note);
+  });
+  document.value.history.map((operation) => {
+    operation.date = date.formatDate(operation.operationTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
+    switch (operation.operationType) {
+      case 1:
+        operation.label = t("Document created");
+        break;
+      case 2:
+        operation.label = t("Document updated");
+        break;
+      default:
+        operation.label = t("Unknown operation");
+        break;
+    }
+    return (operation);
+  });
+}
+
 function onRefresh() {
   loading.value = true;
   api.document
     .get(document.value.id)
     .then((response) => {
-      document.value = response.data.data;
-      document.value.creationDate = date.formatDate(document.value.createdOnTimestamp * 1000, 'YYYY/MM/DD HH:mm:ss');
-      document.value.lastUpdate = date.formatDate(document.value.lastUpdateTimestamp * 1000, 'YYYY/MM/DD HH:mm:ss');
-      document.value.files.map((file) => {
-        file.isNew = false;
-        file.uploadedOn = date.formatDate(file.uploadedOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
-        file.humanSize = format.humanStorageSize(file.size);
-        file.url = "api2/file/" + file.id;
-        return (file);
-      });
-      document.value.notes.map((note) => {
-        note.isNew = false;
-        note.createdOn = date.formatDate(note.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
-        note.expanded = false;
-        return (note);
-      });
-      document.value.history.map((operation) => {
-        operation.date = date.formatDate(operation.operationTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
-        switch (operation.operationType) {
-          case 1:
-            operation.label = t("Document created");
-            break;
-          case 2:
-            operation.label = t("Document updated");
-            break;
-          default:
-            operation.label = t("Unknown operation");
-            break;
-        }
-        return (operation);
-      });
+      parseDocumentJSONResponse(response.data.data);
       loading.value = false;
       if (titleRef.value) {
         nextTick(() => titleRef.value.focus());
@@ -401,36 +405,7 @@ function onSubmitForm() {
         if (response.data.data) {
           readOnlyTitle.value = true;
           readOnlyDescription.value = true;
-          document.value = response.data.data;
-          document.value.creationDate = date.formatDate(document.value.createdOnTimestamp * 1000, 'YYYY/MM/DD');
-          document.value.lastUpdate = date.formatDate(document.value.lastUpdateTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
-          document.value.files.map((file) => {
-            file.isNew = false;
-            file.url = "api2/file/" + file.id;
-            file.uploadedOn = date.formatDate(file.uploadedOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
-            file.humanSize = format.humanStorageSize(file.size);
-            return (file);
-          });
-          document.value.notes.map((note) => {
-            note.isNew = false;
-            note.createdOn = date.formatDate(note.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
-            return (note);
-          });
-          document.value.history.map((operation) => {
-            operation.date = date.formatDate(operation.operationTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
-            switch (operation.operationType) {
-              case 1:
-                operation.label = t("Document created");
-                break;
-              case 2:
-                operation.label = t("Document updated");
-                break;
-              default:
-                operation.label = t("Unknown operation");
-                break;
-            }
-            return (operation);
-          });
+          parseDocumentJSONResponse(response.data.data);
           loading.value = false;
           nextTick(() => {
             //TODO: FAIL with hidden tab
