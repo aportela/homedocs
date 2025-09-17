@@ -9,12 +9,12 @@
       <q-tooltip>{{ t("Click to toggle edit mode") }}</q-tooltip>
     </q-icon>
     <q-chip :dense="dense" v-for="tag, index in currentTags" :key="tag" @remove="removeTagAtIndex(index)"
-      color="primary" text-color="white" icon="tag" :label="tag">
+      color="primary" text-color="white" icon="tag">
       <router-link :to="{ name: 'advancedSearchByTag', params: { tag: tag } }"
         style="text-decoration: none; color: white;">
         {{ tag }}
+        <q-tooltip>{{ t("Browse by tag: ", { tag: tag }) }}</q-tooltip>
       </router-link>
-      <q-tooltip>{{ t("Browse by tag: ", { tag: tag }) }}</q-tooltip>
     </q-chip>
   </div>
   <q-select v-else ref="selectRef" :label="t('Tags')" v-model="currentTags" :dense="dense" :options-dense="dense"
@@ -36,7 +36,7 @@
 
 <script setup>
 
-import { ref, watch, computed } from "vue";
+import { ref, watch, computed, onMounted } from "vue";
 import { api } from "boot/axios";
 import { useI18n } from "vue-i18n";
 
@@ -107,6 +107,8 @@ function removeTagAtIndex(index) {
   currentTags.value.splice(index, 1);
 }
 
-loadAvailableTags();
+onMounted(() => {
+  loadAvailableTags();
+});
 
 </script>
