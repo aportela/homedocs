@@ -240,7 +240,7 @@
 
 <script setup>
 
-import { ref, nextTick, computed } from "vue";
+import { ref, nextTick, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { uid, format, date, useQuasar } from "quasar";
 import { useI18n } from 'vue-i18n'
@@ -684,9 +684,11 @@ function onDeleteDocument() {
     });
 }
 
-document.value.id = route.params.id || null;
-if (!isNewDocument.value) {
-  onRefresh();
-}
+onMounted(() => {
+  if (!isNewDocument.value) {
+    document.value.id = route.params.id;
+    onRefresh();
+  }
+});
 
 </script>
