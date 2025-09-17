@@ -60,7 +60,7 @@
                 </TagSelector>
               </div>
               <div class="col-12 col-lg-6 col-xl-6 scroll q-px-sm" style="min-height: 50vh; max-height: 70vh;">
-                <q-tabs v-model="tab" align="left" class="q-mb-sm full-width">
+                <q-tabs v-model="tab" align="left" class="q-mb-sm">
                   <q-tab name="attachments" icon="attach_file" :label="t('Attachments')">
                     <q-badge floating v-show="document.files.length > 0">{{ document.files.length }}</q-badge>
                   </q-tab>
