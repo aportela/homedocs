@@ -20,7 +20,7 @@
             <q-card-section class="row">
               <div class="col-12 col-lg-6 col-xl-6 q-px-sm">
                 <q-card class="q-ma-xs q-mt-sm">
-                  <q-card-section class="q-pa-none">
+                  <q-card-section class="q-pa-none q-mb-sm">
                     <q-tabs v-model="leftTab">
                       <q-tab name="metadata" icon="description" :label="t('Document metadata')"
                         class="cursor-default full-width"></q-tab>
@@ -67,8 +67,8 @@
               </div>
               <div class="col-12 col-lg-6 col-xl-6 scroll q-px-sm" style="min-height: 64vh; max-height: 64vh;">
                 <q-card class="q-ma-xs q-mt-sm">
-                  <q-card-section class="q-pa-none">
-                    <q-tabs v-model="tab" align="left" class="q-mb-sm">
+                  <q-card-section class="q-pa-none q-mb-sm">
+                    <q-tabs v-model="tab" align="left">
                       <q-tab name="attachments" icon="attach_file" :label="t('Attachments')">
                         <q-badge floating v-show="document.files.length > 0">{{ document.files.length }}</q-badge>
                       </q-tab>
@@ -78,6 +78,10 @@
                       <q-tab name="history" icon="view_timeline" :label="t('History')" v-if="document.id">
                         <q-badge floating v-show="document.history.length > 0">{{ document.history.length }}</q-badge>
                       </q-tab>
+                      <q-tab name="attachments" v-if="tab == 'attachments'" icon="add" :label="t('Add attachment')"
+                        class="bg-blue text-white" @click.stop="onShowAttachmentsPicker"></q-tab>
+                      <q-tab name="notes" v-if="tab == 'notes'" icon="add" :label="t('Add note')"
+                        class="bg-blue text-white" @click.stop="onShowAddNoteDialog"></q-tab>
                     </q-tabs>
                   </q-card-section>
                   <q-card-section class="q-pa-md">
@@ -149,7 +153,6 @@
                         </q-markup-table>
                       </q-tab-panel>
                       <q-tab-panel name="notes">
-                        <q-btn class="full-width q-mb-md" :label="t('Add note')" @click="onShowAddNoteDialog"></q-btn>
                         <q-list>
                           <q-item hint="click to open note" v-for="note, noteIndex in document.notes" :key="note.id"
                             class="q-mb-lg">
@@ -302,6 +305,7 @@ const showTitleUpdateHoverIcon = ref(false);
 const showDescriptionUpdateHoverIcon = ref(false);
 
 const leftTab = ref("metadata");
+const documentDetailsActionsTab = ref(null);
 const screengtxs = computed(() => $q.screen.gt.xs);
 
 const document = ref({
@@ -544,6 +548,13 @@ function onSuccessConfirmationModal() {
   } else if (showConfirmDeleteDocumentDialog.value) {
     onDeleteDocument();
   }
+}
+
+function onShowAttachmentsPicker() {
+  tab.value = 'attachments';
+  nextTick(() => {
+    uploaderRef.value.pickFiles();
+  });
 }
 
 function onRemoveSelectedFile() {
