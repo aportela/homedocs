@@ -1,19 +1,18 @@
 <template>
   <div v-if="readOnly" class="cursor-pointer q-pa-sm q-mb-md relative-position white-space-pre-line"
     style="border: 1px solid rgba(0, 0, 0, 0.12); border-radius: 4px;" @mouseenter="showUpdateHoverIcon = true"
-    @mouseleave="showUpdateHoverIcon = false">
+    @mouseleave="showUpdateHoverIcon = false" @click="readOnly = !readOnly">
     <div style="font-size: 12px; color: rgba(0, 0, 0, 0.6); margin-left: 0px; margin-bottom: 4px;">
       {{ props.label }}</div>
     <q-icon name="expand" size="sm" class="absolute-top-right text-grey cursor-pointer q-mr-sm q-mt-sm"
-      v-show="showUpdateHoverIcon" @click="collapsedView = !collapsedView">
+      v-show="showUpdateHoverIcon" @click.stop="collapsedView = !collapsedView">
       <q-tooltip>{{ t("Click to expand/collapse") }}</q-tooltip>
     </q-icon>
     <q-icon name="edit" size="sm" class="absolute-top-right text-grey cursor-pointer q-mr-xl q-mt-sm"
-      v-show="showUpdateHoverIcon" @click="readOnly = !readOnly">
+      v-show="showUpdateHoverIcon">
       <q-tooltip>{{ t("Click to toggle edit mode") }}</q-tooltip>
     </q-icon>
-
-    <div :class="{ 'collapsed': collapsedView }" :style="`--max-lines: ${maxLines}`">
+    <div class="q-mt-sm" :class="{ 'collapsed': collapsedView }" :style="`--max-lines: ${maxLines}`">
       {{ model }}
     </div>
   </div>
