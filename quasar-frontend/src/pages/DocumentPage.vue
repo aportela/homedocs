@@ -8,11 +8,10 @@
               <h3 class="q-mt-sm q-mb-sm" v-if="!document.id">{{ t("New document") }}</h3>
               <h3 class="q-mt-sm q-mb-sm" v-else>{{ t("Document card") }}</h3>
               <q-space />
-              <q-btn icon="delete" flat square size="xl" :title="t('Remove document')" v-if="!isNew"
+              <q-btn icon="delete" flat square size="xl" :title="t('Remove document')" v-if="!isNewDocument"
                 @click="showConfirmDeleteDocumentDialog = true" />
               <q-btn icon="save" flat round size="xl" :title="t('Save document')" @click="onSubmitForm"
                 :disable="loading || saving || uploading || !document.title" />
-
             </div>
             <q-separator />
           </q-card-section>
@@ -47,14 +46,15 @@
                     </q-input>
                   </div>
                 </div>
-                <q-input dense class="q-mb-md" ref="titleRef" maxlength="128" outlined v-model.trim="document.title"
-                  type="text" name="title" :label="t('Document title')" :disable="loading || saving" :autofocus="true"
-                  clearable>
-                </q-input>
-                <q-input dense class="q-mb-md" outlined v-model.trim="document.description" type="textarea"
+                <EditableTextField ref="titleRef" dense class="q-mb-md" maxlength="128" outlined
+                  v-model.trim="document.title" type="textarea" autogrow name="title" :label="t('Document title')"
+                  :disable="loading || saving" :autofocus="true" clearable :start-mode-editable="isNewDocument"
+                  :max-lines="1">
+                </EditableTextField>
+                <EditableTextField dense class="q-mb-md" outlined v-model.trim="document.description" type="textarea"
                   maxlength="4096" autogrow name="description" :label="t('Document description')"
-                  :disable="loading || saving" clearable>
-                </q-input>
+                  :disable="loading || saving" clearable :start-mode-editable="isNewDocument" :max-lines="6">
+                </EditableTextField>
                 <TagSelector dense v-model="document.tags" :disabled="loading || saving" :link="true" class="q-pb-none">
                 </TagSelector>
               </div>
@@ -252,6 +252,8 @@ import { useInitialStateStore } from "stores/initialState";
 
 import { useFormatDates } from "src/composables/formatDate"
 
+import { default as EditableTextField } from "components/EditableTextField.vue"
+
 const tab = ref("notes");
 
 const $q = useQuasar();
@@ -273,11 +275,18 @@ const showConfirmDeleteDocumentDialog = ref(false);
 const showConfirmDeleteNoteDialog = ref(false);
 const showNoteDialog = ref(false);
 const titleRef = ref(null);
-const isNew = ref(false);
 const loading = ref(false);
 const saving = ref(false);
 const uploading = ref(false);
 const currentNote = ref({ id: null, body: null });
+
+
+const isNewDocument = computed(() => !route.params.id);
+
+const readOnlyTitle = ref(!isNewDocument.value);
+const readOnlyDescription = ref(!isNewDocument.value);
+const showTitleUpdateHoverIcon = ref(false);
+const showDescriptionUpdateHoverIcon = ref(false);
 
 const leftTab = ref("metadata");
 const screengtxs = computed(() => $q.screen.gt.xs);
@@ -311,15 +320,12 @@ router.beforeEach(async (to, from) => {
       tags: [],
       notes: []
     }
-    isNew.value = true;
   } else if (from.name == "newDocument" && to.name == "document" && to.params.id) {
     // existent document from creation
-    isNew.value = false;
     document.value.id = to.params.id
     onRefresh();
   } else if (from.name != "newDocument" && to.name == "document" && to.params.id) {
     // existent document
-    isNew.value = false;
     document.value.id = to.params.id
     onRefresh();
   }
@@ -387,11 +393,13 @@ function onRefresh() {
 
 function onSubmitForm() {
   loading.value = true;
-  if (!isNew.value) {
+  if (!isNewDocument.value) {
     api.document
       .update(document.value)
       .then((response) => {
         if (response.data.data) {
+          readOnlyTitle.value = true;
+          readOnlyDescription.value = true;
           document.value = response.data.data;
           document.value.creationDate = date.formatDate(document.value.createdOnTimestamp * 1000, 'YYYY/MM/DD');
           document.value.lastUpdate = date.formatDate(document.value.lastUpdateTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
@@ -701,11 +709,8 @@ function onDeleteDocument() {
 }
 
 document.value.id = route.params.id || null;
-if (document.value.id) {
-  isNew.value = false;
+if (!isNewDocument.value) {
   onRefresh();
-} else {
-  isNew.value = true;
 }
 
 </script>
