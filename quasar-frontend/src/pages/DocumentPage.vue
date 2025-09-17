@@ -18,46 +18,52 @@
           <form @submit.prevent.stop="onSubmitForm" autocorrect="off" autocapitalize="off" autocomplete="off"
             spellcheck="false">
             <q-card-section class="row">
-              <div class="col-12 col-lg-6 col-xl-6 scroll q-px-sm" style="min-height: 50vh; max-height: 70vh;">
-                <q-tabs v-model="leftTab" align="left" class="q-mb-sm">
-                  <q-tab name="metadata" icon="description" :label="t('Document metadata')"
-                    class="cursor-default full-width"></q-tab>
-                </q-tabs>
-                <div class="row q-col-gutter-sm">
-                  <div
-                    :class="{ 'col-6': document.createdOnTimestamp != document.lastUpdateTimestamp, 'col-12': document.createdOnTimestamp == document.lastUpdateTimestamp }">
-                    <q-input dense class="q-mb-md" outlined v-model="document.creationDate" :label="t('Created on')"
-                      readonly v-if="document.id">
-                      <template v-slot:append v-if="screengtxs">
-                        <span style="font-size: 14px;">
-                          {{ timeAgo(document.createdOnTimestamp * 1000) }}
-                        </span>
-                      </template>
-                    </q-input>
-                  </div>
-                  <div class="col-6" v-if="document.createdOnTimestamp != document.lastUpdateTimestamp">
-                    <q-input dense class="q-mb-md" outlined v-model="document.lastUpdate" :label="t('Last update')"
-                      readonly v-if="document.id">
-                      <template v-slot:append v-if="screengtxs">
-                        <span style="font-size: 14px;">
-                          {{ timeAgo(document.lastUpdateTimestamp * 1000) }}
-                        </span>
-                      </template>
-                    </q-input>
-                  </div>
-                </div>
-                <EditableTextField ref="titleRef" dense class="q-mb-md" maxlength="128" outlined
-                  v-model.trim="document.title" type="textarea" autogrow name="title" :label="t('Document title')"
-                  :disable="loading || saving" :autofocus="true" clearable :start-mode-editable="isNewDocument"
-                  :max-lines="1">
-                </EditableTextField>
-                <EditableTextField dense class="q-mb-md" outlined v-model.trim="document.description" type="textarea"
-                  maxlength="4096" autogrow name="description" :label="t('Document description')"
-                  :disable="loading || saving" clearable :start-mode-editable="isNewDocument" :max-lines="6">
-                </EditableTextField>
-                <TagSelector dense v-model="document.tags" :disabled="loading || saving"
-                  :start-mode-editable="isNewDocument" clearable>
-                </TagSelector>
+              <div class="col-12 col-lg-6 col-xl-6 q-px-sm">
+                <q-card class="q-ma-xs q-mt-sm">
+                  <q-card-section class="q-pa-none">
+                    <q-tabs v-model="leftTab">
+                      <q-tab name="metadata" icon="description" :label="t('Document metadata')"
+                        class="cursor-default full-width"></q-tab>
+                    </q-tabs>
+                  </q-card-section>
+                  <q-card-section class="q-pa-md">
+                    <div class="row q-col-gutter-x-sm">
+                      <div
+                        :class="{ 'col-6': document.createdOnTimestamp != document.lastUpdateTimestamp, 'col-12': document.createdOnTimestamp == document.lastUpdateTimestamp }">
+                        <q-input dense class="q-mb-md" outlined v-model="document.creationDate" :label="t('Created on')"
+                          readonly v-if="document.id">
+                          <template v-slot:append v-if="screengtxs">
+                            <span style="font-size: 14px;">
+                              {{ timeAgo(document.createdOnTimestamp * 1000) }}
+                            </span>
+                          </template>
+                        </q-input>
+                      </div>
+                      <div class="col-6" v-if="document.createdOnTimestamp != document.lastUpdateTimestamp">
+                        <q-input dense class="q-mb-md" outlined v-model="document.lastUpdate" :label="t('Last update')"
+                          readonly v-if="document.id">
+                          <template v-slot:append v-if="screengtxs">
+                            <span style="font-size: 14px;">
+                              {{ timeAgo(document.lastUpdateTimestamp * 1000) }}
+                            </span>
+                          </template>
+                        </q-input>
+                      </div>
+                    </div>
+                    <EditableTextField ref="titleRef" dense class="q-mb-md" maxlength="128" outlined
+                      v-model.trim="document.title" type="textarea" autogrow name="title" :label="t('Document title')"
+                      :disable="loading || saving" :autofocus="true" clearable :start-mode-editable="isNewDocument"
+                      :max-lines="1">
+                    </EditableTextField>
+                    <EditableTextField dense class="q-mb-md" outlined v-model.trim="document.description"
+                      type="textarea" maxlength="4096" autogrow name="description" :label="t('Document description')"
+                      :disable="loading || saving" clearable :start-mode-editable="isNewDocument" :max-lines="6">
+                    </EditableTextField>
+                    <TagSelector dense v-model="document.tags" :disabled="loading || saving"
+                      :start-mode-editable="isNewDocument" clearable>
+                    </TagSelector>
+                  </q-card-section>
+                </q-card>
               </div>
               <div class="col-12 col-lg-6 col-xl-6 scroll q-px-sm" style="min-height: 50vh; max-height: 70vh;">
                 <q-tabs v-model="tab" align="left" class="q-mb-sm">
