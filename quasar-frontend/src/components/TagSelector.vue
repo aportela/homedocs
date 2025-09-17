@@ -4,20 +4,24 @@
     @mouseleave="showUpdateHoverIcon = false" @click="readOnly = !readOnly">
     <div style="font-size: 12px; color: rgba(0, 0, 0, 0.6); margin-left: 0px; margin-bottom: 4px;">
       {{ t('Tags') }}</div>
-    <q-icon name="edit" size="sm" class="absolute-top-right text-grey cursor-pointer q-mr-sm q-mt-sm"
-      v-show="showUpdateHoverIcon">
+    <q-icon v-if="!denyChangeEditableMode" name="edit" size="sm"
+      class="absolute-top-right text-grey cursor-pointer q-mr-sm q-mt-sm" v-show="showUpdateHoverIcon">
       <q-tooltip>{{ t("Click to toggle edit mode") }}</q-tooltip>
     </q-icon>
     <q-chip :dense="dense" v-for="tag, index in currentTags" :key="tag" @remove="removeTagAtIndex(index)"
       color="primary" text-color="white" icon="tag" :label="tag">
+      <router-link :to="{ name: 'advancedSearchByTag', params: { tag: tag } }"
+        style="text-decoration: none; color: white;">
+        {{ tag }}
+      </router-link>
       <q-tooltip>{{ t("Browse by tag: ", { tag: tag }) }}</q-tooltip>
     </q-chip>
   </div>
   <q-select v-else ref="selectRef" :label="t('Tags')" v-model="currentTags" :dense="dense" :options-dense="dense"
     outlined use-input use-chips multiple hide-dropdown-icon :options="filteredTags" input-debounce="0"
-    new-value-mode="add-unique" :clearable="!readOnly" :disable="disabled || loading || loadingError" :loading="loading"
-    :error="loadingError" :errorMessage="t('Error loading available tags')" @filter="onFilterTags" @add="onAddTag">
-    <template v-slot:append>
+    new-value-mode="add-unique" :disable="disabled || loading || loadingError" :loading="loading" :error="loadingError"
+    :errorMessage="t('Error loading available tags')" @filter="onFilterTags" @add="onAddTag">
+    <template v-slot:append v-if="!denyChangeEditableMode">
       <q-icon name="done" class="cursor-pointer" @click="readOnly = !readOnly">
         <q-tooltip>{{ t("Click to toggle edit mode") }}</q-tooltip>
       </q-icon>
@@ -40,17 +44,17 @@ const { t } = useI18n();
 
 const props = defineProps({
   startModeEditable: Boolean,
+  denyChangeEditableMode: Boolean,
   modelValue: Array,
   disabled: Boolean,
-  dense: Boolean,
-  link: Boolean
+  dense: Boolean
 });
 
 const emit = defineEmits(['update:modelValue', 'error']);
 
 const showUpdateHoverIcon = ref(false);
 
-const readOnly = ref(true);
+const readOnly = ref(!props.startModeEditable);
 const selectRef = ref('');
 const loading = ref(false);
 const loadingError = ref(false);
