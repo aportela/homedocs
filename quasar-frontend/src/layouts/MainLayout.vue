@@ -10,7 +10,7 @@
         <q-btn type="button" no-caps no-wrap align="left" outline :label="searchButtonLabel" icon-right="search"
           class="full-width no-caps theme-default-q-btn" @click.prevent="visibleFastSearchModal = true">
           <q-tooltip anchor="bottom middle" self="top middle">{{ t("Click to open fast search")
-          }}</q-tooltip>
+            }}</q-tooltip>
         </q-btn>
         <!--
         <FastSearchSelector dense class="full-width"></FastSearchSelector>
@@ -19,6 +19,7 @@
           <DarkModeButton dense />
           <SwitchLanguageButton :short-labels="true" style="min-width: 9em" />
           <GitHubButton dense :href="GITHUB_PROJECT_URL" />
+          <NotificationsButton dense no-caps></NotificationsButton>
         </q-btn-group>
       </q-toolbar>
     </q-header>
@@ -43,6 +44,7 @@ import { default as DarkModeButton } from "components/DarkModeButton.vue"
 import { default as SwitchLanguageButton } from "components/SwitchLanguageButton.vue"
 import { default as GitHubButton } from "components/GitHubButton.vue"
 import { GITHUB_PROJECT_URL } from "src/constants"
+import { default as NotificationsButton } from "components/NotificationsButton.vue"
 
 const $q = useQuasar();
 const { t } = useI18n();
