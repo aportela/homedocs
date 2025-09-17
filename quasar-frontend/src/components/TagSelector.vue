@@ -1,5 +1,5 @@
 <template>
-  <div v-if="readOnly" class="cursor-pointer q-pa-sm q-mb-md relative-position white-space-pre-line"
+  <div v-if="readOnly" class="cursor-pointer q-pa-sm relative-position white-space-pre-line"
     style="border: 1px solid rgba(0, 0, 0, 0.12); border-radius: 4px;" @mouseenter="showUpdateHoverIcon = true"
     @mouseleave="showUpdateHoverIcon = false" @click="onToggleReadOnly">
     <div style="font-size: 12px; color: rgba(0, 0, 0, 0.6); margin-left: 0px; margin-bottom: 4px;">
