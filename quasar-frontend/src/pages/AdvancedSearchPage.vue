@@ -161,7 +161,8 @@
 
 
                 <TagSelector v-model="advancedSearchData.filter.tags"
-                  :disabled="searching || advancedSearchData.denyChangeCreationDateFilters" dense>
+                  :disabled="searching || advancedSearchData.denyChangeCreationDateFilters" dense
+                  :start-mode-editable="true" :deny-change-editable-mode="true" clearable>
                 </TagSelector>
                 <q-btn color="dark" size="md" :label="$t('Search')" no-caps class="full-width" icon="search"
                   :disable="searching" :loading="searching" type="submit">
