@@ -1,16 +1,30 @@
 <template>
-  <q-select ref="selectRef" :label="t('Tags')" v-model="currentTags" :dense="dense" :options-dense="dense" outlined
-    use-input use-chips multiple hide-dropdown-icon :options="filteredTags" input-debounce="0"
-    new-value-mode="add-unique" clearable :disable="disabled || loading || loadingError" :loading="loading"
+  <div v-if="readOnly" class="cursor-pointer q-pa-sm q-mb-md relative-position white-space-pre-line"
+    style="border: 1px solid rgba(0, 0, 0, 0.12); border-radius: 4px;" @mouseenter="showUpdateHoverIcon = true"
+    @mouseleave="showUpdateHoverIcon = false" @click="readOnly = !readOnly">
+    <div style="font-size: 12px; color: rgba(0, 0, 0, 0.6); margin-left: 0px; margin-bottom: 4px;">
+      {{ t('Tags') }}</div>
+    <q-icon name="edit" size="sm" class="absolute-top-right text-grey cursor-pointer q-mr-sm q-mt-sm"
+      v-show="showUpdateHoverIcon">
+      <q-tooltip>{{ t("Click to toggle edit mode") }}</q-tooltip>
+    </q-icon>
+    <q-chip :dense="dense" v-for="tag, index in currentTags" :key="tag" @remove="removeTagAtIndex(index)"
+      color="primary" text-color="white" icon="tag" :label="tag">
+      <q-tooltip>{{ t("Browse by tag: ", { tag: tag }) }}</q-tooltip>
+    </q-chip>
+  </div>
+  <q-select v-else ref="selectRef" :label="t('Tags')" v-model="currentTags" :dense="dense" :options-dense="dense"
+    outlined use-input use-chips multiple hide-dropdown-icon :options="filteredTags" input-debounce="0"
+    new-value-mode="add-unique" :clearable="!readOnly" :disable="disabled || loading || loadingError" :loading="loading"
     :error="loadingError" :errorMessage="t('Error loading available tags')" @filter="onFilterTags" @add="onAddTag">
+    <template v-slot:append>
+      <q-icon name="done" class="cursor-pointer" @click="readOnly = !readOnly">
+        <q-tooltip>{{ t("Click to toggle edit mode") }}</q-tooltip>
+      </q-icon>
+    </template>
     <template v-slot:selected>
-      <q-chip removable :dense="dense" v-for="tag, index in currentTags" :key="tag" @remove="removeTagAtIndex(index)"
-        color="dark" text-color="white" icon="label_important">
-        <router-link v-if="props.link" :to="{ name: 'advancedSearchByTag', params: { tag: tag } }"
-          style="text-decoration: none; color: white;">
-          {{ tag }}
-        </router-link>
-        <span v-else>{{ tag }}</span>
+      <q-chip :removable="!readOnly" :dense="dense" v-for="tag, index in currentTags" :key="tag"
+        @remove="removeTagAtIndex(index)" color="primary" text-color="white" icon="tag" :label="tag">
       </q-chip>
     </template>
   </q-select>
@@ -25,6 +39,7 @@ import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 
 const props = defineProps({
+  startModeEditable: Boolean,
   modelValue: Array,
   disabled: Boolean,
   dense: Boolean,
@@ -33,6 +48,9 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue', 'error']);
 
+const showUpdateHoverIcon = ref(false);
+
+const readOnly = ref(true);
 const selectRef = ref('');
 const loading = ref(false);
 const loadingError = ref(false);
