@@ -65,7 +65,7 @@
                     <q-item-label>
                       <router-link :to="{ name: 'document', params: { id: recentDocument.id } }"
                         class="text-decoration-hover text-color-primary"><span class="text-weight-bold">{{ t("Title")
-                        }}:</span> {{
+                          }}:</span> {{
                             recentDocument.title
                           }}
                       </router-link>
@@ -132,7 +132,7 @@ function refresh() {
   api.document.searchRecent(16)
     .then((success) => {
       recentDocuments.value = success.data.recentDocuments.map((document) => {
-        document.timestamp = document.lastUpdateTimestamp * 1000;
+        document.timestamp = document.lastHistoryOperationTimestamp * 1000;
         return (document);
       });
       loading.value = false;
