@@ -259,6 +259,7 @@ const searching = ref(false);
 const searchLaunched = ref(false);
 const expandedFilter = ref(true);
 const expandedResults = ref(false);
+// TODO: not working on real-time i18n changes
 const dateFilterOptions = ref([
   { label: t('Any date'), value: 0 },
   { label: t('Today'), value: 1 },
