@@ -1,7 +1,7 @@
 <template>
   <div v-if="readOnly" class="cursor-pointer q-pa-sm q-mb-md relative-position white-space-pre-line"
     style="border: 1px solid rgba(0, 0, 0, 0.12); border-radius: 4px;" @mouseenter="showUpdateHoverIcon = true"
-    @mouseleave="showUpdateHoverIcon = false" @click="readOnly = !readOnly">
+    @mouseleave="showUpdateHoverIcon = false" @click="onToggleReadOnly">
     <div style="font-size: 12px; color: rgba(0, 0, 0, 0.6); margin-left: 0px; margin-bottom: 4px;">
       {{ t('Tags') }}</div>
     <q-icon v-if="!denyChangeEditableMode" name="edit" size="sm"
@@ -22,7 +22,7 @@
     new-value-mode="add-unique" :disable="disabled || loading || loadingError" :loading="loading" :error="loadingError"
     :errorMessage="t('Error loading available tags')" @filter="onFilterTags" @add="onAddTag">
     <template v-slot:append v-if="!denyChangeEditableMode">
-      <q-icon name="done" class="cursor-pointer" @click="readOnly = !readOnly">
+      <q-icon name="done" class="cursor-pointer" @click="onToggleReadOnly">
         <q-tooltip>{{ t("Click to toggle edit mode") }}</q-tooltip>
       </q-icon>
     </template>
@@ -36,7 +36,7 @@
 
 <script setup>
 
-import { ref, watch, computed, onMounted } from "vue";
+import { ref, watch, computed, onMounted, nextTick } from "vue";
 import { api } from "boot/axios";
 import { useI18n } from "vue-i18n";
 
@@ -106,6 +106,23 @@ function onAddTag(tag) {
 function removeTagAtIndex(index) {
   currentTags.value.splice(index, 1);
 }
+
+async function focus() {
+  await nextTick()
+  selectRef.value?.focus()
+}
+
+defineExpose({
+  focus
+});
+
+function onToggleReadOnly() {
+  readOnly.value = !readOnly.value;
+  if (!readOnly.value) {
+    focus();
+  }
+}
+
 
 onMounted(() => {
   loadAvailableTags();
