@@ -55,8 +55,8 @@
                   maxlength="4096" autogrow name="description" :label="t('Document description')"
                   :disable="loading || saving" clearable :start-mode-editable="isNewDocument" :max-lines="6">
                 </EditableTextField>
-                <TagSelector dense v-model="document.tags" :disabled="loading || saving" :link="true"
-                  :start-mode-editable="isNewDocument">
+                <TagSelector dense v-model="document.tags" :disabled="loading || saving"
+                  :start-mode-editable="isNewDocument" clearable>
                 </TagSelector>
               </div>
               <div class="col-12 col-lg-6 col-xl-6 scroll q-px-sm" style="min-height: 50vh; max-height: 70vh;">
