@@ -1,5 +1,5 @@
 <template>
-  <q-card>
+  <q-card class="full-width">
     <q-item class="theme-default-q-card-section-header">
       <q-item-section avatar>
         <q-icon :name="icon"></q-icon>
