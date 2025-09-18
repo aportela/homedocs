@@ -14,8 +14,8 @@
           :errorMessage="validator.message ? t(validator.message) : ''" :disable="loading" :autofocus="true"
           :rules="formUtils.requiredFieldRules" lazy-rules>
         </CustomInputPassword>
-        <q-btn color="primary" size="md" :label="$t('Update profile')" no-caps class="full-width" icon="account_circle"
-          :disable="loading || !password" :loading="loading" type="submit">
+        <q-btn color="primary" size="md" :label="$t('Update profile')" no-caps class="full-width q-my-xs"
+          icon=" account_circle" :disable="loading || !password" :loading="loading" type="submit">
           <template v-slot:loading>
             <q-spinner-hourglass class="on-left" />
             {{ t('Update profile') }}
