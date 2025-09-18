@@ -12,7 +12,7 @@
     <div class="row q-col-gutter-sm">
       <div class="col-lg-4 col-xl-4 col-12">
         <q-card>
-          <q-item>
+          <q-item class="theme-default-q-card-section-header">
             <q-item-section avatar>
               <q-icon name="contact_mail"></q-icon>
             </q-item-section>
