@@ -10,7 +10,7 @@
             <q-tooltip>{{ t("Click to refresh data") }}</q-tooltip>
           </q-icon>
         </q-item-section>
-        <q-item-section class="">
+        <q-item-section>
           <q-item-label>{{ t("Tag cloud") }}
             <q-chip square size="sm" color="primary" text-color="white">{{ t("Total tags", {
               count:
