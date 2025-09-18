@@ -86,17 +86,17 @@ const onGetProfile = () => {
   email.value = null;
   password.value = null;
   api.user.getProfile()
-    .then((success) => {
+    .then((successResponse) => {
       loading.value = false;
-      email.value = success.data.data.email;
+      email.value = successResponse.data.data.email;
       nextTick(() => {
         passwordRef.value?.focus();
       });
     })
-    .catch((error) => {
+    .catch((errorResponse) => {
       loading.value = false;
       error.value = true;
-      apiError.value = error.customAPIErrorDetails;
+      apiError.value = errorResponse.customAPIErrorDetails;
       nextTick(() => {
         passwordRef.value?.focus();
       });
