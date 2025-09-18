@@ -1,6 +1,6 @@
 <template>
   <q-btn v-bind="attrs" :icon="hasNotifications ? 'notifications_active' : 'notifications'"
-    :disabled="!hasNotifications" :class="{ shake: hasNotifications }">
+    :disabled="!hasNotifications" :class="{ 'shake-animation': hasNotifications }">
     <q-tooltip v-if="hasNotifications">{{ tooltip }}</q-tooltip>
     <q-menu>
       <div class="no-wrap q-pa-md">
@@ -55,7 +55,6 @@ notifications.on("add", message => {
   );
 });
 
-
 onMounted(() => {
   nextTick(() => {
     notifications.emit("add", { body: "Session logged", caption: null, type: "positive" });
@@ -67,8 +66,8 @@ onMounted(() => {
 
 </script>
 
-<style>
-@keyframes shake {
+<style scoped>
+@keyframes shakeKeyFrames {
   0% {
     transform: rotate(0deg);
   }
@@ -90,8 +89,8 @@ onMounted(() => {
   }
 }
 
-.shake {
-  animation: shake 0.5s ease-in-out;
+.shake-animation {
+  animation: shakeKeyFrames 0.5s ease-in-out;
   animation-iteration-count: 1;
 }
 </style>
