@@ -152,7 +152,6 @@ class Document
         } else {
             $params[] = (new \aportela\DatabaseWrapper\Param\NullParam(":description"));
         }
-        $dbh->beginTransaction();
         if ($dbh->exec(
             "
                     INSERT INTO DOCUMENT
@@ -223,9 +222,6 @@ class Document
                     $dbh->exec($notesQuery, $params);
                 }
             }
-            $dbh->commit();
-        } else {
-            $dbh->rollBack();
         }
     }
 
@@ -241,7 +237,6 @@ class Document
         } else {
             $params[] = new \aportela\DatabaseWrapper\Param\NullParam(":description");
         }
-        $dbh->beginTransaction();
         if ($dbh->exec(
             "
                    UPDATE DOCUMENT SET
@@ -414,9 +409,6 @@ class Document
                     }
                 }
             }
-            $dbh->commit();
-        } else {
-            $dbh->rollBack();
         }
     }
 
@@ -424,7 +416,6 @@ class Document
     {
         if (!empty($this->id) && mb_strlen($this->id) == 36) {
             $originalFiles = $this->getFiles($dbh);
-            $dbh->beginTransaction();
             foreach ($originalFiles as $file) {
                 $file = new \HomeDocs\File($this->rootStoragePath, $file->id);
                 $file->remove($dbh);
@@ -455,7 +446,6 @@ class Document
                     ",
                 $params
             );
-            $dbh->commit();
         } else {
             throw new \HomeDocs\Exception\InvalidParamsException("id");
         }
