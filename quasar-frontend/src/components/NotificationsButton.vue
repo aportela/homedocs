@@ -1,20 +1,22 @@
 <template>
   <q-btn v-bind="attrs" :icon="hasNotifications ? 'notifications_active' : 'notifications'"
-    :disabled="notifications.length < 1" :class="{ shake: hasNotifications }">
+    :disabled="!hasNotifications" :class="{ shake: hasNotifications }">
     <q-tooltip v-if="hasNotifications">{{ tooltip }}</q-tooltip>
     <q-menu>
       <div class="no-wrap q-pa-md">
         <div class="text-h6 q-mb-md">Recent notifications</div>
         <q-separator />
-        <p v-for="notification in notifications" :key="notification.timestamp" class="text-subtitle2 q-mt-md q-mb-xs">
+        <p v-for="notification in notificationItems" :key="notification.timestamp"
+          class="text-subtitle2 q-mt-md q-mb-xs">
           <q-icon name="check" color="green" size="sm" v-if="notification.success"></q-icon>
           <q-icon name="error" color="red" size="sm" v-else></q-icon>
           {{ notification.date }} - {{ notification.body }}
         </p>
         <q-separator />
-        <p>
+        <p class="text-center q-mt-sm">
           <q-btn color="primary" label="Close" size="sm" v-close-popup />
-          <q-btn color="primary" label="Clear" size="sm" class="q-ml-sm" @click="notifications = []" v-close-popup />
+          <q-btn color="primary" label="Clear" size="sm" class="q-ml-sm" @click="notificationItems = []"
+            v-close-popup />
         </p>
       </div>
     </q-menu>
@@ -24,7 +26,6 @@
 <script setup>
 
 import { useAttrs, ref, onMounted, nextTick, computed } from "vue";
-import { date } from "quasar";
 
 import { useI18n } from "vue-i18n";
 
@@ -34,16 +35,15 @@ const attrs = useAttrs();
 
 const { t } = useI18n();
 
-const notifications2 = useNotifications();
-
+const notifications = useNotifications();
 
 const tooltip = computed(() => t("Show recent notifications"));
 
-const notifications = ref([]);
-const hasNotifications = computed(() => notifications.value.length > 0);
+const notificationItems = ref([]);
+const hasNotifications = computed(() => notificationItems.value.length > 0);
 
-notifications2.on("add", message => {
-  notifications.value.unshift(
+notifications.on("add", message => {
+  notificationItems.value.unshift(
     {
       id: message.id,
       timestamp: message.timestamp,
@@ -58,10 +58,9 @@ notifications2.on("add", message => {
 
 onMounted(() => {
   nextTick(() => {
-    const notifications2 = useNotifications();
-    notifications2.emit("add", { body: "Session logged", caption: null, type: "positive" });
-    notifications2.emit("add", { body: "Document created", caption: null, type: "positive" });
-    notifications2.emit("add", { body: "Document update failed", caption: null, type: "negative" });
+    notifications.emit("add", { body: "Session logged", caption: null, type: "positive" });
+    notifications.emit("add", { body: "Document created", caption: null, type: "positive" });
+    notifications.emit("add", { body: "Document update failed", caption: null, type: "negative" });
   });
 
 });
