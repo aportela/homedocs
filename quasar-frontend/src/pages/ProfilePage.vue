@@ -6,11 +6,11 @@
         <h2 class="text-h2 text-white text-weight-bolder q-my-none">{{ t("My profile") }}</h2>
       </div>
       <div class="text-center">
-        <q-avatar icon="account_circle" size="200px" class="bg-grey-4 q-mx-auto my-profile-header-center-icon" />
+        <q-avatar icon="account_circle" size="160px" class="bg-grey-4 q-mx-auto my-profile-header-center-icon" />
       </div>
     </div>
     <div class="row q-col-gutter-sm">
-      <div class="col-lg-4 col-xl-4 col-12">
+      <div class="col-lg-4 col-xl-4 col-12 flex">
         <CustomWidget title="Personal information" caption="Update your data" icon="contact_mail">
           <template v-slot:content>
             <form @submit.prevent.stop="onValidateForm" autocorrect="off" autocapitalize="off" autocomplete="off"
@@ -51,7 +51,7 @@
           </template>
         </CustomWidget>
       </div>
-      <div class="col-lg-8 col-xl-8 col-12">
+      <div class="col-lg-8 col-xl-8 col-12 flex">
         <CustomWidget title="Your system stats" caption="Small resume of your platform usage" icon="analytics">
           <template v-slot:content>
             <SystemStats></SystemStats>
@@ -197,13 +197,13 @@ function onSubmitForm() {
 
 <style scoped>
 .my-profile-header-container {
-  height: 440px;
+  height: 350px;
   margin-bottom: 1em;
 }
 
 .my-profile-header-background-image-cover {
   width: 100%;
-  height: 300px;
+  height: 260px;
   background-image: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.8) 100%), url('https://images.pexels.com/photos/3184460/pexels-photo-3184460.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
   background-size: cover;
   background-position: bottom;
@@ -221,6 +221,6 @@ function onSubmitForm() {
 
 .my-profile-header-center-icon {
   position: relative;
-  top: -100px;
+  top: -80px;
 }
 </style>
