@@ -196,8 +196,16 @@ return function (App $app) {
                     $notes,
                 );
                 $document->setRootStoragePath($this->get('settings')['paths']['storage']);
-                $document->add($this->get(\aportela\DatabaseWrapper\DB::class));
-                $document->get($this->get(\aportela\DatabaseWrapper\DB::class));
+                $dbh = $this->get(\aportela\DatabaseWrapper\DB::class);
+                $dbh->beginTransaction();
+                try {
+                    $document->add($dbh);
+                    $dbh->commit();
+                } catch (\aportela\DatabaseWrapper\Exception\DBException $e) {
+                    $dbh->rollBack();
+                    throw $e;
+                }
+                $document->get($dbh);
                 $payload = json_encode(
                     [
                         'initialState' => \HomeDocs\Utils::getInitialState($this),
@@ -210,6 +218,12 @@ return function (App $app) {
 
             $group->put('/document/{id}', function (Request $request, Response $response, array $args) {
                 $params = $request->getParsedBody();
+                $dbh = $this->get(\aportela\DatabaseWrapper\DB::class);
+                $document = new \HomeDocs\Document(
+                    $args['id']
+                );
+                // test existence && check permissions
+                $document->get($dbh);
                 $documentFiles = $params["files"] ?? [];
                 $rootStoragePath = $this->get('settings')['paths']['storage'];
                 $files = array();
@@ -235,13 +249,7 @@ return function (App $app) {
                         );
                     }
                 }
-                $dbh = $this->get(\aportela\DatabaseWrapper\DB::class);
-                $document = new \HomeDocs\Document(
-                    $args['id']
-                );
-                $document->setRootStoragePath($this->get('settings')['paths']['storage']);
-                // test existence && check permissions
-                $document->get($dbh);
+
                 $document = new \HomeDocs\Document(
                     $args['id'],
                     $params["title"] ?? "",
@@ -250,8 +258,16 @@ return function (App $app) {
                     $files,
                     $notes
                 );
+                // TODO: required ?
                 $document->setRootStoragePath($this->get('settings')['paths']['storage']);
-                $document->update($dbh);
+                try {
+                    $dbh->beginTransaction();
+                    $document->update($dbh);
+                    $dbh->commit();
+                } catch (\aportela\DatabaseWrapper\Exception\DBException $e) {
+                    $dbh->rollBack();
+                    throw $e;
+                }
                 $document->get($this->get(\aportela\DatabaseWrapper\DB::class));
                 $payload = json_encode(
                     [
@@ -271,7 +287,14 @@ return function (App $app) {
                 $dbh = $this->get(\aportela\DatabaseWrapper\DB::class);
                 // test existence && check permissions
                 $document->get($dbh);
-                $document->delete($dbh);
+                try {
+                    $dbh->beginTransaction();
+                    $document->delete($dbh);
+                    $dbh->commit();
+                } catch (\aportela\DatabaseWrapper\Exception\DBException $e) {
+                    $dbh->rollBack();
+                    throw $e;
+                }
                 $payload = json_encode(
                     [
                         'initialState' => \HomeDocs\Utils::getInitialState($this)
