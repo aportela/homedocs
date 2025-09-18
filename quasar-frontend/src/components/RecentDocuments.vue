@@ -52,7 +52,7 @@
                 <q-item-label>
                   <router-link :to="{ name: 'document', params: { id: recentDocument.id } }"
                     class="text-decoration-hover text-color-primary"><span class="text-weight-bold">{{ t("Title")
-                      }}:</span> {{
+                    }}:</span> {{
                         recentDocument.title
                       }}
                   </router-link>
@@ -89,27 +89,34 @@
         </q-banner>
       </div>
       <div v-else>
-        <CustomBanner class="q-ma-lg" text="Error loading data" error></CustomBanner>
+        <CustomBanner class="q-ma-lg" text="Error loading data" error>
+          <template v-slot:details v-if="initialState.isDevEnvironment && apiError">
+            <APIErrorDetails class="q-mt-md" :apiError="apiError"></APIErrorDetails>
+          </template>
+        </CustomBanner>
       </div>
     </template>
   </CustomExpansionWidget>
-
 </template>
 
 <script setup>
 
 import { ref, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { useQuasar } from "quasar";
+//import { useQuasar } from "quasar";
 import { api } from "boot/axios";
 import { useFormatDates } from "src/composables/formatDate"
+import { useInitialStateStore } from "src/stores/initialState";
 
 import { default as CustomExpansionWidget } from "components/CustomExpansionWidget.vue";
 import { default as CustomBanner } from "components/CustomBanner.vue";
+import { default as APIErrorDetails } from "components/APIErrorDetails.vue";
 
 const { t } = useI18n();
 const { timeAgo } = useFormatDates();
-const $q = useQuasar();
+
+const initialState = useInitialStateStore();
+//const $q = useQuasar();
 const loadingError = ref(false);
 const loading = ref(false);
 
@@ -119,11 +126,13 @@ const props = defineProps({
 
 const recentDocuments = ref([]);
 const hasRecentDocuments = computed(() => recentDocuments.value.length > 0);
+const apiError = ref(null);
 
 function refresh() {
   recentDocuments.value = [];
   loading.value = true;
   loadingError.value = false;
+  apiError.value = null;
   api.document.searchRecent(16)
     .then((success) => {
       recentDocuments.value = success.data.recentDocuments.map((document) => {
@@ -135,6 +144,9 @@ function refresh() {
     .catch((error) => {
       loading.value = false;
       loadingError.value = true;
+      apiError.value = error.customAPIErrorDetails;
+      // TODO: REMOVE
+      /*
       const status = error.response?.status || 'N/A';
       const statusText = error.response?.statusText || 'Unknown error';
       $q.notify({
@@ -142,6 +154,7 @@ function refresh() {
         message: t("API Error: fatal error"),
         caption: t("API Error: fatal error details", { status, statusText })
       });
+      */
     });
 }
 

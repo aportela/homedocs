@@ -53,6 +53,16 @@ axios.interceptors.response.use(
           statusText: "undefined",
         };
       }
+      error.customAPIErrorDetails = {
+        method: error.config?.method || 'N/A',
+        url: error.request?.responseURL || 'N/A',
+        httpCode: error.response?.status || 'N/A',
+        httpStatus: error.response?.statusText || 'Unknown error',
+        params: {
+          query: error.config.params || null,
+          data: error.config.data || null,
+        }
+      }
       return Promise.reject(error);
     }
   },

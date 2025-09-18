@@ -33,7 +33,11 @@
         </q-banner>
       </div>
       <div v-else>
-        <CustomBanner class="q-ma-lg" text="Error loading data" error></CustomBanner>
+        <CustomBanner class="q-ma-lg" text="Error loading data" error>
+          <template v-slot:details v-if="initialState.isDevEnvironment && apiError">
+            <APIErrorDetails class="q-mt-md" :apiError="apiError"></APIErrorDetails>
+          </template>
+        </CustomBanner>
       </div>
     </template>
   </CustomExpansionWidget>
@@ -43,14 +47,17 @@
 
 import { ref, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { useQuasar } from "quasar"
+//import { useQuasar } from "quasar"
 import { api } from "boot/axios";
+import { useInitialStateStore } from "src/stores/initialState";
 
 import { default as CustomExpansionWidget } from "components/CustomExpansionWidget.vue";
 import { default as CustomBanner } from "components/CustomBanner.vue";
+import { default as APIErrorDetails } from "components/APIErrorDetails.vue";
 
 const { t } = useI18n();
-const $q = useQuasar();
+const initialState = useInitialStateStore();
+//const $q = useQuasar();
 const loadingError = ref(false);
 const loading = ref(false);
 
@@ -60,6 +67,7 @@ const props = defineProps({
 
 const tags = ref([]);
 const hasTags = computed(() => tags.value.length > 0);
+const apiError = ref(null);
 
 function refresh() {
   tags.value = [];
@@ -73,6 +81,8 @@ function refresh() {
     .catch((error) => {
       loading.value = false;
       loadingError.value = true;
+      apiError.value = error.customAPIErrorDetails;
+      /*
       const status = error.response?.status || 'N/A';
       const statusText = error.response?.statusText || 'Unknown error';
       $q.notify({
@@ -80,6 +90,7 @@ function refresh() {
         message: t("API Error: fatal error"),
         caption: t("API Error: fatal error details", { status, statusText })
       });
+      */
     });
 }
 
