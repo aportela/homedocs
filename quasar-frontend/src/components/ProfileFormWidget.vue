@@ -103,13 +103,14 @@ const onGetProfile = () => {
     });
 }
 
-
 const onValidateForm = () => {
   onResetForm();
   passwordRef.value.validate();
   nextTick(() => {
     if (!(passwordRef.value.hasError)) {
       onSubmitForm();
+    } else {
+      passwordRef.value?.focus();
     }
   });
 }
@@ -117,22 +118,23 @@ const onValidateForm = () => {
 const onSubmitForm = () => {
   loading.value = true;
   error.value = false;
+  apiError.value = null;
   profileUpdatedSuccessfully.value = false;
   api.user
     .updateProfile(email.value, password.value)
-    .then((success) => {
+    .then((successResponse) => {
       loading.value = false;
-      email.value = success.data.data.email;
-      password.value = null;
       profileUpdatedSuccessfully.value = true;
+      email.value = successResponse.data.data.email;
+      password.value = null;
       nextTick(() => {
         passwordRef.value?.focus();
       });
     })
-    .catch((error) => {
+    .catch((errorResponse) => {
       loading.value = false;
       error.value = true;
-      apiError.value = error.customAPIErrorDetails;
+      apiError.value = errorResponse.customAPIErrorDetails;
       nextTick(() => {
         passwordRef.value?.focus();
       });
