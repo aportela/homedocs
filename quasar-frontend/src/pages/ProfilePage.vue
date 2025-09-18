@@ -1,16 +1,15 @@
 <template>
   <q-page>
-    <div class="profile-background-image-cover flex flex-center q-mx-auto q-mt-lg" style="width: 90%; height: 300px;">
-      <q-avatar icon="edit" size="48px" class="bg-dark text-white"
-        style="position: absolute; top: 16px; right: 16px;" />
-      <h2 class="text-h2 text-white text-weight-bolder q-my-none">My profile</h2>
+    <div class="my-profile-header-container">
+      <div class="my-profile-header-background-image-cover flex flex-center q-mx-auto">
+        <q-avatar icon="edit" size="48px" class="bg-dark text-white my-profile-header-top-right-icon" />
+        <h2 class="text-h2 text-white text-weight-bolder q-my-none">{{ t("My profile") }}</h2>
+      </div>
+      <div class="text-center">
+        <q-avatar icon="account_circle" size="200px" class="bg-grey-4 q-mx-auto my-profile-header-center-icon" />
+      </div>
     </div>
-    <div class="text-center">
-      <q-avatar icon="account_circle" size="200px" class="bg-grey-4 q-mx-auto"
-        style="position: relative; top: -100px;" />
-    </div>
-
-    <div class="row" style="margin-top: -50px;">
+    <div class="row">
       <div class="col-lg-4 col-xl-4 col-12">
         <q-expansion-item expand-separator header-class="bg-grey-4" icon="contact_mail"
           :label="t('Personal information')" cation="update profile" :model-value="profileFormExpanded"
@@ -60,7 +59,6 @@
         <SystemStats></SystemStats>
       </div>
     </div>
-
   </q-page>
 </template>
 
@@ -181,12 +179,31 @@ function onSubmitForm() {
 </script>
 
 <style scoped>
-.profile-background-image-cover {
+.my-profile-header-container {
+  height: 440px;
+  margin-bottom: 1em;
+}
+
+.my-profile-header-background-image-cover {
+  width: 100%;
+  height: 300px;
   background-image: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.8) 100%), url('https://images.pexels.com/photos/3184460/pexels-photo-3184460.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
   background-size: cover;
   background-position: bottom;
   filter: grayscale(100%);
   border-radius: 16px;
 
+}
+
+.my-profile-header-top-right-icon {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  color: blue;
+}
+
+.my-profile-header-center-icon {
+  position: relative;
+  top: -100px;
 }
 </style>
