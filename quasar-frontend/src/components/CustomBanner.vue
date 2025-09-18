@@ -1,5 +1,5 @@
 <template>
-  <q-banner dense rounded class="theme-default-q-banner"
+  <q-banner dense rounded class="q-my-md theme-default-q-banner"
     :class="{ 'theme-default-q-banner-success': success, 'theme-default-q-banner-error': error }">
     <template v-slot:avatar v-if="success || error">
       <q-icon v-if="success" name="check" class="text-green" />
