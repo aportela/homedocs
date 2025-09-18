@@ -11,13 +11,20 @@
     </div>
     <div class="row">
       <div class="col-lg-4 col-xl-4 col-12">
-        <q-expansion-item expand-separator header-class="bg-grey-4" icon="contact_mail"
-          :label="t('Personal information')" cation="update profile" :model-value="profileFormExpanded"
-          class="bg-grey-2 rounded-borders">
-          <q-card class="q-mx-auto">
+        <q-card>
+          <q-item>
+            <q-item-section avatar>
+              <q-icon name="contact_mail"></q-icon>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ t('Personal information') }}</q-item-label>
+              <q-item-label caption>{{ t("Update your data") }}</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-separator />
+          <q-card-section>
             <form @submit.prevent.stop="onValidateForm" autocorrect="off" autocapitalize="off" autocomplete="off"
               spellcheck="false">
-
               <q-card-section>
                 <q-input dense outlined ref="emailRef" v-model="email" type="email" name="email" :label="t('Email')"
                   readonly>
@@ -51,9 +58,12 @@
                   </template>
                 </q-btn>
               </q-card-section>
+              <CustomBanner v-if="bannerType" :text="bannerText" :success="bannerType == 'success'"
+                :error="bannerType == 'error'">
+              </CustomBanner>
             </form>
-          </q-card>
-        </q-expansion-item>
+          </q-card-section>
+        </q-card>
       </div>
       <div class="col-lg-8 col-xl-8 col-12">
         <SystemStats></SystemStats>
@@ -70,6 +80,7 @@ import { useInitialStateStore } from "stores/initialState";
 
 import { api } from 'boot/axios'
 
+import { default as CustomBanner } from "src/components/CustomBanner.vue";
 import { default as SystemStats } from "src/components/SystemStats.vue";
 
 const { t } = useI18n();
@@ -79,14 +90,26 @@ const initialState = useInitialStateStore();
 
 const loading = ref(false);
 
-const profileFormExpanded = ref(true);
-
 const email = computed(() => initialState.session.email);
 
 const password = ref(null);
 const emailRef = ref(null);
 const passwordRef = ref(null);
 const visiblePassword = ref(false);
+
+
+const bannerType = ref(null);
+const bannerText = ref(null);
+
+function showSuccessBanner(text) {
+  bannerType.value = "success";
+  bannerText.value = text;
+}
+
+function showErrorBanner(text) {
+  bannerType.value = "error";
+  bannerText.value = text;
+}
 
 const remoteValidation = ref({
   password: {
@@ -121,6 +144,7 @@ function onSubmitForm() {
         type: "positive",
         message: t("Profile has been successfully updated"),
       });
+      showSuccessBanner("Profile has been successfully updated");
 
       loading.value = false;
       nextTick(() => {
@@ -171,6 +195,7 @@ function onSubmitForm() {
             message: t("API Error: fatal error"),
             caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
           });
+          showErrorBanner("Error while updating profile");
           break;
       }
     });
