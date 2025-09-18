@@ -8,7 +8,7 @@
           :icon="miniSidebarCurrentMode ? 'arrow_forward_ios' : 'arrow_back_ios_new'" class="q-mr-md"
           v-show="visibleSidebar" />
         <q-btn type="button" no-caps no-wrap align="left" outline :label="searchButtonLabel" icon-right="search"
-          class="full-width no-caps theme-default-q-btn" @click.prevent="visibleFastSearchModal = true">
+          class="full-width no-caps theme-default-q-btn" @click.prevent="isFastSearchModalVisible = true">
           <q-tooltip anchor="bottom middle" self="top middle">{{ t("Click to open fast search")
             }}</q-tooltip>
         </q-btn>
@@ -19,12 +19,14 @@
           <DarkModeButton dense />
           <SwitchLanguageButton :short-labels="true" style="min-width: 9em" />
           <GitHubButton dense :href="GITHUB_PROJECT_URL" />
+          <!--
           <NotificationsButton dense no-caps></NotificationsButton>
+          -->
         </q-btn-group>
       </q-toolbar>
     </q-header>
     <SidebarDrawer v-model="visibleSidebar" :mini="miniSidebarCurrentMode"></SidebarDrawer>
-    <FastSearchModal v-model="visibleFastSearchModal" @close="visibleFastSearchModal = false"></FastSearchModal>
+    <FastSearchModal v-model="isFastSearchModalVisible" @close="isFastSearchModalVisible = false"></FastSearchModal>
     <q-page-container>
       <router-view class="q-pa-sm" />
     </q-page-container>
@@ -44,16 +46,19 @@ import { default as DarkModeButton } from "components/DarkModeButton.vue"
 import { default as SwitchLanguageButton } from "components/SwitchLanguageButton.vue"
 import { default as GitHubButton } from "components/GitHubButton.vue"
 import { GITHUB_PROJECT_URL } from "src/constants"
-import { default as NotificationsButton } from "components/NotificationsButton.vue"
+//import { default as NotificationsButton } from "components/NotificationsButton.vue"
 
 const $q = useQuasar();
+
 const { t } = useI18n();
+
 const session = useSessionStore();
+
 if (!session.isLoaded) {
   session.load();
 }
 
-const visibleFastSearchModal = ref(false);
+const isFastSearchModalVisible = ref(false);
 
 const lockminiSidebarCurrentModeMode = ref(false);
 
