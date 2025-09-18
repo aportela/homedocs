@@ -9,10 +9,10 @@
           </q-avatar>
           <h4 class="q-mt-sm q-mb-md text-h4 text-weight-bolder">{{
             t(!!savedEmail ? "Glad to see you again!" : "Welcome aboard!")
-          }}</h4>
+            }}</h4>
           <div class="text-color-secondary">{{
             t(!!savedEmail ? "Let's get back to organizing." : "Let's start organizing.")
-            }}
+          }}
           </div>
         </q-card-section>
         <q-card-section>
@@ -25,8 +25,8 @@
             </template>
           </q-input>
           <CustomInputPassword dense outlined ref="passwordRef" class="q-mt-md" v-model="password" name="password"
-            :label="t('Password')" :autofocus="!!savedEmail" :rules="formUtils.requiredFieldRules" lazy-rules
-            :error="validator.password.hasErrors"
+            :label="t('Password')" :disable="loading" :autofocus="!!savedEmail" :rules="formUtils.requiredFieldRules"
+            lazy-rules :error="validator.password.hasErrors"
             :errorMessage="validator.password.message ? t(validator.password.message) : ''">
           </CustomInputPassword>
         </q-card-section>
@@ -91,7 +91,7 @@ const router = useRouter();
 
 const initialState = useInitialStateStore();
 
-const signUpAllowed = computed(() => initialState.isSignUpAllowed);
+const signUpAllowed = computed(() => initialState.isSignUpAllowed === true);
 
 const loading = ref(false);
 const error = ref(false);
@@ -174,7 +174,6 @@ const onSubmitForm = () => {
             nextTick(() => {
               passwordRef.value?.focus();
             });
-            passwordRef.value.focus();
           } else {
             errorMessage.value = "API Error: invalid/missing param";
             nextTick(() => {
