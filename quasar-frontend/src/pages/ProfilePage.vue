@@ -9,7 +9,7 @@
         <q-avatar icon="account_circle" size="200px" class="bg-grey-4 q-mx-auto my-profile-header-center-icon" />
       </div>
     </div>
-    <div class="row">
+    <div class="row q-col-gutter-sm">
       <div class="col-lg-4 col-xl-4 col-12">
         <q-card>
           <q-item>
