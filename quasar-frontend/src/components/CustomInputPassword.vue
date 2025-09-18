@@ -1,30 +1,28 @@
 <template>
-  <q-input :type="visiblePassword ? 'text' : 'password'" v-model="model" :dense="dense" :label="label"
-    :outlined="outlined" :autofocus="autofocus" v-bind="attrs">
+  <q-input :type="visiblePassword ? 'text' : 'password'" v-model="model" :dense="dense" :label="label" :rules="rules"
+    :outlined="outlined" v-bind="attrs" ref="qInputPasswordRef" :error="error" :errorMessage="errorMessage">
     <template v-slot:prepend>
       <q-icon name="key" />
     </template>
     <template v-slot:append v-if="model">
       <q-icon :name="visiblePassword ? 'visibility_off' : 'visibility'" class="cursor-pointer"
         @click="visiblePassword = !visiblePassword" />
-      <q-tooltip anchor="bottom right" self="top end">{{ t(visiblePassword ? "Hide password"
-        :
-        "Show password")
+      <q-tooltip anchor="bottom right" self="top end">{{ t(visiblePassword ? "Hide password" : "Show password")
       }}</q-tooltip>
     </template>
   </q-input>
 </template>
 
 <script setup>
-import { ref, watch, useAttrs } from "vue";
+
+import { ref, watch, useAttrs, onMounted, nextTick } from "vue";
 import { useI18n } from 'vue-i18n'
 
 const attrs = useAttrs();
-console.log(attrs);
-
-const emit = defineEmits(['update:modelValue'])
 
 const { t } = useI18n();
+
+const emit = defineEmits(['update:modelValue'])
 
 const props = defineProps({
   modelValue: {
@@ -34,10 +32,6 @@ const props = defineProps({
   label: {
     type: String,
     default: "Password",
-  },
-  placeholder: {
-    type: String,
-    default: "Enter your password",
   },
   dense: {
     type: Boolean,
@@ -54,13 +48,50 @@ const props = defineProps({
   autofocus: {
     type: Boolean,
     default: false,
-  }
+  },
+  error:
+  {
+    type: Boolean,
+    required: false,
+    default: false
+  },
+  errorMessage: {
+    type: String,
+    required: false,
+    default: null
+  },
 });
+
+const qInputPasswordRef = ref(null);
 
 const model = ref(props.modelValue)
 const visiblePassword = ref(false);
 
 watch(() => props.modelValue, val => model.value = val);
 watch(model, val => emit('update:modelValue', val));
+
+const focus = () => {
+  nextTick(() => {
+    qInputPasswordRef.value?.focus();
+  });
+}
+
+const resetValidation = () => {
+  qInputPasswordRef.value?.resetValidation();
+}
+
+const validate = () => {
+  return (qInputPasswordRef.value?.validate());
+}
+
+defineExpose({
+  focus, resetValidation, validate
+});
+
+onMounted(() => {
+  if (props.autofocus) {
+    focus();
+  }
+});
 
 </script>
