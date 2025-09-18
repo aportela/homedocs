@@ -63,6 +63,7 @@ axios.interceptors.response.use(
           data: error.config.data || null,
         }
       }
+      console.log(error.customAPIErrorDetails);
       return Promise.reject(error);
     }
   },
@@ -129,6 +130,18 @@ const api = {
           });
       });
     },
+    getProfile: function () {
+      return new Promise((resolve, reject) => {
+        axios
+          .get("api2/user/profile")
+          .then((response) => {
+            resolve(response);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    },
     updateProfile: function (email, password) {
       return new Promise((resolve, reject) => {
         const params = {
@@ -136,7 +149,7 @@ const api = {
           password: password,
         };
         axios
-          .post("api2/user/update-profile", params)
+          .post("api2/user/profile", params)
           .then((response) => {
             resolve(response);
           })

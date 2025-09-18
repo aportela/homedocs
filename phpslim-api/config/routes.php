@@ -80,7 +80,24 @@ return function (App $app) {
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             });
 
-            $group->post('/user/update-profile', function (Request $request, Response $response, array $args) {
+            $group->get('/user/profile', function (Request $request, Response $response, array $args) {
+                $user = new \HomeDocs\User();
+                $user->id = \HomeDocs\UserSession::getUserId();
+                $user->get($this->get(\aportela\DatabaseWrapper\DB::class));
+                unset($user->password);
+                unset($user->passwordHash);
+                $payload = json_encode(
+                    [
+                        'initialState' => \HomeDocs\Utils::getInitialState($this),
+                        'data' => $user
+                    ]
+                );
+                $response->getBody()->write($payload);
+                return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+            })->add(\HomeDocs\Middleware\CheckAuth::class);
+
+
+            $group->post('/user/profile', function (Request $request, Response $response, array $args) {
                 $params = $request->getParsedBody();
                 $db = $this->get(\aportela\DatabaseWrapper\DB::class);
                 $user = new \HomeDocs\User(
@@ -91,9 +108,12 @@ return function (App $app) {
                 $user->get($db);
                 $user->password = $params["password"] ?? "";
                 $user->update($db);
+                unset($user->password);
+                unset($user->passwordHash);
                 $payload = json_encode(
                     [
-                        'initialState' => \HomeDocs\Utils::getInitialState($this)
+                        'initialState' => \HomeDocs\Utils::getInitialState($this),
+                        'data' => $user
                     ]
                 );
                 $response->getBody()->write($payload);

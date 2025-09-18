@@ -44,10 +44,14 @@
                   {{ t('Update profile') }}
                 </template>
               </q-btn>
-              <CustomBanner v-if="bannerType" :text="bannerText" :success="bannerType == 'success'"
-                :error="bannerType == 'error'">
+              <CustomBanner v-if="bannerType" :text="bannerText" success>
               </CustomBanner>
             </form>
+            <CustomBanner class="q-my-lg" text="Error loading data" error v-if="loadingError">
+              <template v-slot:details v-if="initialState.isDevEnvironment && apiError">
+                <APIErrorDetails class="q-mt-md" :apiError="apiError"></APIErrorDetails>
+              </template>
+            </CustomBanner>
           </template>
         </CustomWidget>
       </div>
@@ -63,17 +67,17 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick } from "vue";
+import { ref, onMounted, nextTick } from "vue";
 import { useQuasar } from "quasar";
 import { useI18n } from 'vue-i18n'
 import { useInitialStateStore } from "stores/initialState";
 
 import { api } from 'boot/axios'
 
+import { default as CustomWidget } from "src/components/CustomWidget.vue";
 import { default as CustomBanner } from "src/components/CustomBanner.vue";
 import { default as SystemStats } from "src/components/SystemStats.vue";
-
-import { default as CustomWidget } from "src/components/CustomWidget.vue";
+import { default as APIErrorDetails } from "components/APIErrorDetails.vue";
 
 const { t } = useI18n();
 
@@ -81,25 +85,23 @@ const $q = useQuasar();
 const initialState = useInitialStateStore();
 
 const loading = ref(false);
+const loadingError = ref(false);
 
-const email = computed(() => initialState.session.email);
-
+const email = ref(null);
 const password = ref(null);
+
 const emailRef = ref(null);
 const passwordRef = ref(null);
-const visiblePassword = ref(false);
 
+const visiblePassword = ref(false);
 
 const bannerType = ref(null);
 const bannerText = ref(null);
 
+const apiError = ref(null);
+
 function showSuccessBanner(text) {
   bannerType.value = "success";
-  bannerText.value = text;
-}
-
-function showErrorBanner(text) {
-  bannerType.value = "error";
   bannerText.value = text;
 }
 
@@ -109,6 +111,23 @@ const remoteValidation = ref({
     message: null
   }
 });
+
+function onGetProfile() {
+  loading.value = true;
+  loadingError.value = false;
+  email.value = null;
+  password.value = null;
+  api.user.getProfile()
+    .then((success) => {
+      loading.value = false;
+      email.value = success.data.data.email;
+    })
+    .catch((error) => {
+      loading.value = false;
+      loadingError.value = true;
+      apiError.value = error.customAPIErrorDetails;
+    });
+}
 
 function onResetForm() {
   remoteValidation.value.password.hasErrors = false;
@@ -128,16 +147,12 @@ function onValidateForm() {
 
 function onSubmitForm() {
   loading.value = true;
+  loadingError.value = false;
   api.user
     .updateProfile(email.value, password.value)
     .then((success) => {
       password.value = null;
-      $q.notify({
-        type: "positive",
-        message: t("Profile has been successfully updated"),
-      });
       showSuccessBanner("Profile has been successfully updated");
-
       loading.value = false;
       nextTick(() => {
         passwordRef.value.focus();
@@ -182,16 +197,25 @@ function onSubmitForm() {
           });
           break;
         default:
+          /*
           $q.notify({
             type: "negative",
             message: t("API Error: fatal error"),
             caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
           });
           showErrorBanner("Error while updating profile");
+          */
+          //loading.value = false;
+          loadingError.value = true;
+          apiError.value = error.customAPIErrorDetails;
           break;
       }
     });
 }
+
+onMounted(() => {
+  onGetProfile();
+});
 
 </script>
 
