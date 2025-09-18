@@ -54,16 +54,15 @@ axios.interceptors.response.use(
         };
       }
       error.customAPIErrorDetails = {
-        method: error.config?.method || 'N/A',
-        url: error.request?.responseURL || 'N/A',
-        httpCode: error.response?.status || 'N/A',
-        httpStatus: error.response?.statusText || 'Unknown error',
+        method: error.config?.method || "N/A",
+        url: error.request?.responseURL || "N/A",
+        httpCode: error.response?.status || "N/A",
+        httpStatus: error.response?.statusText || "Unknown error",
         params: {
           query: error.config.params || null,
           data: error.config.data || null,
-        }
-      }
-      console.log(error.customAPIErrorDetails);
+        },
+      };
       return Promise.reject(error);
     }
   },
@@ -190,7 +189,8 @@ const api = {
           params.toCreationTimestampCondition = filter.toCreationTimestamp;
         }
         if (filter.fromLastUpdateTimestamp) {
-          params.fromLastUpdateTimestampCondition = filter.fromLastUpdateTimestamp;
+          params.fromLastUpdateTimestampCondition =
+            filter.fromLastUpdateTimestamp;
         }
         if (filter.toLastUpdateTimestamp) {
           params.toLastUpdateTimestampCondition = filter.toLastUpdateTimestamp;
