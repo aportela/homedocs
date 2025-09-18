@@ -179,4 +179,6 @@ export default {
   "Click to expand/collapse": "Click to expand/collapse",
   "Document creation date": "Document creation date",
   "Document last update": "Document last update",
+  "Oops. Nothing here...": "Oops. Nothing here...",
+  "Go Home": "Go Home",
 };

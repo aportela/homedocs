@@ -182,4 +182,6 @@ export default {
   "Click to expand/collapse": "Faga click pra expandir/contraer",
   "Document creation date": "Data de creación do documento",
   "Document last update": "Data da último cambio do documento",
+  "Oops. Nothing here...": "Oops. Parece que non hai nada por eiquí...",
+  "Go Home": "Volver o inicio",
 };
