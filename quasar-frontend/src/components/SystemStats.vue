@@ -1,56 +1,57 @@
 <template>
   <div class="fit">
-    <q-card class="q-ma-xs" flat bordered>
+    <q-card>
+      <q-item class="theme-default-q-card-section-header">
+        <q-item-section avatar>
+          <q-icon :name="loadingError ? 'error' : 'analytics'"></q-icon>
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>{{ t('Your system stats') }}</q-item-label>
+          <q-item-label caption>{{ t(loadingError ? 'Error loading data' : "Small resume of your platform usage")
+            }}</q-item-label>
+        </q-item-section>
+      </q-item>
+      <q-separator />
       <q-card-section>
-        <q-expansion-item :header-class="loadingError ? 'bg-red' : ''" expand-separator
-          :icon="loadingError ? 'error' : 'analytics'" :label="t('Your system stats')"
-          :caption="t(loadingError ? 'Error loading data' : 'Small resume of your platform usage')"
-          :model-value="expanded">
-          <p class="text-center" v-if="loading">
-            <q-spinner-pie v-if="loading" color="grey-5" size="md" />
-          </p>
-          <div v-else>
-            <q-card class="bg-grey-3 q-ma-sm scroll">
-              <q-card-section class="text-center text-h6"><q-icon name="insights"></q-icon> {{ t("Activity Heatmap")
-                }}</q-card-section>
-              <q-card-section class="bg-white">
-                <ActivityHeatMap class="q-mx-auto"></ActivityHeatMap>
+        <q-card-section class="text-center text-h6"><q-icon name="insights"></q-icon> {{ t("Activity Heatmap")
+          }}</q-card-section>
+        <q-card-section class="bg-white">
+          <ActivityHeatMap class="q-mx-auto"></ActivityHeatMap>
+        </q-card-section>
+      </q-card-section>
+      <q-card-section>
+        <div class="row">
+          <div class="col-4">
+            <q-card class="bg-grey-3 q-ma-sm">
+              <q-card-section class="text-center text-h6">
+                <q-icon name="shelves"></q-icon>
+                {{ t("Total documents") }}
               </q-card-section>
+              <q-separator inset />
+              <q-card-section class="text-center text-h4">{{ totalDocuments }}</q-card-section>
             </q-card>
-            <div class="row">
-              <div class="col-4">
-                <q-card class="bg-grey-3 q-ma-sm">
-                  <q-card-section class="text-center text-h6">
-                    <q-icon name="shelves"></q-icon>
-                    {{ t("Total documents") }}
-                  </q-card-section>
-                  <q-separator inset />
-                  <q-card-section class="text-center text-h4">{{ totalDocuments }}</q-card-section>
-                </q-card>
-              </div>
-              <div class="col-4">
-                <q-card class="bg-grey-3 q-ma-sm">
-                  <q-card-section class="text-center text-h6">
-                    <q-icon name="attachment"></q-icon>
-                    {{ t("Total attachments") }}
-                  </q-card-section>
-                  <q-separator inset />
-                  <q-card-section class="text-center text-h4">{{ totalAttachments }}</q-card-section>
-                </q-card>
-              </div>
-              <div class="col-4">
-                <q-card class="bg-grey-3 q-ma-sm ">
-                  <q-card-section class="text-center text-h6">
-                    <q-icon name="data_usage"></q-icon>
-                    {{ t("Disk usage") }}
-                  </q-card-section>
-                  <q-separator inset />
-                  <q-card-section class="text-center text-h4">{{ totalAttachmentsDiskUsage }}</q-card-section>
-                </q-card>
-              </div>
-            </div>
           </div>
-        </q-expansion-item>
+          <div class="col-4">
+            <q-card class="bg-grey-3 q-ma-sm">
+              <q-card-section class="text-center text-h6">
+                <q-icon name="attachment"></q-icon>
+                {{ t("Total attachments") }}
+              </q-card-section>
+              <q-separator inset />
+              <q-card-section class="text-center text-h4">{{ totalAttachments }}</q-card-section>
+            </q-card>
+          </div>
+          <div class="col-4">
+            <q-card class="bg-grey-3 q-ma-sm ">
+              <q-card-section class="text-center text-h6">
+                <q-icon name="data_usage"></q-icon>
+                {{ t("Disk usage") }}
+              </q-card-section>
+              <q-separator inset />
+              <q-card-section class="text-center text-h4">{{ totalAttachmentsDiskUsage }}</q-card-section>
+            </q-card>
+          </div>
+        </div>
       </q-card-section>
     </q-card>
   </div>
