@@ -22,7 +22,7 @@
                 </template>
               </q-input>
               <q-input dense outlined class="q-mt-md" ref="passwordRef" v-model="password" name="password"
-                :type="visiblePassword ? 'text' : 'password'" :label="t('New password')" :disable="loading" autofocus
+                :type="visiblePassword ? 'text' : 'password'" :label="t('New password')" :disable="loading" autofo2cus
                 :error="remoteValidation.password.hasErrors"
                 :errorMessage="remoteValidation.password.message ? t(remoteValidation.password.message) : ''">
                 <template v-slot:prepend>
@@ -37,6 +37,10 @@
                     t(visiblePassword ? "Hide password" : "Show password")
                   }}</q-tooltip>
               </q-input>
+              <!--
+              <CustomInputPassword dense outlined class="q-mt-md" v-model="password" name="password"
+                :label="t('New password')" :disable="loading" autofocus></CustomInputPassword>
+-->
               <q-btn color="primary" size="md" :label="$t('Update profile')" no-caps class="full-width"
                 icon="account_circle" :disable="loading || !password" :loading="loading" type="submit">
                 <template v-slot:loading>
@@ -74,6 +78,7 @@ import { useInitialStateStore } from "stores/initialState";
 import { api } from 'boot/axios'
 
 import { default as CustomWidget } from "src/components/CustomWidget.vue";
+import { default as CustomInputPassword } from "src/components/CustomInputPassword.vue";
 import { default as CustomBanner } from "src/components/CustomBanner.vue";
 import { default as SystemStats } from "src/components/SystemStats.vue";
 import { default as APIErrorDetails } from "components/APIErrorDetails.vue";
