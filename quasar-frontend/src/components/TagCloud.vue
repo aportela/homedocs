@@ -54,7 +54,10 @@ const $q = useQuasar();
 const loadingError = ref(false);
 const loading = ref(false);
 
-const expanded = ref(!$q.screen.lt.md);
+const props = defineProps({
+  expanded: Boolean
+});
+
 const tags = ref([]);
 const hasTags = computed(() => tags.value.length > 0);
 
