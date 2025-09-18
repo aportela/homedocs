@@ -153,7 +153,7 @@ const api = {
           count: count,
         };
         axios
-          .post("api2/document/search-recent", params)
+          .post("api2/search/recent_documents", params)
           .then((response) => {
             resolve(response);
           })
@@ -187,7 +187,7 @@ const api = {
         params.sortBy = sortBy;
         params.sortOrder = sortOrder;
         axios
-          .post("api2/document/search", params)
+          .post("api2/search/document", params)
           .then((response) => {
             resolve(response);
           })

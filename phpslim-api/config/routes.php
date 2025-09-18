@@ -100,7 +100,8 @@ return function (App $app) {
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $group->post('/document/search-recent', function (Request $request, Response $response, array $args) {
+            // TODO: is this required ? can be recplaced only with /search/document with custom params
+            $group->post('/search/recent_documents', function (Request $request, Response $response, array $args) {
                 $settings = $this->get('settings');
                 $params = $request->getParsedBody();
                 $payload = json_encode(
@@ -116,7 +117,7 @@ return function (App $app) {
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $group->post('/document/search', function (Request $request, Response $response, array $args) {
+            $group->post('/search/document', function (Request $request, Response $response, array $args) {
                 $settings = $this->get('settings');
                 $params = $request->getParsedBody();
                 $payload = json_encode(
