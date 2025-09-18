@@ -1,5 +1,5 @@
 <template>
-  <div class="fit">
+  <div>
     <q-expansion-item class="theme-default-q-expansion-item" header-class="theme-default-q-expansion-item-header"
       expand-separator :model-value="expanded">
       <template v-slot:header>
