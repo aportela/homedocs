@@ -133,6 +133,7 @@ export default {
   Dashboard: "Dashboard",
   "My profile": "My profile",
   "Personal information": "Personal information",
+  "Update your data": "Update your data",
   "Update profile": "Update profile",
   Add: "Add",
   "Advanced search": "Advanced search",

@@ -138,6 +138,7 @@ export default {
   Dashboard: "Inicio",
   "My profile": "Mi perfil",
   "Personal information": "Información personal",
+  "Update your data": "Actualice sus datos",
   "Update profile": "Actualizar perfil",
   Add: "Añadir",
   "Selected language": "Idioma seleccionado",
