@@ -16,7 +16,7 @@
       {{ model }}
     </div>
   </div>
-  <q-input v-else v-bind="attrs" ref="myref" :label="label" v-model.trim="model">
+  <q-input v-else v-bind="attrs" ref="qInputRef" :label="label" v-model.trim="model">
     <template v-slot:append v-if="model">
       <q-icon name="done" class="cursor-pointer" @click="onToggleReadOnly">
         <q-tooltip>{{ t("Click to toggle edit mode") }}</q-tooltip>
@@ -41,36 +41,36 @@ const props = defineProps({
 });
 
 const attrs = useAttrs();
+const { t } = useI18n();
 
 const emit = defineEmits(['update:modelValue'])
 
-const { t } = useI18n();
-
-const myref = ref(null);
+const qInputRef = ref(null);
 
 const readOnly = ref(!props.startModeEditable);
 const showUpdateHoverIcon = ref(false);
 const collapsedView = ref(true);
 const model = ref(props.modelValue)
 
-async function focus() {
-  await nextTick()
-  myref.value?.focus()
-}
-
-defineExpose({
-  focus
-});
-
 watch(() => props.modelValue, val => model.value = val);
 watch(model, val => emit('update:modelValue', val));
 
-function onToggleReadOnly() {
+const focus = () => {
+  nextTick(() => {
+    qInputRef.value?.focus();
+  });
+}
+
+const onToggleReadOnly = () => {
   readOnly.value = !readOnly.value;
   if (!readOnly.value) {
     focus();
   }
 }
+
+defineExpose({
+  focus
+});
 
 </script>
 
