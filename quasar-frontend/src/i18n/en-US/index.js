@@ -172,7 +172,7 @@ export default {
   },
   "Most recent activity": "Most recent activity",
   "Click to refresh data": "Click to refresh data",
-  "Total documents": "{count} document|{count} documents",
+  "Total document count": "{count} document|{count} documents",
   "Total tags": "{count} tag|{count} tags",
   "Click to toggle edit mode": "Click to toggle edit mode",
   "Click to expand/collapse": "Click to expand/collapse",

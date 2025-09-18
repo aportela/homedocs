@@ -177,7 +177,7 @@ export default {
   },
   "Most recent activity": "Actividad más reciente",
   "Click to refresh data": "Haga click para refrescar los datos",
-  "Total documents": "{count} documento|{count} documentos",
+  "Total document count": "{count} documento|{count} documentos",
   "Total tags": "{count} etiqueta|{count} etiquetas",
   "Click to toggle edit mode": "Haga click para alternar el modo de edición",
   "Click to expand/collapse": "Haga click para expandir/contraer",
