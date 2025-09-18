@@ -11,62 +11,52 @@
     </div>
     <div class="row q-col-gutter-sm">
       <div class="col-lg-4 col-xl-4 col-12">
-        <q-card>
-          <q-item class="theme-default-q-card-section-header">
-            <q-item-section avatar>
-              <q-icon name="contact_mail"></q-icon>
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ t('Personal information') }}</q-item-label>
-              <q-item-label caption>{{ t("Update your data") }}</q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-separator />
-          <q-card-section>
+        <CustomWidget title="Personal information" caption="Update your data" icon="contact_mail">
+          <template v-slot:content>
             <form @submit.prevent.stop="onValidateForm" autocorrect="off" autocapitalize="off" autocomplete="off"
               spellcheck="false">
-              <q-card-section>
-                <q-input dense outlined ref="emailRef" v-model="email" type="email" name="email" :label="t('Email')"
-                  readonly>
-                  <template v-slot:prepend>
-                    <q-icon name="alternate_email" />
-                  </template>
-                </q-input>
-                <q-input dense outlined class="q-mt-md" ref="passwordRef" v-model="password" name="password"
-                  :type="visiblePassword ? 'text' : 'password'" :label="t('New password')" :disable="loading" autofocus
-                  :error="remoteValidation.password.hasErrors"
-                  :errorMessage="remoteValidation.password.message ? t(remoteValidation.password.message) : ''">
-                  <template v-slot:prepend>
-                    <q-icon name="key" />
-                  </template>
-                  <template v-slot:append>
-                    <q-icon :name="visiblePassword ? 'visibility_off' : 'visibility'" class="cursor-pointer"
-                      @click="visiblePassword = !visiblePassword" />
-                  </template>
-                  <q-tooltip anchor="bottom right" self="top end">
-                    {{
-                      t(visiblePassword ? "Hide password" : "Show password")
-                    }}</q-tooltip>
-                </q-input>
-              </q-card-section>
-              <q-card-section>
-                <q-btn color="primary" size="md" :label="$t('Update profile')" no-caps class="full-width"
-                  icon="account_circle" :disable="loading || !password" :loading="loading" type="submit">
-                  <template v-slot:loading>
-                    <q-spinner-hourglass class="on-left" />
-                    {{ t('Update profile') }}
-                  </template>
-                </q-btn>
-              </q-card-section>
+              <q-input dense outlined ref="emailRef" v-model="email" type="email" name="email" :label="t('Email')"
+                readonly>
+                <template v-slot:prepend>
+                  <q-icon name="alternate_email" />
+                </template>
+              </q-input>
+              <q-input dense outlined class="q-mt-md" ref="passwordRef" v-model="password" name="password"
+                :type="visiblePassword ? 'text' : 'password'" :label="t('New password')" :disable="loading" autofocus
+                :error="remoteValidation.password.hasErrors"
+                :errorMessage="remoteValidation.password.message ? t(remoteValidation.password.message) : ''">
+                <template v-slot:prepend>
+                  <q-icon name="key" />
+                </template>
+                <template v-slot:append>
+                  <q-icon :name="visiblePassword ? 'visibility_off' : 'visibility'" class="cursor-pointer"
+                    @click="visiblePassword = !visiblePassword" />
+                </template>
+                <q-tooltip anchor="bottom right" self="top end">
+                  {{
+                    t(visiblePassword ? "Hide password" : "Show password")
+                  }}</q-tooltip>
+              </q-input>
+              <q-btn color="primary" size="md" :label="$t('Update profile')" no-caps class="full-width"
+                icon="account_circle" :disable="loading || !password" :loading="loading" type="submit">
+                <template v-slot:loading>
+                  <q-spinner-hourglass class="on-left" />
+                  {{ t('Update profile') }}
+                </template>
+              </q-btn>
               <CustomBanner v-if="bannerType" :text="bannerText" :success="bannerType == 'success'"
                 :error="bannerType == 'error'">
               </CustomBanner>
             </form>
-          </q-card-section>
-        </q-card>
+          </template>
+        </CustomWidget>
       </div>
       <div class="col-lg-8 col-xl-8 col-12">
-        <SystemStats></SystemStats>
+        <CustomWidget title="Your system stats" caption="Small resume of your platform usage" icon="analytics">
+          <template v-slot:content>
+            <SystemStats></SystemStats>
+          </template>
+        </CustomWidget>
       </div>
     </div>
   </q-page>
@@ -82,6 +72,8 @@ import { api } from 'boot/axios'
 
 import { default as CustomBanner } from "src/components/CustomBanner.vue";
 import { default as SystemStats } from "src/components/SystemStats.vue";
+
+import { default as CustomWidget } from "src/components/CustomWidget.vue";
 
 const { t } = useI18n();
 
