@@ -44,14 +44,13 @@
                   {{ t('Update profile') }}
                 </template>
               </q-btn>
-              <CustomBanner v-if="bannerType" :text="bannerText" success>
+              <CustomBanner v-if="profileUpdated || loadingError" :text="bannerText" :success="profileUpdated"
+                :error="loadingError">
+                <template v-slot:details v-if="loadingError && initialState.isDevEnvironment && apiError">
+                  <APIErrorDetails class="q-mt-md" :apiError="apiError"></APIErrorDetails>
+                </template>
               </CustomBanner>
             </form>
-            <CustomBanner class="q-my-lg" text="Error loading data" error v-if="loadingError">
-              <template v-slot:details v-if="initialState.isDevEnvironment && apiError">
-                <APIErrorDetails class="q-mt-md" :apiError="apiError"></APIErrorDetails>
-              </template>
-            </CustomBanner>
           </template>
         </CustomWidget>
       </div>
@@ -67,7 +66,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from "vue";
+import { ref, computed, onMounted, nextTick } from "vue";
 import { useQuasar } from "quasar";
 import { useI18n } from 'vue-i18n'
 import { useInitialStateStore } from "stores/initialState";
@@ -95,15 +94,18 @@ const passwordRef = ref(null);
 
 const visiblePassword = ref(false);
 
-const bannerType = ref(null);
-const bannerText = ref(null);
+const profileUpdated = ref(false);
 
+const bannerText = computed(() => {
+  if (profileUpdated.value) {
+    return ("Profile has been successfully updated");
+  } else if (loadingError.value) {
+    return ("Error loading data")
+  } else {
+    return (null);
+  }
+});
 const apiError = ref(null);
-
-function showSuccessBanner(text) {
-  bannerType.value = "success";
-  bannerText.value = text;
-}
 
 const remoteValidation = ref({
   password: {
@@ -148,11 +150,12 @@ function onValidateForm() {
 function onSubmitForm() {
   loading.value = true;
   loadingError.value = false;
+  profileUpdated.value = false;
   api.user
     .updateProfile(email.value, password.value)
     .then((success) => {
       password.value = null;
-      showSuccessBanner("Profile has been successfully updated");
+      profileUpdated.value = true;
       loading.value = false;
       nextTick(() => {
         passwordRef.value.focus();
