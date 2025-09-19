@@ -12,7 +12,6 @@
             <q-icon :name="stat.error ? 'error' : stat.icon" class="gt-xs" :class="{ 'text-red': stat.error }" />
             {{ t(stat.headerLabel) }}
           </q-card-section>
-          <q-separator inset />
           <q-card-section class="text-center text-h4">{{ stat.total }}</q-card-section>
         </q-card>
       </div>
