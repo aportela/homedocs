@@ -169,11 +169,9 @@ body {
     background-color: #e4bec4;
   }
 
-
   .theme-default-q-card-section-header {
     background-color: var(--color-zinc-200);
   }
-
 }
 
 .body--dark {
@@ -274,5 +272,9 @@ body {
   .theme-default-q-banner-error {
     background-color: #71565a;
     color: white;
+  }
+
+  .theme-default-q-card-section-header {
+    background-color: var(--color-zinc-700);
   }
 }
