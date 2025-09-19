@@ -1,40 +1,19 @@
 <template>
   <div>
-    <h6 class="text-center text-h6 q-my-sm"><q-icon name="insights"></q-icon> {{ t("Activity Heatmap")
-      }}</h6>
+    <h6 class="text-center text-h6 q-my-sm"><q-icon name="insights"></q-icon> {{ t("Activity Heatmap") }}</h6>
     <div>
       <ActivityHeatMap class="q-mx-auto"></ActivityHeatMap>
     </div>
     <q-separator class="q-my-md" />
     <div class="row">
-      <div class="col-4">
-        <q-card class="bg-grey-3 q-ma-sm">
-          <q-card-section class="text-center text-h6">
-            <q-icon name="shelves" class="gt-xs"></q-icon>
-            {{ t("Total documents") }}
+      <div v-for="(stat, index) in stats" :key="index" class="col-4">
+        <q-card class="q-ma-sm">
+          <q-card-section class="text-center text-h6 theme-default-q-card-section-header">
+            <q-icon :name="stat.error ? 'error' : stat.icon" class="gt-xs" :class="{ 'text-red': stat.error }" />
+            {{ t(stat.headerLabel) }}
           </q-card-section>
           <q-separator inset />
-          <q-card-section class="text-center text-h4">{{ totalDocuments }}</q-card-section>
-        </q-card>
-      </div>
-      <div class="col-4">
-        <q-card class="bg-grey-3 q-ma-sm">
-          <q-card-section class="text-center text-h6">
-            <q-icon name="attachment" class="gt-xs"></q-icon>
-            {{ t("Total attachments") }}
-          </q-card-section>
-          <q-separator inset />
-          <q-card-section class="text-center text-h4">{{ totalAttachments }}</q-card-section>
-        </q-card>
-      </div>
-      <div class="col-4">
-        <q-card class="bg-grey-3 q-ma-sm ">
-          <q-card-section class="text-center text-h6">
-            <q-icon name="data_usage" class="gt-xs"></q-icon>
-            {{ t("Disk usage") }}
-          </q-card-section>
-          <q-separator inset />
-          <q-card-section class="text-center text-h4">{{ totalAttachmentsDiskUsage }}</q-card-section>
+          <q-card-section class="text-center text-h4">{{ stat.total }}</q-card-section>
         </q-card>
       </div>
     </div>
@@ -43,88 +22,89 @@
 
 <script setup>
 
-import { ref, onMounted } from "vue";
-
+import { reactive, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { format, useQuasar } from "quasar"
+import { format } from "quasar"
+
 import { api } from "boot/axios";
 
 import ActivityHeatMap from 'components/ActivityHeatMap.vue';
 
 const { t } = useI18n();
-const $q = useQuasar();
-const loadingError = ref(false);
-const loading = ref(false);
 
-let expanded = !$q.screen.lt.md;
-const totalDocuments = ref(0);
-const totalAttachments = ref(0);
-const totalAttachmentsDiskUsage = ref(0);
+const stats = reactive({
+  documents: {
+    total: 0,
+    loading: false,
+    error: false,
+    headerLabel: "Total documents",
+    icon: "shelves"
+  },
+  attachments: {
+    total: 0,
+    loading: false,
+    error: false,
+    headerLabel: "Total attachments",
+    icon: "attachment"
+  },
+  diskUsage: {
+    total: 0,
+    loading: false,
+    error: false,
+    headerLabel: "Disk usage",
+    icon: "data_usage"
+  }
+});
 
-function refreshTotalDocuments() {
-  totalDocuments.value = 0;
-  loading.value = true;
-  loadingError.value = false;
+const onRefreshTotalDocuments = () => {
+  stats.documents.loading = true;
+  stats.documents.total = 0;
+  stats.documents.error = false;
   api.stats.documentCount()
-    .then((success) => {
-      totalDocuments.value = success.data.count;
-      loading.value = false;
+    .then((successResponse) => {
+      stats.documents.total = successResponse.data.count;
+      stats.documents.loading = false;
     })
-    .catch((error) => {
-      loading.value = false;
-      loadingError.value = true;
-      $q.notify({
-        type: "negative",
-        message: t("API Error: fatal error"),
-        caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
-      });
+    .catch((errorResponse) => {
+      stats.documents.error = true;
+      stats.documents.loading = false;
     });
 }
 
-function refreshTotalAttachments() {
-  totalAttachments.value = 0;
-  loading.value = true;
-  loadingError.value = false;
+const onRefreshTotalAttachments = () => {
+  stats.attachments.loading = true;
+  stats.attachments.total = 0;
+  stats.attachments.error = false;
   api.stats.attachmentCount()
-    .then((success) => {
-      totalAttachments.value = success.data.count;
-      loading.value = false;
+    .then((successResponse) => {
+      stats.attachments.total = successResponse.data.count;
+      stats.attachments.loading = false;
     })
-    .catch((error) => {
-      loading.value = false;
-      loadingError.value = true;
-      $q.notify({
-        type: "negative",
-        message: t("API Error: fatal error"),
-        caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
-      });
+    .catch((errorResponse) => {
+      stats.attachments.error = true;
+      stats.attachments.loading = false;
     });
 }
 
-function refreshTotalAttachmentsDiskUsage() {
-  totalAttachments.value = 0;
-  loading.value = true;
-  loadingError.value = false;
+const onRefreshTotalAttachmentsDiskUsage = () => {
+  stats.diskUsage.loading = true;
+  stats.diskUsage.total = 0;
+  stats.diskUsage.error = false;
   api.stats.attachmentDiskSize()
-    .then((success) => {
-      totalAttachmentsDiskUsage.value = format.humanStorageSize(success.data.size);
-      loading.value = false;
+    .then((successResponse) => {
+      stats.diskUsage.total = format.humanStorageSize(successResponse.data.size);
+      stats.diskUsage.false;
     })
-    .catch((error) => {
-      loading.value = false;
-      loadingError.value = true;
-      $q.notify({
-        type: "negative",
-        message: t("API Error: fatal error"),
-        caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
-      });
+    .catch((errorResponse) => {
+      stats.diskUsage.error = true;
+      stats.diskUsage.loading = false;
     });
 }
 
 onMounted(() => {
-  refreshTotalDocuments();
-  refreshTotalAttachments();
-  refreshTotalAttachmentsDiskUsage();
+  onRefreshTotalDocuments();
+  onRefreshTotalAttachments();
+  onRefreshTotalAttachmentsDiskUsage();
 });
 
 </script>
