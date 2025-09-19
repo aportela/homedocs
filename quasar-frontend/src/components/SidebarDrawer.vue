@@ -13,7 +13,8 @@
         </q-item-section>
       </q-item>
       <q-item v-for="link in menuItems" :key="link.text" v-ripple clickable :to="{ name: link.routeName }"
-        class="rounded-borders q-ma-sm theme-default-q-item" :active="$route.name === link.routeName"
+        class="rounded-borders q-ma-sm theme-default-q-item"
+        :active="$route.name === link.routeName || (link.alternateRouteNames?.includes($route.name))"
         active-class="theme-default-q-item-active">
         <q-item-section avatar>
           <q-icon :name="link.icon" />
@@ -63,7 +64,7 @@ const menuItems = [
   { icon: 'home', text: "Dashboard", routeName: 'index' },
   { icon: 'account_circle', text: "My profile", routeName: 'profile' },
   { icon: 'note_add', text: "Add", routeName: 'newDocument' },
-  { icon: 'find_in_page', text: "Advanced search", routeName: 'advancedSearch' }
+  { icon: 'find_in_page', text: "Advanced search", routeName: 'advancedSearch', alternateRouteNames: ['advancedSearchByTag', ['advancedSearchByFixedDate']] }
 ];
 
 function onDrawerClick(e) {
