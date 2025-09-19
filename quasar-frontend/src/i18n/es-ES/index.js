@@ -129,7 +129,6 @@ export default {
   "Error loading available tags": "Error cargando las etiquetas disponibles",
   "Sign out": "Cerrar sesión",
   "Advanced search": "Búsqueda avanzada",
-  Conditions: "Condiciones",
   Results: "Resultados",
   "No results found with current filter":
     "No hay resultados para las condiciones de filtro especificadas",
@@ -189,4 +188,6 @@ export default {
   Previous: "Anterior",
   Next: "Siguiente",
   "Document updated on": "Documento actualizado en",
+  "Total search conditions count": "{count} condición|{count} condiciones",
+  "Total search results count": "{count} documento|{count} documentos",
 };

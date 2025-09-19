@@ -125,7 +125,6 @@ export default {
   "Error loading available tags": "Error loading available tags",
   "Sign out": "Sign out",
   "Advanced search": "Advanced search",
-  Conditions: "Conditions",
   Results: "Results",
   "No results found with current filter":
     "No results found with current filter",
@@ -184,4 +183,6 @@ export default {
   Previous: "Previous",
   Next: "Next",
   "Document updated on": "Document updated on",
+  "Total search conditions count": "{count} condition|{count} conditions",
+  "Total search results count": "{count} document|{count} documents",
 };
