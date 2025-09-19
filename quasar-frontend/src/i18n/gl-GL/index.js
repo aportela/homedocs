@@ -186,4 +186,5 @@ export default {
   "Go Home": "Volver o inicio",
   Previous: "Anterior",
   Next: "Seguinte",
+  "Document updated on": "Documento actualizado en",
 };

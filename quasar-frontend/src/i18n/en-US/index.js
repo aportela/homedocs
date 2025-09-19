@@ -183,4 +183,5 @@ export default {
   "Go Home": "Go Home",
   Previous: "Previous",
   Next: "Next",
+  "Document updated on": "Document updated on",
 };
