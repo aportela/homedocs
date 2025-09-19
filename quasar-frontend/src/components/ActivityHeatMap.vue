@@ -7,6 +7,11 @@
       <q-btn icon-right="arrow_right" :disabled="rightButtonDisabled" size="md" color="primary"
         @click.prevent="onRightButtonClicked">Next</q-btn>
     </div>
+    <CustomBanner class="q-ma-lg" text="Error loading data" v-if="error" error>
+      <template v-slot:details v-if="initialState.isDevEnvironment && apiError">
+        <APIErrorDetails class="q-mt-md" :apiError="apiError"></APIErrorDetails>
+      </template>
+    </CustomBanner>
   </div>
 </template>
 
@@ -24,9 +29,16 @@ import "cal-heatmap/cal-heatmap.css";
 import Tooltip from 'cal-heatmap/plugins/Tooltip';
 import CalendarLabel from 'cal-heatmap/plugins/CalendarLabel';
 
+import { useInitialStateStore } from "src/stores/initialState";
+
+import { default as CustomBanner } from "components/CustomBanner.vue";
+import { default as APIErrorDetails } from "components/APIErrorDetails.vue";
+
 const router = useRouter();
 
 const { t } = useI18n();
+
+const initialState = useInitialStateStore();
 
 const props = defineProps({
   showNavigationButtons: {
@@ -38,6 +50,7 @@ const props = defineProps({
 
 const loading = ref(false);
 const error = ref(false);
+const apiError = ref(null);
 
 const leftButtonDisabled = ref(false);
 const rightButtonDisabled = ref(false);
@@ -53,6 +66,8 @@ const calOptions = ref({
     locale: currentLocale.value,
     start: new Date(new Date().setFullYear(new Date().getFullYear() - 1)),
     end: new Date(),
+    // TODO: use min month from filter
+    //min: new Date(new Date().setFullYear(new Date().getFullYear() - 1)),
     max: new Date(),
   },
   range: 13, // visibility: 12 months
@@ -177,24 +192,25 @@ const refresh = () => {
   loading.value = true;
   error.value = false;
   api.stats.getActivityHeatMapData()
-    .then((success) => {
-      const counts = success.data.heatmap.map(d => d.count);
+    .then((successResponse) => {
+      const counts = successResponse.data.heatmap.map(d => d.count);
       //const min = Math.min(...counts);
       //const max = Math.max(...counts);
       let scaleDomain = [...new Set(counts)];
       scaleDomain.unshift(0);
       scaleDomain.sort(function (a, b) { return a - b; });
       onCalRefresh({
-        source: success.data.heatmap,
+        source: successResponse.data.heatmap,
         x: "date",
         y: "count",
         type: "json",
       }, scaleDomain);
       loading.value = false;
     })
-    .catch((error) => {
+    .catch((errorResponse) => {
       loading.value = false;
       error.value = true;
+      apiError.value = errorResponse.customAPIErrorDetails;
     });
 }
 
