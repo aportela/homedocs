@@ -2,7 +2,7 @@
   <div>
     <h6 class="text-center text-h6 q-my-sm"><q-icon name="insights"></q-icon> {{ t("Activity Heatmap") }}</h6>
     <div>
-      <ActivityHeatMap class="q-mx-auto"></ActivityHeatMap>
+      <ActivityHeatMap class="q-mx-auto" :showNavigationButtons="true"></ActivityHeatMap>
     </div>
     <q-separator class="q-my-md" />
     <div class="row">
