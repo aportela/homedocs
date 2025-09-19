@@ -69,24 +69,32 @@ class Stats
         return (intval($result[0]->total));
     }
 
-    public static function getActivityHeatMapData(\aportela\DatabaseWrapper\DB $dbh): array
+    public static function getActivityHeatMapData(\aportela\DatabaseWrapper\DB $dbh, int $fromTimestamp = 0): array
     {
+        $whereCondition = null;
+        $params = array(
+            new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
+        );
+        if ($fromTimestamp > 0) {
+            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":from_timestamp", $fromTimestamp);
+            $whereCondition = " AND DOCUMENT_HISTORY.operation_date >= :from_timestamp ";
+        }
         $results = $dbh->query(
-            "
-                SELECT
-                    DATE(DOCUMENT_HISTORY.operation_date, 'unixepoch') AS activity_date, COUNT(*) AS total
-                FROM
-                    DOCUMENT_HISTORY
-                WHERE
-                    DOCUMENT_HISTORY.operation_user_id = :session_user_id
-                AND
-                    DOCUMENT_HISTORY.operation_date >= strftime('%s', 'now', '-1 year')
-                GROUP BY activity_date
-                ORDER BY activity_date
-            ",
-            array(
-                new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
-            )
+            sprintf(
+                "
+                    SELECT
+                        DATE(DOCUMENT_HISTORY.operation_date, 'unixepoch') AS activity_date, COUNT(*) AS total
+                    FROM
+                        DOCUMENT_HISTORY
+                    WHERE
+                        DOCUMENT_HISTORY.operation_user_id = :session_user_id
+                    %s
+                    GROUP BY activity_date
+                    ORDER BY activity_date
+                ",
+                count($params) == 2 ? $whereCondition : null
+            ),
+            $params
         );
         $results = array_map(
             function ($item) {

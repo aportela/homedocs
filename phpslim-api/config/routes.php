@@ -494,10 +494,14 @@ return function (App $app) {
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
             $group->get('/stats/heatmap-activity-data', function (Request $request, Response $response, array $args) {
+                $queryParams = $request->getQueryParams();
                 $payload = json_encode(
                     [
                         'initialState' => \HomeDocs\Utils::getInitialState($this),
-                        'heatmap' => \HomeDocs\Stats::getActivityHeatMapData($this->get(\aportela\DatabaseWrapper\DB::class))
+                        'heatmap' => \HomeDocs\Stats::getActivityHeatMapData(
+                            $this->get(\aportela\DatabaseWrapper\DB::class),
+                            isset($queryParams["fromTimestamp"]) ? $queryParams["fromTimestamp"] : 0
+                        )
                     ]
                 );
                 $response->getBody()->write($payload);

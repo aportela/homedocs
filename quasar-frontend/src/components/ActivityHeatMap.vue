@@ -19,7 +19,7 @@
 import { ref, computed, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { Dark } from "quasar";
+import { date, Dark } from "quasar";
 
 import { i18n } from "boot/i18n";
 import { api } from "boot/axios";
@@ -61,13 +61,16 @@ const calDefaultOptions = {
   itemSelector: '#cal-heatmap',
 };
 
+// last 2 years
+let fromDate = (new Date(new Date().setFullYear(new Date().getFullYear() - 2)));
+fromDate.setDate(1); fromDate.setHours(0, 0, 0, 0);
+
 const calOptions = ref({
   date: {
     locale: currentLocale.value,
-    start: new Date(new Date().setFullYear(new Date().getFullYear() - 1)),
+    start: new Date(new Date().setFullYear(new Date().getFullYear() - 1)), // last 12 months
     end: new Date(),
-    // TODO: use min month from filter
-    //min: new Date(new Date().setFullYear(new Date().getFullYear() - 1)),
+    min: fromDate,
     max: new Date(),
   },
   range: 13, // visibility: 12 months
@@ -130,9 +133,9 @@ watch(() => currentLocale.value, val => {
 /*
 // TODO: change cal-heatmap-container max-width style for avoiding scrollbar appearing on button navigation
 cal.on('resize', (newW, newH, oldW, oldH) => {
-  console.log(
-    `Calendar has been resized from ${oldW}x${oldH} to ${newW}x${newH}`
-  );
+   onsole.log(
+     Calendar has been resized from ${oldW}x${oldH} to ${newW}x${newH}`
+   ;
 
 });
 */
@@ -191,7 +194,7 @@ const onRightButtonClicked = () => {
 const refresh = () => {
   loading.value = true;
   error.value = false;
-  api.stats.getActivityHeatMapData()
+  api.stats.getActivityHeatMapData(date.formatDate(fromDate, 'X'))
     .then((successResponse) => {
       const counts = successResponse.data.heatmap.map(d => d.count);
       //const min = Math.min(...counts);

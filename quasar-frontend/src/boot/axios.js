@@ -367,10 +367,10 @@ const api = {
           });
       });
     },
-    getActivityHeatMapData: function () {
+    getActivityHeatMapData: function (fromTimestamp) {
       return new Promise((resolve, reject) => {
         axios
-          .get("api2/stats/heatmap-activity-data", {})
+          .get("api2/stats/heatmap-activity-data", { params: { fromTimestamp: fromTimestamp || null } })
           .then((response) => {
             resolve(response);
           })

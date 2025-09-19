@@ -29,9 +29,16 @@ final class StatsTest extends \HomeDocs\Test\BaseTest
         $this->assertTrue($total >= 0);
     }
 
-    public function testGetActivityHeatMapData(): void
+    public function testGetActivityHeatMapDataWithoutTimestamp(): void
     {
         $data = \HomeDocs\Stats::getActivityHeatMapData(self::$dbh);
+        $this->assertIsArray($data);
+        $this->assertTrue(count($data) >= 0);
+    }
+
+    public function testGetActivityHeatMapDataWithTimestamp(): void
+    {
+        $data = \HomeDocs\Stats::getActivityHeatMapData(self::$dbh, strtotime('-1 year', time()));
         $this->assertIsArray($data);
         $this->assertTrue(count($data) >= 0);
     }
