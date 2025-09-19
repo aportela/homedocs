@@ -7,6 +7,9 @@
           <q-card-section>
             <q-expansion-item expand-separator icon="filter_alt" :label="t('Conditions')" :model-value="expandedFilter">
               <template v-slot:header>
+                <q-item-section avatar>
+                  <q-icon name="filter_alt"></q-icon>
+                </q-item-section>
                 <q-item-section>
                   <q-item-label>{{ t('Conditions') }}
                     <q-chip size="sm" color="dark" text-color="white" v-if="totalSearchConditions">{{
@@ -231,7 +234,7 @@
                     </TagSelector>
                   </div>
                 </div>
-                <q-btn color="dark" size="md" :label="$t('Search')" no-caps class="full-width" icon="search"
+                <q-btn color="primary" size="md" :label="$t('Search')" no-caps class="full-width" icon="search"
                   :disable="searching" :loading="searching" type="submit">
                   <template v-slot:loading>
                     <q-spinner-hourglass class="on-left" />
@@ -361,6 +364,7 @@ const disableCreationDateFilterByRouteParams = computed(() => route.params.fixed
 const disableLastUpdateFilterByRouteParams = computed(() => route.params.fixedLastUpdate !== undefined);
 const disableUpdatedOnFilterByRouteParams = computed(() => route.params.fixedUpdatedOn !== undefined);
 
+
 const sortOrderIcon = computed(() => advancedSearchData.sortOrder == "ASC" ? "keyboard_double_arrow_up" : "keyboard_double_arrow_down");
 
 const totalSearchConditions = computed(() => {
@@ -381,6 +385,9 @@ const totalSearchConditions = computed(() => {
     total++;
   }
   if (advancedSearchData.filter.lastUpdateFilterType && advancedSearchData.filter.lastUpdateFilterType.value != 0) {
+    total++;
+  }
+  if (advancedSearchData.filter.updatedOnDateFilterType && advancedSearchData.filter.updatedOnDateFilterType.value != 0) {
     total++;
   }
   return (total);
@@ -515,7 +522,7 @@ function onSubmitForm(resetPager) {
     });
 }
 
-if (advancedSearchData.filter.tags.length > 0 || disableCreationDateFilterByRouteParams.value || disableLastUpdateFilterByRouteParams.value || disableUpdatedOnFilterByRouteParams) {
+if (advancedSearchData.filter.tags.length > 0 || disableCreationDateFilterByRouteParams.value || disableLastUpdateFilterByRouteParams.value || disableUpdatedOnFilterByRouteParams.value) {
   onSubmitForm(true);
 }
 
