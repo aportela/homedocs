@@ -153,10 +153,6 @@
                     </q-input>
                   </div>
                 </div>
-
-
-
-
                 <TagSelector v-model="advancedSearchData.filter.tags"
                   :disabled="searching || advancedSearchData.denyChangeCreationDateFilters" dense
                   :start-mode-editable="true" :deny-change-editable-mode="true" clearable>
@@ -275,13 +271,13 @@ const dateFilterOptions = ref([
 ]);
 
 const advancedSearchData = useAdvancedSearchData();
+
 advancedSearchData.filter.tags = route.params.tag !== undefined ? [route.params.tag] : [];
-advancedSearchData.filter.creationDateFilterType = dateFilterOptions.value[0];
+
 advancedSearchData.filter.fixedCreationDate = route.params.fixedCreationDate !== undefined ? route.params.fixedCreationDate.replaceAll("-", "/") : null;
 advancedSearchData.filter.creationDateFilterType = advancedSearchData.filter.fixedCreationDate ? dateFilterOptions.value[7] : dateFilterOptions.value[0]
 
-advancedSearchData.filter.lastUpdateFilterType = dateFilterOptions.value[0];
-advancedSearchData.filter.fixedLastUpdate = route.params.fixedLastUpdate !== undefined ? route.params.lastUpdateFilterType.replaceAll("-", "/") : null;
+advancedSearchData.filter.fixedLastUpdate = route.params.fixedLastUpdate !== undefined ? route.params.fixedLastUpdate.replaceAll("-", "/") : null;
 advancedSearchData.filter.lastUpdateFilterType = advancedSearchData.filter.fixedLastUpdate ? dateFilterOptions.value[7] : dateFilterOptions.value[0]
 
 const disableCreationDateFilterByRouteParams = computed(() => route.params.fixedCreationDate !== undefined);
@@ -419,7 +415,7 @@ function onSubmitForm(resetPager) {
     });
 }
 
-if (advancedSearchData.filter.tags.length > 0 || disableCreationDateFilterByRouteParams.value) {
+if (advancedSearchData.filter.tags.length > 0 || disableCreationDateFilterByRouteParams.value || disableLastUpdateFilterByRouteParams.value) {
   onSubmitForm(true);
 }
 

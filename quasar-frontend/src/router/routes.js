@@ -50,8 +50,13 @@ const routes = [
         component: () => import("pages/AdvancedSearchPage.vue"),
       },
       {
-        name: "advancedSearchByFixedDate",
-        path: "advanced-search/fixed-date/:fixedDate",
+        name: "advancedSearchByFixedCreationDate",
+        path: "advanced-search/fixed-creation-date/:fixedCreationDate",
+        component: () => import("pages/AdvancedSearchPage.vue"),
+      },
+      {
+        name: "advancedSearchByFixedLastUpdate",
+        path: "advanced-search/fixed-last-update/:fixedLastUpdate",
         component: () => import("pages/AdvancedSearchPage.vue"),
       },
     ],
