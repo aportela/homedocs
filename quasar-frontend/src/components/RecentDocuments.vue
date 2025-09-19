@@ -1,7 +1,8 @@
 <template>
-  <CustomExpansionWidget title="Tag cloud" :caption="loading ? 'Loading...' : 'Click on title to open document'"
-    icon="work_history" iconToolTip="Click to refresh data" :onHeaderIconClick="refresh" :loading="loading"
-    :error="loadingError" :expanded="expanded">
+  <CustomExpansionWidget title="Most recent activity"
+    :caption="loading ? 'Loading...' : 'Click on title to open document'" icon="work_history"
+    iconToolTip="Click to refresh data" :onHeaderIconClick="refresh" :loading="loading" :error="loadingError"
+    :expanded="expanded">
     <template v-slot:header-extra>
       <q-chip square size="sm" color="primary" text-color="white">{{ t("Total document count", {
         count:
@@ -52,7 +53,7 @@
                 <q-item-label>
                   <router-link :to="{ name: 'document', params: { id: recentDocument.id } }"
                     class="text-decoration-hover text-color-primary"><span class="text-weight-bold">{{ t("Title")
-                      }}:</span> {{
+                    }}:</span> {{
                         recentDocument.title
                       }}
                   </router-link>
