@@ -10,7 +10,7 @@
       <q-card-actions align="right">
         <q-btn outline @click.stop="onCancel"><q-icon left name="close" />{{ t("Cancel")
         }}</q-btn>
-        <q-btn outline @click.stop="onOK"><q-icon left name="done" />{{ t("Ok")
+        <q-btn outline @click.stop="onConfirm"><q-icon left name="done" />{{ t("Ok")
         }}</q-btn>
       </q-card-actions>
     </q-card>
@@ -27,17 +27,17 @@ const emit = defineEmits(['close', 'ok']);
 
 const visible = ref(true);
 
-function onClose() {
+const onClose = () => {
   visible.value = false;
   emit('close');
 }
 
-function onCancel() {
+const onCancel = () => {
   visible.value = false;
   emit('cancel');
 }
 
-function onOK() {
+const onConfirm = () => {
   visible.value = false;
   emit('ok');
 }
