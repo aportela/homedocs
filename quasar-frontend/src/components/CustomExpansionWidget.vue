@@ -4,9 +4,9 @@
     <template v-slot:header>
       <q-item-section avatar>
         <q-icon v-if="loading" name="settings" class="animation-spin"></q-icon>
-        <q-icon v-else-if="error" name="error" color="red" @click.stop="handleClick"
-          :class="{ 'cursor-pointer': handleClick }"></q-icon>
-        <q-icon v-else :name="icon" @click.stop="handleClick" :class="{ 'cursor-pointer': handleClick }">
+        <q-icon v-else-if="error" name="error" color="red" @click.stop="onHeaderIconClicked"
+          :class="iconClass"></q-icon>
+        <q-icon v-else :name="icon" @click.stop="onHeaderIconClicked" :class="iconClass">
           <q-tooltip v-if="iconToolTip">{{ t(iconToolTip) }}</q-tooltip>
         </q-icon>
       </q-item-section>
@@ -27,33 +27,55 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
+
 const { t } = useI18n();
 
 const props = defineProps({
   expanded: {
     type: Boolean,
+    required: false,
     default: true
   },
-  title: String,
-  caption: String,
-  icon: String,
-  iconToolTip: String,
-  onIconClick: {
+  title: {
+    type: String,
+    required: false,
+    default: ""
+  },
+  caption: {
+    type: String,
+    required: false,
+    default: ""
+  },
+  icon: {
+    type: String,
+    required: true
+  },
+  iconToolTip: {
+    type: String,
+    required: false
+  },
+  onHeaderIconClick: {
     type: Function,
     default: null
   },
-  loading: Boolean,
-  error: Boolean
+  loading: {
+    type: Boolean,
+    required: false
+  },
+  error: {
+    type: Boolean,
+    required: false
+  }
 });
 
-
 const isExpanded = ref(props.expanded === true);
+const iconClass = computed(() => !!props.onHeaderIconClick ? "cursor-pointer" : "cursor-default");
 
-function handleClick() {
-  if (props.onIconClick && typeof props.onIconClick === 'function') {
-    props.onIconClick();
+const onHeaderIconClicked = () => {
+  if (props.onHeaderIconClick && typeof props.onHeaderIconClick === 'function') {
+    props.onHeaderIconClick();
   }
 }
 
