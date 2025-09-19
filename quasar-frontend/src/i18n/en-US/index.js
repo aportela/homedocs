@@ -181,4 +181,6 @@ export default {
   "Document last update": "Document last update",
   "Oops. Nothing here...": "Oops. Nothing here...",
   "Go Home": "Go Home",
+  Previous: "Previous",
+  Next: "Next",
 };

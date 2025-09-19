@@ -186,4 +186,6 @@ export default {
   "Document last update": "Fecha del último cambio del documento",
   "Oops. Nothing here...": "Oops. Parece que no hay nada por aquí...",
   "Go Home": "Volver al inicio",
+  Previous: "Anterior",
+  Next: "Siguiente",
 };

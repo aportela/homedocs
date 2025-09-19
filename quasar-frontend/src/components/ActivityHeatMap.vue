@@ -3,9 +3,9 @@
     <div id="cal-heatmap"></div>
     <div class="q-mb-md q-gutter-sm q-py-sm" v-if="showNavigationButtons">
       <q-btn icon="arrow_left" :disabled="leftButtonDisabled" size="md" color="primary"
-        @click.prevent="onLeftButtonClicked">Previous</q-btn>
+        @click.prevent="onLeftButtonClicked">{{ t("Previous") }}</q-btn>
       <q-btn icon-right="arrow_right" :disabled="rightButtonDisabled" size="md" color="primary"
-        @click.prevent="onRightButtonClicked">Next</q-btn>
+        @click.prevent="onRightButtonClicked">{{ t("Next") }}</q-btn>
     </div>
     <CustomBanner class="q-ma-lg" text="Error loading data" v-if="error" error>
       <template v-slot:details v-if="initialState.isDevEnvironment && apiError">
