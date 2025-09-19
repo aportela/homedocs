@@ -1,5 +1,5 @@
 <template>
-  <q-btn v-bind="attrs" :icon="currentDarkModeIcon" @click="toggleDarkMode">
+  <q-btn v-bind="attrs" :icon="currentDarkModeIcon" @click="onToggleDarkMode">
     <q-tooltip>{{ tooltip }}</q-tooltip>
     <slot></slot>
   </q-btn>
@@ -28,7 +28,7 @@ watch(
   val => LocalStorage.set('darkMode', val)
 )
 
-function toggleDarkMode() {
+const onToggleDarkMode = () => {
   Dark.toggle();
 }
 
