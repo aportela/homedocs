@@ -1,6 +1,6 @@
 <template>
   <CustomExpansionWidget title="Tag cloud" :caption="loading ? 'Loading...' : 'Click on title to open document'"
-    icon="work_history" iconToolTip="Click to refresh data" :onIconClick="refresh" :loading="loading"
+    icon="work_history" iconToolTip="Click to refresh data" :onHeaderIconClick="refresh" :loading="loading"
     :error="loadingError" :expanded="expanded">
     <template v-slot:header-extra>
       <q-chip square size="sm" color="primary" text-color="white">{{ t("Total document count", {

@@ -1,6 +1,6 @@
 <template>
   <CustomExpansionWidget title="Tag cloud" :caption="loading ? 'Loading...' : 'Click on tag to browse by tag'"
-    icon="tag" iconToolTip="Click to refresh data" :onIconClick="refresh" :loading="loading" :error="loadingError"
+    icon="tag" iconToolTip="Click to refresh data" :onHeaderIconClick="refresh" :loading="loading" :error="loadingError"
     :expanded="expanded">
     <template v-slot:header-extra>
       <q-chip square size="sm" color="primary" text-color="white">{{ t("Total tags", {
