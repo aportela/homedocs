@@ -690,11 +690,11 @@ class Document
         }
         if (isset($filter["fromLastUpdateTimestampCondition"]) && $filter["fromLastUpdateTimestampCondition"] > 0) {
             $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":fromLastUpdateTimestamp", $filter["fromLastUpdateTimestampCondition"]);
-            $queryConditions[] = " DOCUMENT_HISTORY_LAST_UPDATE.lastUpdateTimestamp >= :fromLastUpdateTimestamp ";
+            $queryConditions[] = " COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.operation_date, DOCUMENT_HISTORY_CREATION_DATE.operation_date) >= :fromLastUpdateTimestamp ";
         }
         if (isset($filter["toLastUpdateTimestampCondition"]) && $filter["toLastUpdateTimestampCondition"] > 0) {
             $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":toLastUpdateTimestamp", $filter["toLastUpdateTimestampCondition"]);
-            $queryConditions[] = " DOCUMENT_HISTORY_LAST_UPDATE.operation_date <= :toLastUpdateTimestamp ";
+            $queryConditions[] = " COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.operation_date, DOCUMENT_HISTORY_CREATION_DATE.operation_date) <= :toLastUpdateTimestamp ";
         }
         if (isset($filter["tags"]) && is_array($filter["tags"]) && count($filter["tags"]) > 0) {
             foreach ($filter["tags"] as $i => $tag) {
@@ -727,7 +727,7 @@ class Document
                 )
                 LEFT JOIN (
                     SELECT
-                        DOCUMENT_HISTORY.document_id, MAX(DOCUMENT_HISTORY.operation_date) AS lastUpdateTimestamp
+                        DOCUMENT_HISTORY.document_id, MAX(DOCUMENT_HISTORY.operation_date) AS operation_date
                     FROM DOCUMENT_HISTORY
                     WHERE DOCUMENT_HISTORY.operation_type = :history_operation_update
                     GROUP BY DOCUMENT_HISTORY.document_id
@@ -762,7 +762,7 @@ class Document
                     $sqlSortBy = "DOCUMENT_HISTORY_CREATION_DATE.operation_date";
                     break;
                 case "lastUpdateTimestamp":
-                    $sqlSortBy = "DOCUMENT_HISTORY_LAST_UPDATE.lastUpdateTimestamp";
+                    $sqlSortBy = "COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.operation_date, DOCUMENT_HISTORY_CREATION_DATE.operation_date)";
                     break;
                 default:
                     $sqlSortBy = "DOCUMENT_HISTORY_CREATION_DATE.operation_date";
@@ -772,7 +772,7 @@ class Document
                 sprintf(
                     "
                             SELECT
-                                DOCUMENT.id, DOCUMENT.title, DOCUMENT.description, DOCUMENT_HISTORY_CREATION_DATE.operation_date AS createdOnTimestamp, DOCUMENT_HISTORY_LAST_UPDATE.lastUpdateTimestamp, TMP_FILE_COUNT.fileCount, TMP_NOTE_COUNT.noteCount
+                                DOCUMENT.id, DOCUMENT.title, DOCUMENT.description, DOCUMENT_HISTORY_CREATION_DATE.operation_date AS createdOnTimestamp, COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.operation_date, DOCUMENT_HISTORY_CREATION_DATE.operation_date) AS lastUpdateTimestamp, TMP_FILE_COUNT.fileCount, TMP_NOTE_COUNT.noteCount
                             FROM DOCUMENT
                             INNER JOIN DOCUMENT_HISTORY AS DOCUMENT_HISTORY_CREATION_DATE ON (
                                 DOCUMENT_HISTORY_CREATION_DATE.document_id = DOCUMENT.id
@@ -781,7 +781,7 @@ class Document
                             )
                             LEFT JOIN (
                                 SELECT
-                                    DOCUMENT_HISTORY.document_id, MAX(DOCUMENT_HISTORY.operation_date) AS lastUpdateTimestamp
+                                    DOCUMENT_HISTORY.document_id, MAX(DOCUMENT_HISTORY.operation_date) AS operation_date
                                 FROM DOCUMENT_HISTORY
                                 WHERE DOCUMENT_HISTORY.operation_type = :history_operation_update
                                 GROUP BY DOCUMENT_HISTORY.document_id
@@ -810,6 +810,7 @@ class Document
             $data->documents = array_map(
                 function ($item) use ($filter, $dbh) {
                     $item->createdOnTimestamp = intval($item->createdOnTimestamp);
+                    $item->lastUpdateTimestamp = intval($item->lastUpdateTimestamp);
                     $item->fileCount = intval($item->fileCount);
                     $item->noteCount = intval($item->noteCount);
                     $item->matchedFragments = [];
