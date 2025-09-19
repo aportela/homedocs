@@ -696,6 +696,44 @@ class Document
             $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":toLastUpdateTimestamp", $filter["toLastUpdateTimestampCondition"]);
             $queryConditions[] = " COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.operation_date, DOCUMENT_HISTORY_CREATION_DATE.operation_date) <= :toLastUpdateTimestamp ";
         }
+        if (isset($filter["fromUpdatedOnTimestampCondition"]) && $filter["fromUpdatedOnTimestampCondition"] > 0  && isset($filter["toUpdatedOnTimestampCondition"]) && $filter["toUpdatedOnTimestampCondition"] > 0) {
+
+            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":fromUpdatedOnTimestamp", $filter["fromUpdatedOnTimestampCondition"]);
+            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":toUpdatedOnTimestamp", $filter["toUpdatedOnTimestampCondition"]);
+            $queryConditions[] = "
+                EXISTS (
+                    SELECT
+                        DOCUMENT_HISTORY_UPDATED_ON.document_id
+                    FROM DOCUMENT_HISTORY AS DOCUMENT_HISTORY_UPDATED_ON
+                    WHERE DOCUMENT_HISTORY_UPDATED_ON.document_id = DOCUMENT.id
+                    AND DOCUMENT_HISTORY_UPDATED_ON.operation_type >= :fromUpdatedOnTimestamp
+                    AND DOCUMENT_HISTORY_UPDATED_ON.operation_type <= :toUpdatedOnTimestamp
+                )
+            ";
+        } else if (isset($filter["fromUpdatedOnTimestampCondition"]) && $filter["fromUpdatedOnTimestampCondition"] > 0) {
+
+            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":fromUpdatedOnTimestamp", $filter["fromUpdatedOnTimestampCondition"]);
+            $queryConditions[] = "
+                EXISTS (
+                    SELECT
+                        DOCUMENT_HISTORY_UPDATED_ON.document_id
+                    FROM DOCUMENT_HISTORY AS DOCUMENT_HISTORY_UPDATED_ON
+                    WHERE DOCUMENT_HISTORY_UPDATED_ON.document_id = DOCUMENT.id
+                    AND DOCUMENT_HISTORY_UPDATED_ON.operation_type >= :fromUpdatedOnTimestamp
+                )
+            ";
+        } else if (isset($filter["toUpdatedOnTimestampCondition"]) && $filter["toUpdatedOnTimestampCondition"] > 0) {
+            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":toUpdatedOnTimestamp", $filter["toUpdatedOnTimestampCondition"]);
+            $queryConditions[] = "
+                EXISTS (
+                    SELECT
+                        DOCUMENT_HISTORY_UPDATED_ON.document_id
+                    FROM DOCUMENT_HISTORY AS DOCUMENT_HISTORY_UPDATED_ON
+                    WHERE DOCUMENT_HISTORY_UPDATED_ON.document_id = DOCUMENT.id
+                    AND DOCUMENT_HISTORY_UPDATED_ON.operation_type <= :toUpdatedOnTimestamp
+                )
+            ";
+        }
         if (isset($filter["tags"]) && is_array($filter["tags"]) && count($filter["tags"]) > 0) {
             foreach ($filter["tags"] as $i => $tag) {
                 $paramName = sprintf(":TAG_%03d", $i + 1);
@@ -730,6 +768,7 @@ class Document
                         DOCUMENT_HISTORY.document_id, MAX(DOCUMENT_HISTORY.operation_date) AS operation_date
                     FROM DOCUMENT_HISTORY
                     WHERE DOCUMENT_HISTORY.operation_type = :history_operation_update
+                    AND DOCUMENT_HISTORY.operation_user_id = :session_user_id
                     GROUP BY DOCUMENT_HISTORY.document_id
                 ) DOCUMENT_HISTORY_LAST_UPDATE ON DOCUMENT_HISTORY_LAST_UPDATE.document_id = DOCUMENT.id
                 %s

@@ -155,6 +155,8 @@ return function (App $app) {
                                 "toCreationTimestampCondition" => intval($params["toCreationTimestampCondition"] ?? 0),
                                 "fromLastUpdateTimestampCondition" => intval($params["fromLastUpdateTimestampCondition"] ?? 0),
                                 "toLastUpdateTimestampCondition" => intval($params["toLastUpdateTimestampCondition"] ?? 0),
+                                "fromUpdatedOnTimestampCondition" => intval($params["fromUpdatedOnTimestampCondition"] ?? 0),
+                                "toUpdatedOnTimestampCondition" => intval($params["toUpdatedOnTimestampCondition"] ?? 0),
                                 "tags" => $params["tags"] ?? [],
                             ],
                             $params["sortBy"] ?? null,

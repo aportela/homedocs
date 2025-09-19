@@ -59,6 +59,11 @@ const routes = [
         path: "advanced-search/fixed-last-update/:fixedLastUpdate",
         component: () => import("pages/AdvancedSearchPage.vue"),
       },
+      {
+        name: "advancedSearchByFixedUpdatedOn",
+        path: "advanced-search/fixed-updated-on/:fixedUpdatedOn",
+        component: () => import("pages/AdvancedSearchPage.vue"),
+      },
     ],
   },
   // Always leave this as last one,

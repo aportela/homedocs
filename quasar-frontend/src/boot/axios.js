@@ -195,6 +195,13 @@ const api = {
         if (filter.toLastUpdateTimestamp) {
           params.toLastUpdateTimestampCondition = filter.toLastUpdateTimestamp;
         }
+        if (filter.fromUpdatedOnTimestamp) {
+          params.fromUpdatedOnTimestampCondition =
+            filter.fromUpdatedOnTimestamp;
+        }
+        if (filter.toUpdatedOnTimestamp) {
+          params.toUpdatedOnTimestampCondition = filter.toUpdatedOnTimestamp;
+        }
         params.currentPage = currentPage;
         params.resultsPage = resultsPage;
         params.sortBy = sortBy;
