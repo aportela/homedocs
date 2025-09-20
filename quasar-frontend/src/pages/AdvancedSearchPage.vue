@@ -1,315 +1,312 @@
 <template>
-  <q-page class="_bg-grey-2">
-    <div class="q-pa-md">
-      <CustomExpansionWidget title="Advanced search"
-        :caption="loading ? 'Loading...' : 'Use custom filters to refine your search'" icon="filter_alt"
-        :loading="loading" :error="loadingError" :expanded="expandedFilter">
-        <template v-slot:header-extra>
-          <q-chip square size="sm" color="primary" text-color="white">{{ t("Total search conditions count", {
-            count:
-              totalSearchConditions
-          }) }}</q-chip>
-        </template>
-        <template v-slot:content>
-          <form @submit.prevent.stop=" onSubmitForm(true)" autocorrect="off" autocapitalize="off" autocomplete="off"
-            spellcheck="false" class="q-mt-md q-pa-sm">
-            <div class="row q-col-gutter-sm">
-              <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
-                <q-input class="q-mb-md" dense outlined v-model="advancedSearchData.filter.title" type="text"
-                  name="title" clearable :label="t('Document title')" :disable="searching" :autofocus="true">
-                  <template v-slot:prepend>
-                    <q-icon name="search" />
-                  </template>
-                </q-input>
-                <q-input class="q-mb-md" dense outlined v-model="advancedSearchData.filter.description" type="text"
-                  name="description" clearable :label="t('Document description')" :disable="searching">
-                  <template v-slot:prepend>
-                    <q-icon name="search" />
-                  </template>
-                </q-input>
-                <q-input class="q-mb-md" dense outlined v-model="advancedSearchData.filter.notesBody" type="text"
-                  name="notesBody" clearable :label="t('Document notes')" :disable="searching">
-                  <template v-slot:prepend>
-                    <q-icon name="search" />
-                  </template>
-                </q-input>
-              </div>
-              <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
-                <div class="row q-col-gutter-xs">
-                  <div class="col">
-                    <q-select class="q-mb-md" dense options-dense outlined clearable
-                      v-model="advancedSearchData.filter.creationDateFilterType" :options="dateFilterOptions"
-                      :label="t('Document creation date')"
-                      :disable="searching || disableCreationDateFilterByRouteParams" />
-                  </div>
-                  <div class="col" v-if="advancedSearchData.hasFromCreationDateFilter">
-                    <q-input dense outlined mask="date" v-model="advancedSearchData.filter.fromCreationDate"
-                      :label="t('From date')" :disable="searching || advancedSearchData.denyChangeCreationDateFilters">
-                      <template v-slot:append>
-                        <q-icon name="event" class="cursor-pointer">
-                          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                            <q-date v-model="advancedSearchData.filter.fromCreationDate" today-btn
-                              :disable="searching || advancedSearchData.denyChangeCreationDateFilters">
-                              <div class="row items-center justify-end">
-                                <q-btn v-close-popup label="Close" color="primary" flat />
-                              </div>
-                            </q-date>
-                          </q-popup-proxy>
-                        </q-icon>
-                      </template>
-                    </q-input>
-                  </div>
-                  <div class="col" v-if="advancedSearchData.hasToCreationDateFilter">
-                    <q-input dense outlined mask="date" v-model="advancedSearchData.filter.toCreationDate"
-                      :label="t('To date')" :disable="searching || advancedSearchData.denyChangeCreationDateFilters">
-                      <template v-slot:append>
-                        <q-icon name="event" class="cursor-pointer">
-                          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                            <q-date v-model="advancedSearchData.filter.toCreationDate" today-btn
-                              :disable="searching || advancedSearchData.denyChangeCreationDateFilters">
-                              <div class="row items-center justify-end">
-                                <q-btn v-close-popup label="Close" color="primary" flat />
-                              </div>
-                            </q-date>
-                          </q-popup-proxy>
-                        </q-icon>
-                      </template>
-                    </q-input>
-                  </div>
-                  <div class="col" v-if="advancedSearchData.hasFixedCreationDateFilter">
-                    <q-input dense outlined mask="date" v-model="advancedSearchData.filter.fixedCreationDate"
-                      :label="t('Fixed date')"
-                      :disable="searching || advancedSearchData.denyChangeCreationDateFilters || disableCreationDateFilterByRouteParams">
-                      <template v-slot:append>
-                        <q-icon name="event" class="cursor-pointer">
-                          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                            <q-date v-model="advancedSearchData.filter.fixedCreationDate" today-btn
-                              :disable="searching || advancedSearchData.denyChangeCreationDateFilters">
-                              <div class="row items-center justify-end">
-                                <q-btn v-close-popup label="Close" color="primary" flat />
-                              </div>
-                            </q-date>
-                          </q-popup-proxy>
-                        </q-icon>
-                      </template>
-                    </q-input>
-                  </div>
+  <q-page>
+    <CustomExpansionWidget title="Advanced search"
+      :caption="state.loading ? 'Loading...' : 'Use custom filters to refine your search'" icon="filter_alt"
+      :loading="state.loading" :error="state.loadingError" :expanded="expandedFilter">
+      <template v-slot:header-extra>
+        <q-chip square size="sm" color="primary" text-color="white">{{ t("Total search conditions count", {
+          count:
+            totalSearchConditions
+        }) }}</q-chip>
+      </template>
+      <template v-slot:content>
+        <form @submit.prevent.stop=" onSubmitForm(true)" autocorrect="off" autocapitalize="off" autocomplete="off"
+          spellcheck="false" class="q-mt-md q-pa-sm">
+          <div class="row q-col-gutter-sm">
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
+              <q-input class="q-mb-md" dense outlined v-model="advancedSearchData.filter.title" type="text" name="title"
+                clearable :label="t('Document title')" :disable="state.loading" :autofocus="true">
+                <template v-slot:prepend>
+                  <q-icon name="search" />
+                </template>
+              </q-input>
+              <q-input class="q-mb-md" dense outlined v-model="advancedSearchData.filter.description" type="text"
+                name="description" clearable :label="t('Document description')" :disable="state.loading">
+                <template v-slot:prepend>
+                  <q-icon name="search" />
+                </template>
+              </q-input>
+              <q-input class="q-mb-md" dense outlined v-model="advancedSearchData.filter.notesBody" type="text"
+                name="notesBody" clearable :label="t('Document notes')" :disable="state.loading">
+                <template v-slot:prepend>
+                  <q-icon name="search" />
+                </template>
+              </q-input>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
+              <div class="row q-col-gutter-xs">
+                <div class="col">
+                  <q-select class="q-mb-md" dense options-dense outlined clearable
+                    v-model="advancedSearchData.filter.creationDateFilterType" :options="dateFilterOptions"
+                    :label="t('Document creation date')"
+                    :disable="state.loading || disableCreationDateFilterByRouteParams" />
                 </div>
-                <div class="row q-col-gutter-xs">
-                  <div class="col">
-                    <q-select class="q-mb-md" dense options-dense outlined clearable
-                      v-model="advancedSearchData.filter.lastUpdateFilterType" :options="dateFilterOptions"
-                      :label="t('Document last update')" :disable="searching || disableLastUpdateFilterByRouteParams" />
-                  </div>
-                  <div class="col" v-if="advancedSearchData.hasFromLastUpdateFilter">
-                    <q-input dense outlined mask="date" v-model="advancedSearchData.filter.fromLastUpdate"
-                      :label="t('From date')" :disable="searching || advancedSearchData.denyChangeLastUpdateFilters">
-                      <template v-slot:append>
-                        <q-icon name="event" class="cursor-pointer">
-                          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                            <q-date v-model="advancedSearchData.filter.fromLastUpdate" today-btn
-                              :disable="searching || advancedSearchData.denyChangeLastUpdateFilters">
-                              <div class="row items-center justify-end">
-                                <q-btn v-close-popup label="Close" color="primary" flat />
-                              </div>
-                            </q-date>
-                          </q-popup-proxy>
-                        </q-icon>
-                      </template>
-                    </q-input>
-                  </div>
-                  <div class="col" v-if="advancedSearchData.hasToLastUpdateFilter">
-                    <q-input dense outlined mask="date" v-model="advancedSearchData.filter.toLastUpdate"
-                      :label="t('To date')" :disable="searching || advancedSearchData.denyChangeLastUpdateFilters">
-                      <template v-slot:append>
-                        <q-icon name="event" class="cursor-pointer">
-                          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                            <q-date v-model="advancedSearchData.filter.toLastUpdate" today-btn
-                              :disable="searching || advancedSearchData.denyChangeLastUpdateFilters">
-                              <div class="row items-center justify-end">
-                                <q-btn v-close-popup label="Close" color="primary" flat />
-                              </div>
-                            </q-date>
-                          </q-popup-proxy>
-                        </q-icon>
-                      </template>
-                    </q-input>
-                  </div>
-                  <div class="col" v-if="advancedSearchData.hasFixedLastUpdateFilter">
-                    <q-input dense outlined mask="date" v-model="advancedSearchData.filter.fixedLastUpdate"
-                      :label="t('Fixed date')"
-                      :disable="searching || advancedSearchData.denyChangeLastUpdateFilters || disableLastUpdateFilterByRouteParams">
-                      <template v-slot:append>
-                        <q-icon name="event" class="cursor-pointer">
-                          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                            <q-date v-model="advancedSearchData.filter.fixedLastUpdate" today-btn
-                              :disable="searching || advancedSearchData.denyChangeLastUpdateFilters">
-                              <div class="row items-center justify-end">
-                                <q-btn v-close-popup label="Close" color="primary" flat />
-                              </div>
-                            </q-date>
-                          </q-popup-proxy>
-                        </q-icon>
-                      </template>
-                    </q-input>
-                  </div>
+                <div class="col" v-if="advancedSearchData.hasFromCreationDateFilter">
+                  <q-input dense outlined mask="date" v-model="advancedSearchData.filter.fromCreationDate"
+                    :label="t('From date')"
+                    :disable="state.loading || advancedSearchData.denyChangeCreationDateFilters">
+                    <template v-slot:append>
+                      <q-icon name="event" class="cursor-pointer">
+                        <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                          <q-date v-model="advancedSearchData.filter.fromCreationDate" today-btn
+                            :disable="state.loading || advancedSearchData.denyChangeCreationDateFilters">
+                            <div class="row items-center justify-end">
+                              <q-btn v-close-popup label="Close" color="primary" flat />
+                            </div>
+                          </q-date>
+                        </q-popup-proxy>
+                      </q-icon>
+                    </template>
+                  </q-input>
                 </div>
-                <div class="row">
-                  <div class="col">
-                    <q-select class="q-mb-md" dense options-dense outlined clearable
-                      v-model="advancedSearchData.filter.updatedOnDateFilterType" :options="dateFilterOptions"
-                      :label="t('Document updated on')" :disable="searching || disableUpdatedOnFilterByRouteParams" />
-                  </div>
-                  <div class="col" v-if="advancedSearchData.hasFromUpdatedOnFilter">
-                    <q-input dense outlined mask="date" v-model="advancedSearchData.filter.fromUpdatedOn"
-                      :label="t('From date')" :disable="searching || advancedSearchData.denyChangeUpdatedOnFilters">
-                      <template v-slot:append>
-                        <q-icon name="event" class="cursor-pointer">
-                          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                            <q-date v-model="advancedSearchData.filter.fromUpdatedOn" today-btn
-                              :disable="searching || advancedSearchData.denyChangeUpdatedOnFilters">
-                              <div class="row items-center justify-end">
-                                <q-btn v-close-popup label="Close" color="primary" flat />
-                              </div>
-                            </q-date>
-                          </q-popup-proxy>
-                        </q-icon>
-                      </template>
-                    </q-input>
-                  </div>
-                  <div class="col" v-if="advancedSearchData.hasToUpdatedOnFilter">
-                    <q-input dense outlined mask="date" v-model="advancedSearchData.filter.toUpdatedOn"
-                      :label="t('To date')" :disable="searching || advancedSearchData.denyChangeUpdatedOnFilters">
-                      <template v-slot:append>
-                        <q-icon name="event" class="cursor-pointer">
-                          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                            <q-date v-model="advancedSearchData.filter.toUpdatedOn" today-btn
-                              :disable="searching || advancedSearchData.denyChangeUpdatedOnFilters">
-                              <div class="row items-center justify-end">
-                                <q-btn v-close-popup label="Close" color="primary" flat />
-                              </div>
-                            </q-date>
-                          </q-popup-proxy>
-                        </q-icon>
-                      </template>
-                    </q-input>
-                  </div>
-                  <div class="col" v-if="advancedSearchData.hasFixedUpdatedOnFilter">
-                    <q-input dense outlined mask="date" v-model="advancedSearchData.filter.fixedUpdatedOn"
-                      :label="t('Fixed date')"
-                      :disable="searching || advancedSearchData.denyChangeUpdatedOnFilters || disableUpdatedOnFilterByRouteParams">
-                      <template v-slot:append>
-                        <q-icon name="event" class="cursor-pointer">
-                          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                            <q-date v-model="advancedSearchData.filter.fixedUpdatedOn" today-btn
-                              :disable="searching || advancedSearchData.denyChangeUpdatedOnFilters">
-                              <div class="row items-center justify-end">
-                                <q-btn v-close-popup label="Close" color="primary" flat />
-                              </div>
-                            </q-date>
-                          </q-popup-proxy>
-                        </q-icon>
-                      </template>
-                    </q-input>
-                  </div>
+                <div class="col" v-if="advancedSearchData.hasToCreationDateFilter">
+                  <q-input dense outlined mask="date" v-model="advancedSearchData.filter.toCreationDate"
+                    :label="t('To date')" :disable="state.loading || advancedSearchData.denyChangeCreationDateFilters">
+                    <template v-slot:append>
+                      <q-icon name="event" class="cursor-pointer">
+                        <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                          <q-date v-model="advancedSearchData.filter.toCreationDate" today-btn
+                            :disable="state.loading || advancedSearchData.denyChangeCreationDateFilters">
+                            <div class="row items-center justify-end">
+                              <q-btn v-close-popup label="Close" color="primary" flat />
+                            </div>
+                          </q-date>
+                        </q-popup-proxy>
+                      </q-icon>
+                    </template>
+                  </q-input>
+                </div>
+                <div class="col" v-if="advancedSearchData.hasFixedCreationDateFilter">
+                  <q-input dense outlined mask="date" v-model="advancedSearchData.filter.fixedCreationDate"
+                    :label="t('Fixed date')"
+                    :disable="state.loading || advancedSearchData.denyChangeCreationDateFilters || disableCreationDateFilterByRouteParams">
+                    <template v-slot:append>
+                      <q-icon name="event" class="cursor-pointer">
+                        <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                          <q-date v-model="advancedSearchData.filter.fixedCreationDate" today-btn
+                            :disable="state.loading || advancedSearchData.denyChangeCreationDateFilters">
+                            <div class="row items-center justify-end">
+                              <q-btn v-close-popup label="Close" color="primary" flat />
+                            </div>
+                          </q-date>
+                        </q-popup-proxy>
+                      </q-icon>
+                    </template>
+                  </q-input>
                 </div>
               </div>
-            </div>
-            <div class="row">
-              <div class="col-12">
-                <TagSelector v-model="advancedSearchData.filter.tags"
-                  :disabled="searching || advancedSearchData.denyChangeCreationDateFilters" dense
-                  :start-mode-editable="true" :deny-change-editable-mode="true" clearable>
-                </TagSelector>
+              <div class="row q-col-gutter-xs">
+                <div class="col">
+                  <q-select class="q-mb-md" dense options-dense outlined clearable
+                    v-model="advancedSearchData.filter.lastUpdateFilterType" :options="dateFilterOptions"
+                    :label="t('Document last update')"
+                    :disable="state.loading || disableLastUpdateFilterByRouteParams" />
+                </div>
+                <div class="col" v-if="advancedSearchData.hasFromLastUpdateFilter">
+                  <q-input dense outlined mask="date" v-model="advancedSearchData.filter.fromLastUpdate"
+                    :label="t('From date')" :disable="state.loading || advancedSearchData.denyChangeLastUpdateFilters">
+                    <template v-slot:append>
+                      <q-icon name="event" class="cursor-pointer">
+                        <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                          <q-date v-model="advancedSearchData.filter.fromLastUpdate" today-btn
+                            :disable="state.loading || advancedSearchData.denyChangeLastUpdateFilters">
+                            <div class="row items-center justify-end">
+                              <q-btn v-close-popup label="Close" color="primary" flat />
+                            </div>
+                          </q-date>
+                        </q-popup-proxy>
+                      </q-icon>
+                    </template>
+                  </q-input>
+                </div>
+                <div class="col" v-if="advancedSearchData.hasToLastUpdateFilter">
+                  <q-input dense outlined mask="date" v-model="advancedSearchData.filter.toLastUpdate"
+                    :label="t('To date')" :disable="state.loading || advancedSearchData.denyChangeLastUpdateFilters">
+                    <template v-slot:append>
+                      <q-icon name="event" class="cursor-pointer">
+                        <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                          <q-date v-model="advancedSearchData.filter.toLastUpdate" today-btn
+                            :disable="state.loading || advancedSearchData.denyChangeLastUpdateFilters">
+                            <div class="row items-center justify-end">
+                              <q-btn v-close-popup label="Close" color="primary" flat />
+                            </div>
+                          </q-date>
+                        </q-popup-proxy>
+                      </q-icon>
+                    </template>
+                  </q-input>
+                </div>
+                <div class="col" v-if="advancedSearchData.hasFixedLastUpdateFilter">
+                  <q-input dense outlined mask="date" v-model="advancedSearchData.filter.fixedLastUpdate"
+                    :label="t('Fixed date')"
+                    :disable="state.loading || advancedSearchData.denyChangeLastUpdateFilters || disableLastUpdateFilterByRouteParams">
+                    <template v-slot:append>
+                      <q-icon name="event" class="cursor-pointer">
+                        <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                          <q-date v-model="advancedSearchData.filter.fixedLastUpdate" today-btn
+                            :disable="state.loading || advancedSearchData.denyChangeLastUpdateFilters">
+                            <div class="row items-center justify-end">
+                              <q-btn v-close-popup label="Close" color="primary" flat />
+                            </div>
+                          </q-date>
+                        </q-popup-proxy>
+                      </q-icon>
+                    </template>
+                  </q-input>
+                </div>
               </div>
-            </div>
-            <q-btn color="primary" size="md" :label="$t('Search')" no-caps class="full-width" icon="search"
-              :disable="searching" :loading="searching" type="submit">
-              <template v-slot:loading>
-                <q-spinner-hourglass class="on-left" />
-                {{ t("Searching...") }}
-              </template>
-            </q-btn>
-          </form>
-        </template>
-      </CustomExpansionWidget>
-
-      <CustomExpansionWidget v-if="searchLaunched" title="Results"
-        :caption="searching ? 'Loading...' : 'Use custom filters to refine your search'" icon="folder_open"
-        :loading="searching" :error="loadingError" :expanded="expandedResults" class="q-mt-md">
-        <template v-slot:header-extra>
-          <q-chip square size="sm" color="primary" text-color="white">{{ t("Total search results count", {
-            count:
-              advancedSearchData.pager.totalResults
-          }) }}</q-chip>
-        </template>
-        <template v-slot:content>
-          <div v-if="advancedSearchData.hasResults">
-            <div class="q-pa-lg flex flex-center" v-if="advancedSearchData.pager.totalPages > 1">
-              <q-pagination v-model="advancedSearchData.pager.currentPage" color="dark"
-                :max="advancedSearchData.pager.totalPages" :max-pages="5" boundary-numbers direction-links
-                boundary-links @update:model-value="onPaginationChanged" :disable="searching" />
-            </div>
-            <q-markup-table>
-              <thead>
-                <tr>
-                  <th style="width: 40%;" class="text-left cursor-pointer" @click="onToggleSort('title')">{{
-                    t("Title") }}
-                    <q-icon :name="sortOrderIcon" v-if="advancedSearchData.isSortedByField('title')" size="sm"></q-icon>
-                  </th>
-                  <th style="width: 20%;" class="text-left cursor-pointer" @click="onToggleSort('createdOnTimestamp')">
-                    {{ t("Creation date") }}
-                    <q-icon :name="sortOrderIcon" v-if="advancedSearchData.isSortedByField('createdOnTimestamp')"
-                      size="sm"></q-icon>
-                  </th>
-                  <th style="width: 20%;" class="text-left cursor-pointer" @click="onToggleSort('lastUpdateTimestamp')">
-                    {{ t("Last update") }}
-                    <q-icon :name="sortOrderIcon" v-if="advancedSearchData.isSortedByField('lastUpdateTimestamp')"
-                      size="sm"></q-icon>
-                  </th>
-                  <th style="width: 10%;" class="text-right cursor-pointer" @click="onToggleSort('fileCount')">
-                    {{ t("Files") }}<q-icon :name="sortOrderIcon" v-if="advancedSearchData.isSortedByField('fileCount')"
-                      size="sm"></q-icon>
-                  </th>
-                  <th style="width: 10%;" class="text-right cursor-pointer" @click="onToggleSort('noteCount')">
-                    {{ t("Notes") }}<q-icon :name="sortOrderIcon" v-if="advancedSearchData.isSortedByField('noteCount')"
-                      size="sm"></q-icon>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="document in advancedSearchData.results" :key="document.id">
-                  <td class="text-left"><router-link :to="{ name: 'document', params: { id: document.id } }">{{
-                    document.title }}</router-link>
-                  </td>
-                  <td class="text-left">{{ document.createdOn }}</td>
-                  <td class="text-left">{{ document.lastUpdate }}</td>
-                  <td class="text-right">{{ document.fileCount }}</td>
-                  <td class="text-right">{{ document.noteCount }}</td>
-                </tr>
-              </tbody>
-            </q-markup-table>
-            <div class="q-pa-lg flex flex-center" v-if="advancedSearchData.pager.totalPages > 1">
-              <q-pagination v-model="advancedSearchData.pager.currentPage" color="dark"
-                :max="advancedSearchData.pager.totalPages" :max-pages="5" boundary-numbers direction-links
-                boundary-links @update:model-value="onPaginationChanged" :disable="searching" />
+              <div class="row">
+                <div class="col">
+                  <q-select class="q-mb-md" dense options-dense outlined clearable
+                    v-model="advancedSearchData.filter.updatedOnDateFilterType" :options="dateFilterOptions"
+                    :label="t('Document updated on')" :disable="state.loading || disableUpdatedOnFilterByRouteParams" />
+                </div>
+                <div class="col" v-if="advancedSearchData.hasFromUpdatedOnFilter">
+                  <q-input dense outlined mask="date" v-model="advancedSearchData.filter.fromUpdatedOn"
+                    :label="t('From date')" :disable="state.loading || advancedSearchData.denyChangeUpdatedOnFilters">
+                    <template v-slot:append>
+                      <q-icon name="event" class="cursor-pointer">
+                        <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                          <q-date v-model="advancedSearchData.filter.fromUpdatedOn" today-btn
+                            :disable="state.loading || advancedSearchData.denyChangeUpdatedOnFilters">
+                            <div class="row items-center justify-end">
+                              <q-btn v-close-popup label="Close" color="primary" flat />
+                            </div>
+                          </q-date>
+                        </q-popup-proxy>
+                      </q-icon>
+                    </template>
+                  </q-input>
+                </div>
+                <div class="col" v-if="advancedSearchData.hasToUpdatedOnFilter">
+                  <q-input dense outlined mask="date" v-model="advancedSearchData.filter.toUpdatedOn"
+                    :label="t('To date')" :disable="state.loading || advancedSearchData.denyChangeUpdatedOnFilters">
+                    <template v-slot:append>
+                      <q-icon name="event" class="cursor-pointer">
+                        <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                          <q-date v-model="advancedSearchData.filter.toUpdatedOn" today-btn
+                            :disable="state.loading || advancedSearchData.denyChangeUpdatedOnFilters">
+                            <div class="row items-center justify-end">
+                              <q-btn v-close-popup label="Close" color="primary" flat />
+                            </div>
+                          </q-date>
+                        </q-popup-proxy>
+                      </q-icon>
+                    </template>
+                  </q-input>
+                </div>
+                <div class="col" v-if="advancedSearchData.hasFixedUpdatedOnFilter">
+                  <q-input dense outlined mask="date" v-model="advancedSearchData.filter.fixedUpdatedOn"
+                    :label="t('Fixed date')"
+                    :disable="state.loading || advancedSearchData.denyChangeUpdatedOnFilters || disableUpdatedOnFilterByRouteParams">
+                    <template v-slot:append>
+                      <q-icon name="event" class="cursor-pointer">
+                        <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                          <q-date v-model="advancedSearchData.filter.fixedUpdatedOn" today-btn
+                            :disable="state.loading || advancedSearchData.denyChangeUpdatedOnFilters">
+                            <div class="row items-center justify-end">
+                              <q-btn v-close-popup label="Close" color="primary" flat />
+                            </div>
+                          </q-date>
+                        </q-popup-proxy>
+                      </q-icon>
+                    </template>
+                  </q-input>
+                </div>
+              </div>
             </div>
           </div>
-          <q-banner dense v-else>
-            <template v-slot:avatar>
-              <q-icon name="error" />
+          <div class="row">
+            <div class="col-12">
+              <TagSelector v-model="advancedSearchData.filter.tags"
+                :disabled="state.loading || advancedSearchData.denyChangeCreationDateFilters" dense
+                :start-mode-editable="true" :deny-change-editable-mode="true" clearable>
+              </TagSelector>
+            </div>
+          </div>
+          <q-btn color="primary" size="md" :label="$t('Search')" no-caps class="full-width" icon="search"
+            :disable="state.loading" :loading="state.loading" type="submit">
+            <template v-slot:loading>
+              <q-spinner-hourglass class="on-left" />
+              {{ t("Searching...") }}
             </template>
-            {{ t("No results found with current filter") }}
-          </q-banner>
-        </template>
-      </CustomExpansionWidget>
-    </div>
+          </q-btn>
+        </form>
+      </template>
+    </CustomExpansionWidget>
+
+    <CustomExpansionWidget v-if="state.searchLaunched" title="Results" :caption="state.loading ? 'Loading...' : 'TODO'"
+      icon="folder_open" :loading="state.loading" :error="state.loadingError" :expanded="expandedResults"
+      class="q-mt-md">
+      <template v-slot:header-extra>
+        <q-chip square size="sm" color="primary" text-color="white">{{ t("Total search results count", {
+          count:
+            advancedSearchData.pager.totalResults
+        }) }}</q-chip>
+      </template>
+      <template v-slot:content>
+        <CustomErrorBanner v-if="state.loadingError" text="Error loading data" :apiError="state.apiError">
+        </CustomErrorBanner>
+        <div v-else-if="advancedSearchData.hasResults">
+          <div class="q-pa-lg flex flex-center" v-if="advancedSearchData.pager.totalPages > 1">
+            <q-pagination v-model="advancedSearchData.pager.currentPage" color="dark"
+              :max="advancedSearchData.pager.totalPages" :max-pages="5" boundary-numbers direction-links boundary-links
+              @update:model-value="onPaginationChanged" :disable="state.loading" />
+          </div>
+          <q-markup-table>
+            <thead>
+              <tr>
+                <th style="width: 40%;" class="text-left cursor-pointer" @click="onToggleSort('title')">{{
+                  t("Title") }}
+                  <q-icon :name="sortOrderIcon" v-if="advancedSearchData.isSortedByField('title')" size="sm"></q-icon>
+                </th>
+                <th style="width: 20%;" class="text-left cursor-pointer" @click="onToggleSort('createdOnTimestamp')">
+                  {{ t("Creation date") }}
+                  <q-icon :name="sortOrderIcon" v-if="advancedSearchData.isSortedByField('createdOnTimestamp')"
+                    size="sm"></q-icon>
+                </th>
+                <th style="width: 20%;" class="text-left cursor-pointer" @click="onToggleSort('lastUpdateTimestamp')">
+                  {{ t("Last update") }}
+                  <q-icon :name="sortOrderIcon" v-if="advancedSearchData.isSortedByField('lastUpdateTimestamp')"
+                    size="sm"></q-icon>
+                </th>
+                <th style="width: 10%;" class="text-right cursor-pointer" @click="onToggleSort('fileCount')">
+                  {{ t("Files") }}<q-icon :name="sortOrderIcon" v-if="advancedSearchData.isSortedByField('fileCount')"
+                    size="sm"></q-icon>
+                </th>
+                <th style="width: 10%;" class="text-right cursor-pointer" @click="onToggleSort('noteCount')">
+                  {{ t("Notes") }}<q-icon :name="sortOrderIcon" v-if="advancedSearchData.isSortedByField('noteCount')"
+                    size="sm"></q-icon>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="document in advancedSearchData.results" :key="document.id">
+                <td class="text-left"><router-link :to="{ name: 'document', params: { id: document.id } }">{{
+                  document.title }}</router-link>
+                </td>
+                <td class="text-left">{{ document.createdOn }}</td>
+                <td class="text-left">{{ document.lastUpdate }}</td>
+                <td class="text-right">{{ document.fileCount }}</td>
+                <td class="text-right">{{ document.noteCount }}</td>
+              </tr>
+            </tbody>
+          </q-markup-table>
+          <div class="q-pa-lg flex flex-center" v-if="advancedSearchData.pager.totalPages > 1">
+            <q-pagination v-model="advancedSearchData.pager.currentPage" color="dark"
+              :max="advancedSearchData.pager.totalPages" :max-pages="5" boundary-numbers direction-links boundary-links
+              @update:model-value="onPaginationChanged" :disable="state.loading" />
+          </div>
+        </div>
+        <CustomBanner v-else warning text="No results found with current filter"></CustomBanner>
+      </template>
+    </CustomExpansionWidget>
   </q-page>
 </template>
 
 <script setup>
 
-import { ref, computed, watch, onMounted } from "vue";
+import { ref, reactive, computed, watch, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { date } from "quasar";
 import { useI18n } from "vue-i18n";
@@ -318,22 +315,24 @@ import { useAdvancedSearchData } from "stores/advancedSearchData";
 import { default as TagSelector } from "components/TagSelector.vue";
 
 import { default as CustomExpansionWidget } from "components/CustomExpansionWidget.vue";
+import { default as CustomErrorBanner } from "components/CustomErrorBanner.vue";
 import { default as CustomBanner } from "components/CustomBanner.vue";
-import { default as APIErrorDetails } from "components/APIErrorDetails.vue";
-
 
 const { t } = useI18n();
+
 const route = useRoute();
-const loading = ref(false);
-const loadingError = ref(false);
-const apiError = ref(null);
-const searching = ref(false);
-const searchLaunched = ref(false);
+
+const state = reactive({
+  loading: false,
+  loadingError: false,
+  errorMessage: null,
+  apiError: null,
+  searchLaunched: false
+});
+
+
 const expandedFilter = ref(route.meta.conditionsFilterExpanded);
 const expandedResults = ref(false);
-
-console.log(route.meta);
-
 
 // TODO: not working on real-time i18n changes
 const dateFilterOptions = ref([
@@ -431,7 +430,7 @@ function onSubmitForm(resetPager) {
   if (resetPager) {
     advancedSearchData.pager.currentPage = 1;
   }
-  searching.value = true;
+  state.loading = true;
   if (date.isValid(advancedSearchData.filter.fixedCreationDate)) {
     advancedSearchData.filter.fromCreationTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.fixedCreationDate, 'YYYY/MM/DD'), { hour: 0, minute: 0, second: 0, millisecond: 0 }), 'X');
     advancedSearchData.filter.toCreationTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.fixedCreationDate, 'YYYY/MM/DD'), { hour: 23, minute: 59, second: 59, millisecond: 999 }), 'X');
@@ -482,52 +481,41 @@ function onSubmitForm(resetPager) {
       if (success.data.results) {
         advancedSearchData.pager = success.data.results.pagination;
         advancedSearchData.results = success.data.results.documents.map((document) => {
+          // convert PHP timestamps (seconds) to JS (milliseconds)
           document.createdOn = date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
           document.lastUpdate = document.lastUpdateTimestamp ? date.formatDate(document.lastUpdateTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss') : null;
           return (document);
         });
-        searching.value = false;
-        searchLaunched.value = true;
+        state.loading = false;
+
+        state.searchLaunched = true;
         if (advancedSearchData.hasResults) {
           expandedResults.value = true;
         }
       } else {
-        /*
-        $q.notify({
-          type: "negative",
-          message: t("API Error: fatal error"),
-          caption: t("API Error: invalid JSON response")
-        });
-        */
-        searching.value = false;
+        state.loading = false;
+
       }
     })
-    .catch((error) => {
-      switch (error.response.status) {
+    .catch((errorResponse) => {
+      state.apiError = errorResponse.customAPIErrorDetails;
+      switch (errorResponse.response.status) {
         case 400:
-          /*
-          $q.notify({
-            type: "negative",
-            message: t("API Error: invalid/missing param"),
-          });
-          */
+          state.loadingError = true;
+          state.errorMessage = "API Error: invalid/missing param";
           break;
         case 401:
+          // TODO: dialog modal signin ?
           this.$router.push({
             name: "signIn",
           });
           break;
         default:
-          /*
-          $q.notify({
-            type: "negative",
-            message: t("API Error: fatal error"),
-            caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
-          });
-          */
+          state.loadingError = true;
+          state.errorMessage = "API Error: fatal error";
           break;
       }
-      searching.value = false;
+      state.loading = false;
     });
 }
 
