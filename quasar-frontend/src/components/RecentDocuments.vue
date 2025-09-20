@@ -1,8 +1,8 @@
 <template>
   <CustomExpansionWidget title="Most recent activity"
-    :caption="loading ? 'Loading...' : 'Click on title to open document'" icon="work_history"
-    iconToolTip="Click to refresh data" :onHeaderIconClick="onRefresh" :loading="loading" :error="loadingError"
-    :expanded="expanded">
+    :caption="state.loading ? 'Loading...' : 'Click on title to open document'" icon="work_history"
+    iconToolTip="Click to refresh data" :onHeaderIconClick="onRefresh" :loading="state.loading"
+    :error="state.loadingError" :expanded="expanded">
     <template v-slot:header-extra>
       <q-chip square size="sm" color="primary" text-color="white">{{ t("Total document count", {
         count:
@@ -10,7 +10,7 @@
       }) }}</q-chip>
     </template>
     <template v-slot:content>
-      <q-list v-if="loading">
+      <q-list v-if="state.loading">
         <div v-for="i in 4" :key="i">
           <q-item class="transparent-background text-color-primary">
             <q-item-section top avatar class="gt-xs q-mt-lg">
@@ -40,18 +40,19 @@
           <q-separator inset v-if="i < 3" class="q-my-md" />
         </div>
       </q-list>
-      <CustomErrorBanner v-else-if="loadingError" text="Error loading data" :apiError="apiError"></CustomErrorBanner>
+      <CustomErrorBanner v-else-if="state.loadingError" text="Error loading data" :apiError="state.apiError">
+      </CustomErrorBanner>
       <q-list v-else-if="hasRecentDocuments">
         <div v-for="recentDocument, index in recentDocuments" :key="recentDocument.id">
           <q-item class="transparent-background text-color-primary">
             <q-item-section top avatar class="gt-xs">
-              <q-avatar square icon="work" size="64px" />
+              <q-avatar square icon="work" size="64px" aria-label="Document avatar" />
             </q-item-section>
             <q-item-section top>
               <q-item-label>
                 <router-link :to="{ name: 'document', params: { id: recentDocument.id } }"
                   class="text-decoration-hover text-color-primary"><span class="text-weight-bold">{{ t("Title")
-                    }}:</span> {{
+                  }}:</span> {{
                       recentDocument.title
                     }}
                 </router-link>
@@ -89,7 +90,7 @@
 
 <script setup>
 
-import { ref, reactive, computed, onMounted } from "vue";
+import { reactive, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { api } from "boot/axios";
 import { useFormatDates } from "src/composables/formatDate"
@@ -109,30 +110,32 @@ const props = defineProps({
   }
 });
 
-const loading = ref(false);
-const loadingError = ref(false);
-const apiError = ref(null);
+const state = reactive({
+  loading: false,
+  loadingError: false,
+  apiError: null
+});
 
 const recentDocuments = reactive([]);
 const hasRecentDocuments = computed(() => recentDocuments.length > 0);
 
 function onRefresh() {
-  loading.value = true;
+  state.loading = true;
   recentDocuments.length = 0;
-  loadingError.value = false;
-  apiError.value = null;
+  state.loadingError = false;
+  state.apiError = null;
   api.document.searchRecent(16)
     .then((successResponse) => {
-      successResponse.data.recentDocuments.forEach((document) => {
+      recentDocuments.push(...successResponse.data.recentDocuments.map((document) => {
         document.timestamp = document.lastUpdateTimestamp * 1000; // convert PHP timestamps (seconds) to JS (milliseconds)
-        recentDocuments.push(document);
-      });
-      loading.value = false;
+        return document;
+      }));
+      state.loading = false;
     })
     .catch((errorResponse) => {
-      loadingError.value = true;
-      apiError.value = errorResponse.customAPIErrorDetails;
-      loading.value = false;
+      state.loadingError = true;
+      state.apiError = errorResponse.customAPIErrorDetails;
+      state.loading = false;
     });
 }
 
