@@ -18,7 +18,7 @@
         <q-item-label caption>{{ t(caption) }}</q-item-label>
       </q-item-section>
     </template>
-    <q-card class="q-ma-xs q-mt-sm" flat>
+    <q-card class="q-ma-xs" flat>
       <q-card-section class="q-pa-none">
         <slot name="content"></slot>
       </q-card-section>
