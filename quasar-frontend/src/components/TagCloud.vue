@@ -1,7 +1,7 @@
 <template>
-  <CustomExpansionWidget title="Tag cloud" :caption="loading ? 'Loading...' : 'Click on tag to browse by tag'"
-    icon="tag" iconToolTip="Click to refresh data" :onHeaderIconClick="refresh" :loading="loading" :error="loadingError"
-    :expanded="expanded">
+  <CustomExpansionWidget title="Tag cloud" :caption="state.loading ? 'Loading...' : 'Click on tag to browse by tag'"
+    icon="tag" iconToolTip="Click to refresh data" :onHeaderIconClick="onRefresh" :loading="state.loading"
+    :error="state.loadingError" :expanded="expanded">
     <template v-slot:header-extra>
       <q-chip square size="sm" color="primary" text-color="white">{{ t("Total tags", {
         count:
@@ -9,17 +9,17 @@
       }) }}</q-chip>
     </template>
     <template v-slot:content>
-      <div v-if="loading">
-        <div class="row items-center q-gutter-sm q-pa-xs">
-          <q-skeleton square width="12em" height="2em" class="" v-for="j in 32" :key="j"></q-skeleton>
-        </div>
+      <div class="row items-center q-gutter-sm q-pa-xs" v-if="state.loading">
+        <q-skeleton square width="12em" height="2em" class="" v-for="j in 32" :key="j"></q-skeleton>
       </div>
-      <div v-else-if="!loadingError">
+      <CustomErrorBanner v-else-if="state.loadingError" text="Error loading data" :apiError="state.apiError">
+      </CustomErrorBanner>
+      <div v-else-if="hasTags">
         <div v-if="hasTags">
           <q-chip square class="theme-default-q-chip" v-for="tag in tags" :key="tag.tag">
             <q-avatar class="theme-default-q-avatar">{{ tag.total }}</q-avatar>
             <router-link :to="{ name: 'advancedSearchByTag', params: { tag: tag.tag } }"
-              style="text-decoration: none; width: 10em; text-align: center">
+              class="text-center text-decoration-none q-chip-10em" aria-label="Browse by tag">
               <div class="ellipsis">
                 {{ tag.tag }}
                 <q-tooltip>{{ t("Browse by tag: ", { tag: tag.tag }) }}</q-tooltip>
@@ -32,70 +32,66 @@
           {{ t("You haven't created any tags yet") }}
         </q-banner>
       </div>
-      <div v-else>
-        <CustomBanner class="q-ma-lg" text="Error loading data" error>
-          <template v-slot:details v-if="initialState.isDevEnvironment && apiError">
-            <APIErrorDetails class="q-mt-md" :apiError="apiError"></APIErrorDetails>
-          </template>
-        </CustomBanner>
-      </div>
+      <CustomBanner v-else warning text="You haven't created any tags yet"></CustomBanner>
     </template>
   </CustomExpansionWidget>
 </template>
 
 <script setup>
 
-import { ref, computed, onMounted } from "vue";
+import { reactive, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-//import { useQuasar } from "quasar"
 import { api } from "boot/axios";
-import { useInitialStateStore } from "src/stores/initialState";
 
 import { default as CustomExpansionWidget } from "components/CustomExpansionWidget.vue";
+import { default as CustomErrorBanner } from "components/CustomErrorBanner.vue";
 import { default as CustomBanner } from "components/CustomBanner.vue";
-import { default as APIErrorDetails } from "components/APIErrorDetails.vue";
 
 const { t } = useI18n();
-const initialState = useInitialStateStore();
-//const $q = useQuasar();
-const loadingError = ref(false);
-const loading = ref(false);
 
 const props = defineProps({
-  expanded: Boolean
+  expanded: {
+    type: Boolean,
+    required: false,
+    default: true
+  }
 });
 
-const tags = ref([]);
-const hasTags = computed(() => tags.value.length > 0);
-const apiError = ref(null);
+const state = reactive({
+  loading: false,
+  loadingError: false,
+  apiError: null
+});
 
-function refresh() {
-  tags.value = [];
-  loading.value = true;
-  loadingError.value = false;
+const tags = reactive([]);
+const hasTags = computed(() => tags.length > 0);
+
+function onRefresh() {
+  state.loading = true;
+  tags.length = 0;
+  state.loadingError = false;
+  state.apiError = null;
   api.tag.getCloud()
-    .then((success) => {
-      tags.value = success.data.tags;
-      loading.value = false;
+    .then((successResponse) => {
+      tags.push(...successResponse.data.tags);
+      state.loading = false;
     })
-    .catch((error) => {
-      loading.value = false;
-      loadingError.value = true;
-      apiError.value = error.customAPIErrorDetails;
-      /*
-      const status = error.response?.status || 'N/A';
-      const statusText = error.response?.statusText || 'Unknown error';
-      $q.notify({
-        type: "negative",
-        message: t("API Error: fatal error"),
-        caption: t("API Error: fatal error details", { status, statusText })
-      });
-      */
+    .catch((errorResponse) => {
+      console.log(errorResponse);
+      state.loadingError = true;
+      state.apiError = errorResponse.customAPIErrorDetails;
+      state.loading = false;
     });
 }
 
 onMounted(() => {
-  refresh();
+  onRefresh();
 });
 
 </script>
+
+<style scoped>
+.q-chip-10em {
+  width: 10em;
+}
+</style>

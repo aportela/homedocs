@@ -52,7 +52,7 @@
               <q-item-label>
                 <router-link :to="{ name: 'document', params: { id: recentDocument.id } }"
                   class="text-decoration-hover text-color-primary"><span class="text-weight-bold">{{ t("Title")
-                  }}:</span> {{
+                    }}:</span> {{
                       recentDocument.title
                     }}
                 </router-link>
