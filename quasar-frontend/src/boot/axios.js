@@ -377,7 +377,9 @@ const api = {
     getActivityHeatMapData: function (fromTimestamp) {
       return new Promise((resolve, reject) => {
         axios
-          .get("api2/stats/heatmap-activity-data", { params: { fromTimestamp: fromTimestamp || null } })
+          .get("api2/stats/heatmap-activity-data", {
+            params: { fromTimestamp: fromTimestamp || null },
+          })
           .then((response) => {
             resolve(response);
           })
