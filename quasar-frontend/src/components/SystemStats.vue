@@ -12,7 +12,10 @@
             <q-icon :name="stat.error ? 'error' : stat.icon" class="gt-xs" :class="{ 'text-red': stat.error }" />
             {{ t(stat.headerLabel) }}
           </q-card-section>
-          <q-card-section class="text-center text-h4">{{ stat.total }}</q-card-section>
+          <q-card-section class="text-center text-h4" v-if="!stat.loadingError">{{ stat.total }}</q-card-section>
+          <q-card-section v-else>
+            <CustomErrorBanner text="Error loading data" :apiError="stat.apiError"></CustomErrorBanner>
+          </q-card-section>
         </q-card>
       </div>
     </div>
@@ -28,6 +31,7 @@ import { format } from "quasar"
 import { api } from "boot/axios";
 
 import ActivityHeatMap from 'components/ActivityHeatMap.vue';
+import { default as CustomErrorBanner } from "components/CustomErrorBanner.vue";
 
 const { t } = useI18n();
 
@@ -35,21 +39,24 @@ const stats = reactive({
   documents: {
     total: 0,
     loading: false,
-    error: false,
+    loadingError: false,
+    apiError: null,
     headerLabel: "Total documents",
     icon: "shelves"
   },
   attachments: {
     total: 0,
     loading: false,
-    error: false,
+    loadingError: false,
+    apiError: null,
     headerLabel: "Total attachments",
     icon: "attachment"
   },
   diskUsage: {
     total: 0,
     loading: false,
-    error: false,
+    loadingError: false,
+    apiError: null,
     headerLabel: "Disk usage",
     icon: "data_usage"
   }
@@ -58,14 +65,16 @@ const stats = reactive({
 const onRefreshTotalDocuments = () => {
   stats.documents.loading = true;
   stats.documents.total = 0;
-  stats.documents.error = false;
+  stats.documents.loadingError = false;
+  stats.documents.apiError = null;
   api.stats.documentCount()
     .then((successResponse) => {
       stats.documents.total = successResponse.data.count;
       stats.documents.loading = false;
     })
     .catch((errorResponse) => {
-      stats.documents.error = true;
+      stats.documents.loadingError = true;
+      stats.documents.apiError = errorResponse.customAPIErrorDetails;
       stats.documents.loading = false;
     });
 }
@@ -73,14 +82,16 @@ const onRefreshTotalDocuments = () => {
 const onRefreshTotalAttachments = () => {
   stats.attachments.loading = true;
   stats.attachments.total = 0;
-  stats.attachments.error = false;
+  stats.attachments.loadingError = false;
+  stats.attachments.apiError = null;
   api.stats.attachmentCount()
     .then((successResponse) => {
       stats.attachments.total = successResponse.data.count;
       stats.attachments.loading = false;
     })
     .catch((errorResponse) => {
-      stats.attachments.error = true;
+      stats.attachments.loadingError = true;
+      stats.attachments.apiError = errorResponse.customAPIErrorDetails;
       stats.attachments.loading = false;
     });
 }
@@ -88,14 +99,16 @@ const onRefreshTotalAttachments = () => {
 const onRefreshTotalAttachmentsDiskUsage = () => {
   stats.diskUsage.loading = true;
   stats.diskUsage.total = 0;
-  stats.diskUsage.error = false;
+  stats.diskUsage.loadingError = false;
+  stats.diskUsage.apiError = null;
   api.stats.attachmentDiskSize()
     .then((successResponse) => {
       stats.diskUsage.total = format.humanStorageSize(successResponse.data.size);
       stats.diskUsage.false;
     })
     .catch((errorResponse) => {
-      stats.diskUsage.error = true;
+      stats.diskUsage.loadingError = true;
+      stats.diskUsage.apiError = errorResponse.customAPIErrorDetails;
       stats.diskUsage.loading = false;
     });
 }
