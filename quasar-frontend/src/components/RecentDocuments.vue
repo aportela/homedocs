@@ -40,55 +40,49 @@
           <q-separator inset v-if="i < 3" class="q-my-md" />
         </div>
       </q-list>
-      <div v-else-if="!loadingError">
-        <q-list v-if="hasRecentDocuments">
-          <div v-for="recentDocument, index in recentDocuments" :key="recentDocument.id">
-            <q-item class="transparent-background text-color-primary">
-              <q-item-section top avatar class="gt-xs">
-                <q-avatar square icon="work" size="64px" />
-              </q-item-section>
-              <q-item-section top>
-                <q-item-label>
-                  <router-link :to="{ name: 'document', params: { id: recentDocument.id } }"
-                    class="text-decoration-hover text-color-primary"><span class="text-weight-bold">{{ t("Title")
-                      }}:</span> {{
-                        recentDocument.title
-                      }}
-                  </router-link>
-                </q-item-label>
-                <q-item-label caption lines="2">{{ recentDocument.description }}</q-item-label>
-                <q-item-label>
-                  <router-link v-for="tag in recentDocument.tags" :key="tag"
-                    :to="{ name: 'advancedSearchByTag', params: { tag: tag } }">
-                    <q-chip square size="md" clickable icon="tag" class="q-chip-themed">
-                      {{ tag }}
-                      <q-tooltip>{{ t("Browse by tag: ", { tag: tag }) }}</q-tooltip>
-                    </q-chip>
-                  </router-link>
-                </q-item-label>
-              </q-item-section>
-              <q-item-section side top>
-                <q-item-label caption>{{ timeAgo(recentDocument.timestamp) }}</q-item-label>
-                <q-chip size="md" square class="full-width theme-default-q-chip">
-                  <q-avatar class="theme-default-q-avatar">{{ recentDocument.fileCount }}</q-avatar>
-                  {{ t("Files") }}
-                </q-chip>
-                <q-chip size="md" square class="full-width theme-default-q-chip">
-                  <q-avatar class="theme-default-q-avatar">{{ recentDocument.noteCount }}</q-avatar>
-                  {{ t("Notes") }}
-                </q-chip>
-              </q-item-section>
-            </q-item>
-            <q-separator inset v-if="index !== recentDocuments.length - 1" class="q-my-md" />
-          </div>
-        </q-list>
-        <q-banner v-else class="transparent-background">
-          <q-icon name="warning" size="sm" class="q-mr-sm" />
-          {{ t("You haven't created any documents yet") }}
-        </q-banner>
-        <CustomBanner warning text="eeeeeeeeeee"></CustomBanner>
-      </div>
-      <CustomErrorBanner v-else text="Error loading data" :apiError="apiError"></CustomErrorBanner>
+      <CustomErrorBanner v-if="loadingError" text="Error loading data" :apiError="apiError"></CustomErrorBanner>
+      <q-list v-else-if="hasRecentDocuments">
+        <div v-for="recentDocument, index in recentDocuments" :key="recentDocument.id">
+          <q-item class="transparent-background text-color-primary">
+            <q-item-section top avatar class="gt-xs">
+              <q-avatar square icon="work" size="64px" />
+            </q-item-section>
+            <q-item-section top>
+              <q-item-label>
+                <router-link :to="{ name: 'document', params: { id: recentDocument.id } }"
+                  class="text-decoration-hover text-color-primary"><span class="text-weight-bold">{{ t("Title")
+                  }}:</span> {{
+                      recentDocument.title
+                    }}
+                </router-link>
+              </q-item-label>
+              <q-item-label caption lines="2">{{ recentDocument.description }}</q-item-label>
+              <q-item-label>
+                <router-link v-for="tag in recentDocument.tags" :key="tag"
+                  :to="{ name: 'advancedSearchByTag', params: { tag: tag } }">
+                  <q-chip square size="md" clickable icon="tag" class="q-chip-themed">
+                    {{ tag }}
+                    <q-tooltip>{{ t("Browse by tag: ", { tag: tag }) }}</q-tooltip>
+                  </q-chip>
+                </router-link>
+              </q-item-label>
+            </q-item-section>
+            <q-item-section side top>
+              <q-item-label caption>{{ timeAgo(recentDocument.timestamp) }}</q-item-label>
+              <q-chip size="md" square class="full-width theme-default-q-chip">
+                <q-avatar class="theme-default-q-avatar">{{ recentDocument.fileCount }}</q-avatar>
+                {{ t("Files") }}
+              </q-chip>
+              <q-chip size="md" square class="full-width theme-default-q-chip">
+                <q-avatar class="theme-default-q-avatar">{{ recentDocument.noteCount }}</q-avatar>
+                {{ t("Notes") }}
+              </q-chip>
+            </q-item-section>
+          </q-item>
+          <q-separator inset v-if="index !== recentDocuments.length - 1" class="q-my-md" />
+        </div>
+      </q-list>
+      <CustomBanner v-else warning text="You haven't created any documents yet"></CustomBanner>
     </template>
   </CustomExpansionWidget>
 </template>
@@ -129,18 +123,18 @@ function onRefresh() {
   apiError.value = null;
   api.document.searchRecent(16)
     .then((successResponse) => {
-      /*
       recentDocuments.value = successResponse.data.recentDocuments.map((document) => {
         document.timestamp = document.lastUpdateTimestamp * 1000; // convert PHP timestamps (seconds) to JS (milliseconds)
         return (document);
       });
-      */
       loading.value = false;
     })
     .catch((errorResponse) => {
       loadingError.value = true;
       apiError.value = errorResponse.customAPIErrorDetails;
       loading.value = false;
+
+
     });
 }
 
