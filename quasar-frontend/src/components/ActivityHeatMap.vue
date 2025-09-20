@@ -7,16 +7,13 @@
       <q-btn icon-right="arrow_right" :disabled="rightButtonDisabled" size="md" color="primary"
         @click.prevent="onRightButtonClicked">{{ t("Next") }}</q-btn>
     </div>
-    <CustomBanner class="q-ma-lg" text="Error loading data" v-if="error" error>
-      <template v-slot:details v-if="initialState.isDevEnvironment && apiError">
-        <APIErrorDetails class="q-mt-md" :apiError="apiError"></APIErrorDetails>
-      </template>
-    </CustomBanner>
+    <CustomErrorBanner v-if="state.loadingError" text="Error loading data" :apiError="state.apiError">
+    </CustomErrorBanner>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, reactive, computed, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { date, Dark } from "quasar";
@@ -29,16 +26,11 @@ import "cal-heatmap/cal-heatmap.css";
 import Tooltip from 'cal-heatmap/plugins/Tooltip';
 import CalendarLabel from 'cal-heatmap/plugins/CalendarLabel';
 
-import { useInitialStateStore } from "src/stores/initialState";
-
-import { default as CustomBanner } from "components/CustomBanner.vue";
-import { default as APIErrorDetails } from "components/APIErrorDetails.vue";
+import { default as CustomErrorBanner } from "components/CustomErrorBanner.vue";
 
 const router = useRouter();
 
 const { t } = useI18n();
-
-const initialState = useInitialStateStore();
 
 const props = defineProps({
   showNavigationButtons: {
@@ -48,9 +40,11 @@ const props = defineProps({
   }
 });
 
-const loading = ref(false);
-const error = ref(false);
-const apiError = ref(null);
+const state = reactive({
+  loading: false,
+  loadingError: false,
+  apiError: null
+});
 
 const leftButtonDisabled = ref(false);
 const rightButtonDisabled = ref(false);
@@ -136,7 +130,6 @@ cal.on('resize', (newW, newH, oldW, oldH) => {
    onsole.log(
      Calendar has been resized from ${oldW}x${oldH} to ${newW}x${newH}`
    ;
-
 });
 */
 
@@ -192,8 +185,9 @@ const onRightButtonClicked = () => {
 
 
 const refresh = () => {
-  loading.value = true;
-  error.value = false;
+  state.loading = true;
+  state.loadingError = false;
+  state.apiError = null;
   api.stats.getActivityHeatMapData(date.formatDate(fromDate, 'X'))
     .then((successResponse) => {
       const counts = successResponse.data.heatmap.map(d => d.count);
@@ -208,12 +202,12 @@ const refresh = () => {
         y: "count",
         type: "json",
       }, scaleDomain);
-      loading.value = false;
+      state.loading = false;
     })
     .catch((errorResponse) => {
-      loading.value = false;
-      error.value = true;
-      apiError.value = errorResponse.customAPIErrorDetails;
+      state.loadingError = true;
+      state.apiError = errorResponse.customAPIErrorDetails;
+      state.loading = false;
     });
 }
 
