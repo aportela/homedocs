@@ -40,7 +40,7 @@
           <q-separator inset v-if="i < 3" class="q-my-md" />
         </div>
       </q-list>
-      <CustomErrorBanner v-if="loadingError" text="Error loading data" :apiError="apiError"></CustomErrorBanner>
+      <CustomErrorBanner v-else-if="loadingError" text="Error loading data" :apiError="apiError"></CustomErrorBanner>
       <q-list v-else-if="hasRecentDocuments">
         <div v-for="recentDocument, index in recentDocuments" :key="recentDocument.id">
           <q-item class="transparent-background text-color-primary">
@@ -51,7 +51,7 @@
               <q-item-label>
                 <router-link :to="{ name: 'document', params: { id: recentDocument.id } }"
                   class="text-decoration-hover text-color-primary"><span class="text-weight-bold">{{ t("Title")
-                  }}:</span> {{
+                    }}:</span> {{
                       recentDocument.title
                     }}
                 </router-link>
