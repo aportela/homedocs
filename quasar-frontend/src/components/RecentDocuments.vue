@@ -89,7 +89,7 @@
 
 <script setup>
 
-import { ref, computed, onMounted } from "vue";
+import { ref, reactive, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { api } from "boot/axios";
 import { useFormatDates } from "src/composables/formatDate"
@@ -113,19 +113,19 @@ const loading = ref(false);
 const loadingError = ref(false);
 const apiError = ref(null);
 
-const recentDocuments = ref([]);
-const hasRecentDocuments = computed(() => recentDocuments.value?.length > 0);
+const recentDocuments = reactive([]);
+const hasRecentDocuments = computed(() => recentDocuments.length > 0);
 
 function onRefresh() {
   loading.value = true;
-  recentDocuments.value = [];
+  recentDocuments.length = 0;
   loadingError.value = false;
   apiError.value = null;
   api.document.searchRecent(16)
     .then((successResponse) => {
-      recentDocuments.value = successResponse.data.recentDocuments.map((document) => {
+      successResponse.data.recentDocuments.forEach((document) => {
         document.timestamp = document.lastUpdateTimestamp * 1000; // convert PHP timestamps (seconds) to JS (milliseconds)
-        return (document);
+        recentDocuments.push(document);
       });
       loading.value = false;
     })
@@ -133,8 +133,6 @@ function onRefresh() {
       loadingError.value = true;
       apiError.value = errorResponse.customAPIErrorDetails;
       loading.value = false;
-
-
     });
 }
 
