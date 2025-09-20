@@ -77,7 +77,6 @@ function onRefresh() {
       state.loading = false;
     })
     .catch((errorResponse) => {
-      console.log(errorResponse);
       state.loadingError = true;
       state.apiError = errorResponse.customAPIErrorDetails;
       state.loading = false;
