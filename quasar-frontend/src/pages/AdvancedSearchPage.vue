@@ -3,7 +3,7 @@
     <div class="q-pa-md">
       <CustomExpansionWidget title="Advanced search"
         :caption="loading ? 'Loading...' : 'Use custom filters to refine your search'" icon="filter_alt"
-        :loading="loading" :error="loadingError" :expanded="expanded">
+        :loading="loading" :error="loadingError" :expanded="expandedFilter">
         <template v-slot:header-extra>
           <q-chip square size="sm" color="primary" text-color="white">{{ t("Total search conditions count", {
             count:
@@ -309,9 +309,9 @@
 
 <script setup>
 
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import { date, useQuasar } from "quasar";
+import { date } from "quasar";
 import { useI18n } from "vue-i18n";
 import { api } from "boot/axios";
 import { useAdvancedSearchData } from "stores/advancedSearchData";
@@ -322,15 +322,19 @@ import { default as CustomBanner } from "components/CustomBanner.vue";
 import { default as APIErrorDetails } from "components/APIErrorDetails.vue";
 
 
-const $q = useQuasar();
 const { t } = useI18n();
 const route = useRoute();
 const loading = ref(false);
+const loadingError = ref(false);
 const apiError = ref(null);
 const searching = ref(false);
 const searchLaunched = ref(false);
-const expandedFilter = ref(true);
+const expandedFilter = ref(route.meta.conditionsFilterExpanded);
 const expandedResults = ref(false);
+
+console.log(route.meta);
+
+
 // TODO: not working on real-time i18n changes
 const dateFilterOptions = ref([
   { label: t('Any date'), value: 0 },
@@ -488,21 +492,25 @@ function onSubmitForm(resetPager) {
           expandedResults.value = true;
         }
       } else {
+        /*
         $q.notify({
           type: "negative",
           message: t("API Error: fatal error"),
           caption: t("API Error: invalid JSON response")
         });
+        */
         searching.value = false;
       }
     })
     .catch((error) => {
       switch (error.response.status) {
         case 400:
+          /*
           $q.notify({
             type: "negative",
             message: t("API Error: invalid/missing param"),
           });
+          */
           break;
         case 401:
           this.$router.push({
@@ -510,19 +518,23 @@ function onSubmitForm(resetPager) {
           });
           break;
         default:
+          /*
           $q.notify({
             type: "negative",
             message: t("API Error: fatal error"),
             caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
           });
+          */
           break;
       }
       searching.value = false;
     });
 }
 
-if (advancedSearchData.filter.tags.length > 0 || disableCreationDateFilterByRouteParams.value || disableLastUpdateFilterByRouteParams.value || disableUpdatedOnFilterByRouteParams.value) {
-  onSubmitForm(true);
-}
+onMounted(() => {
+  if (route.meta.autoLaunchSearch) {
+    onSubmitForm(true);
+  }
+});
 
 </script>
