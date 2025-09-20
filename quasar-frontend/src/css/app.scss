@@ -166,7 +166,11 @@ body {
   }
 
   .theme-default-q-banner-error {
-    background-color: #e4bec4;
+    background-color: #ffabb8;
+  }
+
+  .theme-default-q-banner-warning {
+    background-color: #ffe0d0;
   }
 
   .theme-default-q-card-section-header {
@@ -270,7 +274,12 @@ body {
   }
 
   .theme-default-q-banner-error {
-    background-color: #71565a;
+    background-color: #dd7080;
+    color: white;
+  }
+
+  .theme-default-q-banner-warning{
+    background-color: #ffbb98;
     color: white;
   }
 
