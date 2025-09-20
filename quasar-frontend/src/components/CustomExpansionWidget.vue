@@ -4,8 +4,9 @@
     <template v-slot:header>
       <q-item-section avatar>
         <q-icon v-if="loading" name="settings" class="animation-spin"></q-icon>
-        <q-icon v-else-if="error" name="error" color="red" @click.stop="onHeaderIconClicked"
-          :class="iconClass"></q-icon>
+        <q-icon v-else-if="error" name="error" color="red" @click.stop="onHeaderIconClicked" :class="iconClass">
+          <q-tooltip v-if="iconToolTip">{{ t(iconToolTip) }}</q-tooltip>
+        </q-icon>
         <q-icon v-else :name="icon" @click.stop="onHeaderIconClicked" :class="iconClass">
           <q-tooltip v-if="iconToolTip">{{ t(iconToolTip) }}</q-tooltip>
         </q-icon>
@@ -18,7 +19,7 @@
         <q-item-label caption>{{ t(caption) }}</q-item-label>
       </q-item-section>
     </template>
-    <q-card class="q-ma-xs q-mt-sm" flat>
+    <q-card class="q-ma-xs" flat>
       <q-card-section class="q-pa-none">
         <slot name="content"></slot>
       </q-card-section>
