@@ -3,100 +3,94 @@
     <template v-slot:content>
       <form @submit.prevent.stop="onValidateForm" autocorrect="off" autocapitalize="off" autocomplete="off"
         spellcheck="false">
-        <q-input class="q-my-md" dense outlined v-model="email" type="email" name="email" :label="t('Email')" readonly
-          :error="false">
+        <q-input class="q-my-md" dense outlined v-model="profile.email" type="email" name="email" :label="t('Email')"
+          readonly :error="false">
           <template v-slot:prepend>
             <q-icon name="alternate_email" />
           </template>
         </q-input>
-        <CustomInputPassword class="q-my-md" dense outlined v-model="password" name="password"
+        <CustomInputPassword class="q-my-md" dense outlined v-model="profile.password" name="password"
           :label="t('New password')" :error="validator.hasErrors" ref="passwordRef"
-          :errorMessage="validator.message ? t(validator.message) : ''" :disable="loading" :autofocus="true"
+          :errorMessage="validator.message ? t(validator.message) : ''" :disable="state.loading" :autofocus="true"
           :rules="formUtils.requiredFieldRules" lazy-rules>
         </CustomInputPassword>
         <q-btn color="primary" size="md" :label="$t('Update profile')" no-caps class="full-width q-my-xs"
-          icon=" account_circle" :disable="loading || !password" :loading="loading" type="submit">
+          icon=" account_circle" :disable="state.loading || !profile.password" :loading="state.loading" type="submit">
           <template v-slot:loading>
             <q-spinner-hourglass class="on-left" />
             {{ t('Update profile') }}
           </template>
         </q-btn>
-        <CustomBanner v-if="profileUpdatedSuccessfully || error" :text="bannerText"
-          :success="profileUpdatedSuccessfully" :error="error">
-          <template v-slot:details v-if="error && initialState.isDevEnvironment && apiError">
-            <APIErrorDetails class="q-mt-md" :apiError="apiError"></APIErrorDetails>
-          </template>
+        <CustomBanner v-if="profileUpdatedSuccessfully" text="Profile has been successfully updated" success
+          class="q-mt-lg">
         </CustomBanner>
+        <CustomErrorBanner v-else-if="state.loadingError" text="Error loading data" :apiError="state.apiError"
+          class="q-mt-lg">
+        </CustomErrorBanner>
       </form>
     </template>
   </CustomWidget>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, nextTick } from "vue";
+import { ref, reactive, onMounted, nextTick } from "vue";
 import { useI18n } from 'vue-i18n'
-import { useInitialStateStore } from "stores/initialState";
 
 import { api } from 'boot/axios'
 import { useFormUtils } from "src/composables/formUtils";
 
 import { default as CustomWidget } from "src/components/CustomWidget.vue";
 import { default as CustomInputPassword } from "src/components/CustomInputPassword.vue";
-import { default as CustomBanner } from "src/components/CustomBanner.vue";
-import { default as APIErrorDetails } from "components/APIErrorDetails.vue";
+import { default as CustomErrorBanner } from "components/CustomErrorBanner.vue";
+import { default as CustomBanner } from "components/CustomBanner.vue";
 
 const { t } = useI18n();
 const formUtils = useFormUtils();
-const initialState = useInitialStateStore();
 
-const loading = ref(false);
-const error = ref(false);
+const state = reactive({
+  loading: false,
+  loadingError: false,
+  apiError: null
+});
 
-const email = ref(null);
-const password = ref(null);
+const profile = reactive({
+  email: null,
+  password: null
+});
+
 const passwordRef = ref(null);
 
 const profileUpdatedSuccessfully = ref(false);
-const apiError = ref(null);
 
-const validator = ref({
+const validator = reactive({
   hasErrors: false,
   message: null
 });
 
-const bannerText = computed(() => {
-  if (profileUpdatedSuccessfully.value) {
-    return ("Profile has been successfully updated");
-  } else if (error.value) {
-    return ("Error loading data")
-  } else {
-    return (null);
-  }
-});
-
 const onResetForm = () => {
-  validator.value.hasErrors = false;
-  validator.value.message = null;
-  passwordRef.value.resetValidation();
+  validator.hasErrors = false;
+  validator.message = null;
+  passwordRef.value?.resetValidation();
 }
 
 const onGetProfile = () => {
-  loading.value = true;
-  error.value = false;
-  email.value = null;
-  password.value = null;
+  state.loading = true;
+  state.loadingError = false;
+  state.apiError = null;
+  profile.email = null;
+  profile.password = null;
   api.user.getProfile()
     .then((successResponse) => {
-      loading.value = false;
-      email.value = successResponse.data.data.email;
+      profile.email = successResponse.data.data.email;
+      state.loading = false;
       nextTick(() => {
         passwordRef.value?.focus();
       });
     })
     .catch((errorResponse) => {
-      loading.value = false;
-      error.value = true;
-      apiError.value = errorResponse.customAPIErrorDetails;
+      state.loadingError = true;
+      state.apiError = errorResponse.customAPIErrorDetails;
+      state.loading = false;
       nextTick(() => {
         passwordRef.value?.focus();
       });
@@ -105,36 +99,36 @@ const onGetProfile = () => {
 
 const onValidateForm = () => {
   onResetForm();
-  passwordRef.value.validate();
-  nextTick(() => {
-    if (!(passwordRef.value.hasError)) {
-      onSubmitForm();
-    } else {
+  passwordRef.value?.validate();
+  if (!passwordRef.value?.hasError) {
+    onSubmitForm();
+  } else {
+    nextTick(() => {
       passwordRef.value?.focus();
-    }
-  });
+    });
+  }
 }
 
 const onSubmitForm = () => {
-  loading.value = true;
-  error.value = false;
-  apiError.value = null;
+  state.loading = true;
+  state.loadingError = false;
+  state.apiError = null;
   profileUpdatedSuccessfully.value = false;
   api.user
-    .updateProfile(email.value, password.value)
+    .updateProfile(profile.email, profile.password)
     .then((successResponse) => {
-      loading.value = false;
       profileUpdatedSuccessfully.value = true;
-      email.value = successResponse.data.data.email;
-      password.value = null;
+      profile.email = successResponse.data.data.email;
+      profile.password = null;
+      state.loading = false;
       nextTick(() => {
         passwordRef.value?.focus();
       });
     })
     .catch((errorResponse) => {
-      loading.value = false;
-      error.value = true;
-      apiError.value = errorResponse.customAPIErrorDetails;
+      state.loadingError = true;
+      state.apiError = errorResponse.customAPIErrorDetails;
+      state.loading = false;
       nextTick(() => {
         passwordRef.value?.focus();
       });
