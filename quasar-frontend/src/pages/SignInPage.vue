@@ -9,10 +9,10 @@
           </q-avatar>
           <h4 class="q-mt-sm q-mb-md text-h4 text-weight-bolder">{{
             t(!!savedEmail ? "Glad to see you again!" : "Welcome aboard!")
-          }}</h4>
+            }}</h4>
           <div class="text-color-secondary">{{
             t(!!savedEmail ? "Let's get back to organizing." : "Let's start organizing.")
-            }}
+          }}
           </div>
         </q-card-section>
         <q-card-section>
@@ -39,7 +39,7 @@
             </template>
           </q-btn>
           <CustomErrorBanner v-if="state.loadingError && state.errorMessage" :text="state.errorMessage"
-            :apiError="state.apiError">
+            :apiError="state.apiError" class="q-mt-lg">
           </CustomErrorBanner>
         </q-card-section>
         <q-card-section class="text-center q-pt-none" v-if="signUpAllowed">
