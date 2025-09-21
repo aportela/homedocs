@@ -40,16 +40,19 @@
 import { computed, useAttrs } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { useQuasar } from "quasar";
 import { api } from "boot/axios";
 import { useSessionStore } from "stores/session";
 
 const props = defineProps({
-  mini: Boolean
+  mini: {
+    type: Boolean,
+    required: false,
+    default: false
+  }
 });
 
 const attrs = useAttrs();
-const $q = useQuasar();
+
 const { t } = useI18n();
 const router = useRouter();
 
@@ -80,17 +83,17 @@ function onDrawerClick(e) {
 function signOut() {
   api.user
     .signOut()
-    .then((success) => {
+    .then((successResponse) => {
       session.signOut();
       router.push({
         name: "signIn",
       });
     })
     .catch((error) => {
-      $q.notify({
-        type: "negative",
-        message: t("API Error: fatal error"),
-        caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
+      console.error(errorResponse);
+      session.signOut();
+      router.push({
+        name: "signIn",
       });
     });
 }
