@@ -136,9 +136,9 @@ cal.on('resize', (newW, newH, oldW, oldH) => {
 cal.on('click', (event, timestamp, value) => {
   if (value > 0) {
     router.push({
-      name: "advancedSearchByFixedLastUpdate",
+      name: "advancedSearchByFixedUpdatedOn",
       params: {
-        fixedLastUpdate: new Date(timestamp).toISOString().split('T')[0]
+        fixedUpdatedOn: new Date(timestamp).toISOString().split('T')[0]
       }
     });
   }
