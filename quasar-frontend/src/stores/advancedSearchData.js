@@ -38,13 +38,6 @@ export const useAdvancedSearchData = defineStore("advancedSearchData", {
       field: "lastUpdateTimestamp",
       order: "DESC",
     },
-    pager: {
-      currentPage: 1,
-      resultsPage: 32,
-      totalResults: 0,
-      totalPages: 0,
-    },
-    results: [],
   }),
   getters: {
     isSortAscending: (state) => state.sort.order == "ASC",
@@ -104,9 +97,6 @@ export const useAdvancedSearchData = defineStore("advancedSearchData", {
         this.sort.order = "ASC";
       }
     },
-    setCurrentPage(page) {
-      this.pager.currentPage = page;
-    },
     recalcCreationDates(creationDateFilterType) {
       this.filter.fromCreationDate = null;
       this.filter.fromCreationTimestamp = null;
@@ -119,7 +109,10 @@ export const useAdvancedSearchData = defineStore("advancedSearchData", {
           break;
         // TODAY
         case 1:
-          this.filter.fixedCreationDate = date.formatDate(Date.now(), "YYYY/MM/DD");
+          this.filter.fixedCreationDate = date.formatDate(
+            Date.now(),
+            "YYYY/MM/DD",
+          );
           break;
         // YESTERDAY
         case 2:
@@ -177,16 +170,28 @@ export const useAdvancedSearchData = defineStore("advancedSearchData", {
           break;
         // FROM DATE
         case 8:
-          this.filter.fromCreationDate = date.formatDate(Date.now(), "YYYY/MM/DD");
+          this.filter.fromCreationDate = date.formatDate(
+            Date.now(),
+            "YYYY/MM/DD",
+          );
           break;
         // TO DATE
         case 9:
-          this.filter.toCreationDate = date.formatDate(Date.now(), "YYYY/MM/DD");
+          this.filter.toCreationDate = date.formatDate(
+            Date.now(),
+            "YYYY/MM/DD",
+          );
           break;
         // BETWEEN DATES
         case 10:
-          this.filter.fromCreationDate = date.formatDate(Date.now(), "YYYY/MM/DD");
-          this.filter.toCreationDate = date.formatDate(Date.now(), "YYYY/MM/DD");
+          this.filter.fromCreationDate = date.formatDate(
+            Date.now(),
+            "YYYY/MM/DD",
+          );
+          this.filter.toCreationDate = date.formatDate(
+            Date.now(),
+            "YYYY/MM/DD",
+          );
           break;
       }
     },
@@ -202,7 +207,10 @@ export const useAdvancedSearchData = defineStore("advancedSearchData", {
           break;
         // TODAY
         case 1:
-          this.filter.fixedLastUpdate = date.formatDate(Date.now(), "YYYY/MM/DD");
+          this.filter.fixedLastUpdate = date.formatDate(
+            Date.now(),
+            "YYYY/MM/DD",
+          );
           break;
         // YESTERDAY
         case 2:
@@ -260,7 +268,10 @@ export const useAdvancedSearchData = defineStore("advancedSearchData", {
           break;
         // FROM DATE
         case 8:
-          this.filter.fromLastUpdate = date.formatDate(Date.now(), "YYYY/MM/DD");
+          this.filter.fromLastUpdate = date.formatDate(
+            Date.now(),
+            "YYYY/MM/DD",
+          );
           break;
         // TO DATE
         case 9:
@@ -268,7 +279,10 @@ export const useAdvancedSearchData = defineStore("advancedSearchData", {
           break;
         // BETWEEN DATES
         case 10:
-          this.filter.fromLastUpdate = date.formatDate(Date.now(), "YYYY/MM/DD");
+          this.filter.fromLastUpdate = date.formatDate(
+            Date.now(),
+            "YYYY/MM/DD",
+          );
           this.filter.toLastUpdate = date.formatDate(Date.now(), "YYYY/MM/DD");
           break;
       }
@@ -285,7 +299,10 @@ export const useAdvancedSearchData = defineStore("advancedSearchData", {
           break;
         // TODAY
         case 1:
-          this.filter.fixedUpdatedOn = date.formatDate(Date.now(), "YYYY/MM/DD");
+          this.filter.fixedUpdatedOn = date.formatDate(
+            Date.now(),
+            "YYYY/MM/DD",
+          );
           break;
         // YESTERDAY
         case 2:
@@ -355,6 +372,6 @@ export const useAdvancedSearchData = defineStore("advancedSearchData", {
           this.filter.toUpdatedOn = date.formatDate(Date.now(), "YYYY/MM/DD");
           break;
       }
-    }
+    },
   },
 });
