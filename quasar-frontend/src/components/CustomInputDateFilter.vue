@@ -7,12 +7,11 @@
     </div>
     <div class="col" v-if="dateFilter.state.hasFrom">
       <q-input dense outlined mask="date" v-model="dateFilter.formattedDate.from" :label="t('From date')"
-        :disable="disable || dateFilter.state.denyChanges">
+        :disable="extraDateInputFieldsDisabled" ref="qInputFromDateRef">
         <template v-slot:append>
           <q-icon name="event" class="cursor-pointer">
             <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-              <q-date v-model="dateFilter.formattedDate.from" today-btn
-                :disable="disable || dateFilter.state.denyChanges">
+              <q-date v-model="dateFilter.formattedDate.from" today-btn>
                 <div class="row items-center justify-end">
                   <q-btn v-close-popup label="Close" color="primary" flat />
                 </div>
@@ -24,12 +23,11 @@
     </div>
     <div class="col" v-if="dateFilter.state.hasTo">
       <q-input dense outlined mask="date" v-model="dateFilter.formattedDate.to" :label="t('To date')"
-        :disable="disable || dateFilter.state.denyChanges">
+        :disable="extraDateInputFieldsDisabled" ref="qInputFromDateRef">
         <template v-slot:append>
           <q-icon name="event" class="cursor-pointer">
             <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-              <q-date v-model="dateFilter.formattedDate.to" today-btn
-                :disable="disable || dateFilter.state.denyChanges">
+              <q-date v-model="dateFilter.formattedDate.to" today-btn>
                 <div class="row items-center justify-end">
                   <q-btn v-close-popup label="Close" color="primary" flat />
                 </div>
@@ -41,12 +39,11 @@
     </div>
     <div class="col" v-if="dateFilter.state.hasFixed">
       <q-input dense outlined mask="date" v-model="dateFilter.formattedDate.fixed" :label="t('Fixed date')"
-        :disable="disable || dateFilter.state.denyChanges">
+        :disable="extraDateInputFieldsDisabled" ref="qInputFixedDateRef">
         <template v-slot:append>
           <q-icon name="event" class="cursor-pointer">
             <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-              <q-date v-model="dateFilter.formattedDate.fixed" today-btn
-                :disable="disable || dateFilter.state.denyChanges">
+              <q-date v-model="dateFilter.formattedDate.fixed" today-btn>
                 <div class="row items-center justify-end">
                   <q-btn v-close-popup label="Close" color="primary" flat />
                 </div>
@@ -61,7 +58,7 @@
 
 <script setup>
 
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, computed, onMounted } from "vue";
 
 import { useI18n } from "vue-i18n";
 
@@ -73,8 +70,8 @@ const emit = defineEmits(['update:modelValue'])
 
 const props = defineProps({
   modelValue: {
-    type: String,
-    default: "",
+    type: Object,
+    required: true,
   },
   label: {
     type: String,
@@ -88,24 +85,9 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  rules: {
-    type: Array,
-    default: () => [],
-  },
   autofocus: {
     type: Boolean,
     default: false,
-  },
-  error:
-  {
-    type: Boolean,
-    required: false,
-    default: false
-  },
-  errorMessage: {
-    type: String,
-    required: false,
-    default: null
   },
   disable: {
     type: Boolean,
@@ -114,34 +96,44 @@ const props = defineProps({
   },
 });
 
-const qInputDateRef = ref(null);
+const qInputFromDateRef = ref(null);
+const qInputToDateRef = ref(null);
+const qInputFixedDateRef = ref(null);
 
-const model = ref(props.modelValue)
+const dateFilter = ref(props.modelValue || {});
 
-watch(() => props.modelValue, val => model.value = val);
-watch(model, val => emit('update:modelValue', val));
+const { dateFilterTypeOptions } = useDateFilter();
 
-const { dateFilter, dateFilterTypeOptions } = useDateFilter();
+const extraDateInputFieldsDisabled = computed(() => props.disable || dateFilter.value.state.denyChanges);
 
-dateFilter.filterType = dateFilterTypeOptions[0];
+watch(() => props.modelValue, val => dateFilter.value = val);
+watch(dateFilter, val => emit('update:modelValue', val));
+
 
 // TODO: focus based on dateFilter.state.denyChanges
 const focus = () => {
-  nextTick(() => {
-    qInputDateRef.value?.focus();
-  });
-}
-
-const resetValidation = () => {
-  qInputDateRef.value?.resetValidation();
-}
-
-const validate = () => {
-  return (qInputDateRef.value?.validate() === true);
-}
+  if (!dateFilter.value.state.denyChanges) {
+    nextTick(() => {
+      switch (dateFilter.value.filterType.value) {
+        case 7: // fixed date
+          qInputFixedDateRef.value?.focus();
+          break;
+        case 8: // from date
+          qInputFromDateRef.value?.focus();
+          break;
+        case 9: // to date
+          qInputToDateRef.value?.focus();
+          break;
+        case 10: // between dates
+          qInputFromDateRef.value?.focus();
+          break;
+      }
+    });
+  }
+};
 
 defineExpose({
-  focus, resetValidation, validate
+  focus
 });
 
 onMounted(() => {
