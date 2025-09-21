@@ -26,25 +26,6 @@ export function useDateFilter() {
     })),
   );
 
-  const dateFilter = reactive({
-    filterType: dateFilterTypeOptions.value[0],
-    formattedDate: {
-      fixed: null,
-      from: null,
-      to: null,
-    },
-    timestamps: {
-      from: null,
-      to: null,
-    },
-    state: {
-      hasFrom: false,
-      hasTo: false,
-      hasFixed: false,
-      denyChanges: false,
-    },
-  });
-
   const dateMask = "YYYY/MM/DD";
 
   const getFormattedDate = (daysToSubtract = 0) => {
@@ -54,135 +35,168 @@ export function useDateFilter() {
     );
   };
 
-  const onRecalcDates = () => {
-    dateFilter.formattedDate.from = null;
-    dateFilter.formattedDate.to = null;
-    dateFilter.formattedDate.fixed = null;
-    dateFilter.timestamps.from = null;
-    dateFilter.timestamps.to = null;
-    // generate model/formatted (visible) dates
-    switch (dateFilter.filterType?.value) {
-      // NONE
-      case 0:
-        break;
-      // TODAY
-      case 1:
-        dateFilter.formattedDate.fixed = getFormattedDate();
-        break;
-      // YESTERDAY
-      case 2:
-        dateFilter.formattedDate.fixed = getFormattedDate(-1);
-        break;
-      // LAST 7 DAYS
-      case 3:
-        dateFilter.formattedDate.from = getFormattedDate(-7);
-        dateFilter.formattedDate.to = getFormattedDate(-1);
-        break;
-      // LAST 15 DAYS
-      case 4:
-        dateFilter.formattedDate.from = getFormattedDate(-15);
-        dateFilter.formattedDate.to = getFormattedDate(-1);
-        break;
-      // LAST 31 DAYS
-      case 5:
-        dateFilter.formattedDate.from = getFormattedDate(-31);
-        dateFilter.formattedDate.to = getFormattedDate(-1);
-        break;
-      // LAST 365 DAYS
-      case 6:
-        dateFilter.formattedDate.from = getFormattedDate(-365);
-        dateFilter.formattedDate.to = getFormattedDate(-1);
-        break;
-      // FIXED DATE
-      case 7:
-        break;
-      // FROM DATE
-      case 8:
-        dateFilter.formattedDate.from = getFormattedDate();
-        break;
-      // TO DATE
-      case 9:
-        dateFilter.formattedDate.to = getFormattedDate();
-        break;
-      // BETWEEN DATES
-      case 10:
-        dateFilter.formattedDate.from = getFormattedDate();
-        dateFilter.formattedDate.to = getFormattedDate();
-        break;
-    }
-  };
+  const getDateFilterInstance = () => {
+    const dateFilter = reactive({
+      filterType: dateFilterTypeOptions.value[0],
+      formattedDate: {
+        fixed: null,
+        from: null,
+        to: null,
+      },
+      timestamps: {
+        from: null,
+        to: null,
+      },
+      state: {
+        hasFrom: false,
+        hasTo: false,
+        hasFixed: false,
+        denyChanges: false,
+      },
+      hasValue: false,
+    });
 
-  const onRecalcTimestamps = () => {
-    // generate API timestamps (real filters)
-    if (dateFilter.formattedDate.fixed) {
-      dateFilter.timestamps.from = date.formatDate(
-        date.adjustDate(
-          date.extractDate(dateFilter.formattedDate.fixed, dateMask),
-          { hour: 0, minute: 0, second: 0, millisecond: 0 },
-        ),
-        "X", // timestamp in seconds
+    const onRecalcDates = () => {
+      dateFilter.formattedDate.from = null;
+      dateFilter.formattedDate.to = null;
+      dateFilter.formattedDate.fixed = null;
+      dateFilter.timestamps.from = null;
+      dateFilter.timestamps.to = null;
+      // generate model/formatted (visible) dates
+      switch (dateFilter.filterType?.value) {
+        // NONE
+        case 0:
+          break;
+        // TODAY
+        case 1:
+          dateFilter.formattedDate.fixed = getFormattedDate();
+          break;
+        // YESTERDAY
+        case 2:
+          dateFilter.formattedDate.fixed = getFormattedDate(-1);
+          break;
+        // LAST 7 DAYS
+        case 3:
+          dateFilter.formattedDate.from = getFormattedDate(-7);
+          dateFilter.formattedDate.to = getFormattedDate(-1);
+          break;
+        // LAST 15 DAYS
+        case 4:
+          dateFilter.formattedDate.from = getFormattedDate(-15);
+          dateFilter.formattedDate.to = getFormattedDate(-1);
+          break;
+        // LAST 31 DAYS
+        case 5:
+          dateFilter.formattedDate.from = getFormattedDate(-31);
+          dateFilter.formattedDate.to = getFormattedDate(-1);
+          break;
+        // LAST 365 DAYS
+        case 6:
+          dateFilter.formattedDate.from = getFormattedDate(-365);
+          dateFilter.formattedDate.to = getFormattedDate(-1);
+          break;
+        // FIXED DATE
+        case 7:
+          break;
+        // FROM DATE
+        case 8:
+          dateFilter.formattedDate.from = getFormattedDate();
+          break;
+        // TO DATE
+        case 9:
+          dateFilter.formattedDate.to = getFormattedDate();
+          break;
+        // BETWEEN DATES
+        case 10:
+          dateFilter.formattedDate.from = getFormattedDate();
+          dateFilter.formattedDate.to = getFormattedDate();
+          break;
+      }
+      console.log(dateFilter.hasValue);
+      dateFilter.hasValue = !!(
+        dateFilter.formattedDate.fixed ||
+        dateFilter.formattedDate.from ||
+        dateFilter.formattedDate.to
       );
-      dateFilter.timestamps.to = date.formatDate(
-        date.adjustDate(
-          date.extractDate(dateFilter.formattedDate.fixed, dateMask),
-          { hour: 23, minute: 59, second: 59, millisecond: 999 },
-        ),
-        "X", // timestamp in seconds
-      );
-    } else {
-      if (dateFilter.formattedDate.from) {
+      console.log(dateFilter.hasValue);
+    };
+
+    const onRecalcTimestamps = () => {
+      // generate API timestamps (real filters)
+      if (dateFilter.formattedDate.fixed) {
         dateFilter.timestamps.from = date.formatDate(
           date.adjustDate(
-            date.extractDate(dateFilter.formattedDate.from, "YYYY/MM/DD"),
+            date.extractDate(dateFilter.formattedDate.fixed, dateMask),
             { hour: 0, minute: 0, second: 0, millisecond: 0 },
           ),
           "X", // timestamp in seconds
         );
-      }
-      if (dateFilter.formattedDate.to) {
         dateFilter.timestamps.to = date.formatDate(
           date.adjustDate(
-            date.extractDate(dateFilter.formattedDate.to, "YYYY/MM/DD"),
+            date.extractDate(dateFilter.formattedDate.fixed, dateMask),
             { hour: 23, minute: 59, second: 59, millisecond: 999 },
           ),
           "X", // timestamp in seconds
         );
-      }
-    }
-  };
-
-  // UGLY HACK: selected value (model with label/value) do not react to global i18n changes
-  // so we are watching changes on first option label and when this label translation changes
-  // we translate again the label assigned to the model
-  watch(
-    () => dateFilterTypeOptions.value[0].label,
-    (value) => {
-      dateFilter.filterType.label = t(dateFilter.filterType.labelKey);
-    },
-  );
-
-  watch(
-    () => dateFilter.filterType,
-    (filterType) => {
-      if (filterType) {
-        dateFilter.state.hasFrom = [3, 4, 5, 6, 8, 10].includes(
-          filterType.value,
-        );
-        dateFilter.state.hasTo = [3, 4, 5, 6, 9, 10].includes(filterType.value);
-        dateFilter.state.hasFixed = [1, 2, 7].includes(filterType.value);
-        dateFilter.state.denyChanges = [1, 2, 3, 4, 5, 6].includes(
-          filterType.value,
-        );
       } else {
-        dateFilter.filterType = dateFilterTypeOptions.value[0];
+        if (dateFilter.formattedDate.from) {
+          dateFilter.timestamps.from = date.formatDate(
+            date.adjustDate(
+              date.extractDate(dateFilter.formattedDate.from, "YYYY/MM/DD"),
+              { hour: 0, minute: 0, second: 0, millisecond: 0 },
+            ),
+            "X", // timestamp in seconds
+          );
+        }
+        if (dateFilter.formattedDate.to) {
+          dateFilter.timestamps.to = date.formatDate(
+            date.adjustDate(
+              date.extractDate(dateFilter.formattedDate.to, "YYYY/MM/DD"),
+              { hour: 23, minute: 59, second: 59, millisecond: 999 },
+            ),
+            "X", // timestamp in seconds
+          );
+        }
       }
-      onRecalcDates();
-      onRecalcTimestamps();
-    },
-  );
+    };
+
+    // UGLY HACK: selected value (model with label/value) do not react to global i18n changes
+    // so we are watching changes on first option label and when this label translation changes
+    // we translate again the label assigned to the model
+    watch(
+      () => dateFilterTypeOptions.value[0].label,
+      (value) => {
+        dateFilter.filterType.label = t(dateFilter.filterType.labelKey);
+      },
+    );
+
+    watch(
+      () => dateFilter.filterType,
+      (filterType) => {
+        if (filterType) {
+          dateFilter.state.hasFrom = [3, 4, 5, 6, 8, 10].includes(
+            filterType.value,
+          );
+          dateFilter.state.hasTo = [3, 4, 5, 6, 9, 10].includes(
+            filterType.value,
+          );
+          dateFilter.state.hasFixed = [1, 2, 7].includes(filterType.value);
+          dateFilter.state.denyChanges = [1, 2, 3, 4, 5, 6].includes(
+            filterType.value,
+          );
+        } else {
+          dateFilter.filterType = dateFilterTypeOptions.value[0];
+        }
+        onRecalcDates();
+        onRecalcTimestamps();
+      },
+    );
+
+    return dateFilter;
+  };
 
   return {
     dateFilterTypeOptions,
-    dateFilter,
+    getDateFilterInstance,
   };
 }
