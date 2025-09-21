@@ -112,13 +112,11 @@ export function useDateFilter() {
           dateFilter.formattedDate.to = getFormattedDate();
           break;
       }
-      console.log(dateFilter.hasValue);
       dateFilter.hasValue = !!(
         dateFilter.formattedDate.fixed ||
         dateFilter.formattedDate.from ||
         dateFilter.formattedDate.to
       );
-      console.log(dateFilter.hasValue);
     };
 
     const onRecalcTimestamps = () => {
