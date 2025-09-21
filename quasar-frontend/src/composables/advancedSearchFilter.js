@@ -9,6 +9,41 @@ const state = reactive({
     description: null,
     noteBody: null,
     tags: [],
+    dateFilters: {
+      creationDate: {
+        filterType: null,
+        timestamps: {
+          from: null,
+          to: null,
+        },
+        formattedDate: {
+          from: null,
+          to: null,
+        },
+      },
+      lastUpdate: {
+        filterType: null,
+        timestamps: {
+          from: null,
+          to: null,
+        },
+        formattedDate: {
+          from: null,
+          to: null,
+        },
+      },
+      updatedOn: {
+        filterType: null,
+        timestamps: {
+          from: null,
+          to: null,
+        },
+        formattedDate: {
+          from: null,
+          to: null,
+        },
+      },
+    },
     // created on
     creationDateFilterType: null,
     creationDateRange: null,
@@ -37,12 +72,6 @@ const state = reactive({
   sort: {
     field: "lastUpdateTimestamp",
     order: "DESC",
-  },
-  pager: {
-    currentPage: 1,
-    resultsPage: 32,
-    totalResults: 0,
-    totalPages: 0,
   },
 });
 
@@ -131,9 +160,7 @@ const toggleSort = (field) => {
   }
 };
 
-const setCurrentPage = (page) => {
-  state.pager.currentPage = page;
-};
+const recalcDates = (dateFilter) => {};
 
 export function useAdvancedSearchFilter() {
   return {
@@ -145,7 +172,6 @@ export function useAdvancedSearchFilter() {
     hasResults,
     isSortedByField,
     toggleSort,
-    setCurrentPage,
     recalcCreationDates,
   };
 }
