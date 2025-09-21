@@ -2,7 +2,7 @@
   <div class="row q-col-gutter-xs">
     <div class="col">
       <q-select class="q-mb-md" dense options-dense outlined clearable v-model="dateFilter.filterType"
-        :options="dateFilterTypeOptions" :label="t(label)" :disable="disable">
+        :options="dateFilterTypeOptions" :label="label" :disable="disable">
       </q-select>
     </div>
     <div class="col" v-if="dateFilter.state.hasFrom">
