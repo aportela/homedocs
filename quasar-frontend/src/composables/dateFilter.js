@@ -53,13 +53,28 @@ export function useDateFilter() {
         hasFixed: false,
         denyChanges: false,
       },
+      // UGLY HACK to skip clearing/reseting values on filterType watchers
+      skipClearOnRecalc: {
+        from: false,
+        to: false,
+        fixed: false,
+      },
       hasValue: false,
     });
 
     const onRecalcDates = () => {
-      dateFilter.formattedDate.from = null;
-      dateFilter.formattedDate.to = null;
-      dateFilter.formattedDate.fixed = null;
+      if (!dateFilter.skipClearOnRecalc.from) {
+        dateFilter.formattedDate.from = null;
+      }
+      dateFilter.skipClearOnRecalc.from = false;
+      if (!dateFilter.skipClearOnRecalc.to) {
+        dateFilter.formattedDate.to = null;
+      }
+      dateFilter.skipClearOnRecalc.to = false;
+      if (!dateFilter.skipClearOnRecalc.fixed) {
+        dateFilter.formattedDate.fixed = null;
+      }
+      dateFilter.skipClearOnRecalc.fixed = true;
       dateFilter.timestamps.from = null;
       dateFilter.timestamps.to = null;
       // generate model/formatted (visible) dates
