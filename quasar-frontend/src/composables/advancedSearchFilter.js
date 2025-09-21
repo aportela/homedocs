@@ -17,6 +17,7 @@ const state = reactive({
           to: null,
         },
         formattedDate: {
+          fixed: null,
           from: null,
           to: null,
         },
@@ -28,6 +29,7 @@ const state = reactive({
           to: null,
         },
         formattedDate: {
+          fixed: null,
           from: null,
           to: null,
         },
@@ -39,6 +41,7 @@ const state = reactive({
           to: null,
         },
         formattedDate: {
+          fixed: null,
           from: null,
           to: null,
         },
@@ -160,7 +163,141 @@ const toggleSort = (field) => {
   }
 };
 
-const recalcDates = (dateFilter) => {};
+const recalcDates = (dateFilter) => {
+  dateFilter.formattedDate.from = null;
+  dateFilter.formattedDate.to = null;
+  dateFilter.formattedDate.fixed = null;
+  dateFilter.timestamps.from = null;
+  dateFilter.timestamps.to = null;
+  // generate model/formatted (visible) dates
+  switch (dateFilter.filterType) {
+    // NONE
+    case 0:
+      break;
+    // TODAY
+    case 1:
+      dateFilter.formattedDate.fixed = date.formatDate(
+        Date.now(),
+        "YYYY/MM/DD",
+      );
+      break;
+    // YESTERDAY
+    case 2:
+      dateFilter.formattedDate.fixed = date.formatDate(
+        date.addToDate(Date.now(), { days: -1 }),
+        "YYYY/MM/DD",
+      );
+      break;
+    // LAST 7 DAYS
+    case 3:
+      dateFilter.formattedDate.from = date.formatDate(
+        date.addToDate(Date.now(), { days: -7 }),
+        "YYYY/MM/DD",
+      );
+      dateFilter.formattedDate.to = date.formatDate(
+        date.addToDate(Date.now(), { days: -1 }),
+        "YYYY/MM/DD",
+      );
+      break;
+    // LAST 15 DAYS
+    case 4:
+      dateFilter.formattedDate.from = date.formatDate(
+        date.addToDate(Date.now(), { days: -15 }),
+        "YYYY/MM/DD",
+      );
+      dateFilter.formattedDate.to = date.formatDate(
+        date.addToDate(Date.now(), { days: -1 }),
+        "YYYY/MM/DD",
+      );
+      break;
+    // LAST 31 DAYS
+    case 5:
+      dateFilter.formattedDate.from = date.formatDate(
+        date.addToDate(Date.now(), { days: -31 }),
+        "YYYY/MM/DD",
+      );
+      dateFilter.formattedDate.to = date.formatDate(
+        date.addToDate(Date.now(), { days: -1 }),
+        "YYYY/MM/DD",
+      );
+      break;
+    // LAST 365 DAYS
+    case 6:
+      dateFilter.formattedDate.from = date.formatDate(
+        date.addToDate(Date.now(), { days: -365 }),
+        "YYYY/MM/DD",
+      );
+      dateFilter.formattedDate.to = date.formatDate(
+        date.addToDate(Date.now(), { days: -1 }),
+        "YYYY/MM/DD",
+      );
+      break;
+    // FIXED DATE
+    case 7:
+      break;
+    // FROM DATE
+    case 8:
+      dateFilter.formattedDate.from = date.formatDate(Date.now(), "YYYY/MM/DD");
+      break;
+    // TO DATE
+    case 9:
+      dateFilter.formattedDate.to = date.formatDate(Date.now(), "YYYY/MM/DD");
+      break;
+    // BETWEEN DATES
+    case 10:
+      dateFilter.formattedDate.from = date.formatDate(Date.now(), "YYYY/MM/DD");
+      dateFilter.formattedDate.to = date.formatDate(Date.now(), "YYYY/MM/DD");
+      break;
+  }
+  // generate API timestamps (real filters)
+  if (dateFilter.formattedDate.fixed) {
+    dateFilter.timestamps.from = date.formatDate(
+      date.adjustDate(
+        date.extractDate(dateFilter.formattedDate.fixed, "YYYY/MM/DD"),
+        { hour: 0, minute: 0, second: 0, millisecond: 0 },
+      ),
+      "X",
+    );
+    dateFilter.timestamps.from = date.formatDate(
+      date.adjustDate(
+        date.extractDate(dateFilter.formattedDate.fixed, "YYYY/MM/DD"),
+        { hour: 0, minute: 0, second: 0, millisecond: 0 },
+      ),
+      "X",
+    );
+  } else {
+    if (dateFilter.formattedDate.from) {
+      dateFilter.timestamps.from = date.formatDate(
+        date.adjustDate(
+          date.extractDate(dateFilter.formattedDate.from, "YYYY/MM/DD"),
+          { hour: 0, minute: 0, second: 0, millisecond: 0 },
+        ),
+        "X",
+      );
+    }
+    if (dateFilter.formattedDate.to) {
+      dateFilter.timestamps.from = date.formatDate(
+        date.adjustDate(
+          date.extractDate(dateFilter.formattedDate.to, "YYYY/MM/DD"),
+          { hour: 0, minute: 0, second: 0, millisecond: 0 },
+        ),
+        "X",
+      );
+    }
+  }
+};
+
+const recalcCreationDates = () => {
+  recalcDates(state.dateFilters.creationDate);
+};
+
+const recalcLastUpdates = () => {
+  recalcDates(state.dateFilters.lastUpdate);
+};
+
+const recalcUpdatedOnDates = () => {
+  recalcDates(state.dateFilters.updatedOn);
+};
 
 export function useAdvancedSearchFilter() {
   return {
@@ -173,5 +310,7 @@ export function useAdvancedSearchFilter() {
     isSortedByField,
     toggleSort,
     recalcCreationDates,
+    recalcLastUpdates,
+    recalcUpdatedOnDates,
   };
 }
