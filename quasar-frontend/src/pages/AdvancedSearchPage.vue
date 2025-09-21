@@ -34,6 +34,17 @@
               </q-input>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
+
+              <CustomInputDateFilter :options="dateFilterTypeOptions" :label="t('Document creation date')"
+                :disable="state.loading || disableCreationDateFilterByRouteParams" v-model="dateFilters.creationDate">
+              </CustomInputDateFilter>
+              <CustomInputDateFilter :options="dateFilterTypeOptions" :label="t('Document last update')"
+                :disable="state.loading || disableLastUpdateFilterByRouteParams" v-model="dateFilters.lastUpdate">
+              </CustomInputDateFilter>
+              <CustomInputDateFilter :options="dateFilterTypeOptions" :label="t('Document updated on')"
+                :disable="state.loading || disableUpdatedOnFilterByRouteParams" v-model="dateFilters.updatedOn">
+              </CustomInputDateFilter>
+              <!--
               <div class="row q-col-gutter-xs">
                 <div class="col">
                   <q-select class="q-mb-md" dense options-dense outlined clearable
@@ -155,7 +166,7 @@
                   </q-input>
                 </div>
               </div>
-              <div class="row">
+              <div class="row q-col-gutter-xs">
                 <div class="col">
                   <q-select class="q-mb-md" dense options-dense outlined clearable
                     v-model="advancedSearchData.filter.updatedOnDateFilterType" :options="dateFilterOptions"
@@ -214,6 +225,7 @@
                   </q-input>
                 </div>
               </div>
+              -->
             </div>
           </div>
           <div class="row">
@@ -317,6 +329,9 @@ import { default as CustomExpansionWidget } from "components/CustomExpansionWidg
 import { default as CustomErrorBanner } from "components/CustomErrorBanner.vue";
 import { default as CustomBanner } from "components/CustomBanner.vue";
 
+import { useDateFilter } from "src/composables/dateFilter"
+import { default as CustomInputDateFilter } from "components/CustomInputDateFilter.vue";
+
 const { t } = useI18n();
 
 const route = useRoute();
@@ -332,6 +347,14 @@ const state = reactive({
 const expandedFilter = ref(route.meta.conditionsFilterExpanded);
 const expandedResults = ref(false);
 
+const { getDateFilterInstance, dateFilterTypeOptions } = useDateFilter();
+
+const dateFilters = {
+  creationDate: getDateFilterInstance(),
+  lastUpdate: getDateFilterInstance(),
+  updatedOn: getDateFilterInstance(),
+};
+
 const pager = reactive({
   currentPage: 1,
   resultsPage: 32,
@@ -342,40 +365,16 @@ const pager = reactive({
 const results = reactive([]);
 const hasResults = computed(() => results.length > 0);
 
-// TODO: on clear date filters restore init value/label
-
-// TODO: not working on real-time i18n changes
-const dateFilterOptions = ref([
-  { label: t('Any date'), value: 0 },
-  { label: t('Today'), value: 1 },
-  { label: t('Yesterday'), value: 2 },
-  { label: t('Last 7 days'), value: 3 },
-  { label: t('Last 15 days'), value: 4 },
-  { label: t('Last 31 days'), value: 5 },
-  { label: t('Last 365 days'), value: 6 },
-  { label: t('Fixed date'), value: 7 },
-  { label: t('From date'), value: 8 },
-  { label: t('To date'), value: 9 },
-  { label: t('Between dates'), value: 10 }
-]);
 
 // TODO: replace with composable ? or allow reset/restore pinia store
 const advancedSearchData = useAdvancedSearchData();
 
 advancedSearchData.filter.tags = route.params.tag !== undefined ? [route.params.tag] : [];
 
-advancedSearchData.filter.fixedCreationDate = route.params.fixedCreationDate !== undefined ? route.params.fixedCreationDate.replaceAll("-", "/") : null;
-advancedSearchData.filter.creationDateFilterType = advancedSearchData.filter.fixedCreationDate ? dateFilterOptions.value[7] : dateFilterOptions.value[0]
-
-advancedSearchData.filter.fixedLastUpdate = route.params.fixedLastUpdate !== undefined ? route.params.fixedLastUpdate.replaceAll("-", "/") : null;
-advancedSearchData.filter.lastUpdateFilterType = advancedSearchData.filter.fixedLastUpdate ? dateFilterOptions.value[7] : dateFilterOptions.value[0]
-
-advancedSearchData.filter.fixedUpdatedOn = route.params.fixedUpdatedOn !== undefined ? route.params.fixedUpdatedOn.replaceAll("-", "/") : null;
-advancedSearchData.filter.updatedOnDateFilterType = advancedSearchData.filter.fixedUpdatedOn ? dateFilterOptions.value[7] : dateFilterOptions.value[0]
-
 const disableCreationDateFilterByRouteParams = computed(() => route.params.fixedCreationDate !== undefined);
 const disableLastUpdateFilterByRouteParams = computed(() => route.params.fixedLastUpdate !== undefined);
 const disableUpdatedOnFilterByRouteParams = computed(() => route.params.fixedUpdatedOn !== undefined);
+
 
 const sortOrderIcon = computed(() => advancedSearchData.sortOrder == "ASC" ? "keyboard_double_arrow_up" : "keyboard_double_arrow_down");
 
@@ -393,38 +392,17 @@ const totalSearchConditions = computed(() => {
   if (advancedSearchData.filter.tags && advancedSearchData.filter.tags.length > 0) {
     total += advancedSearchData.filter.tags.length;
   }
-  if (advancedSearchData.filter.creationDateFilterType && advancedSearchData.filter.creationDateFilterType.value != 0) {
+  if (dateFilters.creationDate.hasValue) {
     total++;
   }
-  if (advancedSearchData.filter.lastUpdateFilterType && advancedSearchData.filter.lastUpdateFilterType.value != 0) {
+  if (dateFilters.lastUpdate.hasValue) {
     total++;
   }
-  if (advancedSearchData.filter.updatedOnDateFilterType && advancedSearchData.filter.updatedOnDateFilterType.value != 0) {
+  if (dateFilters.updatedOn.hasValue) {
     total++;
   }
   return (total);
 });
-
-watch(
-  () => advancedSearchData.filter.creationDateFilterType,
-  (creationDateFilterType) => {
-    advancedSearchData.recalcCreationDates(creationDateFilterType || 0)
-  }
-);
-
-watch(
-  () => advancedSearchData.filter.lastUpdateFilterType,
-  (lastUpdateFilterType) => {
-    advancedSearchData.recalcLastUpdates(lastUpdateFilterType || 0)
-  }
-);
-
-watch(
-  () => advancedSearchData.filter.updatedOnDateFilterType,
-  (updatedOnDateFilterType) => {
-    advancedSearchData.recalcUpdatedOnDates(updatedOnDateFilterType || 0)
-  }
-);
 
 function onPaginationChanged(pageIndex) {
   pager.currentPage = pageIndex;
@@ -442,50 +420,26 @@ function onSubmitForm(resetPager) {
   }
   state.loading = true;
   results.length = 0;
-  if (date.isValid(advancedSearchData.filter.fixedCreationDate)) {
-    advancedSearchData.filter.fromCreationTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.fixedCreationDate, 'YYYY/MM/DD'), { hour: 0, minute: 0, second: 0, millisecond: 0 }), 'X');
-    advancedSearchData.filter.toCreationTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.fixedCreationDate, 'YYYY/MM/DD'), { hour: 23, minute: 59, second: 59, millisecond: 999 }), 'X');
+  if (dateFilters.creationDate.hasValue) {
+    advancedSearchData.filter.fromCreationTimestamp = dateFilters.creationDate.timestamps.from;
+    advancedSearchData.filter.toCreationTimestamp = dateFilters.creationDate.timestamps.to;
   } else {
-    if (date.isValid(advancedSearchData.filter.fromCreationDate)) {
-      advancedSearchData.filter.fromCreationTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.fromCreationDate, 'YYYY/MM/DD'), { hour: 0, minute: 0, second: 0, millisecond: 0 }), 'X');
-    } else {
-      advancedSearchData.filter.fromCreationTimestamp = null;
-    }
-    if (date.isValid(advancedSearchData.filter.toCreationDate)) {
-      advancedSearchData.filter.toCreationTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.toCreationDate, 'YYYY/MM/DD'), { hour: 23, minute: 59, second: 59, millisecond: 999 }), 'X');
-    } else {
-      advancedSearchData.filter.toCreationTimestamp = null;
-    }
+    advancedSearchData.filter.fromCreationTimestamp = null;
+    advancedSearchData.filter.toCreationTimestamp = null;
   }
-  if (date.isValid(advancedSearchData.filter.fixedLastUpdate)) {
-    advancedSearchData.filter.fromLastUpdateTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.fixedLastUpdate, 'YYYY/MM/DD'), { hour: 0, minute: 0, second: 0, millisecond: 0 }), 'X');
-    advancedSearchData.filter.toLastUpdateTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.fixedLastUpdate, 'YYYY/MM/DD'), { hour: 23, minute: 59, second: 59, millisecond: 999 }), 'X');
+  if (dateFilters.lastUpdate.hasValue) {
+    advancedSearchData.filter.fromLastUpdateTimestamp = dateFilters.lastUpdate.timestamps.from;
+    advancedSearchData.filter.toLastUpdateTimestamp = dateFilters.lastUpdate.timestamps.to;
   } else {
-    if (date.isValid(advancedSearchData.filter.fromLastUpdate)) {
-      advancedSearchData.filter.fromLastUpdateTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.fromLastUpdate, 'YYYY/MM/DD'), { hour: 0, minute: 0, second: 0, millisecond: 0 }), 'X');
-    } else {
-      advancedSearchData.filter.fromLastUpdateTimestamp = null;
-    }
-    if (date.isValid(advancedSearchData.filter.toLastUpdate)) {
-      advancedSearchData.filter.toLastUpdateTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.toLastUpdate, 'YYYY/MM/DD'), { hour: 23, minute: 59, second: 59, millisecond: 999 }), 'X');
-    } else {
-      advancedSearchData.filter.toLastUpdateTimestamp = null;
-    }
+    advancedSearchData.filter.fromLastUpdateTimestamp = null;
+    advancedSearchData.filter.toLastUpdateTimestamp = null;
   }
-  if (date.isValid(advancedSearchData.filter.fixedUpdatedOn)) {
-    advancedSearchData.filter.fromUpdatedOnTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.fixedUpdatedOn, 'YYYY/MM/DD'), { hour: 0, minute: 0, second: 0, millisecond: 0 }), 'X');
-    advancedSearchData.filter.toUpdatedOnTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.fixedUpdatedOn, 'YYYY/MM/DD'), { hour: 23, minute: 59, second: 59, millisecond: 999 }), 'X');
+  if (dateFilters.updatedOn.hasValue) {
+    advancedSearchData.filter.fromUpdatedOnTimestamp = dateFilters.updatedOn.timestamps.from;
+    advancedSearchData.filter.toUpdatedOnTimestamp = dateFilters.updatedOn.timestamps.to;
   } else {
-    if (date.isValid(advancedSearchData.filter.fromUpdatedOn)) {
-      advancedSearchData.filter.fromUpdatedOnTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.fromUpdatedOn, 'YYYY/MM/DD'), { hour: 0, minute: 0, second: 0, millisecond: 0 }), 'X');
-    } else {
-      advancedSearchData.filter.fromUpdatedOnTimestamp = null;
-    }
-    if (date.isValid(advancedSearchData.filter.toUpdatedOn)) {
-      advancedSearchData.filter.toUpdatedOnTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.toUpdatedOn, 'YYYY/MM/DD'), { hour: 23, minute: 59, second: 59, millisecond: 999 }), 'X');
-    } else {
-      advancedSearchData.filter.toUpdatedOnTimestamp = null;
-    }
+    advancedSearchData.filter.fromUpdatedOnTimestamp = null;
+    advancedSearchData.filter.toUpdatedOnTimestamp = null;
   }
   api.document.search(pager.currentPage, pager.resultsPage, advancedSearchData.filter, advancedSearchData.sortField, advancedSearchData.sortOrder)
     .then((successResponse) => {
@@ -533,6 +487,23 @@ function onSubmitForm(resetPager) {
 }
 
 onMounted(() => {
+
+  if (disableCreationDateFilterByRouteParams.value) {
+    dateFilters.creationDate.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
+    dateFilters.creationDate.filterType = dateFilterTypeOptions.value[7];
+    dateFilters.creationDate.formattedDate.fixed = route.params.fixedCreationDate.replaceAll("-", "/");
+  }
+  else if (disableLastUpdateFilterByRouteParams.value) {
+    dateFilters.lastUpdate.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
+    dateFilters.lastUpdate.filterType = dateFilterTypeOptions.value[7];
+    dateFilters.lastUpdate.formattedDate.fixed = route.params.fixedLastUpdate.replaceAll("-", "/");
+  }
+  else if (disableUpdatedOnFilterByRouteParams.value) {
+    dateFilters.updatedOn.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
+    dateFilters.updatedOn.filterType = dateFilterTypeOptions.value[7];
+    dateFilters.updatedOn.formattedDate.fixed = route.params.fixedUpdatedOn.replaceAll("-", "/");
+  }
+
   if (route.meta.autoLaunchSearch) {
     onSubmitForm(true);
   }
