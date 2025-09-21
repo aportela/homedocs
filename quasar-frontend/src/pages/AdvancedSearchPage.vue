@@ -11,7 +11,7 @@
       </template>
       <template v-slot:content>
         <form @submit.prevent.stop=" onSubmitForm(true)" autocorrect="off" autocapitalize="off" autocomplete="off"
-          spellcheck="false" class="q-mt-md q-pa-sm">
+          spellcheck="false" class="q-ma-xs q-mt-sm">
           <div class="row q-col-gutter-sm">
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
               <q-input class="q-mb-md" dense outlined v-model="advancedSearchData.filter.title" type="text" name="title"
@@ -234,24 +234,23 @@
         </form>
       </template>
     </CustomExpansionWidget>
-
     <CustomExpansionWidget v-if="state.searchLaunched" title="Results" :caption="state.loading ? 'Loading...' : 'TODO'"
       icon="folder_open" :loading="state.loading" :error="state.loadingError" :expanded="expandedResults"
-      class="q-mt-md">
+      class="q-mt-sm">
       <template v-slot:header-extra>
         <q-chip square size="sm" color="primary" text-color="white">{{ t("Total search results count", {
           count:
-            advancedSearchData.pager.totalResults
+            pager.totalResults
         }) }}</q-chip>
       </template>
       <template v-slot:content>
         <CustomErrorBanner v-if="state.loadingError" text="Error loading data" :apiError="state.apiError">
         </CustomErrorBanner>
-        <div v-else-if="advancedSearchData.hasResults">
-          <div class="q-pa-lg flex flex-center" v-if="advancedSearchData.pager.totalPages > 1">
-            <q-pagination v-model="advancedSearchData.pager.currentPage" color="dark"
-              :max="advancedSearchData.pager.totalPages" :max-pages="5" boundary-numbers direction-links boundary-links
-              @update:model-value="onPaginationChanged" :disable="state.loading" />
+        <div v-else-if="hasResults">
+          <div class="q-pa-lg flex flex-center" v-if="pager.totalPages > 1">
+            <q-pagination v-model="pager.currentPage" color="dark" :max="pager.totalPages" :max-pages="5"
+              boundary-numbers direction-links boundary-links @update:model-value="onPaginationChanged"
+              :disable="state.loading" />
           </div>
           <q-markup-table>
             <thead>
@@ -281,7 +280,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="document in advancedSearchData.results" :key="document.id">
+              <tr v-for="document in results" :key="document.id">
                 <td class="text-left"><router-link :to="{ name: 'document', params: { id: document.id } }">{{
                   document.title }}</router-link>
                 </td>
@@ -292,13 +291,13 @@
               </tr>
             </tbody>
           </q-markup-table>
-          <div class="q-pa-lg flex flex-center" v-if="advancedSearchData.pager.totalPages > 1">
-            <q-pagination v-model="advancedSearchData.pager.currentPage" color="dark"
-              :max="advancedSearchData.pager.totalPages" :max-pages="5" boundary-numbers direction-links boundary-links
-              @update:model-value="onPaginationChanged" :disable="state.loading" />
+          <div class="q-pa-lg flex flex-center" v-if="pager.totalPages > 1">
+            <q-pagination v-model="pager.currentPage" color="dark" :max="pager.totalPages" :max-pages="5"
+              boundary-numbers direction-links boundary-links @update:model-value="onPaginationChanged"
+              :disable="state.loading" />
           </div>
         </div>
-        <CustomBanner v-else warning text="No results found with current filter"></CustomBanner>
+        <CustomBanner v-else-if="!state.loading" warning text="No results found with current filter"></CustomBanner>
       </template>
     </CustomExpansionWidget>
   </q-page>
@@ -330,9 +329,20 @@ const state = reactive({
   searchLaunched: false
 });
 
-
 const expandedFilter = ref(route.meta.conditionsFilterExpanded);
 const expandedResults = ref(false);
+
+const pager = reactive({
+  currentPage: 1,
+  resultsPage: 32,
+  totalResults: 0,
+  totalPages: 0,
+});
+
+const results = reactive([]);
+const hasResults = computed(() => results.length > 0);
+
+// TODO: on clear date filters restore init value/label
 
 // TODO: not working on real-time i18n changes
 const dateFilterOptions = ref([
@@ -349,6 +359,7 @@ const dateFilterOptions = ref([
   { label: t('Between dates'), value: 10 }
 ]);
 
+// TODO: replace with composable ? or allow reset/restore pinia store
 const advancedSearchData = useAdvancedSearchData();
 
 advancedSearchData.filter.tags = route.params.tag !== undefined ? [route.params.tag] : [];
@@ -365,7 +376,6 @@ advancedSearchData.filter.updatedOnDateFilterType = advancedSearchData.filter.fi
 const disableCreationDateFilterByRouteParams = computed(() => route.params.fixedCreationDate !== undefined);
 const disableLastUpdateFilterByRouteParams = computed(() => route.params.fixedLastUpdate !== undefined);
 const disableUpdatedOnFilterByRouteParams = computed(() => route.params.fixedUpdatedOn !== undefined);
-
 
 const sortOrderIcon = computed(() => advancedSearchData.sortOrder == "ASC" ? "keyboard_double_arrow_up" : "keyboard_double_arrow_down");
 
@@ -417,7 +427,7 @@ watch(
 );
 
 function onPaginationChanged(pageIndex) {
-  advancedSearchData.setCurrentPage(pageIndex);
+  pager.currentPage = pageIndex;
   onSubmitForm(false);
 }
 
@@ -428,20 +438,21 @@ function onToggleSort(field) {
 
 function onSubmitForm(resetPager) {
   if (resetPager) {
-    advancedSearchData.pager.currentPage = 1;
+    pager.currentPage = 1;
   }
   state.loading = true;
+  results.length = 0;
   if (date.isValid(advancedSearchData.filter.fixedCreationDate)) {
     advancedSearchData.filter.fromCreationTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.fixedCreationDate, 'YYYY/MM/DD'), { hour: 0, minute: 0, second: 0, millisecond: 0 }), 'X');
     advancedSearchData.filter.toCreationTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.fixedCreationDate, 'YYYY/MM/DD'), { hour: 23, minute: 59, second: 59, millisecond: 999 }), 'X');
   } else {
-    if (date.isValid(advancedSearchData.filter.fromDate)) {
-      advancedSearchData.filter.fromCreationTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.fromDate, 'YYYY/MM/DD'), { hour: 0, minute: 0, second: 0, millisecond: 0 }), 'X');
+    if (date.isValid(advancedSearchData.filter.fromCreationDate)) {
+      advancedSearchData.filter.fromCreationTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.fromCreationDate, 'YYYY/MM/DD'), { hour: 0, minute: 0, second: 0, millisecond: 0 }), 'X');
     } else {
       advancedSearchData.filter.fromCreationTimestamp = null;
     }
-    if (date.isValid(advancedSearchData.filter.toDate)) {
-      advancedSearchData.filter.toCreationTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.toDate, 'YYYY/MM/DD'), { hour: 23, minute: 59, second: 59, millisecond: 999 }), 'X');
+    if (date.isValid(advancedSearchData.filter.toCreationDate)) {
+      advancedSearchData.filter.toCreationTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.toCreationDate, 'YYYY/MM/DD'), { hour: 23, minute: 59, second: 59, millisecond: 999 }), 'X');
     } else {
       advancedSearchData.filter.toCreationTimestamp = null;
     }
@@ -476,25 +487,27 @@ function onSubmitForm(resetPager) {
       advancedSearchData.filter.toUpdatedOnTimestamp = null;
     }
   }
-  api.document.search(advancedSearchData.pager.currentPage, advancedSearchData.pager.resultsPage, advancedSearchData.filter, advancedSearchData.sortField, advancedSearchData.sortOrder)
-    .then((success) => {
-      if (success.data.results) {
-        advancedSearchData.pager = success.data.results.pagination;
-        advancedSearchData.results = success.data.results.documents.map((document) => {
+  api.document.search(pager.currentPage, pager.resultsPage, advancedSearchData.filter, advancedSearchData.sortField, advancedSearchData.sortOrder)
+    .then((successResponse) => {
+      if (successResponse.data.results) {
+        pager.currentPage = successResponse.data.results.pagination.currentPage;
+        pager.resultsPage = successResponse.data.results.pagination.resultsPage;
+        pager.totalResults = successResponse.data.results.pagination.totalResults;
+        pager.totalPages = successResponse.data.results.pagination.totalPages;
+        results.push(...successResponse.data.results.documents.map((document) => {
           // convert PHP timestamps (seconds) to JS (milliseconds)
           document.createdOn = date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
-          document.lastUpdate = document.lastUpdateTimestamp ? date.formatDate(document.lastUpdateTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss') : null;
+          document.lastUpdate = date.formatDate(document.lastUpdateTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
           return (document);
-        });
-        state.loading = false;
-
+        }));
         state.searchLaunched = true;
-        if (advancedSearchData.hasResults) {
+        if (hasResults.value) {
           expandedResults.value = true;
+          // TODO: not expanding if collapsed manually
         }
+        state.loading = false;
       } else {
         state.loading = false;
-
       }
     })
     .catch((errorResponse) => {
