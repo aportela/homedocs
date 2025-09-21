@@ -47,6 +47,13 @@ export function useDateFilter() {
 
   const dateMask = "YYYY/MM/DD";
 
+  const getFormattedDate = (daysToSubtract = 0) => {
+    return date.formatDate(
+      date.addToDate(Date.now(), { days: daysToSubtract }),
+      dateMask,
+    );
+  };
+
   const onRecalcDates = () => {
     dateFilter.formattedDate.from = null;
     dateFilter.formattedDate.to = null;
@@ -60,74 +67,47 @@ export function useDateFilter() {
         break;
       // TODAY
       case 1:
-        dateFilter.formattedDate.fixed = date.formatDate(Date.now(), dateMask);
+        dateFilter.formattedDate.fixed = getFormattedDate();
         break;
       // YESTERDAY
       case 2:
-        dateFilter.formattedDate.fixed = date.formatDate(
-          date.addToDate(Date.now(), { days: -1 }),
-          dateMask,
-        );
+        dateFilter.formattedDate.fixed = getFormattedDate(-1);
         break;
       // LAST 7 DAYS
       case 3:
-        dateFilter.formattedDate.from = date.formatDate(
-          date.addToDate(Date.now(), { days: -7 }),
-          dateMask,
-        );
-        dateFilter.formattedDate.to = date.formatDate(
-          date.addToDate(Date.now(), { days: -1 }),
-          dateMask,
-        );
+        dateFilter.formattedDate.from = getFormattedDate(-7);
+        dateFilter.formattedDate.to = getFormattedDate(-1);
         break;
       // LAST 15 DAYS
       case 4:
-        dateFilter.formattedDate.from = date.formatDate(
-          date.addToDate(Date.now(), { days: -15 }),
-          dateMask,
-        );
-        dateFilter.formattedDate.to = date.formatDate(
-          date.addToDate(Date.now(), { days: -1 }),
-          dateMask,
-        );
+        dateFilter.formattedDate.from = getFormattedDate(-15);
+        dateFilter.formattedDate.to = getFormattedDate(-1);
         break;
       // LAST 31 DAYS
       case 5:
-        dateFilter.formattedDate.from = date.formatDate(
-          date.addToDate(Date.now(), { days: -31 }),
-          dateMask,
-        );
-        dateFilter.formattedDate.to = date.formatDate(
-          date.addToDate(Date.now(), { days: -1 }),
-          dateMask,
-        );
+        dateFilter.formattedDate.from = getFormattedDate(-31);
+        dateFilter.formattedDate.to = getFormattedDate(-1);
         break;
       // LAST 365 DAYS
       case 6:
-        dateFilter.formattedDate.from = date.formatDate(
-          date.addToDate(Date.now(), { days: -365 }),
-          dateMask,
-        );
-        dateFilter.formattedDate.to = date.formatDate(
-          date.addToDate(Date.now(), { days: -1 }),
-          dateMask,
-        );
+        dateFilter.formattedDate.from = getFormattedDate(-365);
+        dateFilter.formattedDate.to = getFormattedDate(-1);
         break;
       // FIXED DATE
       case 7:
         break;
       // FROM DATE
       case 8:
-        dateFilter.formattedDate.from = date.formatDate(Date.now(), dateMask);
+        dateFilter.formattedDate.from = getFormattedDate();
         break;
       // TO DATE
       case 9:
-        dateFilter.formattedDate.to = date.formatDate(Date.now(), dateMask);
+        dateFilter.formattedDate.to = getFormattedDate();
         break;
       // BETWEEN DATES
       case 10:
-        dateFilter.formattedDate.from = date.formatDate(Date.now(), dateMask);
-        dateFilter.formattedDate.to = date.formatDate(Date.now(), dateMask);
+        dateFilter.formattedDate.from = getFormattedDate();
+        dateFilter.formattedDate.to = getFormattedDate();
         break;
     }
   };
@@ -160,7 +140,7 @@ export function useDateFilter() {
         );
       }
       if (dateFilter.formattedDate.to) {
-        dateFilter.timestamps.from = date.formatDate(
+        dateFilter.timestamps.to = date.formatDate(
           date.adjustDate(
             date.extractDate(dateFilter.formattedDate.to, "YYYY/MM/DD"),
             { hour: 23, minute: 59, second: 59, millisecond: 999 },
@@ -196,7 +176,6 @@ export function useDateFilter() {
       } else {
         dateFilter.filterType = dateFilterTypeOptions.value[0];
       }
-
       onRecalcDates();
       onRecalcTimestamps();
     },
