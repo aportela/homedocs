@@ -116,21 +116,33 @@
             </thead>
             <tbody>
               <tr v-for="document in results" :key="document.id">
-                <td class="text-left"><router-link :to="{ name: 'document', params: { id: document.id } }">{{
-                  document.title }}</router-link>
+                <td class="text-left"><router-link class="text-decoration-hover text-color-primary"
+                    :to="{ name: 'document', params: { id: document.id } }">{{
+                      document.title }}</router-link>
                 </td>
                 <td class="text-left">{{ document.createdOn }}</td>
                 <td class="text-left">{{ document.lastUpdate }}</td>
                 <td class="text-right">
                   <q-chip size="md" square class="theme-default-q-chip q-chip-8em">
-                    <q-avatar class="theme-default-q-avatar">{{ document.fileCount }}</q-avatar>
+                    <q-avatar class="theme-default-q-avatar"
+                      :class="{ 'text-white bg-blue': document.fileCount > 0 }">{{ document.fileCount }}</q-avatar>
                     <span v-if="document.fileCount > 0 && !loading" class="cursor-pointer"
                       @click="onShowDocumentFiles(document.id)"> {{ t('Total files', { count: document.fileCount })
                       }}</span>
                     <span v-else> {{ t('Total files', { count: document.fileCount }) }}</span>
                   </q-chip>
                 </td>
-                <td class="text-right"> {{ document.noteCount }}</td>
+                <td class="text-right">
+                  <q-chip size="md" square class="theme-default-q-chip q-chip-8em">
+                    <q-avatar class="theme-default-q-avatar"
+                      :class="{ 'text-white bg-blue': document.noteCount > 0 }">{{
+                        document.noteCount }}</q-avatar>
+                    <span v-if="document.noteCount > 0 && !loading" class="cursor-pointer"
+                      @click="onShowDocumentFiles(document.id)"> {{ t('Total notes', { count: document.noteCount })
+                      }}</span>
+                    <span v-else> {{ t('Total notes', { count: document.noteCount }) }}</span>
+                  </q-chip>
+                </td>
               </tr>
             </tbody>
           </q-markup-table>

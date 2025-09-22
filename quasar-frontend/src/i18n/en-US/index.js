@@ -176,6 +176,7 @@ export default {
   "Total document count": "{count} document|{count} documents",
   "Total tags": "{count} tag|{count} tags",
   "Total files": "file|files",
+  "Total notes": "note|notes",
   "Click to toggle edit mode": "Click to toggle edit mode",
   "Click to expand/collapse": "Click to expand/collapse",
   "Document creation date": "Document creation date",
