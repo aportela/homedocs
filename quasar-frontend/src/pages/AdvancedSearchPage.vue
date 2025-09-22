@@ -89,7 +89,7 @@
           <div class="q-px-sm q-py-md flex flex-center" v-if="pager.totalPages > 1">
             <q-pagination v-model="pager.currentPage" color="dark" :max="pager.totalPages" :max-pages="5"
               boundary-numbers direction-links boundary-links @update:model-value="onPaginationChanged"
-              :disable="state.loading" input-class="action-primary" />
+              :disable="state.loading" class="theme-default-q-pagination" />
           </div>
           <q-markup-table>
             <thead>
@@ -128,7 +128,7 @@
                       :class="{ 'text-white bg-blue': document.noteCount > 0 }">{{
                         document.noteCount }}</q-avatar>
                     <span v-if="document.noteCount > 0 && !state.loading" class="cursor-pointer"
-                      @click.stop="onShowDocumentFiles(document.id)"> {{ t('Total notes', { count: document.noteCount })
+                      @click.stop="onShowDocumentNotes(document.id)"> {{ t('Total notes', { count: document.noteCount })
                       }}</span>
                     <span v-else> {{ t('Total notes', { count: document.noteCount }) }}</span>
                   </q-chip>
@@ -139,7 +139,7 @@
           <div class="q-px-sm q-py-md flex flex-center" v-if="pager.totalPages > 1">
             <q-pagination v-model="pager.currentPage" color="dark" :max="pager.totalPages" :max-pages="5"
               boundary-numbers direction-links boundary-links @update:model-value="onPaginationChanged"
-              :disable="state.loading" />
+              :disable="state.loading" class="theme-default-q-pagination" />
           </div>
         </div>
         <CustomBanner v-else-if="!state.loading" warning text="No results found with current filter"></CustomBanner>
@@ -147,6 +147,8 @@
     </CustomExpansionWidget>
     <FilePreviewModal v-if="showPreviewFileDialog" :files="documentFiles" @close="showPreviewFileDialog = false">
     </FilePreviewModal>
+    <NotesPreviewModal v-if="showPreviewNotesDialog" :notes="documentNotes" @close="showPreviewNotesDialog = false">
+    </NotesPreviewModal>
   </q-page>
 </template>
 
@@ -167,6 +169,7 @@ import { default as CustomBanner } from "components/CustomBanner.vue";
 import { useDateFilter } from "src/composables/dateFilter"
 import { default as CustomInputDateFilter } from "components/CustomInputDateFilter.vue";
 import { default as FilePreviewModal } from "components/FilePreviewModal.vue";
+import { default as NotesPreviewModal } from "components/NotesPreviewModal.vue";
 
 const { t } = useI18n();
 
@@ -226,7 +229,6 @@ const sort = reactive({
 });
 
 const results = reactive([]);
-const hasResults = computed(() => results.length > 0);
 
 if (route.params.tag !== undefined) {
   filters.tags.push(route.params.tag);
@@ -240,6 +242,8 @@ const sortOrderIcon = computed(() => sort.order == "ASC" ? "keyboard_double_arro
 
 const showPreviewFileDialog = ref(false);
 const documentFiles = reactive([]);
+const showPreviewNotesDialog = ref(false);
+const documentNotes = reactive([]);
 
 const totalSearchConditions = computed(() => {
   let total = 0;
@@ -358,34 +362,64 @@ const onResetForm = () => {
 };
 
 const onShowDocumentFiles = (documentId) => {
-  documentFiles.length = 0;
-  state.loading = true;
-  api.document
-    .get(documentId)
-    .then((successResponse) => {
-      documentFiles.push(...successResponse.data.data.files.map((file) => {
-        file.isNew = false;
-        file.uploadedOn = date.formatDate(file.uploadedOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
-        file.humanSize = format.humanStorageSize(file.size);
-        file.url = "api2/file/" + file.id;
-        return (file)
-      }));
-      showPreviewFileDialog.value = documentFiles.length > 0;
-      state.loading = false;
-    })
-    .catch((errorResponse) => {
-      state.loading = false;
-      switch (errorResponse.response.status) {
-        case 401:
-          // TODO
-          break;
-        default:
-          // TODO
-          break;
-      }
-    });
-
+  if (!state.loading) {
+    documentFiles.length = 0;
+    state.loading = true;
+    api.document
+      .get(documentId)
+      .then((successResponse) => {
+        documentFiles.push(...successResponse.data.data.files.map((file) => {
+          file.isNew = false;
+          file.uploadedOn = date.formatDate(file.uploadedOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
+          file.humanSize = format.humanStorageSize(file.size);
+          file.url = "api2/file/" + file.id;
+          return (file)
+        }));
+        showPreviewFileDialog.value = documentFiles.length > 0;
+        state.loading = false;
+      })
+      .catch((errorResponse) => {
+        state.loading = false;
+        switch (errorResponse.response.status) {
+          case 401:
+            // TODO
+            break;
+          default:
+            // TODO
+            break;
+        }
+      });
+  }
 }
+
+const onShowDocumentNotes = (documentId) => {
+  if (!state.loading) {
+    documentNotes.length = 0;
+    state.loading = true;
+    api.document
+      .getNotes(documentId)
+      .then((successResponse) => {
+        documentNotes.push(...successResponse.data.notes.map((note) => {
+          note.createdOn = date.formatDate(note.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
+          note.expanded = false;
+          return (note);
+        }));
+        showPreviewNotesDialog.value = documentNotes.length > 0;
+        state.loading = false;
+      })
+      .catch((errorResponse) => {
+        state.loading = false;
+        switch (errorResponse.response.status) {
+          case 401:
+            // TODO
+            break;
+          default:
+            // TODO
+            break;
+        }
+      });
+  }
+};
 
 const onDocumentRowClick = (documentId) => {
   if (!state.loading) {
