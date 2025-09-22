@@ -126,16 +126,24 @@ watch(dateFilter.value, val => {
     nextTick(() => {
       switch (val.filterType.value) {
         case 7: // fixed date
-          qInputFixedDatePopupProfyRef.value.show();
+          if (!val.formattedDate.fixed) {
+            qInputFixedDatePopupProfyRef.value.show();
+          }
           break;
         case 8: // from date
-          qInputFromDatePopupProfyRef.value.show();
+          if (!val.formattedDate.from) {
+            qInputFromDatePopupProfyRef.value.show();
+          }
           break;
         case 9: // to date
-          qInputToDatePopupProfyRef.value.show();
+          if (!val.formattedDate.to) {
+            qInputToDatePopupProfyRef.value.show();
+          }
           break;
         case 10: // between dates
-          qInputFromDatePopupProfyRef.value.show();
+          if (!val.formattedDate.from) {
+            qInputFromDatePopupProfyRef.value.show();
+          }
           break;
       }
     });
