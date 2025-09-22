@@ -706,8 +706,8 @@ class Document
                         DOCUMENT_HISTORY_UPDATED_ON.document_id
                     FROM DOCUMENT_HISTORY AS DOCUMENT_HISTORY_UPDATED_ON
                     WHERE DOCUMENT_HISTORY_UPDATED_ON.document_id = DOCUMENT.id
-                    AND DOCUMENT_HISTORY_UPDATED_ON.operation_type >= :fromUpdatedOnTimestamp
-                    AND DOCUMENT_HISTORY_UPDATED_ON.operation_type <= :toUpdatedOnTimestamp
+                    AND DOCUMENT_HISTORY_UPDATED_ON.operation_date >= :fromUpdatedOnTimestamp
+                    AND DOCUMENT_HISTORY_UPDATED_ON.operation_date <= :toUpdatedOnTimestamp
                 )
             ";
         } else if (isset($filter["fromUpdatedOnTimestampCondition"]) && $filter["fromUpdatedOnTimestampCondition"] > 0) {
@@ -719,7 +719,7 @@ class Document
                         DOCUMENT_HISTORY_UPDATED_ON.document_id
                     FROM DOCUMENT_HISTORY AS DOCUMENT_HISTORY_UPDATED_ON
                     WHERE DOCUMENT_HISTORY_UPDATED_ON.document_id = DOCUMENT.id
-                    AND DOCUMENT_HISTORY_UPDATED_ON.operation_type >= :fromUpdatedOnTimestamp
+                    AND DOCUMENT_HISTORY_UPDATED_ON.operation_date >= :fromUpdatedOnTimestamp
                 )
             ";
         } else if (isset($filter["toUpdatedOnTimestampCondition"]) && $filter["toUpdatedOnTimestampCondition"] > 0) {
@@ -730,7 +730,7 @@ class Document
                         DOCUMENT_HISTORY_UPDATED_ON.document_id
                     FROM DOCUMENT_HISTORY AS DOCUMENT_HISTORY_UPDATED_ON
                     WHERE DOCUMENT_HISTORY_UPDATED_ON.document_id = DOCUMENT.id
-                    AND DOCUMENT_HISTORY_UPDATED_ON.operation_type <= :toUpdatedOnTimestamp
+                    AND DOCUMENT_HISTORY_UPDATED_ON.operation_date <= :toUpdatedOnTimestamp
                 )
             ";
         }
