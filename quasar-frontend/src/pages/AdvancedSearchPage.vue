@@ -99,7 +99,7 @@
                   @click="onToggleSort(column.field)">
                   <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                   {{ t(column.title) }}
-                  <q-tooltip>{{ t('Toggle sort by this column') }}</q-tooltip>
+                  <q-tooltip>{{ t('Toggle sort by this column', { field: t(column.title) }) }}</q-tooltip>
                 </th>
               </tr>
             </thead>

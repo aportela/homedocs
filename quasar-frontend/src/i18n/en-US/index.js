@@ -190,5 +190,5 @@ export default {
   "Total search conditions count": "{count} condition|{count} conditions",
   "Total search results count": "{count} document|{count} documents",
   "Type text condition": "Type text condition",
-  "Toggle sort by this column": "Toggle sort by this column",
+  "Toggle sort by this column": "Toggle sort by this column: {field}",
 };

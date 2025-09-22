@@ -195,5 +195,5 @@ export default {
   "Total search conditions count": "{count} condición|{count} condiciones",
   "Total search results count": "{count} documento|{count} documentos",
   "Type text condition": "Teclee la condición de texto",
-  "Toggle sort by this column": "Alterar el orden por esta columna",
+  "Toggle sort by this column": "Alterar el orden por esta columna: {field}",
 };
