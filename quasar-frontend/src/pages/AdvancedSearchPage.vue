@@ -68,8 +68,8 @@
                 {{ t("Searching...") }}
               </template>
             </q-btn>
-            <q-btn color="secondary" size="md" :label="$t('Reset filters')" no-caps icon="undo" :disable="state.loading"
-              type="reset" v-if="useStoreFilter"></q-btn>
+            <q-btn color="secondary" size="md" :label="$t('Reset filters')" no-caps icon="undo"
+              :disable="state.loading || totalSearchConditions < 1" type="reset" v-if="useStoreFilter"></q-btn>
           </q-btn-group>
         </form>
       </template>
