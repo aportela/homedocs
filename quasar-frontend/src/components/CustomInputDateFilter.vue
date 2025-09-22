@@ -23,7 +23,7 @@
     </div>
     <div class="col" v-if="dateFilter.state.hasTo">
       <q-input dense outlined mask="date" v-model="dateFilter.formattedDate.to" :label="t('To date')"
-        :disable="extraDateInputFieldsDisabled" ref="qInputFromDateRef">
+        :disable="extraDateInputFieldsDisabled" ref="qInputToDateRef">
         <template v-slot:append>
           <q-icon name="event" class="cursor-pointer">
             <q-popup-proxy cover transition-show="scale" transition-hide="scale">
@@ -39,7 +39,8 @@
     </div>
     <div class="col" v-if="dateFilter.state.hasFixed">
       <q-input dense outlined mask="date" v-model="dateFilter.formattedDate.fixed" :label="t('Fixed date')"
-        :disable="extraDateInputFieldsDisabled" ref="qInputFixedDateRef">
+        :disable="extraDateInputFieldsDisabled" ref="qInputFixedDateRef" :error="!dateFilter.formattedDate.fixed"
+        :error-message="t('Field is required')">
         <template v-slot:append>
           <q-icon name="event" class="cursor-pointer">
             <q-popup-proxy cover transition-show="scale" transition-hide="scale">
@@ -58,7 +59,7 @@
 
 <script setup>
 
-import { ref, watch, computed, onMounted } from "vue";
+import { ref, watch, computed, onMounted, nextTick } from "vue";
 
 import { useI18n } from "vue-i18n";
 
@@ -107,7 +108,10 @@ const { dateFilterTypeOptions } = useDateFilter();
 const extraDateInputFieldsDisabled = computed(() => props.disable || dateFilter.value.state.denyChanges);
 
 watch(() => props.modelValue, val => dateFilter.value = val);
-watch(dateFilter, val => emit('update:modelValue', val));
+watch(dateFilter.value, val => {
+  focus();
+  emit('update:modelValue', val);
+});
 
 
 // TODO: focus based on dateFilter.state.denyChanges
