@@ -115,7 +115,8 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="document in results" :key="document.id" class="cursor-pointer">
+              <tr v-for="document in results" :key="document.id" class="cursor-pointer"
+                @click="onDocumentRowClick(document.id)">
                 <td class="text-left"><router-link class="text-decoration-hover text-color-primary"
                     :to="{ name: 'document', params: { id: document.id } }">{{
                       document.title }}</router-link>
@@ -163,7 +164,7 @@
 <script setup>
 
 import { ref, reactive, computed, onMounted, nextTick } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { date, format } from "quasar";
 import { useI18n } from "vue-i18n";
 import { api } from "boot/axios";
@@ -181,6 +182,7 @@ import { default as FilePreviewModal } from "components/FilePreviewModal.vue";
 const { t } = useI18n();
 
 const route = useRoute();
+const router = useRouter();
 
 const state = reactive({
   loading: false,
@@ -385,6 +387,17 @@ const onShowDocumentFiles = (documentId) => {
     });
 
 }
+
+const onDocumentRowClick = (documentId) => {
+  if (!state.loading) {
+    router.push({
+      name: "document",
+      params: {
+        id: documentId
+      }
+    });
+  }
+};
 
 onMounted(() => {
   if (hasCreationDateRouteParamsFilter.value) {
