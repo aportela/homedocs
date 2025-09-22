@@ -385,6 +385,32 @@ onMounted(() => {
     filters.text.description = store.filters?.text.description || null;
     filters.text.notes = store.filters?.text.notes || null;
     filters.tags = store.filters?.tags || [];
+    if (store.filters?.dates) {
+      // creation date
+      filters.dates.creationDate.skipClearOnRecalc.fixed = true;
+      filters.dates.creationDate.formattedDate.fixed = store.filters.dates.creationDate.formattedDate.fixed;
+      filters.dates.creationDate.skipClearOnRecalc.from = true;
+      filters.dates.creationDate.formattedDate.from = store.filters.dates.creationDate.formattedDate.from;
+      filters.dates.creationDate.skipClearOnRecalc.to = true;
+      filters.dates.creationDate.formattedDate.to = store.filters.dates.creationDate.formattedDate.to;
+      filters.dates.creationDate.filterType = store.filters.dates.creationDate.filterType;
+      // last update
+      filters.dates.lastUpdate.skipClearOnRecalc.fixed = true;
+      filters.dates.lastUpdate.formattedDate.fixed = store.filters.dates.lastUpdate.formattedDate.fixed;
+      filters.dates.lastUpdate.skipClearOnRecalc.from = true;
+      filters.dates.lastUpdate.formattedDate.from = store.filters.dates.lastUpdate.formattedDate.from;
+      filters.dates.lastUpdate.skipClearOnRecalc.to = true;
+      filters.dates.lastUpdate.formattedDate.to = store.filters.dates.lastUpdate.formattedDate.to;
+      filters.dates.lastUpdate.filterType = store.filters.dates.lastUpdate.filterType;
+      // updated on
+      filters.dates.updatedOn.skipClearOnRecalc.fixed = true;
+      filters.dates.updatedOn.formattedDate.fixed = store.filters.dates.updatedOn.formattedDate.fixed;
+      filters.dates.updatedOn.skipClearOnRecalc.from = true;
+      filters.dates.updatedOn.formattedDate.from = store.filters.dates.updatedOn.formattedDate.from;
+      filters.dates.updatedOn.skipClearOnRecalc.to = true;
+      filters.dates.updatedOn.formattedDate.to = store.filters.dates.updatedOn.formattedDate.to;
+      filters.dates.updatedOn.filterType = store.filters.dates.updatedOn.filterType;
+    }
     if (store.sort?.field) {
       sort.field = store.sort.field;
     }
