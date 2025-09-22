@@ -59,7 +59,7 @@
                     :disable="loading || saving" clearable :start-mode-editable="isNewDocument" :max-lines="6">
                   </EditableTextField>
                   <TagSelector dense v-model="document.tags" :disabled="loading || saving"
-                    :start-mode-editable="isNewDocument" clearable>
+                    :start-mode-editable="isNewDocument" :deny-change-editable-mode="isNewDocument" clearable>
                   </TagSelector>
                 </q-card-section>
               </q-card>
