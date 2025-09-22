@@ -69,7 +69,7 @@
               </template>
             </q-btn>
             <q-btn color="secondary" size="md" :label="$t('Reset filters')" no-caps icon="undo" :disable="state.loading"
-              type="reset"></q-btn>
+              type="reset" v-if="useStoreFilter"></q-btn>
           </q-btn-group>
         </form>
       </template>
