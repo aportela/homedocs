@@ -42,11 +42,17 @@ $default-dark-third-text-color: var(--color-zinc-400);
 
 $default-widget-border-radius: 10px;
 
-$default-action-primary-color: white;
-$default-action-primary-bg-color: var(--q-primary);
+$default-action-light-primary-color: white;
+$default-action-light-primary-bg-color: var(--q-primary);
 
-$default-action-secondary-color: white;
-$default-action-secondary-bg-color: #295291;
+$default-action-dark-primary-color: white;
+$default-action-dark-primary-bg-color: var(--q-primary);
+
+$default-action-light-secondary-color: #000;
+$default-action-light-secondary-bg-color: var(--color-zinc-300);
+
+$default-action-dark-secondary-color: white;
+$default-action-dark-secondary-bg-color: var(--color-zinc-700);
 
 body {
   ::selection {
@@ -76,13 +82,13 @@ body {
 
 
   .action-primary {
-    background: $default-action-primary-bg-color;
-    color: $default-action-primary-color;
+    background: $default-action-light-primary-bg-color;
+    color: $default-action-light-primary-color;
   }
 
   .action-secondary {
-    background: $default-action-secondary-bg-color;
-    color: $default-action-secondary-color;
+    background: $default-action-light-secondary-bg-color;
+    color: $default-action-light-secondary-color;
   }
 
   .text-color-primary {
@@ -194,8 +200,8 @@ body {
   }
 
   .theme-default-q-pagination .q-btn {
-    background: $default-action-primary-bg-color !important;
-    color: $default-action-primary-color !important;
+    background: $default-action-light-primary-bg-color !important;
+    color: $default-action-light-primary-color !important;
     margin-left: 4px;
     margin-right: 4px;
     width: 4em;
@@ -216,13 +222,13 @@ body {
   color: $default-dark-primary-text-color !important;
 
   .action-primary {
-    background: $default-action-primary-bg-color;
-    color: $default-action-primary-color;
+    background: $default-action-dark-primary-bg-color;
+    color: $default-action-dark-primary-color;
   }
 
   .action-secondary {
-    background: $default-action-secondary-bg-color;
-    color: $default-action-secondary-color;
+    background: $default-action-dark-secondary-bg-color;
+    color: $default-action-dark-secondary-color;
   }
 
   .text-color-primary {
@@ -330,13 +336,13 @@ body {
   }
 
   .theme-default-q-pagination .q-btn {
-    background: $default-action-primary-bg-color !important;
-    color: $default-action-primary-color !important;
+    background: $default-action-light-primary-bg-color !important;
+    color: $default-action-light-primary-color !important;
   }
 
   .theme-default-q-pagination .q-btn {
-    background: $default-action-primary-bg-color !important;
-    color: $default-action-primary-color !important;
+    background: $default-action-light-primary-bg-color !important;
+    color: $default-action-light-primary-color !important;
     margin-left: 4px;
     margin-right: 4px;
     width: 4em;
