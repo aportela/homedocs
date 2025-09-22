@@ -93,22 +93,22 @@ export function useDateFilter() {
         // LAST 7 DAYS
         case 3:
           dateFilter.formattedDate.from = getFormattedDate(-7);
-          dateFilter.formattedDate.to = getFormattedDate(-1);
+          dateFilter.formattedDate.to = getFormattedDate();
           break;
         // LAST 15 DAYS
         case 4:
           dateFilter.formattedDate.from = getFormattedDate(-15);
-          dateFilter.formattedDate.to = getFormattedDate(-1);
+          dateFilter.formattedDate.to = getFormattedDate();
           break;
         // LAST 31 DAYS
         case 5:
           dateFilter.formattedDate.from = getFormattedDate(-31);
-          dateFilter.formattedDate.to = getFormattedDate(-1);
+          dateFilter.formattedDate.to = getFormattedDate();
           break;
         // LAST 365 DAYS
         case 6:
           dateFilter.formattedDate.from = getFormattedDate(-365);
-          dateFilter.formattedDate.to = getFormattedDate(-1);
+          dateFilter.formattedDate.to = getFormattedDate();
           break;
         // FIXED DATE
         case 7:
