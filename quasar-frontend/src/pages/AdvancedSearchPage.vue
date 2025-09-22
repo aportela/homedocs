@@ -9,8 +9,8 @@
         }) }}</q-chip>
       </template>
       <template v-slot:content>
-        <form @submit.prevent.stop="onSubmitForm(true)" autocorrect="off" autocapitalize="off" autocomplete="off"
-          spellcheck="false" class="q-pa-md">
+        <form @submit.prevent.stop="onSubmitForm(true)" @reset.prevent.stop="onResetForm" autocorrect="off"
+          autocapitalize="off" autocomplete="off" spellcheck="false" class="q-pa-md">
           <div class="row q-col-gutter-sm">
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
               <q-input class="q-mb-md" dense outlined v-model.trim="filters.text.title" type="text" name="title"
@@ -60,13 +60,17 @@
               </TagSelector>
             </div>
           </div>
-          <q-btn color="primary" size="md" :label="$t('Search')" no-caps class="full-width" icon="search"
-            :disable="state.loading" :loading="state.loading" type="submit">
-            <template v-slot:loading>
-              <q-spinner-hourglass class="on-left" />
-              {{ t("Searching...") }}
-            </template>
-          </q-btn>
+          <q-btn-group spread>
+            <q-btn color="primary" size="md" :label="$t('Search')" no-caps icon="search" :disable="state.loading"
+              :loading="state.loading" type="submit">
+              <template v-slot:loading>
+                <q-spinner-hourglass class="on-left" />
+                {{ t("Searching...") }}
+              </template>
+            </q-btn>
+            <q-btn color="secondary" size="md" :label="$t('Reset filters')" no-caps icon="undo" :disable="state.loading"
+              type="reset"></q-btn>
+          </q-btn-group>
         </form>
       </template>
     </CustomExpansionWidget>
@@ -151,6 +155,7 @@ import { useRoute } from "vue-router";
 import { date, format } from "quasar";
 import { useI18n } from "vue-i18n";
 import { api } from "boot/axios";
+import { useAdvancedSearchData } from "stores/advancedSearchData"
 import { default as TagSelector } from "components/TagSelector.vue";
 
 import { default as CustomExpansionWidget } from "components/CustomExpansionWidget.vue";
@@ -174,9 +179,14 @@ const state = reactive({
 });
 
 const isFilterWidgetExpanded = ref(route.meta.conditionsFilterExpanded);
+
 const resultsWidgetRef = ref(null);
 
 const { getDateFilterInstance, dateFilterTypeOptions } = useDateFilter();
+
+const useStoreFilter = computed(() => route.name == 'advancedSearch');
+
+const store = useAdvancedSearchData();
 
 const filters = reactive({
   text: {
@@ -270,6 +280,12 @@ const onSubmitForm = (resetPager) => {
   state.errorMessage = null;
   state.apiError = null;
   results.length = 0;
+
+  if (useStoreFilter.value) {
+    store.filters = filters;
+    store.sort = sort;
+  }
+
   api.document.search(pager.currentPage, pager.resultsPage, filters, sort.field, sort.order)
     .then((successResponse) => {
       if (successResponse.data.results) {
@@ -313,6 +329,14 @@ const onSubmitForm = (resetPager) => {
     });
 }
 
+const onResetForm = () => {
+  filters.text.title = null;
+  filters.text.description = null;
+  filters.text.notes = null;
+  filters.tags.length = 0;
+  store.reset();
+};
+
 const onShowDocumentFiles = (documentId) => {
   documentFiles.length = 0;
   state.loading = true;
@@ -348,16 +372,25 @@ onMounted(() => {
     filters.dates.creationDate.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
     filters.dates.creationDate.filterType = dateFilterTypeOptions.value[7];
     filters.dates.creationDate.formattedDate.fixed = route.params.fixedCreationDate.replaceAll("-", "/");
-  }
-  else if (hasLastUpdateRouteParamsFilter.value) {
+  } else if (hasLastUpdateRouteParamsFilter.value) {
     filters.dates.lastUpdate.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
     filters.dates.lastUpdate.filterType = dateFilterTypeOptions.value[7];
     filters.dates.lastUpdate.formattedDate.fixed = route.params.fixedLastUpdate.replaceAll("-", "/");
-  }
-  else if (hasUpdatedOnRouteParamsFilter.value) {
+  } else if (hasUpdatedOnRouteParamsFilter.value) {
     filters.dates.updatedOn.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
     filters.dates.updatedOn.filterType = dateFilterTypeOptions.value[7];
     filters.dates.updatedOn.formattedDate.fixed = route.params.fixedUpdatedOn.replaceAll("-", "/");
+  } else if (useStoreFilter.value) {
+    filters.text.title = store.filters?.text.title || null;
+    filters.text.description = store.filters?.text.description || null;
+    filters.text.notes = store.filters?.text.notes || null;
+    filters.tags = store.filters?.tags || [];
+    if (store.sort?.field) {
+      sort.field = store.sort.field;
+    }
+    if (store.sort?.order) {
+      sort.order = store.sort.order;
+    }
   }
   if (route.meta.autoLaunchSearch) {
     nextTick(() => {

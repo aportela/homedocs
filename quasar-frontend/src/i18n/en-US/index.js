@@ -83,6 +83,7 @@ export default {
   "Saving...": "Saving...",
   "Searching...": "Searching...",
   Search: "Search",
+  "Reset filters": "Reset filters",
   "Search on HomeDocs...": "Search on HomeDocs...",
   "Click to open fast search": "Click to open fast search",
   "Search on": "Search on",
