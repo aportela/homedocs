@@ -228,6 +228,7 @@ return function (App $app) {
                     $dbh->rollBack();
                     throw $e;
                 }
+                $document->setRootStoragePath($this->get('settings')['paths']['storage']);
                 $document->get($dbh);
                 $payload = json_encode(
                     [
@@ -246,6 +247,7 @@ return function (App $app) {
                     $args['id']
                 );
                 // test existence && check permissions
+                $document->setRootStoragePath($this->get('settings')['paths']['storage']);
                 $document->get($dbh);
                 $documentFiles = $params["files"] ?? [];
                 $rootStoragePath = $this->get('settings')['paths']['storage'];
