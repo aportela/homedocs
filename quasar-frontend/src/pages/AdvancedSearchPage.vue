@@ -10,23 +10,26 @@
       </template>
       <template v-slot:content>
         <form @submit.prevent.stop=" onSubmitForm(true)" autocorrect="off" autocapitalize="off" autocomplete="off"
-          spellcheck="false" class="q-ma-xs q-mt-sm">
+          spellcheck="false" class="q-pa-md">
           <div class="row q-col-gutter-sm">
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
               <q-input class="q-mb-md" dense outlined v-model="advancedSearchData.filter.title" type="text" name="title"
-                clearable :label="t('Document title')" :disable="state.loading" :autofocus="true">
+                clearable :label="t('Document title')" :disable="state.loading" :autofocus="true"
+                :placeholder="t('Type text condition')">
                 <template v-slot:prepend>
                   <q-icon name="search" />
                 </template>
               </q-input>
               <q-input class="q-mb-md" dense outlined v-model="advancedSearchData.filter.description" type="text"
-                name="description" clearable :label="t('Document description')" :disable="state.loading">
+                name="description" clearable :label="t('Document description')" :disable="state.loading"
+                :placeholder="t('Type text condition')">
                 <template v-slot:prepend>
                   <q-icon name="search" />
                 </template>
               </q-input>
               <q-input class="q-mb-md" dense outlined v-model="advancedSearchData.filter.notesBody" type="text"
-                name="notesBody" clearable :label="t('Document notes')" :disable="state.loading">
+                name="notesBody" clearable :label="t('Document notes')" :disable="state.loading"
+                :placeholder="t('Type text condition')">
                 <template v-slot:prepend>
                   <q-icon name="search" />
                 </template>
@@ -49,9 +52,13 @@
           </div>
           <div class="row">
             <div class="col-12">
-              <TagSelector v-model="advancedSearchData.filter.tags"
+              <TagSelector v-model="advancedSearchData.filter.tags" label="Document tags"
                 :disabled="state.loading || advancedSearchData.denyChangeCreationDateFilters" dense
-                :start-mode-editable="true" :deny-change-editable-mode="true" clearable>
+                :start-mode-editable="true" :deny-change-editable-mode="true" clearable
+                :placeholder="t('Type text condition')">
+                <template v-slot:prepend>
+                  <q-icon name="search" />
+                </template>
               </TagSelector>
             </div>
           </div>
