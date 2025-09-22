@@ -97,6 +97,11 @@ const props = defineProps({
     required: false,
     default: false,
   },
+  autoOpenPopUps: {
+    type: Boolean,
+    required: false,
+    default: true
+  }
 });
 
 const qInputFromDateRef = ref(null);
@@ -117,22 +122,24 @@ watch(() => props.modelValue, val => dateFilter.value = val);
 watch(dateFilter.value, val => {
   focus();
   emit('update:modelValue', val);
-  nextTick(() => {
-    switch (val.filterType.value) {
-      case 7: // fixed date
-        qInputFixedDatePopupProfyRef.value.show();
-        break;
-      case 8: // from date
-        qInputFromDatePopupProfyRef.value.show();
-        break;
-      case 9: // to date
-        qInputToDatePopupProfyRef.value.show();
-        break;
-      case 10: // between dates
-        qInputFromDatePopupProfyRef.value.show();
-        break;
-    }
-  });
+  if (props.autoOpenPopUps) {
+    nextTick(() => {
+      switch (val.filterType.value) {
+        case 7: // fixed date
+          qInputFixedDatePopupProfyRef.value.show();
+          break;
+        case 8: // from date
+          qInputFromDatePopupProfyRef.value.show();
+          break;
+        case 9: // to date
+          qInputToDatePopupProfyRef.value.show();
+          break;
+        case 10: // between dates
+          qInputFromDatePopupProfyRef.value.show();
+          break;
+      }
+    });
+  }
 });
 
 // TODO: focus based on dateFilter.state.denyChanges
