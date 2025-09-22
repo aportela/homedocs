@@ -178,6 +178,7 @@ export default {
   "Click to expand/collapse": "Click to expand/collapse",
   "Document creation date": "Document creation date",
   "Document last update": "Document last update",
+  "Document tags": "Document tags",
   "Oops. Nothing here...": "Oops. Nothing here...",
   "Go Home": "Go Home",
   Previous: "Previous",
@@ -185,4 +186,5 @@ export default {
   "Document updated on": "Document updated on",
   "Total search conditions count": "{count} condition|{count} conditions",
   "Total search results count": "{count} document|{count} documents",
+  "Type text condition": "Type text condition",
 };

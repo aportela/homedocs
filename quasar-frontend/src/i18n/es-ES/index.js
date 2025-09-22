@@ -183,6 +183,7 @@ export default {
   "Click to expand/collapse": "Haga click para expandir/contraer",
   "Document creation date": "Fecha de creación del documento",
   "Document last update": "Fecha del último cambio del documento",
+  "Document tags": "Etiquetas del documento",
   "Oops. Nothing here...": "Oops. Parece que no hay nada por aquí...",
   "Go Home": "Volver al inicio",
   Previous: "Anterior",
@@ -190,4 +191,5 @@ export default {
   "Document updated on": "Documento actualizado en",
   "Total search conditions count": "{count} condición|{count} condiciones",
   "Total search results count": "{count} documento|{count} documentos",
+  "Type text condition": "Teclee la condición de texto",
 };
