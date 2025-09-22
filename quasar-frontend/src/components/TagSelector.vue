@@ -3,7 +3,7 @@
     style="border: 1px solid rgba(0, 0, 0, 0.12); border-radius: 4px;" @mouseenter="showUpdateHoverIcon = true"
     @mouseleave="showUpdateHoverIcon = false" @click="onToggleReadOnly">
     <div style="font-size: 12px; color: rgba(0, 0, 0, 0.6); margin-left: 0px; margin-bottom: 4px;">
-      {{ t('Tags') }}</div>
+      {{ t(label) }}</div>
     <q-icon v-if="!denyChangeEditableMode" name="edit" size="sm"
       class="absolute-top-right text-grey cursor-pointer q-mr-sm q-mt-sm" v-show="showUpdateHoverIcon">
       <q-tooltip>{{ t("Click to toggle edit mode") }}</q-tooltip>
@@ -17,8 +17,8 @@
       </router-link>
     </q-chip>
   </div>
-  <q-select v-else ref="selectRef" :label="label" v-model="currentTags" :dense="dense" :options-dense="dense" outlined
-    use-input use-chips multiple hide-dropdown-icon :options="filteredTags" input-debounce="0"
+  <q-select v-else ref="selectRef" :label="t(label)" v-model="currentTags" :dense="dense" :options-dense="dense"
+    outlined use-input use-chips multiple hide-dropdown-icon :options="filteredTags" input-debounce="0"
     new-value-mode="add-unique" :disable="disabled || loading || loadingError" :loading="loading" :error="loadingError"
     :errorMessage="t('Error loading available tags')" @filter="onFilterTags" @add="onAddTag">
     <template v-slot:prepend>
@@ -56,7 +56,7 @@ const props = defineProps({
   label: {
     type: String,
     required: false,
-    default: "Tags"
+    default: "Document tags"
   }
 });
 
