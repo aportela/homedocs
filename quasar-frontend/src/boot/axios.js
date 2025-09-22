@@ -177,9 +177,9 @@ const api = {
     search: function (currentPage, resultsPage, filter, sortBy, sortOrder) {
       return new Promise((resolve, reject) => {
         const params = {
-          title: filter.title,
-          description: filter.description,
-          notesBody: filter.notesBody,
+          title: filter.text.title || null,
+          description: filter.text.description || null,
+          notesBody: filter.text.notes || null,
           tags: filter.tags || [],
         };
         params.fromCreationTimestampCondition = filter.timestamps.creationDate.from || null;

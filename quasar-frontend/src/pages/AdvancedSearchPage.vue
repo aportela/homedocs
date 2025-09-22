@@ -9,27 +9,26 @@
         }) }}</q-chip>
       </template>
       <template v-slot:content>
-        <form @submit.prevent.stop=" onSubmitForm(true)" autocorrect="off" autocapitalize="off" autocomplete="off"
+        <form @submit.prevent.stop="onSubmitForm(true)" autocorrect="off" autocapitalize="off" autocomplete="off"
           spellcheck="false" class="q-pa-md">
           <div class="row q-col-gutter-sm">
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
-              <q-input class="q-mb-md" dense outlined v-model="advancedSearchData.filter.title" type="text" name="title"
+              <q-input class="q-mb-md" dense outlined v-model.trim="filters.text.title" type="text" name="title"
                 clearable :label="t('Document title')" :disable="state.loading" :autofocus="true"
                 :placeholder="t('Type text condition')">
                 <template v-slot:prepend>
                   <q-icon name="search" />
                 </template>
               </q-input>
-              <q-input class="q-mb-md" dense outlined v-model="advancedSearchData.filter.description" type="text"
+              <q-input class="q-mb-md" dense outlined v-model.trim="filters.text.description" type="text"
                 name="description" clearable :label="t('Document description')" :disable="state.loading"
                 :placeholder="t('Type text condition')">
                 <template v-slot:prepend>
                   <q-icon name="search" />
                 </template>
               </q-input>
-              <q-input class="q-mb-md" dense outlined v-model="advancedSearchData.filter.notesBody" type="text"
-                name="notesBody" clearable :label="t('Document notes')" :disable="state.loading"
-                :placeholder="t('Type text condition')">
+              <q-input class="q-mb-md" dense outlined v-model.trim="filters.text.notes" type="text" name="notesBody"
+                clearable :label="t('Document notes')" :disable="state.loading" :placeholder="t('Type text condition')">
                 <template v-slot:prepend>
                   <q-icon name="search" />
                 </template>
@@ -52,8 +51,7 @@
           </div>
           <div class="row">
             <div class="col-12">
-              <TagSelector v-model="advancedSearchData.filter.tags" label="Document tags"
-                :disabled="state.loading || advancedSearchData.denyChangeCreationDateFilters" dense
+              <TagSelector v-model="filters.tags" label="Document tags" :disabled="state.loading" dense
                 :start-mode-editable="true" :deny-change-editable-mode="true" clearable
                 :placeholder="t('Type text condition')">
                 <template v-slot:prepend>
@@ -153,7 +151,6 @@ import { useRoute } from "vue-router";
 import { date, format } from "quasar";
 import { useI18n } from "vue-i18n";
 import { api } from "boot/axios";
-import { useAdvancedSearchData } from "stores/advancedSearchData";
 import { default as TagSelector } from "components/TagSelector.vue";
 
 import { default as CustomExpansionWidget } from "components/CustomExpansionWidget.vue";
@@ -181,6 +178,29 @@ const resultsWidgetRef = ref(null);
 
 const { getDateFilterInstance, dateFilterTypeOptions } = useDateFilter();
 
+const filters = reactive({
+  text: {
+    title: null,
+    description: null,
+    notes: null
+  },
+  tags: [],
+  timestamps: {
+    creationDate: {
+      from: null,
+      to: null,
+    },
+    lastUpdate: {
+      from: null,
+      to: null,
+    },
+    updatedOn: {
+      from: null,
+      to: null,
+    },
+  }
+});
+
 const dateFilters = {
   creationDate: getDateFilterInstance(),
   lastUpdate: getDateFilterInstance(),
@@ -202,12 +222,11 @@ const sort = reactive({
 const results = reactive([]);
 const hasResults = computed(() => results.length > 0);
 
-// TODO: replace with composable ? or allow reset/restore pinia store
-const advancedSearchData = useAdvancedSearchData();
 
-advancedSearchData.reset();
-
-advancedSearchData.filter.tags = route.params.tag !== undefined ? [route.params.tag] : [];
+//TODO
+if (route.params.tag !== undefined) {
+  filters.tags.push(route.params.tag);
+}
 
 const hasCreationDateRouteParamsFilter = computed(() => route.params.fixedCreationDate !== undefined);
 const hasLastUpdateRouteParamsFilter = computed(() => route.params.fixedLastUpdate !== undefined);
@@ -221,17 +240,17 @@ const documentFiles = reactive([]);
 
 const totalSearchConditions = computed(() => {
   let total = 0;
-  if (advancedSearchData.filter.title) {
+  if (filters.text.title) {
     total++;
   }
-  if (advancedSearchData.filter.description) {
+  if (filters.text.description) {
     total++;
   }
-  if (advancedSearchData.filter.notesBody) {
+  if (filters.text.notes) {
     total++;
   }
-  if (advancedSearchData.filter.tags && advancedSearchData.filter.tags.length > 0) {
-    total += advancedSearchData.filter.tags.length;
+  if (filters.tags && filters.tags.length > 0) {
+    total += filters.tags.length;
   }
   if (dateFilters.creationDate.state.hasValue) {
     total++;
@@ -270,27 +289,27 @@ const onSubmitForm = (resetPager) => {
   state.apiError = null;
   results.length = 0;
   if (dateFilters.creationDate.timestamps.from || dateFilters.creationDate.timestamps.to) {
-    advancedSearchData.filter.timestamps.creationDate.from = dateFilters.creationDate.timestamps.from;
-    advancedSearchData.filter.timestamps.creationDate.to = dateFilters.creationDate.timestamps.to;
+    filters.timestamps.creationDate.from = dateFilters.creationDate.timestamps.from;
+    filters.timestamps.creationDate.to = dateFilters.creationDate.timestamps.to;
   } else {
-    advancedSearchData.filter.timestamps.creationDate.from = null;
-    advancedSearchData.filter.timestamps.creationDate.to = null;
+    filters.timestamps.creationDate.from = null;
+    filters.timestamps.creationDate.to = null;
   }
   if (dateFilters.lastUpdate.timestamps.from || dateFilters.lastUpdate.timestamps.to) {
-    advancedSearchData.filter.timestamps.lastUpdate.from = dateFilters.lastUpdate.timestamps.from;
-    advancedSearchData.filter.timestamps.lastUpdate.to = dateFilters.lastUpdate.timestamps.to;
+    filters.timestamps.lastUpdate.from = dateFilters.lastUpdate.timestamps.from;
+    filters.timestamps.lastUpdate.to = dateFilters.lastUpdate.timestamps.to;
   } else {
-    advancedSearchData.filter.timestamps.lastUpdate.from = null;
-    advancedSearchData.filter.timestamps.lastUpdate.to = null;
+    filters.timestamps.lastUpdate.from = null;
+    filters.timestamps.lastUpdate.to = null;
   }
   if (dateFilters.updatedOn.timestamps.from || dateFilters.updatedOn.timestamps.to) {
-    advancedSearchData.filter.timestamps.updatedOn.from = dateFilters.updatedOn.timestamps.from;
-    advancedSearchData.filter.timestamps.updatedOn.to = dateFilters.updatedOn.timestamps.to;
+    filters.timestamps.updatedOn.from = dateFilters.updatedOn.timestamps.from;
+    filters.timestamps.updatedOn.to = dateFilters.updatedOn.timestamps.to;
   } else {
-    advancedSearchData.filter.timestamps.updatedOn.from = null;
-    advancedSearchData.filter.timestamps.updatedOn.to = null;
+    filters.timestamps.updatedOn.from = null;
+    filters.timestamps.updatedOn.to = null;
   }
-  api.document.search(pager.currentPage, pager.resultsPage, advancedSearchData.filter, sort.field, sort.order)
+  api.document.search(pager.currentPage, pager.resultsPage, filters, sort.field, sort.order)
     .then((successResponse) => {
       if (successResponse.data.results) {
         pager.currentPage = successResponse.data.results.pagination.currentPage;
@@ -311,6 +330,7 @@ const onSubmitForm = (resetPager) => {
       }
     })
     .catch((errorResponse) => {
+      console.log(errorResponse);
       state.apiError = errorResponse.customAPIErrorDetails;
       switch (errorResponse.response.status) {
         case 400:
