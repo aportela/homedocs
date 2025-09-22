@@ -334,7 +334,15 @@ const onResetForm = () => {
   filters.text.description = null;
   filters.text.notes = null;
   filters.tags.length = 0;
-  store.reset();
+  filters.dates = {
+    creationDate: getDateFilterInstance(),
+    lastUpdate: getDateFilterInstance(),
+    updatedOn: getDateFilterInstance()
+  }
+  sort.field = "lastUpdateTimestamp";
+  sort.order = "DESC";
+  state.searchLaunched = false;
+  results.length = 0;
 };
 
 const onShowDocumentFiles = (documentId) => {
