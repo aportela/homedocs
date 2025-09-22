@@ -16,7 +16,7 @@
           <slot name="header-extra">
           </slot>
         </q-item-label>
-        <q-item-label caption>{{ t(caption) }}</q-item-label>
+        <q-item-label caption v-if="caption">{{ t(caption) }}</q-item-label>
       </q-item-section>
     </template>
     <q-card class="q-ma-xs" flat>
@@ -28,7 +28,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
@@ -73,6 +73,18 @@ const props = defineProps({
 
 const isExpanded = ref(props.expanded === true);
 const iconClass = computed(() => !!props.onHeaderIconClick ? "cursor-pointer" : "cursor-default");
+
+const expand = () => {
+  isExpanded.value = true;
+};
+
+const collapse = () => {
+  isExpanded.value = false;
+};
+
+defineExpose({
+  expand, collapse
+});
 
 const onHeaderIconClicked = () => {
   if (props.onHeaderIconClick && typeof props.onHeaderIconClick === 'function') {
