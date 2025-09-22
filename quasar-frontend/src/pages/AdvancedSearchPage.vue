@@ -116,7 +116,14 @@
                 </td>
                 <td class="text-left">{{ document.createdOn }}</td>
                 <td class="text-left">{{ document.lastUpdate }}</td>
-                <td class="text-right">{{ document.fileCount }}</td>
+                <td class="text-right">
+                  <q-chip size="md" square class="theme-default-q-chip">
+                    <q-avatar class="theme-default-q-avatar">{{ document.fileCount }}</q-avatar>
+                    <span v-if="document.fileCount > 0" class="cursor-pointer"
+                      @click="onShowDocumentFiles(document.id)"> files</span>
+                    <span v-else> files</span>
+                  </q-chip>
+                </td>
                 <td class="text-right">{{ document.noteCount }}</td>
               </tr>
             </tbody>
@@ -130,6 +137,8 @@
         <CustomBanner v-else-if="!state.loading" warning text="No results found with current filter"></CustomBanner>
       </template>
     </CustomExpansionWidget>
+    <FilePreviewModal v-if="showPreviewFileDialog" :files="documentFiles" @close="showPreviewFileDialog = false">
+    </FilePreviewModal>
   </q-page>
 </template>
 
@@ -137,7 +146,7 @@
 
 import { ref, reactive, computed, onMounted, nextTick } from "vue";
 import { useRoute } from "vue-router";
-import { date } from "quasar";
+import { date, format } from "quasar";
 import { useI18n } from "vue-i18n";
 import { api } from "boot/axios";
 import { useAdvancedSearchData } from "stores/advancedSearchData";
@@ -149,6 +158,7 @@ import { default as CustomBanner } from "components/CustomBanner.vue";
 
 import { useDateFilter } from "src/composables/dateFilter"
 import { default as CustomInputDateFilter } from "components/CustomInputDateFilter.vue";
+import { default as FilePreviewModal } from "components/FilePreviewModal.vue";
 
 const { t } = useI18n();
 
@@ -193,6 +203,9 @@ const hasLastUpdateRouteParamsFilter = computed(() => route.params.fixedLastUpda
 const hasUpdatedOnRouteParamsFilter = computed(() => route.params.fixedUpdatedOn !== undefined);
 
 const sortOrderIcon = computed(() => advancedSearchData.sortOrder == "ASC" ? "keyboard_double_arrow_up" : "keyboard_double_arrow_down");
+
+const showPreviewFileDialog = ref(false);
+const documentFiles = reactive([]);
 
 const totalSearchConditions = computed(() => {
   let total = 0;
@@ -300,6 +313,36 @@ function onSubmitForm(resetPager) {
       }
       state.loading = false;
     });
+}
+
+const onShowDocumentFiles = (documentId) => {
+  documentFiles.length = 0;
+  state.loading = true;
+  api.document
+    .get(documentId)
+    .then((successResponse) => {
+      documentFiles.push(...successResponse.data.data.files.map((file) => {
+        file.isNew = false;
+        file.uploadedOn = date.formatDate(file.uploadedOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
+        file.humanSize = format.humanStorageSize(file.size);
+        file.url = "api2/file/" + file.id;
+        return (file)
+      }));
+      showPreviewFileDialog.value = documentFiles.length > 0;
+      state.loading = false;
+    })
+    .catch((errorResponse) => {
+      state.loading = false;
+      switch (errorResponse.response.status) {
+        case 401:
+          // TODO
+          break;
+        default:
+          // TODO
+          break;
+      }
+    });
+
 }
 
 onMounted(() => {
