@@ -89,41 +89,30 @@
           <div class="q-px-sm q-py-md flex flex-center" v-if="pager.totalPages > 1">
             <q-pagination v-model="pager.currentPage" color="dark" :max="pager.totalPages" :max-pages="5"
               boundary-numbers direction-links boundary-links @update:model-value="onPaginationChanged"
-              :disable="state.loading" />
+              :disable="state.loading" input-class="action-primary" />
           </div>
           <q-markup-table>
             <thead>
               <tr>
-                <th style="width: 40%;" class="text-left cursor-pointer" @click="onToggleSort('title')">{{
-                  t("Title") }}
-                  <q-icon :name="sortOrderIcon" v-if="sort.field == 'title'" size="sm"></q-icon>
-                </th>
-                <th style="width: 20%;" class="text-left cursor-pointer" @click="onToggleSort('createdOnTimestamp')">
-                  {{ t("Creation date") }}
-                  <q-icon :name="sortOrderIcon" v-if="sort.field == 'createdOnTimestamp'" size="sm"></q-icon>
-                </th>
-                <th style="width: 20%;" class="text-left cursor-pointer" @click="onToggleSort('lastUpdateTimestamp')">
-                  {{ t("Last update") }}
-                  <q-icon :name="sortOrderIcon" v-if="sort.field == 'lastUpdateTimestamp'" size="sm"></q-icon>
-                </th>
-                <th style="width: 10%;" class="text-right cursor-pointer" @click="onToggleSort('fileCount')">
-                  {{ t("Files") }}<q-icon :name="sortOrderIcon" v-if="sort.field == 'fileCount'" size="sm"></q-icon>
-                </th>
-                <th style="width: 10%;" class="text-right cursor-pointer" @click="onToggleSort('noteCount')">
-                  {{ t("Notes") }}<q-icon :name="sortOrderIcon" v-if="sort.field == 'noteCount'" size="sm"></q-icon>
+                <th v-for="(column, index) in columns" :key="index" :style="{ width: column.width }"
+                  :class="['text-left', { 'cursor-not-allowed': state.loading, 'cursor-pointer': !state.loading, 'action-primary': sort.field === column.field }]"
+                  @click="onToggleSort(column.field)">
+                  <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
+                  {{ t(column.title) }}
+                  <q-tooltip>{{ t('Toggle sort by this column') }}</q-tooltip>
                 </th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="document in results" :key="document.id" class="cursor-pointer"
                 @click="onDocumentRowClick(document.id)">
-                <td class="text-left"><router-link class="text-decoration-hover text-color-primary"
+                <td><router-link class="text-decoration-hover text-color-primary"
                     :to="{ name: 'document', params: { id: document.id } }">{{
                       document.title }}</router-link>
                 </td>
-                <td class="text-left">{{ document.createdOn }}</td>
-                <td class="text-left">{{ document.lastUpdate }}</td>
-                <td class="text-right">
+                <td>{{ document.createdOn }}</td>
+                <td>{{ document.lastUpdate }}</td>
+                <td>
                   <q-chip size="md" square class="theme-default-q-chip q-chip-8em">
                     <q-avatar class="theme-default-q-avatar"
                       :class="{ 'text-white bg-blue': document.fileCount > 0 }">{{ document.fileCount }}</q-avatar>
@@ -133,7 +122,7 @@
                     <span v-else> {{ t('Total files', { count: document.fileCount }) }}</span>
                   </q-chip>
                 </td>
-                <td class="text-right">
+                <td>
                   <q-chip size="md" square class="theme-default-q-chip q-chip-8em">
                     <q-avatar class="theme-default-q-avatar"
                       :class="{ 'text-white bg-blue': document.noteCount > 0 }">{{
@@ -183,6 +172,14 @@ const { t } = useI18n();
 
 const route = useRoute();
 const router = useRouter();
+
+const columns = [
+  { field: 'title', title: 'Title', width: '40%' },
+  { field: 'createdOnTimestamp', title: 'Creation date', width: '20%' },
+  { field: 'lastUpdateTimestamp', title: 'Last update', width: '20%' },
+  { field: 'fileCount', title: 'Files', width: '10%' },
+  { field: 'noteCount', title: 'Notes', width: '10%' }
+];
 
 const state = reactive({
   loading: false,
@@ -276,13 +273,15 @@ const onPaginationChanged = (pageIndex) => {
 }
 
 const onToggleSort = (field) => {
-  if (sort.field == field) {
-    sort.order = sort.order == "ASC" ? "DESC" : "ASC";
-  } else {
-    sort.field = field;
-    sort.order = "ASC";
+  if (!state.loading) {
+    if (sort.field == field) {
+      sort.order = sort.order == "ASC" ? "DESC" : "ASC";
+    } else {
+      sort.field = field;
+      sort.order = "ASC";
+    }
+    onSubmitForm(false);
   }
-  onSubmitForm(false);
 }
 
 const onSubmitForm = (resetPager) => {

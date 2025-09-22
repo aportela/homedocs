@@ -42,6 +42,12 @@ $default-dark-third-text-color: var(--color-zinc-400);
 
 $default-widget-border-radius: 10px;
 
+$default-action-primary-color: white;
+$default-action-primary-bg-color: var(--q-primary);
+
+$default-action-secondary-color: white;
+$default-action-secondary-bg-color: #295291;
+
 body {
   ::selection {
     background-color: var(--color-primary-600);
@@ -68,6 +74,16 @@ body {
   background: $default-light-primary-bg-color !important;
   color: $default-light-primary-text-color !important;
 
+
+  .action-primary {
+    background: $default-action-primary-bg-color;
+    color: $default-action-primary-color;
+  }
+
+  .action-secondary {
+    background: $default-action-secondary-bg-color;
+    color: $default-action-secondary-color;
+  }
 
   .text-color-primary {
     color: $default-light-primary-text-color !important;
@@ -183,6 +199,16 @@ body {
   background: $default-dark-primary-bg-color !important;
   color: $default-dark-primary-text-color !important;
 
+  .action-primary {
+    background: $default-action-primary-bg-color;
+    color: $default-action-primary-color;
+  }
+
+  .action-secondary {
+    background: $default-action-secondary-bg-color;
+    color: $default-action-secondary-color;
+  }
+
   .text-color-primary {
     color: $default-dark-primary-text-color;
   }
@@ -278,7 +304,7 @@ body {
     color: white;
   }
 
-  .theme-default-q-banner-warning{
+  .theme-default-q-banner-warning {
     background-color: #ffbb98;
     color: white;
   }
