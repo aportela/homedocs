@@ -174,6 +174,7 @@ export default {
   "Click to refresh data": "Click to refresh data",
   "Total document count": "{count} document|{count} documents",
   "Total tags": "{count} tag|{count} tags",
+  "Total files": "file|files",
   "Click to toggle edit mode": "Click to toggle edit mode",
   "Click to expand/collapse": "Click to expand/collapse",
   "Document creation date": "Document creation date",

@@ -124,14 +124,15 @@
                 <td class="text-left">{{ document.createdOn }}</td>
                 <td class="text-left">{{ document.lastUpdate }}</td>
                 <td class="text-right">
-                  <q-chip size="md" square class="theme-default-q-chip">
+                  <q-chip size="md" square class="theme-default-q-chip q-chip-8em">
                     <q-avatar class="theme-default-q-avatar">{{ document.fileCount }}</q-avatar>
                     <span v-if="document.fileCount > 0" class="cursor-pointer"
-                      @click="onShowDocumentFiles(document.id)"> files</span>
-                    <span v-else> files</span>
+                      @click="onShowDocumentFiles(document.id)"> {{ t('Total files', { count: document.fileCount })
+                      }}</span>
+                    <span v-else> {{ t('Total files', { count: document.fileCount }) }}</span>
                   </q-chip>
                 </td>
-                <td class="text-right">{{ document.noteCount }}</td>
+                <td class="text-right"> {{ document.noteCount }}</td>
               </tr>
             </tbody>
           </q-markup-table>
@@ -376,3 +377,9 @@ onMounted(() => {
 });
 
 </script>
+
+<style scoped>
+.q-chip-8em {
+  width: 8em;
+}
+</style>
