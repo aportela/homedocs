@@ -94,25 +94,21 @@
               <tr>
                 <th style="width: 40%;" class="text-left cursor-pointer" @click="onToggleSort('title')">{{
                   t("Title") }}
-                  <q-icon :name="sortOrderIcon" v-if="advancedSearchData.isSortedByField('title')" size="sm"></q-icon>
+                  <q-icon :name="sortOrderIcon" v-if="sort.field == 'title'" size="sm"></q-icon>
                 </th>
                 <th style="width: 20%;" class="text-left cursor-pointer" @click="onToggleSort('createdOnTimestamp')">
                   {{ t("Creation date") }}
-                  <q-icon :name="sortOrderIcon" v-if="advancedSearchData.isSortedByField('createdOnTimestamp')"
-                    size="sm"></q-icon>
+                  <q-icon :name="sortOrderIcon" v-if="sort.field == 'createdOnTimestamp'" size="sm"></q-icon>
                 </th>
                 <th style="width: 20%;" class="text-left cursor-pointer" @click="onToggleSort('lastUpdateTimestamp')">
                   {{ t("Last update") }}
-                  <q-icon :name="sortOrderIcon" v-if="advancedSearchData.isSortedByField('lastUpdateTimestamp')"
-                    size="sm"></q-icon>
+                  <q-icon :name="sortOrderIcon" v-if="sort.field == 'lastUpdateTimestamp'" size="sm"></q-icon>
                 </th>
                 <th style="width: 10%;" class="text-right cursor-pointer" @click="onToggleSort('fileCount')">
-                  {{ t("Files") }}<q-icon :name="sortOrderIcon" v-if="advancedSearchData.isSortedByField('fileCount')"
-                    size="sm"></q-icon>
+                  {{ t("Files") }}<q-icon :name="sortOrderIcon" v-if="sort.field == 'fileCount'" size="sm"></q-icon>
                 </th>
                 <th style="width: 10%;" class="text-right cursor-pointer" @click="onToggleSort('noteCount')">
-                  {{ t("Notes") }}<q-icon :name="sortOrderIcon" v-if="advancedSearchData.isSortedByField('noteCount')"
-                    size="sm"></q-icon>
+                  {{ t("Notes") }}<q-icon :name="sortOrderIcon" v-if="sort.field == 'noteCount'" size="sm"></q-icon>
                 </th>
               </tr>
             </thead>
@@ -198,6 +194,11 @@ const pager = reactive({
   totalPages: 0,
 });
 
+const sort = reactive({
+  field: "lastUpdateTimestamp",
+  order: "DESC",
+});
+
 const results = reactive([]);
 const hasResults = computed(() => results.length > 0);
 
@@ -212,7 +213,8 @@ const hasCreationDateRouteParamsFilter = computed(() => route.params.fixedCreati
 const hasLastUpdateRouteParamsFilter = computed(() => route.params.fixedLastUpdate !== undefined);
 const hasUpdatedOnRouteParamsFilter = computed(() => route.params.fixedUpdatedOn !== undefined);
 
-const sortOrderIcon = computed(() => advancedSearchData.sortOrder == "ASC" ? "keyboard_double_arrow_up" : "keyboard_double_arrow_down");
+const sortField = computed(() => sort.field);
+const sortOrderIcon = computed(() => sort.order == "ASC" ? "keyboard_double_arrow_up" : "keyboard_double_arrow_down");
 
 const showPreviewFileDialog = ref(false);
 const documentFiles = reactive([]);
@@ -243,17 +245,22 @@ const totalSearchConditions = computed(() => {
   return (total);
 });
 
-function onPaginationChanged(pageIndex) {
+const onPaginationChanged = (pageIndex) => {
   pager.currentPage = pageIndex;
   onSubmitForm(false);
 }
 
-function onToggleSort(field) {
-  advancedSearchData.toggleSort(field);
+const onToggleSort = (field) => {
+  if (sort.field == field) {
+    sort.order = sort.order == "ASC" ? "DESC" : "ASC";
+  } else {
+    sort.field = field;
+    sort.order = "ASC";
+  }
   onSubmitForm(false);
 }
 
-function onSubmitForm(resetPager) {
+const onSubmitForm = (resetPager) => {
   if (resetPager) {
     pager.currentPage = 1;
   }
@@ -283,7 +290,7 @@ function onSubmitForm(resetPager) {
     advancedSearchData.filter.timestamps.updatedOn.from = null;
     advancedSearchData.filter.timestamps.updatedOn.to = null;
   }
-  api.document.search(pager.currentPage, pager.resultsPage, advancedSearchData.filter, advancedSearchData.sortField, advancedSearchData.sortOrder)
+  api.document.search(pager.currentPage, pager.resultsPage, advancedSearchData.filter, sort.field, sort.order)
     .then((successResponse) => {
       if (successResponse.data.results) {
         pager.currentPage = successResponse.data.results.pagination.currentPage;
