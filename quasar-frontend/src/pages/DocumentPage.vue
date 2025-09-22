@@ -295,7 +295,7 @@ const uploading = ref(false);
 const currentNote = ref({ id: null, body: null });
 
 
-const isNewDocument = computed(() => !route.params.id);
+const isNewDocument = computed(() => router.currentRoute.value.name == 'newDocument');
 
 const readOnlyTitle = ref(!isNewDocument.value);
 const readOnlyDescription = ref(!isNewDocument.value);
@@ -473,11 +473,6 @@ function onSubmitForm() {
       .add(document.value)
       .then((response) => {
         loading.value = false;
-        nextTick(() => {
-          //TODO: FAIL with hidden tab
-          //uploaderRef.value.reset();
-          titleRef.value.focus();
-        });
         router.push({
           name: "document",
           params: { id: document.value.id }
@@ -707,8 +702,12 @@ function onDeleteDocument() {
 
 onMounted(() => {
   if (!isNewDocument.value) {
-    document.value.id = route.params.id;
-    onRefresh();
+    if (route.params.id) {
+      document.value.id = route.params.id;
+      onRefresh();
+    } else {
+      // TODO: ERROR
+    }
   }
 });
 
