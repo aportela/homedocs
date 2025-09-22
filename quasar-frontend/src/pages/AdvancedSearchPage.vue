@@ -124,7 +124,7 @@
                 <td class="text-right">
                   <q-chip size="md" square class="theme-default-q-chip q-chip-8em">
                     <q-avatar class="theme-default-q-avatar">{{ document.fileCount }}</q-avatar>
-                    <span v-if="document.fileCount > 0" class="cursor-pointer"
+                    <span v-if="document.fileCount > 0 && !loading" class="cursor-pointer"
                       @click="onShowDocumentFiles(document.id)"> {{ t('Total files', { count: document.fileCount })
                       }}</span>
                     <span v-else> {{ t('Total files', { count: document.fileCount }) }}</span>
