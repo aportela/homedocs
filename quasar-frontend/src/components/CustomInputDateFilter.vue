@@ -12,7 +12,7 @@
         <template v-slot:append>
           <q-icon name="event" class="cursor-pointer">
             <q-popup-proxy cover transition-show="scale" transition-hide="scale" ref="qInputFromDatePopupProfyRef">
-              <q-date v-model="dateFilter.formattedDate.from" minimal v-close-popup>
+              <q-date v-model="dateFilter.formattedDate.from" minimal @update:model-value="onFromDateSelected">
                 <div class="row items-center justify-end">
                   <q-btn v-close-popup label="Close" color="primary" flat />
                 </div>
@@ -29,7 +29,7 @@
         <template v-slot:append>
           <q-icon name="event" class="cursor-pointer">
             <q-popup-proxy cover transition-show="scale" transition-hide="scale" ref="qInputToDatePopupProfyRef">
-              <q-date v-model="dateFilter.formattedDate.to" minimal v-close-popup>
+              <q-date v-model="dateFilter.formattedDate.to" minimal @update:model-value="onToDateSelected">
                 <div class="row items-center justify-end">
                   <q-btn v-close-popup label="Close" color="primary" flat />
                 </div>
@@ -46,7 +46,7 @@
         <template v-slot:append>
           <q-icon name="event" class="cursor-pointer">
             <q-popup-proxy cover transition-show="scale" transition-hide="scale" ref="qInputFixedDatePopupProfyRef">
-              <q-date v-model="dateFilter.formattedDate.fixed" minimal v-close-popup>
+              <q-date v-model="dateFilter.formattedDate.fixed" minimal @update:model-value="onFixedDateSelected">
                 <div class="row items-center justify-end">
                   <q-btn v-close-popup label="Close" color="primary" flat />
                 </div>
@@ -70,6 +70,18 @@ import { useDateFilter } from "src/composables/dateFilter"
 const { t } = useI18n();
 
 const emit = defineEmits(['update:modelValue'])
+
+const onFromDateSelected = () => {
+  qInputFromDatePopupProfyRef.value?.hide();
+}
+
+const onToDateSelected = () => {
+  qInputToDatePopupProfyRef.value?.hide();
+}
+
+const onFixedDateSelected = () => {
+  qInputFixedDatePopupProfyRef.value?.hide();
+}
 
 const props = defineProps({
   modelValue: {
