@@ -7,11 +7,12 @@
     </div>
     <div class="col" v-if="dateFilter.state.hasFrom">
       <q-input dense outlined mask="date" v-model="dateFilter.formattedDate.from" :label="t('From date')"
-        :disable="extraDateInputFieldsDisabled" ref="qInputFromDateRef">
+        :disable="extraDateInputFieldsDisabled" ref="qInputFromDateRef" :error="!dateFilter.formattedDate.from"
+        :error-message="t('Field is required')">
         <template v-slot:append>
           <q-icon name="event" class="cursor-pointer">
-            <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-              <q-date v-model="dateFilter.formattedDate.from" today-btn>
+            <q-popup-proxy cover transition-show="scale" transition-hide="scale" ref="qInputFromDatePopupProfyRef">
+              <q-date v-model="dateFilter.formattedDate.from" minimal v-close-popup>
                 <div class="row items-center justify-end">
                   <q-btn v-close-popup label="Close" color="primary" flat />
                 </div>
@@ -23,11 +24,12 @@
     </div>
     <div class="col" v-if="dateFilter.state.hasTo">
       <q-input dense outlined mask="date" v-model="dateFilter.formattedDate.to" :label="t('To date')"
-        :disable="extraDateInputFieldsDisabled" ref="qInputToDateRef">
+        :disable="extraDateInputFieldsDisabled" ref="qInputToDateRef" :error="!dateFilter.formattedDate.to"
+        :error-message="t('Field is required')">
         <template v-slot:append>
           <q-icon name="event" class="cursor-pointer">
-            <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-              <q-date v-model="dateFilter.formattedDate.to" today-btn>
+            <q-popup-proxy cover transition-show="scale" transition-hide="scale" ref="qInputToDatePopupProfyRef">
+              <q-date v-model="dateFilter.formattedDate.to" minimal v-close-popup>
                 <div class="row items-center justify-end">
                   <q-btn v-close-popup label="Close" color="primary" flat />
                 </div>
@@ -43,8 +45,8 @@
         :error-message="t('Field is required')">
         <template v-slot:append>
           <q-icon name="event" class="cursor-pointer">
-            <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-              <q-date v-model="dateFilter.formattedDate.fixed" today-btn>
+            <q-popup-proxy cover transition-show="scale" transition-hide="scale" ref="qInputFixedDatePopupProfyRef">
+              <q-date v-model="dateFilter.formattedDate.fixed" minimal v-close-popup>
                 <div class="row items-center justify-end">
                   <q-btn v-close-popup label="Close" color="primary" flat />
                 </div>
@@ -101,6 +103,10 @@ const qInputFromDateRef = ref(null);
 const qInputToDateRef = ref(null);
 const qInputFixedDateRef = ref(null);
 
+const qInputFromDatePopupProfyRef = ref(null);
+const qInputToDatePopupProfyRef = ref(null);
+const qInputFixedDatePopupProfyRef = ref(null);
+
 const dateFilter = ref(props.modelValue || {});
 
 const { dateFilterTypeOptions } = useDateFilter();
@@ -111,8 +117,23 @@ watch(() => props.modelValue, val => dateFilter.value = val);
 watch(dateFilter.value, val => {
   focus();
   emit('update:modelValue', val);
+  nextTick(() => {
+    switch (val.filterType.value) {
+      case 7: // fixed date
+        qInputFixedDatePopupProfyRef.value.show();
+        break;
+      case 8: // from date
+        qInputFromDatePopupProfyRef.value.show();
+        break;
+      case 9: // to date
+        qInputToDatePopupProfyRef.value.show();
+        break;
+      case 10: // between dates
+        qInputFromDatePopupProfyRef.value.show();
+        break;
+    }
+  });
 });
-
 
 // TODO: focus based on dateFilter.state.denyChanges
 const focus = () => {
