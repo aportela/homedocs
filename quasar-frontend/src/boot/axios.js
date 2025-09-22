@@ -182,12 +182,12 @@ const api = {
           notesBody: filter.text.notes || null,
           tags: filter.tags || [],
         };
-        params.fromCreationTimestampCondition = filter.timestamps.creationDate.from || null;
-        params.toCreationTimestampCondition = filter.timestamps.creationDate.to || null;
-        params.fromLastUpdateTimestampCondition = filter.timestamps.lastUpdate.from || null;
-        params.toLastUpdateTimestampCondition = filter.timestamps.lastUpdate.to || null;
-        params.fromUpdatedOnTimestampCondition = filter.timestamps.updatedOn.from || null;
-        params.toUpdatedOnTimestampCondition = filter.timestamps.updatedOn.to || null;
+        params.fromCreationTimestampCondition = filter.dates.creationDate.timestamps.from || null;
+        params.toCreationTimestampCondition = filter.dates.creationDate.timestamps.to || null;
+        params.fromLastUpdateTimestampCondition = filter.dates.lastUpdate.timestamps.from || null;
+        params.toLastUpdateTimestampCondition = filter.dates.lastUpdate.timestamps.to || null;
+        params.fromUpdatedOnTimestampCondition = filter.dates.updatedOn.timestamps.from || null;
+        params.toUpdatedOnTimestampCondition = filter.dates.updatedOn.timestamps.to || null;
         params.currentPage = currentPage;
         params.resultsPage = resultsPage;
         params.sortBy = sortBy;

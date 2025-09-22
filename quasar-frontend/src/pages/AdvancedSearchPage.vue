@@ -36,15 +36,15 @@
             </div>
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
               <CustomInputDateFilter :options="dateFilterTypeOptions" :label="t('Document creation date')"
-                :disable="state.loading || hasCreationDateRouteParamsFilter" v-model="dateFilters.creationDate"
+                :disable="state.loading || hasCreationDateRouteParamsFilter" v-model="filters.dates.creationDate"
                 :auto-open-pop-ups="!hasCreationDateRouteParamsFilter">
               </CustomInputDateFilter>
               <CustomInputDateFilter :options="dateFilterTypeOptions" :label="t('Document last update')"
-                :disable="state.loading || hasLastUpdateRouteParamsFilter" v-model="dateFilters.lastUpdate"
+                :disable="state.loading || hasLastUpdateRouteParamsFilter" v-model="filters.dates.lastUpdate"
                 :auto-open-pop-ups="!hasLastUpdateRouteParamsFilter">
               </CustomInputDateFilter>
               <CustomInputDateFilter :options="dateFilterTypeOptions" :label="t('Document updated on')"
-                :disable="state.loading || hasUpdatedOnRouteParamsFilter" v-model="dateFilters.updatedOn"
+                :disable="state.loading || hasUpdatedOnRouteParamsFilter" v-model="filters.dates.updatedOn"
                 :auto-open-pop-ups="!hasUpdatedOnRouteParamsFilter">
               </CustomInputDateFilter>
             </div>
@@ -185,27 +185,12 @@ const filters = reactive({
     notes: null
   },
   tags: [],
-  timestamps: {
-    creationDate: {
-      from: null,
-      to: null,
-    },
-    lastUpdate: {
-      from: null,
-      to: null,
-    },
-    updatedOn: {
-      from: null,
-      to: null,
-    },
+  dates: {
+    creationDate: getDateFilterInstance(),
+    lastUpdate: getDateFilterInstance(),
+    updatedOn: getDateFilterInstance()
   }
 });
-
-const dateFilters = {
-  creationDate: getDateFilterInstance(),
-  lastUpdate: getDateFilterInstance(),
-  updatedOn: getDateFilterInstance(),
-};
 
 const pager = reactive({
   currentPage: 1,
@@ -222,8 +207,6 @@ const sort = reactive({
 const results = reactive([]);
 const hasResults = computed(() => results.length > 0);
 
-
-//TODO
 if (route.params.tag !== undefined) {
   filters.tags.push(route.params.tag);
 }
@@ -232,7 +215,6 @@ const hasCreationDateRouteParamsFilter = computed(() => route.params.fixedCreati
 const hasLastUpdateRouteParamsFilter = computed(() => route.params.fixedLastUpdate !== undefined);
 const hasUpdatedOnRouteParamsFilter = computed(() => route.params.fixedUpdatedOn !== undefined);
 
-const sortField = computed(() => sort.field);
 const sortOrderIcon = computed(() => sort.order == "ASC" ? "keyboard_double_arrow_up" : "keyboard_double_arrow_down");
 
 const showPreviewFileDialog = ref(false);
@@ -252,13 +234,13 @@ const totalSearchConditions = computed(() => {
   if (filters.tags && filters.tags.length > 0) {
     total += filters.tags.length;
   }
-  if (dateFilters.creationDate.state.hasValue) {
+  if (filters.dates.creationDate.state.hasValue) {
     total++;
   }
-  if (dateFilters.lastUpdate.state.hasValue) {
+  if (filters.dates.lastUpdate.state.hasValue) {
     total++;
   }
-  if (dateFilters.updatedOn.state.hasValue) {
+  if (filters.dates.updatedOn.state.hasValue) {
     total++;
   }
   return (total);
@@ -288,27 +270,6 @@ const onSubmitForm = (resetPager) => {
   state.errorMessage = null;
   state.apiError = null;
   results.length = 0;
-  if (dateFilters.creationDate.timestamps.from || dateFilters.creationDate.timestamps.to) {
-    filters.timestamps.creationDate.from = dateFilters.creationDate.timestamps.from;
-    filters.timestamps.creationDate.to = dateFilters.creationDate.timestamps.to;
-  } else {
-    filters.timestamps.creationDate.from = null;
-    filters.timestamps.creationDate.to = null;
-  }
-  if (dateFilters.lastUpdate.timestamps.from || dateFilters.lastUpdate.timestamps.to) {
-    filters.timestamps.lastUpdate.from = dateFilters.lastUpdate.timestamps.from;
-    filters.timestamps.lastUpdate.to = dateFilters.lastUpdate.timestamps.to;
-  } else {
-    filters.timestamps.lastUpdate.from = null;
-    filters.timestamps.lastUpdate.to = null;
-  }
-  if (dateFilters.updatedOn.timestamps.from || dateFilters.updatedOn.timestamps.to) {
-    filters.timestamps.updatedOn.from = dateFilters.updatedOn.timestamps.from;
-    filters.timestamps.updatedOn.to = dateFilters.updatedOn.timestamps.to;
-  } else {
-    filters.timestamps.updatedOn.from = null;
-    filters.timestamps.updatedOn.to = null;
-  }
   api.document.search(pager.currentPage, pager.resultsPage, filters, sort.field, sort.order)
     .then((successResponse) => {
       if (successResponse.data.results) {
@@ -384,19 +345,19 @@ const onShowDocumentFiles = (documentId) => {
 
 onMounted(() => {
   if (hasCreationDateRouteParamsFilter.value) {
-    dateFilters.creationDate.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
-    dateFilters.creationDate.filterType = dateFilterTypeOptions.value[7];
-    dateFilters.creationDate.formattedDate.fixed = route.params.fixedCreationDate.replaceAll("-", "/");
+    filters.dates.creationDate.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
+    filters.dates.creationDate.filterType = dateFilterTypeOptions.value[7];
+    filters.dates.creationDate.formattedDate.fixed = route.params.fixedCreationDate.replaceAll("-", "/");
   }
   else if (hasLastUpdateRouteParamsFilter.value) {
-    dateFilters.lastUpdate.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
-    dateFilters.lastUpdate.filterType = dateFilterTypeOptions.value[7];
-    dateFilters.lastUpdate.formattedDate.fixed = route.params.fixedLastUpdate.replaceAll("-", "/");
+    filters.dates.lastUpdate.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
+    filters.dates.lastUpdate.filterType = dateFilterTypeOptions.value[7];
+    filters.dates.lastUpdate.formattedDate.fixed = route.params.fixedLastUpdate.replaceAll("-", "/");
   }
   else if (hasUpdatedOnRouteParamsFilter.value) {
-    dateFilters.updatedOn.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
-    dateFilters.updatedOn.filterType = dateFilterTypeOptions.value[7];
-    dateFilters.updatedOn.formattedDate.fixed = route.params.fixedUpdatedOn.replaceAll("-", "/");
+    filters.dates.updatedOn.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
+    filters.dates.updatedOn.filterType = dateFilterTypeOptions.value[7];
+    filters.dates.updatedOn.formattedDate.fixed = route.params.fixedUpdatedOn.replaceAll("-", "/");
   }
   if (route.meta.autoLaunchSearch) {
     nextTick(() => {
