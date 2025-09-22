@@ -10,27 +10,12 @@ export const useAdvancedSearchData = defineStore("advancedSearchData", {
       noteBody: null,
       tags: [],
       // created on
-      creationDateFilterType: null,
-      creationDateRange: null,
-      fromCreationDate: null,
-      fixedCreationDate: null,
-      toCreationDate: null,
       fromCreationTimestamp: null,
       toCreationTimestamp: null,
       // last update on
-      lastUpdateFilterType: null,
-      lastUpdateDateRange: null,
-      fromLastUpdate: null,
-      fixedLastUpdate: null,
-      toLastUpdate: null,
       fromLastUpdateTimestamp: null,
       toLastUpdateTimestamp: null,
       // updated on
-      updatedOnDateFilterType: null,
-      updatedOnDateRange: null,
-      fromUpdatedOn: null,
-      fixedUpdatedOn: null,
-      toUpdatedOn: null,
       fromUpdatedOnTimestamp: null,
       toUpdatedOnTimestamp: null,
     },
@@ -373,5 +358,13 @@ export const useAdvancedSearchData = defineStore("advancedSearchData", {
           break;
       }
     },
+    reset() {
+      this.filter.title = null;
+      this.filter.description = null;
+      this.filter.noteBody = null;
+      this.filter.tags = [];
+      this.sort.field = "lastUpdateTimestamp";
+      this.sort.order = "DESC";
+    }
   },
 });
