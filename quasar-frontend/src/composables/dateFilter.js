@@ -212,6 +212,7 @@ export function useDateFilter() {
   };
 
   return {
+    dateMask,
     dateFilterTypeOptions,
     getDateFilterInstance,
   };
