@@ -204,6 +204,8 @@ const hasResults = computed(() => results.length > 0);
 // TODO: replace with composable ? or allow reset/restore pinia store
 const advancedSearchData = useAdvancedSearchData();
 
+advancedSearchData.reset();
+
 advancedSearchData.filter.tags = route.params.tag !== undefined ? [route.params.tag] : [];
 
 const hasCreationDateRouteParamsFilter = computed(() => route.params.fixedCreationDate !== undefined);
@@ -261,25 +263,25 @@ function onSubmitForm(resetPager) {
   state.apiError = null;
   results.length = 0;
   if (dateFilters.creationDate.timestamps.from || dateFilters.creationDate.timestamps.to) {
-    advancedSearchData.filter.fromCreationTimestamp = dateFilters.creationDate.timestamps.from;
-    advancedSearchData.filter.toCreationTimestamp = dateFilters.creationDate.timestamps.to;
+    advancedSearchData.filter.timestamps.creationDate.from = dateFilters.creationDate.timestamps.from;
+    advancedSearchData.filter.timestamps.creationDate.to = dateFilters.creationDate.timestamps.to;
   } else {
-    advancedSearchData.filter.fromCreationTimestamp = null;
-    advancedSearchData.filter.toCreationTimestamp = null;
+    advancedSearchData.filter.timestamps.creationDate.from = null;
+    advancedSearchData.filter.timestamps.creationDate.to = null;
   }
   if (dateFilters.lastUpdate.timestamps.from || dateFilters.lastUpdate.timestamps.to) {
-    advancedSearchData.filter.fromLastUpdateTimestamp = dateFilters.lastUpdate.timestamps.from;
-    advancedSearchData.filter.toLastUpdateTimestamp = dateFilters.lastUpdate.timestamps.to;
+    advancedSearchData.filter.timestamps.lastUpdate.from = dateFilters.lastUpdate.timestamps.from;
+    advancedSearchData.filter.timestamps.lastUpdate.to = dateFilters.lastUpdate.timestamps.to;
   } else {
-    advancedSearchData.filter.fromLastUpdateTimestamp = null;
-    advancedSearchData.filter.toLastUpdateTimestamp = null;
+    advancedSearchData.filter.timestamps.lastUpdate.from = null;
+    advancedSearchData.filter.timestamps.lastUpdate.to = null;
   }
   if (dateFilters.updatedOn.timestamps.from || dateFilters.updatedOn.timestamps.to) {
-    advancedSearchData.filter.fromUpdatedOnTimestamp = dateFilters.updatedOn.timestamps.from;
-    advancedSearchData.filter.toUpdatedOnTimestamp = dateFilters.updatedOn.timestamps.to;
+    advancedSearchData.filter.timestamps.updatedOn.from = dateFilters.updatedOn.timestamps.from;
+    advancedSearchData.filter.timestamps.updatedOn.to = dateFilters.updatedOn.timestamps.to;
   } else {
-    advancedSearchData.filter.fromUpdatedOnTimestamp = null;
-    advancedSearchData.filter.toUpdatedOnTimestamp = null;
+    advancedSearchData.filter.timestamps.updatedOn.from = null;
+    advancedSearchData.filter.timestamps.updatedOn.to = null;
   }
   api.document.search(pager.currentPage, pager.resultsPage, advancedSearchData.filter, advancedSearchData.sortField, advancedSearchData.sortOrder)
     .then((successResponse) => {

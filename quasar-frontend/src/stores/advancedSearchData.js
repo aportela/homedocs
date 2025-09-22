@@ -9,15 +9,20 @@ export const useAdvancedSearchData = defineStore("advancedSearchData", {
       description: null,
       noteBody: null,
       tags: [],
-      // created on
-      fromCreationTimestamp: null,
-      toCreationTimestamp: null,
-      // last update on
-      fromLastUpdateTimestamp: null,
-      toLastUpdateTimestamp: null,
-      // updated on
-      fromUpdatedOnTimestamp: null,
-      toUpdatedOnTimestamp: null,
+      timestamps: {
+        creationDate: {
+          from: null,
+          to: null,
+        },
+        lastUpdate: {
+          from: null,
+          to: null,
+        },
+        updatedOn: {
+          from: null,
+          to: null,
+        }
+      },
     },
     sort: {
       field: "lastUpdateTimestamp",
@@ -363,6 +368,12 @@ export const useAdvancedSearchData = defineStore("advancedSearchData", {
       this.filter.description = null;
       this.filter.noteBody = null;
       this.filter.tags = [];
+      this.filter.timestamps.creationDate.from = null;
+      this.filter.timestamps.creationDate.to = null;
+      this.filter.timestamps.lastUpdate.from = null;
+      this.filter.timestamps.lastUpdate.to = null;
+      this.filter.timestamps.updatedOn.from = null;
+      this.filter.timestamps.updatedOn.to = null;
       this.sort.field = "lastUpdateTimestamp";
       this.sort.order = "DESC";
     }
