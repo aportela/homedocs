@@ -85,8 +85,8 @@
       <template v-slot:content>
         <CustomErrorBanner v-if="state.loadingError" text="Error loading data" :apiError="state.apiError">
         </CustomErrorBanner>
-        <div v-else-if="pager.totalResults > 0">
-          <div class="q-pa-lg flex flex-center" v-if="pager.totalPages > 1">
+        <div v-else-if="pager.totalResults > 0" class="q-pa-md">
+          <div class="q-px-sm q-py-md flex flex-center" v-if="pager.totalPages > 1">
             <q-pagination v-model="pager.currentPage" color="dark" :max="pager.totalPages" :max-pages="5"
               boundary-numbers direction-links boundary-links @update:model-value="onPaginationChanged"
               :disable="state.loading" />
@@ -147,7 +147,7 @@
               </tr>
             </tbody>
           </q-markup-table>
-          <div class="q-pa-lg flex flex-center" v-if="pager.totalPages > 1">
+          <div class="q-px-sm q-py-md flex flex-center" v-if="pager.totalPages > 1">
             <q-pagination v-model="pager.currentPage" color="dark" :max="pager.totalPages" :max-pages="5"
               boundary-numbers direction-links boundary-links @update:model-value="onPaginationChanged"
               :disable="state.loading" />
