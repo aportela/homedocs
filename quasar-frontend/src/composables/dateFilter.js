@@ -51,6 +51,7 @@ export function useDateFilter() {
         hasFrom: false,
         hasTo: false,
         hasFixed: false,
+        hasValue: false,
         denyChanges: false,
       },
       // UGLY HACK to skip clearing/reseting values on filterType watchers
@@ -59,7 +60,6 @@ export function useDateFilter() {
         to: false,
         fixed: false,
       },
-      hasValue: false,
     });
 
     const onRecalcDates = () => {
@@ -130,11 +130,6 @@ export function useDateFilter() {
           //dateFilter.formattedDate.to = getFormattedDate();
           break;
       }
-      dateFilter.hasValue = !!(
-        dateFilter.formattedDate.fixed ||
-        dateFilter.formattedDate.from ||
-        dateFilter.formattedDate.to
-      );
     };
 
     const onRecalcTimestamps = () => {
@@ -175,6 +170,30 @@ export function useDateFilter() {
         }
       }
     };
+
+    watch(
+      () => dateFilter.formattedDate.from,
+      (value) => {
+        dateFilter.state.hasValue = !!value;
+        onRecalcTimestamps();
+      },
+    );
+
+    watch(
+      () => dateFilter.formattedDate.to,
+      (value) => {
+        dateFilter.state.hasValue = !!value;
+        onRecalcTimestamps();
+      },
+    );
+
+    watch(
+      () => dateFilter.formattedDate.fixed,
+      (value) => {
+        dateFilter.state.hasValue = !!value;
+        onRecalcTimestamps();
+      },
+    );
 
     // UGLY HACK: selected value (model with label/value) do not react to global i18n changes
     // so we are watching changes on first option label and when this label translation changes
