@@ -58,8 +58,15 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n();
 
 const props = defineProps({
-  files: Array,
-  index: Number
+  files: {
+    type: Array,
+    required: true
+  },
+  index: {
+    type: Number,
+    required: false,
+    default: 0
+  }
 });
 
 const currentIndex = ref(props.index + 1 || 1);
