@@ -17,10 +17,15 @@
       </router-link>
     </q-chip>
   </div>
-  <q-select v-else ref="selectRef" :label="t('Tags')" v-model="currentTags" :dense="dense" :options-dense="dense"
-    outlined use-input use-chips multiple hide-dropdown-icon :options="filteredTags" input-debounce="0"
+  <q-select v-else ref="selectRef" :label="label" v-model="currentTags" :dense="dense" :options-dense="dense" outlined
+    use-input use-chips multiple hide-dropdown-icon :options="filteredTags" input-debounce="0"
     new-value-mode="add-unique" :disable="disabled || loading || loadingError" :loading="loading" :error="loadingError"
     :errorMessage="t('Error loading available tags')" @filter="onFilterTags" @add="onAddTag">
+    <template v-slot:prepend>
+      <slot name="prepend">
+        <q-icon name="tag" />
+      </slot>
+    </template>
     <template v-slot:append v-if="!denyChangeEditableMode">
       <q-icon name="done" class="cursor-pointer" @click="onToggleReadOnly">
         <q-tooltip>{{ t("Click to toggle edit mode") }}</q-tooltip>
@@ -47,7 +52,12 @@ const props = defineProps({
   denyChangeEditableMode: Boolean,
   modelValue: Array,
   disabled: Boolean,
-  dense: Boolean
+  dense: Boolean,
+  label: {
+    type: String,
+    required: false,
+    default: "Tags"
+  }
 });
 
 const emit = defineEmits(['update:modelValue', 'error']);
