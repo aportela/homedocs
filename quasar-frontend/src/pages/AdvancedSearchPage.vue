@@ -85,7 +85,7 @@
       <template v-slot:content>
         <CustomErrorBanner v-if="state.loadingError" text="Error loading data" :apiError="state.apiError">
         </CustomErrorBanner>
-        <div v-else-if="hasResults">
+        <div v-else-if="pager.totalResults > 0">
           <div class="q-pa-lg flex flex-center" v-if="pager.totalPages > 1">
             <q-pagination v-model="pager.currentPage" color="dark" :max="pager.totalPages" :max-pages="5"
               boundary-numbers direction-links boundary-links @update:model-value="onPaginationChanged"
@@ -279,8 +279,6 @@ const onSubmitForm = (resetPager) => {
   state.loadingError = false;
   state.errorMessage = null;
   state.apiError = null;
-  results.length = 0;
-
   if (useStoreFilter.value) {
     store.filters = filters;
     store.sort = sort;
@@ -289,6 +287,7 @@ const onSubmitForm = (resetPager) => {
   api.document.search(pager.currentPage, pager.resultsPage, filters, sort.field, sort.order)
     .then((successResponse) => {
       if (successResponse.data.results) {
+        results.length = 0;
         pager.currentPage = successResponse.data.results.pagination.currentPage;
         pager.resultsPage = successResponse.data.results.pagination.resultsPage;
         pager.totalResults = successResponse.data.results.pagination.totalResults;
