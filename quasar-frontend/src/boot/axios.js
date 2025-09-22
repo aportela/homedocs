@@ -182,12 +182,18 @@ const api = {
           notesBody: filter.text.notes || null,
           tags: filter.tags || [],
         };
-        params.fromCreationTimestampCondition = filter.dates.creationDate.timestamps.from || null;
-        params.toCreationTimestampCondition = filter.dates.creationDate.timestamps.to || null;
-        params.fromLastUpdateTimestampCondition = filter.dates.lastUpdate.timestamps.from || null;
-        params.toLastUpdateTimestampCondition = filter.dates.lastUpdate.timestamps.to || null;
-        params.fromUpdatedOnTimestampCondition = filter.dates.updatedOn.timestamps.from || null;
-        params.toUpdatedOnTimestampCondition = filter.dates.updatedOn.timestamps.to || null;
+        params.fromCreationTimestampCondition =
+          filter.dates.creationDate.timestamps.from || null;
+        params.toCreationTimestampCondition =
+          filter.dates.creationDate.timestamps.to || null;
+        params.fromLastUpdateTimestampCondition =
+          filter.dates.lastUpdate.timestamps.from || null;
+        params.toLastUpdateTimestampCondition =
+          filter.dates.lastUpdate.timestamps.to || null;
+        params.fromUpdatedOnTimestampCondition =
+          filter.dates.updatedOn.timestamps.from || null;
+        params.toUpdatedOnTimestampCondition =
+          filter.dates.updatedOn.timestamps.to || null;
         params.currentPage = currentPage;
         params.resultsPage = resultsPage;
         params.sortBy = sortBy;
@@ -262,6 +268,18 @@ const api = {
       return new Promise((resolve, reject) => {
         axios
           .get("api2/document/" + id, {})
+          .then((response) => {
+            resolve(response);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    },
+    getNotes: function (id) {
+      return new Promise((resolve, reject) => {
+        axios
+          .get("api2/document/" + id + "/notes", {})
           .then((response) => {
             resolve(response);
           })
