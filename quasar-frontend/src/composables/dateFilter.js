@@ -81,6 +81,9 @@ export function useDateFilter() {
       switch (dateFilter.filterType?.value) {
         // NONE
         case 0:
+          dateFilter.formattedDate.from = null;
+          dateFilter.formattedDate.to = null;
+          dateFilter.formattedDate.fixed = null;
           break;
         // TODAY
         case 1:
