@@ -118,16 +118,16 @@ export function useDateFilter() {
           break;
         // FROM DATE
         case 8:
-          dateFilter.formattedDate.from = getFormattedDate();
+          //dateFilter.formattedDate.from = getFormattedDate();
           break;
         // TO DATE
         case 9:
-          dateFilter.formattedDate.to = getFormattedDate();
+          //dateFilter.formattedDate.to = getFormattedDate();
           break;
         // BETWEEN DATES
         case 10:
-          dateFilter.formattedDate.from = getFormattedDate();
-          dateFilter.formattedDate.to = getFormattedDate();
+          //dateFilter.formattedDate.from = getFormattedDate();
+          //dateFilter.formattedDate.to = getFormattedDate();
           break;
       }
       dateFilter.hasValue = !!(
