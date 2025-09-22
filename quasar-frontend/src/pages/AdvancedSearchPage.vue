@@ -1,8 +1,7 @@
 <template>
   <q-page>
-    <CustomExpansionWidget title="Advanced search"
-      :caption="state.loading ? 'Loading...' : 'Use custom filters to refine your search'" icon="filter_alt"
-      :loading="state.loading" :error="state.loadingError" :expanded="expandedFilter">
+    <CustomExpansionWidget title="Advanced search" icon="filter_alt" :loading="state.loading"
+      :error="state.loadingError" :expanded="isFilterWidgetExpanded">
       <template v-slot:header-extra>
         <q-chip square size="sm" color="primary" text-color="white">{{ t("Total search conditions count", {
           count:
@@ -34,7 +33,6 @@
               </q-input>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
-
               <CustomInputDateFilter :options="dateFilterTypeOptions" :label="t('Document creation date')"
                 :disable="state.loading || hasCreationDateRouteParamsFilter" v-model="dateFilters.creationDate"
                 :auto-open-pop-ups="!hasCreationDateRouteParamsFilter">
@@ -67,9 +65,8 @@
         </form>
       </template>
     </CustomExpansionWidget>
-    <CustomExpansionWidget v-if="state.searchLaunched" title="Results" :caption="state.loading ? 'Loading...' : 'TODO'"
-      icon="folder_open" :loading="state.loading" :error="state.loadingError" :expanded="expandedResults"
-      class="q-mt-sm">
+    <CustomExpansionWidget v-if="state.searchLaunched" title="Results" icon="folder_open" :loading="state.loading"
+      :error="state.loadingError" expanded class="q-mt-sm" ref="resultsWidgetRef">
       <template v-slot:header-extra>
         <q-chip square size="sm" color="primary" text-color="white">{{ t("Total search results count", {
           count:
@@ -138,7 +135,7 @@
 
 <script setup>
 
-import { ref, reactive, computed, watch, onMounted, nextTick } from "vue";
+import { ref, reactive, computed, onMounted, nextTick } from "vue";
 import { useRoute } from "vue-router";
 import { date } from "quasar";
 import { useI18n } from "vue-i18n";
@@ -165,8 +162,8 @@ const state = reactive({
   searchLaunched: false
 });
 
-const expandedFilter = ref(route.meta.conditionsFilterExpanded);
-const expandedResults = ref(false);
+const isFilterWidgetExpanded = ref(route.meta.conditionsFilterExpanded);
+const resultsWidgetRef = ref(null);
 
 const { getDateFilterInstance, dateFilterTypeOptions } = useDateFilter();
 
@@ -277,10 +274,7 @@ function onSubmitForm(resetPager) {
           return (document);
         }));
         state.searchLaunched = true;
-        if (hasResults.value) {
-          expandedResults.value = true;
-          // TODO: not expanding if collapsed manually
-        }
+        resultsWidgetRef.value?.expand();
         state.loading = false;
       } else {
         state.loading = false;
