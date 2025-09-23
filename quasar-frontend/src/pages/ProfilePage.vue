@@ -14,11 +14,7 @@
         <UpdateProfileForm></UpdateProfileForm>
       </div>
       <div class="col-lg-8 col-xl-8 col-12 flex">
-        <BaseWidget title="Your system stats" caption="Small resume of your platform usage" icon="analytics">
-          <template v-slot:content>
-            <SystemStatsWidget></SystemStatsWidget>
-          </template>
-        </BaseWidget>
+        <SystemStatsWidget></SystemStatsWidget>
       </div>
     </div>
   </q-page>
@@ -28,7 +24,6 @@
 
 import { useI18n } from 'vue-i18n'
 
-import { default as BaseWidget } from "src/components/Widgets/BaseWidget.vue";
 import { default as UpdateProfileForm } from "src/components/Forms/UpdateProfileForm.vue";
 import { default as SystemStatsWidget } from "src/components/Widgets/SystemStatsWidget.vue";
 
