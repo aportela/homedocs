@@ -49,16 +49,16 @@
                       </q-input>
                     </div>
                   </div>
-                  <CustomInputEditableTextField ref="titleRef" dense class="q-mb-md" maxlength="128" outlined
+                  <InteractiveTextFieldCustomInput ref="titleRef" dense class="q-mb-md" maxlength="128" outlined
                     v-model.trim="document.title" type="textarea" autogrow name="title" :label="t('Document title')"
                     :disable="loading || saving" :autofocus="true" clearable :start-mode-editable="isNewDocument"
                     :rules="requiredFieldRules" :error="!document.title" :error-message="fieldIsRequiredLabel"
                     :max-lines="1">
-                  </CustomInputEditableTextField>
-                  <CustomInputEditableTextField dense class="q-mb-md" outlined v-model.trim="document.description"
+                  </InteractiveTextFieldCustomInput>
+                  <InteractiveTextFieldCustomInput dense class="q-mb-md" outlined v-model.trim="document.description"
                     type="textarea" maxlength="4096" autogrow name="description" :label="t('Document description')"
                     :disable="loading || saving" clearable :start-mode-editable="isNewDocument" :max-lines="6">
-                  </CustomInputEditableTextField>
+                  </InteractiveTextFieldCustomInput>
                   <TagSelector dense v-model="document.tags" :disabled="loading || saving"
                     :start-mode-editable="isNewDocument" :deny-change-editable-mode="isNewDocument" clearable>
                   </TagSelector>
@@ -157,7 +157,7 @@
                         <q-item v-for="note, noteIndex in document.notes" :key="note.id"
                           class="q-pa-none bg-transparent">
                           <q-item-section>
-                            <CustomInputEditableTextField v-model.trim="note.body" dense outlined type="textarea"
+                            <InteractiveTextFieldCustomInput v-model.trim="note.body" dense outlined type="textarea"
                               maxlength="4096" autogrow name="description"
                               :label="`${note.createdOn} (${timeAgo(note.createdOnTimestamp * 1000)})`"
                               :start-mode-editable="!!note.startOnEditMode" :disable="loading || saving" clearable
@@ -176,7 +176,7 @@
                                 </q-icon>
                               </template>
                               <!-- TODO: NOT FOCUSING ON TEXTAREA CHANGE TO EDIT MODE -->
-                            </CustomInputEditableTextField>
+                            </InteractiveTextFieldCustomInput>
                           </q-item-section>
                         </q-item>
                       </q-list>
@@ -265,7 +265,7 @@ import { useInitialStateStore } from "stores/initialState";
 import { useFormatDates } from "src/composables/formatDate"
 import { useFormUtils } from "src/composables/formUtils"
 
-import { default as CustomInputEditableTextField } from "components/CustomInputEditableTextField.vue"
+import { default as InteractiveTextFieldCustomInput } from "components/Forms/Fields/InteractiveTextFieldCustomInput.vue"
 
 const tab = ref("notes");
 
