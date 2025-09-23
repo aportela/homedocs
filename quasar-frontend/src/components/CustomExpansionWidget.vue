@@ -1,6 +1,6 @@
 <template>
   <q-expansion-item class="full-width theme-default-q-expansion-item" style="width: 100%"
-    header-class="theme-default-q-expansion-item-header" expand-separator v-model="isExpanded">
+    header-class="theme-default-q-expansion-item-header" v-model="isExpanded">
     <template v-slot:header>
       <q-item-section avatar>
         <q-icon v-if="loading" name="settings" class="animation-spin"></q-icon>
@@ -28,7 +28,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
