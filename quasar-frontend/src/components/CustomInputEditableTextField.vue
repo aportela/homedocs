@@ -6,7 +6,7 @@
       {{ props.label }}</div>
     <span class="absolute-top-right text-grey q-mt-sm">
       <slot name="top-icon-prepend" :showTopHoverIcons="showTopHoverIcons"></slot>
-      <q-icon name="expand" size="sm" v-show="showTopHoverIcons" clickable @click.stop="collapsedView = !collapsedView">
+      <q-icon name="expand" size="sm" v-show="showTopHoverIcons" @click.stop="collapsedView = !collapsedView">
         <q-tooltip>{{ t("Click to expand/collapse") }}</q-tooltip>
       </q-icon>
       <q-icon name="edit" size="sm" class="q-ml-sm" v-show="showTopHoverIcons">
@@ -18,18 +18,21 @@
       {{ model }}
     </div>
   </div>
-  <q-input v-else v-bind="attrs" ref="qInputRef" :label="label" v-model.trim="model">
-    <template v-slot:append v-if="model">
-      <q-icon name="done" class="cursor-pointer" @click="onToggleReadOnly">
+  <q-input v-else v-bind="attrs" ref="qInputRef" :label="label" v-model.trim="model" :rules="rules" :error="error"
+    :errorMessage="errorMessage">
+    <template v-slot:append>
+      <q-icon name="done" class="cursor-pointer" @click.stop="onToggleReadOnly">
         <q-tooltip>{{ t("Click to toggle edit mode") }}</q-tooltip>
       </q-icon>
+      <slot name="icon-append-on-edit"></slot>
     </template>
+
   </q-input>
 </template>
 
 <script setup>
 
-import { ref, useAttrs, computed, watch, nextTick } from "vue";
+import { ref, useAttrs, computed, watch, nextTick, onMounted } from "vue";
 import { useQuasar } from "quasar";
 import { useI18n } from 'vue-i18n'
 
@@ -52,7 +55,26 @@ const props = defineProps({
     type: Number,
     required: false,
     default: 2
-  }
+  },
+  rules: {
+    type: Array,
+    default: () => [],
+  },
+  autofocus: {
+    type: Boolean,
+    default: false,
+  },
+  error:
+  {
+    type: Boolean,
+    required: false,
+    default: false
+  },
+  errorMessage: {
+    type: String,
+    required: false,
+    default: null
+  },
 });
 
 const attrs = useAttrs();
@@ -101,6 +123,12 @@ const onToggleReadOnly = () => {
 
 defineExpose({
   focus
+});
+
+onMounted(() => {
+  if (props.autofocus && props.startModeEditable) {
+    focus();
+  }
 });
 
 </script>
