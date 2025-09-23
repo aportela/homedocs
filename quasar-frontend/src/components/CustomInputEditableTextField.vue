@@ -1,22 +1,27 @@
 <template>
-  <div v-if="readOnly" class="cursor-pointer q-pa-sm q-mb-md relative-position white-space-pre-line"
-    style="border: 1px solid rgba(0, 0, 0, 0.12); border-radius: 4px;" @mouseenter="onMouseEnter"
-    @mouseleave="onMouseLeave" @click="onToggleReadOnly">
-    <div style="font-size: 12px; color: rgba(0, 0, 0, 0.6); margin-left: 0px; margin-bottom: 4px;">
-      {{ props.label }}</div>
-    <span class="absolute-top-right text-grey q-mt-sm">
-      <slot name="top-icon-prepend" :showTopHoverIcons="showTopHoverIcons"></slot>
-      <q-icon name="expand" size="sm" v-show="showTopHoverIcons" @click.stop="collapsedView = !collapsedView">
-        <q-tooltip>{{ t("Click to expand/collapse") }}</q-tooltip>
-      </q-icon>
-      <q-icon name="edit" size="sm" class="q-ml-sm" v-show="showTopHoverIcons">
-        <q-tooltip>{{ t("Click to toggle edit mode") }}</q-tooltip>
-      </q-icon>
-      <slot name="top-icon-append" :showTopHoverIcons="showTopHoverIcons"></slot>
-    </span>
-    <div class="q-mt-sm" :class="{ 'collapsed': collapsedView }" :style="`--max-lines: ${maxLines}`">
-      {{ model }}
+  <div v-if="readOnly">
+    <div class="cursor-pointer q-pa-sm q-mb-md relative-position white-space-pre-line read-only-input-container"
+      :class="{ 'border-error': error }" @mouseenter="onMouseEnter" @mouseleave="onMouseLeave"
+      @click="onToggleReadOnly">
+      <div style="font-size: 12px; color: rgba(0, 0, 0, 0.6); margin-left: 0px; margin-bottom: 4px;">
+        {{ props.label }}</div>
+      <span class="absolute-top-right text-grey q-mt-sm">
+        <slot name="top-icon-prepend" :showTopHoverIcons="showTopHoverIcons"></slot>
+        <q-icon name="expand" size="sm" v-show="showTopHoverIcons" @click.stop="collapsedView = !collapsedView">
+          <q-tooltip>{{ t("Click to expand/collapse") }}</q-tooltip>
+        </q-icon>
+        <q-icon name="edit" size="sm" class="q-ml-sm" v-show="showTopHoverIcons">
+          <q-tooltip>{{ t("Click to toggle edit mode") }}</q-tooltip>
+        </q-icon>
+        <slot name="top-icon-append" :showTopHoverIcons="showTopHoverIcons"></slot>
+      </span>
+      <div class="q-mt-sm" :class="{ 'collapsed': collapsedView }" :style="`--max-lines: ${maxLines}`">
+        {{ model }}
+      </div>
     </div>
+    <p class="text-red q-ml-sm" style="position: relative; top: -10px; font-size: 0.8em;" v-if="error"> {{ errorMessage
+    }}
+    </p>
   </div>
   <q-input v-else v-bind="attrs" ref="qInputRef" :label="label" v-model.trim="model" :rules="rules" :error="error"
     :errorMessage="errorMessage">
@@ -140,5 +145,14 @@ onMounted(() => {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   text-overflow: ellipsis;
+}
+
+.read-only-input-container {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+}
+
+.border-error {
+  border: 2px solid red !important;
 }
 </style>
