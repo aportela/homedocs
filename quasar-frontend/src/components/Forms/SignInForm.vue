@@ -7,10 +7,10 @@
       </q-avatar>
       <h4 class="q-mt-sm q-mb-md text-h4 text-weight-bolder">{{
         t(!!savedEmail ? "Glad to see you again!" : "Welcome aboard!")
-      }}</h4>
+        }}</h4>
       <div class="text-color-secondary">{{
         t(!!savedEmail ? "Let's get back to organizing." : "Let's start organizing.")
-      }}
+        }}
       </div>
     </q-card-section>
     <q-card-section>
@@ -72,7 +72,7 @@ import { default as SwitchLanguageButton } from "components/Buttons/SwitchLangua
 import { default as GitHubButton } from "components/Buttons/GitHubButton.vue"
 import { GITHUB_PROJECT_URL } from "src/constants"
 import { default as PasswordFieldCustomInput } from "src/components/Forms/Fields/PasswordFieldCustomInput.vue";
-import { default as CustomErrorBanner } from "components/CustomErrorBanner.vue";
+import { default as CustomErrorBanner } from "components/Banners/CustomErrorBanner.vue";
 
 const emit = defineEmits(['success']);
 

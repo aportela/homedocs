@@ -59,8 +59,8 @@ import { date } from "quasar";
 import { useFormatDates } from "src/composables/formatDate"
 import { api } from "boot/axios";
 
-import { default as CustomErrorBanner } from "components/CustomErrorBanner.vue";
-import { default as CustomBanner } from "components/CustomBanner.vue";
+import { default as CustomErrorBanner } from "components/Banners/CustomErrorBanner.vue";
+import { default as CustomBanner } from "components/Banners/CustomBanner.vue";
 
 const { t } = useI18n();
 const { timeAgo } = useFormatDates();

@@ -162,8 +162,8 @@ import { useAdvancedSearchData } from "stores/advancedSearchData"
 import { default as InteractiveTagsFieldCustomSelect } from "components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
 
 import { default as CustomExpansionWidget } from "components/Widgets/CustomExpansionWidget.vue";
-import { default as CustomErrorBanner } from "components/CustomErrorBanner.vue";
-import { default as CustomBanner } from "components/CustomBanner.vue";
+import { default as CustomErrorBanner } from "components/Banners/CustomErrorBanner.vue";
+import { default as CustomBanner } from "components/Banners/CustomBanner.vue";
 
 import { useDateFilter } from "src/composables/dateFilter"
 import { default as DateFieldCustomInput } from "components/Forms/Fields/DateFieldCustomInput.vue";

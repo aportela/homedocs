@@ -37,7 +37,7 @@ import { api } from "boot/axios";
 
 import ActivityHeatMap from 'components/ActivityHeatMap.vue';
 import { default as BaseWidget } from "components/Widgets/BaseWidget.vue";
-import { default as CustomErrorBanner } from "components/CustomErrorBanner.vue";
+import { default as CustomErrorBanner } from "components/Banners/CustomErrorBanner.vue";
 
 const { t } = useI18n();
 

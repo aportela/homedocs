@@ -26,7 +26,7 @@ import "cal-heatmap/cal-heatmap.css";
 import Tooltip from 'cal-heatmap/plugins/Tooltip';
 import CalendarLabel from 'cal-heatmap/plugins/CalendarLabel';
 
-import { default as CustomErrorBanner } from "components/CustomErrorBanner.vue";
+import { default as CustomErrorBanner } from "components/Banners/CustomErrorBanner.vue";
 
 const router = useRouter();
 

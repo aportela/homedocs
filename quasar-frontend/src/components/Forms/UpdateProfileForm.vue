@@ -41,8 +41,8 @@ import { useFormUtils } from "src/composables/formUtils";
 
 import { default as BaseWidget } from "src/components/Widgets/BaseWidget.vue";
 import { default as PasswordFieldCustomInput } from "src/components/Forms/Fields/PasswordFieldCustomInput.vue";
-import { default as CustomErrorBanner } from "components/CustomErrorBanner.vue";
-import { default as CustomBanner } from "components/CustomBanner.vue";
+import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
+import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 
 const { t } = useI18n();
 const formUtils = useFormUtils();
