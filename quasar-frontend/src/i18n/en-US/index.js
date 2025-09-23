@@ -178,7 +178,8 @@ export default {
   "Total files": "file|files",
   "Total notes": "note|notes",
   "Click to toggle edit mode": "Click to toggle edit mode",
-  "Click to expand/collapse": "Click to expand/collapse",
+  "Click to expand": "Click to expand",
+  "Click to collapse": "Click to collapse",
   "Document creation date": "Document creation date",
   "Document last update": "Document last update",
   "Document tags": "Document tags",
@@ -191,6 +192,7 @@ export default {
   "Total search results count": "{count} document|{count} documents",
   "Type text condition": "Type text condition",
   "Toggle sort by this column": "Toggle sort by this column: {field}",
-  "This document has no associated notes.": "This document has no associated notes.",
+  "This document has no associated notes.":
+    "This document has no associated notes.",
   "Click to remove note": "Click to remove note",
 };

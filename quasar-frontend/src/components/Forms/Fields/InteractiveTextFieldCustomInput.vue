@@ -8,8 +8,9 @@
         {{ props.label }}</div>
       <span class="absolute-top-right text-grey q-mt-sm">
         <slot name="top-icon-prepend" :showTopHoverIcons="showTopHoverIcons"></slot>
-        <q-icon name="expand" size="sm" v-show="showTopHoverIcons" @click.stop="collapsedView = !collapsedView">
-          <q-tooltip>{{ t("Click to expand/collapse") }}</q-tooltip>
+        <q-icon :name="!collapsedView ? 'unfold_less' : 'expand'" size="sm" v-show="showTopHoverIcons"
+          @click.stop="collapsedView = !collapsedView">
+          <q-tooltip>{{ t(collapsedView ? "Click to expand" : "Click to collapse") }}</q-tooltip>
         </q-icon>
         <q-icon name="edit" size="sm" class="q-ml-sm" v-show="showTopHoverIcons">
           <q-tooltip>{{ t("Click to toggle edit mode") }}</q-tooltip>

@@ -31,9 +31,10 @@
             :class="{ 'q-mb-md': index < notes.length - 1 }">
             <div class="note-date-label">
               {{ note.createdOn }} ({{ timeAgo(note.createdOnTimestamp * 1000) }})</div>
-            <q-icon name="expand" size="sm" class="absolute-top-right text-grey cursor-pointer q-mr-sm q-mt-sm"
+            <q-icon :name="note.expanded ? 'unfold_less' : 'expand'" size="sm"
+              class="absolute-top-right text-grey cursor-pointer q-mr-sm q-mt-sm" color="blue"
               @click.stop="note.expanded = !note.expanded">
-              <q-tooltip>{{ t("Click to expand/collapse") }}</q-tooltip>
+              <q-tooltip>{{ t(note.expanded ? "Click to collapse" : "Click to expand") }}</q-tooltip>
             </q-icon>
             <div class="q-mt-sm" :class="{ 'collapsed': !note.expanded }" :style="`--max-lines: ${maxLines}`">
               {{ note.body }}

@@ -183,7 +183,8 @@ export default {
   "Total files": "archivo|archivos",
   "Total notes": "nota|notas",
   "Click to toggle edit mode": "Haga click para alternar el modo de edición",
-  "Click to expand/collapse": "Haga click para expandir/contraer",
+  "Click to expand": "Haga click para expandir",
+  "Click to collapse": "Haga click para contraer",
   "Document creation date": "Fecha de creación del documento",
   "Document last update": "Fecha del último cambio del documento",
   "Document tags": "Etiquetas del documento",
@@ -196,6 +197,7 @@ export default {
   "Total search results count": "{count} documento|{count} documentos",
   "Type text condition": "Teclee la condición de texto",
   "Toggle sort by this column": "Alterar el orden por esta columna: {field}",
-  "This document has no associated notes.": "Este documento no tiene notas asociadas.",
+  "This document has no associated notes.":
+    "Este documento no tiene notas asociadas.",
   "Click to remove note": "Haga click para eliminar la nota",
 };
