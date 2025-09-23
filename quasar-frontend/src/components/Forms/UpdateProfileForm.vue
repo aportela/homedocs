@@ -9,11 +9,11 @@
             <q-icon name="alternate_email" />
           </template>
         </q-input>
-        <CustomInputPassword class="q-my-md" dense outlined v-model="profile.password" name="password"
+        <PasswordFieldCustomInput class="q-my-md" dense outlined v-model="profile.password" name="password"
           :label="t('New password')" :error="validator.hasErrors" ref="passwordRef"
           :errorMessage="validator.message ? t(validator.message) : ''" :disable="state.loading" :autofocus="true"
           :rules="formUtils.requiredFieldRules" lazy-rules>
-        </CustomInputPassword>
+        </PasswordFieldCustomInput>
         <q-btn color="primary" size="md" :label="$t('Update profile')" no-caps class="full-width q-my-xs"
           icon=" account_circle" :disable="state.loading || !profile.password" :loading="state.loading" type="submit">
           <template v-slot:loading>
@@ -40,7 +40,7 @@ import { api } from 'boot/axios'
 import { useFormUtils } from "src/composables/formUtils";
 
 import { default as BaseWidget } from "src/components/BaseWidget.vue";
-import { default as CustomInputPassword } from "src/components/CustomInputPassword.vue";
+import { default as PasswordFieldCustomInput } from "src/components/Forms/Fields/PasswordFieldCustomInput.vue";
 import { default as CustomErrorBanner } from "components/CustomErrorBanner.vue";
 import { default as CustomBanner } from "components/CustomBanner.vue";
 

@@ -21,11 +21,11 @@
           <q-icon name="alternate_email" />
         </template>
       </q-input>
-      <CustomInputPassword dense outlined ref="passwordRef" class="q-mt-md" v-model="profile.password" name="password"
-        :label="t('Password')" :disable="state.loading" :autofocus="!!savedEmail" :rules="formUtils.requiredFieldRules"
-        lazy-rules :error="validator.password.hasErrors"
+      <PasswordFieldCustomInput dense outlined ref="passwordRef" class="q-mt-md" v-model="profile.password"
+        name="password" :label="t('Password')" :disable="state.loading" :autofocus="!!savedEmail"
+        :rules="formUtils.requiredFieldRules" lazy-rules :error="validator.password.hasErrors"
         :errorMessage="validator.password.message ? t(validator.password.message) : ''">
-      </CustomInputPassword>
+      </PasswordFieldCustomInput>
     </q-card-section>
     <q-card-section>
       <q-btn color="primary" size="md" :label="$t('Sign in')" no-caps class="full-width" icon="account_circle"
@@ -71,7 +71,7 @@ import { default as DarkModeButton } from "components/DarkModeButton.vue"
 import { default as SwitchLanguageButton } from "components/SwitchLanguageButton.vue"
 import { default as GitHubButton } from "components/GitHubButton.vue"
 import { GITHUB_PROJECT_URL } from "src/constants"
-import { default as CustomInputPassword } from "src/components/CustomInputPassword.vue";
+import { default as PasswordFieldCustomInput } from "src/components/Forms/Fields/PasswordFieldCustomInput.vue";
 import { default as CustomErrorBanner } from "components/CustomErrorBanner.vue";
 
 const emit = defineEmits(['success']);
