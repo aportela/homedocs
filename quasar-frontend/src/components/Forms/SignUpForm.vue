@@ -70,9 +70,9 @@ import { api } from 'boot/axios'
 import { useFormUtils } from "src/composables/formUtils";
 import { useInitialStateStore } from "stores/initialState";
 
-import { default as DarkModeButton } from "components/DarkModeButton.vue"
-import { default as SwitchLanguageButton } from "components/SwitchLanguageButton.vue"
-import { default as GitHubButton } from "components/GitHubButton.vue"
+import { default as DarkModeButton } from "components/Buttons/DarkModeButton.vue"
+import { default as SwitchLanguageButton } from "components/Buttons/SwitchLanguageButton.vue"
+import { default as GitHubButton } from "components/Buttons/GitHubButton.vue"
 import { GITHUB_PROJECT_URL } from "src/constants"
 import { default as PasswordFieldCustomInput } from "src/components/Forms/Fields/PasswordFieldCustomInput.vue";
 import { default as CustomBanner } from "components/CustomBanner.vue";

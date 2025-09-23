@@ -10,7 +10,7 @@
         <q-btn type="button" no-caps no-wrap align="left" outline :label="searchButtonLabel" icon-right="search"
           class="full-width no-caps theme-default-q-btn" @click.prevent="isFastSearchModalVisible = true">
           <q-tooltip anchor="bottom middle" self="top middle">{{ t("Click to open fast search")
-            }}</q-tooltip>
+          }}</q-tooltip>
         </q-btn>
         <!--
         <FastSearchSelector dense class="full-width"></FastSearchSelector>
@@ -42,11 +42,11 @@ import { useI18n } from "vue-i18n";
 import { default as SidebarDrawer } from "components/SidebarDrawer.vue"
 //import { default as FastSearchSelector } from "components/FastSearchSelector.vue"
 import { default as FastSearchModal } from "components/FastSearchModal.vue"
-import { default as DarkModeButton } from "components/DarkModeButton.vue"
-import { default as SwitchLanguageButton } from "components/SwitchLanguageButton.vue"
-import { default as GitHubButton } from "components/GitHubButton.vue"
+import { default as DarkModeButton } from "components/Buttons/DarkModeButton.vue"
+import { default as SwitchLanguageButton } from "components/Buttons/SwitchLanguageButton.vue"
+import { default as GitHubButton } from "components/Buttons/GitHubButton.vue"
 import { GITHUB_PROJECT_URL } from "src/constants"
-//import { default as NotificationsButton } from "components/NotificationsButton.vue"
+//import { default as NotificationsButton } from "components/Buttons/NotificationsButton.vue"
 
 const $q = useQuasar();
 
