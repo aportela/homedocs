@@ -35,18 +35,18 @@
               </q-input>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
-              <CustomInputDateFilter :options="dateFilterTypeOptions" :label="t('Document creation date')"
+              <CustomInputDateField :options="dateFilterTypeOptions" :label="t('Document creation date')"
                 :disable="state.loading || hasCreationDateRouteParamsFilter" v-model="filters.dates.creationDate"
                 :auto-open-pop-ups="!hasCreationDateRouteParamsFilter">
-              </CustomInputDateFilter>
-              <CustomInputDateFilter :options="dateFilterTypeOptions" :label="t('Document last update')"
+              </CustomInputDateField>
+              <CustomInputDateField :options="dateFilterTypeOptions" :label="t('Document last update')"
                 :disable="state.loading || hasLastUpdateRouteParamsFilter" v-model="filters.dates.lastUpdate"
                 :auto-open-pop-ups="!hasLastUpdateRouteParamsFilter">
-              </CustomInputDateFilter>
-              <CustomInputDateFilter :options="dateFilterTypeOptions" :label="t('Document updated on')"
+              </CustomInputDateField>
+              <CustomInputDateField :options="dateFilterTypeOptions" :label="t('Document updated on')"
                 :disable="state.loading || hasUpdatedOnRouteParamsFilter" v-model="filters.dates.updatedOn"
                 :auto-open-pop-ups="!hasUpdatedOnRouteParamsFilter">
-              </CustomInputDateFilter>
+              </CustomInputDateField>
             </div>
           </div>
           <div class="row">
@@ -102,7 +102,7 @@
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <q-tooltip v-if="isDesktop">{{ t('Toggle sort by this column', { field: t(column.title) })
-                  }}</q-tooltip>
+                }}</q-tooltip>
               </th>
             </tr>
           </thead>
@@ -166,7 +166,7 @@ import { default as CustomErrorBanner } from "components/CustomErrorBanner.vue";
 import { default as CustomBanner } from "components/CustomBanner.vue";
 
 import { useDateFilter } from "src/composables/dateFilter"
-import { default as CustomInputDateFilter } from "components/CustomInputDateFilter.vue";
+import { default as CustomInputDateField } from "components/CustomInputDateField.vue";
 import { default as DocumentFilesPreviewDialog } from "components/DocumentFilesPreviewDialog.vue";
 import { default as DocumentNotesPreviewDialog } from "components/DocumentNotesPreviewDialog.vue";
 
