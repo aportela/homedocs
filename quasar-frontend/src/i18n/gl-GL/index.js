@@ -195,4 +195,5 @@ export default {
   "Type text condition": "Teclee a condición de texto",
   "Toggle sort by this column": "Altera-la orde por esta columna: {field}",
   "This document has no associated notes.": "Este documento non ten notas asociadas.",
+  "Click to remove note": "Faga click pra elimina-la nota",
 };

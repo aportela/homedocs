@@ -151,34 +151,31 @@
                         </tbody>
                       </q-markup-table>
                     </q-tab-panel>
-                    <q-tab-panel name="notes">
-                      <q-list>
-                        <q-item hint="click to open note" v-for="note, noteIndex in document.notes" :key="note.id"
-                          class="q-mb-lg">
+                    <q-tab-panel name="notes" class="q-pa-none">
+                      <q-list class="bg-transparent">
+                        <q-item v-for="note, noteIndex in document.notes" :key="note.id"
+                          class="q-pa-none bg-transparent">
                           <q-item-section>
-                            <q-item-label class="font-weight-bold">
-                              {{ note.createdOn }} ({{ timeAgo(note.createdOnTimestamp * 1000) }})
-                            </q-item-label>
-                            <q-item-label caption class="white-space-pre-line" :lines="note.expanded ? undefined : 4"
-                              ref="el => noteBodyRefs[note.id] = el">
-                              {{ note.body }}
-                            </q-item-label>
-                            <q-item-label>
-                            </q-item-label>
-                          </q-item-section>
-                          <q-item-section side top>
-                            <q-item-label caption>
-                              <q-btn-group flat>
-                                <q-btn size="sm" icon="expand" @click="note.expanded = !note.expanded"></q-btn>
-                                <q-btn size="sm" icon="edit" @click=" currentNote = {
-                                  id: note.id, body: note.body,
-                                  createdOn: note.createdOn, createdOnTimestamp: note.createdOnTimestamp
-                                };
-                                showNoteDialog = true"></q-btn>
-                                <q-btn size="sm" icon="delete"
-                                  @click.prevent="onShowNoteRemoveConfirmationDialog(note, noteIndex)"></q-btn>
-                              </q-btn-group>
-                            </q-item-label>
+                            <CustomInputEditableTextField v-model.trim="note.body" dense outlined type="textarea"
+                              maxlength="4096" autogrow name="description"
+                              :label="`${note.createdOn} (${timeAgo(note.createdOnTimestamp * 1000)})`"
+                              :start-mode-editable="!!note.startOnEditMode" :disable="loading || saving" clearable
+                              :max-lines="6" :rules="requiredFieldRules" :error="!note.body"
+                              :error-message="fieldIsRequiredLabel" :autofocus="note.startOnEditMode">
+                              <template v-slot:top-icon-append="{ showTopHoverIcons }">
+                                <q-icon name="delete" size="sm" class="q-ml-sm q-mr-sm" clickable
+                                  v-show="showTopHoverIcons"
+                                  @click.prevent="onShowNoteRemoveConfirmationDialog(note, noteIndex)">
+                                  <q-tooltip>{{ t("Click to remove note") }}</q-tooltip>
+                                </q-icon>
+                              </template>
+                              <template v-slot:icon-append-on-edit>
+                                <q-icon name="delete" size="sm" class="cursor-pointer" clickable
+                                  @click.prevent="onShowNoteRemoveConfirmationDialog(note, noteIndex)">
+                                </q-icon>
+                              </template>
+                              <!-- TODO: NOT FOCUSING ON TEXTAREA CHANGE TO EDIT MODE -->
+                            </CustomInputEditableTextField>
                           </q-item-section>
                         </q-item>
                       </q-list>
@@ -265,6 +262,7 @@ import { default as NoteModal } from "components/NoteModal.vue";
 import { useInitialStateStore } from "stores/initialState";
 
 import { useFormatDates } from "src/composables/formatDate"
+import { useFormUtils } from "src/composables/formUtils"
 
 import { default as CustomInputEditableTextField } from "components/CustomInputEditableTextField.vue"
 
@@ -272,6 +270,8 @@ const tab = ref("notes");
 
 const $q = useQuasar();
 const { t } = useI18n();
+
+const { requiredFieldRules, fieldIsRequiredLabel } = useFormUtils();
 
 const route = useRoute();
 const router = useRouter();
@@ -629,10 +629,20 @@ function onShowNoteRemoveConfirmationDialog(note, noteIndex) {
 }
 
 function onShowAddNoteDialog() {
+  /*
   currentNote.value.id = null;
   currentNote.value.body = null;
   currentNote.value.createdOn = null;
   showNoteDialog.value = true
+  */
+  const timestamp = date.formatDate(new Date(), 'X');
+  document.value.notes.unshift({
+    id: uid(),
+    body: null,
+    createdOnTimestamp: date.formatDate(new Date(), 'X'),
+    createdOn: date.formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss'),
+    startOnEditMode: true
+  });
 }
 
 function onAddNote(newNote) {

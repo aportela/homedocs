@@ -192,4 +192,5 @@ export default {
   "Type text condition": "Type text condition",
   "Toggle sort by this column": "Toggle sort by this column: {field}",
   "This document has no associated notes.": "This document has no associated notes.",
+  "Click to remove note": "Click to remove note",
 };
