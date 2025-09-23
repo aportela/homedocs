@@ -1,4 +1,4 @@
-import { useInitialStateStore } from "stores/initialState";
+import { useInitialStateStore } from "src/stores/initialState";
 
 export default () => {
   const initialState = useInitialStateStore();

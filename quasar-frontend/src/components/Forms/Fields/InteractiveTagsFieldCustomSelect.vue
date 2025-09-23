@@ -42,7 +42,7 @@
 <script setup>
 
 import { ref, watch, computed, onMounted, nextTick } from "vue";
-import { api } from "boot/axios";
+import { api } from "src/boot/axios";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();

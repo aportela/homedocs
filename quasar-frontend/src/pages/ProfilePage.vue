@@ -22,7 +22,7 @@
 
 <script setup>
 
-import { useI18n } from 'vue-i18n'
+import { useI18n } from "vue-i18n";
 
 import { default as UpdateProfileForm } from "src/components/Forms/UpdateProfileForm.vue";
 import { default as SystemStatsWidget } from "src/components/Widgets/SystemStatsWidget.vue";

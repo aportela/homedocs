@@ -8,7 +8,7 @@
       <q-icon :name="visiblePassword ? 'visibility_off' : 'visibility'" class="cursor-pointer"
         @click="visiblePassword = !visiblePassword" />
       <q-tooltip anchor="bottom right" self="top end">{{ t(visiblePassword ? "Hide password" : "Show password")
-        }}</q-tooltip>
+      }}</q-tooltip>
     </template>
   </q-input>
 </template>
@@ -16,7 +16,7 @@
 <script setup>
 
 import { ref, watch, useAttrs, onMounted, nextTick } from "vue";
-import { useI18n } from 'vue-i18n'
+import { useI18n } from "vue-i18n";
 
 const attrs = useAttrs();
 

@@ -34,9 +34,9 @@
 
 <script setup>
 import { ref, reactive, onMounted, nextTick } from "vue";
-import { useI18n } from 'vue-i18n'
+import { useI18n } from "vue-i18n";
 
-import { api } from 'boot/axios'
+import { api } from "src/boot/axios";
 import { useFormUtils } from "src/composables/formUtils";
 
 import { default as BaseWidget } from "src/components/Widgets/BaseWidget.vue";

@@ -3,8 +3,7 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue'
-
+import { defineComponent } from "vue";
 
 /*
 window.onpopstate = function (event) {

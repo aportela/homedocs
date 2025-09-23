@@ -102,7 +102,7 @@
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <q-tooltip v-if="isDesktop">{{ t('Toggle sort by this column', { field: t(column.title) })
-                }}</q-tooltip>
+                  }}</q-tooltip>
               </th>
             </tr>
           </thead>
@@ -157,18 +157,18 @@ import { ref, reactive, computed, onMounted, nextTick } from "vue";
 import { useRoute } from "vue-router";
 import { date, format, useQuasar } from "quasar";
 import { useI18n } from "vue-i18n";
-import { api } from "boot/axios";
-import { useAdvancedSearchData } from "stores/advancedSearchData"
-import { default as InteractiveTagsFieldCustomSelect } from "components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
+import { api } from "src/boot/axios";
+import { useAdvancedSearchData } from "src/stores/advancedSearchData"
+import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
 
-import { default as CustomExpansionWidget } from "components/Widgets/CustomExpansionWidget.vue";
-import { default as CustomErrorBanner } from "components/Banners/CustomErrorBanner.vue";
-import { default as CustomBanner } from "components/Banners/CustomBanner.vue";
+import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
+import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
+import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 
 import { useDateFilter } from "src/composables/dateFilter"
-import { default as DateFieldCustomInput } from "components/Forms/Fields/DateFieldCustomInput.vue";
-import { default as DocumentFilesPreviewDialog } from "components/Dialogs/DocumentFilesPreviewDialog.vue";
-import { default as DocumentNotesPreviewDialog } from "components/Dialogs/DocumentNotesPreviewDialog.vue";
+import { default as DateFieldCustomInput } from "src/components/Forms/Fields/DateFieldCustomInput.vue";
+import { default as DocumentFilesPreviewDialog } from "src/components/Dialogs/DocumentFilesPreviewDialog.vue";
+import { default as DocumentNotesPreviewDialog } from "src/components/Dialogs/DocumentNotesPreviewDialog.vue";
 
 const { t } = useI18n();
 

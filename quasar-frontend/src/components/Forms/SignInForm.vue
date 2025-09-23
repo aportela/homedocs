@@ -7,10 +7,10 @@
       </q-avatar>
       <h4 class="q-mt-sm q-mb-md text-h4 text-weight-bolder">{{
         t(!!savedEmail ? "Glad to see you again!" : "Welcome aboard!")
-        }}</h4>
+      }}</h4>
       <div class="text-color-secondary">{{
         t(!!savedEmail ? "Let's get back to organizing." : "Let's start organizing.")
-        }}
+      }}
       </div>
     </q-card-section>
     <q-card-section>
@@ -61,18 +61,18 @@
 
 import { ref, reactive, nextTick, computed } from "vue";
 import { LocalStorage } from "quasar";
-import { useI18n } from 'vue-i18n'
+import { useI18n } from "vue-i18n";
 
-import { api } from 'boot/axios'
+import { api } from "src/boot/axios";
 import { useFormUtils } from "src/composables/formUtils";
-import { useInitialStateStore } from "stores/initialState";
+import { useInitialStateStore } from "src/stores/initialState";
 
-import { default as DarkModeButton } from "components/Buttons/DarkModeButton.vue"
-import { default as SwitchLanguageButton } from "components/Buttons/SwitchLanguageButton.vue"
-import { default as GitHubButton } from "components/Buttons/GitHubButton.vue"
+import { default as DarkModeButton } from "src/components/Buttons/DarkModeButton.vue"
+import { default as SwitchLanguageButton } from "src/components/Buttons/SwitchLanguageButton.vue"
+import { default as GitHubButton } from "src/components/Buttons/GitHubButton.vue"
 import { GITHUB_PROJECT_URL } from "src/constants"
 import { default as PasswordFieldCustomInput } from "src/components/Forms/Fields/PasswordFieldCustomInput.vue";
-import { default as CustomErrorBanner } from "components/Banners/CustomErrorBanner.vue";
+import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
 
 const emit = defineEmits(['success']);
 

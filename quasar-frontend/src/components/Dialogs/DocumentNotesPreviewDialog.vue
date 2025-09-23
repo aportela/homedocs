@@ -54,13 +54,13 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted } from "vue";
-import { useI18n } from 'vue-i18n'
+import { useI18n } from "vue-i18n";
 import { date } from "quasar";
 import { useFormatDates } from "src/composables/formatDate"
-import { api } from "boot/axios";
+import { api } from "src/boot/axios";
 
-import { default as CustomErrorBanner } from "components/Banners/CustomErrorBanner.vue";
-import { default as CustomBanner } from "components/Banners/CustomBanner.vue";
+import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
+import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 
 const { t } = useI18n();
 const { timeAgo } = useFormatDates();

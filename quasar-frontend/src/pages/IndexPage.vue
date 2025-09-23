@@ -15,8 +15,8 @@
 import { ref } from "vue";
 import { useQuasar } from "quasar";
 
-import { default as RecentDocuments } from "components/Widgets/RecentDocumentsWidget.vue";
-import { default as TagCloudWidget } from "components/Widgets/TagCloudWidget.vue";
+import { default as RecentDocuments } from "src/components/Widgets/RecentDocumentsWidget.vue";
+import { default as TagCloudWidget } from "src/components/Widgets/TagCloudWidget.vue";
 
 const $q = useQuasar();
 

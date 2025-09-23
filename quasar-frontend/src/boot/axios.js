@@ -1,6 +1,6 @@
 import { boot } from "quasar/wrappers";
 import axios from "axios";
-import { useSessionStore } from "stores/session";
+import { useSessionStore } from "src/stores/session";
 import { useInitialStateStore } from "src/stores/initialState";
 
 const session = useSessionStore();

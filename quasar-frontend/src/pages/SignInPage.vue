@@ -8,7 +8,7 @@
 
 <script setup>
 import { useRouter } from "vue-router";
-import { default as SignInForm } from "components/Forms/SignInForm.vue";
+import { default as SignInForm } from "src/components/Forms/SignInForm.vue";
 
 const router = useRouter();
 

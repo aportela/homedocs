@@ -40,8 +40,8 @@
 import { computed, useAttrs } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { api } from "boot/axios";
-import { useSessionStore } from "stores/session";
+import { api } from "src/boot/axios";
+import { useSessionStore } from "src/stores/session";
 
 const props = defineProps({
   mini: {

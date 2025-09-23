@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-import { default as SignUpForm } from "components/Forms/SignUpForm.vue";
+import { default as SignUpForm } from "src/components/Forms/SignUpForm.vue";
 
 const onSuccessSignUp = (apiResponseData) => {
 };

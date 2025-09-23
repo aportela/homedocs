@@ -92,7 +92,7 @@ import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useQuasar, date } from "quasar";
-import { api } from "boot/axios";
+import { api } from "src/boot/axios";
 
 const visible = ref(true);
 

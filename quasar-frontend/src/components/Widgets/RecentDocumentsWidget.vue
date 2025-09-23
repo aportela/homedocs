@@ -106,14 +106,14 @@
 
 import { ref, reactive, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { api } from "boot/axios";
+import { api } from "src/boot/axios";
 import { useFormatDates } from "src/composables/formatDate"
 
-import { default as CustomExpansionWidget } from "components/Widgets/CustomExpansionWidget.vue";
-import { default as CustomErrorBanner } from "components/Banners/CustomErrorBanner.vue";
-import { default as CustomBanner } from "components/Banners/CustomBanner.vue";
-import { default as DocumentFilesPreviewDialog } from "components/Dialogs/DocumentFilesPreviewDialog.vue";
-import { default as DocumentNotesPreviewDialog } from "components/Dialogs/DocumentNotesPreviewDialog.vue";
+import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
+import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
+import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
+import { default as DocumentFilesPreviewDialog } from "src/components/Dialogs/DocumentFilesPreviewDialog.vue";
+import { default as DocumentNotesPreviewDialog } from "src/components/Dialogs/DocumentNotesPreviewDialog.vue";
 
 const { t } = useI18n();
 const { timeAgo } = useFormatDates();

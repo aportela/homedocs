@@ -31,13 +31,13 @@
 
 import { reactive, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { format } from "quasar"
+import { format } from "quasar";
 
-import { api } from "boot/axios";
+import { api } from "src/boot/axios";
 
-import ActivityHeatMap from 'components/ActivityHeatMap.vue';
-import { default as BaseWidget } from "components/Widgets/BaseWidget.vue";
-import { default as CustomErrorBanner } from "components/Banners/CustomErrorBanner.vue";
+import ActivityHeatMap from "src/components/ActivityHeatMap.vue";
+import { default as BaseWidget } from "src/components/Widgets/BaseWidget.vue";
+import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
 
 const { t } = useI18n();
 

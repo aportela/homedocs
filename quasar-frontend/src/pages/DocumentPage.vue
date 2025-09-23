@@ -254,18 +254,18 @@
 import { ref, nextTick, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { uid, format, date, useQuasar } from "quasar";
-import { useI18n } from 'vue-i18n'
-import { api } from 'boot/axios'
-import { default as InteractiveTagsFieldCustomSelect } from "components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
-import { default as ConfirmationDialog } from "components/Dialogs/ConfirmationDialog.vue";
-import { default as DocumentFilesPreviewDialog } from "components/Dialogs/DocumentFilesPreviewDialog.vue";
-import { default as NoteModal } from "components/NoteModal.vue";
-import { useInitialStateStore } from "stores/initialState";
+import { useI18n } from "vue-i18n";
+import { api } from "src/boot/axios";
+import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
+import { default as ConfirmationDialog } from "src/components/Dialogs/ConfirmationDialog.vue";
+import { default as DocumentFilesPreviewDialog } from "src/components/Dialogs/DocumentFilesPreviewDialog.vue";
+import { default as NoteModal } from "src/components/NoteModal.vue";
+import { useInitialStateStore } from "src/stores/initialState";
 
 import { useFormatDates } from "src/composables/formatDate"
 import { useFormUtils } from "src/composables/formUtils"
 
-import { default as InteractiveTextFieldCustomInput } from "components/Forms/Fields/InteractiveTextFieldCustomInput.vue"
+import { default as InteractiveTextFieldCustomInput } from "src/components/Forms/Fields/InteractiveTextFieldCustomInput.vue"
 
 const tab = ref("notes");
 

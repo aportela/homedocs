@@ -18,15 +18,15 @@ import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { date, Dark } from "quasar";
 
-import { i18n } from "boot/i18n";
-import { api } from "boot/axios";
+import { i18n } from "src/boot/i18n";
+import { api } from "src/boot/axios";
 
 import CalHeatmap from "cal-heatmap";
 import "cal-heatmap/cal-heatmap.css";
-import Tooltip from 'cal-heatmap/plugins/Tooltip';
-import CalendarLabel from 'cal-heatmap/plugins/CalendarLabel';
+import Tooltip from "cal-heatmap/plugins/Tooltip";
+import CalendarLabel from "cal-heatmap/plugins/CalendarLabel";
 
-import { default as CustomErrorBanner } from "components/Banners/CustomErrorBanner.vue";
+import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
 
 const router = useRouter();
 

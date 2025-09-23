@@ -36,17 +36,17 @@
 <script setup>
 import { ref, watch, computed } from "vue";
 import { useQuasar, LocalStorage } from "quasar";
-import { useSessionStore } from "stores/session";
+import { useSessionStore } from "src/stores/session";
 import { useI18n } from "vue-i18n";
 
-import { default as SidebarDrawer } from "components/SidebarDrawer.vue"
-//import { default as FastSearchSelector } from "components/FastSearchSelector.vue"
-import { default as FastSearchModal } from "components/FastSearchModal.vue"
-import { default as DarkModeButton } from "components/Buttons/DarkModeButton.vue"
-import { default as SwitchLanguageButton } from "components/Buttons/SwitchLanguageButton.vue"
-import { default as GitHubButton } from "components/Buttons/GitHubButton.vue"
+import { default as SidebarDrawer } from "src/components/SidebarDrawer.vue"
+//import { default as FastSearchSelector } from "src/components/FastSearchSelector.vue"
+import { default as FastSearchModal } from "src/components/FastSearchModal.vue"
+import { default as DarkModeButton } from "src/components/Buttons/DarkModeButton.vue"
+import { default as SwitchLanguageButton } from "src/components/Buttons/SwitchLanguageButton.vue"
+import { default as GitHubButton } from "src/components/Buttons/GitHubButton.vue"
 import { GITHUB_PROJECT_URL } from "src/constants"
-//import { default as NotificationsButton } from "components/Buttons/NotificationsButton.vue"
+//import { default as NotificationsButton } from "src/components/Buttons/NotificationsButton.vue"
 
 const $q = useQuasar();
 

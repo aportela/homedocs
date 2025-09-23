@@ -41,11 +41,11 @@
 
 import { reactive, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { api } from "boot/axios";
+import { api } from "src/boot/axios";
 
-import { default as CustomExpansionWidget } from "components/Widgets/CustomExpansionWidget.vue";
-import { default as CustomErrorBanner } from "components/Banners/CustomErrorBanner.vue";
-import { default as CustomBanner } from "components/Banners/CustomBanner.vue";
+import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
+import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
+import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 
 const { t } = useI18n();
 

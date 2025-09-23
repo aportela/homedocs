@@ -1,5 +1,5 @@
 import { boot } from "quasar/wrappers";
-import { useSessionStore } from "stores/session";
+import { useSessionStore } from "src/stores/session";
 
 export default boot(({ app, router, store }) => {
   router.beforeEach((to, from, next) => {

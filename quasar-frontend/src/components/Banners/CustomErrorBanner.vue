@@ -10,8 +10,8 @@
 
 import { useInitialStateStore } from "src/stores/initialState";
 
-import { default as CustomBanner } from "components/Banners/CustomBanner.vue";
-import { default as APIErrorDetails } from "components/APIErrorDetails.vue";
+import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
+import { default as APIErrorDetails } from "src/components/APIErrorDetails.vue";
 
 const initialState = useInitialStateStore();
 
