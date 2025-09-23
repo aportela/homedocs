@@ -16,16 +16,16 @@
       <q-separator />
       <q-card-actions align="right">
         <q-btn flat @click.stop="onCancel"><q-icon left name="close" />{{ t("Cancel")
-        }}</q-btn>
+          }}</q-btn>
         <q-btn flat @click.stop="onSave"><q-icon left name="done" />{{ t("Save")
-        }}</q-btn>
+          }}</q-btn>
       </q-card-actions>
     </q-card>
   </q-dialog>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { uid, date } from "quasar";
 
@@ -41,6 +41,7 @@ const props = defineProps({
 
 const emit = defineEmits(['close', 'cancel', 'add', 'update']);
 
+const loading = ref(false);
 const visible = ref(true);
 
 const creationDate = ref(props.note ? props.note.createdOn : date.formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss'));
@@ -69,5 +70,14 @@ function onSave() {
     emit('update', { id: props.note.id, body: body });
   }
 }
+
+const onRefresh = () => {
+  loading.value = true;
+  loading.value = false;
+};
+
+onMounted(() => {
+  onRefresh();
+});
 
 </script>
