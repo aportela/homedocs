@@ -104,11 +104,10 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="document in results" :key="document.id" class="cursor-pointer"
-                @click="onDocumentRowClick(document.id)">
-                <td><router-link class="text-decoration-hover text-color-primary"
-                    :to="{ name: 'document', params: { id: document.id } }">{{
-                      document.title }}</router-link>
+              <tr v-for="document in results" :key="document.id">
+                <td class="td-document-link">
+                  <q-btn align="left" no-caps flat :to="{ name: 'document', params: { id: document.id } }" class="fit"
+                    :label="document.title"></q-btn>
                 </td>
                 <td>{{ document.createdOn }}</td>
                 <td>{{ document.lastUpdate }}</td>
@@ -117,7 +116,10 @@
                     <q-avatar class="theme-default-q-avatar"
                       :class="{ 'text-white bg-blue': document.fileCount > 0 }">{{ document.fileCount }}</q-avatar>
                     <span v-if="document.fileCount > 0 && !state.loading" class="cursor-pointer"
-                      @click.stop="onShowDocumentFiles(document.id)"> {{ t('Total files', { count: document.fileCount })
+                      @click.stop="onShowDocumentFiles(document.id, document.title)"> {{ t('Total files', {
+                        count:
+                          document.fileCount
+                      })
                       }}</span>
                     <span v-else> {{ t('Total files', { count: document.fileCount }) }}</span>
                   </q-chip>
@@ -128,7 +130,10 @@
                       :class="{ 'text-white bg-blue': document.noteCount > 0 }">{{
                         document.noteCount }}</q-avatar>
                     <span v-if="document.noteCount > 0 && !state.loading" class="cursor-pointer"
-                      @click.stop="onShowDocumentNotes(document.id)"> {{ t('Total notes', { count: document.noteCount })
+                      @click.stop="onShowDocumentNotes(document.id, document.title)"> {{ t('Total notes', {
+                        count:
+                          document.noteCount
+                      })
                       }}</span>
                     <span v-else> {{ t('Total notes', { count: document.noteCount }) }}</span>
                   </q-chip>
@@ -145,9 +150,11 @@
         <CustomBanner v-else-if="!state.loading" warning text="No results found with current filter"></CustomBanner>
       </template>
     </CustomExpansionWidget>
-    <FilePreviewModal v-if="showPreviewFileDialog" :files="documentFiles" @close="showPreviewFileDialog = false">
+    <FilePreviewModal v-if="showPreviewFileDialog" :title="selectedDocument.title" :files="selectedDocument.files"
+      @close="showPreviewFileDialog = false">
     </FilePreviewModal>
-    <NotesPreviewModal v-if="showPreviewNotesDialog" :notes="documentNotes" @close="showPreviewNotesDialog = false">
+    <NotesPreviewModal v-if="showPreviewNotesDialog" :title="selectedDocument.title" :notes="selectedDocument.notes"
+      @close="showPreviewNotesDialog = false">
     </NotesPreviewModal>
   </q-page>
 </template>
@@ -240,10 +247,15 @@ const hasUpdatedOnRouteParamsFilter = computed(() => route.params.fixedUpdatedOn
 
 const sortOrderIcon = computed(() => sort.order == "ASC" ? "keyboard_double_arrow_up" : "keyboard_double_arrow_down");
 
+const selectedDocument = reactive({
+  id: null,
+  title: null,
+  files: [],
+  notes: [],
+});
+
 const showPreviewFileDialog = ref(false);
-const documentFiles = reactive([]);
 const showPreviewNotesDialog = ref(false);
-const documentNotes = reactive([]);
 
 const totalSearchConditions = computed(() => {
   let total = 0;
@@ -361,22 +373,26 @@ const onResetForm = () => {
   results.length = 0;
 };
 
-const onShowDocumentFiles = (documentId) => {
+const onShowDocumentFiles = (documentId, documentTitle) => {
   if (!state.loading) {
-    documentFiles.length = 0;
+    selectedDocument.title = null;
+    selectedDocument.notes.length = 0;
+    selectedDocument.files.length = 0;
     state.loading = true;
     api.document
       .get(documentId)
       .then((successResponse) => {
-        documentFiles.push(...successResponse.data.data.files.map((file) => {
+        selectedDocument.id = documentId;
+        selectedDocument.title = documentTitle;
+        selectedDocument.files.push(...successResponse.data.data.files.map((file) => {
           file.isNew = false;
           file.uploadedOn = date.formatDate(file.uploadedOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
           file.humanSize = format.humanStorageSize(file.size);
           file.url = "api2/file/" + file.id;
           return (file)
         }));
-        showPreviewFileDialog.value = documentFiles.length > 0;
         state.loading = false;
+        showPreviewFileDialog.value = selectedDocument.files.length > 0;
       })
       .catch((errorResponse) => {
         state.loading = false;
@@ -392,20 +408,24 @@ const onShowDocumentFiles = (documentId) => {
   }
 }
 
-const onShowDocumentNotes = (documentId) => {
+const onShowDocumentNotes = (documentId, documentTitle) => {
   if (!state.loading) {
-    documentNotes.length = 0;
+    selectedDocument.title = null;
+    selectedDocument.notes.length = 0;
+    selectedDocument.files.length = 0;
     state.loading = true;
     api.document
       .getNotes(documentId)
       .then((successResponse) => {
-        documentNotes.push(...successResponse.data.notes.map((note) => {
+        selectedDocument.id = documentId;
+        selectedDocument.title = documentTitle;
+        selectedDocument.notes.push(...successResponse.data.notes.map((note) => {
           note.createdOn = date.formatDate(note.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
           note.expanded = false;
           return (note);
         }));
-        showPreviewNotesDialog.value = documentNotes.length > 0;
         state.loading = false;
+        showPreviewNotesDialog.value = selectedDocument.notes.length > 0;
       })
       .catch((errorResponse) => {
         state.loading = false;
@@ -418,17 +438,6 @@ const onShowDocumentNotes = (documentId) => {
             break;
         }
       });
-  }
-};
-
-const onDocumentRowClick = (documentId) => {
-  if (!state.loading) {
-    router.push({
-      name: "document",
-      params: {
-        id: documentId
-      }
-    });
   }
 };
 
@@ -493,6 +502,10 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.td-document-link {
+  padding: 0px !important;
+}
+
 .q-chip-8em {
   width: 8em;
 }
