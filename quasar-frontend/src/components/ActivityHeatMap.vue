@@ -32,6 +32,8 @@ const router = useRouter();
 
 const { t } = useI18n();
 
+const emit = defineEmits(['loading', 'loaded', 'error']);
+
 const props = defineProps({
   showNavigationButtons: {
     type: Boolean,
@@ -185,6 +187,7 @@ const onRightButtonClicked = () => {
 
 
 const refresh = () => {
+  emit("loading");
   state.loading = true;
   state.loadingError = false;
   state.apiError = null;
@@ -203,11 +206,13 @@ const refresh = () => {
         type: "json",
       }, scaleDomain);
       state.loading = false;
+      emit("loaded");
     })
     .catch((errorResponse) => {
       state.loadingError = true;
       state.apiError = errorResponse.customAPIErrorDetails;
       state.loading = false;
+      emit("error");
     });
 }
 
