@@ -52,7 +52,7 @@
               <q-item-label>
                 <router-link :to="{ name: 'document', params: { id: recentDocument.id } }"
                   class="text-decoration-hover text-color-primary"><span class="text-weight-bold">{{ t("Title")
-                  }}:</span> {{
+                    }}:</span> {{
                       recentDocument.title
                     }}
                 </router-link>
@@ -72,7 +72,7 @@
               <q-item-label caption>{{ timeAgo(recentDocument.timestamp) }}</q-item-label>
               <q-chip size="md" square class="full-width theme-default-q-chip">
                 <q-avatar class="theme-default-q-avatar">{{ recentDocument.fileCount }}</q-avatar>
-                {{ t("Files") }}
+                {{ t("Total files", { count: recentDocument.fileCount }) }}
               </q-chip>
               <q-chip size="md" square class="full-width theme-default-q-chip">
                 <q-avatar class="theme-default-q-avatar">{{ recentDocument.noteCount }}</q-avatar>
