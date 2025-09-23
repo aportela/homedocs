@@ -86,7 +86,7 @@
                 </q-card-section>
                 <q-card-section class="q-pa-md">
                   <q-tab-panels v-model="tab" animated class="bg-transparent">
-                    <q-tab-panel name="attachments">
+                    <q-tab-panel name="attachments" class="q-pa-none">
                       <q-uploader ref="uploaderRef" class="q-mb-md" :label="t('Add new file (Drag & Drop supported)')"
                         flat bordered auto-upload hide-upload-btn color="dark" field-name="file" url="api2/file"
                         :max-file-size="maxFileSize" multiple @uploaded="onFileUploaded" @rejected="onUploadRejected"
@@ -181,16 +181,23 @@
                         </q-item>
                       </q-list>
                     </q-tab-panel>
-                    <q-tab-panel name="history" v-if="document.id">
-                      <q-list>
-                        <q-item v-for="operation in document.history" :key="operation.operationTimestamp">
-                          <q-item-section>
-                            <q-item-label>
-                              {{ operation.date }} - {{ operation.label }}
-                            </q-item-label>
-                          </q-item-section>
-                        </q-item>
-                      </q-list>
+                    <q-tab-panel name="history" class="q-pa-none" v-if="document.id">
+                      <q-markup-table>
+                        <thead>
+                          <tr>
+                            <th class="text-left">Fecha</th>
+                            <th class="text-left">Operación</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr v-for="operation in document.history" :key="operation.operationTimestamp">
+                            <td>{{ operation.date }} ({{ timeAgo(operation.operationTimestamp * 1000) }})</td>
+                            <td><q-icon size="md" :name="operation.icon" class="q-mr-sm"></q-icon>{{
+                              operation.label }}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </q-markup-table>
                     </q-tab-panel>
                   </q-tab-panels>
                 </q-card-section>
@@ -369,12 +376,15 @@ function parseDocumentJSONResponse(documentData) {
     switch (operation.operationType) {
       case 1:
         operation.label = t("Document created");
+        operation.icon = "post_add";
         break;
       case 2:
         operation.label = t("Document updated");
+        operation.icon = "edit_note";
         break;
       default:
         operation.label = t("Unknown operation");
+        operation.icon = "error";
         break;
     }
     return (operation);
