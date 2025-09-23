@@ -28,7 +28,7 @@
   <q-input v-else v-bind="attrs" ref="qInputRef" :label="label" v-model.trim="model" :rules="rules" :error="error"
     :errorMessage="errorMessage">
     <template v-slot:append>
-      <q-icon name="done" class="cursor-pointer" @click.stop="onToggleReadOnly">
+      <q-icon name="done" class="cursor-pointer" @click.stop="onToggleReadOnly" v-if="!error">
         <q-tooltip>{{ t("Click to toggle edit mode") }}</q-tooltip>
       </q-icon>
       <slot name="icon-append-on-edit"></slot>
