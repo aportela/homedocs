@@ -28,7 +28,7 @@
 
 import { useI18n } from 'vue-i18n'
 
-import { default as BaseWidget } from "src/components/BaseWidget.vue";
+import { default as BaseWidget } from "src/components/Widgets/BaseWidget.vue";
 import { default as UpdateProfileForm } from "src/components/Forms/UpdateProfileForm.vue";
 import { default as SystemStats } from "src/components/SystemStats.vue";
 
