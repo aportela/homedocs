@@ -1,5 +1,5 @@
 <template>
-  <CustomWidget title="Personal information" caption="Update your data" icon="contact_mail">
+  <BaseWidget title="Personal information" caption="Update your data" icon="contact_mail">
     <template v-slot:content>
       <form @submit.prevent.stop="onValidateForm" autocorrect="off" autocapitalize="off" autocomplete="off"
         spellcheck="false">
@@ -29,7 +29,7 @@
         </CustomErrorBanner>
       </form>
     </template>
-  </CustomWidget>
+  </BaseWidget>
 </template>
 
 <script setup>
@@ -39,7 +39,7 @@ import { useI18n } from 'vue-i18n'
 import { api } from 'boot/axios'
 import { useFormUtils } from "src/composables/formUtils";
 
-import { default as CustomWidget } from "src/components/CustomWidget.vue";
+import { default as BaseWidget } from "src/components/BaseWidget.vue";
 import { default as CustomInputPassword } from "src/components/CustomInputPassword.vue";
 import { default as CustomErrorBanner } from "components/CustomErrorBanner.vue";
 import { default as CustomBanner } from "components/CustomBanner.vue";

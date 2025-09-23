@@ -14,11 +14,11 @@
         <ProfileFormWidget></ProfileFormWidget>
       </div>
       <div class="col-lg-8 col-xl-8 col-12 flex">
-        <CustomWidget title="Your system stats" caption="Small resume of your platform usage" icon="analytics">
+        <BaseWidget title="Your system stats" caption="Small resume of your platform usage" icon="analytics">
           <template v-slot:content>
             <SystemStats></SystemStats>
           </template>
-        </CustomWidget>
+        </BaseWidget>
       </div>
     </div>
   </q-page>
@@ -28,7 +28,7 @@
 
 import { useI18n } from 'vue-i18n'
 
-import { default as CustomWidget } from "src/components/CustomWidget.vue";
+import { default as BaseWidget } from "src/components/BaseWidget.vue";
 import { default as ProfileFormWidget } from "src/components/ProfileFormWidget.vue";
 import { default as SystemStats } from "src/components/SystemStats.vue";
 
