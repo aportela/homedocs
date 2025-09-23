@@ -72,9 +72,14 @@
               :disable="state.loading || totalSearchConditions < 1" type="reset" v-if="useStoreFilter"></q-btn>
           </q-btn-group>
         </form>
+        <CustomErrorBanner v-if="showErrorBanner" text="Error loading data" :apiError="state.apiError" class="q-ma-md">
+        </CustomErrorBanner>
+        <CustomBanner v-else-if="showNoResultsBanner" warning text="No results found with current filter"
+          class="q-ma-md">
+        </CustomBanner>
       </template>
     </CustomExpansionWidget>
-    <CustomExpansionWidget v-if="state.searchLaunched" title="Results" icon="folder_open" :loading="state.loading"
+    <CustomExpansionWidget v-show="hasResults" title="Results" icon="folder_open" :loading="state.loading"
       :error="state.loadingError" expanded class="q-mt-sm" ref="resultsWidgetRef">
       <template v-slot:header-extra>
         <q-chip square size="sm" color="primary" text-color="white">{{ t("Total search results count", {
@@ -83,74 +88,66 @@
         }) }}</q-chip>
       </template>
       <template v-slot:content>
-        <CustomErrorBanner v-if="state.loadingError" text="Error loading data" :apiError="state.apiError"
-          class="q-ma-md">
-        </CustomErrorBanner>
-        <div v-else-if="pager.totalResults > 0" class="q-pa-md">
-          <div class="q-px-sm q-py-md flex flex-center" v-if="pager.totalPages > 1">
-            <q-pagination v-model="pager.currentPage" color="dark" :max="pager.totalPages" :max-pages="5"
-              boundary-numbers direction-links boundary-links @update:model-value="onPaginationChanged"
-              :disable="state.loading" class="theme-default-q-pagination" />
-          </div>
-          <q-markup-table>
-            <thead>
-              <tr>
-                <th v-for="(column, index) in columns" :key="index" :style="{ width: column.width }"
-                  :class="['text-left', { 'cursor-not-allowed': state.loading, 'cursor-pointer': !state.loading, 'action-primary': sort.field === column.field }]"
-                  @click="onToggleSort(column.field)">
-                  <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
-                  {{ t(column.title) }}
-                  <q-tooltip v-if="isDesktop">{{ t('Toggle sort by this column', { field: t(column.title) })
-                  }}</q-tooltip>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="document in results" :key="document.id">
-                <td class="td-document-link">
-                  <q-btn align="left" no-caps flat :to="{ name: 'document', params: { id: document.id } }" class="fit"
-                    :label="document.title"></q-btn>
-                </td>
-                <td>{{ document.createdOn }}</td>
-                <td>{{ document.lastUpdate }}</td>
-                <td>
-                  <q-chip size="md" square class="theme-default-q-chip q-chip-8em">
-                    <q-avatar class="theme-default-q-avatar"
-                      :class="{ 'text-white bg-blue': document.fileCount > 0 }">{{ document.fileCount }}</q-avatar>
-                    <span v-if="document.fileCount > 0 && !state.loading" class="cursor-pointer"
-                      @click.stop="onShowDocumentFiles(document.id, document.title)"> {{ t('Total files', {
-                        count:
-                          document.fileCount
-                      })
-                      }}</span>
-                    <span v-else> {{ t('Total files', { count: document.fileCount }) }}</span>
-                  </q-chip>
-                </td>
-                <td>
-                  <q-chip size="md" square class="theme-default-q-chip q-chip-8em">
-                    <q-avatar class="theme-default-q-avatar"
-                      :class="{ 'text-white bg-blue': document.noteCount > 0 }">{{
-                        document.noteCount }}</q-avatar>
-                    <span v-if="document.noteCount > 0 && !state.loading" class="cursor-pointer"
-                      @click.stop="onShowDocumentNotes(document.id, document.title)"> {{ t('Total notes', {
-                        count:
-                          document.noteCount
-                      })
-                      }}</span>
-                    <span v-else> {{ t('Total notes', { count: document.noteCount }) }}</span>
-                  </q-chip>
-                </td>
-              </tr>
-            </tbody>
-          </q-markup-table>
-          <div class="q-px-sm q-py-md flex flex-center" v-if="pager.totalPages > 1">
-            <q-pagination v-model="pager.currentPage" color="dark" :max="pager.totalPages" :max-pages="5"
-              boundary-numbers direction-links boundary-links @update:model-value="onPaginationChanged"
-              :disable="state.loading" class="theme-default-q-pagination" />
-          </div>
+        <div class="q-px-sm q-py-md flex flex-center" v-if="pager.totalPages > 1">
+          <q-pagination v-model="pager.currentPage" color="dark" :max="pager.totalPages" :max-pages="5" boundary-numbers
+            direction-links boundary-links @update:model-value="onPaginationChanged" :disable="state.loading"
+            class="theme-default-q-pagination" />
         </div>
-        <CustomBanner v-else-if="!state.loading" warning text="No results found with current filter" class="q-ma-md">
-        </CustomBanner>
+        <q-markup-table>
+          <thead>
+            <tr>
+              <th v-for="(column, index) in columns" :key="index" :style="{ width: column.width }"
+                :class="['text-left', { 'cursor-not-allowed': state.loading, 'cursor-pointer': !state.loading, 'action-primary': sort.field === column.field }]"
+                @click="onToggleSort(column.field)">
+                <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
+                {{ t(column.title) }}
+                <q-tooltip v-if="isDesktop">{{ t('Toggle sort by this column', { field: t(column.title) })
+                }}</q-tooltip>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="document in results" :key="document.id">
+              <td class="td-document-link">
+                <q-btn align="left" no-caps flat :to="{ name: 'document', params: { id: document.id } }" class="fit"
+                  :label="document.title"></q-btn>
+              </td>
+              <td>{{ document.createdOn }}</td>
+              <td>{{ document.lastUpdate }}</td>
+              <td>
+                <q-chip size="md" square class="theme-default-q-chip q-chip-8em">
+                  <q-avatar class="theme-default-q-avatar" :class="{ 'text-white bg-blue': document.fileCount > 0 }">{{
+                    document.fileCount }}</q-avatar>
+                  <span v-if="document.fileCount > 0 && !state.loading" class="cursor-pointer"
+                    @click.stop="onShowDocumentFiles(document.id, document.title)"> {{ t('Total files', {
+                      count:
+                        document.fileCount
+                    })
+                    }}</span>
+                  <span v-else> {{ t('Total files', { count: document.fileCount }) }}</span>
+                </q-chip>
+              </td>
+              <td>
+                <q-chip size="md" square class="theme-default-q-chip q-chip-8em">
+                  <q-avatar class="theme-default-q-avatar" :class="{ 'text-white bg-blue': document.noteCount > 0 }">{{
+                    document.noteCount }}</q-avatar>
+                  <span v-if="document.noteCount > 0 && !state.loading" class="cursor-pointer"
+                    @click.stop="onShowDocumentNotes(document.id, document.title)"> {{ t('Total notes', {
+                      count:
+                        document.noteCount
+                    })
+                    }}</span>
+                  <span v-else> {{ t('Total notes', { count: document.noteCount }) }}</span>
+                </q-chip>
+              </td>
+            </tr>
+          </tbody>
+        </q-markup-table>
+        <div class="q-px-sm q-py-md flex flex-center" v-if="pager.totalPages > 1">
+          <q-pagination v-model="pager.currentPage" color="dark" :max="pager.totalPages" :max-pages="5" boundary-numbers
+            direction-links boundary-links @update:model-value="onPaginationChanged" :disable="state.loading"
+            class="theme-default-q-pagination" />
+        </div>
       </template>
     </CustomExpansionWidget>
     <FilePreviewModal v-if="showPreviewFileDialog" :title="selectedDocument.title" :files="selectedDocument.files"
@@ -240,7 +237,12 @@ const sort = reactive({
   order: "DESC",
 });
 
+
 const results = reactive([]);
+const hasResults = computed(() => results.length > 0);
+
+const showErrorBanner = computed(() => !state.loading && state.loadingError);
+const showNoResultsBanner = computed(() => !state.loading && state.searchLaunched && !hasResults.value);
 
 if (route.params.tag !== undefined) {
   filters.tags.push(route.params.tag);
