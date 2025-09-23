@@ -109,8 +109,8 @@
           <tbody>
             <tr v-for="document in results" :key="document.id">
               <td class="td-document-link">
-                <q-btn align="left" no-caps flat :to="{ name: 'document', params: { id: document.id } }" class="fit"
-                  :label="document.title"></q-btn>
+                <q-btn align="left" no-caps flat :to="{ name: 'document', params: { id: document.id } }"
+                  class="fit text-decoration-hover" :label="document.title"></q-btn>
               </td>
               <td>{{ document.createdOn }}</td>
               <td>{{ document.lastUpdate }}</td>
