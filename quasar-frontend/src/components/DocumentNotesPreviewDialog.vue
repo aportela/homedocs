@@ -2,8 +2,10 @@
   <q-dialog v-model="dialogModel" @hide="emit('close')">
     <q-card class="q-card-notes-dialog">
       <q-card-section class="row items-center q-p-none">
-        <div class="q-card-notes-dialog-header" v-if="documentTitle">{{ t("Document title") }}: <span>{{ documentTitle
-        }}</span>
+        <div class="q-card-notes-dialog-header" v-if="documentTitle">{{ t("Document title") }}: <router-link
+            :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
+              documentTitle
+            }}</router-link>
         </div>
         <div class="q-card-notes-dialog-header" v-else>{{ t("Document notes") }}</div>
         <q-space />
@@ -146,7 +148,7 @@ onMounted(() => {
   font-weight: bold;
 }
 
-.q-card-notes-dialog-header span {
+.q-card-notes-dialog-header a {
   font-weight: normal;
 }
 
