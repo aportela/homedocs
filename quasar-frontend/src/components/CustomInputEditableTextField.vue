@@ -1,17 +1,19 @@
 <template>
   <div v-if="readOnly" class="cursor-pointer q-pa-sm q-mb-md relative-position white-space-pre-line"
-    style="border: 1px solid rgba(0, 0, 0, 0.12); border-radius: 4px;" @mouseenter="showUpdateHoverIcon = true"
-    @mouseleave="showUpdateHoverIcon = false" @click="onToggleReadOnly">
+    style="border: 1px solid rgba(0, 0, 0, 0.12); border-radius: 4px;" @mouseenter="showTopHoverIcons = true"
+    @mouseleave="showTopHoverIcons = false" @click="onToggleReadOnly">
     <div style="font-size: 12px; color: rgba(0, 0, 0, 0.6); margin-left: 0px; margin-bottom: 4px;">
       {{ props.label }}</div>
-    <q-icon name="expand" size="sm" class="absolute-top-right text-grey cursor-pointer q-mr-sm q-mt-sm"
-      v-show="showUpdateHoverIcon" @click.stop="collapsedView = !collapsedView">
-      <q-tooltip>{{ t("Click to expand/collapse") }}</q-tooltip>
-    </q-icon>
-    <q-icon name="edit" size="sm" class="absolute-top-right text-grey cursor-pointer q-mr-xl q-mt-sm"
-      v-show="showUpdateHoverIcon">
-      <q-tooltip>{{ t("Click to toggle edit mode") }}</q-tooltip>
-    </q-icon>
+    <span class="absolute-top-right text-grey q-mt-sm">
+      <slot name="top-icon-prepend" :showTopHoverIcons="showTopHoverIcons"></slot>
+      <q-icon name="expand" size="sm" v-show="showTopHoverIcons" clickable @click.stop="collapsedView = !collapsedView">
+        <q-tooltip>{{ t("Click to expand/collapse") }}</q-tooltip>
+      </q-icon>
+      <q-icon name="edit" size="sm" class="q-ml-sm" v-show="showTopHoverIcons">
+        <q-tooltip>{{ t("Click to toggle edit mode") }}</q-tooltip>
+      </q-icon>
+      <slot name="top-icon-append" :showTopHoverIcons="showTopHoverIcons"></slot>
+    </span>
     <div class="q-mt-sm" :class="{ 'collapsed': collapsedView }" :style="`--max-lines: ${maxLines}`">
       {{ model }}
     </div>
@@ -60,7 +62,7 @@ const emit = defineEmits(['update:modelValue']);
 const qInputRef = ref(null);
 
 const readOnly = ref(!props.startModeEditable);
-const showUpdateHoverIcon = ref(false);
+const showTopHoverIcons = ref(false); // TODO: ONLY ON DESKTOP (NOT MOBILE, ALWAYS SHOWED)
 const collapsedView = ref(true);
 const model = ref(props.modelValue)
 
