@@ -145,9 +145,9 @@
     <FilePreviewModal v-if="showPreviewFileDialog" :title="selectedDocument.title" :files="selectedDocument.files"
       @close="showPreviewFileDialog = false">
     </FilePreviewModal>
-    <NotesPreviewModal v-if="showPreviewNotesDialog" :documentId="selectedDocument.id"
+    <DocumentNotesPreviewDialog v-if="showPreviewNotesDialog" :documentId="selectedDocument.id"
       :documentTitle="selectedDocument.title" @close="showPreviewNotesDialog = false">
-    </NotesPreviewModal>
+    </DocumentNotesPreviewDialog>
   </q-page>
 </template>
 
@@ -168,7 +168,7 @@ import { default as CustomBanner } from "components/CustomBanner.vue";
 import { useDateFilter } from "src/composables/dateFilter"
 import { default as CustomInputDateFilter } from "components/CustomInputDateFilter.vue";
 import { default as FilePreviewModal } from "components/FilePreviewModal.vue";
-import { default as NotesPreviewModal } from "components/NotesPreviewModal.vue";
+import { default as DocumentNotesPreviewDialog } from "components/DocumentNotesPreviewDialog.vue";
 
 const { t } = useI18n();
 
