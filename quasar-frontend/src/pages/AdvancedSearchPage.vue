@@ -88,12 +88,12 @@
         }) }}</q-chip>
       </template>
       <template v-slot:content>
-        <div class="q-px-sm q-py-md flex flex-center" v-if="pager.totalPages > 1">
+        <div class="q-ma-md flex flex-center" v-if="pager.totalPages > 1">
           <q-pagination v-model="pager.currentPage" color="dark" :max="pager.totalPages" :max-pages="5" boundary-numbers
             direction-links boundary-links @update:model-value="onPaginationChanged" :disable="state.loading"
             class="theme-default-q-pagination" />
         </div>
-        <q-markup-table>
+        <q-markup-table class="q-ma-md">
           <thead>
             <tr>
               <th v-for="(column, index) in columns" :key="index" :style="{ width: column.width }"
@@ -143,7 +143,7 @@
             </tr>
           </tbody>
         </q-markup-table>
-        <div class="q-px-sm q-py-md flex flex-center" v-if="pager.totalPages > 1">
+        <div class="q-ma-md flex flex-center" v-if="pager.totalPages > 1">
           <q-pagination v-model="pager.currentPage" color="dark" :max="pager.totalPages" :max-pages="5" boundary-numbers
             direction-links boundary-links @update:model-value="onPaginationChanged" :disable="state.loading"
             class="theme-default-q-pagination" />
