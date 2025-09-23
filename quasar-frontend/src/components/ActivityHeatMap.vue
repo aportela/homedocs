@@ -2,9 +2,9 @@
   <div id="cal-heatmap-container" class="calContainerRef">
     <div id="cal-heatmap"></div>
     <div class="q-mb-md q-gutter-sm q-py-sm" v-if="showNavigationButtons">
-      <q-btn icon="arrow_left" :disabled="leftButtonDisabled" size="md" color="primary"
+      <q-btn icon="arrow_left" :disabled="state.loading || leftButtonDisabled" size="md" color="primary"
         @click.prevent="onLeftButtonClicked">{{ t("Previous") }}</q-btn>
-      <q-btn icon-right="arrow_right" :disabled="rightButtonDisabled" size="md" color="primary"
+      <q-btn icon-right="arrow_right" :disabled="state.loading || rightButtonDisabled" size="md" color="primary"
         @click.prevent="onRightButtonClicked">{{ t("Next") }}</q-btn>
     </div>
     <CustomErrorBanner v-if="state.loadingError" text="Error loading data" :apiError="state.apiError">
