@@ -99,7 +99,8 @@
                   @click="onToggleSort(column.field)">
                   <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                   {{ t(column.title) }}
-                  <q-tooltip>{{ t('Toggle sort by this column', { field: t(column.title) }) }}</q-tooltip>
+                  <q-tooltip v-if="isDesktop">{{ t('Toggle sort by this column', { field: t(column.title) })
+                  }}</q-tooltip>
                 </th>
               </tr>
             </thead>
@@ -161,9 +162,9 @@
 
 <script setup>
 
-import { ref, reactive, computed, onMounted, nextTick } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { date, format } from "quasar";
+import { ref, reactive, computed, onMounted, nextTick, watch } from "vue";
+import { useRoute } from "vue-router";
+import { date, format, useQuasar } from "quasar";
 import { useI18n } from "vue-i18n";
 import { api } from "boot/axios";
 import { useAdvancedSearchData } from "stores/advancedSearchData"
@@ -181,7 +182,9 @@ import { default as NotesPreviewModal } from "components/NotesPreviewModal.vue";
 const { t } = useI18n();
 
 const route = useRoute();
-const router = useRouter();
+
+const $q = useQuasar();
+const isDesktop = computed(() => $q.platform.is.desktop);
 
 const columns = [
   { field: 'title', title: 'Title', width: '40%' },
