@@ -4,14 +4,16 @@
       <q-card-section class="q-p-none">
         <slot name="header"></slot>
       </q-card-section>
+      <q-separator class="q-mb-md"></q-separator>
       <q-card-section class="q-p-none">
         <slot name="body"></slot>
       </q-card-section>
+      <q-separator class="q-my-sm"></q-separator>
       <q-card-actions align="right">
-        <q-btn outline @click.stop="onCancel"><q-icon left name="close" />{{ t("Cancel")
-        }}</q-btn>
-        <q-btn outline @click.stop="onConfirm"><q-icon left name="done" />{{ t("Ok")
-        }}</q-btn>
+        <q-btn class="action-secondary" @click.stop="onCancel"><q-icon left name="close" />{{ t("Cancel")
+          }}</q-btn>
+        <q-btn color="primary" @click.stop="onConfirm"><q-icon left name="done" />{{ t("Ok")
+          }}</q-btn>
       </q-card-actions>
     </q-card>
   </q-dialog>
