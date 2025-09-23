@@ -51,13 +51,13 @@
           </div>
           <div class="row">
             <div class="col-12">
-              <TagSelector v-model="filters.tags" label="Document tags" :disabled="state.loading" dense
-                :start-mode-editable="true" :deny-change-editable-mode="true" clearable
+              <InteractiveTagsFieldCustomSelect v-model="filters.tags" label="Document tags" :disabled="state.loading"
+                dense :start-mode-editable="true" :deny-change-editable-mode="true" clearable
                 :placeholder="t('Type text condition')">
                 <template v-slot:prepend>
                   <q-icon name="search" />
                 </template>
-              </TagSelector>
+              </InteractiveTagsFieldCustomSelect>
             </div>
           </div>
           <q-btn-group spread>
@@ -159,7 +159,7 @@ import { date, format, useQuasar } from "quasar";
 import { useI18n } from "vue-i18n";
 import { api } from "boot/axios";
 import { useAdvancedSearchData } from "stores/advancedSearchData"
-import { default as TagSelector } from "components/TagSelector.vue";
+import { default as InteractiveTagsFieldCustomSelect } from "components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
 
 import { default as CustomExpansionWidget } from "components/Widgets/CustomExpansionWidget.vue";
 import { default as CustomErrorBanner } from "components/CustomErrorBanner.vue";

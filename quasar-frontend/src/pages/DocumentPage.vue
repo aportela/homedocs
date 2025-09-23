@@ -59,9 +59,9 @@
                     type="textarea" maxlength="4096" autogrow name="description" :label="t('Document description')"
                     :disable="loading || saving" clearable :start-mode-editable="isNewDocument" :max-lines="6">
                   </InteractiveTextFieldCustomInput>
-                  <TagSelector dense v-model="document.tags" :disabled="loading || saving"
+                  <InteractiveTagsFieldCustomSelect dense v-model="document.tags" :disabled="loading || saving"
                     :start-mode-editable="isNewDocument" :deny-change-editable-mode="isNewDocument" clearable>
-                  </TagSelector>
+                  </InteractiveTagsFieldCustomSelect>
                 </q-card-section>
               </q-card>
             </div>
@@ -256,7 +256,7 @@ import { useRoute, useRouter } from "vue-router";
 import { uid, format, date, useQuasar } from "quasar";
 import { useI18n } from 'vue-i18n'
 import { api } from 'boot/axios'
-import { default as TagSelector } from "components/TagSelector.vue";
+import { default as InteractiveTagsFieldCustomSelect } from "components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
 import { default as ConfirmationDialog } from "components/Dialogs/ConfirmationDialog.vue";
 import { default as DocumentFilesPreviewDialog } from "components/Dialogs/DocumentFilesPreviewDialog.vue";
 import { default as NoteModal } from "components/NoteModal.vue";
