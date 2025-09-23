@@ -11,7 +11,7 @@
     </div>
     <div class="row q-col-gutter-sm">
       <div class="col-lg-4 col-xl-4 col-12 flex">
-        <ProfileFormWidget></ProfileFormWidget>
+        <UpdateProfileForm></UpdateProfileForm>
       </div>
       <div class="col-lg-8 col-xl-8 col-12 flex">
         <BaseWidget title="Your system stats" caption="Small resume of your platform usage" icon="analytics">
@@ -29,7 +29,7 @@
 import { useI18n } from 'vue-i18n'
 
 import { default as BaseWidget } from "src/components/BaseWidget.vue";
-import { default as ProfileFormWidget } from "src/components/ProfileFormWidget.vue";
+import { default as UpdateProfileForm } from "src/components/Forms/UpdateProfileForm.vue";
 import { default as SystemStats } from "src/components/SystemStats.vue";
 
 const { t } = useI18n();
