@@ -76,7 +76,7 @@
               </q-chip>
               <q-chip size="md" square class="full-width theme-default-q-chip">
                 <q-avatar class="theme-default-q-avatar">{{ recentDocument.noteCount }}</q-avatar>
-                {{ t("Notes") }}
+                {{ t("Total notes", { count: recentDocument.noteCount }) }}
               </q-chip>
             </q-item-section>
           </q-item>
@@ -121,11 +121,11 @@ const hasRecentDocuments = computed(() => recentDocuments.length > 0);
 
 function onRefresh() {
   state.loading = true;
-  recentDocuments.length = 0;
   state.loadingError = false;
   state.apiError = null;
   api.document.searchRecent(16)
     .then((successResponse) => {
+      recentDocuments.length = 0;
       recentDocuments.push(...successResponse.data.recentDocuments.map((document) => {
         document.timestamp = document.lastUpdateTimestamp * 1000; // convert PHP timestamps (seconds) to JS (milliseconds)
         return document;
