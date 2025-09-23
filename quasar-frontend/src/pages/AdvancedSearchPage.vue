@@ -102,7 +102,7 @@
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <q-tooltip v-if="isDesktop">{{ t('Toggle sort by this column', { field: t(column.title) })
-                  }}</q-tooltip>
+                }}</q-tooltip>
               </th>
             </tr>
           </thead>
@@ -115,29 +115,21 @@
               <td>{{ document.createdOn }}</td>
               <td>{{ document.lastUpdate }}</td>
               <td>
-                <q-chip size="md" square class="theme-default-q-chip q-chip-8em">
+                <q-chip size="md" square class="theme-default-q-chip q-chip-8em"
+                  :clickable="document.fileCount > 0 && !state.loading"
+                  @click.stop="onShowDocumentFiles(document.id, document.title)">
                   <q-avatar class="theme-default-q-avatar" :class="{ 'text-white bg-blue': document.fileCount > 0 }">{{
                     document.fileCount }}</q-avatar>
-                  <span v-if="document.fileCount > 0 && !state.loading" class="cursor-pointer"
-                    @click.stop="onShowDocumentFiles(document.id, document.title)"> {{ t('Total files', {
-                      count:
-                        document.fileCount
-                    })
-                    }}</span>
-                  <span v-else> {{ t('Total files', { count: document.fileCount }) }}</span>
+                  {{ t('Total files', { count: document.fileCount }) }}
                 </q-chip>
               </td>
               <td>
-                <q-chip size="md" square class="theme-default-q-chip q-chip-8em">
+                <q-chip size="md" square class="theme-default-q-chip q-chip-8em"
+                  :clickable="document.noteCount > 0 && !state.loading"
+                  @click.stop="onShowDocumentNotes(document.id, document.title)">
                   <q-avatar class="theme-default-q-avatar" :class="{ 'text-white bg-blue': document.noteCount > 0 }">{{
                     document.noteCount }}</q-avatar>
-                  <span v-if="document.noteCount > 0 && !state.loading" class="cursor-pointer"
-                    @click.stop="onShowDocumentNotes(document.id, document.title)"> {{ t('Total notes', {
-                      count:
-                        document.noteCount
-                    })
-                    }}</span>
-                  <span v-else> {{ t('Total notes', { count: document.noteCount }) }}</span>
+                  {{ t('Total notes', { count: document.noteCount }) }}
                 </q-chip>
               </td>
             </tr>
