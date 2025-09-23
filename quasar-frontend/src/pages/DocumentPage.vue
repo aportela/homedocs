@@ -52,6 +52,7 @@
                   <CustomInputEditableTextField ref="titleRef" dense class="q-mb-md" maxlength="128" outlined
                     v-model.trim="document.title" type="textarea" autogrow name="title" :label="t('Document title')"
                     :disable="loading || saving" :autofocus="true" clearable :start-mode-editable="isNewDocument"
+                    :rules="requiredFieldRules" :error="!document.title" :error-message="fieldIsRequiredLabel"
                     :max-lines="1">
                   </CustomInputEditableTextField>
                   <CustomInputEditableTextField dense class="q-mb-md" outlined v-model.trim="document.description"
