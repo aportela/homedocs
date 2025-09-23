@@ -23,7 +23,7 @@
     </div>
     <!-- TODO: do not use relative position-->
     <p class="text-red q-ml-sm" style="position: relative; top: -10px; font-size: 0.8em;" v-if="error"> {{ errorMessage
-    }}
+      }}
     </p>
   </div>
   <q-input v-else v-bind="attrs" ref="qInputRef" :label="label" v-model.trim="model" :rules="rules" :error="error"
@@ -34,7 +34,6 @@
       </q-icon>
       <slot name="icon-append-on-edit"></slot>
     </template>
-
   </q-input>
 </template>
 
