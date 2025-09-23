@@ -49,15 +49,15 @@
                       </q-input>
                     </div>
                   </div>
-                  <EditableTextField ref="titleRef" dense class="q-mb-md" maxlength="128" outlined
+                  <CustomInputEditableTextField ref="titleRef" dense class="q-mb-md" maxlength="128" outlined
                     v-model.trim="document.title" type="textarea" autogrow name="title" :label="t('Document title')"
                     :disable="loading || saving" :autofocus="true" clearable :start-mode-editable="isNewDocument"
                     :max-lines="1">
-                  </EditableTextField>
-                  <EditableTextField dense class="q-mb-md" outlined v-model.trim="document.description" type="textarea"
-                    maxlength="4096" autogrow name="description" :label="t('Document description')"
+                  </CustomInputEditableTextField>
+                  <CustomInputEditableTextField dense class="q-mb-md" outlined v-model.trim="document.description"
+                    type="textarea" maxlength="4096" autogrow name="description" :label="t('Document description')"
                     :disable="loading || saving" clearable :start-mode-editable="isNewDocument" :max-lines="6">
-                  </EditableTextField>
+                  </CustomInputEditableTextField>
                   <TagSelector dense v-model="document.tags" :disabled="loading || saving"
                     :start-mode-editable="isNewDocument" :deny-change-editable-mode="isNewDocument" clearable>
                   </TagSelector>
@@ -266,7 +266,7 @@ import { useInitialStateStore } from "stores/initialState";
 
 import { useFormatDates } from "src/composables/formatDate"
 
-import { default as EditableTextField } from "components/EditableTextField.vue"
+import { default as CustomInputEditableTextField } from "components/CustomInputEditableTextField.vue"
 
 const tab = ref("notes");
 
