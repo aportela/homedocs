@@ -2,16 +2,19 @@
   <BaseWidget title="Your system stats" caption="Small resume of your platform usage" icon="analytics">
     <template v-slot:content>
       <div>
-        <h6 class="text-center text-h6 q-my-sm"><q-icon name="insights"></q-icon> {{ t("Activity Heatmap") }}</h6>
+        <h6 class="text-center text-h6 q-my-sm"><q-icon :name="heatmapStats.loading ? 'settings' : 'insights'"
+            :class="{ 'animation-spin': heatmapStats.loading }"></q-icon> {{ t("Activity Heatmap") }}</h6>
         <div>
-          <ActivityHeatMap class="q-mx-auto" :showNavigationButtons="true"></ActivityHeatMap>
+          <ActivityHeatMap class="q-mx-auto" :showNavigationButtons="true" @loading="onActivityHeatMapLoading"
+            @loaded="onActivityHeatMapLoaded" @error="onActivityHeatMapError"></ActivityHeatMap>
         </div>
         <q-separator class="q-my-md" />
         <div class="row">
           <div v-for="(stat, index) in stats" :key="index" class="col-4">
             <q-card class="q-ma-sm">
               <q-card-section class="text-center text-h6 theme-default-q-card-section-header">
-                <q-icon :name="stat.error ? 'error' : stat.icon" class="gt-xs" :class="{ 'text-red': stat.error }" />
+                <q-icon :name="stat.loading ? 'settings' : stat.error ? 'error' : stat.icon" class="gt-xs"
+                  :class="{ 'text-red': stat.error, 'animation-spin': stat.loading }" />
                 {{ t(stat.headerLabel) }}
               </q-card-section>
               <q-card-section class="text-center text-h4" v-if="!stat.loadingError">{{ stat.total }}</q-card-section>
@@ -41,6 +44,11 @@ import { default as CustomErrorBanner } from "src/components/Banners/CustomError
 
 const { t } = useI18n();
 
+const heatmapStats = reactive({
+  loading: false,
+  loadingError: false
+});
+
 const stats = reactive({
   documents: {
     total: 0,
@@ -67,6 +75,18 @@ const stats = reactive({
     icon: "data_usage"
   }
 });
+
+const onActivityHeatMapLoading = () => {
+  heatmapStats.loadingError = false;
+  heatmapStats.loading = true;
+};
+const onActivityHeatMapLoaded = () => {
+  heatmapStats.loading = false;
+};
+const onActivityHeatMapError = () => {
+  heatmapStats.loadingError = true;
+  heatmapStats.loading = false;
+};
 
 const onRefreshTotalDocuments = () => {
   stats.documents.loading = true;
@@ -110,7 +130,7 @@ const onRefreshTotalAttachmentsDiskUsage = () => {
   api.stats.attachmentDiskSize()
     .then((successResponse) => {
       stats.diskUsage.total = format.humanStorageSize(successResponse.data.size);
-      stats.diskUsage.false;
+      stats.diskUsage.loading = false;
     })
     .catch((errorResponse) => {
       stats.diskUsage.loadingError = true;
