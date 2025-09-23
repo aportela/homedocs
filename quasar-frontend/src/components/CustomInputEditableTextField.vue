@@ -1,7 +1,7 @@
 <template>
   <div v-if="readOnly" class="cursor-pointer q-pa-sm q-mb-md relative-position white-space-pre-line"
-    style="border: 1px solid rgba(0, 0, 0, 0.12); border-radius: 4px;" @mouseenter="showTopHoverIcons = true"
-    @mouseleave="showTopHoverIcons = false" @click="onToggleReadOnly">
+    style="border: 1px solid rgba(0, 0, 0, 0.12); border-radius: 4px;" @mouseenter="onMouseEnter"
+    @mouseleave="onMouseLeave" @click="onToggleReadOnly">
     <div style="font-size: 12px; color: rgba(0, 0, 0, 0.6); margin-left: 0px; margin-bottom: 4px;">
       {{ props.label }}</div>
     <span class="absolute-top-right text-grey q-mt-sm">
@@ -29,7 +29,8 @@
 
 <script setup>
 
-import { ref, useAttrs, watch, nextTick } from "vue";
+import { ref, useAttrs, computed, watch, nextTick } from "vue";
+import { useQuasar } from "quasar";
 import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
@@ -57,12 +58,16 @@ const props = defineProps({
 const attrs = useAttrs();
 const { t } = useI18n();
 
+const $q = useQuasar();
+const isDesktop = computed(() => $q.platform.is.desktop);
+
 const emit = defineEmits(['update:modelValue']);
 
 const qInputRef = ref(null);
 
 const readOnly = ref(!props.startModeEditable);
-const showTopHoverIcons = ref(false); // TODO: ONLY ON DESKTOP (NOT MOBILE, ALWAYS SHOWED)
+
+const showTopHoverIcons = ref(!isDesktop.value);
 const collapsedView = ref(true);
 const model = ref(props.modelValue)
 
@@ -74,6 +79,18 @@ const focus = () => {
     qInputRef.value?.focus();
   });
 }
+
+const onMouseEnter = () => {
+  if (isDesktop.value) {
+    showTopHoverIcons.value = true
+  }
+};
+
+const onMouseLeave = () => {
+  if (isDesktop.value) {
+    showTopHoverIcons.value = false
+  }
+};
 
 const onToggleReadOnly = () => {
   readOnly.value = !readOnly.value;
