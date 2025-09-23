@@ -217,7 +217,7 @@
     <NoteModal v-if="showNoteDialog" @close="showNoteDialog = false" @cancel="showNoteDialog = false" @add="onAddNote"
       @update="onUpdateNote" :note="currentNote">
     </NoteModal>
-    <ConfirmationModal
+    <ConfirmationDialog
       v-if="showConfirmDeleteFileDialog || showConfirmDeleteDocumentDialog || showConfirmDeleteNoteDialog"
       @close="onCancelConfirmationModal" @cancel="onCancelConfirmationModal" @ok="onSuccessConfirmationModal">
       <template v-slot:header v-if="showConfirmDeleteFileDialog">
@@ -247,7 +247,7 @@
       <template v-slot:body v-else-if="showConfirmDeleteDocumentDialog">
         <strong>{{ t("This operation cannot be undone. Would you like to proceed ?") }}</strong>
       </template>
-    </ConfirmationModal>
+    </ConfirmationDialog>
   </q-page>
 </template>
 
@@ -259,7 +259,7 @@ import { uid, format, date, useQuasar } from "quasar";
 import { useI18n } from 'vue-i18n'
 import { api } from 'boot/axios'
 import { default as TagSelector } from "components/TagSelector.vue";
-import { default as ConfirmationModal } from "components/ConfirmationModal.vue";
+import { default as ConfirmationDialog } from "components/Dialogs/ConfirmationDialog.vue";
 import { default as DocumentFilesPreviewDialog } from "components/DocumentFilesPreviewDialog.vue";
 import { default as NoteModal } from "components/NoteModal.vue";
 import { useInitialStateStore } from "stores/initialState";
