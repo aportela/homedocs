@@ -35,18 +35,18 @@
               </q-input>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
-              <CustomInputDateField :options="dateFilterTypeOptions" :label="t('Document creation date')"
+              <DateFieldCustomInput :options="dateFilterTypeOptions" :label="t('Document creation date')"
                 :disable="state.loading || hasCreationDateRouteParamsFilter" v-model="filters.dates.creationDate"
                 :auto-open-pop-ups="!hasCreationDateRouteParamsFilter">
-              </CustomInputDateField>
-              <CustomInputDateField :options="dateFilterTypeOptions" :label="t('Document last update')"
+              </DateFieldCustomInput>
+              <DateFieldCustomInput :options="dateFilterTypeOptions" :label="t('Document last update')"
                 :disable="state.loading || hasLastUpdateRouteParamsFilter" v-model="filters.dates.lastUpdate"
                 :auto-open-pop-ups="!hasLastUpdateRouteParamsFilter">
-              </CustomInputDateField>
-              <CustomInputDateField :options="dateFilterTypeOptions" :label="t('Document updated on')"
+              </DateFieldCustomInput>
+              <DateFieldCustomInput :options="dateFilterTypeOptions" :label="t('Document updated on')"
                 :disable="state.loading || hasUpdatedOnRouteParamsFilter" v-model="filters.dates.updatedOn"
                 :auto-open-pop-ups="!hasUpdatedOnRouteParamsFilter">
-              </CustomInputDateField>
+              </DateFieldCustomInput>
             </div>
           </div>
           <div class="row">
@@ -166,7 +166,7 @@ import { default as CustomErrorBanner } from "components/CustomErrorBanner.vue";
 import { default as CustomBanner } from "components/CustomBanner.vue";
 
 import { useDateFilter } from "src/composables/dateFilter"
-import { default as CustomInputDateField } from "components/CustomInputDateField.vue";
+import { default as DateFieldCustomInput } from "components/Forms/Fields/DateFieldCustomInput.vue";
 import { default as DocumentFilesPreviewDialog } from "components/Dialogs/DocumentFilesPreviewDialog.vue";
 import { default as DocumentNotesPreviewDialog } from "components/Dialogs/DocumentNotesPreviewDialog.vue";
 
