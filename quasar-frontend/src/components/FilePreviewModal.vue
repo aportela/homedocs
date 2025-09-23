@@ -2,20 +2,18 @@
   <q-dialog v-model="visible" @hide="emit('close')">
     <q-card style="width: 700px; max-width: 80vw;">
       <q-card-section class="row items-center q-p-none">
-        <div class="text-h6">{{ t("File preview") }}</div>
+        <div class="q-card-notes-dialog-header" v-if="title">{{ t("Document title") }}: <span>{{ title }}</span>
+        </div>
+        <div class="q-card-notes-dialog-header" v-else>{{ t("File preview") }}</div>
         <q-space />
         <q-btn icon="close" flat round dense v-close-popup />
       </q-card-section>
       <q-card-section class="q-pt-none">
-        <q-banner inline-actions class="text-center">
-          <strong>{{ currentFile.name }} ({{ currentFile.humanSize }})</strong>
-        </q-banner>
-        <div class="flex flex-center" v-if="totalFiles > 1">
-          <q-pagination v-model="currentIndex" :max="totalFiles" color="dark" :max-pages="5" boundary-numbers
-            direction-links icon-first="skip_previous" icon-last="skip_next" icon-prev="fast_rewind"
-            icon-next="fast_forward" gutter="md" v-if="files.length > 0"
-            @update:model-value="previewLoadingError = false" />
-        </div>
+        <p class="text-center"><strong>{{ currentFile.name }} ({{ currentFile.humanSize }})</strong></p>
+        <q-pagination class="flex flex-center" v-if="totalFiles > 1" v-model="currentIndex" :max="totalFiles"
+          color="dark" :max-pages="5" boundary-numbers direction-links icon-first="skip_previous" icon-last="skip_next"
+          icon-prev="fast_rewind" icon-next="fast_forward" gutter="md"
+          @update:model-value="previewLoadingError = false" />
       </q-card-section>
       <q-card-section class="q-pt-none">
         <div>
@@ -42,9 +40,9 @@
           </div>
         </div>
         <q-card-actions align="right">
-          <q-btn outline :href="currentFile.url" :label="t('Download')" icon="download"
+          <q-btn color="primary" :href="currentFile.url" :label="t('Download')" icon="download"
             :disable="previewLoadingError" />
-          <q-btn outline v-close-popup :label="t('Close')" icon="close" />
+          <q-btn color="primary" v-close-popup :label="t('Close')" icon="close" />
         </q-card-actions>
       </q-card-section>
     </q-card>
@@ -58,6 +56,11 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n();
 
 const props = defineProps({
+  title: {
+    type: String,
+    required: false,
+    default: ""
+  },
   files: {
     type: Array,
     required: true
@@ -70,7 +73,7 @@ const props = defineProps({
 });
 
 const currentIndex = ref(props.index + 1 || 1);
-const totalFiles = ref(props.files ? props.files.length : 0);
+const totalFiles = ref(props.files?.length || 0);
 if (currentIndex.value > totalFiles.value) {
   currentIndex.value = 1;
 }
@@ -92,3 +95,14 @@ function isAudio(filename) {
 }
 
 </script>
+
+<style scoped>
+.q-card-notes-dialog-header {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.q-card-notes-dialog-header span {
+  font-weight: normal;
+}
+</style>
