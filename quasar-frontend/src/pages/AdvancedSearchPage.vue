@@ -83,7 +83,8 @@
         }) }}</q-chip>
       </template>
       <template v-slot:content>
-        <CustomErrorBanner v-if="state.loadingError" text="Error loading data" :apiError="state.apiError">
+        <CustomErrorBanner v-if="state.loadingError" text="Error loading data" :apiError="state.apiError"
+          class="q-ma-md">
         </CustomErrorBanner>
         <div v-else-if="pager.totalResults > 0" class="q-pa-md">
           <div class="q-px-sm q-py-md flex flex-center" v-if="pager.totalPages > 1">
@@ -148,7 +149,8 @@
               :disable="state.loading" class="theme-default-q-pagination" />
           </div>
         </div>
-        <CustomBanner v-else-if="!state.loading" warning text="No results found with current filter"></CustomBanner>
+        <CustomBanner v-else-if="!state.loading" warning text="No results found with current filter" class="q-ma-md">
+        </CustomBanner>
       </template>
     </CustomExpansionWidget>
     <FilePreviewModal v-if="showPreviewFileDialog" :title="selectedDocument.title" :files="selectedDocument.files"
@@ -338,7 +340,6 @@ const onSubmitForm = (resetPager) => {
       }
     })
     .catch((errorResponse) => {
-      console.log(errorResponse);
       state.apiError = errorResponse.customAPIErrorDetails;
       switch (errorResponse.response.status) {
         case 400:
@@ -357,6 +358,7 @@ const onSubmitForm = (resetPager) => {
           break;
       }
       state.loading = false;
+      state.searchLaunched = true;
     });
 }
 
