@@ -67,7 +67,7 @@
             </div>
             <div class="col-12 col-lg-6 col-xl-6 scroll q-px-sm" style="min-height: 64vh; max-height: 64vh;">
               <q-card class="q-ma-xs q-mt-sm">
-                <q-card-section class="q-pa-none q-mb-sm">
+                <q-card-section class="q-pa-none q-mb-sm" style="border-bottom: 2px solid rgba(0, 0, 0, 0.12);">
                   <q-tabs v-model="tab" align="left">
                     <q-tab name="attachments" icon="attach_file" :label="t('Attachments')">
                       <q-badge floating v-show="document.files.length > 0">{{ document.files.length }}</q-badge>
@@ -85,7 +85,7 @@
                   </q-tabs>
                 </q-card-section>
                 <q-card-section class="q-pa-md">
-                  <q-tab-panels v-model="tab" animated>
+                  <q-tab-panels v-model="tab" animated class="bg-transparent">
                     <q-tab-panel name="attachments">
                       <q-uploader ref="uploaderRef" class="q-mb-md" :label="t('Add new file (Drag & Drop supported)')"
                         flat bordered auto-upload hide-upload-btn color="dark" field-name="file" url="api2/file"
