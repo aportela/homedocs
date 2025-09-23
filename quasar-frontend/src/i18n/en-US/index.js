@@ -191,4 +191,5 @@ export default {
   "Total search results count": "{count} document|{count} documents",
   "Type text condition": "Type text condition",
   "Toggle sort by this column": "Toggle sort by this column: {field}",
+  "This document has no associated notes.": "This document has no associated notes.",
 };

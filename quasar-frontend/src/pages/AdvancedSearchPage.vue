@@ -102,7 +102,7 @@
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <q-tooltip v-if="isDesktop">{{ t('Toggle sort by this column', { field: t(column.title) })
-                }}</q-tooltip>
+                  }}</q-tooltip>
               </th>
             </tr>
           </thead>
@@ -153,15 +153,15 @@
     <FilePreviewModal v-if="showPreviewFileDialog" :title="selectedDocument.title" :files="selectedDocument.files"
       @close="showPreviewFileDialog = false">
     </FilePreviewModal>
-    <NotesPreviewModal v-if="showPreviewNotesDialog" :title="selectedDocument.title" :notes="selectedDocument.notes"
-      @close="showPreviewNotesDialog = false">
+    <NotesPreviewModal v-if="showPreviewNotesDialog" :documentId="selectedDocument.id"
+      :documentTitle="selectedDocument.title" @close="showPreviewNotesDialog = false">
     </NotesPreviewModal>
   </q-page>
 </template>
 
 <script setup>
 
-import { ref, reactive, computed, onMounted, nextTick, watch } from "vue";
+import { ref, reactive, computed, onMounted, nextTick } from "vue";
 import { useRoute } from "vue-router";
 import { date, format, useQuasar } from "quasar";
 import { useI18n } from "vue-i18n";
@@ -417,34 +417,9 @@ const onShowDocumentFiles = (documentId, documentTitle) => {
 
 const onShowDocumentNotes = (documentId, documentTitle) => {
   if (!state.loading) {
-    selectedDocument.title = null;
-    selectedDocument.notes.length = 0;
-    selectedDocument.files.length = 0;
-    state.loading = true;
-    api.document
-      .getNotes(documentId)
-      .then((successResponse) => {
-        selectedDocument.id = documentId;
-        selectedDocument.title = documentTitle;
-        selectedDocument.notes.push(...successResponse.data.notes.map((note) => {
-          note.createdOn = date.formatDate(note.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
-          note.expanded = false;
-          return (note);
-        }));
-        state.loading = false;
-        showPreviewNotesDialog.value = selectedDocument.notes.length > 0;
-      })
-      .catch((errorResponse) => {
-        state.loading = false;
-        switch (errorResponse.response.status) {
-          case 401:
-            // TODO
-            break;
-          default:
-            // TODO
-            break;
-        }
-      });
+    selectedDocument.id = documentId;
+    selectedDocument.title = documentTitle;
+    showPreviewNotesDialog.value = true;
   }
 };
 
