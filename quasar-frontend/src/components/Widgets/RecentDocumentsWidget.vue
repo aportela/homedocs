@@ -109,7 +109,7 @@ import { useI18n } from "vue-i18n";
 import { api } from "boot/axios";
 import { useFormatDates } from "src/composables/formatDate"
 
-import { default as CustomExpansionWidget } from "components/CustomExpansionWidget.vue";
+import { default as CustomExpansionWidget } from "components/Widgets/CustomExpansionWidget.vue";
 import { default as CustomErrorBanner } from "components/CustomErrorBanner.vue";
 import { default as CustomBanner } from "components/CustomBanner.vue";
 import { default as DocumentFilesPreviewDialog } from "components/Dialogs/DocumentFilesPreviewDialog.vue";

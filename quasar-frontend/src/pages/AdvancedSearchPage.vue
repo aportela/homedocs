@@ -102,7 +102,7 @@
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <q-tooltip v-if="isDesktop">{{ t('Toggle sort by this column', { field: t(column.title) })
-                  }}</q-tooltip>
+                }}</q-tooltip>
               </th>
             </tr>
           </thead>
@@ -161,7 +161,7 @@ import { api } from "boot/axios";
 import { useAdvancedSearchData } from "stores/advancedSearchData"
 import { default as TagSelector } from "components/TagSelector.vue";
 
-import { default as CustomExpansionWidget } from "components/CustomExpansionWidget.vue";
+import { default as CustomExpansionWidget } from "components/Widgets/CustomExpansionWidget.vue";
 import { default as CustomErrorBanner } from "components/CustomErrorBanner.vue";
 import { default as CustomBanner } from "components/CustomBanner.vue";
 
