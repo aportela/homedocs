@@ -211,9 +211,9 @@
         </form>
       </q-card>
     </div>
-    <FilePreviewModal v-if="showPreviewFileDialog" :files="document.files" :index="selectedFileIndex"
+    <DocumentFilesPreviewDialog v-if="showPreviewFileDialog" :files="document.files" :index="selectedFileIndex"
       @close="showPreviewFileDialog = false">
-    </FilePreviewModal>
+    </DocumentFilesPreviewDialog>
     <NoteModal v-if="showNoteDialog" @close="showNoteDialog = false" @cancel="showNoteDialog = false" @add="onAddNote"
       @update="onUpdateNote" :note="currentNote">
     </NoteModal>
@@ -260,7 +260,7 @@ import { useI18n } from 'vue-i18n'
 import { api } from 'boot/axios'
 import { default as TagSelector } from "components/TagSelector.vue";
 import { default as ConfirmationModal } from "components/ConfirmationModal.vue";
-import { default as FilePreviewModal } from "components/FilePreviewModal.vue";
+import { default as DocumentFilesPreviewDialog } from "components/DocumentFilesPreviewDialog.vue";
 import { default as NoteModal } from "components/NoteModal.vue";
 import { useInitialStateStore } from "stores/initialState";
 

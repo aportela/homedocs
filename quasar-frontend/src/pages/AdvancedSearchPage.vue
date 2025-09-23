@@ -102,7 +102,7 @@
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <q-tooltip v-if="isDesktop">{{ t('Toggle sort by this column', { field: t(column.title) })
-                }}</q-tooltip>
+                  }}</q-tooltip>
               </th>
             </tr>
           </thead>
@@ -142,9 +142,9 @@
         </div>
       </template>
     </CustomExpansionWidget>
-    <FilePreviewModal v-if="showPreviewFileDialog" :title="selectedDocument.title" :files="selectedDocument.files"
-      @close="showPreviewFileDialog = false">
-    </FilePreviewModal>
+    <DocumentFilesPreviewDialog v-if="showPreviewFileDialog" :title="selectedDocument.title"
+      :files="selectedDocument.files" @close="showPreviewFileDialog = false">
+    </DocumentFilesPreviewDialog>
     <DocumentNotesPreviewDialog v-if="showPreviewNotesDialog" :documentId="selectedDocument.id"
       :documentTitle="selectedDocument.title" @close="showPreviewNotesDialog = false">
     </DocumentNotesPreviewDialog>
@@ -167,7 +167,7 @@ import { default as CustomBanner } from "components/CustomBanner.vue";
 
 import { useDateFilter } from "src/composables/dateFilter"
 import { default as CustomInputDateFilter } from "components/CustomInputDateFilter.vue";
-import { default as FilePreviewModal } from "components/FilePreviewModal.vue";
+import { default as DocumentFilesPreviewDialog } from "components/DocumentFilesPreviewDialog.vue";
 import { default as DocumentNotesPreviewDialog } from "components/DocumentNotesPreviewDialog.vue";
 
 const { t } = useI18n();
