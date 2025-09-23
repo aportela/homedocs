@@ -55,7 +55,7 @@ const props = defineProps({
 const attrs = useAttrs();
 const { t } = useI18n();
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue']);
 
 const qInputRef = ref(null);
 
