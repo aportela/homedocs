@@ -70,12 +70,20 @@
             </q-item-section>
             <q-item-section side top>
               <q-item-label caption>{{ timeAgo(recentDocument.timestamp) }}</q-item-label>
-              <q-chip size="md" square class="full-width theme-default-q-chip">
-                <q-avatar class="theme-default-q-avatar">{{ recentDocument.fileCount }}</q-avatar>
+              <q-chip size="md" square class="full-width theme-default-q-chip"
+                :clickable="recentDocument.fileCount > 0 && !state.loading"
+                @click.stop="onShowDocumentFiles(recentDocument.id, recentDocument.title)">
+                <q-avatar class="theme-default-q-avatar"
+                  :class="{ 'text-white bg-blue': recentDocument.fileCount > 0 }">{{ recentDocument.fileCount
+                  }}</q-avatar>
                 {{ t("Total files", { count: recentDocument.fileCount }) }}
               </q-chip>
-              <q-chip size="md" square class="full-width theme-default-q-chip">
-                <q-avatar class="theme-default-q-avatar">{{ recentDocument.noteCount }}</q-avatar>
+              <q-chip size="md" square class="full-width theme-default-q-chip"
+                :clickable="recentDocument.noteCount > 0 && !state.loading"
+                @click="onShowDocumentNotes(recentDocument.id, recentDocument.title)">
+                <q-avatar class="theme-default-q-avatar"
+                  :class="{ 'text-white bg-blue': recentDocument.noteCount > 0 }">{{ recentDocument.noteCount
+                  }}</q-avatar>
                 {{ t("Total notes", { count: recentDocument.noteCount }) }}
               </q-chip>
             </q-item-section>
@@ -86,11 +94,17 @@
       <CustomBanner v-else warning text="You haven't created any documents yet"></CustomBanner>
     </template>
   </CustomExpansionWidget>
+  <FilePreviewModal v-if="showPreviewFilesDialog" :title="selectedDocument.title" :files="selectedDocument.files"
+    @close="showPreviewFilesDialog = false">
+  </FilePreviewModal>
+  <NotesPreviewModal v-if="showPreviewNotesDialog" :documentId="selectedDocument.id"
+    :documentTitle="selectedDocument.title" @close="showPreviewNotesDialog = false">
+  </NotesPreviewModal>
 </template>
 
 <script setup>
 
-import { reactive, computed, onMounted } from "vue";
+import { ref, reactive, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { api } from "boot/axios";
 import { useFormatDates } from "src/composables/formatDate"
@@ -98,6 +112,8 @@ import { useFormatDates } from "src/composables/formatDate"
 import { default as CustomExpansionWidget } from "components/CustomExpansionWidget.vue";
 import { default as CustomErrorBanner } from "components/CustomErrorBanner.vue";
 import { default as CustomBanner } from "components/CustomBanner.vue";
+import { default as FilePreviewModal } from "components/FilePreviewModal.vue";
+import { default as NotesPreviewModal } from "components/NotesPreviewModal.vue";
 
 const { t } = useI18n();
 const { timeAgo } = useFormatDates();
@@ -119,6 +135,16 @@ const state = reactive({
 const recentDocuments = reactive([]);
 const hasRecentDocuments = computed(() => recentDocuments.length > 0);
 
+const selectedDocument = reactive({
+  id: null,
+  title: null,
+  files: [],
+  notes: [],
+});
+
+const showPreviewFilesDialog = ref(false);
+const showPreviewNotesDialog = ref(false);
+
 function onRefresh() {
   state.loading = true;
   state.loadingError = false;
@@ -138,6 +164,25 @@ function onRefresh() {
       state.loading = false;
     });
 }
+
+const onShowDocumentFiles = (documentId, documentTitle) => {
+  /*
+  if (!state.loading) {
+    selectedDocument.id = documentId;
+    selectedDocument.title = documentTitle;
+    showPreviewFilesDialog.value = true;
+  }
+    */
+};
+
+const onShowDocumentNotes = (documentId, documentTitle) => {
+  if (!state.loading) {
+    selectedDocument.id = documentId;
+    selectedDocument.title = documentTitle;
+    showPreviewNotesDialog.value = true;
+  }
+};
+
 
 onMounted(() => {
   onRefresh();
