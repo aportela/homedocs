@@ -5,7 +5,7 @@
         <RecentDocuments :expanded="expanded"></RecentDocuments>
       </div>
       <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
-        <TagCloud :expanded="expanded"></TagCloud>
+        <TagCloudWidget :expanded="expanded"></TagCloudWidget>
       </div>
     </div>
   </q-page>
@@ -15,8 +15,8 @@
 import { ref } from "vue";
 import { useQuasar } from "quasar";
 
-import { default as RecentDocuments } from "components/RecentDocuments.vue";
-import { default as TagCloud } from "components/TagCloud.vue";
+import { default as RecentDocuments } from "components/Widgets/RecentDocumentsWidget.vue";
+import { default as TagCloudWidget } from "components/Widgets/TagCloudWidget.vue";
 
 const $q = useQuasar();
 
