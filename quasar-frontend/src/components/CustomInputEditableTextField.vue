@@ -1,5 +1,6 @@
 <template>
   <div v-if="readOnly">
+    <!-- TODO: q-mb-md not working on errorMessages -->
     <div class="cursor-pointer q-pa-sm q-mb-md relative-position white-space-pre-line read-only-input-container"
       :class="{ 'border-error': error }" @mouseenter="onMouseEnter" @mouseleave="onMouseLeave"
       @click="onToggleReadOnly">
@@ -19,8 +20,9 @@
         {{ model }}
       </div>
     </div>
+    <!-- TODO: do not use relative position-->
     <p class="text-red q-ml-sm" style="position: relative; top: -10px; font-size: 0.8em;" v-if="error"> {{ errorMessage
-    }}
+      }}
     </p>
   </div>
   <q-input v-else v-bind="attrs" ref="qInputRef" :label="label" v-model.trim="model" :rules="rules" :error="error"
