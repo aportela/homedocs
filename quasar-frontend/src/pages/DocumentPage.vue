@@ -260,7 +260,7 @@ import { useI18n } from 'vue-i18n'
 import { api } from 'boot/axios'
 import { default as TagSelector } from "components/TagSelector.vue";
 import { default as ConfirmationDialog } from "components/Dialogs/ConfirmationDialog.vue";
-import { default as DocumentFilesPreviewDialog } from "components/DocumentFilesPreviewDialog.vue";
+import { default as DocumentFilesPreviewDialog } from "components/Dialogs/DocumentFilesPreviewDialog.vue";
 import { default as NoteModal } from "components/NoteModal.vue";
 import { useInitialStateStore } from "stores/initialState";
 

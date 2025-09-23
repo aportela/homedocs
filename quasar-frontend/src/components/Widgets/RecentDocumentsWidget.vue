@@ -52,7 +52,7 @@
               <q-item-label>
                 <router-link :to="{ name: 'document', params: { id: recentDocument.id } }"
                   class="text-decoration-hover text-color-primary"><span class="text-weight-bold">{{ t("Title")
-                    }}:</span> {{
+                  }}:</span> {{
                       recentDocument.title
                     }}
                 </router-link>
@@ -112,8 +112,8 @@ import { useFormatDates } from "src/composables/formatDate"
 import { default as CustomExpansionWidget } from "components/CustomExpansionWidget.vue";
 import { default as CustomErrorBanner } from "components/CustomErrorBanner.vue";
 import { default as CustomBanner } from "components/CustomBanner.vue";
-import { default as DocumentFilesPreviewDialog } from "components/DocumentFilesPreviewDialog.vue";
-import { default as DocumentNotesPreviewDialog } from "components/DocumentNotesPreviewDialog.vue";
+import { default as DocumentFilesPreviewDialog } from "components/Dialogs/DocumentFilesPreviewDialog.vue";
+import { default as DocumentNotesPreviewDialog } from "components/Dialogs/DocumentNotesPreviewDialog.vue";
 
 const { t } = useI18n();
 const { timeAgo } = useFormatDates();

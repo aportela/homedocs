@@ -102,7 +102,7 @@
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <q-tooltip v-if="isDesktop">{{ t('Toggle sort by this column', { field: t(column.title) })
-                }}</q-tooltip>
+                  }}</q-tooltip>
               </th>
             </tr>
           </thead>
@@ -167,8 +167,8 @@ import { default as CustomBanner } from "components/CustomBanner.vue";
 
 import { useDateFilter } from "src/composables/dateFilter"
 import { default as CustomInputDateField } from "components/CustomInputDateField.vue";
-import { default as DocumentFilesPreviewDialog } from "components/DocumentFilesPreviewDialog.vue";
-import { default as DocumentNotesPreviewDialog } from "components/DocumentNotesPreviewDialog.vue";
+import { default as DocumentFilesPreviewDialog } from "components/Dialogs/DocumentFilesPreviewDialog.vue";
+import { default as DocumentNotesPreviewDialog } from "components/Dialogs/DocumentNotesPreviewDialog.vue";
 
 const { t } = useI18n();
 
