@@ -24,8 +24,8 @@
         <CustomBanner v-if="profileUpdatedSuccessfully" text="Profile has been successfully updated" success
           class="q-mt-lg">
         </CustomBanner>
-        <CustomErrorBanner v-else-if="state.loadingError" text="Error loading data" :apiError="state.apiError"
-          class="q-mt-lg">
+        <CustomErrorBanner v-else-if="state.loadingError" :text="state.errorMessage || 'Error loading data'"
+          :apiError="state.apiError" class="q-mt-lg">
         </CustomErrorBanner>
       </form>
     </template>
@@ -33,9 +33,10 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, nextTick } from "vue";
+import { ref, reactive, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 
+import { bus } from "src/boot/bus";
 import { api } from "src/boot/axios";
 import { useFormUtils } from "src/composables/formUtils";
 
@@ -50,6 +51,7 @@ const formUtils = useFormUtils();
 const state = reactive({
   loading: false,
   loadingError: false,
+  errorMessage: null,
   apiError: null
 });
 
@@ -76,6 +78,7 @@ const onResetForm = () => {
 const onGetProfile = () => {
   state.loading = true;
   state.loadingError = false;
+  state.errorMessage = null;
   state.apiError = null;
   profile.email = null;
   profile.password = null;
@@ -89,7 +92,18 @@ const onGetProfile = () => {
     })
     .catch((errorResponse) => {
       state.loadingError = true;
-      state.apiError = errorResponse.customAPIErrorDetails;
+      switch (errorResponse.response.status) {
+        // TODO: invalid fields check
+        case 401:
+          state.apiError = errorResponse.customAPIErrorDetails;
+          state.errorMessage = "Auth session expired, requesting new...";
+          bus.emit("reAuthRequired", { emitter: "UpdateProfileForm.onGetProfile" });
+          break;
+        default:
+          state.apiError = errorResponse.customAPIErrorDetails;
+          state.errorMessage = "API Error: fatal error";
+          break;
+      }
       state.loading = false;
       nextTick(() => {
         passwordRef.value?.focus();
@@ -112,6 +126,7 @@ const onValidateForm = () => {
 const onSubmitForm = () => {
   state.loading = true;
   state.loadingError = false;
+  state.errorMessage = null;
   state.apiError = null;
   profileUpdatedSuccessfully.value = false;
   api.user
@@ -127,7 +142,18 @@ const onSubmitForm = () => {
     })
     .catch((errorResponse) => {
       state.loadingError = true;
-      state.apiError = errorResponse.customAPIErrorDetails;
+      switch (errorResponse.response.status) {
+        // TODO: invalid fields check
+        case 401:
+          state.apiError = errorResponse.customAPIErrorDetails;
+          state.errorMessage = "Auth session expired, requesting new...";
+          bus.emit("reAuthRequired", { emitter: "UpdateProfileForm.onSubmitForm" });
+          break;
+        default:
+          state.apiError = errorResponse.customAPIErrorDetails;
+          state.errorMessage = "API Error: fatal error";
+          break;
+      }
       state.loading = false;
       nextTick(() => {
         passwordRef.value?.focus();
@@ -137,6 +163,19 @@ const onSubmitForm = () => {
 
 onMounted(() => {
   onGetProfile();
+  bus.on("reAuthSucess", (msg) => {
+    if (msg.to?.includes("UpdateProfileForm.onGetProfile")) {
+      onGetProfile();
+    }
+    if (msg.to?.includes("UpdateProfileForm.onSubmitForm")) {
+      onSubmitForm();
+    }
+  });
 });
+
+onBeforeUnmount(() => {
+  bus.off("reAuthSucess");
+});
+
 
 </script>
