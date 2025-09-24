@@ -177,23 +177,23 @@ const api = {
     search: function (currentPage, resultsPage, filter, sortBy, sortOrder) {
       return new Promise((resolve, reject) => {
         const params = {
-          title: filter.text.title || null,
-          description: filter.text.description || null,
-          notesBody: filter.text.notes || null,
+          title: filter.text?.title || null,
+          description: filter.text?.description || null,
+          notesBody: filter.text?.notes || null,
           tags: filter.tags || [],
         };
         params.fromCreationTimestampCondition =
-          filter.dates.creationDate.timestamps.from || null;
+          filter.dates?.creationDate?.timestamps?.from || null;
         params.toCreationTimestampCondition =
-          filter.dates.creationDate.timestamps.to || null;
+          filter.dates?.creationDate?.timestamps?.to || null;
         params.fromLastUpdateTimestampCondition =
-          filter.dates.lastUpdate.timestamps.from || null;
+          filter.dates?.lastUpdate?.timestamps?.from || null;
         params.toLastUpdateTimestampCondition =
-          filter.dates.lastUpdate.timestamps.to || null;
+          filter.dates?.lastUpdate?.timestamps?.to || null;
         params.fromUpdatedOnTimestampCondition =
-          filter.dates.updatedOn.timestamps.from || null;
+          filter.dates?.updatedOn?.timestamps?.from || null;
         params.toUpdatedOnTimestampCondition =
-          filter.dates.updatedOn.timestamps.to || null;
+          filter.dates?.updatedOn?.timestamps?.to || null;
         params.currentPage = currentPage;
         params.resultsPage = resultsPage;
         params.sortBy = sortBy;
