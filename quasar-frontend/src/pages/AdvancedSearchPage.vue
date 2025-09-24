@@ -72,7 +72,8 @@
               :disable="state.loading || totalSearchConditions < 1" type="reset" v-if="useStoreFilter"></q-btn>
           </q-btn-group>
         </form>
-        <CustomErrorBanner v-if="showErrorBanner" text="Error loading data" :apiError="state.apiError" class="q-ma-md">
+        <CustomErrorBanner v-if="showErrorBanner" :text="state.errorMessage || 'Error loading data'"
+          :apiError="state.apiError" class="q-ma-md">
         </CustomErrorBanner>
         <CustomBanner v-else-if="showNoResultsBanner" warning text="No results found with current filter"
           class="q-ma-md">
@@ -102,7 +103,7 @@
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <q-tooltip v-if="isDesktop">{{ t('Toggle sort by this column', { field: t(column.title) })
-                  }}</q-tooltip>
+                }}</q-tooltip>
               </th>
             </tr>
           </thead>
