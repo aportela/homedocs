@@ -58,10 +58,13 @@ axios.interceptors.response.use(
         url: error.request?.responseURL || "N/A",
         httpCode: error.response?.status || "N/A",
         httpStatus: error.response?.statusText || "Unknown error",
-        params: {
-          query: error.config.params || null,
-          data: error.config.data || null,
+        request: {
+          params: {
+            query: error.config.params || null,
+            data: error.config.data || null,
+          },
         },
+        response: error.response.data,
       };
       return Promise.reject(error);
     }
