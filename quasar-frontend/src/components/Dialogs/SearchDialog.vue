@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="visible" @show="onShow" @hide="onClose">
+  <q-dialog v-model="isVisible" @show="onShow" @hide="onClose">
     <q-card style="width: 60%; max-width: 80vw;">
       <q-card-section class="row items-center q-pb-none">
         <div class="text-h6">{{ t('Search on HomeDocs...') }}</div>
@@ -86,7 +86,7 @@
 
 <script setup>
 
-import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
+import { ref, watch, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useQuasar, date } from "quasar";
@@ -98,7 +98,13 @@ import { default as CustomErrorBanner } from "src/components/Banners/CustomError
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 
 
-const visible = ref(true);
+const props = defineProps({
+  visible: {
+    type: Boolean,
+    required: true,
+    default: false,
+  }
+});
 
 const router = useRouter();
 
@@ -107,6 +113,10 @@ const $q = useQuasar();
 const { t } = useI18n();
 
 const emit = defineEmits(['close']);
+
+const isVisible = ref(props.visible);
+
+watch(() => props.visible, val => isVisible.value = val);
 
 const state = reactive({
   loading: false,
@@ -253,7 +263,7 @@ const onShow = () => {
 }
 
 const onClose = () => {
-  visible.value = false;
+  isVisible.value = false;
   searchResults.length = 0;
   text.value = null;
   showNoSearchResults.value = false;

@@ -26,7 +26,7 @@
       </q-toolbar>
     </q-header>
     <SidebarDrawer v-model="visibleSidebar" :mini="miniSidebarCurrentMode"></SidebarDrawer>
-    <SearchDialog v-model="isFastSearchModalVisible" @close="isFastSearchModalVisible = false"></SearchDialog>
+    <SearchDialog :visible="isFastSearchModalVisible" @close="isFastSearchModalVisible = false"></SearchDialog>
     <q-page-container>
       <router-view class="q-pa-sm" />
     </q-page-container>
