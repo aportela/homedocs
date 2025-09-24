@@ -2,7 +2,7 @@
   <q-dialog v-model="visible" @hide="onClose">
     <q-card style="width: 80%; max-width: 80vw;">
       <q-card-section>
-        <div class=" text-h6">{{ t(props.note.id ? "Document note (click on body to update)" : "Add document note") }}
+        <div class=" text-h6">{{ t(props.note.id ? "Document note (click on body to update)" : "Add note") }}
         </div>
       </q-card-section>
       <q-separator />
@@ -16,9 +16,9 @@
       <q-separator />
       <q-card-actions align="right">
         <q-btn flat @click.stop="onCancel"><q-icon left name="close" />{{ t("Cancel")
-          }}</q-btn>
+        }}</q-btn>
         <q-btn flat @click.stop="onSave"><q-icon left name="done" />{{ t("Save")
-          }}</q-btn>
+        }}</q-btn>
       </q-card-actions>
     </q-card>
   </q-dialog>

@@ -149,7 +149,7 @@ export default {
   "Document note (click on body to update)":
     "Document note (click on body to update)",
   "Add note": "Add note",
-  "Add document note": "Add document note",
+  "Add attachment": "Add attachment",
   History: "History",
   "Document created": "Document created",
   "Document updated": "Document updated",
