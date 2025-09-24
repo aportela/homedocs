@@ -102,7 +102,7 @@
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <q-tooltip v-if="isDesktop">{{ t('Toggle sort by this column', { field: t(column.title) })
-                  }}</q-tooltip>
+                }}</q-tooltip>
               </th>
             </tr>
           </thead>
@@ -471,7 +471,7 @@ onMounted(() => {
   }
   bus.on("reAuthSucess", (msg) => {
     if (msg.to?.includes("AdvancedSearchPage.onSubmitForm")) {
-      onSubmitForm(true);
+      onSubmitForm(false);
     }
   });
 });
