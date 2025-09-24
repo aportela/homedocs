@@ -3,9 +3,9 @@
     <q-card class="q-card-notes-dialog">
       <q-card-section class="row items-center q-p-none">
         <div class="q-card-notes-dialog-header max-width-90" v-if="documentTitle">{{ t(" Document title")
-          }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
+        }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
             documentTitle
-          }}</router-link>
+            }}</router-link>
         </div>
         <div class="q-card-notes-dialog-header" v-else>{{ t("Document notes") }}</div>
         <q-space />
@@ -54,9 +54,10 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from "vue";
+import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import { date } from "quasar";
+import { bus } from "src/boot/bus";
 import { useFormatDates } from "src/composables/formatDate"
 import { api } from "src/boot/axios";
 
@@ -88,6 +89,7 @@ const emit = defineEmits(['close']);
 const state = reactive({
   loading: false,
   loadingError: false,
+  errorMessage: null,
   apiError: null
 });
 
@@ -99,33 +101,38 @@ const dialogModel = ref(true);
 
 const onRefresh = (documentId) => {
   if (documentId) {
-    state.loading = true;
-    state.loadingError = false;
-    state.apiError = null;
-    api.document
-      .getNotes(documentId)
-      .then((successResponse) => {
-        notes.length = 0;
-        notes.push(...successResponse.data.notes.map((note) => {
-          note.createdOn = date.formatDate(note.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
-          note.expanded = false;
-          return (note);
-        }));
-        state.loading = false;
-      })
-      .catch((errorResponse) => {
-        state.loadingError = true;
-        state.apiError = errorResponse.customAPIErrorDetails;
-        state.loading = false;
-        switch (errorResponse.response.status) {
-          case 401:
-            // TODO
-            break;
-          default:
-            // TODO
-            break;
-        }
-      });
+    if (!state.loading) {
+      state.loading = true;
+      state.loadingError = false;
+      state.errorMessage = null;
+      state.apiError = null;
+      api.document
+        .getNotes(documentId)
+        .then((successResponse) => {
+          notes.length = 0;
+          notes.push(...successResponse.data.notes.map((note) => {
+            note.createdOn = date.formatDate(note.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
+            note.expanded = false;
+            return (note);
+          }));
+          state.loading = false;
+        })
+        .catch((errorResponse) => {
+          state.loadingError = true;
+          switch (errorResponse.response.status) {
+            case 401:
+              state.apiError = errorResponse.customAPIErrorDetails;
+              state.errorMessage = "Auth session expired, requesting new...";
+              bus.emit("reAuthRequired", { emitter: "DocumentNotesPreviewDialog" });
+              break;
+            default:
+              state.apiError = errorResponse.customAPIErrorDetails;
+              state.errorMessage = "API Error: fatal error";
+              break;
+          }
+          state.loading = false;
+        });
+    }
   } else {
     // TODO
     state.loadingError = true;
@@ -134,6 +141,15 @@ const onRefresh = (documentId) => {
 
 onMounted(() => {
   onRefresh(props.documentId || null);
+  bus.on("reAuthSucess", (msg) => {
+    if (msg.to?.includes("DocumentNotesPreviewDialog")) {
+      onRefresh(props.documentId || null);
+    }
+  });
+});
+
+onBeforeUnmount(() => {
+  bus.off("reAuthSucess");
 });
 
 </script>
