@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="visible" @hide="onClose">
+  <q-dialog v-model="visible" persistent @hide="onClose">
     <q-card style="width: 512px; max-width: 80vw;">
       <q-card-section class="q-p-none">
         <slot name="header"></slot>
