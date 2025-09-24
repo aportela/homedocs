@@ -69,7 +69,7 @@ const state = reactive({
 const tags = reactive([]);
 const hasTags = computed(() => tags.length > 0);
 
-function onRefresh() {
+const onRefresh = () => {
   if (!state.loading) {
     state.loading = true;
     state.loadingError = false;
@@ -97,7 +97,7 @@ function onRefresh() {
         state.loading = false;
       });
   }
-}
+};
 
 onMounted(() => {
   onRefresh();
@@ -111,6 +111,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
   bus.off("reAuthSucess");
 });
+
 </script>
 
 <style scoped>

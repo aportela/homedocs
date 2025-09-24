@@ -53,7 +53,7 @@
               <q-item-label>
                 <router-link :to="{ name: 'document', params: { id: recentDocument.id } }"
                   class="text-decoration-hover text-color-primary"><span class="text-weight-bold">{{ t("Title")
-                  }}:</span> {{
+                    }}:</span> {{
                       recentDocument.title
                     }}
                 </router-link>
@@ -148,7 +148,7 @@ const selectedDocument = reactive({
 const showPreviewFilesDialog = ref(false);
 const showPreviewNotesDialog = ref(false);
 
-function onRefresh() {
+const onRefresh = () => {
   if (!state.loading) {
     state.loading = true;
     state.loadingError = false;
@@ -179,7 +179,7 @@ function onRefresh() {
         state.loading = false;
       });
   }
-}
+};
 
 const onShowDocumentFiles = (documentId, documentTitle) => {
   /*
@@ -211,4 +211,5 @@ onMounted(() => {
 onBeforeUnmount(() => {
   bus.off("reAuthSucess");
 });
+
 </script>
