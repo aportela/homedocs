@@ -153,19 +153,20 @@
 
 <script setup>
 
-import { ref, reactive, computed, onMounted, nextTick } from "vue";
+import { ref, reactive, computed, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useRoute } from "vue-router";
-import { date, format, useQuasar } from "quasar";
 import { useI18n } from "vue-i18n";
+import { date, format, useQuasar } from "quasar";
+
+import { bus } from "src/boot/bus";
 import { api } from "src/boot/axios";
 import { useAdvancedSearchData } from "src/stores/advancedSearchData"
-import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
+import { useDateFilter } from "src/composables/dateFilter"
 
+import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
 import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
-
-import { useDateFilter } from "src/composables/dateFilter"
 import { default as DateFieldCustomInput } from "src/components/Forms/Fields/DateFieldCustomInput.vue";
 import { default as DocumentFilesPreviewDialog } from "src/components/Dialogs/DocumentFilesPreviewDialog.vue";
 import { default as DocumentNotesPreviewDialog } from "src/components/Dialogs/DocumentNotesPreviewDialog.vue";
@@ -228,7 +229,6 @@ const sort = reactive({
   field: "lastUpdateTimestamp",
   order: "DESC",
 });
-
 
 const results = reactive([]);
 const hasResults = computed(() => results.length > 0);
@@ -311,7 +311,6 @@ const onSubmitForm = (resetPager) => {
     store.filters = filters;
     store.sort = sort;
   }
-
   api.document.search(pager.currentPage, pager.resultsPage, filters, sort.field, sort.order)
     .then((successResponse) => {
       if (successResponse.data.results) {
@@ -341,10 +340,9 @@ const onSubmitForm = (resetPager) => {
           state.errorMessage = "API Error: invalid/missing param";
           break;
         case 401:
-          // TODO: dialog modal signin ?
-          this.$router.push({
-            name: "signIn",
-          });
+          state.apiError = errorResponse.customAPIErrorDetails;
+          state.errorMessage = "Auth session expired, requesting new...";
+          bus.emit("reAuthRequired", { emitter: "AdvancedSearchPage.onSubmitForm" });
           break;
         default:
           state.loadingError = true;
@@ -471,6 +469,15 @@ onMounted(() => {
       onSubmitForm(true);
     });
   }
+  bus.on("reAuthSucess", (msg) => {
+    if (msg.to?.includes("AdvancedSearchPage.onSubmitForm")) {
+      onSubmitForm(true);
+    }
+  });
+});
+
+onBeforeUnmount(() => {
+  bus.off("reAuthSucess");
 });
 
 </script>
