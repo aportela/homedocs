@@ -40,7 +40,8 @@
           <q-separator inset v-if="i < 3" class="q-my-md" />
         </div>
       </q-list>
-      <CustomErrorBanner v-else-if="state.loadingError" text="Error loading data" :apiError="state.apiError">
+      <CustomErrorBanner v-else-if="state.loadingError" :text="state.errorMessage || 'Error loading data'"
+        :apiError="state.apiError">
       </CustomErrorBanner>
       <q-list v-else-if="hasRecentDocuments">
         <div v-for="recentDocument, index in recentDocuments" :key="recentDocument.id">
@@ -52,7 +53,7 @@
               <q-item-label>
                 <router-link :to="{ name: 'document', params: { id: recentDocument.id } }"
                   class="text-decoration-hover text-color-primary"><span class="text-weight-bold">{{ t("Title")
-                  }}:</span> {{
+                    }}:</span> {{
                       recentDocument.title
                     }}
                 </router-link>
@@ -104,8 +105,9 @@
 
 <script setup>
 
-import { ref, reactive, computed, onMounted } from "vue";
+import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
+import { bus } from "src/boot/bus";
 import { api } from "src/boot/axios";
 import { useFormatDates } from "src/composables/formatDate"
 
@@ -129,6 +131,7 @@ const props = defineProps({
 const state = reactive({
   loading: false,
   loadingError: false,
+  errorMessage: null,
   apiError: null
 });
 
@@ -146,23 +149,36 @@ const showPreviewFilesDialog = ref(false);
 const showPreviewNotesDialog = ref(false);
 
 function onRefresh() {
-  state.loading = true;
-  state.loadingError = false;
-  state.apiError = null;
-  api.document.searchRecent(16)
-    .then((successResponse) => {
-      recentDocuments.length = 0;
-      recentDocuments.push(...successResponse.data.recentDocuments.map((document) => {
-        document.timestamp = document.lastUpdateTimestamp * 1000; // convert PHP timestamps (seconds) to JS (milliseconds)
-        return document;
-      }));
-      state.loading = false;
-    })
-    .catch((errorResponse) => {
-      state.loadingError = true;
-      state.apiError = errorResponse.customAPIErrorDetails;
-      state.loading = false;
-    });
+  if (!state.loading) {
+    state.loading = true;
+    state.loadingError = false;
+    state.apiError = null;
+    api.document.searchRecent(16)
+      .then((successResponse) => {
+        recentDocuments.length = 0;
+        recentDocuments.push(...successResponse.data.recentDocuments.map((document) => {
+          document.timestamp = document.lastUpdateTimestamp * 1000; // convert PHP timestamps (seconds) to JS (milliseconds)
+          return document;
+        }));
+        state.loading = false;
+      })
+      .catch((errorResponse) => {
+        state.loadingError = true;
+        switch (errorResponse.response.status) {
+          case 401:
+            state.apiError = errorResponse.customAPIErrorDetails;
+            state.errorMessage = "Auth session expired, requesting new...";
+            bus.emit("reAuthRequired", { emitter: "RecentDocumentsWidget" });
+            break;
+          default:
+            // TODO: on this error (example 404 not found) do not use error validation fields on title (required, red border, this field is required)
+            state.apiError = errorResponse.customAPIErrorDetails;
+            state.errorMessage = "API Error: fatal error";
+            break;
+        }
+        state.loading = false;
+      });
+  }
 }
 
 const onShowDocumentFiles = (documentId, documentTitle) => {
@@ -183,9 +199,16 @@ const onShowDocumentNotes = (documentId, documentTitle) => {
   }
 };
 
-
 onMounted(() => {
   onRefresh();
+  bus.on("reAuthSucess", (msg) => {
+    if (msg.to?.includes("RecentDocumentsWidget")) {
+      onRefresh();
+    }
+  });
 });
 
+onBeforeUnmount(() => {
+  bus.off("reAuthSucess");
+});
 </script>

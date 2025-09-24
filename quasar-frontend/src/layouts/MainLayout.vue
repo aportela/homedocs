@@ -10,7 +10,7 @@
         <q-btn type="button" no-caps no-wrap align="left" outline :label="searchButtonLabel" icon-right="search"
           class="full-width no-caps theme-default-q-btn" @click.prevent="isFastSearchModalVisible = true">
           <q-tooltip anchor="bottom middle" self="top middle">{{ t("Click to open fast search")
-            }}</q-tooltip>
+          }}</q-tooltip>
         </q-btn>
         <!--
         <FastSearchSelector dense class="full-width"></FastSearchSelector>
@@ -50,10 +50,11 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from "vue";
+import { ref, reactive, watch, computed, onMounted, onBeforeUnmount } from "vue";
 import { useQuasar, LocalStorage } from "quasar";
-import { useSessionStore } from "src/stores/session";
 import { useI18n } from "vue-i18n";
+import { useSessionStore } from "src/stores/session";
+import { bus } from "src/boot/bus";
 
 import { default as SidebarDrawer } from "src/components/SidebarDrawer.vue"
 //import { default as FastSearchSelector } from "src/components/FastSearchSelector.vue"
@@ -78,8 +79,11 @@ if (!session.isLoaded) {
 }
 
 const showReauthDialog = ref(false);
+const reAuthEmitters = reactive([]);
+
 const onSuccessReauth = () => {
   showReauthDialog.value = false;
+  bus.emit("reAuthSucess", ({ to: reAuthEmitters }))
 };
 
 const isFastSearchModalVisible = ref(false);
@@ -116,5 +120,18 @@ const onToggleminiSidebarCurrentMode = (value) => {
     LocalStorage.set("miniSidebarCurrentMode", miniSidebarCurrentMode.value);
   }
 }
+
+onMounted(() => {
+  bus.on("reAuthRequired", (msg) => {
+    if (msg.emitter) {
+      reAuthEmitters.push(msg.emitter);
+    }
+    showReauthDialog.value = true;
+  });
+});
+
+onBeforeUnmount(() => {
+  bus.off("reAuthRequired");
+});
 
 </script>
