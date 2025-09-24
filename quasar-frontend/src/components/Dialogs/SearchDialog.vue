@@ -247,6 +247,8 @@ const onKeyDown = (event) => {
 };
 
 const onShow = () => {
+  // this is required here because this modal dialog is persistent (from MainLayout.vue).
+  // DOES NOT WORK with onMounted/onBeforeUnmount. WE ONLY WANT CAPTURE KEY EVENTS WHEN DIALOG IS VISIBLE
   window.addEventListener('keydown', onKeyDown);
 }
 
@@ -255,6 +257,8 @@ const onClose = () => {
   searchResults.length = 0;
   text.value = null;
   showNoSearchResults.value = false;
+  // this is required here because this modal dialog is persistent (from MainLayout.vue).
+  // DOES NOT WORK with onMounted/onBeforeUnmount. WE ONLY WANT CAPTURE KEY EVENTS WHEN DIALOG IS VISIBLE
   window.removeEventListener('keydown', onKeyDown);
   emit('close');
 }
