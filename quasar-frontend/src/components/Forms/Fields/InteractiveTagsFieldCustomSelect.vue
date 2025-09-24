@@ -19,8 +19,9 @@
   </div>
   <q-select v-else ref="selectRef" :label="t(label)" v-model="currentTags" :dense="dense" :options-dense="dense"
     outlined use-input use-chips multiple hide-dropdown-icon :options="filteredTags" input-debounce="0"
-    new-value-mode="add-unique" :disable="disabled || loading || loadingError" :loading="loading" :error="loadingError"
-    :errorMessage="t('Error loading available tags')" @filter="onFilterTags" @add="onAddTag">
+    new-value-mode="add-unique" :disable="disabled || state.loading || state.loadingError" :loading="state.loading"
+    :error="state.loadingError" :errorMessage="t('Error loading available tags')" @filter="onFilterTags"
+    @add="onAddTag">
     <template v-slot:prepend>
       <slot name="prepend">
         <q-icon name="tag" />
@@ -66,11 +67,8 @@ const emit = defineEmits(['update:modelValue', 'error']);
 
 const showUpdateHoverIcon = ref(false);
 
-// TODO use reactive obj for status
 const readOnly = ref(!props.startModeEditable);
 const selectRef = ref('');
-const loading = ref(false);
-const loadingError = ref(false);
 const filteredTags = ref([]);
 const currentTags = ref([]);
 const selectedTagsProp = computed(() => props.modelValue || []);
@@ -82,7 +80,7 @@ const state = reactive({
   apiError: null
 });
 
-let availableTags = [];
+const availableTags = reactive([]);
 
 watch(selectedTagsProp, (newValue) => {
   currentTags.value = newValue || [];
@@ -111,16 +109,12 @@ function onRefresh() {
     state.loadingError = false;
     state.errorMessage = null;
     state.apiError = null;
-
-    loadingError.value = false;
-    loading.value = true;
     api.tag.search().then((successResponse) => {
-      availableTags = successResponse.data.tags;
+      availableTags.length = 0;
+      availableTags.push(...successResponse.data.tags);
       currentTags.value = selectedTagsProp.value;
-      loading.value = false;
       state.loading = false;
     }).catch((errorResponse) => {
-
       state.loadingError = true;
       switch (errorResponse.response.status) {
         case 401:
@@ -134,9 +128,6 @@ function onRefresh() {
           break;
       }
       state.loading = false;
-
-      loadingError.value = true;
-      loading.value = false;
       emit('error', errorResponse.response);
     });
   }
