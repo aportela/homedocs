@@ -19,7 +19,8 @@
               </q-card-section>
               <q-card-section class="text-center text-h4" v-if="!stat.loadingError">{{ stat.total }}</q-card-section>
               <q-card-section v-else>
-                <CustomErrorBanner text="Error loading data" :apiError="stat.apiError"></CustomErrorBanner>
+                <CustomErrorBanner :text="stat.errorMessage || 'Error loading data'" :apiError="stat.apiError">
+                </CustomErrorBanner>
               </q-card-section>
             </q-card>
           </div>
@@ -32,10 +33,11 @@
 
 <script setup>
 
-import { reactive, onMounted } from "vue";
+import { reactive, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import { format } from "quasar";
 
+import { bus } from "src/boot/bus";
 import { api } from "src/boot/axios";
 
 import ActivityHeatMap from "src/components/ActivityHeatMap.vue";
@@ -54,6 +56,7 @@ const stats = reactive({
     total: 0,
     loading: false,
     loadingError: false,
+    errorMessage: null,
     apiError: null,
     headerLabel: "Total documents",
     icon: "shelves"
@@ -62,6 +65,7 @@ const stats = reactive({
     total: 0,
     loading: false,
     loadingError: false,
+    errorMessage: null,
     apiError: null,
     headerLabel: "Total attachments",
     icon: "attachment"
@@ -70,6 +74,7 @@ const stats = reactive({
     total: 0,
     loading: false,
     loadingError: false,
+    errorMessage: null,
     apiError: null,
     headerLabel: "Disk usage",
     icon: "data_usage"
@@ -80,69 +85,125 @@ const onActivityHeatMapLoading = () => {
   heatmapStats.loadingError = false;
   heatmapStats.loading = true;
 };
+
 const onActivityHeatMapLoaded = () => {
   heatmapStats.loading = false;
 };
+
 const onActivityHeatMapError = () => {
   heatmapStats.loadingError = true;
   heatmapStats.loading = false;
 };
 
 const onRefreshTotalDocuments = () => {
-  stats.documents.loading = true;
-  stats.documents.total = 0;
-  stats.documents.loadingError = false;
-  stats.documents.apiError = null;
-  api.stats.documentCount()
-    .then((successResponse) => {
-      stats.documents.total = successResponse.data.count;
-      stats.documents.loading = false;
-    })
-    .catch((errorResponse) => {
-      stats.documents.loadingError = true;
-      stats.documents.apiError = errorResponse.customAPIErrorDetails;
-      stats.documents.loading = false;
-    });
+  if (!stats.documents.loading) {
+    stats.documents.loading = true;
+    stats.documents.total = 0;
+    stats.documents.loadingError = false;
+    stats.documents.errorMessage = null;
+    stats.documents.apiError = null;
+    api.stats.documentCount()
+      .then((successResponse) => {
+        stats.documents.total = successResponse.data.count;
+        stats.documents.loading = false;
+      })
+      .catch((errorResponse) => {
+        stats.documents.loadingError = true;
+        switch (errorResponse.response.status) {
+          case 401:
+            stats.documents.apiError = errorResponse.customAPIErrorDetails;
+            stats.documents.errorMessage = "Auth session expired, requesting new...";
+            bus.emit("reAuthRequired", { emitter: "SystemStatsWidget.TotalDocuments" });
+            break;
+          default:
+            stats.documents.apiError = errorResponse.customAPIErrorDetails;
+            stats.documents.errorMessage = "API Error: fatal error";
+            break;
+        }
+        stats.documents.loading = false;
+      });
+  }
 }
 
 const onRefreshTotalAttachments = () => {
-  stats.attachments.loading = true;
-  stats.attachments.total = 0;
-  stats.attachments.loadingError = false;
-  stats.attachments.apiError = null;
-  api.stats.attachmentCount()
-    .then((successResponse) => {
-      stats.attachments.total = successResponse.data.count;
-      stats.attachments.loading = false;
-    })
-    .catch((errorResponse) => {
-      stats.attachments.loadingError = true;
-      stats.attachments.apiError = errorResponse.customAPIErrorDetails;
-      stats.attachments.loading = false;
-    });
+  if (!stats.attachments.loading) {
+    stats.attachments.loading = true;
+    stats.attachments.total = 0;
+    stats.attachments.loadingError = false;
+    stats.attachments.errorMessage = null;
+    stats.attachments.apiError = null;
+    api.stats.attachmentCount()
+      .then((successResponse) => {
+        stats.attachments.total = successResponse.data.count;
+        stats.attachments.loading = false;
+      })
+      .catch((errorResponse) => {
+        stats.attachments.loadingError = true;
+        switch (errorResponse.response.status) {
+          case 401:
+            stats.attachments.apiError = errorResponse.customAPIErrorDetails;
+            stats.attachments.errorMessage = "Auth session expired, requesting new...";
+            bus.emit("reAuthRequired", { emitter: "SystemStatsWidget.TotalAttachments" });
+            break;
+          default:
+            stats.attachments.apiError = errorResponse.customAPIErrorDetails;
+            stats.attachments.errorMessage = "API Error: fatal error";
+            break;
+        }
+        stats.attachments.loading = false;
+      });
+  }
 }
 
 const onRefreshTotalAttachmentsDiskUsage = () => {
-  stats.diskUsage.loading = true;
-  stats.diskUsage.total = 0;
-  stats.diskUsage.loadingError = false;
-  stats.diskUsage.apiError = null;
-  api.stats.attachmentDiskSize()
-    .then((successResponse) => {
-      stats.diskUsage.total = format.humanStorageSize(successResponse.data.size);
-      stats.diskUsage.loading = false;
-    })
-    .catch((errorResponse) => {
-      stats.diskUsage.loadingError = true;
-      stats.diskUsage.apiError = errorResponse.customAPIErrorDetails;
-      stats.diskUsage.loading = false;
-    });
+  if (!stats.diskUsage.loading) {
+    stats.diskUsage.loading = true;
+    stats.diskUsage.total = 0;
+    stats.diskUsage.loadingError = false;
+    stats.diskUsage.errorMessage = null;
+    stats.diskUsage.apiError = null;
+    api.stats.attachmentDiskSize()
+      .then((successResponse) => {
+        stats.diskUsage.total = format.humanStorageSize(successResponse.data.size);
+        stats.diskUsage.loading = false;
+      })
+      .catch((errorResponse) => {
+        stats.diskUsage.loadingError = true;
+        switch (errorResponse.response.status) {
+          case 401:
+            stats.diskUsage.apiError = errorResponse.customAPIErrorDetails;
+            stats.diskUsage.errorMessage = "Auth session expired, requesting new...";
+            bus.emit("reAuthRequired", { emitter: "SystemStatsWidget.TotalAttachmentsDiskUsage" });
+            break;
+          default:
+            stats.diskUsage.apiError = errorResponse.customAPIErrorDetails;
+            stats.diskUsage.errorMessage = "API Error: fatal error";
+            break;
+        }
+        stats.diskUsage.loading = false;
+      });
+  }
 }
 
 onMounted(() => {
   onRefreshTotalDocuments();
   onRefreshTotalAttachments();
   onRefreshTotalAttachmentsDiskUsage();
+  bus.on("reAuthSucess", (msg) => {
+    if (msg.to?.includes("SystemStatsWidget.TotalDocuments")) {
+      onRefreshTotalDocuments();
+    }
+    if (msg.to?.includes("SystemStatsWidget.TotalAttachments")) {
+      onRefreshTotalAttachments();
+    }
+    if (msg.to?.includes("SystemStatsWidget.TotalAttachmentsDiskUsage")) {
+      onRefreshTotalAttachmentsDiskUsage();
+    }
+  });
+});
+
+onBeforeUnmount(() => {
+  bus.off("reAuthSucess");
 });
 
 </script>
