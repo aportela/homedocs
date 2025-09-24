@@ -148,7 +148,7 @@ const api = {
           password: password,
         };
         axios
-          .post("api2/user/profile", params)
+          .put("api2/user/profile", params)
           .then((response) => {
             resolve(response);
           })

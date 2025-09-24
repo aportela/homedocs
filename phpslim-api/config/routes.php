@@ -96,8 +96,7 @@ return function (App $app) {
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-
-            $group->post('/user/profile', function (Request $request, Response $response, array $args) {
+            $group->put('/user/profile', function (Request $request, Response $response, array $args) {
                 $params = $request->getParsedBody();
                 $db = $this->get(\aportela\DatabaseWrapper\DB::class);
                 $user = new \HomeDocs\User(
