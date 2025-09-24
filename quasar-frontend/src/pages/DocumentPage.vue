@@ -213,7 +213,8 @@
               </template>
             </q-btn>
             <CustomBanner v-if="state.saveSuccess" class="q-mt-md" text="Document saved" success></CustomBanner>
-            <CustomErrorBanner v-else-if="state.saveError" class="q-mt-md" :text="state.errorMessage">
+            <CustomErrorBanner v-else-if="state.loadingError || state.saveError" class="q-mt-md"
+              :text="state.errorMessage">
             </CustomErrorBanner>
           </q-card-section>
         </form>
@@ -406,31 +407,39 @@ function parseDocumentJSONResponse(documentData) {
 
 function onRefresh() {
   loading.value = true;
+  state.loading = true;
+  state.loadingError = false;
+  state.errorMessage = null;
+  state.apiError = null;
+  state.saveSuccess = false;
+  state.saveError = false;
   api.document
     .get(document.value.id)
-    .then((response) => {
-      parseDocumentJSONResponse(response.data.data);
+    .then((successResponse) => {
+      parseDocumentJSONResponse(successResponse.data.data);
       loading.value = false;
+      state.loading = false;
       if (titleRef.value) {
         nextTick(() => titleRef.value.focus());
       }
     })
-    .catch((error) => {
+    .catch((errorResponse) => {
       loading.value = false;
-      switch (error.response.status) {
+      state.apiError = errorResponse.customAPIErrorDetails;
+      switch (errorResponse.response.status) {
         case 401:
+          // TODO: signin popup ??
           this.$router.push({
             name: "signIn",
           });
           break;
         default:
-          $q.notify({
-            type: "negative",
-            message: t("API Error: error loading document"),
-            caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
-          });
+          // TODO: on this error (example 404 not found) do not use error validation fields on title (required, red border, this field is required)
+          state.loadingError = true;
+          state.errorMessage = "API Error: fatal error";
           break;
       }
+      state.loading = false;
     });
 }
 
