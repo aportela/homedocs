@@ -5,13 +5,15 @@
       <q-avatar square size="128px">
         <img src="icons/favicon-128x128.png" />
       </q-avatar>
-      <h4 class="q-mt-sm q-mb-md text-h4 text-weight-bolder">{{
-        t(!!savedEmail ? "Glad to see you again!" : "Welcome aboard!")
-      }}</h4>
-      <div class="text-color-secondary">{{
-        t(!!savedEmail ? "Let's get back to organizing." : "Let's start organizing.")
-      }}
-      </div>
+      <slot name="slogan">
+        <h4 class="q-mt-sm q-mb-md text-h4 text-weight-bolder">{{
+          t(!!savedEmail ? "Glad to see you again!" : "Welcome aboard!")
+        }}</h4>
+        <div class="text-color-secondary">{{
+          t(!!savedEmail ? "Let's get back to organizing." : "Let's start organizing.")
+        }}
+        </div>
+      </slot>
     </q-card-section>
     <q-card-section>
       <q-input dense outlined ref="emailRef" v-model="profile.email" type="email" name="email" :label="t('Email')"
@@ -39,21 +41,23 @@
         :apiError="state.apiError" class="q-mt-lg">
       </CustomErrorBanner>
     </q-card-section>
-    <q-card-section class="text-center q-pt-none" v-if="signUpAllowed">
-      <div>
-        {{ t("Don't have an account yet ?") }}
-        <router-link :to="{ name: 'signUp' }" class="main-app-text-link-hover">{{ t("Click here to sign up") }}
-        </router-link>
-      </div>
-    </q-card-section>
-    <q-separator class="q-mb-sm" />
-    <q-card-section class="text-center q-py-none">
-      <q-btn-group flat square>
-        <DarkModeButton />
-        <SwitchLanguageButton />
-        <GitHubButton label="@2025 HomeDocs" :href="GITHUB_PROJECT_URL" />
-      </q-btn-group>
-    </q-card-section>
+    <div v-if="showExtraBottom">
+      <q-card-section class="text-center q-pt-none" v-if="signUpAllowed">
+        <div>
+          {{ t("Don't have an account yet ?") }}
+          <router-link :to="{ name: 'signUp' }" class="main-app-text-link-hover">{{ t("Click here to sign up") }}
+          </router-link>
+        </div>
+      </q-card-section>
+      <q-separator class="q-mb-sm" />
+      <q-card-section class="text-center q-py-none">
+        <q-btn-group flat square>
+          <DarkModeButton />
+          <SwitchLanguageButton />
+          <GitHubButton label="@2025 HomeDocs" :href="GITHUB_PROJECT_URL" />
+        </q-btn-group>
+      </q-card-section>
+    </div>
   </form>
 </template>
 
@@ -73,6 +77,14 @@ import { default as GitHubButton } from "src/components/Buttons/GitHubButton.vue
 import { GITHUB_PROJECT_URL } from "src/constants"
 import { default as PasswordFieldCustomInput } from "src/components/Forms/Fields/PasswordFieldCustomInput.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
+
+const props = defineProps({
+  showExtraBottom: {
+    type: Boolean,
+    required: false,
+    default: true
+  }
+});
 
 const emit = defineEmits(['success']);
 
