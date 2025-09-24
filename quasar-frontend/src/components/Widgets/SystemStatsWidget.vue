@@ -40,7 +40,7 @@ import { format } from "quasar";
 import { bus } from "src/boot/bus";
 import { api } from "src/boot/axios";
 
-import ActivityHeatMap from "src/components/ActivityHeatMap.vue";
+import ActivityHeatMap from "src/components/Widgets/ActivityHeatMap.vue";
 import { default as BaseWidget } from "src/components/Widgets/BaseWidget.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
 
