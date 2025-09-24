@@ -262,20 +262,21 @@
 
 <script setup>
 
-import { ref, reactive, nextTick, computed, onMounted } from "vue";
+import { ref, reactive, nextTick, computed, onMounted, onBeforeUnmount } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { uid, format, date, useQuasar } from "quasar";
 import { useI18n } from "vue-i18n";
+import { uid, format, date, useQuasar } from "quasar";
+
+import { bus } from "src/boot/bus";
 import { api } from "src/boot/axios";
+import { useFormatDates } from "src/composables/formatDate"
+import { useFormUtils } from "src/composables/formUtils"
+import { useInitialStateStore } from "src/stores/initialState";
+
 import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
 import { default as ConfirmationDialog } from "src/components/Dialogs/ConfirmationDialog.vue";
 import { default as DocumentFilesPreviewDialog } from "src/components/Dialogs/DocumentFilesPreviewDialog.vue";
 import { default as NoteModal } from "src/components/NoteModal.vue";
-import { useInitialStateStore } from "src/stores/initialState";
-
-import { useFormatDates } from "src/composables/formatDate"
-import { useFormUtils } from "src/composables/formUtils"
-
 import { default as InteractiveTextFieldCustomInput } from "src/components/Forms/Fields/InteractiveTextFieldCustomInput.vue"
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue"
@@ -428,10 +429,9 @@ function onRefresh() {
       state.apiError = errorResponse.customAPIErrorDetails;
       switch (errorResponse.response.status) {
         case 401:
-          // TODO: signin popup ??
-          this.$router.push({
-            name: "signIn",
-          });
+          state.apiError = errorResponse.customAPIErrorDetails;
+          state.errorMessage = "Auth session expired, requesting new...";
+          bus.emit("reAuthRequired", { emitter: "DocumentPage.onRefresh" });
           break;
         default:
           // TODO: on this error (example 404 not found) do not use error validation fields on title (required, red border, this field is required)
@@ -455,6 +455,7 @@ function onSubmitForm() {
     api.document
       .update(document.value)
       .then((successResponse) => {
+        // TODO: refactor api response to document
         if (successResponse.data.data) {
           readOnlyTitle.value = true;
           readOnlyDescription.value = true;
@@ -468,12 +469,14 @@ function onSubmitForm() {
             titleRef.value.focus();
           });
         } else {
+          // TODO
           loading.value = false;
         }
       })
       .catch((errorResponse) => {
         loading.value = false;
         state.apiError = errorResponse.customAPIErrorDetails;
+        state.saveError = true;
         switch (errorResponse.response.status) {
           case 400:
             if (
@@ -481,7 +484,6 @@ function onSubmitForm() {
                 return e === "title";
               })
             ) {
-              state.saveError = true;
               state.errorMessage = t("API Error: missing document title param");
               nextTick(() => titleRef.value.focus());
             } else if (
@@ -489,22 +491,17 @@ function onSubmitForm() {
                 return e === "note_body";
               })
             ) {
-              state.saveError = true;
               state.errorMessage = t("API Error: missing document note body");
               // TODO: focus note without body ???
             } else {
-              state.saveError = true;
               state.errorMessage = "API Error: fatal error";
             }
             break;
           case 401:
-            // TODO: signin popup ??
-            this.$router.push({
-              name: "signIn",
-            });
+            state.errorMessage = "Auth session expired, requesting new...";
+            bus.emit("reAuthRequired", { emitter: "AdvancedSearchPage.onSubmitForm" });
             break;
           default:
-            state.saveError = true;
             state.errorMessage = "API Error: fatal error";
             break;
         }
@@ -524,10 +521,10 @@ function onSubmitForm() {
         });
       })
       .catch((errorResponse) => {
-        console.log(errorResponse);
         document.value.id = null;
         loading.value = false;
         state.apiError = errorResponse.customAPIErrorDetails;
+        state.saveError = true;
         switch (errorResponse.response.status) {
           case 400:
             if (
@@ -535,7 +532,6 @@ function onSubmitForm() {
                 return e === "title";
               })
             ) {
-              state.saveError = true;
               state.errorMessage = t("API Error: missing document title param");
               nextTick(() => titleRef.value.focus());
             } else if (
@@ -543,22 +539,17 @@ function onSubmitForm() {
                 return e === "note_body";
               })
             ) {
-              state.saveError = true;
               state.errorMessage = t("API Error: missing document note body");
               // TODO: focus note without body ???
             } else {
-              state.saveError = true;
               state.errorMessage = "API Error: fatal error";
             }
             break;
           case 401:
-            // TODO: signin popup ??
-            this.$router.push({
-              name: "signIn",
-            });
+            state.errorMessage = "Auth session expired, requesting new...";
+            bus.emit("reAuthRequired", { emitter: "AdvancedSearchPage.onSubmitForm" });
             break;
           default:
-            state.saveError = true;
             state.errorMessage = "API Error: fatal error";
             break;
         }
@@ -774,6 +765,19 @@ onMounted(() => {
       // TODO: ERROR
     }
   }
+  bus.on("reAuthSucess", (msg) => {
+    if (msg.to?.includes("DocumentPage.onRefresh")) {
+      onRefresh();
+    }
+    if (msg.to?.includes("DocumentPage.onSubmitForm")) {
+      onSubmitForm();
+    }
+  });
 });
+
+onBeforeUnmount(() => {
+  bus.off("reAuthSucess");
+});
+
 
 </script>
