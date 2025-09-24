@@ -102,7 +102,7 @@
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <q-tooltip v-if="isDesktop">{{ t('Toggle sort by this column', { field: t(column.title) })
-                }}</q-tooltip>
+                  }}</q-tooltip>
               </th>
             </tr>
           </thead>
@@ -371,6 +371,7 @@ const onResetForm = () => {
 };
 
 const onShowDocumentFiles = (documentId, documentTitle) => {
+  // TODO: use new dialog (LIKE DOCUMENT NOTES, NOT DONE)
   if (!state.loading) {
     selectedDocument.title = null;
     selectedDocument.notes.length = 0;
@@ -381,7 +382,7 @@ const onShowDocumentFiles = (documentId, documentTitle) => {
       .then((successResponse) => {
         selectedDocument.id = documentId;
         selectedDocument.title = documentTitle;
-        selectedDocument.files.push(...successResponse.data.data.files.map((file) => {
+        selectedDocument.files.push(...successResponse.data.document.files.map((file) => {
           file.isNew = false;
           file.uploadedOn = date.formatDate(file.uploadedOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
           file.humanSize = format.humanStorageSize(file.size);

@@ -175,7 +175,7 @@ return function (App $app) {
                 $payload = json_encode(
                     [
                         'initialState' => \HomeDocs\Utils::getInitialState($this),
-                        'data' => $document
+                        'document' => $document
                     ]
                 );
                 $response->getBody()->write($payload);
@@ -247,7 +247,7 @@ return function (App $app) {
                 $payload = json_encode(
                     [
                         'initialState' => \HomeDocs\Utils::getInitialState($this),
-                        'data' => $document
+                        'document' => $document
                     ]
                 );
                 $response->getBody()->write($payload);
@@ -311,7 +311,7 @@ return function (App $app) {
                 $payload = json_encode(
                     [
                         'initialState' => \HomeDocs\Utils::getInitialState($this),
-                        'data' => $document
+                        'document' => $document
                     ]
                 );
                 $response->getBody()->write($payload);
