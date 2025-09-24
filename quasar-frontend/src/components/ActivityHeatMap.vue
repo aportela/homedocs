@@ -13,13 +13,14 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, watch } from "vue";
+import { ref, reactive, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { date, Dark } from "quasar";
 
 import { i18n } from "src/boot/i18n";
 import { api } from "src/boot/axios";
+import { bus } from "src/boot/bus";
 
 import CalHeatmap from "cal-heatmap";
 import "cal-heatmap/cal-heatmap.css";
@@ -45,6 +46,7 @@ const props = defineProps({
 const state = reactive({
   loading: false,
   loadingError: false,
+  errorMessage: null,
   apiError: null
 });
 
@@ -185,11 +187,11 @@ const onRightButtonClicked = () => {
   cal.next();
 };
 
-
-const refresh = () => {
+const onRefresh = () => {
   emit("loading");
   state.loading = true;
   state.loadingError = false;
+  state.errorMessage = null;
   state.apiError = null;
   api.stats.getActivityHeatMapData(date.formatDate(fromDate, 'X'))
     .then((successResponse) => {
@@ -210,14 +212,33 @@ const refresh = () => {
     })
     .catch((errorResponse) => {
       state.loadingError = true;
-      state.apiError = errorResponse.customAPIErrorDetails;
+      switch (errorResponse.response.status) {
+        case 401:
+          state.apiError = errorResponse.customAPIErrorDetails;
+          state.errorMessage = "Auth session expired, requesting new...";
+          bus.emit("reAuthRequired", { emitter: "ActivityHeatMap" });
+          break;
+        default:
+          state.apiError = errorResponse.customAPIErrorDetails;
+          state.errorMessage = "API Error: fatal error";
+          break;
+      }
       state.loading = false;
       emit("error");
     });
 }
 
 onMounted(() => {
-  refresh();
+  onRefresh();
+  bus.on("reAuthSucess", (msg) => {
+    if (msg.to?.includes("ActivityHeatMap")) {
+      onRefresh();
+    }
+  });
+});
+
+onBeforeUnmount(() => {
+  bus.off("reAuthSucess");
 });
 
 </script>
