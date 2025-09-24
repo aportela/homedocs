@@ -53,7 +53,7 @@
               <q-item-label>
                 <router-link :to="{ name: 'document', params: { id: recentDocument.id } }"
                   class="text-decoration-hover text-color-primary"><span class="text-weight-bold">{{ t("Title")
-                    }}:</span> {{
+                  }}:</span> {{
                       recentDocument.title
                     }}
                 </router-link>
@@ -152,6 +152,7 @@ function onRefresh() {
   if (!state.loading) {
     state.loading = true;
     state.loadingError = false;
+    state.errorMessage = null;
     state.apiError = null;
     api.document.searchRecent(16)
       .then((successResponse) => {
@@ -171,7 +172,6 @@ function onRefresh() {
             bus.emit("reAuthRequired", { emitter: "RecentDocumentsWidget" });
             break;
           default:
-            // TODO: on this error (example 404 not found) do not use error validation fields on title (required, red border, this field is required)
             state.apiError = errorResponse.customAPIErrorDetails;
             state.errorMessage = "API Error: fatal error";
             break;
