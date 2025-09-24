@@ -84,6 +84,7 @@ const reAuthEmitters = reactive([]);
 const onSuccessReauth = () => {
   showReauthDialog.value = false;
   bus.emit("reAuthSucess", ({ to: reAuthEmitters }))
+  reAuthEmitters.length = 0;
 };
 
 const isFastSearchModalVisible = ref(false);
