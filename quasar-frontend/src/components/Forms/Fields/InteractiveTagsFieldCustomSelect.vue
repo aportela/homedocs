@@ -68,7 +68,7 @@ const emit = defineEmits(['update:modelValue', 'error']);
 const showUpdateHoverIcon = ref(false);
 
 const readOnly = ref(!props.startModeEditable);
-const selectRef = ref('');
+const selectRef = ref(null);
 const filteredTags = ref([]);
 const currentTags = ref([]);
 const selectedTagsProp = computed(() => props.modelValue || []);
@@ -134,11 +134,11 @@ function onRefresh() {
 }
 
 function onAddTag(tag) {
-  selectRef.value.hidePopup()
+  selectRef.value?.hidePopup()
 }
 
 function removeTagAtIndex(index) {
-  currentTags.value.splice(index, 1);
+  currentTags.value?.splice(index, 1);
 }
 
 async function focus() {
