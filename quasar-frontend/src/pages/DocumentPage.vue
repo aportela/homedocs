@@ -369,7 +369,7 @@ router.beforeEach(async (to, from) => {
   }
 });
 
-function parseDocumentJSONResponse(documentData) {
+const parseDocumentJSONResponse = (documentData) => {
   document.value = documentData;
   document.value.creationDate = date.formatDate(document.value.createdOnTimestamp * 1000, 'YYYY/MM/DD HH:mm:ss');
   document.value.lastUpdate = date.formatDate(document.value.lastUpdateTimestamp * 1000, 'YYYY/MM/DD HH:mm:ss');
@@ -404,9 +404,9 @@ function parseDocumentJSONResponse(documentData) {
     }
     return (operation);
   });
-}
+};
 
-function onRefresh() {
+const onRefresh = () => {
   loading.value = true;
   state.loading = true;
   state.loadingError = false;
@@ -417,11 +417,11 @@ function onRefresh() {
   api.document
     .get(document.value.id)
     .then((successResponse) => {
-      parseDocumentJSONResponse(successResponse.data.data);
+      parseDocumentJSONResponse(successResponse.data.document);
       loading.value = false;
       state.loading = false;
       if (titleRef.value) {
-        nextTick(() => titleRef.value.focus());
+        nextTick(() => titleRef.value?.focus());
       }
     })
     .catch((errorResponse) => {
@@ -456,17 +456,16 @@ function onSubmitForm() {
       .update(document.value)
       .then((successResponse) => {
         // TODO: refactor api response to document
-        if (successResponse.data.data) {
+        if (successResponse.data.document) {
           readOnlyTitle.value = true;
           readOnlyDescription.value = true;
-          parseDocumentJSONResponse(successResponse.data.data);
+          parseDocumentJSONResponse(successResponse.data.document);
           loading.value = false;
           state.loading = false;
+          // TODO: translate "Document saved" label
           state.saveSuccess = true;
           nextTick(() => {
-            //TODO: FAIL with hidden tab
-            //uploaderRef.value.reset();
-            titleRef.value.focus();
+            titleRef.value?.focus();
           });
         } else {
           // TODO
@@ -485,7 +484,7 @@ function onSubmitForm() {
               })
             ) {
               state.errorMessage = t("API Error: missing document title param");
-              nextTick(() => titleRef.value.focus());
+              nextTick(() => titleRef.value?.focus());
             } else if (
               errorResponse.response.data.invalidOrMissingParams.find(function (e) {
                 return e === "note_body";
@@ -533,7 +532,7 @@ function onSubmitForm() {
               })
             ) {
               state.errorMessage = t("API Error: missing document title param");
-              nextTick(() => titleRef.value.focus());
+              nextTick(() => titleRef.value?.focus());
             } else if (
               errorResponse.response.data.invalidOrMissingParams.find(function (e) {
                 return e === "note_body";
