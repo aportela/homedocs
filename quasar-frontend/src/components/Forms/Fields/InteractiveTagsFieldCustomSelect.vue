@@ -41,9 +41,11 @@
 
 <script setup>
 
-import { ref, watch, computed, onMounted, nextTick } from "vue";
-import { api } from "src/boot/axios";
+import { ref, reactive, watch, computed, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
+
+import { bus } from "src/boot/bus";
+import { api } from "src/boot/axios";
 
 const { t } = useI18n();
 
@@ -64,6 +66,7 @@ const emit = defineEmits(['update:modelValue', 'error']);
 
 const showUpdateHoverIcon = ref(false);
 
+// TODO use reactive obj for status
 const readOnly = ref(!props.startModeEditable);
 const selectRef = ref('');
 const loading = ref(false);
@@ -71,6 +74,13 @@ const loadingError = ref(false);
 const filteredTags = ref([]);
 const currentTags = ref([]);
 const selectedTagsProp = computed(() => props.modelValue || []);
+
+const state = reactive({
+  loading: false,
+  loadingError: false,
+  errorMessage: null,
+  apiError: null
+});
 
 let availableTags = [];
 
@@ -95,18 +105,41 @@ function onFilterTags(val, update) {
   }
 }
 
-function loadAvailableTags() {
-  loadingError.value = false;
-  loading.value = true;
-  api.tag.search().then((response) => {
-    availableTags = response.data.tags;
-    currentTags.value = selectedTagsProp.value;
-    loading.value = false;
-  }).catch((error) => {
-    loadingError.value = true;
-    loading.value = false;
-    emit('error', error.response);
-  });
+function onRefresh() {
+  if (!state.loading) {
+    state.loading = true;
+    state.loadingError = false;
+    state.errorMessage = null;
+    state.apiError = null;
+
+    loadingError.value = false;
+    loading.value = true;
+    api.tag.search().then((successResponse) => {
+      availableTags = successResponse.data.tags;
+      currentTags.value = selectedTagsProp.value;
+      loading.value = false;
+      state.loading = false;
+    }).catch((errorResponse) => {
+
+      state.loadingError = true;
+      switch (errorResponse.response.status) {
+        case 401:
+          state.apiError = errorResponse.customAPIErrorDetails;
+          state.errorMessage = "Auth session expired, requesting new...";
+          bus.emit("reAuthRequired", { emitter: "InteractiveTagsFieldCustomSelect" });
+          break;
+        default:
+          state.apiError = errorResponse.customAPIErrorDetails;
+          state.errorMessage = "API Error: fatal error";
+          break;
+      }
+      state.loading = false;
+
+      loadingError.value = true;
+      loading.value = false;
+      emit('error', errorResponse.response);
+    });
+  }
 }
 
 function onAddTag(tag) {
@@ -133,9 +166,17 @@ function onToggleReadOnly() {
   }
 }
 
-
 onMounted(() => {
-  loadAvailableTags();
+  onRefresh();
+  bus.on("reAuthSucess", (msg) => {
+    if (msg.to?.includes("InteractiveTagsFieldCustomSelect")) {
+      onRefresh();
+    }
+  });
+});
+
+onBeforeUnmount(() => {
+  bus.off("reAuthSucess");
 });
 
 </script>
