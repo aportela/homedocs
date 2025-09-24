@@ -212,6 +212,9 @@
                 {{ t("Saving...") }}
               </template>
             </q-btn>
+            <CustomBanner v-if="state.saveSuccess" class="q-mt-md" text="Document saved" success></CustomBanner>
+            <CustomErrorBanner v-else-if="state.saveError" class="q-mt-md" :text="state.errorMessage">
+            </CustomErrorBanner>
           </q-card-section>
         </form>
       </q-card>
@@ -258,7 +261,7 @@
 
 <script setup>
 
-import { ref, nextTick, computed, onMounted } from "vue";
+import { ref, reactive, nextTick, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { uid, format, date, useQuasar } from "quasar";
 import { useI18n } from "vue-i18n";
@@ -273,6 +276,8 @@ import { useFormatDates } from "src/composables/formatDate"
 import { useFormUtils } from "src/composables/formUtils"
 
 import { default as InteractiveTextFieldCustomInput } from "src/components/Forms/Fields/InteractiveTextFieldCustomInput.vue"
+import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
+import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue"
 
 const tab = ref("notes");
 
@@ -302,6 +307,14 @@ const saving = ref(false);
 const uploading = ref(false);
 const currentNote = ref({ id: null, body: null });
 
+const state = reactive({
+  loading: false,
+  loadingError: false,
+  errorMessage: null,
+  apiError: null,
+  saveSuccess: false,
+  saveError: false,
+});
 
 const isNewDocument = computed(() => router.currentRoute.value.name == 'newDocument');
 
@@ -423,15 +436,23 @@ function onRefresh() {
 
 function onSubmitForm() {
   loading.value = true;
+  state.loading = true;
+  state.loadingError = false;
+  state.errorMessage = null;
+  state.apiError = null;
+  state.saveSuccess = false;
+  state.saveError = false;
   if (!isNewDocument.value) {
     api.document
       .update(document.value)
-      .then((response) => {
-        if (response.data.data) {
+      .then((successResponse) => {
+        if (successResponse.data.data) {
           readOnlyTitle.value = true;
           readOnlyDescription.value = true;
-          parseDocumentJSONResponse(response.data.data);
+          parseDocumentJSONResponse(successResponse.data.data);
           loading.value = false;
+          state.loading = false;
+          state.saveSuccess = true;
           nextTick(() => {
             //TODO: FAIL with hidden tab
             //uploaderRef.value.reset();
@@ -439,42 +460,46 @@ function onSubmitForm() {
           });
         } else {
           loading.value = false;
-          $q.notify({
-            type: "negative",
-            message: t("API Error: error updating document"),
-            caption: t("API Error: invalid response data")
-          });
         }
       })
-      .catch((error) => {
+      .catch((errorResponse) => {
         loading.value = false;
-        switch (error.response.status) {
+        state.apiError = errorResponse.customAPIErrorDetails;
+        switch (errorResponse.response.status) {
           case 400:
             if (
-              error.response.data.invalidOrMissingParams.find(function (e) {
+              errorResponse.response.data.invalidOrMissingParams.find(function (e) {
                 return e === "title";
               })
             ) {
-              $q.notify({
-                type: "negative",
-                message: t("API Error: missing document title param"),
-              });
+              state.saveError = true;
+              state.errorMessage = t("API Error: missing document title param");
               nextTick(() => titleRef.value.focus());
+            } else if (
+              errorResponse.response.data.invalidOrMissingParams.find(function (e) {
+                return e === "note_body";
+              })
+            ) {
+              state.saveError = true;
+              state.errorMessage = t("API Error: missing document note body");
+              // TODO: focus note without body ???
+            } else {
+              state.saveError = true;
+              state.errorMessage = "API Error: fatal error";
             }
             break;
           case 401:
+            // TODO: signin popup ??
             this.$router.push({
               name: "signIn",
             });
             break;
           default:
-            $q.notify({
-              type: "negative",
-              message: t("API Error: error updating document"),
-              caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
-            });
+            state.saveError = true;
+            state.errorMessage = "API Error: fatal error";
             break;
         }
+        state.loading = false;
       });
   } else {
     if (!document.value.id) {
@@ -482,43 +507,53 @@ function onSubmitForm() {
     }
     api.document
       .add(document.value)
-      .then((response) => {
+      .then((successResponse) => {
         loading.value = false;
         router.push({
           name: "document",
           params: { id: document.value.id }
         });
       })
-      .catch((error) => {
+      .catch((errorResponse) => {
+        console.log(errorResponse);
         document.value.id = null;
         loading.value = false;
-        switch (error.response.status) {
+        state.apiError = errorResponse.customAPIErrorDetails;
+        switch (errorResponse.response.status) {
           case 400:
             if (
-              error.response.data.invalidOrMissingParams.find(function (e) {
+              errorResponse.response.data.invalidOrMissingParams.find(function (e) {
                 return e === "title";
               })
             ) {
-              $q.notify({
-                type: "negative",
-                message: t("API Error: missing document title param"),
-              });
+              state.saveError = true;
+              state.errorMessage = t("API Error: missing document title param");
               nextTick(() => titleRef.value.focus());
+            } else if (
+              errorResponse.response.data.invalidOrMissingParams.find(function (e) {
+                return e === "note_body";
+              })
+            ) {
+              state.saveError = true;
+              state.errorMessage = t("API Error: missing document note body");
+              // TODO: focus note without body ???
+            } else {
+              state.saveError = true;
+              state.errorMessage = "API Error: fatal error";
             }
             break;
           case 401:
+            // TODO: signin popup ??
             this.$router.push({
               name: "signIn",
             });
             break;
           default:
-            $q.notify({
-              type: "negative",
-              message: t("API Error: error adding document"),
-              caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
-            });
+            state.saveError = true;
+            state.errorMessage = "API Error: fatal error";
             break;
         }
+        state.loading = false;
       });
   }
 }
