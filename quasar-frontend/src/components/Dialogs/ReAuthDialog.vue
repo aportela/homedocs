@@ -1,6 +1,6 @@
 <template>
   <q-dialog v-model="visible" @hide="onClose">
-    <q-card>
+    <q-card style="width: 512px; max-width: 80vw;">
       <q-card-section class="q-p-none">
         <slot name="header"></slot>
       </q-card-section>
@@ -14,8 +14,6 @@
 
 <script setup>
 import { ref } from "vue";
-import { useI18n } from "vue-i18n";
-
 
 const emit = defineEmits(['close', 'hide', 'success', 'error']);
 
