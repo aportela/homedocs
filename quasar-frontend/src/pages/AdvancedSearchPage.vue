@@ -320,9 +320,8 @@ const onSubmitForm = (resetPager) => {
         pager.totalResults = successResponse.data.results.pagination.totalResults;
         pager.totalPages = successResponse.data.results.pagination.totalPages;
         results.push(...successResponse.data.results.documents.map((document) => {
-          // convert PHP timestamps (seconds) to JS (milliseconds)
-          document.createdOn = date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
-          document.lastUpdate = date.formatDate(document.lastUpdateTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
+          document.createdOn = date.formatDate(document.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
+          document.lastUpdate = date.formatDate(document.lastUpdateTimestamp, 'YYYY-MM-DD HH:mm:ss');
           return (document);
         }));
         state.searchLaunched = true;
@@ -384,7 +383,7 @@ const onShowDocumentFiles = (documentId, documentTitle) => {
         selectedDocument.title = documentTitle;
         selectedDocument.files.push(...successResponse.data.document.files.map((file) => {
           file.isNew = false;
-          file.uploadedOn = date.formatDate(file.uploadedOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
+          file.uploadedOn = date.formatDate(file.uploadedOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
           file.humanSize = format.humanStorageSize(file.size);
           file.url = "api2/file/" + file.id;
           return (file)

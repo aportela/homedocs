@@ -33,7 +33,7 @@
                         readonly v-if="document.id">
                         <template v-slot:append v-if="screengtxs">
                           <span style="font-size: 14px;">
-                            {{ timeAgo(document.createdOnTimestamp * 1000) }}
+                            {{ timeAgo(document.createdOnTimestamp) }}
                           </span>
                         </template>
                       </q-input>
@@ -43,7 +43,7 @@
                         readonly v-if="document.id">
                         <template v-slot:append v-if="screengtxs">
                           <span style="font-size: 14px;">
-                            {{ timeAgo(document.lastUpdateTimestamp * 1000) }}
+                            {{ timeAgo(document.lastUpdateTimestamp) }}
                           </span>
                         </template>
                       </q-input>
@@ -159,7 +159,7 @@
                           <q-item-section>
                             <InteractiveTextFieldCustomInput v-model.trim="note.body" dense outlined type="textarea"
                               maxlength="4096" autogrow name="description"
-                              :label="`${note.createdOn} (${timeAgo(note.createdOnTimestamp * 1000)})`"
+                              :label="`${note.createdOn} (${timeAgo(note.createdOnTimestamp)})`"
                               :start-mode-editable="!!note.startOnEditMode" :disable="loading || saving" clearable
                               :max-lines="6" :rules="requiredFieldRules" :error="!note.body"
                               :error-message="fieldIsRequiredLabel" :autofocus="note.startOnEditMode">
@@ -191,7 +191,7 @@
                         </thead>
                         <tbody>
                           <tr v-for="operation in document.history" :key="operation.operationTimestamp">
-                            <td>{{ operation.date }} ({{ timeAgo(operation.operationTimestamp * 1000) }})</td>
+                            <td>{{ operation.date }} ({{ timeAgo(operation.operationTimestamp) }})</td>
                             <td><q-icon size="md" :name="operation.icon" class="q-mr-sm"></q-icon>{{
                               operation.label }}
                             </td>
@@ -371,23 +371,23 @@ router.beforeEach(async (to, from) => {
 
 const parseDocumentJSONResponse = (documentData) => {
   document.value = documentData;
-  document.value.creationDate = date.formatDate(document.value.createdOnTimestamp * 1000, 'YYYY/MM/DD HH:mm:ss');
-  document.value.lastUpdate = date.formatDate(document.value.lastUpdateTimestamp * 1000, 'YYYY/MM/DD HH:mm:ss');
+  document.value.creationDate = date.formatDate(document.value.createdOnTimestamp, 'YYYY/MM/DD HH:mm:ss');
+  document.value.lastUpdate = date.formatDate(document.value.lastUpdateTimestamp, 'YYYY/MM/DD HH:mm:ss');
   document.value.files.map((file) => {
     file.isNew = false;
-    file.uploadedOn = date.formatDate(file.uploadedOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
+    file.uploadedOn = date.formatDate(file.uploadedOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
     file.humanSize = format.humanStorageSize(file.size);
     file.url = "api2/file/" + file.id;
     return (file);
   });
   document.value.notes.map((note) => {
     note.isNew = false;
-    note.createdOn = date.formatDate(note.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
+    note.createdOn = date.formatDate(note.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
     note.expanded = false;
     return (note);
   });
   document.value.history.map((operation) => {
-    operation.date = date.formatDate(operation.operationTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
+    operation.date = date.formatDate(operation.operationTimestamp, 'YYYY-MM-DD HH:mm:ss');
     switch (operation.operationType) {
       case 1:
         operation.label = t("Document created");

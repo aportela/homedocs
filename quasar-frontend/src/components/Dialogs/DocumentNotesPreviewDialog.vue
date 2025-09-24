@@ -30,7 +30,7 @@
             class="note-container q-pa-sm relative-position white-space-pre-line"
             :class="{ 'q-mb-md': index < notes.length - 1 }">
             <div class="note-date-label">
-              {{ note.createdOn }} ({{ timeAgo(note.createdOnTimestamp * 1000) }})</div>
+              {{ note.createdOn }} ({{ timeAgo(note.createdOnTimestamp) }})</div>
             <q-icon :name="note.expanded ? 'unfold_less' : 'expand'" size="sm"
               class="absolute-top-right text-grey cursor-pointer q-mr-sm q-mt-sm" color="blue"
               @click.stop="note.expanded = !note.expanded">
@@ -111,7 +111,7 @@ const onRefresh = (documentId) => {
         .then((successResponse) => {
           notes.length = 0;
           notes.push(...successResponse.data.notes.map((note) => {
-            note.createdOn = date.formatDate(note.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
+            note.createdOn = date.formatDate(note.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
             note.expanded = false;
             return (note);
           }));

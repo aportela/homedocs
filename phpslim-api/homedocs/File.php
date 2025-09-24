@@ -111,14 +111,15 @@ class File
             new \aportela\DatabaseWrapper\Param\StringParam(":sha1_hash", $this->hash),
             new \aportela\DatabaseWrapper\Param\StringParam(":name", $this->name),
             new \aportela\DatabaseWrapper\Param\IntegerParam(":size", $this->size),
-            new \aportela\DatabaseWrapper\Param\StringParam(":uploaded_by_user_id", \HomeDocs\UserSession::getUserId())
+            new \aportela\DatabaseWrapper\Param\StringParam(":uploaded_by_user_id", \HomeDocs\UserSession::getUserId()),
+            new \aportela\DatabaseWrapper\Param\IntegerParam(":current_ms_timestamp", intval(microtime(true)))
         );
         $dbh->exec(
             "
                 INSERT INTO FILE
                     (id, sha1_hash, name, size, uploaded_by_user_id, uploaded_on_timestamp)
                 VALUES
-                    (:id, :sha1_hash, :name, :size, :uploaded_by_user_id, strftime('%s', 'now'))
+                    (:id, :sha1_hash, :name, :size, :uploaded_by_user_id, :current_ms_timestamp)
             ",
             $params
         );

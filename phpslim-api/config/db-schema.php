@@ -152,7 +152,7 @@ return (array(
             (document_id, operation_date, operation_type, operation_user_id)
 
             SELECT
-                DOCUMENT.id, DOCUMENT.created_on_timestamp, 1, DOCUMENT.created_by_user_id
+                DOCUMENT.id, DOCUMENT.created_on_timestamp * 1000, 1, DOCUMENT.created_by_user_id
             FROM DOCUMENT
             ORDER BY DOCUMENT.created_on_timestamp
         ',

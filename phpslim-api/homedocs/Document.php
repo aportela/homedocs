@@ -165,11 +165,13 @@ class Document
                 INSERT INTO DOCUMENT_HISTORY
                     (document_id, operation_date, operation_type, operation_user_id)
                 VALUES
-                    (:document_id, strftime('%s', 'now'), 1, :created_by_user_id)
+                    (:document_id, :current_ms_timestamp, :operation_type, :created_by_user_id)
             ";
             $params = [
                 new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
-                (new \aportela\DatabaseWrapper\Param\StringParam(":created_by_user_id", \HomeDocs\UserSession::getUserId()))
+                (new \aportela\DatabaseWrapper\Param\StringParam(":created_by_user_id", \HomeDocs\UserSession::getUserId())),
+                new \aportela\DatabaseWrapper\Param\IntegerParam(":operation_type", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
+                new \aportela\DatabaseWrapper\Param\IntegerParam(":current_ms_timestamp", intval(microtime(true) * 1000))
             ];
             if ($dbh->exec($historyQuery, $params)) {
                 $tagsQuery = "
@@ -199,7 +201,8 @@ class Document
                     if (!empty($file->id)) {
                         $params = array(
                             new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
-                            new \aportela\DatabaseWrapper\Param\StringParam(":file_id", mb_strtolower($file->id))
+                            new \aportela\DatabaseWrapper\Param\StringParam(":file_id", mb_strtolower($file->id)),
+                            new \aportela\DatabaseWrapper\Param\IntegerParam(":current_ms_timestamp", intval(microtime(true) * 1000))
                         );
                         $dbh->exec($filesQuery, $params);
                     } else {
@@ -210,7 +213,7 @@ class Document
                     INSERT INTO DOCUMENT_NOTE
                         (note_id, document_id, created_on_timestamp, created_by_user_id, body)
                     VALUES
-                        (:note_id, :document_id, strftime('%s', 'now'), :created_by_user_id, :note_body)
+                        (:note_id, :document_id, :current_ms_timestamp, :created_by_user_id, :note_body)
                 ";
                 foreach ($this->notes as $note) {
                     $params = array(
@@ -252,11 +255,13 @@ class Document
                 INSERT INTO DOCUMENT_HISTORY
                     (document_id, operation_date, operation_type, operation_user_id)
                 VALUES
-                    (:document_id, strftime('%s', 'now'), 2, :created_by_user_id)
+                    (:document_id, :current_ms_timestamp, :operation_type, :created_by_user_id)
             ";
             $params = [
                 new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
-                (new \aportela\DatabaseWrapper\Param\StringParam(":created_by_user_id", \HomeDocs\UserSession::getUserId()))
+                (new \aportela\DatabaseWrapper\Param\StringParam(":created_by_user_id", \HomeDocs\UserSession::getUserId())),
+                new \aportela\DatabaseWrapper\Param\IntegerParam(":operation_type", \HomeDocs\DocumentHistoryOperation::OPERATION_UPDATE_DOCUMENT),
+                new \aportela\DatabaseWrapper\Param\IntegerParam(":current_ms_timestamp", intval(microtime(true) * 1000))
             ];
             if ($dbh->exec($historyQuery, $params)) {
                 $dbh->exec(
@@ -396,13 +401,14 @@ class Document
                             new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
                             new \aportela\DatabaseWrapper\Param\StringParam(":created_by_user_id", \HomeDocs\UserSession::getUserId()),
                             new \aportela\DatabaseWrapper\Param\StringParam(":note_body", $note->body),
+                            new \aportela\DatabaseWrapper\Param\IntegerParam(":current_ms_timestamp", intval(microtime(true) * 1000))
                         );
                         $dbh->exec(
                             "
                                 INSERT INTO DOCUMENT_NOTE
                                     (note_id, document_id, created_on_timestamp, created_by_user_id, body)
                                 VALUES
-                                    (:note_id, :document_id, strftime('%s', 'now'), :created_by_user_id, :note_body)
+                                    (:note_id, :document_id, :current_ms_timestamp, :created_by_user_id, :note_body)
                             ",
                             $params
                         );

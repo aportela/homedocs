@@ -163,8 +163,8 @@ function onFilter(val) {
             {
               id: document.id,
               label: document.title,
-              createdOn: date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss'),
-              lastUpdate: date.formatDate(document.lastUpdateTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss'),
+              createdOn: date.formatDate(document.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss'),
+              lastUpdate: date.formatDate(document.lastUpdateTimestamp, 'YYYY-MM-DD HH:mm:ss'),
               fileCount: document.fileCount,
               noteCount: document.noteCount,
               matchedOnFragment: document.matchedOnFragment
