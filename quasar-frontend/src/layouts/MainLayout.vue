@@ -10,7 +10,7 @@
         <q-btn type="button" no-caps no-wrap align="left" outline :label="searchButtonLabel" icon-right="search"
           class="full-width no-caps theme-default-q-btn" @click.prevent="isFastSearchModalVisible = true">
           <q-tooltip anchor="bottom middle" self="top middle">{{ t("Click to open fast search")
-          }}</q-tooltip>
+            }}</q-tooltip>
         </q-btn>
         <!--
         <FastSearchSelector dense class="full-width"></FastSearchSelector>
@@ -30,6 +30,22 @@
     <q-page-container>
       <router-view class="q-pa-sm" />
     </q-page-container>
+    <ReAuthDialog v-if="showReauthDialog">
+      <template v-slot:header>
+        <div class="q-card-notes-dialog-header max-width-90">
+          {{ t("Session lost... re-auth required") }}
+        </div>
+      </template>
+      <template v-slot:body>
+        <SignInForm :show-extra-bottom="false" @success="onSuccessReauth">
+          <template v-slot:slogan>
+            <h4 class="q-mt-sm q-mb-md text-h4 text-weight-bolder">{{ t("Oooops") }}</h4>
+            <div class="text-color-secondary">
+              {{ t("Please enter again your credentials") }}</div>
+          </template>
+        </SignInForm>
+      </template>
+    </ReAuthDialog>
   </q-layout>
 </template>
 
@@ -47,6 +63,9 @@ import { default as SwitchLanguageButton } from "src/components/Buttons/SwitchLa
 import { default as GitHubButton } from "src/components/Buttons/GitHubButton.vue"
 import { GITHUB_PROJECT_URL } from "src/constants"
 //import { default as NotificationsButton } from "src/components/Buttons/NotificationsButton.vue"
+import { default as ReAuthDialog } from "src/components/Dialogs/ReAuthDialog.vue"
+import { default as SignInForm } from "src/components/Forms/SignInForm.vue"
+
 
 const $q = useQuasar();
 
@@ -57,6 +76,11 @@ const session = useSessionStore();
 if (!session.isLoaded) {
   session.load();
 }
+
+const showReauthDialog = ref(false);
+const onSuccessReauth = () => {
+  showReauthDialog.value = false;
+};
 
 const isFastSearchModalVisible = ref(false);
 
