@@ -12,7 +12,8 @@
       <div class="row items-center q-gutter-sm q-pa-xs" v-if="state.loading">
         <q-skeleton square width="12em" height="2em" class="" v-for="j in 32" :key="j"></q-skeleton>
       </div>
-      <CustomErrorBanner v-else-if="state.loadingError" text="Error loading data" :apiError="state.apiError">
+      <CustomErrorBanner v-else-if="state.loadingError" :text="state.errorMessage || 'Error loading data'"
+        :apiError="state.apiError">
       </CustomErrorBanner>
       <div v-else-if="hasTags">
         <div v-if="hasTags">
@@ -39,8 +40,9 @@
 
 <script setup>
 
-import { reactive, computed, onMounted } from "vue";
+import { reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
+import { bus } from "src/boot/bus";
 import { api } from "src/boot/axios";
 
 import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
@@ -60,6 +62,7 @@ const props = defineProps({
 const state = reactive({
   loading: false,
   loadingError: false,
+  errorMessage: null,
   apiError: null
 });
 
@@ -67,26 +70,47 @@ const tags = reactive([]);
 const hasTags = computed(() => tags.length > 0);
 
 function onRefresh() {
-  state.loading = true;
-  tags.length = 0;
-  state.loadingError = false;
-  state.apiError = null;
-  api.tag.getCloud()
-    .then((successResponse) => {
-      tags.push(...successResponse.data.tags);
-      state.loading = false;
-    })
-    .catch((errorResponse) => {
-      state.loadingError = true;
-      state.apiError = errorResponse.customAPIErrorDetails;
-      state.loading = false;
-    });
+  if (!state.loading) {
+    state.loading = true;
+    state.loadingError = false;
+    state.errorMessage = null;
+    state.apiError = null;
+    api.tag.getCloud()
+      .then((successResponse) => {
+        tags.length = 0;
+        tags.push(...successResponse.data.tags);
+        state.loading = false;
+      })
+      .catch((errorResponse) => {
+        state.loadingError = true;
+        switch (errorResponse.response.status) {
+          case 401:
+            state.apiError = errorResponse.customAPIErrorDetails;
+            state.errorMessage = "Auth session expired, requesting new...";
+            bus.emit("reAuthRequired", { emitter: "TagCloudWidget" });
+            break;
+          default:
+            state.apiError = errorResponse.customAPIErrorDetails;
+            state.errorMessage = "API Error: fatal error";
+            break;
+        }
+        state.loading = false;
+      });
+  }
 }
 
 onMounted(() => {
   onRefresh();
+  bus.on("reAuthSucess", (msg) => {
+    if (msg.to?.includes("TagCloudWidget")) {
+      onRefresh();
+    }
+  });
 });
 
+onBeforeUnmount(() => {
+  bus.off("reAuthSucess");
+});
 </script>
 
 <style scoped>
