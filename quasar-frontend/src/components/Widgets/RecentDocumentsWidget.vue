@@ -1,7 +1,7 @@
 <template>
-  <CustomExpansionWidget title="Most recent activity" :caption="isExpanded ? 'Click to collapse' : 'Click to expand'"
-    icon="work_history" iconToolTip="Click to refresh data" :onHeaderIconClick="onRefresh" :loading="state.loading"
-    :error="state.loadingError" :expanded="isExpanded" @expand="isExpanded = true" @collapse="isExpanded = false">
+  <CustomExpansionWidget title="Most recent activity" icon="work_history" iconToolTip="Click to refresh data"
+    :onHeaderIconClick="onRefresh" :loading="state.loading" :error="state.loadingError" :expanded="isExpanded"
+    @expand="isExpanded = true" @collapse="isExpanded = false">
     <template v-slot:header-extra>
       <q-chip square size="sm" color="primary" text-color="white" class="shadow-1">{{ t("Total document count", {
         count:
