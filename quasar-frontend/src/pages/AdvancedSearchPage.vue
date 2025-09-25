@@ -97,8 +97,13 @@
         <q-markup-table class="q-ma-md">
           <thead>
             <tr>
-              <th v-for="(column, index) in columns" :key="index" :style="{ width: column.width }"
-                :class="['text-left', { 'cursor-not-allowed': state.loading, 'cursor-pointer': !state.loading, 'action-primary': sort.field === column.field }]"
+              <th class="lt-xl">
+                <SortByFieldCustomButtonDropdown :options="sortFields" :current="sort"
+                  @change="(opt) => onToggleSort(opt.field)" flat class="action-primary fit">
+                </SortByFieldCustomButtonDropdown>
+              </th>
+              <th v-for="(column, index) in columns" :key="index" :style2="{ width: column.width }"
+                :class="['text-left', column.defaultClass, { 'cursor-not-allowed': state.loading, 'cursor-pointer': !state.loading, 'action-primary': sort.field === column.field }]"
                 @click="onToggleSort(column.field)">
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
@@ -109,13 +114,49 @@
           </thead>
           <tbody>
             <tr v-for="document in results" :key="document.id">
-              <td class="td-document-link">
+              <td class="td-document-link lt-xl"> <!-- lt-md -->
+                <q-item clickable :disable="state.loading" :to="{ name: 'document', params: { id: document.id } }"
+                  class="bg-transparent">
+                  <q-item-section>
+                    <q-item-label>
+                      {{ t("Title") }}: {{ document.title }}
+                    </q-item-label>
+                    <q-item-label caption>
+                      <div class="row">
+                        <!-- TODO: not working on resize -->
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6 self-center">Creado: {{
+                          document.createdOn }} - Actualizado: {{
+                            document.lastUpdate }}</div>
+                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6 self-center text-right"><q-chip
+                            size="md" square class="theme-default-q-chip q-chip-8em"
+                            :clickable="document.fileCount > 0 && !state.loading"
+                            @click.stop="onShowDocumentFiles(document.id, document.title)">
+                            <q-avatar class="theme-default-q-avatar"
+                              :class="{ 'text-white bg-blue': document.fileCount > 0 }">{{
+                                document.fileCount }}</q-avatar>
+                            {{ t('Total files', { count: document.fileCount }) }}
+                          </q-chip>
+                          <q-chip size="md" square class="theme-default-q-chip q-chip-8em"
+                            :clickable="document.noteCount > 0 && !state.loading"
+                            @click.stop="onShowDocumentNotes(document.id, document.title)">
+                            <q-avatar class="theme-default-q-avatar"
+                              :class="{ 'text-white bg-blue': document.noteCount > 0 }">{{
+                                document.noteCount }}</q-avatar>
+                            {{ t('Total notes', { count: document.noteCount }) }}
+                          </q-chip>
+                        </div>
+                      </div>
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+              </td>
+              <td class="td-document-link gt-lg">
                 <q-btn align="left" no-caps flat :to="{ name: 'document', params: { id: document.id } }"
                   class="fit text-decoration-hover" :label="document.title"></q-btn>
               </td>
-              <td>{{ document.createdOn }}</td>
-              <td>{{ document.lastUpdate }}</td>
-              <td>
+              <td class="gt-lg">{{ document.createdOn }}</td>
+              <td class="gt-lg">{{ document.lastUpdate }}</td>
+              <td class="gt-lg">
                 <q-chip size="md" square class="theme-default-q-chip q-chip-8em"
                   :clickable="document.fileCount > 0 && !state.loading"
                   @click.stop="onShowDocumentFiles(document.id, document.title)">
@@ -124,7 +165,7 @@
                   {{ t('Total files', { count: document.fileCount }) }}
                 </q-chip>
               </td>
-              <td>
+              <td class="gt-lg">
                 <q-chip size="md" square class="theme-default-q-chip q-chip-8em"
                   :clickable="document.noteCount > 0 && !state.loading"
                   @click.stop="onShowDocumentNotes(document.id, document.title)">
@@ -169,6 +210,7 @@ import { default as CustomExpansionWidget } from "src/components/Widgets/CustomE
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 import { default as DateFieldCustomInput } from "src/components/Forms/Fields/DateFieldCustomInput.vue";
+import { default as SortByFieldCustomButtonDropdown } from "src/components/Forms/Fields/SortByFieldCustomButtonDropdown.vue";
 import { default as DocumentFilesPreviewDialog } from "src/components/Dialogs/DocumentFilesPreviewDialog.vue";
 import { default as DocumentNotesPreviewDialog } from "src/components/Dialogs/DocumentNotesPreviewDialog.vue";
 
@@ -180,12 +222,17 @@ const $q = useQuasar();
 const isDesktop = computed(() => $q.platform.is.desktop);
 
 const columns = [
-  { field: 'title', title: 'Title', width: '40%' },
-  { field: 'createdOnTimestamp', title: 'Creation date', width: '20%' },
-  { field: 'lastUpdateTimestamp', title: 'Last update', width: '20%' },
-  { field: 'fileCount', title: 'Files', width: '10%' },
-  { field: 'noteCount', title: 'Notes', width: '10%' }
+  { field: 'title', title: 'Title', defaultClass: "gt-lg" },
+  { field: 'createdOnTimestamp', title: 'Creation date', defaultClass: "gt-lg" },
+  { field: 'lastUpdateTimestamp', title: 'Last update', defaultClass: "gt-lg" },
+  { field: 'fileCount', title: 'Files', defaultClass: "gt-lg" },
+  { field: 'noteCount', title: 'Notes', defaultClass: "gt-lg" }
 ];
+
+const sortFields = columns.map(column => ({
+  field: column.field,
+  label: column.title
+}));
 
 const state = reactive({
   loading: false,
