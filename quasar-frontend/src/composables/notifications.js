@@ -15,7 +15,7 @@ export function useNotifications() {
     const d = new Date();
     bus.emit(event, {
       id: message.id || uid(),
-      timestamp: date.formatDate(d, "X"),
+      timestamp: date.formatDate(d, "x"),
       date: date.formatDate(d, "YYYY-MM-DD HH:mm:ss"),
       type: message.type,
       body: message.body,

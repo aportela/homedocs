@@ -26,7 +26,7 @@
       </q-toolbar>
     </q-header>
     <SidebarDrawer v-model="visibleSidebar" :mini="miniSidebarCurrentMode"></SidebarDrawer>
-    <FastSearchModal v-model="isFastSearchModalVisible" @close="isFastSearchModalVisible = false"></FastSearchModal>
+    <SearchDialog :visible="isFastSearchModalVisible" @close="isFastSearchModalVisible = false"></SearchDialog>
     <q-page-container>
       <router-view class="q-pa-sm" />
     </q-page-container>
@@ -57,13 +57,11 @@ import { useSessionStore } from "src/stores/session";
 import { bus } from "src/boot/bus";
 
 import { default as SidebarDrawer } from "src/components/SidebarDrawer.vue"
-//import { default as FastSearchSelector } from "src/components/FastSearchSelector.vue"
-import { default as FastSearchModal } from "src/components/FastSearchModal.vue"
+import { default as SearchDialog } from "src/components/Dialogs/SearchDialog.vue"
 import { default as DarkModeButton } from "src/components/Buttons/DarkModeButton.vue"
 import { default as SwitchLanguageButton } from "src/components/Buttons/SwitchLanguageButton.vue"
 import { default as GitHubButton } from "src/components/Buttons/GitHubButton.vue"
 import { GITHUB_PROJECT_URL } from "src/constants"
-//import { default as NotificationsButton } from "src/components/Buttons/NotificationsButton.vue"
 import { default as ReAuthDialog } from "src/components/Dialogs/ReAuthDialog.vue"
 import { default as SignInForm } from "src/components/Forms/SignInForm.vue"
 

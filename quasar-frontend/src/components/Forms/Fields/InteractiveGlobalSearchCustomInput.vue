@@ -51,7 +51,7 @@ function onFilter(val, update) {
       api.document.search(1, 8, { title: val }, "title", "ASC")
         .then((success) => {
           filteredOptions.value = success.data.results.documents.map((document) => {
-            return ({ id: document.id, label: document.title, caption: t("Fast search caption", { creation: date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss'), attachmentCount: document.fileCount }) });
+            return ({ id: document.id, label: document.title, caption: t("Fast search caption", { creation: date.formatDate(document.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss'), attachmentCount: document.fileCount }) });
           });
           searching.value = false;
           return;

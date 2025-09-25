@@ -53,7 +53,7 @@
               <q-item-label>
                 <router-link :to="{ name: 'document', params: { id: recentDocument.id } }"
                   class="text-decoration-hover text-color-primary"><span class="text-weight-bold">{{ t("Title")
-                    }}:</span> {{
+                  }}:</span> {{
                       recentDocument.title
                     }}
                 </router-link>
@@ -158,7 +158,7 @@ const onRefresh = () => {
       .then((successResponse) => {
         recentDocuments.length = 0;
         recentDocuments.push(...successResponse.data.recentDocuments.map((document) => {
-          document.timestamp = document.lastUpdateTimestamp * 1000; // convert PHP timestamps (seconds) to JS (milliseconds)
+          document.timestamp = document.lastUpdateTimestamp;
           return document;
         }));
         state.loading = false;

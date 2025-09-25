@@ -7,7 +7,8 @@
       <q-btn icon-right="arrow_right" :disabled="state.loading || rightButtonDisabled" size="md" color="primary"
         @click.prevent="onRightButtonClicked">{{ t("Next") }}</q-btn>
     </div>
-    <CustomErrorBanner v-if="state.loadingError" text="Error loading data" :apiError="state.apiError">
+    <CustomErrorBanner v-if="state.loadingError" :text="state.errorMessage || 'Error loading data'"
+      :apiError="state.apiError">
     </CustomErrorBanner>
   </div>
 </template>

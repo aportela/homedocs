@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="visible" @show="onShow" @hide="onClose">
+  <q-dialog v-model="isVisible" @show="onShow" @hide="onClose">
     <q-card style="width: 60%; max-width: 80vw;">
       <q-card-section class="row items-center q-pb-none">
         <div class="text-h6">{{ t('Search on HomeDocs...') }}</div>
@@ -9,9 +9,10 @@
       <q-card-section>
         <div class="row items-center q-gutter-sm">
           <div class="col-auto">
-            <q-select v-model="searchOn" :options="options" :display-value="`${searchOn ? t(searchOn.label) : ''}`"
-              dense options-dense outlined style="min-width: 8em;" :label="t('Search on')"
-              @update:model-value="onFilter(text)">
+            <q-select v-model="searchOn" :options="searchOnOptions"
+              :display-value="`${searchOn ? t(searchOn.label) : ''}`" dense options-dense outlined
+              style="min-width: 8em;" :label="t('Search on')" @update:model-value="onSearch(text)"
+              :disable="state.loading">
               <template v-slot:option="scope">
                 <q-item v-bind="scope.itemProps">
                   <q-item-section>
@@ -25,7 +26,7 @@
           </div>
           <div style="flex-grow: 1;">
             <q-input type="text" dense color="grey-3" label-color="grey-7" :label="t('Search text...')"
-              v-model.trim="text" @update:model-value="onFilter" autofocus="" clearable outlined>
+              v-model.trim="text" @update:model-value="onSearch" autofocus="" clearable outlined>
               <template v-slot:prepend>
                 <q-icon name="search" />
               </template>
@@ -35,7 +36,11 @@
       </q-card-section>
       <q-separator />
       <q-card-section>
-        <q-virtual-scroll component="q-list" :items="searchResults" @virtual-scroll="onVirtualScroll"
+        <div v-if="state.loadingError">
+          <CustomErrorBanner :text="state.errorMessage || 'Error loading data'" :apiError="state.apiError">
+          </CustomErrorBanner>
+        </div>
+        <q-virtual-scroll v-else component="q-list" :items="searchResults" @virtual-scroll="onVirtualScroll"
           ref="virtualListRef" style="height: 50vh; max-height: 50vh">
           <template v-slot="{ item, index }">
             <q-item :key="item.id" class="cursor-pointer"
@@ -69,17 +74,10 @@
           </template>
           <template v-slot:before>
             <q-item v-show="showNoSearchResults">
-              <q-item-section side>
-                <q-icon name="warning" />
-              </q-item-section>
-              <q-item-section>
-                <!-- prettier-ignore -->
-                <q-item-label>{{ t(noResultsMessage) }}</q-item-label>
-              </q-item-section>
+              <CustomBanner warning :text="noResultsMessage"></CustomBanner>
             </q-item>
           </template>
         </q-virtual-scroll>
-
       </q-card-section>
       <q-separator />
     </q-card>
@@ -88,13 +86,25 @@
 
 <script setup>
 
-import { ref, computed, watch } from "vue";
+import { ref, watch, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useQuasar, date } from "quasar";
+
+import { bus } from "src/boot/bus";
 import { api } from "src/boot/axios";
 
-const visible = ref(true);
+import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
+import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
+
+
+const props = defineProps({
+  visible: {
+    type: Boolean,
+    required: true,
+    default: false,
+  }
+});
 
 const router = useRouter();
 
@@ -104,19 +114,31 @@ const { t } = useI18n();
 
 const emit = defineEmits(['close']);
 
-const virtualListRef = ref(null);
-const text = ref("");
-const searchResults = ref([]);
-const currentSearchResultSelectedIndex = ref(-1);
-const virtualListIndex = ref(0);
-const searching = ref(false);
-const options = computed(() => [
+const isVisible = ref(props.visible);
+
+watch(() => props.visible, val => isVisible.value = val);
+
+const state = reactive({
+  loading: false,
+  loadingError: false,
+  errorMessage: null,
+  apiError: null
+});
+
+const searchOnOptions = computed(() => [
   { label: 'Title', value: 'title' },
   { label: 'Description', value: 'description' },
   { label: 'Notes', value: 'notes' },
 ]);
 
-const searchOn = ref(options.value[0]);
+const searchOn = ref(searchOnOptions.value[0]);
+
+const virtualListRef = ref(null);
+
+const text = ref("");
+const searchResults = reactive([]);
+const currentSearchResultSelectedIndex = ref(-1);
+const virtualListIndex = ref(0);
 
 const showNoSearchResults = ref(false);
 
@@ -129,27 +151,25 @@ const boldStringMatch = (str, matchWord) => {
   );
 };
 
-function onFilter(val) {
+const onSearch = (val) => {
   showNoSearchResults.value = false;
   if (val && val.trim().length > 0) {
-    searchResults.value = [];
     currentSearchResultSelectedIndex.value = -1;
-    searching.value = true;
-    let params = {};
-    switch (searchOn.value.value) {
-      case "title":
-        params.title = val;
-        break;
-      case "description":
-        params.description = val;
-        break;
-      case "notes":
-        params.notesBody = val;
-        break;
-    }
+    state.loading = true;
+    state.loadingError = false;
+    state.errorMessage = null;
+    state.apiError = null;
+    const params = {
+      text: {
+        title: searchOn.value.value == "title" ? val : null,
+        description: searchOn.value.value == "description" ? val : null,
+        notes: searchOn.value.value == "notes" ? val : null,
+      }
+    };
     api.document.search(1, 16, params, "lastUpdateTimestamp", "DESC")
-      .then((success) => {
-        searchResults.value = success.data.results.documents.map((document) => {
+      .then((successResponse) => {
+        searchResults.length = 0;
+        searchResults.push(...successResponse.data.results.documents.map((document) => {
           document.matchedOnFragment = null;
           if (Array.isArray(document.matchedFragments) && document.matchedFragments.length > 0) {
             document.matchedOnFragment = t("Fast search match fragment",
@@ -163,30 +183,35 @@ function onFilter(val) {
             {
               id: document.id,
               label: document.title,
-              createdOn: date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss'),
-              lastUpdate: date.formatDate(document.lastUpdateTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss'),
+              createdOn: date.formatDate(document.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss'),
+              lastUpdate: date.formatDate(document.lastUpdateTimestamp, 'YYYY-MM-DD HH:mm:ss'),
               fileCount: document.fileCount,
               noteCount: document.noteCount,
               matchedOnFragment: document.matchedOnFragment
             });
-        });
-        searching.value = false;
-        showNoSearchResults.value = success.data.results.documents.length <= 0;
-        return;
+        }));
+        state.loading = false;
+        showNoSearchResults.value = successResponse.data.results.documents.length <= 0; // REQUIRED ?
       })
-      .catch((error) => {
-        searching.value = false;
-        $q.notify({
-          type: "negative",
-          message: t("API Error: fatal error"),
-          caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
-        });
-        return;
+      .catch((errorResponse) => {
+        state.loadingError = true;
+        switch (errorResponse.response.status) {
+          case 401:
+            state.apiError = errorResponse.customAPIErrorDetails;
+            state.errorMessage = "Auth session expired, requesting new...";
+            bus.emit("reAuthRequired", { emitter: "SearchDialog.onSearch" });
+            break;
+          default:
+            state.apiError = errorResponse.customAPIErrorDetails;
+            state.errorMessage = "API Error: fatal error";
+            break;
+        }
+        state.loading = false;
       });
   } else {
-    searchResults.value = [];
+    searchResults.length = 0;
   }
-}
+};
 
 const onVirtualScroll = (index) => {
   virtualListIndex.value = index
@@ -198,9 +223,9 @@ const scrollToItem = (index) => {
   }
 };
 
-function onKeyDown(event) {
+const onKeyDown = (event) => {
   if (event.key === "ArrowUp") {
-    if (searchResults.value.length > 0) {
+    if (searchResults.length > 0) {
       if (currentSearchResultSelectedIndex.value > 0) {
         currentSearchResultSelectedIndex.value--;
         scrollToItem(currentSearchResultSelectedIndex.value);
@@ -209,8 +234,8 @@ function onKeyDown(event) {
       }
     }
   } else if (event.key === "ArrowDown") {
-    if (searchResults.value.length > 0) {
-      if (currentSearchResultSelectedIndex.value < searchResults.value.length - 1) {
+    if (searchResults.length > 0) {
+      if (currentSearchResultSelectedIndex.value < searchResults.length - 1) {
         currentSearchResultSelectedIndex.value++;
         scrollToItem(currentSearchResultSelectedIndex.value);
         event.preventDefault();
@@ -218,12 +243,12 @@ function onKeyDown(event) {
       }
     }
   } else if (event.key === "Enter") {
-    if (searchResults.value.length > 0) {
-      if (currentSearchResultSelectedIndex.value >= 0 && currentSearchResultSelectedIndex.value < searchResults.value.length) {
+    if (searchResults.length > 0) {
+      if (currentSearchResultSelectedIndex.value >= 0 && currentSearchResultSelectedIndex.value < searchResults.length) {
         router.push({
           name: "document",
           params: {
-            id: searchResults.value[currentSearchResultSelectedIndex.value].id
+            id: searchResults[currentSearchResultSelectedIndex.value].id
           }
         });
       }
@@ -231,17 +256,33 @@ function onKeyDown(event) {
   }
 };
 
-function onShow() {
+const onShow = () => {
+  // this is required here because this modal dialog is persistent (from MainLayout.vue).
+  // DOES NOT WORK with onMounted/onBeforeUnmount. WE ONLY WANT CAPTURE KEY EVENTS WHEN DIALOG IS VISIBLE
   window.addEventListener('keydown', onKeyDown);
 }
 
-function onClose() {
-  visible.value = false;
-  searchResults.value = [];
+const onClose = () => {
+  isVisible.value = false;
+  searchResults.length = 0;
   text.value = null;
   showNoSearchResults.value = false;
+  // this is required here because this modal dialog is persistent (from MainLayout.vue).
+  // DOES NOT WORK with onMounted/onBeforeUnmount. WE ONLY WANT CAPTURE KEY EVENTS WHEN DIALOG IS VISIBLE
   window.removeEventListener('keydown', onKeyDown);
   emit('close');
 }
+
+onMounted(() => {
+  bus.on("reAuthSucess", (msg) => {
+    if (msg.to?.includes("SearchDialog.onSearch")) {
+      onSearch(text.value);
+    }
+  });
+});
+
+onBeforeUnmount(() => {
+  bus.off("reAuthSucess");
+});
 
 </script>
