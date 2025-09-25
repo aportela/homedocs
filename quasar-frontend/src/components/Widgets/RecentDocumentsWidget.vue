@@ -53,7 +53,7 @@
               <q-item-label>
                 <router-link :to="{ name: 'document', params: { id: recentDocument.id } }"
                   class="text-decoration-hover text-color-primary"><span class="text-weight-bold">{{ t("Title")
-                  }}:</span> {{
+                    }}:</span> {{
                       recentDocument.title
                     }}
                 </router-link>
@@ -73,7 +73,7 @@
               <q-item-label caption>{{ timeAgo(recentDocument.timestamp) }}</q-item-label>
               <q-chip size="md" square class="full-width theme-default-q-chip"
                 :clickable="recentDocument.fileCount > 0 && !state.loading"
-                @click.stop="onShowDocumentFiles(recentDocument.id, recentDocument.title)">
+                @click.stop.prevent="onShowDocumentFiles(recentDocument.id, recentDocument.title)">
                 <q-avatar class="theme-default-q-avatar"
                   :class="{ 'text-white bg-blue': recentDocument.fileCount > 0 }">{{ recentDocument.fileCount
                   }}</q-avatar>
@@ -81,7 +81,7 @@
               </q-chip>
               <q-chip size="md" square class="full-width theme-default-q-chip"
                 :clickable="recentDocument.noteCount > 0 && !state.loading"
-                @click="onShowDocumentNotes(recentDocument.id, recentDocument.title)">
+                @click.stop.prevent="onShowDocumentNotes(recentDocument.id, recentDocument.title)">
                 <q-avatar class="theme-default-q-avatar"
                   :class="{ 'text-white bg-blue': recentDocument.noteCount > 0 }">{{ recentDocument.noteCount
                   }}</q-avatar>
