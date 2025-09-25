@@ -18,7 +18,7 @@
       <div v-else-if="hasTags">
         <router-link v-for="tag in tags" :key="tag.tag" :to="{ name: 'advancedSearchByTag', params: { tag: tag.tag } }"
           class="text-decoration-none" aria-label="Browse by tag">
-          <q-chip square class="theme-default-q-chip q-chip-10em shadow-1">
+          <q-chip square clickable class="theme-default-q-chip q-chip-10em shadow-1">
             <q-avatar class="theme-default-q-avatar">{{ tag.total }}</q-avatar>
             <div class="full-width text-center ellipsis">
               {{ tag.tag }}
