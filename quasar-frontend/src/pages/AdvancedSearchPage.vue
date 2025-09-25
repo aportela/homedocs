@@ -82,8 +82,8 @@
         </CustomBanner>
       </template>
     </CustomExpansionWidget>
-    <CustomExpansionWidget v-show="hasResults" title="Results" icon="folder_open" :loading="state.loading"
-      :error="state.loadingError" expanded class="q-mt-sm" ref="resultsWidgetRef">
+    <CustomExpansionWidget v-show="hasResults" title="Results" icon="folder_open" :staticIcon="true"
+      :loading="state.loading" :error="state.loadingError" expanded class="q-mt-sm" ref="resultsWidgetRef">
       <template v-slot:header-extra>
         <q-chip square size="sm" color="primary" text-color="white" class="shadow-1">{{ t("Total search results count",
           {
@@ -111,7 +111,7 @@
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <q-tooltip v-if="isDesktop">{{ t('Toggle sort by this column', { field: t(column.title) })
-                }}</q-tooltip>
+                  }}</q-tooltip>
               </th>
             </tr>
           </thead>

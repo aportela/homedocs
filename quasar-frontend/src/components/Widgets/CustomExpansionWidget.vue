@@ -3,8 +3,9 @@
     header-class="theme-default-q-expansion-item-header" v-model="isExpanded">
     <template v-slot:header>
       <q-item-section avatar>
-        <q-icon v-if="loading" name="settings" class="animation-spin"></q-icon>
-        <q-icon v-else-if="error" name="error" color="red" @click.stop="onHeaderIconClicked" :class="iconClass">
+        <q-icon v-if="loading && !staticIcon" name="settings" class="animation-spin"></q-icon>
+        <q-icon v-else-if="error && !staticIcon" name="error" color="red" @click.stop="onHeaderIconClicked"
+          :class="iconClass">
           <q-tooltip v-if="iconToolTip">{{ t(iconToolTip) }}</q-tooltip>
         </q-icon>
         <q-icon v-else :name="icon" @click.stop.prevent="onHeaderIconClicked" :class="iconClass">
@@ -54,6 +55,11 @@ const props = defineProps({
   icon: {
     type: String,
     required: true
+  },
+  staticIcon: {
+    type: Boolean,
+    required: false,
+    default: false
   },
   iconToolTip: {
     type: String,
