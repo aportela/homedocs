@@ -16,7 +16,7 @@
         :apiError="state.apiError">
       </CustomErrorBanner>
       <div v-else-if="hasTags">
-        <BrowseByTagButton v-for="tag in tags" :key="tag.tag" :tag="tag.tag" :caption="tag.total"
+        <BrowseByTagButton v-for="tag in tags" :key="tag.tag" :tag="tag.tag" :caption="String(tag.total)"
           :qChipClass="'q-chip-10em'"></BrowseByTagButton>
       </div>
       <CustomBanner v-else warning text="You haven't created any tags yet"></CustomBanner>
