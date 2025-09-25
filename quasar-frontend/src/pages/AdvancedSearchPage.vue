@@ -3,10 +3,12 @@
     <CustomExpansionWidget title="Advanced search" icon="filter_alt" :loading="state.loading"
       :error="state.loadingError" :expanded="isFilterWidgetExpanded">
       <template v-slot:header-extra>
-        <q-chip square size="sm" color="primary" text-color="white">{{ t("Total search conditions count", {
-          count:
-            totalSearchConditions
-        }) }}</q-chip>
+        <q-chip square size="sm" color="primary" text-color="white" class="shadow-1">{{
+          t("Total search conditions count", {
+            count:
+              totalSearchConditions
+          }) }}
+        </q-chip>
       </template>
       <template v-slot:content>
         <form @submit.prevent.stop="onSubmitForm(true)" @reset.prevent.stop="onResetForm" autocorrect="off"
@@ -83,10 +85,11 @@
     <CustomExpansionWidget v-show="hasResults" title="Results" icon="folder_open" :loading="state.loading"
       :error="state.loadingError" expanded class="q-mt-sm" ref="resultsWidgetRef">
       <template v-slot:header-extra>
-        <q-chip square size="sm" color="primary" text-color="white">{{ t("Total search results count", {
-          count:
-            pager.totalResults
-        }) }}</q-chip>
+        <q-chip square size="sm" color="primary" text-color="white" class="shadow-1">{{ t("Total search results count",
+          {
+            count:
+              pager.totalResults
+          }) }}</q-chip>
       </template>
       <template v-slot:content>
         <div class="q-ma-md flex flex-center" v-if="pager.totalPages > 1">
@@ -108,7 +111,7 @@
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <q-tooltip v-if="isDesktop">{{ t('Toggle sort by this column', { field: t(column.title) })
-                  }}</q-tooltip>
+                }}</q-tooltip>
               </th>
             </tr>
           </thead>
