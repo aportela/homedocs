@@ -108,7 +108,7 @@
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <q-tooltip v-if="isDesktop">{{ t('Toggle sort by this column', { field: t(column.title) })
-                }}</q-tooltip>
+                  }}</q-tooltip>
               </th>
             </tr>
           </thead>
@@ -127,7 +127,7 @@
                           document.createdOn }} - Actualizado: {{
                             document.lastUpdate }}</div>
                         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6 self-center text-right"><q-chip
-                            size="md" square class="theme-default-q-chip q-chip-8em"
+                            size="md" square class="theme-default-q-chip shadow-1 q-chip-8em"
                             :clickable="document.fileCount > 0 && !state.loading"
                             @click.stop.prevent="onShowDocumentFiles(document.id, document.title)">
                             <q-avatar class="theme-default-q-avatar"
@@ -135,7 +135,7 @@
                                 document.fileCount }}</q-avatar>
                             {{ t('Total files', { count: document.fileCount }) }}
                           </q-chip>
-                          <q-chip size="md" square class="theme-default-q-chip q-chip-8em"
+                          <q-chip size="md" square class="theme-default-q-chip shadow-1 q-chip-8em"
                             :clickable="document.noteCount > 0 && !state.loading"
                             @click.stop.prevent="onShowDocumentNotes(document.id, document.title)">
                             <q-avatar class="theme-default-q-avatar"
@@ -156,7 +156,7 @@
               <td class="gt-lg">{{ document.createdOn }}</td>
               <td class="gt-lg">{{ document.lastUpdate }}</td>
               <td class="gt-lg">
-                <q-chip size="md" square class="theme-default-q-chip q-chip-8em"
+                <q-chip size="md" square class="theme-default-q-chip shadow-1 q-chip-8em"
                   :clickable="document.fileCount > 0 && !state.loading"
                   @click.stop.prevent="onShowDocumentFiles(document.id, document.title)">
                   <q-avatar class="theme-default-q-avatar" :class="{ 'text-white bg-blue': document.fileCount > 0 }">{{
@@ -165,7 +165,7 @@
                 </q-chip>
               </td>
               <td class="gt-lg">
-                <q-chip size="md" square class="theme-default-q-chip q-chip-8em"
+                <q-chip size="md" square class="theme-default-q-chip shadow-1 q-chip-8em"
                   :clickable="document.noteCount > 0 && !state.loading"
                   @click.stop.prevent="onShowDocumentNotes(document.id, document.title)">
                   <q-avatar class="theme-default-q-avatar" :class="{ 'text-white bg-blue': document.noteCount > 0 }">{{
