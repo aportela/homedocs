@@ -161,6 +161,10 @@ return (array(
         ',
         '
             ALTER TABLE DOCUMENT2 RENAME TO DOCUMENT;
+        ',
+        '
+            UPDATE FILE
+                SET uploaded_on_timestamp = uploaded_on_timestamp * 1000
         '
     )
 ));
