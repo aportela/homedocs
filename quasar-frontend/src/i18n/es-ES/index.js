@@ -49,11 +49,7 @@ export default {
   "Tag cloud": "Nube de etiquetas",
   "Browse by tag: ": "Navegar por etiqueta: {tag}",
   "You haven't created any tags yet": "Aún no ha creado ninguna etiqueta",
-  "Click on tag to browse by tag":
-    "Haga click en una etiqueta para navegar por ella",
   "Uploaded on": "Subido en",
-  "Click on title to open document":
-    "Haga click en el título para abrir el documento",
   "API Error: error removing file": "Error de API: error eliminando el archivo",
   "API Error: error deleting document":
     "Error de API: error eliminando el documento",

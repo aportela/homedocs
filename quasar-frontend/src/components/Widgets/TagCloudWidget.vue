@@ -1,7 +1,7 @@
 <template>
-  <CustomExpansionWidget title="Tag cloud" :caption="state.loading ? 'Loading...' : 'Click on tag to browse by tag'"
-    icon="tag" iconToolTip="Click to refresh data" :onHeaderIconClick="onRefresh" :loading="state.loading"
-    :error="state.loadingError" :expanded="expanded">
+  <CustomExpansionWidget title="Tag cloud" :caption="isExpanded ? 'Click to collapse' : 'Click to expand'" icon="tag"
+    iconToolTip="Click to refresh data" :onHeaderIconClick="onRefresh" :loading="state.loading"
+    :error="state.loadingError" :expanded="isExpanded" @expand="isExpanded = true" @collapse="isExpanded = false">
     <template v-slot:header-extra>
       <q-chip square size="sm" color="primary" text-color="white" class="shadow-1">{{ t("Total tags", {
         count:
@@ -41,7 +41,7 @@
 
 <script setup>
 
-import { reactive, computed, onMounted, onBeforeUnmount } from "vue";
+import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import { bus } from "src/boot/bus";
 import { api } from "src/boot/axios";
@@ -59,6 +59,8 @@ const props = defineProps({
     default: true
   }
 });
+
+const isExpanded = ref(props.expanded);
 
 const state = reactive({
   loading: false,
@@ -81,6 +83,9 @@ const onRefresh = () => {
         tags.length = 0;
         tags.push(...successResponse.data.tags);
         state.loading = false;
+        if (!isExpanded.value) {
+          isExpanded.value = true;
+        }
       })
       .catch((errorResponse) => {
         state.loadingError = true;
