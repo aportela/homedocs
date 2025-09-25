@@ -151,6 +151,7 @@ export default {
   "Add note": "Add note",
   "Add attachment": "Add attachment",
   History: "History",
+  "Operation": "Operation",
   "Document created": "Document created",
   "Document updated": "Document updated",
   "Unknown operation": "Unknown operation",

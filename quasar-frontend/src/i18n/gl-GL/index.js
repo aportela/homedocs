@@ -155,6 +155,7 @@ export default {
   "Add note": "Engadir nota",
   "Add attachment": "Engadir arquivo",
   History: "Historial",
+  "Operation": "Operación",
   "Document created": "Documento creado",
   "Document updated": "Documento actualizado",
   "Unknown operation": "Operación desconocida",

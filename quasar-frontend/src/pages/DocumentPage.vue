@@ -185,15 +185,15 @@
                       <q-markup-table>
                         <thead>
                           <tr>
-                            <th class="text-left">Fecha</th>
-                            <th class="text-left">Operación</th>
+                            <th class="text-left">{{ t("Date") }}</th>
+                            <th class="text-left">{{ t("Operation") }}</th>
                           </tr>
                         </thead>
                         <tbody>
                           <tr v-for="operation in document.history" :key="operation.operationTimestamp">
                             <td>{{ operation.date }} ({{ timeAgo(operation.operationTimestamp) }})</td>
                             <td><q-icon size="md" :name="operation.icon" class="q-mr-sm"></q-icon>{{
-                              operation.label }}
+                              t(operation.label) }}
                             </td>
                           </tr>
                         </tbody>
@@ -390,15 +390,15 @@ const parseDocumentJSONResponse = (documentData) => {
     operation.date = date.formatDate(operation.operationTimestamp, 'YYYY-MM-DD HH:mm:ss');
     switch (operation.operationType) {
       case 1:
-        operation.label = t("Document created");
+        operation.label = "Document created";
         operation.icon = "post_add";
         break;
       case 2:
-        operation.label = t("Document updated");
+        operation.label = "Document updated";
         operation.icon = "edit_note";
         break;
       default:
-        operation.label = t("Unknown operation");
+        operation.label = "Unknown operation";
         operation.icon = "error";
         break;
     }
