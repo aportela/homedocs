@@ -37,7 +37,7 @@
               </q-item-label>
             </q-item-section>
           </q-item>
-          <q-separator inset v-if="i < 3" class="q-my-md" />
+          <q-separator inset v-if="i < 3" class="q-my-sm" />
         </div>
       </q-list>
       <CustomErrorBanner v-else-if="state.loadingError" :text="state.errorMessage || 'Error loading data'"
