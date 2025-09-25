@@ -195,4 +195,7 @@ export default {
   "This document has no associated notes.":
     "This document has no associated notes.",
   "Click to remove note": "Click to remove note",
+  "Current sort by": "Order by \"{label}\" ({order})",
+  "ascending": "ascending",
+  "descending": "descending"
 };

@@ -198,4 +198,7 @@ export default {
   "This document has no associated notes.":
     "Este documento non ten notas asociadas.",
   "Click to remove note": "Faga click pra elimina-la nota",
+  "Current sort by": "Orden por \"{label}\" ({order})",
+  "ascending": "ascendente",
+  "descending": "descendente"
 };

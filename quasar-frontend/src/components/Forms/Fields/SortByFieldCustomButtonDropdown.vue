@@ -8,7 +8,10 @@
           <q-icon :name="option.order == 'ASC' ? 'keyboard_double_arrow_up' : 'keyboard_double_arrow_down'" />
         </q-item-section>
         <q-item-section>
-          <q-item-label>{{ t(option.label) }}</q-item-label>
+          <q-item-label>{{ t("Current sort by", {
+            label: t(option.label), order: option.order == "DESC" ?
+              t("descending") : t("ascending")
+          }) }}</q-item-label>
         </q-item-section>
       </q-item>
     </q-list>
@@ -42,22 +45,32 @@ const props = defineProps({
   }
 });
 
-const currentLabel = computed(() => {
-  return (t("Order by: none"))
-});
-
 const currentSort = reactive({
   field: props.current?.field || null,
+  label: props.current?.label || null,
   order: props.current?.order || null
 });
 
+if (!currentSort.label) {
+  currentSort.label = (props.options.find((option) => option.field == currentSort.field))?.label;
+}
+
+const currentLabel = computed(() =>
+  t("Current sort by",
+    {
+      label: currentSort.label ? t(currentSort.label) : null,
+      order: currentSort.order ? t(currentSort.order == "DESC" ? "descending" : "ascending") : null
+    }
+  )
+);
 const onClick = (option) => {
   currentSort.field = option.field;
+  currentSort.label = option.label;
   currentSort.order = option.order;
   emit("change", currentSort);
 };
 
-watch(() => props.current, val => { currentSort.field = val.field; currentSort.order = val.order });
+watch(() => props.current, val => { currentSort.field = val.field; currentSort.label = val.label; currentSort.order = val.order });
 
 const completeOptions = reactive([]);
 
