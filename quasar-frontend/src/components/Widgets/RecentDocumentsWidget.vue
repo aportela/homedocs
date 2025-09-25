@@ -53,7 +53,7 @@
               <q-item-label>
                 <router-link :to="{ name: 'document', params: { id: recentDocument.id } }"
                   class="text-decoration-hover text-color-primary"><span class="text-weight-bold">{{ t("Title")
-                    }}:</span> {{
+                  }}:</span> {{
                       recentDocument.title
                     }}
                 </router-link>
@@ -62,7 +62,7 @@
               <q-item-label>
                 <router-link v-for="tag in recentDocument.tags" :key="tag"
                   :to="{ name: 'advancedSearchByTag', params: { tag: tag } }">
-                  <q-chip square size="md" clickable icon="tag" class="q-chip-themed">
+                  <q-chip square size="md" clickable icon="tag" class="theme-default-q-chip">
                     {{ tag }}
                     <q-tooltip>{{ t("Browse by tag: ", { tag: tag }) }}</q-tooltip>
                   </q-chip>
