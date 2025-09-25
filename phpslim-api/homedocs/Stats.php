@@ -83,7 +83,7 @@ class Stats
             sprintf(
                 "
                     SELECT
-                        DATE(DOCUMENT_HISTORY.operation_date, 'unixepoch') AS activity_date, COUNT(*) AS total
+                        DATE(DOCUMENT_HISTORY.operation_date / 1000, 'unixepoch') AS activity_date, COUNT(*) AS total
                     FROM
                         DOCUMENT_HISTORY
                     WHERE
