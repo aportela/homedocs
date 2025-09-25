@@ -3,7 +3,7 @@
     :onHeaderIconClick="onRefresh" :loading="state.loading" :error="state.loadingError" :expanded="isExpanded"
     @expand="isExpanded = true" @collapse="isExpanded = false">
     <template v-slot:header-extra>
-      <q-chip square size="sm" color="primary" text-color="white" class="shadow-1">{{ t("Total document count", {
+      <q-chip square size="sm" color="grey-7" text-color="white">{{ t("Total document count", {
         count:
           recentDocuments.length
       }) }}</q-chip>

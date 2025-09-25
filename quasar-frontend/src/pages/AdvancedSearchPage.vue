@@ -3,7 +3,7 @@
     <CustomExpansionWidget title="Advanced search" icon="filter_alt" :loading="state.loading"
       :error="state.loadingError" :expanded="isFilterWidgetExpanded">
       <template v-slot:header-extra>
-        <q-chip square size="sm" color="primary" text-color="white" class="shadow-1">{{
+        <q-chip square size="sm" color="grey-7" text-color="white">{{
           t("Total search conditions count", {
             count:
               totalSearchConditions
@@ -85,7 +85,7 @@
     <CustomExpansionWidget v-show="hasResults" title="Results" icon="folder_open" :staticIcon="true"
       :loading="state.loading" :error="state.loadingError" expanded class="q-mt-sm" ref="resultsWidgetRef">
       <template v-slot:header-extra>
-        <q-chip square size="sm" color="primary" text-color="white" class="shadow-1">{{ t("Total search results count",
+        <q-chip square size="sm" color="grey-7" text-color="white">{{ t("Total search results count",
           {
             count:
               pager.totalResults
