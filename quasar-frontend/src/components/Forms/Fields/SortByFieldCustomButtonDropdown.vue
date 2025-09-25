@@ -1,8 +1,9 @@
 <template>
-  <q-btn-dropdown v-bind="attrs" :label="currentLabel">
+  <q-btn-dropdown v-bind="attrs" :label="currentLabel" :dense="dense">
     <q-list>
-      <q-item :clickable="completeOptions.field != current.field && completeOptions.order != current.order"
-        v-close-popup v-for="(option, index) in completeOptions" :key="index" @click="onClick(option)">
+      <q-item :dense="dense"
+        :clickable="completeOptions.field != current.field && completeOptions.order != current.order" v-close-popup
+        v-for="(option, index) in completeOptions" :key="index" @click="onClick(option)">
         <q-item-section avatar>
           <q-icon :name="option.order == 'ASC' ? 'keyboard_double_arrow_up' : 'keyboard_double_arrow_down'" />
         </q-item-section>
@@ -33,6 +34,11 @@ const props = defineProps({
   current: {
     type: Object,
     required: true
+  },
+  dense: {
+    type: Boolean,
+    required: false,
+    default: false
   }
 });
 

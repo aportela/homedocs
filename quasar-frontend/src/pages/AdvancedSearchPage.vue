@@ -98,7 +98,7 @@
           <thead>
             <tr>
               <th class="lt-xl">
-                <SortByFieldCustomButtonDropdown :options="sortFields" :current="sort"
+                <SortByFieldCustomButtonDropdown dense :options="sortFields" :current="sort"
                   @change="(opt) => onToggleSort(opt.field)" flat class="action-primary fit">
                 </SortByFieldCustomButtonDropdown>
               </th>
