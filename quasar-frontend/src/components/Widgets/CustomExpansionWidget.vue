@@ -28,10 +28,12 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
+
+const emit = defineEmits(['expand', 'collapse']);
 
 const props = defineProps({
   expanded: {
@@ -73,6 +75,14 @@ const props = defineProps({
 
 const isExpanded = ref(props.expanded === true);
 const iconClass = computed(() => !!props.onHeaderIconClick ? "cursor-pointer" : "cursor-default");
+
+watch(() => isExpanded.value, val => {
+  if (val) {
+    emit('expand');
+  } else {
+    emit('collapse');
+  }
+});
 
 const expand = () => {
   isExpanded.value = true;
