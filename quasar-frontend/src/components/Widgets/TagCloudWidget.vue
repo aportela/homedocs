@@ -1,7 +1,7 @@
 <template>
-  <CustomExpansionWidget title="Tag cloud" :caption="isExpanded ? 'Click to collapse' : 'Click to expand'" icon="tag"
-    iconToolTip="Click to refresh data" :onHeaderIconClick="onRefresh" :loading="state.loading"
-    :error="state.loadingError" :expanded="isExpanded" @expand="isExpanded = true" @collapse="isExpanded = false">
+  <CustomExpansionWidget title="Tag cloud" icon="tag" iconToolTip="Click to refresh data" :onHeaderIconClick="onRefresh"
+    :loading="state.loading" :error="state.loadingError" :expanded="isExpanded" @expand="isExpanded = true"
+    @collapse="isExpanded = false">
     <template v-slot:header-extra>
       <q-chip square size="sm" color="primary" text-color="white" class="shadow-1">{{ t("Total tags", {
         count:
@@ -9,30 +9,23 @@
       }) }}</q-chip>
     </template>
     <template v-slot:content>
-      <div class="row items-center q-gutter-sm q-pa-xs" v-if="state.loading">
+      <div class="row items-center q-gutter-sm q-mt-none q-pa-xs" v-if="state.loading">
         <q-skeleton square width="12em" height="2em" class="" v-for="j in 32" :key="j"></q-skeleton>
       </div>
       <CustomErrorBanner v-else-if="state.loadingError" :text="state.errorMessage || 'Error loading data'"
         :apiError="state.apiError">
       </CustomErrorBanner>
       <div v-else-if="hasTags">
-        <div v-if="hasTags">
-          <router-link v-for="tag in tags" :key="tag.tag"
-            :to="{ name: 'advancedSearchByTag', params: { tag: tag.tag } }" class="text-decoration-none"
-            aria-label="Browse by tag">
-            <q-chip square class="theme-default-q-chip q-chip-10em shadow-1">
-              <q-avatar class="theme-default-q-avatar">{{ tag.total }}</q-avatar>
-              <div class="full-width text-center ellipsis">
-                {{ tag.tag }}
-              </div>
-              <q-tooltip>{{ t("Browse by tag: ", { tag: tag.tag }) }}</q-tooltip>
-            </q-chip>
-          </router-link>
-        </div>
-        <q-banner v-else class="transparent-background">
-          <q-icon name="warning" size="sm" class="q-mr-sm" />
-          {{ t("You haven't created any tags yet") }}
-        </q-banner>
+        <router-link v-for="tag in tags" :key="tag.tag" :to="{ name: 'advancedSearchByTag', params: { tag: tag.tag } }"
+          class="text-decoration-none" aria-label="Browse by tag">
+          <q-chip square class="theme-default-q-chip q-chip-10em shadow-1">
+            <q-avatar class="theme-default-q-avatar">{{ tag.total }}</q-avatar>
+            <div class="full-width text-center ellipsis">
+              {{ tag.tag }}
+            </div>
+            <q-tooltip>{{ t("Browse by tag: ", { tag: tag.tag }) }}</q-tooltip>
+          </q-chip>
+        </router-link>
       </div>
       <CustomBanner v-else warning text="You haven't created any tags yet"></CustomBanner>
     </template>
@@ -83,9 +76,6 @@ const onRefresh = () => {
         tags.length = 0;
         tags.push(...successResponse.data.tags);
         state.loading = false;
-        if (!isExpanded.value) {
-          isExpanded.value = true;
-        }
       })
       .catch((errorResponse) => {
         state.loadingError = true;
