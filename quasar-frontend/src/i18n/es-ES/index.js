@@ -202,5 +202,7 @@ export default {
   "Click to remove note": "Haga click para eliminar la nota",
   "Current sort by": "Orden por \"{label}\" ({order})",
   "ascending": "ascendente",
-  "descending": "descendente"
+  "descending": "descendente",
+  "View document attachments": "Ver los archivos del documento",
+  "View document notes": "Ver las notas del documento",
 };

@@ -197,5 +197,7 @@ export default {
   "Click to remove note": "Click to remove note",
   "Current sort by": "Order by \"{label}\" ({order})",
   "ascending": "ascending",
-  "descending": "descending"
+  "descending": "descending",
+  "View document attachments": "View document attachments",
+  "View document notes": "View document notes",
 };

@@ -76,6 +76,7 @@
                   :class="{ 'text-white bg-blue': recentDocument.fileCount > 0 }">{{ recentDocument.fileCount
                   }}</q-avatar>
                 {{ t("Total files", { count: recentDocument.fileCount }) }}
+                <q-tooltip v-if="recentDocument.fileCount > 0">{{ t("View document attachments") }}</q-tooltip>
               </q-chip>
               <q-chip size="md" square class="full-width theme-default-q-chip shadow-1"
                 :clickable="recentDocument.noteCount > 0 && !state.loading"
@@ -84,6 +85,7 @@
                   :class="{ 'text-white bg-blue': recentDocument.noteCount > 0 }">{{ recentDocument.noteCount
                   }}</q-avatar>
                 {{ t("Total notes", { count: recentDocument.noteCount }) }}
+                <q-tooltip v-if="recentDocument.noteCount > 0">{{ t("View document notes") }}</q-tooltip>
               </q-chip>
             </q-item-section>
           </q-item>
