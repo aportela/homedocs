@@ -197,6 +197,21 @@ return function (App $app) {
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
+            $group->get('/document/{id}/attachments', function (Request $request, Response $response, array $args) {
+                $document = new \HomeDocs\Document();
+                $document->id = $args['id'];
+                $document->setRootStoragePath($this->get('settings')['paths']['storage']);
+                $document->get($this->get(\aportela\DatabaseWrapper\DB::class));
+                $payload = json_encode(
+                    [
+                        'initialState' => \HomeDocs\Utils::getInitialState($this),
+                        'attachments' => $document->files
+                    ]
+                );
+                $response->getBody()->write($payload);
+                return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+            })->add(\HomeDocs\Middleware\CheckAuth::class);
+
             $group->post('/document/{id}', function (Request $request, Response $response, array $args) {
                 $params = $request->getParsedBody();
                 $documentFiles = $params["files"] ?? [];

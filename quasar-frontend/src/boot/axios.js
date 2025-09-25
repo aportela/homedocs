@@ -291,6 +291,18 @@ const api = {
           });
       });
     },
+    getAttachments: function (id) {
+      return new Promise((resolve, reject) => {
+        axios
+          .get("api2/document/" + id + "/attachments", {})
+          .then((response) => {
+            resolve(response);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    },
     addFile: function (id, file) {
       return new Promise((resolve, reject) => {
         let formData = new FormData();
