@@ -159,22 +159,17 @@
               <td class="gt-lg">{{ document.createdOn }}</td>
               <td class="gt-lg">{{ document.lastUpdate }}</td>
               <td class="gt-lg">
-                <q-chip size="md" square class="theme-default-q-chip shadow-1 q-chip-8em"
-                  :clickable="document.fileCount > 0 && !state.loading"
-                  @click.stop.prevent="onShowDocumentFiles(document.id, document.title)">
-                  <q-avatar class="theme-default-q-avatar" :class="{ 'text-white bg-blue': document.fileCount > 0 }">{{
-                    document.fileCount }}</q-avatar>
-                  {{ t('Total files', { count: document.fileCount }) }}
-                </q-chip>
+                <ViewDocumentDetailsButton size="md" square class="min-width-8em" :count="document.fileCount"
+                  :label="'Total files'" :tool-tip="'View document attachments'" :disable="state.loading"
+                  @click.stop.prevent="onShowDocumentFiles(document.id, document.title)" q-chip-class="'q-chip-8em'">
+                </ViewDocumentDetailsButton>
               </td>
               <td class="gt-lg">
-                <q-chip size="md" square class="theme-default-q-chip shadow-1 q-chip-8em"
-                  :clickable="document.noteCount > 0 && !state.loading"
-                  @click.stop.prevent="onShowDocumentNotes(document.id, document.title)">
-                  <q-avatar class="theme-default-q-avatar" :class="{ 'text-white bg-blue': document.noteCount > 0 }">{{
-                    document.noteCount }}</q-avatar>
-                  {{ t('Total notes', { count: document.noteCount }) }}
-                </q-chip>
+                <ViewDocumentDetailsButton size="md" square class="min-width-8em" :count="document.noteCount"
+                  :label="'Total notes'" :tool-tip="'View document notes'" :disable="state.loading"
+                  @click.stop.prevent="onShowDocumentNotes(document.id, recentDocument.title)"
+                  q-chip-class="'q-chip-8em'">
+                </ViewDocumentDetailsButton>
               </td>
             </tr>
           </tbody>
@@ -213,6 +208,7 @@ import { default as CustomErrorBanner } from "src/components/Banners/CustomError
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 import { default as DateFieldCustomInput } from "src/components/Forms/Fields/DateFieldCustomInput.vue";
 import { default as SortByFieldCustomButtonDropdown } from "src/components/Forms/Fields/SortByFieldCustomButtonDropdown.vue";
+import { default as ViewDocumentDetailsButton } from "src/components/Buttons/ViewDocumentDetailsButton.vue";
 import { default as DocumentFilesPreviewDialog } from "src/components/Dialogs/DocumentFilesPreviewDialog.vue";
 import { default as DocumentNotesPreviewDialog } from "src/components/Dialogs/DocumentNotesPreviewDialog.vue";
 

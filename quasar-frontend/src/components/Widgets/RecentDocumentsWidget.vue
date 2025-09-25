@@ -64,24 +64,14 @@
             </q-item-section>
             <q-item-section side top>
               <q-item-label caption>{{ timeAgo(recentDocument.timestamp) }}</q-item-label>
-              <q-chip size="md" square class="full-width theme-default-q-chip shadow-1 q-chip-7em"
-                :clickable="recentDocument.fileCount > 0 && !state.loading"
+              <ViewDocumentDetailsButton size="md" square class="min-width-7em" :count="recentDocument.fileCount"
+                :label="'Total files'" :tool-tip="'View document attachments'" :disable="state.loading"
                 @click.stop.prevent="onShowDocumentFiles(recentDocument.id, recentDocument.title)">
-                <q-avatar class="theme-default-q-avatar"
-                  :class="{ 'text-white bg-blue-6': recentDocument.fileCount > 0 }">{{ recentDocument.fileCount
-                  }}</q-avatar>
-                {{ t("Total files", { count: recentDocument.fileCount }) }}
-                <q-tooltip v-if="recentDocument.fileCount > 0">{{ t("View document attachments") }}</q-tooltip>
-              </q-chip>
-              <q-chip size="md" square class="full-width theme-default-q-chip shadow-1 q-chip-7em"
-                :clickable="recentDocument.noteCount > 0 && !state.loading"
+              </ViewDocumentDetailsButton>
+              <ViewDocumentDetailsButton size="md" square class="min-width-7em" :count="recentDocument.noteCount"
+                :label="'Total notes'" :tool-tip="'View document notes'" :disable="state.loading"
                 @click.stop.prevent="onShowDocumentNotes(recentDocument.id, recentDocument.title)">
-                <q-avatar class="theme-default-q-avatar"
-                  :class="{ 'text-white bg-blue-6': recentDocument.noteCount > 0 }">{{ recentDocument.noteCount
-                  }}</q-avatar>
-                {{ t("Total notes", { count: recentDocument.noteCount }) }}
-                <q-tooltip v-if="recentDocument.noteCount > 0">{{ t("View document notes") }}</q-tooltip>
-              </q-chip>
+              </ViewDocumentDetailsButton>
             </q-item-section>
           </q-item>
           <q-separator v-if="index !== recentDocuments.length - 1" class="q-my-xs" />
@@ -112,6 +102,7 @@ import { default as CustomExpansionWidget } from "src/components/Widgets/CustomE
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 import { default as BrowseByTagButton } from "src/components/Buttons/BrowseByTagButton.vue";
+import { default as ViewDocumentDetailsButton } from "src/components/Buttons/ViewDocumentDetailsButton.vue";
 import { default as DocumentFilesPreviewDialog } from "src/components/Dialogs/DocumentFilesPreviewDialog.vue";
 import { default as DocumentNotesPreviewDialog } from "src/components/Dialogs/DocumentNotesPreviewDialog.vue";
 
@@ -239,9 +230,3 @@ onBeforeUnmount(() => {
 });
 
 </script>
-
-<style scoped>
-.q-chip-7em {
-  min-width: 7em;
-}
-</style>
