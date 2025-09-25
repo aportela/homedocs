@@ -194,7 +194,7 @@ const onRefresh = () => {
   state.loadingError = false;
   state.errorMessage = null;
   state.apiError = null;
-  api.stats.getActivityHeatMapData(date.formatDate(fromDate, 'X'))
+  api.stats.getActivityHeatMapData(date.formatDate(fromDate, 'x'))
     .then((successResponse) => {
       const counts = successResponse.data.heatmap.map(d => d.count);
       //const min = Math.min(...counts);
