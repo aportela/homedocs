@@ -4,7 +4,7 @@
     iconToolTip="Click to refresh data" :onHeaderIconClick="onRefresh" :loading="state.loading"
     :error="state.loadingError" :expanded="expanded">
     <template v-slot:header-extra>
-      <q-chip square size="sm" color="primary" text-color="white">{{ t("Total document count", {
+      <q-chip square size="sm" color="primary" text-color="white" class="shadow-1">{{ t("Total document count", {
         count:
           recentDocuments.length
       }) }}</q-chip>
@@ -45,24 +45,22 @@
       </CustomErrorBanner>
       <q-list v-else-if="hasRecentDocuments">
         <div v-for="recentDocument, index in recentDocuments" :key="recentDocument.id">
-          <q-item class="transparent-background text-color-primary">
+          <q-item class="transparent-background text-color-primary" clickable
+            :to="{ name: 'document', params: { id: recentDocument.id } }">
             <q-item-section top avatar class="gt-xs">
               <q-avatar square icon="work" size="64px" aria-label="Document avatar" />
             </q-item-section>
             <q-item-section top>
               <q-item-label>
-                <router-link :to="{ name: 'document', params: { id: recentDocument.id } }"
-                  class="text-decoration-hover text-color-primary"><span class="text-weight-bold">{{ t("Title")
-                  }}:</span> {{
-                      recentDocument.title
-                    }}
-                </router-link>
+                <span class="text-weight-bold">{{ t("Title") }}:</span> {{ recentDocument.title }}
               </q-item-label>
-              <q-item-label caption lines="2">{{ recentDocument.description }}</q-item-label>
-              <q-item-label>
+              <q-item-label caption lines="2" v-if="recentDocument.description">
+                <span class="text-weight-bold">{{ t("Description") }}:</span> {{ recentDocument.description
+                }}</q-item-label>
+              <q-item-label v-if="recentDocument.tags?.length > 0">
                 <router-link v-for="tag in recentDocument.tags" :key="tag"
                   :to="{ name: 'advancedSearchByTag', params: { tag: tag } }">
-                  <q-chip square size="md" clickable icon="tag" class="theme-default-q-chip">
+                  <q-chip square size="md" clickable icon="tag" class="theme-default-q-chip shadow-1">
                     {{ tag }}
                     <q-tooltip>{{ t("Browse by tag: ", { tag: tag }) }}</q-tooltip>
                   </q-chip>
@@ -71,7 +69,7 @@
             </q-item-section>
             <q-item-section side top>
               <q-item-label caption>{{ timeAgo(recentDocument.timestamp) }}</q-item-label>
-              <q-chip size="md" square class="full-width theme-default-q-chip"
+              <q-chip size="md" square class="full-width theme-default-q-chip shadow-1"
                 :clickable="recentDocument.fileCount > 0 && !state.loading"
                 @click.stop.prevent="onShowDocumentFiles(recentDocument.id, recentDocument.title)">
                 <q-avatar class="theme-default-q-avatar"
@@ -79,7 +77,7 @@
                   }}</q-avatar>
                 {{ t("Total files", { count: recentDocument.fileCount }) }}
               </q-chip>
-              <q-chip size="md" square class="full-width theme-default-q-chip"
+              <q-chip size="md" square class="full-width theme-default-q-chip shadow-1"
                 :clickable="recentDocument.noteCount > 0 && !state.loading"
                 @click.stop.prevent="onShowDocumentNotes(recentDocument.id, recentDocument.title)">
                 <q-avatar class="theme-default-q-avatar"
