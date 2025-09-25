@@ -81,8 +81,7 @@
     </template>
   </CustomExpansionWidget>
   <DocumentFilesPreviewDialog v-if="showPreviewFilesDialog" :documentId="selectedDocument.id"
-    :documentTitle="selectedDocument.title" :title="selectedDocument.title" :files="selectedDocument.files"
-    @close="showPreviewFilesDialog = false">
+    :documentTitle="selectedDocument.title" @close="showPreviewFilesDialog = false">
   </DocumentFilesPreviewDialog>
   <DocumentNotesPreviewDialog v-if="showPreviewNotesDialog" :documentId="selectedDocument.id"
     :documentTitle="selectedDocument.title" @close="showPreviewNotesDialog = false">
