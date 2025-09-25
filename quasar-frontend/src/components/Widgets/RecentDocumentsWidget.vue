@@ -107,6 +107,8 @@
 
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
+import { date, format } from "quasar";
+
 import { bus } from "src/boot/bus";
 import { api } from "src/boot/axios";
 import { useFormatDates } from "src/composables/formatDate"
@@ -182,14 +184,40 @@ const onRefresh = () => {
 };
 
 const onShowDocumentFiles = (documentId, documentTitle) => {
-  /*
+  // TODO: use new dialog (LIKE DOCUMENT NOTES, NOT DONE)
   if (!state.loading) {
-    selectedDocument.id = documentId;
-    selectedDocument.title = documentTitle;
-    showPreviewFilesDialog.value = true;
+    selectedDocument.title = null;
+    selectedDocument.notes.length = 0;
+    selectedDocument.files.length = 0;
+    state.loading = true;
+    api.document
+      .get(documentId)
+      .then((successResponse) => {
+        selectedDocument.id = documentId;
+        selectedDocument.title = documentTitle;
+        selectedDocument.files.push(...successResponse.data.document.files.map((file) => {
+          file.isNew = false;
+          file.uploadedOn = date.formatDate(file.uploadedOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
+          file.humanSize = format.humanStorageSize(file.size);
+          file.url = "api2/file/" + file.id;
+          return (file)
+        }));
+        state.loading = false;
+        showPreviewFilesDialog.value = selectedDocument.files.length > 0;
+      })
+      .catch((errorResponse) => {
+        state.loading = false;
+        switch (errorResponse.response.status) {
+          case 401:
+            // TODO
+            break;
+          default:
+            // TODO
+            break;
+        }
+      });
   }
-    */
-};
+}
 
 const onShowDocumentNotes = (documentId, documentTitle) => {
   if (!state.loading) {
