@@ -98,8 +98,8 @@
           <thead>
             <tr>
               <th class="lt-xl">
-                <SortByFieldCustomButtonDropdown dense :options="sortFields" :current="sort"
-                  @change="(opt) => onToggleSort(opt.field)" flat class="action-primary fit">
+                <SortByFieldCustomButtonDropdown square dense :options="sortFields" :current="sort"
+                  @change="(opt) => onToggleSort(opt.field)" flat class="action-primary fit full-height">
                 </SortByFieldCustomButtonDropdown>
               </th>
               <th v-for="(column, index) in columns" :key="index" :style2="{ width: column.width }"
@@ -114,7 +114,7 @@
           </thead>
           <tbody>
             <tr v-for="document in results" :key="document.id">
-              <td class="td-document-link lt-xl"> <!-- lt-md -->
+              <td>
                 <q-item clickable :disable="state.loading" :to="{ name: 'document', params: { id: document.id } }"
                   class="bg-transparent">
                   <q-item-section>
@@ -123,7 +123,6 @@
                     </q-item-label>
                     <q-item-label caption>
                       <div class="row">
-                        <!-- TODO: not working on resize -->
                         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6 self-center">Creado: {{
                           document.createdOn }} - Actualizado: {{
                             document.lastUpdate }}</div>
@@ -531,7 +530,12 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.td-document-link {
+th:first-child {
+  height: 100%;
+  padding: 0px !important;
+}
+
+td:first-child {
   padding: 0px !important;
 }
 
