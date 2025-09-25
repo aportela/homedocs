@@ -16,16 +16,8 @@
         :apiError="state.apiError">
       </CustomErrorBanner>
       <div v-else-if="hasTags">
-        <router-link v-for="tag in tags" :key="tag.tag" :to="{ name: 'advancedSearchByTag', params: { tag: tag.tag } }"
-          class="text-decoration-none" aria-label="Browse by tag">
-          <q-chip square clickable class="theme-default-q-chip q-chip-10em shadow-1">
-            <q-avatar class="theme-default-q-avatar text-white bg-blue-6">{{ tag.total }}</q-avatar>
-            <div class="full-width text-center ellipsis">
-              {{ tag.tag }}
-            </div>
-            <q-tooltip>{{ t("Browse by tag: ", { tag: tag.tag }) }}</q-tooltip>
-          </q-chip>
-        </router-link>
+        <BrowseByTagButton v-for="tag in tags" :key="tag.tag" :tag="tag.tag" :caption="tag.total"
+          :qChipClass="'q-chip-10em'"></BrowseByTagButton>
       </div>
       <CustomBanner v-else warning text="You haven't created any tags yet"></CustomBanner>
     </template>
@@ -42,6 +34,7 @@ import { api } from "src/boot/axios";
 import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
+import { default as BrowseByTagButton } from "src/components/Buttons/BrowseByTagButton.vue";
 
 const { t } = useI18n();
 
@@ -110,7 +103,7 @@ onBeforeUnmount(() => {
 
 </script>
 
-<style scoped>
+<style>
 .q-chip-10em {
   width: 10em;
 }

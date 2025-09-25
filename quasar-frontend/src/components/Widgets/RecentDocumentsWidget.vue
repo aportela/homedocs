@@ -57,16 +57,9 @@
                 <span class="text-weight-bold">{{ t("Description") }}:</span> {{ recentDocument.description
                 }}</q-item-label>
               <q-item-label v-if="recentDocument.tags?.length > 0">
-                <router-link v-for="tag in recentDocument.tags" :key="tag"
-                  :to="{ name: 'advancedSearchByTag', params: { tag: tag } }">
-                  <q-chip square size="md" clickable class="theme-default-q-chip shadow-1">
-                    <q-avatar class="text-white bg-blue-6">
-                      <q-icon name="tag"></q-icon>
-                    </q-avatar>
-                    {{ tag }}
-                    <q-tooltip>{{ t("Browse by tag: ", { tag: tag }) }}</q-tooltip>
-                  </q-chip>
-                </router-link>
+                <BrowseByTagButton v-for="tag in recentDocument.tags" :key="tag"
+                  :to="{ name: 'advancedSearchByTag', params: { tag: tag } }" :tag="tag" icon="tag">
+                </BrowseByTagButton>
               </q-item-label>
             </q-item-section>
             <q-item-section side top>
@@ -118,6 +111,7 @@ import { useFormatDates } from "src/composables/formatDate"
 import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
+import { default as BrowseByTagButton } from "src/components/Buttons/BrowseByTagButton.vue";
 import { default as DocumentFilesPreviewDialog } from "src/components/Dialogs/DocumentFilesPreviewDialog.vue";
 import { default as DocumentNotesPreviewDialog } from "src/components/Dialogs/DocumentNotesPreviewDialog.vue";
 
