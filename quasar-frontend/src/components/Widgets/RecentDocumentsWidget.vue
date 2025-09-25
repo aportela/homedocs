@@ -68,7 +68,7 @@
             </q-item-section>
             <q-item-section side top>
               <q-item-label caption>{{ timeAgo(recentDocument.timestamp) }}</q-item-label>
-              <q-chip size="md" square class="full-width theme-default-q-chip shadow-1"
+              <q-chip size="md" square class="full-width theme-default-q-chip shadow-1 q-chip-7em"
                 :clickable="recentDocument.fileCount > 0 && !state.loading"
                 @click.stop.prevent="onShowDocumentFiles(recentDocument.id, recentDocument.title)">
                 <q-avatar class="theme-default-q-avatar"
@@ -77,7 +77,7 @@
                 {{ t("Total files", { count: recentDocument.fileCount }) }}
                 <q-tooltip v-if="recentDocument.fileCount > 0">{{ t("View document attachments") }}</q-tooltip>
               </q-chip>
-              <q-chip size="md" square class="full-width theme-default-q-chip shadow-1"
+              <q-chip size="md" square class="full-width theme-default-q-chip shadow-1 q-chip-7em"
                 :clickable="recentDocument.noteCount > 0 && !state.loading"
                 @click.stop.prevent="onShowDocumentNotes(recentDocument.id, recentDocument.title)">
                 <q-avatar class="theme-default-q-avatar"
@@ -242,3 +242,9 @@ onBeforeUnmount(() => {
 });
 
 </script>
+
+<style scoped>
+.q-chip-7em {
+  min-width: 7em;
+}
+</style>
