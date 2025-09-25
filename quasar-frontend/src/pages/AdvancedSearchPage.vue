@@ -108,13 +108,13 @@
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <q-tooltip v-if="isDesktop">{{ t('Toggle sort by this column', { field: t(column.title) })
-                }}</q-tooltip>
+                  }}</q-tooltip>
               </th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="document in results" :key="document.id">
-              <td>
+              <td class="lt-xl">
                 <q-item clickable :disable="state.loading" :to="{ name: 'document', params: { id: document.id } }"
                   class="bg-transparent">
                   <q-item-section>
@@ -338,18 +338,15 @@ const onToggleSort = (field, order) => {
 
   if (!state.loading) {
     if (sort.field == field) {
-      console.log("coincide, hace togle")
       if (!order) {
         sort.order = sort.order == "ASC" ? "DESC" : "ASC";
       } else {
         sort.order = order;
       }
     } else {
-      console.log("no coincide, asc")
       sort.field = field;
       sort.order = !order ? "ASC" : order;
     }
-    console.log(sort);
     onSubmitForm(false);
   }
 }
