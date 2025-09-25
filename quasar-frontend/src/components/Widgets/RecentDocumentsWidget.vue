@@ -59,7 +59,10 @@
               <q-item-label v-if="recentDocument.tags?.length > 0">
                 <router-link v-for="tag in recentDocument.tags" :key="tag"
                   :to="{ name: 'advancedSearchByTag', params: { tag: tag } }">
-                  <q-chip square size="md" clickable icon="tag" class="theme-default-q-chip shadow-1">
+                  <q-chip square size="md" clickable class="theme-default-q-chip shadow-1">
+                    <q-avatar class="text-white bg-blue-6">
+                      <q-icon name="tag"></q-icon>
+                    </q-avatar>
                     {{ tag }}
                     <q-tooltip>{{ t("Browse by tag: ", { tag: tag }) }}</q-tooltip>
                   </q-chip>
@@ -72,7 +75,7 @@
                 :clickable="recentDocument.fileCount > 0 && !state.loading"
                 @click.stop.prevent="onShowDocumentFiles(recentDocument.id, recentDocument.title)">
                 <q-avatar class="theme-default-q-avatar"
-                  :class="{ 'text-white bg-blue': recentDocument.fileCount > 0 }">{{ recentDocument.fileCount
+                  :class="{ 'text-white bg-blue-6': recentDocument.fileCount > 0 }">{{ recentDocument.fileCount
                   }}</q-avatar>
                 {{ t("Total files", { count: recentDocument.fileCount }) }}
                 <q-tooltip v-if="recentDocument.fileCount > 0">{{ t("View document attachments") }}</q-tooltip>
@@ -81,7 +84,7 @@
                 :clickable="recentDocument.noteCount > 0 && !state.loading"
                 @click.stop.prevent="onShowDocumentNotes(recentDocument.id, recentDocument.title)">
                 <q-avatar class="theme-default-q-avatar"
-                  :class="{ 'text-white bg-blue': recentDocument.noteCount > 0 }">{{ recentDocument.noteCount
+                  :class="{ 'text-white bg-blue-6': recentDocument.noteCount > 0 }">{{ recentDocument.noteCount
                   }}</q-avatar>
                 {{ t("Total notes", { count: recentDocument.noteCount }) }}
                 <q-tooltip v-if="recentDocument.noteCount > 0">{{ t("View document notes") }}</q-tooltip>
