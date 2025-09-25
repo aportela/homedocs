@@ -99,7 +99,7 @@
             <tr>
               <th class="lt-xl">
                 <SortByFieldCustomButtonDropdown square dense :options="sortFields" :current="sort"
-                  @change="(opt) => onToggleSort(opt.field)" flat class="action-primary fit full-height">
+                  @change="(opt) => onToggleSort(opt.field, opt.order)" flat class="action-primary fit full-height">
                 </SortByFieldCustomButtonDropdown>
               </th>
               <th v-for="(column, index) in columns" :key="index" :style2="{ width: column.width }"
@@ -334,14 +334,22 @@ const onPaginationChanged = (pageIndex) => {
   onSubmitForm(false);
 }
 
-const onToggleSort = (field) => {
+const onToggleSort = (field, order) => {
+
   if (!state.loading) {
     if (sort.field == field) {
-      sort.order = sort.order == "ASC" ? "DESC" : "ASC";
+      console.log("coincide, hace togle")
+      if (!order) {
+        sort.order = sort.order == "ASC" ? "DESC" : "ASC";
+      } else {
+        sort.order = order;
+      }
     } else {
+      console.log("no coincide, asc")
       sort.field = field;
-      sort.order = "ASC";
+      sort.order = !order ? "ASC" : order;
     }
+    console.log(sort);
     onSubmitForm(false);
   }
 }

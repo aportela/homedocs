@@ -1,9 +1,9 @@
 <template>
   <q-btn-dropdown v-bind="attrs" :label="currentLabel" :dense="dense">
     <q-list>
-      <q-item :dense="dense"
-        :clickable="completeOptions.field != current.field && completeOptions.order != current.order" v-close-popup
-        v-for="(option, index) in completeOptions" :key="index" @click="onClick(option)">
+      <q-item :dense="dense" v-close-popup v-for="(option, index) in completeOptions" :key="index"
+        @click="onClick(option)" :clickable="!(option.field == currentSort.field && option.order == currentSort.order)"
+        :disable="option.field == currentSort.field && option.order == currentSort.order">
         <q-item-section avatar>
           <q-icon :name="option.order == 'ASC' ? 'keyboard_double_arrow_up' : 'keyboard_double_arrow_down'" />
         </q-item-section>
@@ -17,7 +17,7 @@
 
 <script setup>
 
-import { computed, reactive, useAttrs } from "vue";
+import { computed, reactive, watch, useAttrs } from "vue";
 import { useI18n } from "vue-i18n";
 
 const attrs = useAttrs();
@@ -46,10 +46,18 @@ const currentLabel = computed(() => {
   return (t("Order by: none"))
 });
 
+const currentSort = reactive({
+  field: props.current?.field || null,
+  order: props.current?.order || null
+});
+
 const onClick = (option) => {
-  console.log(option);
-  emit("change", { field: option.field, order: option.order })
+  currentSort.field = option.field;
+  currentSort.order = option.order;
+  emit("change", currentSort);
 };
+
+watch(() => props.current, val => { currentSort.field = val.field; currentSort.order = val.order });
 
 const completeOptions = reactive([]);
 
