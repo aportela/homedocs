@@ -17,16 +17,17 @@
       </CustomErrorBanner>
       <div v-else-if="hasTags">
         <div v-if="hasTags">
-          <q-chip square class="theme-default-q-chip shadow-1" v-for="tag in tags" :key="tag.tag">
-            <q-avatar class="theme-default-q-avatar">{{ tag.total }}</q-avatar>
-            <router-link :to="{ name: 'advancedSearchByTag', params: { tag: tag.tag } }"
-              class="text-center text-decoration-none q-chip-10em" aria-label="Browse by tag">
-              <div class="ellipsis">
+          <router-link v-for="tag in tags" :key="tag.tag"
+            :to="{ name: 'advancedSearchByTag', params: { tag: tag.tag } }" class="text-decoration-none"
+            aria-label="Browse by tag">
+            <q-chip square class="theme-default-q-chip q-chip-10em shadow-1">
+              <q-avatar class="theme-default-q-avatar">{{ tag.total }}</q-avatar>
+              <div class="full-width text-center ellipsis">
                 {{ tag.tag }}
-                <q-tooltip>{{ t("Browse by tag: ", { tag: tag.tag }) }}</q-tooltip>
               </div>
-            </router-link>
-          </q-chip>
+              <q-tooltip>{{ t("Browse by tag: ", { tag: tag.tag }) }}</q-tooltip>
+            </q-chip>
+          </router-link>
         </div>
         <q-banner v-else class="transparent-background">
           <q-icon name="warning" size="sm" class="q-mr-sm" />
