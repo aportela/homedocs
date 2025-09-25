@@ -1,0 +1,131 @@
+<template>
+  <q-dialog v-model="dialogModel" persistent @hide="onHide">
+    <q-card class="q-card-file-preview-dialog">
+      <q-card-section class="row items-center q-p-none">
+        Document file preview
+        <q-space />
+        <q-chip size="md" square class="gt-md theme-default-q-chip" v-if="attachments?.length > 0">
+          <q-avatar class="theme-default-q-avatar">{{ attachments?.length }}</q-avatar>
+          {{ t("Total files", { count: attachments?.length }) }}
+        </q-chip>
+        <q-btn icon="close" flat round dense v-close-popup class="gt-md" aria-label="Close modal" />
+      </q-card-section>
+      <q-separator class="q-mb-md"></q-separator>
+      <q-card-section class="q-pt-none scroll file-preview-scrolled-container">
+
+        <p class="text-center text-bold">{{ currentAttachment.name }} ({{ currentAttachment.humanSize }})</p>
+        <q-pagination class="flex flex-center q-my-md" v-if="attachments?.length > 1" v-model="currentAttachmentIndex"
+          :max="attachments?.length" color="dark" :max-pages="5" boundary-numbers direction-links
+          icon-first="skip_previous" icon-last="skip_next" icon-prev="fast_rewind" icon-next="fast_forward" gutter="md"
+          @update:model-value="previewLoadingError = false" />
+        <div v-if="allowPreview(currentAttachment.name)">
+          <q-img v-if="isImage(currentAttachment.name)" :src="currentAttachment.url" loading="lazy"
+            spinner-color="white" @error="previewLoadingError = true">
+          </q-img>
+          <div v-else-if="isAudio(currentAttachment.name)">
+            <p class="text-center q-my-md">
+              <q-icon name="audio_file" size="192px"></q-icon>
+            </p>
+            <audio controls class="q-mt-md" style="width: 100%;">
+              <source :src="currentAttachment.url" type="audio/mpeg" />
+              {{ t("Your browser does not support the audio element") }}
+            </audio>
+          </div>
+          <div v-else>
+            <p class="text-center q-my-md">
+              <q-icon name="audio_file" size="192px"></q-icon>
+            </p>
+            <q-banner inline-actions>
+              <q-icon name="error" size="sm" />
+              {{ t("Preview not available") }}
+            </q-banner>
+          </div>
+          <div class="text-subtitle1 text-center" v-if="previewLoadingError">
+            <q-banner inline-actions>
+              <q-icon name="error" size="sm" />
+              {{ t("Error loading preview") }}
+            </q-banner>
+          </div>
+        </div>
+        <div v-else>
+          <p class="text-center q-my-md">
+            <q-icon name="hide_source" size="192px"></q-icon>
+          </p>
+          <CustomBanner warning :text="'Preview not available'" icon="error"></CustomBanner>
+        </div>
+      </q-card-section>
+      <q-separator class="q-my-sm"></q-separator>
+      <q-card-section class="q-pt-none">
+        <q-card-actions align="right">
+          <q-btn color="primary" :href="currentAttachment.url" :label="t('Download')" icon="download"
+            aria-label="Download file" />
+          <q-btn color="primary" v-close-popup :label="t('Close')" icon="close" aria-label="Close modal" />
+        </q-card-actions>
+      </q-card-section>
+    </q-card>
+  </q-dialog>
+</template>
+
+<script setup>
+import { ref, computed } from "vue";
+import { useI18n } from "vue-i18n";
+
+import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
+
+const { t } = useI18n();
+
+const emit = defineEmits(['close', 'hide']);
+
+const dialogModel = ref(true);
+
+const previewLoadingError = ref(false);
+
+const props = defineProps({
+  attachments: {
+    type: Array,
+    required: true,
+  },
+  currentIndex: {
+    type: Number,
+    required: false,
+    default: 0,
+  }
+});
+
+const currentAttachmentIndex = ref(props.currentIndex + 1 || 1);
+const currentAttachment = computed(() => props.attachments?.length > 0 ? props.attachments[currentAttachmentIndex.value - 1] : {})
+
+const allowPreview = (filename) => {
+  return (filename.match(/.(jpg|jpeg|png|gif|mp3)$/i));
+};
+
+
+const isImage = (filename) => {
+  return (filename.match(/.(jpg|jpeg|png|gif)$/i));
+};
+
+const isAudio = (filename) => {
+  return (filename.match(/.(mp3)$/i));
+};
+
+const onHide = () => {
+  emit('close');
+};
+
+</script>
+
+<style scoped>
+.q-card-file-preview-dialog {
+  width: 1024px;
+  max-width: 80vw;
+}
+
+.q-card-file-preview-dialog-header {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.file-preview-scrolled-container {
+  height: 50vh
+}
+</style>
