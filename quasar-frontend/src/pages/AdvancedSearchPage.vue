@@ -98,7 +98,7 @@
           <thead>
             <tr>
               <th class="lt-xl">
-                <SortByFieldCustomButtonDropdown square dense :options="sortFields" :current="sort"
+                <SortByFieldCustomButtonDropdown square dense no-caps :options="sortFields" :current="sort"
                   @change="(opt) => onToggleSort(opt.field, opt.order)" flat class="action-primary fit full-height">
                 </SortByFieldCustomButtonDropdown>
               </th>
@@ -108,7 +108,7 @@
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <q-tooltip v-if="isDesktop">{{ t('Toggle sort by this column', { field: t(column.title) })
-                  }}</q-tooltip>
+                }}</q-tooltip>
               </th>
             </tr>
           </thead>
@@ -335,7 +335,6 @@ const onPaginationChanged = (pageIndex) => {
 }
 
 const onToggleSort = (field, order) => {
-
   if (!state.loading) {
     if (sort.field == field) {
       if (!order) {
