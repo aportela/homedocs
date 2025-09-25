@@ -3,7 +3,7 @@
     icon="tag" iconToolTip="Click to refresh data" :onHeaderIconClick="onRefresh" :loading="state.loading"
     :error="state.loadingError" :expanded="expanded">
     <template v-slot:header-extra>
-      <q-chip square size="sm" color="primary" text-color="white">{{ t("Total tags", {
+      <q-chip square size="sm" color="primary" text-color="white" class="shadow-1">{{ t("Total tags", {
         count:
           tags.length
       }) }}</q-chip>
@@ -17,7 +17,7 @@
       </CustomErrorBanner>
       <div v-else-if="hasTags">
         <div v-if="hasTags">
-          <q-chip square class="theme-default-q-chip" v-for="tag in tags" :key="tag.tag">
+          <q-chip square class="theme-default-q-chip shadow-1" v-for="tag in tags" :key="tag.tag">
             <q-avatar class="theme-default-q-avatar">{{ tag.total }}</q-avatar>
             <router-link :to="{ name: 'advancedSearchByTag', params: { tag: tag.tag } }"
               class="text-center text-decoration-none q-chip-10em" aria-label="Browse by tag">
