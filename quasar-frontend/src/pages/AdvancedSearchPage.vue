@@ -129,7 +129,7 @@
                         <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6 self-center text-right"><q-chip
                             size="md" square class="theme-default-q-chip q-chip-8em"
                             :clickable="document.fileCount > 0 && !state.loading"
-                            @click.stop="onShowDocumentFiles(document.id, document.title)">
+                            @click.stop.prevent="onShowDocumentFiles(document.id, document.title)">
                             <q-avatar class="theme-default-q-avatar"
                               :class="{ 'text-white bg-blue': document.fileCount > 0 }">{{
                                 document.fileCount }}</q-avatar>
@@ -137,7 +137,7 @@
                           </q-chip>
                           <q-chip size="md" square class="theme-default-q-chip q-chip-8em"
                             :clickable="document.noteCount > 0 && !state.loading"
-                            @click.stop="onShowDocumentNotes(document.id, document.title)">
+                            @click.stop.prevent="onShowDocumentNotes(document.id, document.title)">
                             <q-avatar class="theme-default-q-avatar"
                               :class="{ 'text-white bg-blue': document.noteCount > 0 }">{{
                                 document.noteCount }}</q-avatar>
@@ -158,7 +158,7 @@
               <td class="gt-lg">
                 <q-chip size="md" square class="theme-default-q-chip q-chip-8em"
                   :clickable="document.fileCount > 0 && !state.loading"
-                  @click.stop="onShowDocumentFiles(document.id, document.title)">
+                  @click.stop.prevent="onShowDocumentFiles(document.id, document.title)">
                   <q-avatar class="theme-default-q-avatar" :class="{ 'text-white bg-blue': document.fileCount > 0 }">{{
                     document.fileCount }}</q-avatar>
                   {{ t('Total files', { count: document.fileCount }) }}
@@ -167,7 +167,7 @@
               <td class="gt-lg">
                 <q-chip size="md" square class="theme-default-q-chip q-chip-8em"
                   :clickable="document.noteCount > 0 && !state.loading"
-                  @click.stop="onShowDocumentNotes(document.id, document.title)">
+                  @click.stop.prevent="onShowDocumentNotes(document.id, document.title)">
                   <q-avatar class="theme-default-q-avatar" :class="{ 'text-white bg-blue': document.noteCount > 0 }">{{
                     document.noteCount }}</q-avatar>
                   {{ t('Total notes', { count: document.noteCount }) }}
