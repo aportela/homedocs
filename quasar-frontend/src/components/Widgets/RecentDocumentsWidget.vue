@@ -80,8 +80,9 @@
       <CustomBanner v-else warning text="You haven't created any documents yet"></CustomBanner>
     </template>
   </CustomExpansionWidget>
-  <DocumentFilesPreviewDialog v-if="showPreviewFilesDialog" :title="selectedDocument.title"
-    :files="selectedDocument.files" @close="showPreviewFilesDialog = false">
+  <DocumentFilesPreviewDialog v-if="showPreviewFilesDialog" :documentId="selectedDocument.id"
+    :documentTitle="selectedDocument.title" :title="selectedDocument.title" :files="selectedDocument.files"
+    @close="showPreviewFilesDialog = false">
   </DocumentFilesPreviewDialog>
   <DocumentNotesPreviewDialog v-if="showPreviewNotesDialog" :documentId="selectedDocument.id"
     :documentTitle="selectedDocument.title" @close="showPreviewNotesDialog = false">
