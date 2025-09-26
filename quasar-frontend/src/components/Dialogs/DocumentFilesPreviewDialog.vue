@@ -55,6 +55,9 @@
       <q-separator class="q-my-sm"></q-separator>
       <q-card-section class="q-pt-none">
         <q-card-actions align="right">
+          <CustomBanner v-if="downloadBanner.visible" :success="downloadBanner.success" :error="downloadBanner.error"
+            :translatedText="downloadBanner.text"></CustomBanner>
+          <q-space></q-space>
           <q-btn color="primary" :disable="state.loading" v-close-popup :label="t('Close')" icon="close"
             aria-label="Close modal" />
         </q-card-actions>
@@ -111,13 +114,28 @@ function allowPreview(filename) {
   return (!!filename.match(/.(jpg|jpeg|png|gif|mp3)$/i));
 }
 
+const downloadBanner = reactive({
+  visible: false,
+  success: false,
+  error: false,
+  text: null,
+});
+
 const onDownload = (url, fileName) => {
+  downloadBanner.visible = false;
+  downloadBanner.success = false;
+  downloadBanner.error = false;
+  downloadBanner.text = null;
   bgDownload(url, fileName)
     .then((successResponse) => {
-      console.log(successResponse);
+      downloadBanner.success = true;
+      downloadBanner.text = `File ${successResponse.fileName} has been downloaded (${format.humanStorageSize(successResponse.length)})`;
+      downloadBanner.visible = true;
     })
     .catch((errorResponse) => {
-      console.log(errorResponse);
+      downloadBanner.error = true;
+      downloadBanner.text = `Error downloading file: ${fileName}`;
+      downloadBanner.visible = true;
     });
 }
 
