@@ -1,20 +1,21 @@
 <template>
   <q-dialog v-model="dialogModel" @hide="onHide">
     <q-card class="q-card-attachments-dialog">
-      <q-card-section class="row items-center q-p-none">
-        <div class="q-card-attachments-dialog-header max-width-90" v-if="documentTitle">{{ t("Document title")
-          }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
+      <q-card-section class="row q-p-none">
+        <div class="q-card-attachments-dialog-header col" v-if="documentTitle">{{ t("Document title")
+        }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
             documentTitle
-          }}</router-link>
+            }}</router-link>
         </div>
-        <div class="q-card-attachments-dialog-header" v-else>{{ t("Document attachments") }}</div>
+        <div class="q-card-attachments-dialog-header col" v-else>{{ t("Document attachments") }}</div>
         <q-space />
-        <q-chip size="md" square class="gt-md theme-default-q-chip" v-if="!state.loading && !state.loadingError">
-          <q-avatar class="theme-default-q-avatar">{{ attachments.length }}</q-avatar>
-          {{ t("Total files", { count: attachments.length }) }}
-        </q-chip>
-        <q-btn icon="close" flat round dense v-close-popup class="gt-md" aria-label="Close modal"
-          :disable="state.loading" />
+        <div>
+          <q-chip size="md" square class="gt-sm theme-default-q-chip" v-if="!state.loading && !state.loadingError">
+            <q-avatar class="theme-default-q-avatar">{{ attachments.length }}</q-avatar>
+            {{ t("Total files", { count: attachments.length }) }}
+          </q-chip>
+          <q-btn icon="close" flat round dense v-close-popup aria-label="Close modal" :disable="state.loading" />
+        </div>
       </q-card-section>
       <q-separator class="q-mb-md"></q-separator>
       <q-card-section class="q-pt-none scroll attachments-scrolled-container">
