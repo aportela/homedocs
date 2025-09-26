@@ -3,9 +3,9 @@
     <q-card class="q-card-attachments-dialog">
       <q-card-section class="row items-center q-p-none">
         <div class="q-card-attachments-dialog-header max-width-90" v-if="documentTitle">{{ t("Document title")
-        }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
+          }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
             documentTitle
-            }}</router-link>
+          }}</router-link>
         </div>
         <div class="q-card-attachments-dialog-header" v-else>{{ t("Document attachments") }}</div>
         <q-space />
@@ -131,7 +131,7 @@ const onDownload = (url, fileName) => {
   bgDownload(url, fileName)
     .then((successResponse) => {
       downloadBanner.success = true;
-      downloadBanner.text = t("FileDownloadedMessage", { filename: successResponse.fileName, length: successResponse.length });
+      downloadBanner.text = t("FileDownloadedMessage", { filename: successResponse.fileName, length: format.humanStorageSize(successResponse.length) });
       downloadBanner.visible = true;
     })
     .catch((errorResponse) => {
