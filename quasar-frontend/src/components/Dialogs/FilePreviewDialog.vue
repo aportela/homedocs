@@ -26,10 +26,10 @@
           icon-first="skip_previous" icon-last="skip_next" icon-prev="fast_rewind" icon-next="fast_forward" gutter="md"
           @update:model-value="onPaginationChange" />
         <!-- TODO: resize image to FIT on dialog height -->
-        <q-img v-if="fileUtils.isImage(currentAttachment.name)" v-show="!previewLoadingError"
-          :src="currentAttachment.url" loading="lazy" spinner-color="white" @error="onImageLoadError" fit>
+        <q-img v-if="isImage(currentAttachment.name)" v-show="!previewLoadingError" :src="currentAttachment.url"
+          loading="lazy" spinner-color="white" @error="onImageLoadError" fit>
         </q-img>
-        <div v-else-if="fileUtils.isAudio(currentAttachment.name)">
+        <div v-else-if="isAudio(currentAttachment.name)">
           <p class="text-center q-my-md">
             <q-icon name="audio_file" size="192px"></q-icon>
           </p>
@@ -48,9 +48,6 @@
           <p class="text-center q-my-md">
             <q-icon name="bug_report" size="192px"></q-icon>
           </p>
-          <!--
-          <CustomBanner error :text="'Error loading preview'" icon="error"></CustomBanner>
-          -->
         </div>
       </q-card-section>
       <q-separator class="q-my-sm"></q-separator>
@@ -72,7 +69,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch, computed } from "vue";
+import { ref, reactive, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { bgDownload } from "src/boot/axios";
 import { useFileUtils } from "src/composables/fileUtils";
@@ -85,7 +82,7 @@ const emit = defineEmits(['close']);
 
 const dialogModel = ref(true);
 
-const fileUtils = useFileUtils();
+const { isImage, isAudio } = useFileUtils();
 const previewLoadingError = ref(false);
 
 const props = defineProps({
