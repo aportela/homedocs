@@ -75,7 +75,7 @@ export default {
   "Save document": "Save document",
   "Remove document": "Remove document",
   "Open/Preview": "Open/Preview",
-  Download: "Download",
+  "Click to Download": "Click to Download",
   Remove: "Remove",
   "Save changes": "Save changes",
   "Saving...": "Saving...",
@@ -149,7 +149,7 @@ export default {
   "Add note": "Add note",
   "Add attachment": "Add attachment",
   History: "History",
-  "Operation": "Operation",
+  Operation: "Operation",
   "Document created": "Document created",
   "Document updated": "Document updated",
   "Unknown operation": "Unknown operation",
@@ -194,9 +194,11 @@ export default {
   "This document has no associated notes.":
     "This document has no associated notes.",
   "Click to remove note": "Click to remove note",
-  "Current sort by": "Order by \"{label}\" ({order})",
-  "ascending": "ascending",
-  "descending": "descending",
+  "Current sort by": 'Order by "{label}" ({order})',
+  ascending: "ascending",
+  descending: "descending",
   "View document attachments": "View document attachments",
   "View document notes": "View document notes",
+  "Document attachments preview":
+    "Document attachment preview|Document attachments preview",
 };

@@ -77,7 +77,7 @@ export default {
   "Save document": "Gardar documento",
   "Remove document": "Eliminar documento",
   "Open/Preview": "Abrir/Previsualizar",
-  Download: "Descargar",
+  "Click to Download": "Faga click pra descargar",
   Remove: "Eliminar",
   "Save changes": "Gardar cambios",
   "Saving...": "Gardando...",
@@ -151,7 +151,7 @@ export default {
   "Add note": "Engadir nota",
   "Add attachment": "Engadir arquivo",
   History: "Historial",
-  "Operation": "Operación",
+  Operation: "Operación",
   "Document created": "Documento creado",
   "Document updated": "Documento actualizado",
   "Unknown operation": "Operación desconocida",
@@ -195,9 +195,11 @@ export default {
   "This document has no associated notes.":
     "Este documento non ten notas asociadas.",
   "Click to remove note": "Faga click pra elimina-la nota",
-  "Current sort by": "Orden por \"{label}\" ({order})",
-  "ascending": "ascendente",
-  "descending": "descendente",
+  "Current sort by": 'Orden por "{label}" ({order})',
+  ascending: "ascendente",
+  descending: "descendente",
   "View document attachments": "Ver os arquivos do documento",
   "View document notes": "Ve as notas do documento",
+  "Document attachments preview":
+    "Previsualización do archivo do documento|Previsualización dos arquivos do documento",
 };
