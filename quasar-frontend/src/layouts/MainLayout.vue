@@ -10,7 +10,7 @@
         <q-btn type="button" no-caps no-wrap align="left" outline :label="searchButtonLabel" icon-right="search"
           class="full-width no-caps theme-default-q-btn" @click.prevent="dialogs.fastSearch.visible = true">
           <q-tooltip anchor="bottom middle" self="top middle">{{ t("Click to open fast search")
-          }}</q-tooltip>
+            }}</q-tooltip>
         </q-btn>
         <!--
         <FastSearchSelector dense class="full-width"></FastSearchSelector>
@@ -124,7 +124,6 @@ const visibleSidebar = ref($q.screen.gt.sm);
 const saveMiniSidebarMode = true;
 
 const miniSidebarCurrentModeSavedMode = saveMiniSidebarMode ? LocalStorage.getItem("miniSidebarCurrentMode") : null;
-console.log(miniSidebarCurrentModeSavedMode);
 
 if (saveMiniSidebarMode && miniSidebarCurrentModeSavedMode != null) {
   lockminiSidebarCurrentModeMode.value = true;
