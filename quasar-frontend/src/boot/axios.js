@@ -410,6 +410,35 @@ const api = {
   },
 };
 
+const bgDownload = async (url, fileName = "fileName") => {
+  try {
+    const startTime = Date.now();
+    const response = await axios.get(url, {
+      responseType: "blob",
+    });
+    const blob = new Blob([response.data]);
+    const tmpLink = document.createElement("a");
+    const urlBlob = URL.createObjectURL(blob);
+    tmpLink.href = urlBlob;
+    tmpLink.download = fileName;
+    document.body.appendChild(tmpLink);
+    tmpLink.click();
+    document.body.removeChild(tmpLink);
+    URL.revokeObjectURL(urlBlob);
+    const endTime = Date.now();
+    return {
+      success: true,
+      fileName: fileName,
+      url: url,
+      mimeType: blob.type,
+      length: blob.size,
+      msTime: endTime - startTime,
+    };
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default boot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
   app.config.globalProperties.$axios = axios;
@@ -420,4 +449,4 @@ export default boot(({ app }) => {
   //       so you can easily perform requests against your app's API
 });
 
-export { axios, api };
+export { axios, api, bgDownload };
