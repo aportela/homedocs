@@ -1,5 +1,6 @@
 <template>
-  <q-chip class="theme-default-q-chip shadow-1" :clickable="count > 0 && !disable" @click.stop.prevent="onClick">
+  <q-chip class="theme-default-q-chip shadow-1" :class="{ 'cursor-not-allowed': disable || count < 1 }"
+    :clickable="count > 0 && !disable" @click.stop.prevent="onClick">
     <q-avatar class="theme-default-q-avatar" :class="{ 'text-white bg-blue-6': count > 0 }">{{ count }}</q-avatar>
     {{ t(label, { count: count }) }}
     <q-tooltip v-if="toolTip && count > 0">{{ t(toolTip) }}</q-tooltip>
