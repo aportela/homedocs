@@ -12,7 +12,6 @@ class Document
     public ?string $description;
     public ?int $createdOnTimestamp;
     public ?int $lastUpdateTimestamp;
-    public ?string $createdBy;
     public ?array $files = [];
     public ?array $notes = [];
     public ?array $tags = [];
