@@ -1,3 +1,4 @@
+import { date } from "quasar";
 import { useI18n } from "vue-i18n";
 
 export function useFormatDates() {
@@ -31,5 +32,13 @@ export function useFormatDates() {
     }
   };
 
-  return { timeAgo };
+  const dateHuman = (timestamp) => {
+    return date.formatDate(timestamp, "YYYY/MM/DD");
+  };
+
+  const fullDateTimeHuman = (timestamp) => {
+    return date.formatDate(timestamp, "YYYY/MM/DD HH:mm:ss");
+  };
+
+  return { timeAgo, dateHuman, fullDateTimeHuman };
 }
