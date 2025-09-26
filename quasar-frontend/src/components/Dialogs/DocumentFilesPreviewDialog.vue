@@ -29,8 +29,9 @@
         <q-list v-else>
           <div v-for="attachment, index in attachments" :key="attachment.id">
             <!-- TODO: clickable to preview if allowed or download -->
-            <q-item class="transparent-background text-color-primary q-pa-sm" clickable>
-              <q-item-section top @click="onDownload(attachment.url, attachment.name)">
+            <q-item class="transparent-background text-color-primary q-pa-sm" clickable :href="attachment.url"
+              @click.stop.prevent="onDownload(attachment.url, attachment.name)">
+              <q-item-section top>
                 <q-item-label>
                   <span class="text-weight-bold">{{ t("Name") }}:</span> {{ attachment.name }}
                 </q-item-label>
@@ -42,8 +43,8 @@
                   }})</q-item-label>
               </q-item-section>
               <q-item-section top side>
-                <q-btn size="md" color="primary" class="q-mt-sm"
-                  :disable="state.loading || !allowPreview(attachment.name)" icon="preview" :label="t('Open/Preview')"
+                <q-btn size="md" color="primary" class="q-mt-sm" v-if="allowPreview(attachment.name)"
+                  :disable="state.loading" icon="preview" :label="t('Preview')"
                   @click.stop.prevent="onFilePreview(index)"></q-btn>
               </q-item-section>
               <q-tooltip>{{ t("Click to download") }}</q-tooltip>
@@ -55,8 +56,9 @@
       <q-separator class="q-my-sm"></q-separator>
       <q-card-section class="q-pt-none">
         <q-card-actions align="right">
-          <CustomBanner v-if="downloadBanner.visible" :success="downloadBanner.success" :error="downloadBanner.error"
-            :translatedText="downloadBanner.text"></CustomBanner>
+          <CustomBanner v-if="downloadBanner.visible" :success="downloadBanner.success" :error="downloadBanner.error">
+            <template v-slot:text>{{ downloadBanner.text }}</template>
+          </CustomBanner>
           <q-space></q-space>
           <q-btn color="primary" :disable="state.loading" v-close-popup :label="t('Close')" icon="close"
             aria-label="Close modal" />
@@ -118,7 +120,7 @@ const downloadBanner = reactive({
   visible: false,
   success: false,
   error: false,
-  text: null,
+  text: null
 });
 
 const onDownload = (url, fileName) => {
@@ -129,12 +131,12 @@ const onDownload = (url, fileName) => {
   bgDownload(url, fileName)
     .then((successResponse) => {
       downloadBanner.success = true;
-      downloadBanner.text = `File ${successResponse.fileName} has been downloaded (${format.humanStorageSize(successResponse.length)})`;
+      downloadBanner.text = t("FileDownloadedMessage", { filename: successResponse.fileName, length: successResponse.length });
       downloadBanner.visible = true;
     })
     .catch((errorResponse) => {
       downloadBanner.error = true;
-      downloadBanner.text = `Error downloading file: ${fileName}`;
+      downloadBanner.text = t("FileDownloadeErrorMessage", { filename: fileName });
       downloadBanner.visible = true;
     });
 }
