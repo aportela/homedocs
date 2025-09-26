@@ -111,7 +111,7 @@
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <q-tooltip v-if="isDesktop">{{ t('Toggle sort by this column', { field: t(column.title) })
-                  }}</q-tooltip>
+                }}</q-tooltip>
               </th>
             </tr>
           </thead>
@@ -167,8 +167,7 @@
               <td class="gt-lg">
                 <ViewDocumentDetailsButton size="md" square class="min-width-8em" :count="document.noteCount"
                   :label="'Total notes'" :tool-tip="'View document notes'" :disable="state.loading"
-                  @click.stop.prevent="onShowDocumentNotes(document.id, recentDocument.title)"
-                  q-chip-class="'q-chip-8em'">
+                  @click.stop.prevent="onShowDocumentNotes(document.id, document.title)" q-chip-class="'q-chip-8em'">
                 </ViewDocumentDetailsButton>
               </td>
             </tr>
@@ -181,12 +180,6 @@
         </div>
       </template>
     </CustomExpansionWidget>
-    <DocumentFilesPreviewDialog v-if="showPreviewFileDialog" :title="selectedDocument.title"
-      :files="selectedDocument.files" @close="showPreviewFileDialog = false">
-    </DocumentFilesPreviewDialog>
-    <DocumentNotesPreviewDialog v-if="showPreviewNotesDialog" :documentId="selectedDocument.id"
-      :documentTitle="selectedDocument.title" @close="showPreviewNotesDialog = false">
-    </DocumentNotesPreviewDialog>
   </q-page>
 </template>
 
@@ -209,8 +202,6 @@ import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue
 import { default as DateFieldCustomInput } from "src/components/Forms/Fields/DateFieldCustomInput.vue";
 import { default as SortByFieldCustomButtonDropdown } from "src/components/Forms/Fields/SortByFieldCustomButtonDropdown.vue";
 import { default as ViewDocumentDetailsButton } from "src/components/Buttons/ViewDocumentDetailsButton.vue";
-import { default as DocumentFilesPreviewDialog } from "src/components/Dialogs/DocumentFilesPreviewDialog.vue";
-import { default as DocumentNotesPreviewDialog } from "src/components/Dialogs/DocumentNotesPreviewDialog.vue";
 
 const { t } = useI18n();
 
@@ -291,16 +282,6 @@ const hasLastUpdateRouteParamsFilter = computed(() => route.params.fixedLastUpda
 const hasUpdatedOnRouteParamsFilter = computed(() => route.params.fixedUpdatedOn !== undefined);
 
 const sortOrderIcon = computed(() => sort.order == "ASC" ? "keyboard_double_arrow_up" : "keyboard_double_arrow_down");
-
-const selectedDocument = reactive({
-  id: null,
-  title: null,
-  files: [],
-  notes: [],
-});
-
-const showPreviewFileDialog = ref(false);
-const showPreviewNotesDialog = ref(false);
 
 const totalSearchConditions = computed(() => {
   let total = 0;
@@ -420,46 +401,24 @@ const onResetForm = () => {
 };
 
 const onShowDocumentFiles = (documentId, documentTitle) => {
-  // TODO: use new dialog (LIKE DOCUMENT NOTES, NOT DONE)
   if (!state.loading) {
-    selectedDocument.title = null;
-    selectedDocument.notes.length = 0;
-    selectedDocument.files.length = 0;
-    state.loading = true;
-    api.document
-      .get(documentId)
-      .then((successResponse) => {
-        selectedDocument.id = documentId;
-        selectedDocument.title = documentTitle;
-        selectedDocument.files.push(...successResponse.data.document.files.map((file) => {
-          file.isNew = false;
-          file.uploadedOn = date.formatDate(file.uploadedOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
-          file.humanSize = format.humanStorageSize(file.size);
-          file.url = "api2/file/" + file.id;
-          return (file)
-        }));
-        state.loading = false;
-        showPreviewFileDialog.value = selectedDocument.files.length > 0;
-      })
-      .catch((errorResponse) => {
-        state.loading = false;
-        switch (errorResponse.response.status) {
-          case 401:
-            // TODO
-            break;
-          default:
-            // TODO
-            break;
-        }
-      });
+    bus.emit("showDocumentFilesPreviewDialog", {
+      document: {
+        id: documentId,
+        title: documentTitle
+      }
+    });
   }
 }
 
 const onShowDocumentNotes = (documentId, documentTitle) => {
   if (!state.loading) {
-    selectedDocument.id = documentId;
-    selectedDocument.title = documentTitle;
-    showPreviewNotesDialog.value = true;
+    bus.emit("showDocumentNotesPreviewDialog", {
+      document: {
+        id: documentId,
+        title: documentTitle
+      }
+    });
   }
 };
 
