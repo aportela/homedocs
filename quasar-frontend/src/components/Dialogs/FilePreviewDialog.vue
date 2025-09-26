@@ -23,6 +23,7 @@
       <q-separator class="q-mb-md"></q-separator>
       <q-card-section class="q-pt-none scroll file-preview-scrolled-container">
         <p class="text-center text-bold">{{ currentAttachment.name }} ({{ currentAttachment.humanSize }})</p>
+        <!-- TODO: color -->
         <q-pagination class="flex flex-center q-my-md" v-if="attachmentsCount > 1" v-model="currentAttachmentIndex"
           :max="attachmentsCount" color="dark" :max-pages="5" boundary-numbers direction-links
           icon-first="skip_previous" icon-last="skip_next" icon-prev="fast_rewind" icon-next="fast_forward" gutter="md"
@@ -35,7 +36,7 @@
           <p class="text-center q-my-md">
             <q-icon name="audio_file" size="128px"></q-icon>
           </p>
-          <audio controls class="q-mt-md" style="width: 100%;">
+          <audio controls class="q-mt-md full-width">
             <source :src="currentAttachment.url" type="audio/mpeg" />
             {{ t("Your browser does not support the audio element") }}
           </audio>
