@@ -40,6 +40,10 @@
       :document-id="dialogs.documentFilesPreview.document.id"
       :document-title="dialogs.documentFilesPreview.document.title"
       @close="dialogs.documentFilesPreview.visible = false"></DocumentFilesPreviewDialog>
+    <DocumentNotesPreviewDialog v-if="dialogs.documentNotesPreview.visible"
+      :document-id="dialogs.documentNotesPreview.document.id"
+      :document-title="dialogs.documentNotesPreview.document.title"
+      @close="dialogs.documentNotesPreview.visible = false"></DocumentNotesPreviewDialog>
   </q-layout>
 </template>
 
@@ -60,6 +64,7 @@ import { default as ReAuthDialog } from "src/components/Dialogs/ReAuthDialog.vue
 
 import { default as FilePreviewDialog } from "src/components/Dialogs/FilePreviewDialog.vue"
 import { default as DocumentFilesPreviewDialog } from "src/components/Dialogs/DocumentFilesPreviewDialog.vue"
+import { default as DocumentNotesPreviewDialog } from "src/components/Dialogs/DocumentNotesPreviewDialog.vue";
 
 const $q = useQuasar();
 
@@ -85,6 +90,13 @@ const dialogs = reactive({
     currentIndex: 0
   },
   documentFilesPreview: {
+    visible: false,
+    document: {
+      id: null,
+      title: null,
+    }
+  },
+  documentNotesPreview: {
     visible: false,
     document: {
       id: null,
@@ -158,12 +170,19 @@ onMounted(() => {
     dialogs.documentFilesPreview.document.title = msg?.document?.title;
     dialogs.documentFilesPreview.visible = true;
   });
+
+  bus.on("showDocumentNotesPreviewDialog", (msg) => {
+    dialogs.documentNotesPreview.document.id = msg?.document?.id;
+    dialogs.documentNotesPreview.document.title = msg?.document?.title;
+    dialogs.documentNotesPreview.visible = true;
+  });
 });
 
 onBeforeUnmount(() => {
   bus.off("reAuthRequired");
   bus.off("showDocumentFilePreviewDialog");
   bus.off("showDocumentFilesPreviewDialog");
+  bus.off("showDocumentNotesPreviewDialog");
 });
 
 </script>
