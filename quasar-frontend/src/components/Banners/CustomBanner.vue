@@ -6,7 +6,7 @@
       <q-icon size="sm" v-else-if="error" name="error" class="text-red" />
       <q-icon size="sm" v-else-if="warning" name="warning" class="text-warning" />
     </template>
-    {{ t(text) }}
+    {{ translatedText ? translatedText : t(text) }}
     <slot name="details"></slot>
   </q-banner>
 </template>
@@ -20,7 +20,11 @@ const { t } = useI18n();
 const props = defineProps({
   text: {
     type: String,
-    required: true,
+    required: false,
+  },
+  translatedText: {
+    type: String,
+    required: false,
   },
   success: {
     type: Boolean,
