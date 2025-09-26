@@ -249,6 +249,8 @@ return function (App $app) {
                         $args['id'],
                         $params["title"] ?? "",
                         $params["description"] ?? "",
+                        null,
+                        null,
                         $params["tags"] ?? [],
                         $files,
                         $notes,
@@ -314,6 +316,8 @@ return function (App $app) {
                         $args['id'],
                         $params["title"] ?? "",
                         $params["description"] ?? "",
+                        null,
+                        null,
                         $params["tags"] ?? [],
                         $files,
                         $notes
