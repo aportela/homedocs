@@ -24,12 +24,12 @@
         <q-pagination class="flex flex-center q-my-md" v-if="attachmentsCount > 1" v-model="currentAttachmentIndex"
           :max="attachmentsCount" color="dark" :max-pages="5" boundary-numbers direction-links
           icon-first="skip_previous" icon-last="skip_next" icon-prev="fast_rewind" icon-next="fast_forward" gutter="md"
-          @update:model-value="previewLoadingError = false" />
+          @update:model-value="onPaginationChange" />
         <!-- TODO: resize image to FIT on dialog height -->
-        <q-img v-if="isImage(currentAttachment.name)" v-show="!previewLoadingError" :src="currentAttachment.url"
-          loading="lazy" spinner-color="white" @error="previewLoadingError = true;" fit>
+        <q-img v-if="fileUtils.isImage(currentAttachment.name)" v-show="!previewLoadingError"
+          :src="currentAttachment.url" loading="lazy" spinner-color="white" @error="onImageLoadError" fit>
         </q-img>
-        <div v-else-if="isAudio(currentAttachment.name)">
+        <div v-else-if="fileUtils.isAudio(currentAttachment.name)">
           <p class="text-center q-my-md">
             <q-icon name="audio_file" size="192px"></q-icon>
           </p>
@@ -42,19 +42,27 @@
           <p class="text-center q-my-md">
             <q-icon name="hide_source" size="192px"></q-icon>
           </p>
-          <CustomBanner warning :text="'Preview not available'" icon="error"></CustomBanner>
+          <CustomBanner warning text="Preview not available"></CustomBanner>
         </div>
         <div class="text-subtitle1 text-center" v-if="previewLoadingError">
           <p class="text-center q-my-md">
             <q-icon name="bug_report" size="192px"></q-icon>
           </p>
+          <!--
           <CustomBanner error :text="'Error loading preview'" icon="error"></CustomBanner>
+          -->
         </div>
       </q-card-section>
       <q-separator class="q-my-sm"></q-separator>
       <q-card-section class="q-pt-none">
         <q-card-actions align="right">
+          <CustomBanner v-if="downloadBanner.visible" :success="downloadBanner.success"
+            :warning="downloadBanner.warning" :error="downloadBanner.error">
+            <template v-slot:text>{{ downloadBanner.text }}</template>
+          </CustomBanner>
+          <q-space></q-space>
           <q-btn color="primary" :href="currentAttachment.url" :label="t('Download')" icon="download"
+            @click.stop.prevent="onDownload(currentAttachment.url, currentAttachment.name)"
             aria-label="Download file" />
           <q-btn color="primary" v-close-popup :label="t('Close')" icon="close" aria-label="Close modal" />
         </q-card-actions>
@@ -64,8 +72,10 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, reactive, watch, computed } from "vue";
 import { useI18n } from "vue-i18n";
+import { bgDownload } from "src/boot/axios";
+import { useFileUtils } from "src/composables/fileUtils";
 
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 
@@ -75,6 +85,7 @@ const emit = defineEmits(['close']);
 
 const dialogModel = ref(true);
 
+const fileUtils = useFileUtils();
 const previewLoadingError = ref(false);
 
 const props = defineProps({
@@ -95,22 +106,54 @@ const attachmentsCount = computed(() => hasAttachments.value ? props.document?.a
 const currentAttachmentIndex = ref(props.currentIndex + 1 || 1);
 const currentAttachment = computed(() => props.document.attachments?.length > 0 ? props.document.attachments[currentAttachmentIndex.value - 1] : {})
 
-const allowPreview = (filename) => {
-  return (filename.match(/.(jpg|jpeg|png|gif|mp3)$/i));
-};
-
-
-const isImage = (filename) => {
-  return (filename.match(/.(jpg|jpeg|png|gif)$/i));
-};
-
-const isAudio = (filename) => {
-  return (filename.match(/.(mp3)$/i));
-};
-
 const onHide = () => {
   emit('close');
 };
+
+const downloadBanner = reactive({
+  visible: false,
+  success: false,
+  error: false,
+  warning: false,
+  text: null
+});
+
+const onPaginationChange = () => {
+  downloadBanner.visible = false;
+  downloadBanner.success = false;
+  downloadBanner.warning = false;
+  downloadBanner.error = false;
+  downloadBanner.text = null;
+  previewLoadingError.value = false
+};
+
+const onImageLoadError = () => {
+  previewLoadingError.value = true;
+  downloadBanner.success = false;
+  downloadBanner.warning = false;
+  downloadBanner.error = true;
+  downloadBanner.text = t("Error loading preview");
+  downloadBanner.visible = true;
+};
+
+const onDownload = (url, fileName) => {
+  downloadBanner.visible = false;
+  downloadBanner.success = false;
+  downloadBanner.warning = false;
+  downloadBanner.error = false;
+  downloadBanner.text = null;
+  bgDownload(url, fileName)
+    .then((successResponse) => {
+      downloadBanner.success = true;
+      downloadBanner.text = t("FileDownloadedMessage", { filename: successResponse.fileName, length: successResponse.length });
+      downloadBanner.visible = true;
+    })
+    .catch((errorResponse) => {
+      downloadBanner.error = true;
+      downloadBanner.text = t("FileDownloadeErrorMessage", { filename: fileName });
+      downloadBanner.visible = true;
+    });
+}
 
 </script>
 
