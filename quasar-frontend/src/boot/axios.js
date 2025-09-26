@@ -427,7 +427,6 @@ const bgDownload = async (url, fileName = "fileName") => {
     URL.revokeObjectURL(urlBlob);
     const endTime = Date.now();
     return {
-      success: true,
       fileName: fileName,
       url: url,
       mimeType: blob.type,
