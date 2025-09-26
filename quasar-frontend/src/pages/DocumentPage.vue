@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <div class="q-pa-md">
+    <div class="q-pa-md" @dragover.prevent @dragenter.prevent @dragleave="handleDragLeave" @drop="handleDrop">
       <q-card flat class="bg-transparent">
         <q-card-section>
           <div class="row items-center">
@@ -91,11 +91,12 @@
                 <q-card-section class="q-pa-md">
                   <q-tab-panels v-model="tab" animated class="bg-transparent">
                     <q-tab-panel name="attachments" class="q-pa-none">
-                      <q-uploader ref="uploaderRef" class="q-mb-md" :label="t('Add new file (Drag & Drop supported)')"
-                        flat bordered auto-upload hide-upload-btn color="dark" field-name="file" url="api2/file"
-                        :max-file-size="maxFileSize" multiple @uploaded="onFileUploaded" @rejected="onUploadRejected"
-                        @failed="onUploadFailed" method="post" style="width: 100%;" :disable="loading || saving"
-                        no-thumbnails @start="onUploadsStart" @finish="onUploadsFinish" />
+                      <q-uploader ref="uploaderRef" class="q-mb-md hidden"
+                        :label="t('Add new file (Drag & Drop supported)')" flat bordered auto-upload hide-upload-btn
+                        color="dark" field-name="file" url="api2/file" :max-file-size="maxFileSize" multiple
+                        @uploaded="onFileUploaded" @rejected="onUploadRejected" @failed="onUploadFailed" method="post"
+                        style="width: 100%;" :disable="loading || saving" no-thumbnails @start="onUploadsStart"
+                        @finish="onUploadsFinish" />
                       <q-markup-table>
                         <thead>
                           <tr>
@@ -466,6 +467,21 @@ const onRefresh = () => {
       state.loading = false;
     });
 }
+
+
+const handleDragLeave = () => {
+
+};
+
+const handleDrop = (event) => {
+  event.preventDefault();
+  // Aquí puedes obtener los archivos arrastrados
+  const files = event.dataTransfer.files;
+  if (files.length) {
+    // Si ya estás usando el q-uploader, puedes agregar los archivos directamente
+    uploaderRef.value?.addFiles(files);
+  };
+};
 
 const filterAttachmentByText = ref(null);
 
