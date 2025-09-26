@@ -33,7 +33,7 @@
         </q-img>
         <div v-else-if="isAudio(currentAttachment.name)">
           <p class="text-center q-my-md">
-            <q-icon name="audio_file" size="192px"></q-icon>
+            <q-icon name="audio_file" size="128px"></q-icon>
           </p>
           <audio controls class="q-mt-md" style="width: 100%;">
             <source :src="currentAttachment.url" type="audio/mpeg" />
@@ -42,22 +42,25 @@
         </div>
         <div v-else>
           <p class="text-center q-my-md">
-            <q-icon name="hide_source" size="192px"></q-icon>
+            <q-icon name="hide_source" size="128px"></q-icon>
           </p>
-          <CustomBanner warning text="Preview not available"></CustomBanner>
         </div>
         <div class="text-subtitle1 text-center" v-if="previewLoadingError">
           <p class="text-center q-my-md">
-            <q-icon name="bug_report" size="192px"></q-icon>
+            <q-icon name="bug_report" size="128px"></q-icon>
           </p>
         </div>
       </q-card-section>
       <q-separator class="q-my-sm"></q-separator>
       <q-card-section class="q-pt-none">
         <q-card-actions align="right">
-          <CustomBanner v-if="downloadBanner.visible" :success="downloadBanner.success"
-            :warning="downloadBanner.warning" :error="downloadBanner.error">
+          <CustomBanner v-if="downloadBanner.visible" :success="downloadBanner.success" :error="downloadBanner.error">
             <template v-slot:text>{{ downloadBanner.text }}</template>
+          </CustomBanner>
+          <CustomBanner warning v-else-if="!allowPreview(currentAttachment.name)">
+            <template v-slot:text>
+              {{ t("File preview not available", { filename: currentAttachment.name }) }}
+            </template>
           </CustomBanner>
           <q-space></q-space>
           <q-btn color="primary" :href="currentAttachment.url" :label="t('Download')" icon="download"
@@ -84,7 +87,7 @@ const emit = defineEmits(['close']);
 
 const dialogModel = ref(true);
 
-const { isImage, isAudio } = useFileUtils();
+const { allowPreview, isImage, isAudio } = useFileUtils();
 const previewLoadingError = ref(false);
 
 const props = defineProps({
@@ -113,14 +116,12 @@ const downloadBanner = reactive({
   visible: false,
   success: false,
   error: false,
-  warning: false,
   text: null
 });
 
 const onPaginationChange = () => {
   downloadBanner.visible = false;
   downloadBanner.success = false;
-  downloadBanner.warning = false;
   downloadBanner.error = false;
   downloadBanner.text = null;
   previewLoadingError.value = false
@@ -129,7 +130,6 @@ const onPaginationChange = () => {
 const onImageLoadError = () => {
   previewLoadingError.value = true;
   downloadBanner.success = false;
-  downloadBanner.warning = false;
   downloadBanner.error = true;
   downloadBanner.text = t("Error loading preview");
   downloadBanner.visible = true;
@@ -138,7 +138,6 @@ const onImageLoadError = () => {
 const onDownload = (url, fileName) => {
   downloadBanner.visible = false;
   downloadBanner.success = false;
-  downloadBanner.warning = false;
   downloadBanner.error = false;
   downloadBanner.text = null;
   bgDownload(url, fileName)

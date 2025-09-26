@@ -109,7 +109,7 @@ export default {
   notes: "notas",
   "File preview": "Previsualizar archivo",
   "Error loading preview": "Error cargando la previsualización",
-  "Preview not available": "Previsualización no disponible",
+  "File preview not available": "El archivo {filename} no se puede previsualizar",
   "Your browser does not support the audio element":
     "Su navegador no soporta el elemento audio",
   "Remove document file": "Eliminar archivo del documento",

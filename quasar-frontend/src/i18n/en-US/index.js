@@ -106,7 +106,7 @@ export default {
   notes: "notes",
   "File preview": "File preview",
   "Error loading preview": "Error loading preview",
-  "Preview not available": "Preview not available",
+  "File preview not available": "File {filename} preview not available",
   "Your browser does not support the audio element":
     "Your browser does not support the audio element",
   "Remove document file": "Remove document file",
