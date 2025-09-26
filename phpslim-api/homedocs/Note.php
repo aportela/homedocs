@@ -10,7 +10,7 @@ class Note
     public ?int $createdOnTimestamp;
     public ?string $body;
 
-    public function __construct(string $id = "", int $createdOnTimestamp = null, string $body = null)
+    public function __construct(?string $id = null, ?int $createdOnTimestamp = null, ?string $body = null)
     {
         $this->id = $id;
         $this->createdOnTimestamp = $createdOnTimestamp;
