@@ -415,14 +415,14 @@ return function (App $app) {
                 })->add(\HomeDocs\Middleware\CheckAuth::class);
 
                 $group->post('/{id}', function (Request $request, Response $response, array $args) {
-                    $files = $request->getUploadedFiles();
+                    $uploadedFiles = $request->getUploadedFiles();
                     $file = new \HomeDocs\File(
                         $this->get('settings')['paths']['storage'],
                         $args['id'],
-                        $files["file"]->getClientFilename(),
-                        $files["file"]->getSize()
+                        $uploadedFiles["file"]->getClientFilename(),
+                        $uploadedFiles["file"]->getSize()
                     );
-                    $file->add($this->get(\aportela\DatabaseWrapper\DB::class), $files["file"]);
+                    $file->add($this->get(\aportela\DatabaseWrapper\DB::class), $uploadedFiles["file"]);
                     $payload = json_encode(
                         [
                             'initialState' => \HomeDocs\Utils::getInitialState($this),
