@@ -188,12 +188,13 @@
 import { ref, reactive, computed, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { date, format, useQuasar } from "quasar";
+import { date, useQuasar } from "quasar";
 
 import { bus } from "src/boot/bus";
 import { api } from "src/boot/axios";
 import { useAdvancedSearchData } from "src/stores/advancedSearchData"
 import { useDateFilter } from "src/composables/dateFilter"
+import { useBusDialog } from "src/composables/busDialog";
 
 import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
 import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
@@ -209,6 +210,8 @@ const route = useRoute();
 
 const $q = useQuasar();
 const isDesktop = computed(() => $q.platform.is.desktop);
+
+const { onShowDocumentFiles, onShowDocumentNotes } = useBusDialog();
 
 const columns = [
   { field: 'title', title: 'Title', defaultClass: "gt-lg" },
@@ -398,28 +401,6 @@ const onResetForm = () => {
   sort.order = "DESC";
   state.searchLaunched = false;
   results.length = 0;
-};
-
-const onShowDocumentFiles = (documentId, documentTitle) => {
-  if (!state.loading) {
-    bus.emit("showDocumentFilesPreviewDialog", {
-      document: {
-        id: documentId,
-        title: documentTitle
-      }
-    });
-  }
-}
-
-const onShowDocumentNotes = (documentId, documentTitle) => {
-  if (!state.loading) {
-    bus.emit("showDocumentNotesPreviewDialog", {
-      document: {
-        id: documentId,
-        title: documentTitle
-      }
-    });
-  }
 };
 
 onMounted(() => {
