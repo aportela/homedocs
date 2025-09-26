@@ -1,24 +1,26 @@
 <template>
   <q-page>
-    <div class="q-pa-md" @dragover.prevent @dragenter.prevent @dragleave="handleDragLeave" @drop="handleDrop">
+    <div @dragover.prevent @dragenter.prevent @dragleave="handleDragLeave" @drop="handleDrop">
       <q-card flat class="bg-transparent">
         <q-card-section>
           <div class="row items-center">
             <h3 class="q-mt-sm q-mb-sm" v-if="!document.id">{{ t("New document") }}</h3>
             <h3 class="q-mt-sm q-mb-sm" v-else>{{ t("Document card") }}</h3>
             <q-space />
-            <q-btn icon="autorenew" flat square size="xl" :title="t('Reload document')" v-if="!isNewDocument"
-              @click="onRefresh" />
-            <q-btn icon="delete" flat square size="xl" :title="t('Remove document')" v-if="!isNewDocument"
-              @click="showConfirmDeleteDocumentDialog = true" />
-            <q-btn icon="save" flat round size="xl" :title="t('Save document')" @click="onSubmitForm"
-              :disable="loading || saving || uploading || !document.title" />
+            <q-btn-group flat square>
+              <q-btn icon="autorenew" flat square size="xl" :title="t('Reload document')" v-if="!isNewDocument"
+                @click="onRefresh" />
+              <q-btn icon="delete" flat square size="xl" :title="t('Remove document')" v-if="!isNewDocument"
+                @click="showConfirmDeleteDocumentDialog = true" />
+              <q-btn icon="save" flat round size="xl" :title="t('Save document')" @click="onSubmitForm"
+                :disable="loading || saving || uploading || !document.title" />
+            </q-btn-group>
           </div>
           <q-separator />
         </q-card-section>
         <form @submit.prevent.stop="onSubmitForm" autocorrect="off" autocapitalize="off" autocomplete="off"
           spellcheck="false">
-          <q-card-section class="row">
+          <q-card-section class="row q-pa-none">
             <div class="col-12 col-lg-6 col-xl-6 q-px-sm">
               <q-card class="q-ma-xs q-mt-sm">
                 <q-card-section class="q-pa-none q-mb-sm">
@@ -67,7 +69,7 @@
                 </q-card-section>
               </q-card>
             </div>
-            <div class="col-12 col-lg-6 col-xl-6 scroll q-px-sm" style="min-height: 64vh; max-height: 64vh;">
+            <div class="col-12 col-lg-6 col-xl-6 scroll_ q-px-sm" style2="min-height: 64vh; max-height: 64vh;">
               <q-card class="q-ma-xs q-mt-sm">
                 <q-card-section class="q-pa-none q-mb-sm" style="border-bottom: 2px solid rgba(0, 0, 0, 0.12);">
                   <q-tabs v-model="tab" align="left">
@@ -88,7 +90,7 @@
                       class="bg-blue text-white" @click.stop="onShowAddNoteDialog"></q-tab>
                   </q-tabs>
                 </q-card-section>
-                <q-card-section class="q-pa-md">
+                <q-card-section class="q-pa-none">
                   <q-tab-panels v-model="tab" animated class="bg-transparent">
                     <q-tab-panel name="attachments" class="q-pa-none">
                       <q-uploader ref="uploaderRef" class="q-mb-md hidden"
@@ -97,6 +99,42 @@
                         @uploaded="onFileUploaded" @rejected="onUploadRejected" @failed="onUploadFailed" method="post"
                         style="width: 100%;" :disable="loading || saving" no-thumbnails @start="onUploadsStart"
                         @finish="onUploadsFinish" />
+                      <q-list class="scroll" style="min-height: 50vh; max-height: 50vh;">
+                        <div v-for="file, index in document.files" :key="file.id">
+                          <q-item class="transparent-background text-color-primary q-pa-sm" v-show="file.visible"
+                            clickable="">
+                            <q-item-section class="q-mx-md">
+                              <q-item-label>
+                                Filename: {{ file.name }}
+                              </q-item-label>
+                              <q-item-label caption>
+                                Length: {{ format.humanStorageSize(file.size) }}
+                              </q-item-label>
+                              <q-item-label caption>
+                                Uploaded on: {{ file.createdOn }}
+                              </q-item-label>
+                            </q-item-section>
+                            <q-item-section side top>
+                              <q-chip size="md" square class="theme-default-q-chip shadow-1 full-width"
+                                :class="{ 'cursor-not-allowed': state.loading }" :clickable="!state.loading"
+                                @click.stop.prevent="onRemoveFile(index)">
+                                <q-avatar class="theme-default-q-avatar text-white bg-blue-6" icon="delete" />
+                                {{ t("Remove") }}
+                              </q-chip>
+                              <q-chip size="md" square class="theme-default-q-chip shadow-1 full-width"
+                                :class="{ 'cursor-not-allowed': state.loading || !allowPreview(file.name) }"
+                                :clickable="!state.loading && allowPreview(file.name)"
+                                @click.stop.prevent="onPreviewFile(index)">
+                                <q-avatar class="theme-default-q-avatar text-white bg-blue-6" icon="preview" />
+                                {{ t("Preview") }}
+                              </q-chip>
+                            </q-item-section>
+                          </q-item>
+                          <q-separator v-if="index !== document.files.length - 1" class="q-my-xs" />
+                        </div>
+
+                      </q-list>
+                      <!--
                       <q-markup-table>
                         <thead>
                           <tr>
@@ -118,7 +156,7 @@
                         </thead>
                         <tbody v-if="hasAttachments">
                           <tr v-for="file, fileIndex in document.files" :key="file.id" v-show="file.visible">
-                            <td class="text-left">{{ file.uploadedOn }}</td>
+                            <td class="text-left">{{ file.createdOn }}</td>
                             <td class="text-left">{{ file.name }}</td>
                             <td class="text-right">{{ file.humanSize }}</td>
                             <td class="text-center">
@@ -173,8 +211,9 @@
                           </tr>
                         </tfoot>
                       </q-markup-table>
+                      -->
                     </q-tab-panel>
-                    <q-tab-panel name="notes" class="q-pa-none">
+                    <q-tab-panel name="notes" class="q-pa-none scroll" style="min-height: 64vh; max-height: 64vh;">
                       <q-list class="bg-transparent">
                         <q-item v-for="note, noteIndex in document.notes" :key="note.id"
                           class="q-pa-none bg-transparent">
@@ -203,7 +242,7 @@
                         </q-item>
                       </q-list>
                     </q-tab-panel>
-                    <q-tab-panel name="history" class="q-pa-none" v-if="document.id">
+                    <q-tab-panel name="history" class="q-pa-none scroll" v-if="document.id">
                       <q-markup-table>
                         <thead>
                           <tr>
@@ -293,6 +332,7 @@ import { bus } from "src/boot/bus";
 import { api } from "src/boot/axios";
 import { useFormatDates } from "src/composables/formatDate"
 import { useFormUtils } from "src/composables/formUtils"
+import { useFileUtils } from "src/composables/fileUtils"
 import { useInitialStateStore } from "src/stores/initialState";
 
 import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
@@ -315,6 +355,8 @@ const router = useRouter();
 const initialState = useInitialStateStore();
 
 const { timeAgo } = useFormatDates();
+
+const { allowPreview } = useFileUtils();
 
 const maxFileSize = computed(() => initialState.maxUploadFileSize);
 const uploaderRef = ref(null);
@@ -344,14 +386,12 @@ const isNewDocument = computed(() => router.currentRoute.value.name == 'newDocum
 
 const readOnlyTitle = ref(!isNewDocument.value);
 const readOnlyDescription = ref(!isNewDocument.value);
-const showTitleUpdateHoverIcon = ref(false);
-const showDescriptionUpdateHoverIcon = ref(false);
 
 const leftTab = ref("metadata");
-const documentDetailsActionsTab = ref(null);
+
 const screengtxs = computed(() => $q.screen.gt.xs);
 
-const document = ref({
+const document = reactive({
   id: null,
   title: null,
   description: null,
@@ -363,55 +403,72 @@ const document = ref({
   tags: [],
   notes: [],
   history: [],
+  reset() {
+    this.id = null;
+    this.title = null;
+    this.description = null;
+    this.created = null;
+    this.createdOnTimestamp = null;
+    this.createdBy = null;
+    this.lastUpdate = null;
+    this.files = [];
+    this.tags = [];
+    this.notes = [];
+    this.history = [];
+  },
+  set(doc) {
+    this.id = doc.id;
+    this.title = doc.title;
+    this.description = doc.description;
+    this.created = doc.created;
+    this.createdOnTimestamp = doc.createdOnTimestamp;
+    this.createdBy = doc.createdBy;
+    this.lastUpdate = doc.lastUpdate;
+    this.files = JSON.parse(JSON.stringify(doc.files))
+    this.tags = JSON.parse(JSON.stringify(doc.tags))
+    this.notes = JSON.parse(JSON.stringify(doc.notes))
+    this.history = JSON.parse(JSON.stringify(doc.history))
+  }
 });
 
-const hasAttachments = computed(() => document?.value.files?.length > 0);
+//const hasAttachments = computed(() => document?.value.files?.length > 0);
 
 router.beforeEach(async (to, from) => {
   if (to.name == "newDocument") {
     // new document, reset form fields
-    document.value = {
-      id: null,
-      title: null,
-      description: null,
-      created: null,
-      createdOnTimestamp: null,
-      date: null,
-      createdBy: null,
-      files: [],
-      tags: [],
-      notes: []
-    }
+    document.reset();
   } else if (from.name == "newDocument" && to.name == "document" && to.params.id) {
     // existent document from creation
-    document.value.id = to.params.id
+    document.reset();
+    document.id = to.params.id
     onRefresh();
   } else if (from.name != "newDocument" && to.name == "document" && to.params.id) {
     // existent document
-    document.value.id = to.params.id
+    document.reset();
+    document.id = to.params.id
     onRefresh();
   }
 });
 
 const parseDocumentJSONResponse = (documentData) => {
-  document.value = documentData;
-  document.value.creationDate = date.formatDate(document.value.createdOnTimestamp, 'YYYY/MM/DD HH:mm:ss');
-  document.value.lastUpdate = date.formatDate(document.value.lastUpdateTimestamp, 'YYYY/MM/DD HH:mm:ss');
-  document.value.files.map((file) => {
+  document.set(documentData);
+  document.creationDate = date.formatDate(document.createdOnTimestamp, 'YYYY/MM/DD HH:mm:ss');
+  document.lastUpdate = date.formatDate(document.lastUpdateTimestamp, 'YYYY/MM/DD HH:mm:ss');
+  document.files.map((file) => {
     file.isNew = false;
-    file.uploadedOn = date.formatDate(file.uploadedOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
+    file.createdOn = date.formatDate(file.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
     file.humanSize = format.humanStorageSize(file.size);
     file.url = "api2/file/" + file.id;
     file.visible = true;
     return (file);
   });
-  document.value.notes.map((note) => {
+  document.notes.map((note) => {
     note.isNew = false;
     note.createdOn = date.formatDate(note.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
     note.expanded = false;
     return (note);
   });
-  document.value.history.map((operation) => {
+  document.history.map((operation) => {
     operation.date = date.formatDate(operation.operationTimestamp, 'YYYY-MM-DD HH:mm:ss');
     switch (operation.operationType) {
       case 1:
@@ -440,7 +497,7 @@ const onRefresh = () => {
   state.saveSuccess = false;
   state.saveError = false;
   api.document
-    .get(document.value.id)
+    .get(document.id)
     .then((successResponse) => {
       parseDocumentJSONResponse(successResponse.data.document);
       loading.value = false;
@@ -496,9 +553,9 @@ const escapeRegExp = (string) => {
 const onFilterAttachments = (text) => {
   if (text) {
     const regex = new RegExp(escapeRegExp(text), 'i');
-    document.value.files.forEach((file) => { file.visible = !!file.name.match(regex); });
+    document.files.forEach((file) => { file.visible = !!file.name.match(regex); });
   } else {
-    document.value.files.forEach((file) => { file.visible = true; });
+    document.files.forEach((file) => { file.visible = true; });
   }
 };
 
@@ -512,7 +569,7 @@ function onSubmitForm() {
   state.saveError = false;
   if (!isNewDocument.value) {
     api.document
-      .update(document.value)
+      .update(document)
       .then((successResponse) => {
         // TODO: refactor api response to document
         if (successResponse.data.document) {
@@ -566,20 +623,20 @@ function onSubmitForm() {
         state.loading = false;
       });
   } else {
-    if (!document.value.id) {
-      document.value.id = uid();
+    if (!document.id) {
+      document.id = uid();
     }
     api.document
-      .add(document.value)
+      .add(document)
       .then((successResponse) => {
         loading.value = false;
         router.push({
           name: "document",
-          params: { id: document.value.id }
+          params: { id: document.id }
         });
       })
       .catch((errorResponse) => {
-        document.value.id = null;
+        document.id = null;
         loading.value = false;
         state.apiError = errorResponse.customAPIErrorDetails;
         state.saveError = true;
@@ -616,20 +673,10 @@ function onSubmitForm() {
   }
 }
 
-function allowPreview(filename) {
-  return (filename.match(/.(jpg|jpeg|png|gif|mp3)$/i));
-}
-
 function onPreviewFile(index) {
-  selectedFileIndex.value = index;
-  showPreviewFileDialog.value = true;
-}
+  bus.emit("showDocumentFilePreviewDialog", { document: { id: document.id, title: document.title, attachments: document.files }, currentIndex: index });
+};
 
-function onShowFileRemoveConfirmationDialog(file, fileIndex) {
-  selectedFileIndex.value = fileIndex;
-  //showConfirmDeleteFileDialog.value = true;
-  onRemoveSelectedFile();
-}
 
 function onCancelConfirmationModal() {
   showConfirmDeleteFileDialog.value = false;
@@ -654,14 +701,18 @@ function onShowAttachmentsPicker() {
   });
 }
 
+const onRemoveFile = (index) => {
+  document.files.splice(index, 1);
+};
+
 function onRemoveSelectedFile() {
   if (selectedFileIndex.value > -1) {
-    if (document.value.files[selectedFileIndex.value].isNew) {
+    if (document.files[selectedFileIndex.value].isNew) {
       loading.value = true;
       api.document.
-        removeFile(document.value.files[selectedFileIndex.value].id)
+        removeFile(document.files[selectedFileIndex.value].id)
         .then((response) => {
-          document.value.files.splice(selectedFileIndex.value, 1);
+          document.files.splice(selectedFileIndex.value, 1);
           selectedFileIndex.value = null;
           showConfirmDeleteFileDialog.value = false;
           loading.value = false;
@@ -675,7 +726,7 @@ function onRemoveSelectedFile() {
           });
         });
     } else {
-      document.value.files.splice(selectedFileIndex.value, 1);
+      document.files.splice(selectedFileIndex.value, 1);
       selectedFileIndex.value = null;
       showConfirmDeleteFileDialog.value = false;
     }
@@ -683,18 +734,17 @@ function onRemoveSelectedFile() {
 }
 
 function onFileUploaded(e) {
-  document.value.files.push(
+  document.files.push(
     {
       id: (JSON.parse(e.xhr.response).data).id,
-      uploadedOnTimestamp: date.formatDate(new Date(), 'X'),
-      uploadedOn: date.formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss'),
+      createdOnTimestamp: date.formatDate(new Date(), 'X'),
+      createdOn: date.formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss'),
       name: e.files[0].name,
       size: e.files[0].size,
       hash: null,
       humanSize: format.humanStorageSize(e.files[0].size),
       isNew: true
-    }
-  );
+    });
 }
 
 function onUploadRejected(e) {
@@ -733,14 +783,7 @@ function onShowNoteRemoveConfirmationDialog(note, noteIndex) {
 }
 
 function onShowAddNoteDialog() {
-  /*
-  currentNote.value.id = null;
-  currentNote.value.body = null;
-  currentNote.value.createdOn = null;
-  showNoteDialog.value = true
-  */
-  const timestamp = date.formatDate(new Date(), 'X');
-  document.value.notes.unshift({
+  document.notes.unshift({
     id: uid(),
     body: null,
     createdOnTimestamp: date.formatDate(new Date(), 'X'),
@@ -750,19 +793,19 @@ function onShowAddNoteDialog() {
 }
 
 function onAddNote(newNote) {
-  document.value.notes.unshift(newNote);
+  document.notes.unshift(newNote);
 }
 
 function onUpdateNote(updatedNote) {
-  const idx = document.value.notes.findIndex((note) => note.id == updatedNote.id)
+  const idx = document.notes.findIndex((note) => note.id == updatedNote.id)
   if (idx >= 0) {
-    document.value.notes[idx].body = updatedNote.body;
+    document.notes[idx].body = updatedNote.body;
   }
 }
 
 function onRemoveSelectedNote() {
   if (selectedNoteIndex.value > -1) {
-    document.value.notes.splice(selectedNoteIndex.value, 1);
+    document.notes.splice(selectedNoteIndex.value, 1);
     selectedNoteIndex.value = null;
     showConfirmDeleteNoteDialog.value = false;
   }
@@ -771,7 +814,7 @@ function onRemoveSelectedNote() {
 function onDeleteDocument() {
   loading.value = true;
   api.document.
-    remove(document.value.id)
+    remove(document.id)
     .then((response) => {
       loading.value = false;
       $q.notify({
@@ -817,7 +860,7 @@ function onDeleteDocument() {
 onMounted(() => {
   if (!isNewDocument.value) {
     if (route.params.id) {
-      document.value.id = route.params.id;
+      document.id = route.params.id;
       onRefresh();
     } else {
       // TODO: ERROR

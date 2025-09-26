@@ -11,15 +11,15 @@ class File
     public ?string $name;
     public ?int $size;
     public ?string $hash;
-    public ?int $uploadedOnTimestamp;
+    public ?int $createdOnTimestamp;
 
-    public function __construct(?string $rootStoragePath = null, string $id = "", string $name = "", int $size = 0, string $hash = "", ?int $uploadedOnTimestamp = null)
+    public function __construct(?string $rootStoragePath = null, string $id = "", string $name = "", int $size = 0, string $hash = "", ?int $createdOnTimestamp = null)
     {
         $this->id = $id;
         $this->name = $name;
         $this->size = $size;
         $this->hash = $hash;
-        $this->uploadedOnTimestamp = $uploadedOnTimestamp;
+        $this->createdOnTimestamp = $createdOnTimestamp;
         $this->localStoragePath = $this->getFileStoragePath($rootStoragePath);
     }
 
@@ -53,7 +53,7 @@ class File
             $data = $dbh->query(
                 "
                         SELECT
-                            name, size, sha1_hash AS hash, uploaded_on_timestamp AS uploadedOnTimestamp, uploaded_by_user_id AS uploadedByUserId
+                            name, size, sha1_hash AS hash, uploaded_on_timestamp AS createdOnTimestamp, uploaded_by_user_id AS uploadedByUserId
                         FROM FILE
                         WHERE id = :id
                     ",
@@ -66,7 +66,7 @@ class File
                     $this->name = $data[0]->name;
                     $this->size = intval($data[0]->size);
                     $this->hash = $data[0]->hash;
-                    $this->uploadedOnTimestamp = intval($data[0]->uploadedOnTimestamp);
+                    $this->createdOnTimestamp = intval($data[0]->createdOnTimestamp);
                 } else {
                     throw new \HomeDocs\Exception\AccessDeniedException("id");
                 }

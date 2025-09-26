@@ -423,7 +423,7 @@ return function (App $app) {
                             "name" => $file->name,
                             "size" => $file->size,
                             "hash" => $file->hash,
-                            "uploadedOnTimestamp" => time()
+                            "createdOnTimestamp" => time()
                         )
                     ]
                 );
@@ -448,7 +448,7 @@ return function (App $app) {
                             "name" => $file->name,
                             "size" => $file->size,
                             "hash" => $file->hash,
-                            "uploadedOnTimestamp" => time()
+                            "createdOnTimestamp" => time()
                         )
                     ]
                 );

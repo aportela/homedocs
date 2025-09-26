@@ -3,9 +3,9 @@
     <q-card class="q-card-attachments-dialog">
       <q-card-section class="row q-p-none">
         <div class="q-card-attachments-dialog-header col" v-if="documentTitle">{{ t("Document title")
-        }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
+          }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
             documentTitle
-            }}</router-link>
+          }}</router-link>
         </div>
         <div class="q-card-attachments-dialog-header col" v-else>{{ t("Document attachments") }}</div>
         <q-space />
@@ -39,8 +39,8 @@
                 <q-item-label>
                   <span class="text-weight-bold">{{ t("Size") }}:</span> {{ attachment.humanSize }}</q-item-label>
                 <q-item-label>
-                  <span class="text-weight-bold">{{ t('Uploaded on') }}:</span> {{ attachment.uploadedOn }} ({{
-                    timeAgo(attachment.uploadedOnTimestamp)
+                  <span class="text-weight-bold">{{ t('Uploaded on') }}:</span> {{ attachment.createdOn }} ({{
+                    timeAgo(attachment.createdOnTimestamp)
                   }})</q-item-label>
               </q-item-section>
               <q-item-section top side>
@@ -152,7 +152,7 @@ const onRefresh = (documentId) => {
         .then((successResponse) => {
           attachments.length = 0;
           attachments.push(...successResponse.data.attachments.map((attachment) => {
-            attachment.uploadedOn = date.formatDate(attachment.uploadedOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
+            attachment.createdOn = date.formatDate(attachment.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
             attachment.humanSize = format.humanStorageSize(attachment.size);
             attachment.url = "api2/file/" + attachment.id;
             return (attachment);

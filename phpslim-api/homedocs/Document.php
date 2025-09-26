@@ -530,7 +530,7 @@ class Document
         $data = $dbh->query(
             "
                     SELECT
-                        FILE.id, FILE.name, FILE.size, FILE.sha1_hash AS hash, FILE.uploaded_on_timestamp AS uploadedOnTimestamp
+                        FILE.id, FILE.name, FILE.size, FILE.sha1_hash AS hash, FILE.uploaded_on_timestamp AS createdOnTimestamp
                     FROM DOCUMENT_FILE
                     INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_FILE.document_id
                     LEFT JOIN FILE ON FILE.id = DOCUMENT_FILE.file_id
@@ -549,7 +549,7 @@ class Document
                     $item->name,
                     intval($item->size),
                     $item->hash,
-                    $item->uploadedOnTimestamp
+                    $item->createdOnTimestamp
                 );
             }
         }
