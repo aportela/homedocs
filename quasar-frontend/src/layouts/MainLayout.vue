@@ -8,9 +8,9 @@
           :icon="miniSidebarCurrentMode ? 'arrow_forward_ios' : 'arrow_back_ios_new'" class="q-mr-md"
           v-show="visibleSidebar" />
         <q-btn type="button" no-caps no-wrap align="left" outline :label="searchButtonLabel" icon-right="search"
-          class="full-width no-caps theme-default-q-btn" @click.prevent="isFastSearchModalVisible = true">
+          class="full-width no-caps theme-default-q-btn" @click.prevent="dialogs.fastSearch.visible = true">
           <q-tooltip anchor="bottom middle" self="top middle">{{ t("Click to open fast search")
-          }}</q-tooltip>
+            }}</q-tooltip>
         </q-btn>
         <!--
         <FastSearchSelector dense class="full-width"></FastSearchSelector>
@@ -26,26 +26,16 @@
       </q-toolbar>
     </q-header>
     <SidebarDrawer v-model="visibleSidebar" :mini="miniSidebarCurrentMode"></SidebarDrawer>
-    <SearchDialog :visible="isFastSearchModalVisible" @close="isFastSearchModalVisible = false"></SearchDialog>
+    <SearchDialog :visible="dialogs.fastSearch.visible" @close="dialogs.fastSearch.visible = false"></SearchDialog>
     <q-page-container>
       <router-view class="q-pa-sm" />
     </q-page-container>
-    <ReAuthDialog v-if="showReauthDialog">
-      <template v-slot:header>
-        <div class="q-card-notes-dialog-header max-width-90">
-          {{ t("Session lost... re-auth required") }}
-        </div>
-      </template>
-      <template v-slot:body>
-        <SignInForm :show-extra-bottom="false" @success="onSuccessReauth">
-          <template v-slot:slogan>
-            <h4 class="q-mt-sm q-mb-md text-h4 text-weight-bolder">{{ t("Oooops") }}</h4>
-            <div class="text-color-secondary">
-              {{ t("Please enter again your credentials") }}</div>
-          </template>
-        </SignInForm>
-      </template>
+    <!-- main common dialogs block, this dialogs will be launched from ANY page so we declare here and manage with bus events -->
+    <ReAuthDialog v-if="dialogs.reauth.visible" @success="onSuccessReauth" @close="dialogs.reauth.visible = false">
     </ReAuthDialog>
+    <FilePreviewDialog v-if="dialogs.filePreview.visible" :document="dialogs.filePreview.document"
+      :current-index="dialogs.filePreview.currentIndex" @close="dialogs.filePreview.visible = false">
+    </FilePreviewDialog>
   </q-layout>
 </template>
 
@@ -63,8 +53,8 @@ import { default as SwitchLanguageButton } from "src/components/Buttons/SwitchLa
 import { default as GitHubButton } from "src/components/Buttons/GitHubButton.vue"
 import { GITHUB_PROJECT_URL } from "src/constants"
 import { default as ReAuthDialog } from "src/components/Dialogs/ReAuthDialog.vue"
-import { default as SignInForm } from "src/components/Forms/SignInForm.vue"
 
+import { default as FilePreviewDialog } from "src/components/Dialogs/FilePreviewDialog.vue"
 
 const $q = useQuasar();
 
@@ -76,16 +66,31 @@ if (!session.isLoaded) {
   session.load();
 }
 
-const showReauthDialog = ref(false);
+const dialogs = reactive({
+  reauth: {
+    visible: false
+  },
+  filePreview: {
+    visible: false,
+    document: {
+      id: null,
+      title: null,
+      attachments: [],
+    },
+    currentIndex: 0
+  },
+  fastSearch: {
+    visible: false
+  }
+});
+
 const reAuthEmitters = reactive([]);
 
 const onSuccessReauth = () => {
-  showReauthDialog.value = false;
+  dialogs.reauth.visible = false;
   bus.emit("reAuthSucess", ({ to: reAuthEmitters }))
   reAuthEmitters.length = 0;
 };
-
-const isFastSearchModalVisible = ref(false);
 
 const lockminiSidebarCurrentModeMode = ref(false);
 
@@ -125,7 +130,15 @@ onMounted(() => {
     if (msg.emitter) {
       reAuthEmitters.push(msg.emitter);
     }
-    showReauthDialog.value = true;
+    dialogs.reauth.visible = true;
+  });
+
+  bus.on("showDocumentFilePreviewDialog", (msg) => {
+    //dialogs.filePreview.document.id = msg?.document?.id;
+    //dialogs.filePreview.document.title = msg?.document?.title;
+    dialogs.filePreview.document.attachments = msg?.document?.attachments || [];
+    dialogs.filePreview.currentIndex = msg?.currentIndex;
+    dialogs.filePreview.visible = true;
   });
 });
 
