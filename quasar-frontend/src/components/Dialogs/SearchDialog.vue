@@ -59,13 +59,11 @@
                 <q-item-label caption>{{ item.lastUpdate }}
                 </q-item-label>
                 <ViewDocumentDetailsButton size="md" square class="min-width-7em" :count="item.fileCount"
-                  :label="'Total files'" :tool-tip="'View document attachments'"
-                  :disable="state.loading || item.fileCount < 1"
+                  :label="'Total files'" :tool-tip="'View document attachments'" :disable="state.loading"
                   @click.stop.prevent="onShowDocumentFiles(item.id, item.label)">
                 </ViewDocumentDetailsButton>
                 <ViewDocumentDetailsButton size="md" square class="min-width-7em" :count="item.noteCount"
-                  :label="'Total notes'" :tool-tip="'View document notes'"
-                  :disable="state.loading || item.noteCount < 1"
+                  :label="'Total notes'" :tool-tip="'View document notes'" :disable="state.loading"
                   @click.stop.prevent="onShowDocumentNotes(item.id, item.label)">
                 </ViewDocumentDetailsButton>
               </q-item-section>
