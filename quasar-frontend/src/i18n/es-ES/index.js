@@ -77,7 +77,7 @@ export default {
   Operations: "Operaciones",
   "Save document": "Guardar documento",
   "Remove document": "Eliminar documento",
-  "Open/Preview": "Abrir/Previsualizar",
+  "Preview": "Previsualizar",
   Download: "Descargar",
   "Click to download": "Haga click para descargar",
   Remove: "Eliminar",

@@ -108,8 +108,7 @@
                             <td class="text-right">{{ file.humanSize }}</td>
                             <td class="text-center">
                               <q-btn-group spread class="desktop-only" :disable="loading">
-                                <q-btn :label="t('Open/Preview')" icon="preview"
-                                  @click.prevent="onPreviewFile(fileIndex)"
+                                <q-btn :label="t('Preview')" icon="preview" @click.prevent="onPreviewFile(fileIndex)"
                                   :disable="loading || !allowPreview(file.name) || file.isNew" />
                                 <q-btn :label="t('Download')" icon="download" :href="file.url"
                                   :disable="loading || file.isNew" />
@@ -124,7 +123,7 @@
                                       <q-icon name="preview"></q-icon>
                                     </q-item-section>
                                     <q-item-section>
-                                      <q-item-label>{{ t("Open/Preview") }}</q-item-label>
+                                      <q-item-label>{{ t("Preview") }}</q-item-label>
                                     </q-item-section>
                                   </q-item>
                                   <q-item clickable v-close-popup :href="file.url" :disable="loading || file.isNew">

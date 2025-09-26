@@ -74,7 +74,7 @@ export default {
   Operations: "Operations",
   "Save document": "Save document",
   "Remove document": "Remove document",
-  "Open/Preview": "Open/Preview",
+  "Preview": "Preview",
   Download: "Download",
   "Click to download": "Click to download",
   Remove: "Remove",
@@ -202,4 +202,6 @@ export default {
   "View document notes": "View document notes",
   "Document attachments preview":
     "Document attachment preview|Document attachments preview",
+  "FileDownloadedMessage": "File {filename} has been downloaded ({length})",
+  "FileDownloadeErrorMessage": "Error downloading file {filename}",
 };
