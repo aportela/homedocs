@@ -6,21 +6,23 @@ namespace HomeDocs;
 
 class File
 {
-    private ?string $localStoragePath;
     public ?string $id;
     public ?string $name;
     public ?int $size;
     public ?string $hash;
     public ?int $createdOnTimestamp;
+    private ?string $localStoragePath;
 
-    public function __construct(?string $rootStoragePath = null, string $id = "", string $name = "", int $size = 0, string $hash = "", ?int $createdOnTimestamp = null)
+    public function __construct(?string $rootStoragePath = null, ?string $id = null, ?string $name = null, ?int $size = null, ?string $hash = null, ?int $createdOnTimestamp = null)
     {
         $this->id = $id;
         $this->name = $name;
         $this->size = $size;
         $this->hash = $hash;
         $this->createdOnTimestamp = $createdOnTimestamp;
-        $this->localStoragePath = $this->getFileStoragePath($rootStoragePath);
+        if (! empty($rootStoragePath) && ! empty($this->id)) {
+            $this->localStoragePath = $this->getFileStoragePath($rootStoragePath);
+        }
     }
 
     private function getFileStoragePath(string $rootStoragePath): string
@@ -83,7 +85,7 @@ class File
         return (file_exists($this->localStoragePath));
     }
 
-    private function saveStorage(\aportela\DatabaseWrapper\DB $dbh, \Psr\Http\Message\UploadedFileInterface $uploadedFile): void
+    private function saveStorage(\Psr\Http\Message\UploadedFileInterface $uploadedFile): void
     {
         if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
             $path = pathinfo($this->localStoragePath);
@@ -97,14 +99,7 @@ class File
         }
     }
 
-    private function removeStorage(): void
-    {
-        if (file_exists(($this->localStoragePath))) {
-            unlink($this->localStoragePath);
-        }
-    }
-
-    public function saveMetadata(\aportela\DatabaseWrapper\DB $dbh): void
+    private function saveMetadata(\aportela\DatabaseWrapper\DB $dbh): void
     {
         $params = array(
             new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id)),
@@ -125,7 +120,30 @@ class File
         );
     }
 
-    public function removeMetadata(\aportela\DatabaseWrapper\DB $dbh): void
+    public function add(\aportela\DatabaseWrapper\DB $dbh, \Psr\Http\Message\UploadedFileInterface $uploadedFile): void
+    {
+        if (!$this->exists()) {
+            $this->saveStorage($uploadedFile);
+            $this->saveMetadata($dbh);
+        } else {
+            throw new \HomeDocs\Exception\AlreadyExistsException("id");
+        }
+    }
+
+
+    private function removeStorage(): bool
+    {
+        if (file_exists(($this->localStoragePath))) {
+            unlink($this->localStoragePath);
+            return (true);
+        } else {
+            return (false);
+        }
+    }
+
+
+
+    private function removeMetadata(\aportela\DatabaseWrapper\DB $dbh): void
     {
         $params = array(
             new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id))
@@ -139,15 +157,6 @@ class File
     }
 
 
-    public function add(\aportela\DatabaseWrapper\DB $dbh, \Psr\Http\Message\UploadedFileInterface $uploadedFile): void
-    {
-        if (!$this->exists()) {
-            $this->saveStorage($dbh, $uploadedFile);
-            $this->saveMetadata($dbh);
-        } else {
-            throw new \HomeDocs\Exception\AlreadyExistsException("id");
-        }
-    }
 
     public function remove(\aportela\DatabaseWrapper\DB $dbh): void
     {
