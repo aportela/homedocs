@@ -20,47 +20,35 @@
       </q-card-section>
       <q-separator class="q-mb-md"></q-separator>
       <q-card-section class="q-pt-none scroll file-preview-scrolled-container">
-
         <p class="text-center text-bold">{{ currentAttachment.name }} ({{ currentAttachment.humanSize }})</p>
         <q-pagination class="flex flex-center q-my-md" v-if="attachmentsCount > 1" v-model="currentAttachmentIndex"
           :max="attachmentsCount" color="dark" :max-pages="5" boundary-numbers direction-links
           icon-first="skip_previous" icon-last="skip_next" icon-prev="fast_rewind" icon-next="fast_forward" gutter="md"
           @update:model-value="previewLoadingError = false" />
-        <div v-if="allowPreview(currentAttachment.name)">
-          <!-- TODO: resize image to FIT on dialog height -->
-          <q-img v-if="isImage(currentAttachment.name)" :src="currentAttachment.url" loading="lazy"
-            spinner-color="white" @error="previewLoadingError = true" fit>
-          </q-img>
-          <div v-else-if="isAudio(currentAttachment.name)">
-            <p class="text-center q-my-md">
-              <q-icon name="audio_file" size="192px"></q-icon>
-            </p>
-            <audio controls class="q-mt-md" style="width: 100%;">
-              <source :src="currentAttachment.url" type="audio/mpeg" />
-              {{ t("Your browser does not support the audio element") }}
-            </audio>
-          </div>
-          <div v-else>
-            <p class="text-center q-my-md">
-              <q-icon name="audio_file" size="192px"></q-icon>
-            </p>
-            <q-banner inline-actions>
-              <q-icon name="error" size="sm" />
-              {{ t("Preview not available") }}
-            </q-banner>
-          </div>
-          <div class="text-subtitle1 text-center" v-if="previewLoadingError">
-            <q-banner inline-actions>
-              <q-icon name="error" size="sm" />
-              {{ t("Error loading preview") }}
-            </q-banner>
-          </div>
+        <!-- TODO: resize image to FIT on dialog height -->
+        <q-img v-if="isImage(currentAttachment.name)" v-show="!previewLoadingError" :src="currentAttachment.url"
+          loading="lazy" spinner-color="white" @error="previewLoadingError = true;" fit>
+        </q-img>
+        <div v-else-if="isAudio(currentAttachment.name)">
+          <p class="text-center q-my-md">
+            <q-icon name="audio_file" size="192px"></q-icon>
+          </p>
+          <audio controls class="q-mt-md" style="width: 100%;">
+            <source :src="currentAttachment.url" type="audio/mpeg" />
+            {{ t("Your browser does not support the audio element") }}
+          </audio>
         </div>
         <div v-else>
           <p class="text-center q-my-md">
             <q-icon name="hide_source" size="192px"></q-icon>
           </p>
           <CustomBanner warning :text="'Preview not available'" icon="error"></CustomBanner>
+        </div>
+        <div class="text-subtitle1 text-center" v-if="previewLoadingError">
+          <p class="text-center q-my-md">
+            <q-icon name="bug_report" size="192px"></q-icon>
+          </p>
+          <CustomBanner error :text="'Error loading preview'" icon="error"></CustomBanner>
         </div>
       </q-card-section>
       <q-separator class="q-my-sm"></q-separator>
