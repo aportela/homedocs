@@ -10,7 +10,7 @@
         <q-btn type="button" no-caps no-wrap align="left" outline :label="searchButtonLabel" icon-right="search"
           class="full-width no-caps theme-default-q-btn" @click.prevent="dialogs.fastSearch.visible = true">
           <q-tooltip anchor="bottom middle" self="top middle">{{ t("Click to open fast search")
-          }}</q-tooltip>
+            }}</q-tooltip>
         </q-btn>
         <!--
         <FastSearchSelector dense class="full-width"></FastSearchSelector>
@@ -36,6 +36,10 @@
     <FilePreviewDialog v-if="dialogs.filePreview.visible" :document="dialogs.filePreview.document"
       :current-index="dialogs.filePreview.currentIndex" @close="dialogs.filePreview.visible = false">
     </FilePreviewDialog>
+    <DocumentFilesPreviewDialog v-if="dialogs.documentFilesPreview.visible"
+      :document-id="dialogs.documentFilesPreview.document.id"
+      :document-title="dialogs.documentFilesPreview.document.title"
+      @close="dialogs.documentFilesPreview.visible = false"></DocumentFilesPreviewDialog>
   </q-layout>
 </template>
 
@@ -55,6 +59,7 @@ import { GITHUB_PROJECT_URL } from "src/constants"
 import { default as ReAuthDialog } from "src/components/Dialogs/ReAuthDialog.vue"
 
 import { default as FilePreviewDialog } from "src/components/Dialogs/FilePreviewDialog.vue"
+import { default as DocumentFilesPreviewDialog } from "src/components/Dialogs/DocumentFilesPreviewDialog.vue"
 
 const $q = useQuasar();
 
@@ -78,6 +83,13 @@ const dialogs = reactive({
       attachments: [],
     },
     currentIndex: 0
+  },
+  documentFilesPreview: {
+    visible: false,
+    document: {
+      id: null,
+      title: null,
+    }
   },
   fastSearch: {
     visible: false
@@ -140,10 +152,18 @@ onMounted(() => {
     dialogs.filePreview.currentIndex = msg?.currentIndex;
     dialogs.filePreview.visible = true;
   });
+
+  bus.on("showDocumentFilesPreviewDialog", (msg) => {
+    dialogs.documentFilesPreview.document.id = msg?.document?.id;
+    dialogs.documentFilesPreview.document.title = msg?.document?.title;
+    dialogs.documentFilesPreview.visible = true;
+  });
 });
 
 onBeforeUnmount(() => {
   bus.off("reAuthRequired");
+  bus.off("showDocumentFilePreviewDialog");
+  bus.off("showDocumentFilesPreviewDialog");
 });
 
 </script>

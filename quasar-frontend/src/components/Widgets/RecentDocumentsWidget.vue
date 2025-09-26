@@ -80,9 +80,6 @@
       <CustomBanner v-else warning text="You haven't created any documents yet"></CustomBanner>
     </template>
   </CustomExpansionWidget>
-  <DocumentFilesPreviewDialog v-if="showPreviewFilesDialog" :documentId="selectedDocument.id"
-    :documentTitle="selectedDocument.title" @close="showPreviewFilesDialog = false">
-  </DocumentFilesPreviewDialog>
   <DocumentNotesPreviewDialog v-if="showPreviewNotesDialog" :documentId="selectedDocument.id"
     :documentTitle="selectedDocument.title" @close="showPreviewNotesDialog = false">
   </DocumentNotesPreviewDialog>
@@ -92,7 +89,6 @@
 
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
-import { date, format } from "quasar";
 
 import { bus } from "src/boot/bus";
 import { api } from "src/boot/axios";
@@ -103,7 +99,6 @@ import { default as CustomErrorBanner } from "src/components/Banners/CustomError
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 import { default as BrowseByTagButton } from "src/components/Buttons/BrowseByTagButton.vue";
 import { default as ViewDocumentDetailsButton } from "src/components/Buttons/ViewDocumentDetailsButton.vue";
-import { default as DocumentFilesPreviewDialog } from "src/components/Dialogs/DocumentFilesPreviewDialog.vue";
 import { default as DocumentNotesPreviewDialog } from "src/components/Dialogs/DocumentNotesPreviewDialog.vue";
 
 const { t } = useI18n();
@@ -136,7 +131,6 @@ const selectedDocument = reactive({
   notes: [],
 });
 
-const showPreviewFilesDialog = ref(false);
 const showPreviewNotesDialog = ref(false);
 
 const onRefresh = () => {
@@ -174,9 +168,12 @@ const onRefresh = () => {
 
 const onShowDocumentFiles = (documentId, documentTitle) => {
   if (!state.loading) {
-    selectedDocument.id = documentId;
-    selectedDocument.title = documentTitle;
-    showPreviewFilesDialog.value = true;
+    bus.emit("showDocumentFilesPreviewDialog", {
+      document: {
+        id: documentId,
+        title: documentTitle
+      }
+    });
   }
 }
 
