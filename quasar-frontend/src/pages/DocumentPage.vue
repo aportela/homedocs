@@ -95,6 +95,15 @@
                       <q-markup-table v-if="document.files.length > 0">
                         <thead>
                           <tr>
+                            <th><q-btn size="sm" :label="t('Add attachment')" icon="add"
+                                class="bg-blue text-white full-width" @click.stop="onShowAttachmentsPicker"></q-btn>
+                            </th>
+                            <th colspan="3"><q-input type="search" icon="search" outlined dense clearable
+                                v-model.trim="filterAttachmentByText" :label="t('Filter by text on file name')"
+                                :placeholder="t('text condition')"></q-input>
+                            </th>
+                          </tr>
+                          <tr>
                             <th class="text-left">{{ t('Uploaded on') }}</th>
                             <th class="text-left">{{ t('Name') }}</th>
                             <th class="text-right">{{ t('Size') }}</th>
@@ -102,17 +111,18 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="file, fileIndex in document.files" :key="file.id">
+                          <tr v-for="file, fileIndex in document.files" :key="file.id" v-show="file.visible">
                             <td class="text-left">{{ file.uploadedOn }}</td>
                             <td class="text-left">{{ file.name }}</td>
                             <td class="text-right">{{ file.humanSize }}</td>
                             <td class="text-center">
-                              <q-btn-group spread class="desktop-only" :disable="loading">
-                                <q-btn :label="t('Preview')" icon="preview" @click.prevent="onPreviewFile(fileIndex)"
+                              <q-btn-group flat spread class="desktop-only" :disable="loading">
+                                <q-btn size="md" no-caps :label="t('Preview')" icon="preview"
+                                  @click.prevent="onPreviewFile(fileIndex)"
                                   :disable="loading || !allowPreview(file.name) || file.isNew" />
-                                <q-btn :label="t('Download')" icon="download" :href="file.url"
+                                <q-btn size="md" no-caps :label="t('Download')" icon="download" :href="file.url"
                                   :disable="loading || file.isNew" />
-                                <q-btn :label="t('Remove')" icon="delete" :disable="loading"
+                                <q-btn size="md" no-caps :label="t('Remove')" icon="delete" :disable="loading"
                                   @click.prevent="onShowFileRemoveConfirmationDialog(file, fileIndex)" />
                               </q-btn-group>
                               <q-btn-dropdown :label="t('Operations')" class="mobile-only" :disable="loading">
@@ -261,7 +271,7 @@
 
 <script setup>
 
-import { ref, reactive, nextTick, computed, onMounted, onBeforeUnmount } from "vue";
+import { ref, reactive, nextTick, computed, watch, onMounted, onBeforeUnmount } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { uid, format, date, useQuasar } from "quasar";
@@ -280,7 +290,7 @@ import { default as InteractiveTextFieldCustomInput } from "src/components/Forms
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue"
 
-const tab = ref("notes");
+const tab = ref("attachments");
 
 const $q = useQuasar();
 const { t } = useI18n();
@@ -377,6 +387,7 @@ const parseDocumentJSONResponse = (documentData) => {
     file.uploadedOn = date.formatDate(file.uploadedOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
     file.humanSize = format.humanStorageSize(file.size);
     file.url = "api2/file/" + file.id;
+    file.visible = true;
     return (file);
   });
   document.value.notes.map((note) => {
@@ -441,6 +452,25 @@ const onRefresh = () => {
       state.loading = false;
     });
 }
+
+const filterAttachmentByText = ref(null);
+
+watch(() => filterAttachmentByText.value, val => {
+  onFilterAttachments(val);
+});
+
+const escapeRegExp = (string) => {
+  return string.replace(/[.*+?^=!:${}()|\[\]\/\\]/g, '\\$&');
+};
+
+const onFilterAttachments = (text) => {
+  if (text) {
+    const regex = new RegExp(escapeRegExp(text), 'i');
+    document.value.files.forEach((file) => { file.visible = !!file.name.match(regex); });
+  } else {
+    document.value.files.forEach((file) => { file.visible = true; });
+  }
+};
 
 function onSubmitForm() {
   loading.value = true;
