@@ -6,17 +6,17 @@ namespace HomeDocs;
 
 class Document
 {
+    private ?string $rootStoragePath;
     public ?string $id;
     public ?string $title;
     public ?string $description;
     public ?int $createdOnTimestamp;
     public ?int $lastUpdateTimestamp;
     public ?string $createdBy;
-    public ?array $files = array();
-    public ?array $notes = array();
-    public ?string $rootStoragePath;
-    public ?array $tags = array();
-    public ?array $history = array();
+    public ?array $files = [];
+    public ?array $notes = [];
+    public ?array $tags = [];
+    public ?array $history = [];
 
     public function __construct(string $id = "", string $title = "", string $description = "", $tags = array(), $files = array(), $notes = array())
     {
