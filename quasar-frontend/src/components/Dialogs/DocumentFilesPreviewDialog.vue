@@ -3,9 +3,9 @@
     <q-card class="q-card-attachments-dialog">
       <q-card-section class="row items-center q-p-none">
         <div class="q-card-attachments-dialog-header max-width-90" v-if="documentTitle">{{ t("Document title")
-          }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
+        }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
             documentTitle
-          }}</router-link>
+            }}</router-link>
         </div>
         <div class="q-card-attachments-dialog-header" v-else>{{ t("Document attachments") }}</div>
         <q-space />
@@ -29,8 +29,8 @@
         <q-list v-else>
           <div v-for="attachment, index in attachments" :key="attachment.id">
             <!-- TODO: clickable to preview if allowed or download -->
-            <q-item class="transparent-background text-color-primary q-pa-sm" clickable :href="attachment.url">
-              <q-item-section top>
+            <q-item class="transparent-background text-color-primary q-pa-sm" clickable>
+              <q-item-section top @click="onDownload(attachment.url, attachment.name)">
                 <q-item-label>
                   <span class="text-weight-bold">{{ t("Name") }}:</span> {{ attachment.name }}
                 </q-item-label>
@@ -42,19 +42,9 @@
                   }})</q-item-label>
               </q-item-section>
               <q-item-section top side>
-                <q-chip size="md" square class="theme-default-q-chip shadow-1 min-width-12em"
-                  :clickable="!state.loading" v-if="allowPreview(attachment.name)"
-                  @click.stop.prevent="onFilePreview(index)">
-                  <q-avatar class="theme-default-q-avatar text-white bg-blue-6"><q-icon
-                      name="preview"></q-icon></q-avatar>
-                  {{ t("Open/Preview") }}
-                </q-chip>
-                <q-chip size="md" square class="theme-default-q-chip shadow-1 min-width-12em"
-                  :clickable="!state.loading" @click="onDownload(attachment.url, attachment.name)">
-                  <q-avatar class="theme-default-q-avatar text-white bg-blue-6"><q-icon
-                      name="download"></q-icon></q-avatar>
-                  {{ t("Download") }}
-                </q-chip>
+                <q-btn size="md" color="primary" class="q-mt-sm"
+                  :disable="state.loading || !allowPreview(attachment.name)" icon="preview" :label="t('Open/Preview')"
+                  @click.stop.prevent="onFilePreview(index)"></q-btn>
               </q-item-section>
               <q-tooltip>{{ t("Click to download") }}</q-tooltip>
             </q-item>
