@@ -7,6 +7,8 @@
             <h3 class="q-mt-sm q-mb-sm" v-if="!document.id">{{ t("New document") }}</h3>
             <h3 class="q-mt-sm q-mb-sm" v-else>{{ t("Document card") }}</h3>
             <q-space />
+            <q-btn icon="autorenew" flat square size="xl" :title="t('Reload document')" v-if="!isNewDocument"
+              @click="onRefresh" />
             <q-btn icon="delete" flat square size="xl" :title="t('Remove document')" v-if="!isNewDocument"
               @click="showConfirmDeleteDocumentDialog = true" />
             <q-btn icon="save" flat round size="xl" :title="t('Save document')" @click="onSubmitForm"
@@ -69,18 +71,20 @@
               <q-card class="q-ma-xs q-mt-sm">
                 <q-card-section class="q-pa-none q-mb-sm" style="border-bottom: 2px solid rgba(0, 0, 0, 0.12);">
                   <q-tabs v-model="tab" align="left">
-                    <q-tab name="attachments" icon="attach_file" :label="t('Attachments')">
+                    <q-tab name="attachments" icon="attach_file" :disable="state.loading" :label="t('Attachments')">
                       <q-badge floating v-show="document.files.length > 0">{{ document.files.length }}</q-badge>
                     </q-tab>
-                    <q-tab name="notes" icon="forum" :label="t('Notes')">
+                    <q-tab name="notes" icon="forum" :disable="state.loading" :label="t('Notes')">
                       <q-badge floating v-show="document.notes.length > 0">{{ document.notes.length }}</q-badge>
                     </q-tab>
-                    <q-tab name="history" icon="view_timeline" :label="t('History')" v-if="document.id">
+                    <q-tab name="history" icon="view_timeline" :disable="state.loading" :label="t('History')"
+                      v-if="document.id">
                       <q-badge floating v-show="document.history.length > 0">{{ document.history.length }}</q-badge>
                     </q-tab>
-                    <q-tab name="attachments" v-if="tab == 'attachments'" icon="add" :label="t('Add attachment')"
-                      class="bg-blue text-white" @click.stop="onShowAttachmentsPicker"></q-tab>
-                    <q-tab name="notes" v-if="tab == 'notes'" icon="add" :label="t('Add note')"
+                    <q-tab name="attachments" v-if="tab == 'attachments'" icon="add" :disable="state.loading"
+                      :label="t('Add attachment')" class="bg-blue text-white"
+                      @click.stop="onShowAttachmentsPicker"></q-tab>
+                    <q-tab name="notes" v-if="tab == 'notes'" icon="add" :disable="state.loading" :label="t('Add note')"
                       class="bg-blue text-white" @click.stop="onShowAddNoteDialog"></q-tab>
                   </q-tabs>
                 </q-card-section>
@@ -92,15 +96,16 @@
                         :max-file-size="maxFileSize" multiple @uploaded="onFileUploaded" @rejected="onUploadRejected"
                         @failed="onUploadFailed" method="post" style="width: 100%;" :disable="loading || saving"
                         no-thumbnails @start="onUploadsStart" @finish="onUploadsFinish" />
-                      <q-markup-table v-if="document.files.length > 0">
+                      <q-markup-table>
                         <thead>
                           <tr>
                             <th><q-btn size="sm" :label="t('Add attachment')" icon="add"
-                                class="bg-blue text-white full-width" @click.stop="onShowAttachmentsPicker"></q-btn>
+                                class="bg-blue text-white full-width" :disable="state.loading"
+                                @click.stop="onShowAttachmentsPicker"></q-btn>
                             </th>
                             <th colspan="3"><q-input type="search" icon="search" outlined dense clearable
-                                v-model.trim="filterAttachmentByText" :label="t('Filter by text on file name')"
-                                :placeholder="t('text condition')"></q-input>
+                                :disable="state.loading || !hasAttachments" v-model.trim="filterAttachmentByText"
+                                :label="t('Filter by text on file name')" :placeholder="t('text condition')"></q-input>
                             </th>
                           </tr>
                           <tr>
@@ -110,7 +115,7 @@
                             <th class="text-center">{{ t('Actions') }}</th>
                           </tr>
                         </thead>
-                        <tbody>
+                        <tbody v-if="hasAttachments">
                           <tr v-for="file, fileIndex in document.files" :key="file.id" v-show="file.visible">
                             <td class="text-left">{{ file.uploadedOn }}</td>
                             <td class="text-left">{{ file.name }}</td>
@@ -159,6 +164,13 @@
                             </td>
                           </tr>
                         </tbody>
+                        <tfoot v-else>
+                          <tr>
+                            <th colspan="4">
+                              <CustomBanner warning text="No attachments found"></CustomBanner>
+                            </th>
+                          </tr>
+                        </tfoot>
                       </q-markup-table>
                     </q-tab-panel>
                     <q-tab-panel name="notes" class="q-pa-none">
@@ -351,6 +363,8 @@ const document = ref({
   notes: [],
   history: [],
 });
+
+const hasAttachments = computed(() => document?.value.files?.length > 0);
 
 router.beforeEach(async (to, from) => {
   if (to.name == "newDocument") {
