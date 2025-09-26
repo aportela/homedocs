@@ -281,6 +281,7 @@
         </form>
       </q-card>
     </div>
+    <!--
     <DocumentFilesPreviewDialog v-if="showPreviewFileDialog" :files="document.files" :index="selectedFileIndex"
       @close="showPreviewFileDialog = false">
     </DocumentFilesPreviewDialog>
@@ -318,6 +319,7 @@
         <strong>{{ t("This operation cannot be undone. Would you like to proceed ?") }}</strong>
       </template>
     </ConfirmationDialog>
+    -->
   </q-page>
 </template>
 
@@ -336,9 +338,9 @@ import { useFileUtils } from "src/composables/fileUtils"
 import { useInitialStateStore } from "src/stores/initialState";
 
 import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
-import { default as ConfirmationDialog } from "src/components/Dialogs/ConfirmationDialog.vue";
-import { default as DocumentFilesPreviewDialog } from "src/components/Dialogs/DocumentFilesPreviewDialog.vue";
-import { default as NoteModal } from "src/components/NoteModal.vue";
+//import { default as ConfirmationDialog } from "src/components/Dialogs/ConfirmationDialog.vue";
+//import { default as DocumentFilesPreviewDialog } from "src/components/Dialogs/DocumentFilesPreviewDialog.vue";
+//import { default as NoteModal } from "src/components/NoteModal.vue";
 import { default as InteractiveTextFieldCustomInput } from "src/components/Forms/Fields/InteractiveTextFieldCustomInput.vue"
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue"
@@ -361,17 +363,17 @@ const { allowPreview } = useFileUtils();
 const maxFileSize = computed(() => initialState.maxUploadFileSize);
 const uploaderRef = ref(null);
 const selectedFileIndex = ref(null);
-const selectedNoteIndex = ref(null);
-const showPreviewFileDialog = ref(false);
+//const selectedNoteIndex = ref(null);
+//const showPreviewFileDialog = ref(false);
 const showConfirmDeleteFileDialog = ref(false);
 const showConfirmDeleteDocumentDialog = ref(false);
 const showConfirmDeleteNoteDialog = ref(false);
-const showNoteDialog = ref(false);
+//const showNoteDialog = ref(false);
 const titleRef = ref(null);
 const loading = ref(false);
 const saving = ref(false);
 const uploading = ref(false);
-const currentNote = ref({ id: null, body: null });
+//const currentNote = ref({ id: null, body: null });
 
 const state = reactive({
   loading: false,
@@ -688,7 +690,6 @@ function onSuccessConfirmationModal() {
   if (showConfirmDeleteFileDialog.value) {
     onRemoveSelectedFile();
   } else if (showConfirmDeleteNoteDialog.value) {
-    onRemoveSelectedNote();
   } else if (showConfirmDeleteDocumentDialog.value) {
     onDeleteDocument();
   }
@@ -776,12 +777,6 @@ function onUploadsFinish(e) {
   uploading.value = false;
 }
 
-function onShowNoteRemoveConfirmationDialog(note, noteIndex) {
-  selectedNoteIndex.value = noteIndex;
-  //showConfirmDeleteNoteDialog.value = true;
-  onRemoveSelectedNote();
-}
-
 function onShowAddNoteDialog() {
   document.notes.unshift({
     id: uid(),
@@ -792,6 +787,7 @@ function onShowAddNoteDialog() {
   });
 }
 
+/*
 function onAddNote(newNote) {
   document.notes.unshift(newNote);
 }
@@ -803,13 +799,7 @@ function onUpdateNote(updatedNote) {
   }
 }
 
-function onRemoveSelectedNote() {
-  if (selectedNoteIndex.value > -1) {
-    document.notes.splice(selectedNoteIndex.value, 1);
-    selectedNoteIndex.value = null;
-    showConfirmDeleteNoteDialog.value = false;
-  }
-}
+*/
 
 function onDeleteDocument() {
   loading.value = true;
