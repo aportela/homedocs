@@ -1,12 +1,20 @@
 <template>
-  <q-dialog v-model="dialogModel" persistent @hide="onHide">
+  <q-dialog v-model="dialogModel" @hide="onHide">
     <q-card class="q-card-file-preview-dialog">
       <q-card-section class="row items-center q-p-none">
-        Document file preview
+        <div class="q-card-file-preview-dialog-header max-width-90" v-if="document.title">{{ t("Document title") }}:
+          <router-link :to="{ name: 'document', params: { id: document.id } }" class="text-decoration-hover">{{
+            document.title }}</router-link>
+        </div>
+        <!-- TODO use plurals in translation attachments?.length > 0 ?-->
+        <div class="q-card-attachments-dialog-header" v-else>{{ t("Document attachments preview", {
+          count:
+            attachmentsCount
+        }) }}</div>
         <q-space />
-        <q-chip size="md" square class="gt-md theme-default-q-chip" v-if="attachments?.length > 0">
-          <q-avatar class="theme-default-q-avatar">{{ attachments?.length }}</q-avatar>
-          {{ t("Total files", { count: attachments?.length }) }}
+        <q-chip size="md" square class="gt-md theme-default-q-chip" v-if="hasAttachments">
+          <q-avatar class="theme-default-q-avatar">{{ attachmentsCount }}</q-avatar>
+          {{ t("Total files", { count: attachmentsCount }) }}
         </q-chip>
         <q-btn icon="close" flat round dense v-close-popup class="gt-md" aria-label="Close modal" />
       </q-card-section>
@@ -14,13 +22,14 @@
       <q-card-section class="q-pt-none scroll file-preview-scrolled-container">
 
         <p class="text-center text-bold">{{ currentAttachment.name }} ({{ currentAttachment.humanSize }})</p>
-        <q-pagination class="flex flex-center q-my-md" v-if="attachments?.length > 1" v-model="currentAttachmentIndex"
-          :max="attachments?.length" color="dark" :max-pages="5" boundary-numbers direction-links
+        <q-pagination class="flex flex-center q-my-md" v-if="attachmentsCount > 1" v-model="currentAttachmentIndex"
+          :max="attachmentsCount" color="dark" :max-pages="5" boundary-numbers direction-links
           icon-first="skip_previous" icon-last="skip_next" icon-prev="fast_rewind" icon-next="fast_forward" gutter="md"
           @update:model-value="previewLoadingError = false" />
         <div v-if="allowPreview(currentAttachment.name)">
+          <!-- TODO: resize image to FIT on dialog height -->
           <q-img v-if="isImage(currentAttachment.name)" :src="currentAttachment.url" loading="lazy"
-            spinner-color="white" @error="previewLoadingError = true">
+            spinner-color="white" @error="previewLoadingError = true" fit>
           </q-img>
           <div v-else-if="isAudio(currentAttachment.name)">
             <p class="text-center q-my-md">
@@ -74,26 +83,29 @@ import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue
 
 const { t } = useI18n();
 
-const emit = defineEmits(['close', 'hide']);
+const emit = defineEmits(['close']);
 
 const dialogModel = ref(true);
 
 const previewLoadingError = ref(false);
 
 const props = defineProps({
-  attachments: {
-    type: Array,
-    required: true,
+  document: {
+    type: Object,
+    required: true
   },
   currentIndex: {
     type: Number,
     required: false,
-    default: 0,
+    default: 0
   }
 });
 
+const hasAttachments = computed(() => props.document?.attachments?.length > 0);
+const attachmentsCount = computed(() => hasAttachments.value ? props.document?.attachments?.length : 0);
+
 const currentAttachmentIndex = ref(props.currentIndex + 1 || 1);
-const currentAttachment = computed(() => props.attachments?.length > 0 ? props.attachments[currentAttachmentIndex.value - 1] : {})
+const currentAttachment = computed(() => props.document.attachments?.length > 0 ? props.document.attachments[currentAttachmentIndex.value - 1] : {})
 
 const allowPreview = (filename) => {
   return (filename.match(/.(jpg|jpeg|png|gif|mp3)$/i));
@@ -123,6 +135,14 @@ const onHide = () => {
 .q-card-file-preview-dialog-header {
   font-size: 1.2em;
   font-weight: bold;
+}
+
+.q-card-file-preview-dialog-header a {
+  font-weight: normal;
+}
+
+.max-width-90 {
+  max-width: 90%;
 }
 
 .file-preview-scrolled-container {
