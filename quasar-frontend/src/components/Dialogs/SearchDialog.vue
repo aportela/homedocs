@@ -58,14 +58,16 @@
               <q-item-section side top>
                 <q-item-label caption>{{ item.lastUpdate }}
                 </q-item-label>
-                <q-chip size="sm" square text-color="dark" class="full-width">
-                  <q-avatar color="grey-9" text-color="white">{{ item.fileCount }}</q-avatar>
-                  {{ t("Files") }}
-                </q-chip>
-                <q-chip size="sm" square text-color="dark" class="full-width">
-                  <q-avatar color="grey-9" text-color="white">{{ item.noteCount }}</q-avatar>
-                  {{ t("Notes") }}
-                </q-chip>
+                <ViewDocumentDetailsButton size="md" square class="min-width-7em" :count="item.fileCount"
+                  :label="'Total files'" :tool-tip="'View document attachments'"
+                  :disable="state.loading || item.fileCount < 1"
+                  @click.stop.prevent="onShowDocumentFiles(item.id, item.label)">
+                </ViewDocumentDetailsButton>
+                <ViewDocumentDetailsButton size="md" square class="min-width-7em" :count="item.noteCount"
+                  :label="'Total notes'" :tool-tip="'View document notes'"
+                  :disable="state.loading || item.noteCount < 1"
+                  @click.stop.prevent="onShowDocumentNotes(item.id, item.label)">
+                </ViewDocumentDetailsButton>
               </q-item-section>
             </q-item>
             <!--
@@ -93,10 +95,11 @@ import { useQuasar, date } from "quasar";
 
 import { bus } from "src/boot/bus";
 import { api } from "src/boot/axios";
+import { useBusDialog } from "src/composables/busDialog";
 
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
-
+import { default as ViewDocumentDetailsButton } from "src/components/Buttons/ViewDocumentDetailsButton.vue";
 
 const props = defineProps({
   visible: {
@@ -111,6 +114,8 @@ const router = useRouter();
 const $q = useQuasar();
 
 const { t } = useI18n();
+
+const { onShowDocumentFiles, onShowDocumentNotes } = useBusDialog();
 
 const emit = defineEmits(['close']);
 
