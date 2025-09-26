@@ -74,6 +74,7 @@ import { useI18n } from "vue-i18n";
 import { date, format } from "quasar";
 import { bus } from "src/boot/bus";
 import { useFormatDates } from "src/composables/formatDate"
+import { useFileUtils } from "src/composables/fileUtils"
 import { api, bgDownload } from "src/boot/axios";
 
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
@@ -81,6 +82,7 @@ import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue
 
 const { t } = useI18n();
 const { timeAgo } = useFormatDates();
+const { allowPreview } = useFileUtils();
 
 const props = defineProps({
   documentId: {
@@ -111,10 +113,6 @@ const dialogModel = ref(true);
 const onFilePreview = (index) => {
   bus.emit("showDocumentFilePreviewDialog", { document: { id: props.documentId, title: props.documentTitle, attachments: attachments }, currentIndex: index });
 };
-
-function allowPreview(filename) {
-  return (!!filename.match(/.(jpg|jpeg|png|gif|mp3)$/i));
-}
 
 const downloadBanner = reactive({
   visible: false,
