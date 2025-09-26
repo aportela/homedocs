@@ -98,7 +98,7 @@ class Stats
         );
         $results = array_map(
             function ($item) {
-                return (["date" => $item->activity_date, "count" => $item->total]);
+                return (["date" => $item->activity_date, "count" => intval($item->total)]);
             },
             $results
         );
