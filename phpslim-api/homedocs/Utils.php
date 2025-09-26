@@ -159,7 +159,7 @@ class Utils
     /**
      * return (if found) matched fragment of string
      */
-    public static function getStringFragment(string $text, string $search, int $maxFragmentLength, bool $ignoreCase)
+    public static function getStringFragment(string $text, string $search, int $maxFragmentLength, bool $ignoreCase): ?string
     {
         $pos = $ignoreCase ? mb_stripos($text, $search) : mb_strpos($text, $search);
         if ($pos !== false) {
