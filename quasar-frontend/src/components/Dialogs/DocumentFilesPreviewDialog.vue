@@ -28,7 +28,8 @@
         </div>
         <q-list v-else>
           <div v-for="attachment, index in attachments" :key="attachment.id">
-            <q-item class="transparent-background text-color-primary q-pa-sm">
+            <!-- TODO: clickable to preview if allowed or download -->
+            <q-item class="transparent-background text-color-primary q-pa-sm" clickable :href="attachment.url">
               <q-item-section top>
                 <q-item-label>
                   <span class="text-weight-bold">{{ t("Name") }}:</span> {{ attachment.name }}
@@ -41,18 +42,21 @@
                   }})</q-item-label>
               </q-item-section>
               <q-item-section top side>
-                <q-chip size="md" square class="theme-default-q-chip shadow-1 full-width" :clickable="!state.loading"
-                  @click.stop.prevent="showPreviewDialog = true">
+                <q-chip size="md" square class="theme-default-q-chip shadow-1 min-width-12em"
+                  :clickable="!state.loading" v-if="allowPreview(attachment.name)"
+                  @click.stop.prevent="onFilePreview(index)">
                   <q-avatar class="theme-default-q-avatar text-white bg-blue-6"><q-icon
                       name="preview"></q-icon></q-avatar>
                   {{ t("Open/Preview") }}
                 </q-chip>
-                <q-chip size="md" square class="theme-default-q-chip shadow-1 full-width" :clickable="!state.loading">
+                <q-chip size="md" square class="theme-default-q-chip shadow-1 min-width-12em"
+                  :clickable="!state.loading" @click="onDownload(attachment.url, attachment.name)">
                   <q-avatar class="theme-default-q-avatar text-white bg-blue-6"><q-icon
                       name="download"></q-icon></q-avatar>
                   {{ t("Download") }}
                 </q-chip>
               </q-item-section>
+              <q-tooltip>{{ t("Click to download") }}</q-tooltip>
             </q-item>
             <q-separator v-if="index !== attachments.length - 1" class="q-my-xs" />
           </div>
@@ -67,8 +71,6 @@
       </q-card-section>
     </q-card>
   </q-dialog>
-  <FilePreviewDialog v-if="showPreviewDialog" :attachments="attachments" :current-index="0"
-    @close="showPreviewDialog = false"></FilePreviewDialog>
 </template>
 
 <script setup>
@@ -77,11 +79,10 @@ import { useI18n } from "vue-i18n";
 import { date, format } from "quasar";
 import { bus } from "src/boot/bus";
 import { useFormatDates } from "src/composables/formatDate"
-import { api } from "src/boot/axios";
+import { api, bgDownload } from "src/boot/axios";
 
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
-import { default as FilePreviewDialog } from "src/components/Dialogs/FilePreviewDialog.vue";
 
 const { t } = useI18n();
 const { timeAgo } = useFormatDates();
@@ -95,23 +96,7 @@ const props = defineProps({
     type: String,
     required: false,
     default: ""
-  },
-  /*
-  title: {
-    type: String,
-    required: false,
-    default: ""
-  },
-  files: {
-    type: Array,
-    required: true
-  },
-  index: {
-    type: Number,
-    required: false,
-    default: 0
   }
-    */
 });
 
 const emit = defineEmits(['close']);
@@ -123,16 +108,27 @@ const state = reactive({
   apiError: null
 });
 
-const showPreviewDialog = ref(false);
-
 const attachments = reactive([]);
 const hasAttachments = computed(() => attachments?.length > 0);
 
 const dialogModel = ref(true);
 
+const onFilePreview = (index) => {
+  bus.emit("showDocumentFilePreviewDialog", { document: { id: props.documentId, title: props.documentTitle, attachments: attachments }, currentIndex: index });
+};
 
 function allowPreview(filename) {
-  return (filename.match(/.(jpg|jpeg|png|gif|mp3)$/i));
+  return (!!filename.match(/.(jpg|jpeg|png|gif|mp3)$/i));
+}
+
+const onDownload = (url, fileName) => {
+  bgDownload(url, fileName)
+    .then((successResponse) => {
+      console.log(successResponse);
+    })
+    .catch((errorResponse) => {
+      console.log(errorResponse);
+    });
 }
 
 const onRefresh = (documentId) => {
