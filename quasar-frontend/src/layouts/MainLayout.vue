@@ -10,7 +10,7 @@
         <q-btn type="button" no-caps no-wrap align="left" outline :label="searchButtonLabel" icon-right="search"
           class="full-width no-caps theme-default-q-btn" @click.prevent="dialogs.fastSearch.visible = true">
           <q-tooltip anchor="bottom middle" self="top middle">{{ t("Click to open fast search")
-            }}</q-tooltip>
+          }}</q-tooltip>
         </q-btn>
         <!--
         <FastSearchSelector dense class="full-width"></FastSearchSelector>
@@ -134,8 +134,8 @@ onMounted(() => {
   });
 
   bus.on("showDocumentFilePreviewDialog", (msg) => {
-    //dialogs.filePreview.document.id = msg?.document?.id;
-    //dialogs.filePreview.document.title = msg?.document?.title;
+    dialogs.filePreview.document.id = msg?.document?.id;
+    dialogs.filePreview.document.title = msg?.document?.title;
     dialogs.filePreview.document.attachments = msg?.document?.attachments || [];
     dialogs.filePreview.currentIndex = msg?.currentIndex;
     dialogs.filePreview.visible = true;
