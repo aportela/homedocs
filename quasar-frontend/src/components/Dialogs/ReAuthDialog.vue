@@ -2,7 +2,7 @@
   <q-dialog v-model="dialogModel" persistent @hide="onHide">
     <q-card class="q-card-reauth-dialog">
       <q-card-section class="q-p-none">
-        <div class="q-card-notes-dialog-header max-width-90">
+        <div class="q-card-notes-dialog-header">
           {{ t("Session lost... re-auth required") }}
         </div>
       </q-card-section>

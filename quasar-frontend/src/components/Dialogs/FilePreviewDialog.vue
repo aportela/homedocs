@@ -1,22 +1,24 @@
 <template>
   <q-dialog v-model="dialogModel" @hide="onHide">
     <q-card class="q-card-file-preview-dialog">
-      <q-card-section class="row items-center q-p-none">
-        <div class="q-card-file-preview-dialog-header max-width-90" v-if="document.title">{{ t("Document title") }}:
+      <q-card-section class="row q-p-none">
+        <div class="q-card-file-preview-dialog-header col" v-if="document.title">{{ t("Document title") }}:
           <router-link :to="{ name: 'document', params: { id: document.id } }" class="text-decoration-hover">{{
             document.title }}</router-link>
         </div>
         <!-- TODO use plurals in translation attachments?.length > 0 ?-->
-        <div class="q-card-attachments-dialog-header" v-else>{{ t("Document attachments preview", {
+        <div class="q-card-attachments-dialog-header col" v-else>{{ t("Document attachments preview", {
           count:
             attachmentsCount
         }) }}</div>
         <q-space />
-        <q-chip size="md" square class="gt-md theme-default-q-chip" v-if="hasAttachments">
-          <q-avatar class="theme-default-q-avatar">{{ attachmentsCount }}</q-avatar>
-          {{ t("Total files", { count: attachmentsCount }) }}
-        </q-chip>
-        <q-btn icon="close" flat round dense v-close-popup class="gt-md" aria-label="Close modal" />
+        <div>
+          <q-chip size="md" square class="gt-sm theme-default-q-chip" v-if="hasAttachments">
+            <q-avatar class="theme-default-q-avatar">{{ attachmentsCount }}</q-avatar>
+            {{ t("Total files", { count: attachmentsCount }) }}
+          </q-chip>
+          <q-btn icon="close" flat round dense v-close-popup aria-label="Close modal" />
+        </div>
       </q-card-section>
       <q-separator class="q-mb-md"></q-separator>
       <q-card-section class="q-pt-none scroll file-preview-scrolled-container">
@@ -167,10 +169,6 @@ const onDownload = (url, fileName) => {
 
 .q-card-file-preview-dialog-header a {
   font-weight: normal;
-}
-
-.max-width-90 {
-  max-width: 90%;
 }
 
 .file-preview-scrolled-container {
