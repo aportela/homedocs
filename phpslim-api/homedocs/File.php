@@ -6,14 +6,14 @@ namespace HomeDocs;
 
 class File
 {
+    private ?string $localStoragePath;
     public ?string $id;
     public ?string $name;
     public ?int $size;
     public ?string $hash;
     public ?int $uploadedOnTimestamp;
-    private ?string $localStoragePath;
 
-    public function __construct(string $rootStoragePath = null, string $id = "", string $name = "", int $size = 0, string $hash = "", int $uploadedOnTimestamp = null)
+    public function __construct(?string $rootStoragePath = null, string $id = "", string $name = "", int $size = 0, string $hash = "", ?int $uploadedOnTimestamp = null)
     {
         $this->id = $id;
         $this->name = $name;
