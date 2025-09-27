@@ -11,7 +11,7 @@
         </q-input>
         <PasswordFieldCustomInput class="q-my-md" dense outlined v-model="profile.password" name="password"
           :label="t('New password')" :error="validator.hasErrors" ref="passwordRef"
-          :errorMessage="validator.message ? t(validator.message) : ''" :disable="state.loading" :autofocus="true"
+          :errorMessage="validator.message ? t(validator.message) : ''" :disable="state.loading"
           :rules="formUtils.requiredFieldRules" lazy-rules>
         </PasswordFieldCustomInput>
         <q-btn color="primary" size="md" :label="$t('Update profile')" no-caps class="full-width q-my-xs"
@@ -47,6 +47,14 @@ import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue
 
 const { t } = useI18n();
 const formUtils = useFormUtils();
+
+const props = defineProps({
+  autoFocus: {
+    type: Boolean,
+    required: false,
+    default: false
+  }
+});
 
 const state = reactive({
   loading: false,
@@ -86,9 +94,11 @@ const onGetProfile = () => {
     .then((successResponse) => {
       profile.email = successResponse.data.data.email;
       state.loading = false;
-      nextTick(() => {
-        passwordRef.value?.focus();
-      });
+      if (props.autoFocus) {
+        nextTick(() => {
+          passwordRef.value?.focus();
+        });
+      }
     })
     .catch((errorResponse) => {
       state.loadingError = true;
@@ -105,9 +115,11 @@ const onGetProfile = () => {
           break;
       }
       state.loading = false;
-      nextTick(() => {
-        passwordRef.value?.focus();
-      });
+      if (props.autoFocus) {
+        nextTick(() => {
+          passwordRef.value?.focus();
+        });
+      }
     });
 }
 
@@ -176,6 +188,5 @@ onMounted(() => {
 onBeforeUnmount(() => {
   bus.off("reAuthSucess");
 });
-
 
 </script>
