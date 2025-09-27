@@ -32,13 +32,29 @@ export function useFormatDates() {
     }
   };
 
+  const timestamp = (dateObj) => {
+    return date.formatDate(dateObj, 'X');
+  };
+
+  const currentTimestamp = () => {
+    return timestamp(new Date());
+  };
+
   const dateHuman = (timestamp) => {
     return date.formatDate(timestamp, "YYYY/MM/DD");
+  };
+
+  const currentDateHuman = () => {
+    return dateHuman(new Date());
   };
 
   const fullDateTimeHuman = (timestamp) => {
     return date.formatDate(timestamp, "YYYY/MM/DD HH:mm:ss");
   };
 
-  return { timeAgo, dateHuman, fullDateTimeHuman };
+  const currentFullDateTimeHuman = () => {
+    return fullDateTimeHuman(new Date());
+  };
+
+  return { timeAgo, timestamp, currentTimestamp, dateHuman, currentDateHuman, fullDateTimeHuman, currentFullDateTimeHuman };
 }
