@@ -101,20 +101,21 @@ class File
 
     private function saveMetadata(\aportela\DatabaseWrapper\DB $dbh): void
     {
+        $this->createdOnTimestamp = intval(microtime(true));
         $params = array(
             new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id)),
             new \aportela\DatabaseWrapper\Param\StringParam(":sha1_hash", $this->hash),
             new \aportela\DatabaseWrapper\Param\StringParam(":name", $this->name),
             new \aportela\DatabaseWrapper\Param\IntegerParam(":size", $this->size),
             new \aportela\DatabaseWrapper\Param\StringParam(":uploaded_by_user_id", \HomeDocs\UserSession::getUserId()),
-            new \aportela\DatabaseWrapper\Param\IntegerParam(":current_ms_timestamp", intval(microtime(true)))
+            new \aportela\DatabaseWrapper\Param\IntegerParam(":uploaded_on_timestamp", $this->createdOnTimestamp)
         );
         $dbh->exec(
             "
                 INSERT INTO FILE
                     (id, sha1_hash, name, size, uploaded_by_user_id, uploaded_on_timestamp)
                 VALUES
-                    (:id, :sha1_hash, :name, :size, :uploaded_by_user_id, :current_ms_timestamp)
+                    (:id, :sha1_hash, :name, :size, :uploaded_by_user_id, :uploaded_on_timestamp)
             ",
             $params
         );
