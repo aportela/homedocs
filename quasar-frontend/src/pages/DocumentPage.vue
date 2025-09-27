@@ -28,7 +28,7 @@
           </q-tabs>
           <q-card-section class="row q-pa-none">
             <div class="col-12 col-lg-6 col-xl-6 q-px-sm" v-show="isScreenGreaterThanMD || topTab == 'metadata'">
-              <q-card class="q-ma-xs q-mt-sm">
+              <q-card class="q-ma-xs q-mt-sm full-height">
                 <q-card-section class="q-pa-none q-mb-sm gt-md">
                   <q-tabs v-model="leftTab">
                     <q-tab name="metadata" icon="description" :label="t('Document metadata')"
@@ -54,8 +54,8 @@
                 </q-card-section>
               </q-card>
             </div>
-            <div class="col-12 col-lg-6 col-xl-6 scroll_ q-px-sm" v-show="isScreenGreaterThanMD || topTab == 'details'">
-              <q-card class="q-ma-xs q-mt-sm">
+            <div class="col-12 col-lg-6 col-xl-6 q-px-sm" v-show="isScreenGreaterThanMD || topTab == 'details'">
+              <q-card class="q-ma-xs q-mt-sm full-height">
                 <q-card-section class="q-pa-none q-mb-sm" style="border-bottom: 2px solid rgba(0, 0, 0, 0.12);">
                   <q-tabs v-model="tab" align="left">
                     <q-tab name="attachments" icon="attach_file" :disable="state.loading" :label="t('Attachments')">
@@ -190,7 +190,7 @@
               </q-card>
             </div>
           </q-card-section>
-          <q-card-section>
+          <q-card-section class="q-ma-xs q-mt-sm q-px-sm">
             <q-btn :label="t('Save changes')" type="submit" icon="save" class="full-width" color="dark"
               :disable="loading || saving || uploading || !document.title">
               <template v-slot:loading v-if="saving">
