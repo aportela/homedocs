@@ -30,7 +30,6 @@
                   </q-tabs>
                 </q-card-section>
                 <q-card-section class="q-pa-md">
-
                   <DocumentMetadataTopForm v-if="!isNewDocument" :created-on-timestamp="document.createdOnTimestamp"
                     :last-update-timestamp="document.lastUpdateTimestamp"></DocumentMetadataTopForm>
                   <InteractiveTextFieldCustomInput ref="titleRef" dense class="q-mb-md" maxlength="128" outlined
@@ -63,11 +62,6 @@
                       v-if="document.id">
                       <q-badge floating v-show="document.history.length > 0">{{ document.history.length }}</q-badge>
                     </q-tab>
-                    <q-tab name="attachments" v-if="tab == 'attachments'" icon="add" :disable="state.loading"
-                      :label="t('Add attachment')" class="bg-blue text-white"
-                      @click.stop="onShowAttachmentsPicker"></q-tab>
-                    <q-tab name="notes" v-if="tab == 'notes'" icon="add" :disable="state.loading" :label="t('Add note')"
-                      class="bg-blue text-white" @click.stop="onShowAddNoteDialog"></q-tab>
                   </q-tabs>
                 </q-card-section>
                 <q-card-section class="q-pa-none">
@@ -86,7 +80,7 @@
                             :label="t('Filter by text on file name')" :placeholder="t('text condition')"></q-input>
                         </q-item-section>
                         <q-item-section side>
-                          <q-btn size="sm" :label="t('Add attachment')" icon="add" class="bg-blue text-white full-width"
+                          <q-btn size="md" :label="t('Add attachment')" icon="add" class="bg-blue text-white full-width"
                             :disable="state.loading" @click.stop="onShowAttachmentsPicker"></q-btn>
                         </q-item-section>
                       </q-item>
@@ -123,91 +117,24 @@
                           </q-item>
                           <q-separator v-if="file.visible && index !== document.files.length - 1" class="q-my-xs" />
                         </div>
-
                       </q-list>
-                      <!--
-                      <q-markup-table>
-                        <thead>
-                          <tr>
-                            <th><q-btn size="sm" :label="t('Add attachment')" icon="add"
-                                class="bg-blue text-white full-width" :disable="state.loading"
-                                @click.stop="onShowAttachmentsPicker"></q-btn>
-                            </th>
-                            <th colspan="3"><q-input type="search" icon="search" outlined dense clearable
-                                :disable="state.loading || !hasAttachments" v-model.trim="filterAttachmentByText"
-                                :label="t('Filter by text on file name')" :placeholder="t('text condition')"></q-input>
-                            </th>
-                          </tr>
-                          <tr>
-                            <th class="text-left">{{ t('Uploaded on') }}</th>
-                            <th class="text-left">{{ t('Name') }}</th>
-                            <th class="text-right">{{ t('Size') }}</th>
-                            <th class="text-center">{{ t('Actions') }}</th>
-                          </tr>
-                        </thead>
-                        <tbody v-if="hasAttachments">
-                          <tr v-for="file, fileIndex in document.files" :key="file.id" v-show="file.visible">
-                            <td class="text-left">{{ file.createdOn }}</td>
-                            <td class="text-left">{{ file.name }}</td>
-                            <td class="text-right">{{ file.humanSize }}</td>
-                            <td class="text-center">
-                              <q-btn-group flat spread class="desktop-only" :disable="loading">
-                                <q-btn size="md" no-caps :label="t('Preview')" icon="preview"
-                                  @click.prevent="onPreviewFile(fileIndex)"
-                                  :disable="loading || !allowPreview(file.name) || file.isNew" />
-                                <q-btn size="md" no-caps :label="t('Download')" icon="download" :href="file.url"
-                                  :disable="loading || file.isNew" />
-                                <q-btn size="md" no-caps :label="t('Remove')" icon="delete" :disable="loading"
-                                  @click.prevent="onShowFileRemoveConfirmationDialog(file, fileIndex)" />
-                              </q-btn-group>
-                              <q-btn-dropdown :label="t('Operations')" class="mobile-only" :disable="loading">
-                                <q-list>
-                                  <q-item clickable v-close-popup @click.prevent="onPreviewFile(fileIndex)"
-                                    :disable="loading || !allowPreview(file.name) || file.isNew">
-                                    <q-item-section avatar>
-                                      <q-icon name="preview"></q-icon>
-                                    </q-item-section>
-                                    <q-item-section>
-                                      <q-item-label>{{ t("Preview") }}</q-item-label>
-                                    </q-item-section>
-                                  </q-item>
-                                  <q-item clickable v-close-popup :href="file.url" :disable="loading || file.isNew">
-                                    <q-item-section avatar>
-                                      <q-icon name="download"></q-icon>
-                                    </q-item-section>
-                                    <q-item-section>
-                                      <q-item-label>{{ t("Download") }}</q-item-label>
-                                    </q-item-section>
-                                  </q-item>
-                                  <q-item clickable v-close-popup
-                                    @click.prevent="onShowFileRemoveConfirmationDialog(file, fileIndex)"
-                                    :disable="loading">
-                                    <q-item-section avatar>
-                                      <q-icon name="delete"></q-icon>
-                                    </q-item-section>
-                                    <q-item-section>
-                                      <q-item-label>{{ t("Remove") }}</q-item-label>
-                                    </q-item-section>
-                                  </q-item>
-                                </q-list>
-                              </q-btn-dropdown>
-                            </td>
-                          </tr>
-                        </tbody>
-                        <tfoot v-else>
-                          <tr>
-                            <th colspan="4">
-                              <CustomBanner warning text="No attachments found"></CustomBanner>
-                            </th>
-                          </tr>
-                        </tfoot>
-                      </q-markup-table>
-                      -->
+                      <!-- TODO: warning no files -->
                     </q-tab-panel>
-                    <q-tab-panel name="notes" class="q-pa-none scroll" style="min-height: 64vh; max-height: 64vh;">
-                      <q-list class="bg-transparent">
-                        <q-item v-for="note, noteIndex in document.notes" :key="note.id"
-                          class="q-pa-none bg-transparent">
+                    <q-tab-panel name="notes" class="q-pa-none scroll" style="min-height: 50vh; max-height: 50vh;">
+                      <q-item class="transparent-background text-color-primary q-pa-sm">
+                        <q-item-section>
+                          <q-input type="search" icon="search" outlined dense clearable
+                            :disable="state.loading || !hasNotes" v-model.trim="filterNotesByText"
+                            :label="t('Filter by text on note body')" :placeholder="t('text condition')"></q-input>
+                        </q-item-section>
+                        <q-item-section side>
+                          <q-btn size="md" :label="t('Add note')" icon="add" class="bg-blue text-white full-width"
+                            :disable="state.loading" @click.stop="onShowAddNoteDialog"></q-btn>
+                        </q-item-section>
+                      </q-item>
+                      <q-list class="bg-transparent scroll q-pa-sm" style="min-height: 50vh; max-height: 50vh;">
+                        <q-item class="q-pa-none bg-transparent" v-for="note, noteIndex in document.notes"
+                          :key="note.id" v-show="note.visible">
                           <q-item-section>
                             <InteractiveTextFieldCustomInput v-model.trim="note.body" dense outlined type="textarea"
                               maxlength="4096" autogrow name="description"
@@ -413,6 +340,8 @@ const document = reactive({
 
 const hasAttachments = computed(() => document?.files?.length > 0);
 
+const hasNotes = computed(() => document?.notes?.length > 0);
+
 router.beforeEach(async (to, from) => {
   if (to.name == "newDocument") {
     // new document, reset form fields
@@ -444,6 +373,7 @@ const parseDocumentJSONResponse = (documentData) => {
     note.isNew = false;
     note.createdOn = date.formatDate(note.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
     note.expanded = false;
+    note.visible = true;
     return (note);
   });
   document.history.map((operation) => {
@@ -520,8 +450,14 @@ const handleDrop = (event) => {
 
 const filterAttachmentByText = ref(null);
 
+const filterNotesByText = ref(null);
+
 watch(() => filterAttachmentByText.value, val => {
   onFilterAttachments(val);
+});
+
+watch(() => filterNotesByText.value, val => {
+  onFilterNotes(val);
 });
 
 const escapeRegExp = (string) => {
@@ -534,6 +470,16 @@ const onFilterAttachments = (text) => {
     document.files.forEach((file) => { file.visible = !!file.name.match(regex); });
   } else {
     document.files.forEach((file) => { file.visible = true; });
+  }
+};
+
+const onFilterNotes = (text) => {
+  if (text) {
+    const regex = new RegExp(escapeRegExp(text), 'i');
+    document.notes.forEach((note) => { note.visible = !!note.body.match(regex); });
+    // TODO: map new fragment with bold
+  } else {
+    document.notes.forEach((note) => { note.visible = true; });
   }
 };
 
@@ -773,7 +719,8 @@ function onShowAddNoteDialog() {
     body: null,
     createdOnTimestamp: date.formatDate(new Date(), 'X'),
     createdOn: date.formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss'),
-    startOnEditMode: true
+    startOnEditMode: true,
+    visible: true
   });
 }
 
