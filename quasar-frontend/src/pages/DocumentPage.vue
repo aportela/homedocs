@@ -90,7 +90,7 @@
                             :disable="state.loading" @click.stop="onShowAttachmentsPicker"></q-btn>
                         </q-item-section>
                       </q-item>
-                      <q-list class="scroll" style="min-height: 50vh; max-height: 50vh;">
+                      <q-list class="scroll" style="min-height: 50vh; max-height: 50vh;" v-if="hasAttachments">
                         <div v-for="file, index in document.files" :key="file.id">
                           <q-item class="transparent-background text-color-primary q-pa-sm" v-show="file.visible"
                             clickable="">
@@ -124,7 +124,7 @@
                           <q-separator v-if="file.visible && index !== document.files.length - 1" class="q-my-xs" />
                         </div>
                       </q-list>
-                      <!-- TODO: warning no files -->
+                      <CustomBanner v-else warning text="No attachments found" class="q-ma-sm"></CustomBanner>
                     </q-tab-panel>
                     <q-tab-panel name="notes" class="q-pa-none scroll" style="min-height: 50vh; max-height: 50vh;">
                       <q-item class="transparent-background text-color-primary q-pa-sm">
