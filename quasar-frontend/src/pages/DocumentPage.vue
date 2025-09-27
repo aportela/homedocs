@@ -76,8 +76,8 @@
                     <q-tab-panel name="attachments" class="q-pa-none">
                       <q-uploader ref="uploaderRef" class="q-mb-md hidden"
                         :label="t('Add new file (Drag & Drop supported)')" flat bordered auto-upload hide-upload-btn
-                        color="dark" field-name="file" url="api2/file" :max-file-size="maxFileSize" multiple
-                        @uploaded="onFileUploaded" @rejected="onUploadRejected" @failed="onUploadFailed" method="post"
+                        color="dark" field-name="file" method="post" url="api2/file" :max-file-size="maxFileSize"
+                        multiple @uploaded="onFileUploaded" @rejected="onUploadRejected" @failed="onUploadFailed"
                         style="width: 100%;" :disable="loading || saving" no-thumbnails @start="onUploadsStart"
                         @finish="onUploadsFinish" />
                       <q-list class="scroll" style="min-height: 50vh; max-height: 50vh;">
@@ -321,7 +321,6 @@ import { useInitialStateStore } from "src/stores/initialState";
 import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
 //import { default as ConfirmationDialog } from "src/components/Dialogs/ConfirmationDialog.vue";
 //import { default as DocumentFilesPreviewDialog } from "src/components/Dialogs/DocumentFilesPreviewDialog.vue";
-//import { default as NoteModal } from "src/components/NoteModal.vue";
 import { default as DocumentMetadataTopForm } from "src/components/Forms/DocumentMetadataTopForm.vue"
 import { default as InteractiveTextFieldCustomInput } from "src/components/Forms/Fields/InteractiveTextFieldCustomInput.vue"
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
@@ -344,17 +343,13 @@ const { allowPreview } = useFileUtils();
 const maxFileSize = computed(() => initialState.maxUploadFileSize);
 const uploaderRef = ref(null);
 const selectedFileIndex = ref(null);
-//const selectedNoteIndex = ref(null);
-//const showPreviewFileDialog = ref(false);
 const showConfirmDeleteFileDialog = ref(false);
 const showConfirmDeleteDocumentDialog = ref(false);
 const showConfirmDeleteNoteDialog = ref(false);
-//const showNoteDialog = ref(false);
 const titleRef = ref(null);
 const loading = ref(false);
 const saving = ref(false);
 const uploading = ref(false);
-//const currentNote = ref({ id: null, body: null });
 
 const state = reactive({
   loading: false,
@@ -708,6 +703,7 @@ function onRemoveSelectedFile() {
 }
 
 function onFileUploaded(e) {
+  console.log("onFileUploaded");
   document.files.push(
     {
       id: (JSON.parse(e.xhr.response).data).id,
@@ -717,11 +713,13 @@ function onFileUploaded(e) {
       size: e.files[0].size,
       hash: null,
       humanSize: format.humanStorageSize(e.files[0].size),
-      isNew: true
+      isNew: true,
+      visible: true
     });
 }
 
 function onUploadRejected(e) {
+  console.log("onUploadRejected");
   if (e[0].failedPropValidation == "max-file-size") {
     /*
     $q.notify({
@@ -740,6 +738,7 @@ function onUploadRejected(e) {
 }
 
 function onUploadFailed(e) {
+  console.log("onUploadFailed");
   /*
   $q.notify({
     type: "negative",
@@ -749,10 +748,12 @@ function onUploadFailed(e) {
 }
 
 function onUploadsStart(e) {
+  console.log("onUploadsStart");
   uploading.value = true;
 }
 
 function onUploadsFinish(e) {
+  console.log("onUploadsFinish");
   uploading.value = false;
 }
 
