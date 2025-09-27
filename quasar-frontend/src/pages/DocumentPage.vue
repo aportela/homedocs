@@ -159,7 +159,7 @@
                               </template>
                               <template v-slot:icon-append-on-edit>
                                 <q-icon name="delete" size="sm" class="cursor-pointer" clickable
-                                  @click.prevent="onShowNoteRemoveConfirmationDialog(note, noteIndex)">
+                                  @click.prevent="onRemoveNote(noteIndex)">
                                 </q-icon>
                               </template>
                               <!-- TODO: NOT FOCUSING ON TEXTAREA CHANGE TO EDIT MODE -->
