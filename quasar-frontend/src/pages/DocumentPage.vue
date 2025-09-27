@@ -20,10 +20,16 @@
         </q-card-section>
         <form @submit.prevent.stop="onSubmitForm" autocorrect="off" autocapitalize="off" autocomplete="off"
           spellcheck="false">
+          <q-tabs class="lt-lg" v-model="topTab">
+            <q-tab name="metadata" icon="description" :label="t('Document metadata')"
+              class="cursor-default full-width"></q-tab>
+            <q-tab name="details" icon="list_alt" :label="t('Document details')"
+              class="cursor-default full-width"></q-tab>
+          </q-tabs>
           <q-card-section class="row q-pa-none">
-            <div class="col-12 col-lg-6 col-xl-6 q-px-sm">
+            <div class="col-12 col-lg-6 col-xl-6 q-px-sm" v-show="isScreenGreaterThanMD || topTab == 'metadata'">
               <q-card class="q-ma-xs q-mt-sm">
-                <q-card-section class="q-pa-none q-mb-sm">
+                <q-card-section class="q-pa-none q-mb-sm gt-md">
                   <q-tabs v-model="leftTab">
                     <q-tab name="metadata" icon="description" :label="t('Document metadata')"
                       class="cursor-default full-width"></q-tab>
@@ -48,7 +54,7 @@
                 </q-card-section>
               </q-card>
             </div>
-            <div class="col-12 col-lg-6 col-xl-6 scroll_ q-px-sm" style2="min-height: 64vh; max-height: 64vh;">
+            <div class="col-12 col-lg-6 col-xl-6 scroll_ q-px-sm" v-show="isScreenGreaterThanMD || topTab == 'details'">
               <q-card class="q-ma-xs q-mt-sm">
                 <q-card-section class="q-pa-none q-mb-sm" style="border-bottom: 2px solid rgba(0, 0, 0, 0.12);">
                   <q-tabs v-model="tab" align="left">
@@ -246,7 +252,7 @@
 import { ref, reactive, nextTick, computed, watch, onMounted, onBeforeUnmount } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { uid, format, date } from "quasar";
+import { uid, format, date, useQuasar } from "quasar";
 
 import { bus } from "src/boot/bus";
 import { api } from "src/boot/axios";
@@ -272,6 +278,10 @@ const { requiredFieldRules, fieldIsRequiredLabel } = useFormUtils();
 const route = useRoute();
 const router = useRouter();
 const initialState = useInitialStateStore();
+
+const { screen } = useQuasar();
+
+const isScreenGreaterThanMD = computed(() => screen.gt.md);
 
 const { timeAgo } = useFormatDates();
 
@@ -302,6 +312,7 @@ const isNewDocument = computed(() => router.currentRoute.value.name == 'newDocum
 const readOnlyTitle = ref(!isNewDocument.value);
 const readOnlyDescription = ref(!isNewDocument.value);
 
+const topTab = ref("metadata");
 const leftTab = ref("metadata");
 
 const document = reactive({
