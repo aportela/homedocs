@@ -147,7 +147,7 @@
                           <q-item-section>
                             <InteractiveTextFieldCustomInput v-model.trim="note.body" dense outlined type="textarea"
                               maxlength="4096" autogrow name="description"
-                              :label="`${note.createdOn} (${timeAgo(note.createdOnTimestamp)})`"
+                              :label="`${note.creationDate} (${timeAgo(note.createdOnTimestamp)})`"
                               :start-mode-editable="!!note.startOnEditMode" :disable="loading || saving" clearable
                               :max-lines="6" :rules="requiredFieldRules" :error="!note.body"
                               :error-message="fieldIsRequiredLabel" :autofocus="note.startOnEditMode">
@@ -288,7 +288,7 @@ const { screen } = useQuasar();
 
 const isScreenGreaterThanMD = computed(() => screen.gt.md);
 
-const { timeAgo } = useFormatDates();
+const { timeAgo, fullDateTimeHuman, currentTimestamp, currentFullDateTimeHuman } = useFormatDates();
 
 const { allowPreview } = useFileUtils();
 
@@ -379,7 +379,7 @@ const parseDocumentJSONResponse = (documentData) => {
   document.set(documentData);
   document.files.map((file) => {
     file.isNew = false;
-    file.createdOn = date.formatDate(file.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
+    file.createdOn = fullDateTimeHuman(file.createdOnTimestamp);
     file.humanSize = format.humanStorageSize(file.size);
     file.url = "api2/file/" + file.id;
     file.visible = true;
@@ -387,13 +387,14 @@ const parseDocumentJSONResponse = (documentData) => {
   });
   document.notes.map((note) => {
     note.isNew = false;
-    note.createdOn = date.formatDate(note.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
+    note.creationDate = fullDateTimeHuman(note.createdOnTimestamp);
+    note.creationDateTimeAgo = timeAgo(note.createdOnTimestamp);
     note.expanded = false;
     note.visible = true;
     return (note);
   });
   document.history.map((operation) => {
-    operation.date = date.formatDate(operation.operationTimestamp, 'YYYY-MM-DD HH:mm:ss');
+    operation.date = fullDateTimeHuman(operation.operationTimestamp);
     switch (operation.operationType) {
       case 1:
         operation.label = "Document created";
@@ -683,8 +684,8 @@ function onFileUploaded(e) {
   document.files.push(
     {
       id: (JSON.parse(e.xhr.response).data).id,
-      createdOnTimestamp: date.formatDate(new Date(), 'X'),
-      createdOn: date.formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss'),
+      createdOnTimestamp: currentTimestamp(),
+      createdOn: currentFullDateTimeHuman(),
       name: e.files[0].name,
       size: e.files[0].size,
       hash: null,
@@ -737,8 +738,8 @@ function onShowAddNoteDialog() {
   document.notes.unshift({
     id: uid(),
     body: null,
-    createdOnTimestamp: date.formatDate(new Date(), 'X'),
-    createdOn: date.formatDate(new Date(), 'YYYY-MM-DD HH:mm:ss'),
+    createdOnTimestamp: currentTimestamp(),
+    creationDate: currentFullDateTimeHuman(),
     startOnEditMode: true,
     visible: true
   });
