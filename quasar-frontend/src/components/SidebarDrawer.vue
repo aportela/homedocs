@@ -2,7 +2,7 @@
   <q-drawer v-bind="attrs" show-if-above bordered :width="240" :mini="mini" @click.capture="onDrawerClick"
     class="fit theme-default-q-drawer">
     <q-list>
-      <q-item class="cursor-pointer non-selectable rounded-borders q-ma-sm theme-default-q-item">
+      <q-item class="cursor-pointer non-selectable no-pointer-events rounded-borders q-ma-sm theme-default-q-item">
         <q-item-section avatar>
           <q-avatar square size="24px">
             <img src="icons/favicon-128x128.png" />
