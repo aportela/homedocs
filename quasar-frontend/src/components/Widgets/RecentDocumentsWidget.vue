@@ -63,7 +63,7 @@
               </q-item-label>
             </q-item-section>
             <q-item-section side top>
-              <q-item-label caption>{{ timeAgo(recentDocument.timestamp) }}</q-item-label>
+              <q-item-label caption>{{ recentDocument.lastUpdateTimeAgo }}</q-item-label>
               <ViewDocumentDetailsButton size="md" square class="min-width-7em" :count="recentDocument.fileCount"
                 :label="'Total files'" :tool-tip="'View document attachments'" :disable="state.loading"
                 @click.stop.prevent="onShowDocumentFiles(recentDocument.id, recentDocument.title)">
@@ -132,7 +132,7 @@ const onRefresh = () => {
       .then((successResponse) => {
         recentDocuments.length = 0;
         recentDocuments.push(...successResponse.data.recentDocuments.map((document) => {
-          document.timestamp = document.lastUpdateTimestamp;
+          document.lastUpdateTimeAgo = timeAgo(document.lastUpdateTimestamp);
           return document;
         }));
         state.loading = false;
