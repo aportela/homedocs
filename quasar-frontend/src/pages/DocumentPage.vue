@@ -137,7 +137,7 @@
                         </q-item-section>
                         <q-item-section side>
                           <q-btn size="md" :label="t('Add note')" icon="add" class="bg-blue text-white full-width"
-                            :disable="state.loading" @click.stop="onShowAddNoteDialog"></q-btn>
+                            :disable="state.loading" @click.stop="onAddNote"></q-btn>
                         </q-item-section>
                       </q-item>
                       <q-list class="bg-transparent scroll q-pa-sm" style="min-height: 50vh; max-height: 50vh;"
@@ -734,7 +734,7 @@ function onUploadsFinish(e) {
   uploading.value = false;
 }
 
-function onShowAddNoteDialog() {
+function onAddNote() {
   document.notes.unshift({
     id: uid(),
     body: null,
@@ -744,20 +744,6 @@ function onShowAddNoteDialog() {
     visible: true
   });
 }
-
-/*
-function onAddNote(newNote) {
-  document.notes.unshift(newNote);
-}
-
-function onUpdateNote(updatedNote) {
-  const idx = document.notes.findIndex((note) => note.id == updatedNote.id)
-  if (idx >= 0) {
-    document.notes[idx].body = updatedNote.body;
-  }
-}
-
-*/
 
 function onDeleteDocument() {
   loading.value = true;
