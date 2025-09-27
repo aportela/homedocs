@@ -32,6 +32,10 @@ export function useFormatDates() {
     }
   };
 
+  const currentTimeAgo = () => {
+    return t("timeAgo.now");
+  };
+
   const timestamp = (dateObj) => {
     return date.formatDate(dateObj, 'X');
   };
@@ -56,5 +60,5 @@ export function useFormatDates() {
     return fullDateTimeHuman(new Date());
   };
 
-  return { timeAgo, timestamp, currentTimestamp, dateHuman, currentDateHuman, fullDateTimeHuman, currentFullDateTimeHuman };
+  return { timeAgo, currentTimeAgo, timestamp, currentTimestamp, dateHuman, currentDateHuman, fullDateTimeHuman, currentFullDateTimeHuman };
 }
