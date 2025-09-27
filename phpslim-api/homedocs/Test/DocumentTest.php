@@ -44,14 +44,14 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("tag");
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", ["", "tag2"]);
+        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["", "tag2"]);
         $d->add(self::$dbh);
     }
 
     public function testAdd(): void
     {
         $this->expectNotToPerformAssertions();
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", ["tag1", "tag2"]);
+        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["tag1", "tag2"]);
         $d->add(self::$dbh);
     }
 
@@ -59,7 +59,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("title");
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", ["tag1", "tag2"]);
+        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["tag1", "tag2"]);
         $d->add(self::$dbh);
         $d->title = null;
         $d->update(self::$dbh);
@@ -69,7 +69,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("title");
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), str_repeat("0", 129), "document description", ["tag1", "tag2"]);
+        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), str_repeat("0", 129), "document description", null, null, ["tag1", "tag2"]);
         $d->add(self::$dbh);
         $d->title = null;
         $d->update(self::$dbh);
@@ -79,7 +79,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("description");
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", str_repeat("0", 4097), ["tag1", "tag2"]);
+        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", str_repeat("0", 4097), null, null, ["tag1", "tag2"]);
         $d->add(self::$dbh);
         $d->title = null;
         $d->update(self::$dbh);
@@ -89,7 +89,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("tag");
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", ["tag1", "tag2"]);
+        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["tag1", "tag2"]);
         $d->add(self::$dbh);
         $d->tags = ["", ""];
         $d->update(self::$dbh);
@@ -98,7 +98,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
     public function testUpdate(): void
     {
         $this->expectNotToPerformAssertions();
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", ["tag1", "tag2"]);
+        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["tag1", "tag2"]);
         $d->add(self::$dbh);
         $d->title = "document title updated";
         $d->description = "document description updated";
@@ -117,7 +117,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
     public function testDelete(): void
     {
         $this->expectNotToPerformAssertions();
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", ["tag1", "tag2"]);
+        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["tag1", "tag2"]);
         $d->add(self::$dbh);
         $d->delete(self::$dbh);
     }
