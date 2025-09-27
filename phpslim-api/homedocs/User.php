@@ -51,6 +51,7 @@ class User
     {
         $params = $this->validateAndPrepareParams();
         $dbh->exec(" UPDATE USER SET email = :email, password_hash = :password_hash WHERE id = :id ", $params);
+        \HomeDocs\UserSession::set(\HomeDocs\UserSession::getUserId(), $this->email);
     }
 
     public function get(\aportela\DatabaseWrapper\DB $dbh): void
