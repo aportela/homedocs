@@ -418,11 +418,11 @@ return function (App $app) {
                     }
                 })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-                $group->post('/{id}', function (Request $request, Response $response, array $args) {
+                $group->post('[/{id}]', function (Request $request, Response $response, array $args) {
                     $uploadedFiles = $request->getUploadedFiles();
                     $file = new \HomeDocs\File(
                         $this->get('settings')['paths']['storage'],
-                        $args['id'],
+                        isset($args['id']) ? $args['id'] : \HomeDocs\Utils::uuidv4(),
                         $uploadedFiles["file"]->getClientFilename(),
                         $uploadedFiles["file"]->getSize()
                     );
@@ -435,32 +435,7 @@ return function (App $app) {
                                 "name" => $file->name,
                                 "size" => $file->size,
                                 "hash" => $file->hash,
-                                "createdOnTimestamp" => time()
-                            )
-                        ]
-                    );
-                    $response->getBody()->write($payload);
-                    return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
-                })->add(\HomeDocs\Middleware\CheckAuth::class);
-
-                $group->post('/', function (Request $request, Response $response, array $args) {
-                    $uploadedFiles = $request->getUploadedFiles();
-                    $file = new \HomeDocs\File(
-                        $this->get('settings')['paths']['storage'],
-                        \HomeDocs\Utils::uuidv4(),
-                        $uploadedFiles["file"]->getClientFilename(),
-                        $uploadedFiles["file"]->getSize()
-                    );
-                    $file->add($this->get(\aportela\DatabaseWrapper\DB::class), $uploadedFiles["file"]);
-                    $payload = json_encode(
-                        [
-                            'initialState' => \HomeDocs\Utils::getInitialState($this),
-                            'data' => array(
-                                "id" => $file->id,
-                                "name" => $file->name,
-                                "size" => $file->size,
-                                "hash" => $file->hash,
-                                "createdOnTimestamp" => time()
+                                "createdOnTimestamp" => $file->createdOnTimestamp
                             )
                         ]
                     );
