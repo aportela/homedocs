@@ -30,29 +30,10 @@
                   </q-tabs>
                 </q-card-section>
                 <q-card-section class="q-pa-md">
-                  <div class="row q-col-gutter-x-sm">
-                    <div
-                      :class="{ 'col-6': document.createdOnTimestamp != document.lastUpdateTimestamp, 'col-12': document.createdOnTimestamp == document.lastUpdateTimestamp }">
-                      <q-input dense class="q-mb-md" outlined v-model="document.creationDate" :label="t('Created on')"
-                        readonly v-if="document.id">
-                        <template v-slot:append v-if="screengtxs">
-                          <span style="font-size: 14px;">
-                            {{ timeAgo(document.createdOnTimestamp) }}
-                          </span>
-                        </template>
-                      </q-input>
-                    </div>
-                    <div class="col-6" v-if="document.createdOnTimestamp != document.lastUpdateTimestamp">
-                      <q-input dense class="q-mb-md" outlined v-model="document.lastUpdate" :label="t('Last update')"
-                        readonly v-if="document.id">
-                        <template v-slot:append v-if="screengtxs">
-                          <span style="font-size: 14px;">
-                            {{ timeAgo(document.lastUpdateTimestamp) }}
-                          </span>
-                        </template>
-                      </q-input>
-                    </div>
-                  </div>
+
+                  <DocumentMetadataTopForm v-if="!isNewDocument" :created-on-timestamp="document.createdOnTimestamp"
+                    :last-update-timestamp="document.lastUpdateTimestamp"></DocumentMetadataTopForm>
+
                   <InteractiveTextFieldCustomInput ref="titleRef" dense class="q-mb-md" maxlength="128" outlined
                     v-model.trim="document.title" type="textarea" autogrow name="title" :label="t('Document title')"
                     :disable="loading || saving" :autofocus="true" clearable :start-mode-editable="isNewDocument"
@@ -328,7 +309,7 @@
 import { ref, reactive, nextTick, computed, watch, onMounted, onBeforeUnmount } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { uid, format, date, useQuasar } from "quasar";
+import { uid, format, date } from "quasar";
 
 import { bus } from "src/boot/bus";
 import { api } from "src/boot/axios";
@@ -341,13 +322,13 @@ import { default as InteractiveTagsFieldCustomSelect } from "src/components/Form
 //import { default as ConfirmationDialog } from "src/components/Dialogs/ConfirmationDialog.vue";
 //import { default as DocumentFilesPreviewDialog } from "src/components/Dialogs/DocumentFilesPreviewDialog.vue";
 //import { default as NoteModal } from "src/components/NoteModal.vue";
+import { default as DocumentMetadataTopForm } from "src/components/Forms/DocumentMetadataTopForm.vue"
 import { default as InteractiveTextFieldCustomInput } from "src/components/Forms/Fields/InteractiveTextFieldCustomInput.vue"
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue"
 
 const tab = ref("attachments");
 
-const $q = useQuasar();
 const { t } = useI18n();
 
 const { requiredFieldRules, fieldIsRequiredLabel } = useFormUtils();
@@ -391,16 +372,12 @@ const readOnlyDescription = ref(!isNewDocument.value);
 
 const leftTab = ref("metadata");
 
-const screengtxs = computed(() => $q.screen.gt.xs);
-
 const document = reactive({
   id: null,
   title: null,
   description: null,
-  created: null,
   createdOnTimestamp: null,
-  createdBy: null,
-  lastUpdate: null,
+  lastUpdateTimestamp: null,
   files: [],
   tags: [],
   notes: [],
@@ -409,10 +386,8 @@ const document = reactive({
     this.id = null;
     this.title = null;
     this.description = null;
-    this.created = null;
     this.createdOnTimestamp = null;
-    this.createdBy = null;
-    this.lastUpdate = null;
+    this.lastUpdateTimestamp = null;
     this.files = [];
     this.tags = [];
     this.notes = [];
@@ -422,10 +397,8 @@ const document = reactive({
     this.id = doc.id;
     this.title = doc.title;
     this.description = doc.description;
-    this.created = doc.created;
     this.createdOnTimestamp = doc.createdOnTimestamp;
-    this.createdBy = doc.createdBy;
-    this.lastUpdate = doc.lastUpdate;
+    this.lastUpdateTimestamp = doc.lastUpdateTimestamp;
     this.files = JSON.parse(JSON.stringify(doc.files))
     this.tags = JSON.parse(JSON.stringify(doc.tags))
     this.notes = JSON.parse(JSON.stringify(doc.notes))
@@ -454,8 +427,6 @@ router.beforeEach(async (to, from) => {
 
 const parseDocumentJSONResponse = (documentData) => {
   document.set(documentData);
-  document.creationDate = date.formatDate(document.createdOnTimestamp, 'YYYY/MM/DD HH:mm:ss');
-  document.lastUpdate = date.formatDate(document.lastUpdateTimestamp, 'YYYY/MM/DD HH:mm:ss');
   document.files.map((file) => {
     file.isNew = false;
     file.createdOn = date.formatDate(file.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
@@ -720,11 +691,13 @@ function onRemoveSelectedFile() {
         })
         .catch((error) => {
           loading.value = false;
+          /*
           $q.notify({
             type: "negative",
             message: t("API Error: error removing file"),
             caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
           });
+          */
         });
     } else {
       document.files.splice(selectedFileIndex.value, 1);
@@ -750,23 +723,29 @@ function onFileUploaded(e) {
 
 function onUploadRejected(e) {
   if (e[0].failedPropValidation == "max-file-size") {
+    /*
     $q.notify({
       type: "negative",
       message: "Can not upload file " + e[0].file.name + ' (max upload filesize: ' + format.humanStorageSize(maxFileSize.value) + ', current file size: ' + format.humanStorageSize(e[0].file.size) + ')',
     });
+    */
   } else {
+    /*
     $q.notify({
       type: "negative",
       message: t("Can not upload file", { filename: e[0].file.name })
     });
+    */
   }
 }
 
 function onUploadFailed(e) {
+  /*
   $q.notify({
     type: "negative",
     message: "Can not upload file " + e.files[0].name + ', API error: ' + e.xhr.status + ' - ' + e.xhr.statusText,
   });
+  */
 }
 
 function onUploadsStart(e) {
@@ -807,10 +786,12 @@ function onDeleteDocument() {
     remove(document.id)
     .then((response) => {
       loading.value = false;
+      /*
       $q.notify({
         type: "positive",
         message: t("Document has been removed"),
       });
+      */
       router.push({
         name: "index",
       });
@@ -825,23 +806,29 @@ function onDeleteDocument() {
           });
           break;
         case 403:
+          /*
           $q.notify({
             type: "negative",
             message: t("Access denied"),
           });
+          */
           break;
         case 404:
+          /*
           $q.notify({
             type: "negative",
             message: t("Document not found"),
           });
+          */
           break;
         default:
+          /*
           $q.notify({
             type: "negative",
             message: t("API Error: error deleting document"),
             caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
           });
+          */
           break;
       }
     });
