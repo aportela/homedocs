@@ -107,6 +107,16 @@ return function (App $app) {
                         ""
                     );
                     $user->get($db);
+                    if ($params["email"] != \HomeDocs\UserSession::getEmail()) {
+                        $tmpUser = new \HomeDocs\User(
+                            "",
+                            $params["email"]
+                        );
+                        if ($tmpUser->exists($db)) {
+                            throw new \HomeDocs\Exception\AlreadyExistsException("email");
+                        }
+                    }
+                    $user->email = $params["email"] ?? "";
                     $user->password = $params["password"] ?? "";
                     $user->update($db);
                     unset($user->password);

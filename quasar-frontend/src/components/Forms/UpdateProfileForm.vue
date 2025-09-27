@@ -4,15 +4,17 @@
       <form @submit.prevent.stop="onValidateForm" autocorrect="off" autocapitalize="off" autocomplete="off"
         spellcheck="false">
         <q-input class="q-my-md" dense outlined v-model="profile.email" type="email" name="email" :label="t('Email')"
-          readonly :error="false">
+          :disable="state.loading" :error="validator.email.hasErrors"
+          :error-message="validator.email.message ? t(validator.email.message) : ''"
+          :rules="formUtils.requiredFieldRules" lazy-rules ref="emailRef">
           <template v-slot:prepend>
             <q-icon name="alternate_email" />
           </template>
         </q-input>
         <PasswordFieldCustomInput class="q-my-md" dense outlined v-model="profile.password" name="password"
-          :label="t('New password')" :error="validator.hasErrors" ref="passwordRef"
-          :errorMessage="validator.message ? t(validator.message) : ''" :disable="state.loading"
-          :rules="formUtils.requiredFieldRules" lazy-rules>
+          :label="t('New password')" :error="validator.password.hasErrors"
+          :errorMessage="validator.password.message ? t(validator.password.message) : ''" :disable="state.loading"
+          :rules="formUtils.requiredFieldRules" lazy-rules ref="passwordRef">
         </PasswordFieldCustomInput>
         <q-btn color="primary" size="md" :label="$t('Update profile')" no-caps class="full-width q-my-xs"
           icon=" account_circle" :disable="state.loading || !profile.password" :loading="state.loading" type="submit">
@@ -68,18 +70,28 @@ const profile = reactive({
   password: null
 });
 
+const emailRef = ref(null);
 const passwordRef = ref(null);
 
 const profileUpdatedSuccessfully = ref(false);
 
 const validator = reactive({
-  hasErrors: false,
-  message: null
+  email: {
+    hasErrors: false,
+    message: null
+  },
+  password: {
+    hasErrors: false,
+    message: null
+  }
 });
 
 const onResetForm = () => {
-  validator.hasErrors = false;
-  validator.message = null;
+  validator.email.hasErrors = false;
+  validator.email.message = null;
+  validator.password.hasErrors = false;
+  validator.password.message = null;
+  emailRef.value?.resetValidation();
   passwordRef.value?.resetValidation();
 }
 
@@ -125,12 +137,17 @@ const onGetProfile = () => {
 
 const onValidateForm = () => {
   onResetForm();
+  emailRef.value?.validate();
   passwordRef.value?.validate();
-  if (!passwordRef.value?.hasError) {
+  if (!emailRef.value?.hasError && !passwordRef.value?.hasError) {
     onSubmitForm();
   } else {
     nextTick(() => {
-      passwordRef.value?.focus();
+      if (emailRef.value?.hasError) {
+        emailRef.value?.focus();
+      } else if (passwordRef.value?.hasError) {
+        passwordRef.value?.focus();
+      }
     });
   }
 }
@@ -149,7 +166,7 @@ const onSubmitForm = () => {
       profile.password = null;
       state.loading = false;
       nextTick(() => {
-        passwordRef.value?.focus();
+        emailRef.value?.focus();
       });
     })
     .catch((errorResponse) => {
@@ -161,15 +178,20 @@ const onSubmitForm = () => {
           state.errorMessage = "Auth session expired, requesting new...";
           bus.emit("reAuthRequired", { emitter: "UpdateProfileForm.onSubmitForm" });
           break;
+        case 409: // email already exists
+          validator.email.hasErrors = true;
+          validator.email.message = "Email already used";
+          state.errorMessage = "Error updating profile";
+          nextTick(() => {
+            emailRef.value?.focus();
+          });
+          break;
         default:
           state.apiError = errorResponse.customAPIErrorDetails;
           state.errorMessage = "API Error: fatal error";
           break;
       }
       state.loading = false;
-      nextTick(() => {
-        passwordRef.value?.focus();
-      });
     });
 }
 
