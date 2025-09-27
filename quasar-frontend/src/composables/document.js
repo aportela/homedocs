@@ -79,17 +79,17 @@ export function useDocument() {
     },
     onFilterFiles(text) {
       if (text) {
-        this.files.forEach((file) => { file.visible = !!file.name.match(regex); });
+        this.files?.forEach((file) => { file.visible = !!file.name?.match(regex); });
       } else {
-        this.files.forEach((file) => { file.visible = true; });
+        this.files?.forEach((file) => { file.visible = true; });
       }
     },
     onFilterNotes(text) {
       if (text) {
-        document.notes.forEach((note) => { note.visible = !!note.body.match(regex); });
+        document.notes?.forEach((note) => { note.visible = !!note.body?.match(regex); });
         // TODO: map new fragment with bold
       } else {
-        document.notes.forEach((note) => { note.visible = true; });
+        document.notes?.forEach((note) => { note.visible = true; });
       }
     }
   });
