@@ -33,7 +33,6 @@
 
                   <DocumentMetadataTopForm v-if="!isNewDocument" :created-on-timestamp="document.createdOnTimestamp"
                     :last-update-timestamp="document.lastUpdateTimestamp"></DocumentMetadataTopForm>
-
                   <InteractiveTextFieldCustomInput ref="titleRef" dense class="q-mb-md" maxlength="128" outlined
                     v-model.trim="document.title" type="textarea" autogrow name="title" :label="t('Document title')"
                     :disable="loading || saving" :autofocus="true" clearable :start-mode-editable="isNewDocument"
@@ -80,6 +79,17 @@
                         multiple @uploaded="onFileUploaded" @rejected="onUploadRejected" @failed="onUploadFailed"
                         style="width: 100%;" :disable="loading || saving" no-thumbnails @start="onUploadsStart"
                         @finish="onUploadsFinish" />
+                      <q-item class="transparent-background text-color-primary q-pa-sm">
+                        <q-item-section>
+                          <q-input type="search" icon="search" outlined dense clearable
+                            :disable="state.loading || !hasAttachments" v-model.trim="filterAttachmentByText"
+                            :label="t('Filter by text on file name')" :placeholder="t('text condition')"></q-input>
+                        </q-item-section>
+                        <q-item-section side>
+                          <q-btn size="sm" :label="t('Add attachment')" icon="add" class="bg-blue text-white full-width"
+                            :disable="state.loading" @click.stop="onShowAttachmentsPicker"></q-btn>
+                        </q-item-section>
+                      </q-item>
                       <q-list class="scroll" style="min-height: 50vh; max-height: 50vh;">
                         <div v-for="file, index in document.files" :key="file.id">
                           <q-item class="transparent-background text-color-primary q-pa-sm" v-show="file.visible"
@@ -111,7 +121,7 @@
                               </q-chip>
                             </q-item-section>
                           </q-item>
-                          <q-separator v-if="index !== document.files.length - 1" class="q-my-xs" />
+                          <q-separator v-if="file.visible && index !== document.files.length - 1" class="q-my-xs" />
                         </div>
 
                       </q-list>
@@ -401,7 +411,7 @@ const document = reactive({
   }
 });
 
-//const hasAttachments = computed(() => document?.value.files?.length > 0);
+const hasAttachments = computed(() => document?.files?.length > 0);
 
 router.beforeEach(async (to, from) => {
   if (to.name == "newDocument") {
