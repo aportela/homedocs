@@ -124,7 +124,9 @@
                           <q-separator v-if="file.visible && index !== document.files.length - 1" class="q-my-xs" />
                         </div>
                       </q-list>
-                      <CustomBanner v-else warning text="No attachments found" class="q-ma-sm"></CustomBanner>
+                      <CustomBanner v-else-if="!state.loading" warning text="No document attachments found"
+                        class="q-ma-sm">
+                      </CustomBanner>
                     </q-tab-panel>
                     <q-tab-panel name="notes" class="q-pa-none scroll" style="min-height: 50vh; max-height: 50vh;">
                       <q-item class="transparent-background text-color-primary q-pa-sm">
@@ -138,7 +140,8 @@
                             :disable="state.loading" @click.stop="onShowAddNoteDialog"></q-btn>
                         </q-item-section>
                       </q-item>
-                      <q-list class="bg-transparent scroll q-pa-sm" style="min-height: 50vh; max-height: 50vh;">
+                      <q-list class="bg-transparent scroll q-pa-sm" style="min-height: 50vh; max-height: 50vh;"
+                        v-if="hasNotes">
                         <q-item class="q-pa-none bg-transparent" v-for="note, noteIndex in document.notes"
                           :key="note.id" v-show="note.visible">
                           <q-item-section>
@@ -150,8 +153,7 @@
                               :error-message="fieldIsRequiredLabel" :autofocus="note.startOnEditMode">
                               <template v-slot:top-icon-append="{ showTopHoverIcons }">
                                 <q-icon name="delete" size="sm" class="q-ml-sm q-mr-sm" clickable
-                                  v-show="showTopHoverIcons"
-                                  @click.prevent="onShowNoteRemoveConfirmationDialog(note, noteIndex)">
+                                  v-show="showTopHoverIcons" @click.prevent="onRemoveNote(noteIndex)">
                                   <q-tooltip>{{ t("Click to remove note") }}</q-tooltip>
                                 </q-icon>
                               </template>
@@ -165,6 +167,8 @@
                           </q-item-section>
                         </q-item>
                       </q-list>
+                      <CustomBanner v-else-if="!state.loading" warning text="No document notes found" class="q-ma-sm">
+                      </CustomBanner>
                     </q-tab-panel>
                     <q-tab-panel name="history" class="q-pa-none scroll" style="min-height: 50vh; max-height: 50vh;"
                       v-if="document.id">
@@ -635,6 +639,10 @@ function onShowAttachmentsPicker() {
     uploaderRef.value.pickFiles();
   });
 }
+
+const onRemoveNote = (index) => {
+  document.notes.splice(index, 1);
+};
 
 const onRemoveFile = (index) => {
   document.files.splice(index, 1);
