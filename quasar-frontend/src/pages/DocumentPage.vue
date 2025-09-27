@@ -166,7 +166,8 @@
                         </q-item>
                       </q-list>
                     </q-tab-panel>
-                    <q-tab-panel name="history" class="q-pa-none scroll" v-if="document.id">
+                    <q-tab-panel name="history" class="q-pa-none scroll" style="min-height: 50vh; max-height: 50vh;"
+                      v-if="document.id">
                       <q-markup-table>
                         <thead>
                           <tr>
