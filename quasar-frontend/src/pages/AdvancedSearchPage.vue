@@ -111,7 +111,7 @@
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <q-tooltip v-if="isDesktop">{{ t('Toggle sort by this column', { field: t(column.title) })
-                }}</q-tooltip>
+                  }}</q-tooltip>
               </th>
             </tr>
           </thead>
@@ -124,31 +124,28 @@
                     <q-item-label>
                       {{ t("Title") }}: {{ document.title }}
                     </q-item-label>
-                    <q-item-label caption>
-                      <div class="row">
-                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6 self-center">Creado: {{
-                          document.createdOn }} - Actualizado: {{
-                            document.lastUpdate }}</div>
-                        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6 self-center text-right"><q-chip
-                            size="md" square class="theme-default-q-chip shadow-1 q-chip-8em"
-                            :clickable="document.fileCount > 0 && !state.loading"
-                            @click.stop.prevent="onShowDocumentFiles(document.id, document.title)">
-                            <q-avatar class="theme-default-q-avatar"
-                              :class="{ 'text-white bg-blue': document.fileCount > 0 }">{{
-                                document.fileCount }}</q-avatar>
-                            {{ t('Total files', { count: document.fileCount }) }}
-                          </q-chip>
-                          <q-chip size="md" square class="theme-default-q-chip shadow-1 q-chip-8em"
-                            :clickable="document.noteCount > 0 && !state.loading"
-                            @click.stop.prevent="onShowDocumentNotes(document.id, document.title)">
-                            <q-avatar class="theme-default-q-avatar"
-                              :class="{ 'text-white bg-blue': document.noteCount > 0 }">{{
-                                document.noteCount }}</q-avatar>
-                            {{ t('Total notes', { count: document.noteCount }) }}
-                          </q-chip>
-                        </div>
-                      </div>
-                    </q-item-label>
+                    <q-item-label caption>{{ t("Creation date") }}: {{ document.creationDate }} ({{
+                      document.creationDateTimeAgo }})</q-item-label>
+                    <q-item-label caption v-if="document.lastUpdate">{{ t("Last update") }}: {{ document.lastUpdate
+                      }} ({{ document.lastUpdateTimeAgo }})</q-item-label>
+                  </q-item-section>
+                  <q-item-section side top>
+                    <q-chip size="md" square class="theme-default-q-chip shadow-1 q-chip-8em"
+                      :clickable="document.fileCount > 0 && !state.loading"
+                      @click.stop.prevent="onShowDocumentFiles(document.id, document.title)">
+                      <q-avatar class="theme-default-q-avatar"
+                        :class="{ 'text-white bg-blue': document.fileCount > 0 }">{{
+                          document.fileCount }}</q-avatar>
+                      {{ t('Total files', { count: document.fileCount }) }}
+                    </q-chip>
+                    <q-chip size="md" square class="theme-default-q-chip shadow-1 q-chip-8em"
+                      :clickable="document.noteCount > 0 && !state.loading"
+                      @click.stop.prevent="onShowDocumentNotes(document.id, document.title)">
+                      <q-avatar class="theme-default-q-avatar"
+                        :class="{ 'text-white bg-blue': document.noteCount > 0 }">{{
+                          document.noteCount }}</q-avatar>
+                      {{ t('Total notes', { count: document.noteCount }) }}
+                    </q-chip>
                   </q-item-section>
                 </q-item>
               </td>
@@ -156,7 +153,7 @@
                 <q-btn align="left" no-caps flat :to="{ name: 'document', params: { id: document.id } }"
                   class="fit text-decoration-hover" :label="document.title"></q-btn>
               </td>
-              <td class="gt-lg">{{ document.createdOn }}</td>
+              <td class="gt-lg">{{ document.creationDate }}</td>
               <td class="gt-lg">{{ document.lastUpdate }}</td>
               <td class="gt-lg">
                 <ViewDocumentDetailsButton size="md" square class="min-width-8em" :count="document.fileCount"
@@ -194,6 +191,7 @@ import { bus } from "src/boot/bus";
 import { api } from "src/boot/axios";
 import { useAdvancedSearchData } from "src/stores/advancedSearchData"
 import { useDateFilter } from "src/composables/dateFilter"
+import { useFormatDates } from "src/composables/formatDate"
 import { useBusDialog } from "src/composables/busDialog";
 
 import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
@@ -212,6 +210,8 @@ const $q = useQuasar();
 const isDesktop = computed(() => $q.platform.is.desktop);
 
 const { onShowDocumentFiles, onShowDocumentNotes } = useBusDialog();
+
+const { fullDateTimeHuman, timeAgo } = useFormatDates();
 
 const columns = [
   { field: 'title', title: 'Title', defaultClass: "gt-lg" },
@@ -354,8 +354,10 @@ const onSubmitForm = (resetPager) => {
         pager.totalResults = successResponse.data.results.pagination.totalResults;
         pager.totalPages = successResponse.data.results.pagination.totalPages;
         results.push(...successResponse.data.results.documents.map((document) => {
-          document.createdOn = date.formatDate(document.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
-          document.lastUpdate = date.formatDate(document.lastUpdateTimestamp, 'YYYY-MM-DD HH:mm:ss');
+          document.creationDate = fullDateTimeHuman(document.createdOnTimestamp);
+          document.creationDateTimeAgo = timeAgo(document.createdOnTimestamp);
+          document.lastUpdate = fullDateTimeHuman(document.lastUpdateTimestamp);
+          document.lastUpdateTimeAgo = timeAgo(document.lastUpdateTimestamp);
           return (document);
         }));
         state.searchLaunched = true;
