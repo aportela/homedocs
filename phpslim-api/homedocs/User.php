@@ -98,7 +98,6 @@ class User
             $this->get($dbh);
             return (true);
         } catch (\HomeDocs\Exception\NotFoundException $e) {
-        } finally {
             return (false);
         }
     }
