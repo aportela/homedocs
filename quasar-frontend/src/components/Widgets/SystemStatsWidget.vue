@@ -10,10 +10,10 @@
         </div>
         <q-separator class="q-my-md" />
         <div class="row">
-          <div v-for="(stat, index) in stats" :key="index" class="col-4">
+          <div v-for="(stat, index) in stats" :key="index" class="col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
             <q-card class="q-ma-sm">
               <q-card-section class="text-center text-h6 theme-default-q-card-section-header">
-                <q-icon :name="stat.loading ? 'settings' : stat.error ? 'error' : stat.icon" class="gt-xs"
+                <q-icon :name="stat.loading ? 'settings' : stat.error ? 'error' : stat.icon"
                   :class="{ 'text-red': stat.error, 'animation-spin': stat.loading }" />
                 {{ t(stat.headerLabel) }}
               </q-card-section>
