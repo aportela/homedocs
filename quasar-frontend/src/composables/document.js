@@ -17,8 +17,8 @@ export function useDocument() {
     return string.replace(/[.*+?^=!:${}()|\[\]\/\\]/g, "\\$&");
   };
 
-  const getNewDocument = () =>
-    reactive({
+  const getNewDocument = () => {
+    const doc = reactive({
       id: null,
       title: null,
       description: null,
@@ -36,91 +36,106 @@ export function useDocument() {
       tags: [],
       notes: [],
       historyOperations: [],
+
       hasFiles() {
-        return this.files?.length > 0;
+        return doc.files?.length > 0;
       },
       hasTags() {
-        return this.tags?.length > 0;
+        return doc.tags?.length > 0;
       },
       hasNotes() {
-        return this.notes?.length > 0;
+        return doc.notes?.length > 0;
       },
       hasHistoryOperations() {
-        return this.historyOperations?.length > 0;
+        return doc.historyOperations?.length > 0;
       },
+
       reset() {
-        this.id = null;
-        this.title = null;
-        this.description = null;
-        this.createdOn.timestamp = null;
-        this.createdOn.dateTime = null;
-        this.createdOn.timeAgo = null;
-        this.lastUpdate.timestamp = null;
-        this.lastUpdate.dateTime = null;
-        this.lastUpdate.timeAgo = null;
-        this.files.length = 0;
-        this.tags.length = 0;
-        this.notes.length = 0;
-        this.historyOperations.length = 0;
+        doc.id = null;
+        doc.title = null;
+        doc.description = null;
+
+        doc.createdOn.timestamp = null;
+        doc.createdOn.dateTime = null;
+        doc.createdOn.timeAgo = null;
+
+        doc.lastUpdate.timestamp = null;
+        doc.lastUpdate.dateTime = null;
+        doc.lastUpdate.timeAgo = null;
+
+        doc.files.length = 0;
+        doc.tags.length = 0;
+        doc.notes.length = 0;
+        doc.historyOperations.length = 0;
       },
-      set(doc) {
-        this.id = doc.id;
-        this.title = doc.title;
-        this.description = doc.description;
-        if (doc.createdOnTimestamp) {
-          this.createdOn.timestamp = doc.createdOnTimestamp;
-          this.createdOn.dateTime = fullDateTimeHuman(doc.createdOnTimestamp);
-          this.createdOn.timeAgo = timeAgo(doc.createdOnTimestamp);
+
+      set(data) {
+        doc.id = data.id;
+        doc.title = data.title;
+        doc.description = data.description;
+
+        if (data.createdOnTimestamp) {
+          doc.createdOn.timestamp = data.createdOnTimestamp;
+          doc.createdOn.dateTime = fullDateTimeHuman(data.createdOnTimestamp);
+          doc.createdOn.timeAgo = timeAgo(data.createdOnTimestamp);
         } else {
-          this.createdOn.timestamp = null;
-          this.createdOn.dateTime = null;
-          this.createdOn.timeAgo = null;
+          doc.createdOn.timestamp = null;
+          doc.createdOn.dateTime = null;
+          doc.createdOn.timeAgo = null;
         }
-        if (doc.lastUpdateTimestamp) {
-          this.lastUpdate.timestamp = doc.lastUpdateTimestamp;
-          this.lastUpdate.dateTime = fullDateTimeHuman(doc.lastUpdateTimestamp);
-          this.lastUpdate.timeAgo = timeAgo(doc.lastUpdateTimestamp);
+
+        if (data.lastUpdateTimestamp) {
+          doc.lastUpdate.timestamp = data.lastUpdateTimestamp;
+          doc.lastUpdate.dateTime = fullDateTimeHuman(data.lastUpdateTimestamp);
+          doc.lastUpdate.timeAgo = timeAgo(data.lastUpdateTimestamp);
         } else {
-          this.lastUpdate.timestamp = null;
-          this.lastUpdate.dateTime = null;
-          this.lastUpdate.timeAgo = null;
+          doc.lastUpdate.timestamp = null;
+          doc.lastUpdate.dateTime = null;
+          doc.lastUpdate.timeAgo = null;
         }
-        this.tags.length = 0;
-        if (Array.isArray(doc.tags)) {
-          this.tags.push(...doc.tags);
+
+        doc.tags.length = 0;
+        if (Array.isArray(data.tags)) {
+          doc.tags.push(...data.tags);
         }
-        this.files.length = 0;
-        if (Array.isArray(doc.files)) {
-          this.files.push(...JSON.parse(JSON.stringify(doc.files)));
+
+        doc.files.length = 0;
+        if (Array.isArray(data.files)) {
+          doc.files.push(...JSON.parse(JSON.stringify(data.files)));
         }
-        this.notes.length = 0;
-        if (Array.isArray(doc.notes)) {
-          this.notes.push(...JSON.parse(JSON.stringify(doc.notes)));
+
+        doc.notes.length = 0;
+        if (Array.isArray(data.notes)) {
+          doc.notes.push(...JSON.parse(JSON.stringify(data.notes)));
         }
-        this.historyOperations.length = 0;
-        if (Array.isArray(doc.history)) {
-          this.historyOperations.push(
-            ...JSON.parse(JSON.stringify(doc.history)),
+
+        doc.historyOperations.length = 0;
+        if (Array.isArray(data.history)) {
+          doc.historyOperations.push(
+            ...JSON.parse(JSON.stringify(data.history)),
           );
         }
       },
+
       removeFileAtIdx(index) {
-        this.files?.splice(index, 1);
+        doc.files?.splice(index, 1);
       },
+
       previewFile(index) {
-        if (index >= 0 && index < this.files?.length) {
+        if (index >= 0 && index < doc.files?.length) {
           bus.emit("showDocumentFilePreviewDialog", {
             document: {
-              id: this.id,
-              title: this.title,
-              attachments: this.files,
+              id: doc.id,
+              title: doc.title,
+              attachments: doc.files,
             },
             currentIndex: index,
           });
         }
       },
+
       addNote() {
-        this.notes.push(
+        doc.notes.push(
           reactive({
             id: uid(),
             body: null,
@@ -129,39 +144,45 @@ export function useDocument() {
             creationDateTimeAgo: currentTimeAgo(),
             expanded: false,
             startOnEditMode: true, // new notes start with view mode = "edit" (for allowing input body text)
-            visible: true, // show always new notes (ignoring filter by body text)
+            visible: true, // show always new notes (ignoring text filter on note body)
           }),
         );
       },
+
       removeNoteAtIdx(index) {
-        this.notes?.splice(index, 1);
+        doc.notes?.splice(index, 1);
       },
+
       filterFiles(text) {
         if (text) {
           const regex = new RegExp(escapeRegExp(text), "i");
-          this.files?.forEach((file) => {
+          doc.files?.forEach((file) => {
             file.visible = !!file.name?.match(regex);
           });
         } else {
-          this.files?.forEach((file) => {
+          doc.files?.forEach((file) => {
             file.visible = true;
           });
         }
       },
+
       filterNotes(text) {
         if (text) {
           const regex = new RegExp(escapeRegExp(text), "i");
-          this.notes.forEach((note) => {
+          doc.notes?.forEach((note) => {
             note.visible = !!note.body?.match(regex);
+            // TODO: map new fragment with bold ?
           });
-          // TODO: map new fragment with bold ?
         } else {
-          this.notes?.forEach((note) => {
+          doc.notes?.forEach((note) => {
             note.visible = true;
           });
         }
       },
     });
+
+    return doc;
+  };
 
   return { getNewDocument };
 }
