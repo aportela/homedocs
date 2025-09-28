@@ -108,7 +108,7 @@ class File
             new \aportela\DatabaseWrapper\Param\StringParam(":name", $this->name),
             new \aportela\DatabaseWrapper\Param\IntegerParam(":size", $this->size),
             new \aportela\DatabaseWrapper\Param\StringParam(":uploaded_by_user_id", \HomeDocs\UserSession::getUserId()),
-            new \aportela\DatabaseWrapper\Param\IntegerParam(":uploaded_on_timestamp", $this->createdOnTimestamp)
+            new \aportela\DatabaseWrapper\Param\IntegerParam(":uploaded_on_timestamp", intval(microtime(true) * 1000))
         );
         $dbh->exec(
             "
