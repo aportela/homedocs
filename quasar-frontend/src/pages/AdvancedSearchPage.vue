@@ -118,36 +118,38 @@
           <tbody>
             <tr v-for="document in results" :key="document.id">
               <td class="lt-xl">
-                <q-item clickable :disable="state.loading" :to="{ name: 'document', params: { id: document.id } }"
-                  class="bg-transparent">
-                  <q-item-section>
-                    <q-item-label>
-                      {{ t("Title") }}: {{ document.title }}
-                    </q-item-label>
-                    <q-item-label caption>{{ t("Creation date") }}: {{ document.creationDate }} ({{
-                      document.creationDateTimeAgo }})</q-item-label>
-                    <q-item-label caption v-if="document.lastUpdate">{{ t("Last update") }}: {{ document.lastUpdate
-                      }} ({{ document.lastUpdateTimeAgo }})</q-item-label>
-                  </q-item-section>
-                  <q-item-section side top>
-                    <q-chip size="md" square class="theme-default-q-chip shadow-1 q-chip-8em"
-                      :clickable="document.fileCount > 0 && !state.loading"
-                      @click.stop.prevent="onShowDocumentFiles(document.id, document.title)">
-                      <q-avatar class="theme-default-q-avatar"
-                        :class="{ 'text-white bg-blue': document.fileCount > 0 }">{{
-                          document.fileCount }}</q-avatar>
-                      {{ t('Total files', { count: document.fileCount }) }}
-                    </q-chip>
-                    <q-chip size="md" square class="theme-default-q-chip shadow-1 q-chip-8em"
-                      :clickable="document.noteCount > 0 && !state.loading"
-                      @click.stop.prevent="onShowDocumentNotes(document.id, document.title)">
-                      <q-avatar class="theme-default-q-avatar"
-                        :class="{ 'text-white bg-blue': document.noteCount > 0 }">{{
-                          document.noteCount }}</q-avatar>
-                      {{ t('Total notes', { count: document.noteCount }) }}
-                    </q-chip>
-                  </q-item-section>
-                </q-item>
+                <q-list dense>
+                  <q-item clickable :disable="state.loading" :to="{ name: 'document', params: { id: document.id } }"
+                    class="bg-transparent">
+                    <q-item-section>
+                      <q-item-label>
+                        {{ t("Title") }}: {{ document.title }}
+                      </q-item-label>
+                      <q-item-label caption>{{ t("Creation date") }}: {{ document.creationDate }} ({{
+                        document.creationDateTimeAgo }})</q-item-label>
+                      <q-item-label caption v-if="document.lastUpdate">{{ t("Last update") }}: {{ document.lastUpdate
+                        }} ({{ document.lastUpdateTimeAgo }})</q-item-label>
+                    </q-item-section>
+                    <q-item-section side top>
+                      <q-chip size="md" square class="theme-default-q-chip shadow-1 q-chip-8em"
+                        :clickable="document.fileCount > 0 && !state.loading"
+                        @click.stop.prevent="onShowDocumentFiles(document.id, document.title)">
+                        <q-avatar class="theme-default-q-avatar"
+                          :class="{ 'text-white bg-blue': document.fileCount > 0 }">{{
+                            document.fileCount }}</q-avatar>
+                        {{ t('Total files', { count: document.fileCount }) }}
+                      </q-chip>
+                      <q-chip size="md" square class="theme-default-q-chip shadow-1 q-chip-8em"
+                        :clickable="document.noteCount > 0 && !state.loading"
+                        @click.stop.prevent="onShowDocumentNotes(document.id, document.title)">
+                        <q-avatar class="theme-default-q-avatar"
+                          :class="{ 'text-white bg-blue': document.noteCount > 0 }">{{
+                            document.noteCount }}</q-avatar>
+                        {{ t('Total notes', { count: document.noteCount }) }}
+                      </q-chip>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
               </td>
               <td class="td-document-link gt-lg">
                 <q-btn align="left" no-caps flat :to="{ name: 'document', params: { id: document.id } }"
