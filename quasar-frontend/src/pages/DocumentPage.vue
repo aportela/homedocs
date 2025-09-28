@@ -3,7 +3,7 @@
     <div @dragover.prevent @dragenter.prevent @drop="handleDrop">
       <q-uploader ref="uploaderRef" class="q-mb-md hidden" :label="t('Add new file (Drag & Drop supported)')" flat
         bordered auto-upload hide-upload-btn color="dark" field-name="file" method="post" url="api2/file"
-        :max-file-size="maxFileSize" multiple @uploaded="onFileUploaded" @rejected="onUploadRejected"
+        :max-file-size="maxUploadFileSize" multiple @uploaded="onFileUploaded" @rejected="onUploadRejected"
         @failed="onUploadFailed" style="width: 100%;" :disable="loading || saving" no-thumbnails @start="onUploadsStart"
         @finish="onUploadsFinish" />
       <q-card flat class="bg-transparent">
@@ -25,17 +25,18 @@
         </q-card-section>
         <form @submit.prevent.stop="onSubmitForm" autocorrect="off" autocapitalize="off" autocomplete="off"
           spellcheck="false">
-          <q-tabs class="lt-lg q-mb-sm" v-model="topTab">
+          <q-tabs class="lt-lg q-mb-sm" v-model="smallScreensTopTab">
             <q-tab name="metadata" icon="description" :label="t('Document metadata')"
               class="cursor-default full-width"></q-tab>
             <q-tab name="details" icon="list_alt" :label="t('Document details')"
               class="cursor-default full-width"></q-tab>
           </q-tabs>
           <q-card-section class="row q-pa-none">
-            <div class="col-12 col-lg-6 col-xl-6 q-px-sm flex" v-show="isScreenGreaterThanMD || topTab == 'metadata'">
+            <div class="col-12 col-lg-6 col-xl-6 q-px-sm flex"
+              v-show="isScreenGreaterThanMD || smallScreensTopTab == 'metadata'">
               <q-card class="q-ma-xs q-mt-sm full-width">
                 <q-card-section class="q-pa-none q-mb-sm gt-md">
-                  <q-tabs v-model="leftTab">
+                  <q-tabs v-model="leftMetadataTab">
                     <q-tab name="metadata" icon="description" :label="t('Document metadata')"
                       class="cursor-default full-width"></q-tab>
                   </q-tabs>
@@ -43,11 +44,11 @@
                 <q-card-section class="q-pa-md">
                   <DocumentMetadataTopForm v-if="!isNewDocument" :created-on-timestamp="document.createdOn.timestamp"
                     :last-update-timestamp="document.lastUpdate.timestamp"></DocumentMetadataTopForm>
-                  <InteractiveTextFieldCustomInput ref="titleRef" dense class="q-mb-md" maxlength="128" outlined
-                    v-model.trim="document.title" type="textarea" autogrow name="title" :label="t('Document title')"
-                    :disable="loading || saving" :autofocus="true" clearable :start-mode-editable="isNewDocument"
-                    :rules="requiredFieldRules" :error="!document.title" :error-message="fieldIsRequiredLabel"
-                    :max-lines="1">
+                  <InteractiveTextFieldCustomInput ref="documentTitleFieldRef" dense class="q-mb-md" maxlength="128"
+                    outlined v-model.trim="document.title" type="textarea" autogrow name="title"
+                    :label="t('Document title')" :disable="loading || saving" :autofocus="true" clearable
+                    :start-mode-editable="isNewDocument" :rules="requiredFieldRules" :error="!document.title"
+                    :error-message="fieldIsRequiredLabel" :max-lines="1">
                   </InteractiveTextFieldCustomInput>
                   <InteractiveTextFieldCustomInput dense class="q-mb-md" outlined v-model.trim="document.description"
                     type="textarea" maxlength="4096" autogrow name="description" :label="t('Document description')"
@@ -59,10 +60,11 @@
                 </q-card-section>
               </q-card>
             </div>
-            <div class="col-12 col-lg-6 col-xl-6 q-px-sm flex" v-show="isScreenGreaterThanMD || topTab == 'details'">
+            <div class="col-12 col-lg-6 col-xl-6 q-px-sm flex"
+              v-show="isScreenGreaterThanMD || smallScreensTopTab == 'details'">
               <q-card class="q-ma-xs q-mt-sm full-width">
                 <q-card-section class="q-pa-none q-mb-sm" style="border-bottom: 2px solid rgba(0, 0, 0, 0.12);">
-                  <q-tabs v-model="tab" align="left">
+                  <q-tabs v-model="rightDetailsTab" align="left">
                     <q-tab name="attachments" icon="attach_file" :disable="state.loading" :label="t('Attachments')">
                       <q-badge floating v-show="document.hasFiles">{{ document.files.length }}</q-badge>
                     </q-tab>
@@ -72,12 +74,12 @@
                     <q-tab name="history" icon="view_timeline" :disable="state.loading" :label="t('History')"
                       v-if="document.id">
                       <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                        }}</q-badge>
+                      }}</q-badge>
                     </q-tab>
                   </q-tabs>
                 </q-card-section>
                 <q-card-section class="q-pa-none">
-                  <q-tab-panels v-model="tab" animated class="bg-transparent">
+                  <q-tab-panels v-model="rightDetailsTab" animated class="bg-transparent">
                     <q-tab-panel name="attachments" class="q-pa-none">
                       <DocumentDetailsAttachments v-model:attachments="document.files"
                         :disable="loading || saving || state.loading" @add-attachment="onShowAttachmentsPicker"
@@ -142,49 +144,13 @@ import { default as InteractiveTextFieldCustomInput } from "src/components/Forms
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue"
 
-const tab = ref("attachments");
-
 const { t } = useI18n();
-
-const { requiredFieldRules, fieldIsRequiredLabel } = useFormUtils();
-
-const document = useDocument().getNewDocument();
-
 const route = useRoute();
 const router = useRouter();
-const initialState = useInitialStateStore();
-
 const { screen } = useQuasar();
-
-const isScreenGreaterThanMD = computed(() => screen.gt.md);
-
+const initialState = useInitialStateStore();
+const { requiredFieldRules, fieldIsRequiredLabel } = useFormUtils();
 const { timeAgo, fullDateTimeHuman, currentTimestamp, currentFullDateTimeHuman, currentTimeAgo } = useFormatDates();
-
-const maxFileSize = computed(() => initialState.maxUploadFileSize);
-const uploaderRef = ref(null);
-const showConfirmDeleteFileDialog = ref(false);
-const showConfirmDeleteDocumentDialog = ref(false);
-const titleRef = ref(null);
-const loading = ref(false);
-const saving = ref(false);
-const uploading = ref(false);
-
-const state = reactive({
-  loading: false,
-  loadingError: false,
-  errorMessage: null,
-  apiError: null,
-  saveSuccess: false,
-  saveError: false,
-});
-
-const isNewDocument = computed(() => router.currentRoute.value.name == 'newDocument');
-
-const readOnlyTitle = ref(!isNewDocument.value);
-const readOnlyDescription = ref(!isNewDocument.value);
-
-const topTab = ref("metadata");
-const leftTab = ref("metadata");
 
 router.beforeEach(async (to, from) => {
   if (to.name == "newDocument") {
@@ -203,54 +169,87 @@ router.beforeEach(async (to, from) => {
   }
 });
 
-const onRefresh = () => {
-  loading.value = true;
-  state.loading = true;
-  state.loadingError = false;
-  state.errorMessage = null;
-  state.apiError = null;
-  state.saveSuccess = false;
-  state.saveError = false;
-  api.document
-    .get(document.id)
-    .then((successResponse) => {
-      document.setFromAPIJSON(successResponse.data.document);
-      loading.value = false;
-      state.loading = false;
-      if (titleRef.value) {
-        nextTick(() => titleRef.value?.focus());
-      }
-    })
-    .catch((errorResponse) => {
-      console.error(errorResponse);
-      loading.value = false;
-      state.apiError = errorResponse.customAPIErrorDetails;
-      switch (errorResponse.response.status) {
-        case 401:
-          state.apiError = errorResponse.customAPIErrorDetails;
-          state.errorMessage = "Auth session expired, requesting new...";
-          bus.emit("reAuthRequired", { emitter: "DocumentPage.onRefresh" });
-          break;
-        default:
-          // TODO: on this error (example 404 not found) do not use error validation fields on title (required, red border, this field is required)
-          state.loadingError = true;
-          state.errorMessage = "API Error: fatal error";
-          break;
-      }
-      state.loading = false;
-    });
-}
+const isScreenGreaterThanMD = computed(() => screen.gt.md);
+const isNewDocument = computed(() => router.currentRoute.value.name == 'newDocument');
 
+const document = useDocument().getNewDocument();
+
+const maxUploadFileSize = computed(() => initialState.maxUploadFileSize);
+const uploaderRef = ref(null);
+const documentTitleFieldRef = ref(null);
+
+const showConfirmDeleteDocumentDialog = ref(false);
+
+const state = reactive({
+  loading: false,
+  loadingError: false,
+  errorMessage: null,
+  apiError: null,
+  saveSuccess: false,
+  saveError: false,
+});
+
+const loading = ref(false);
+const saving = ref(false);
+const uploading = ref(false);
+
+const smallScreensTopTab = ref("metadata");
+const leftMetadataTab = ref("metadata");
+const rightDetailsTab = ref("attachments");
+
+// handle drag&drop files into q-uploader component
 const handleDrop = (event) => {
   event.preventDefault();
-  // Aquí puedes obtener los archivos arrastrados
   const files = event.dataTransfer.files;
   if (files.length) {
-    // Si ya estás usando el q-uploader, puedes agregar los archivos directamente
     uploaderRef.value?.addFiles(files);
   };
 };
 
+// refresh document data from api
+const onRefresh = () => {
+  if (document.id) {
+    loading.value = true;
+    state.loading = true;
+    state.loadingError = false;
+    state.errorMessage = null;
+    state.apiError = null;
+    state.saveSuccess = false;
+    state.saveError = false;
+    api.document
+      .get(document.id)
+      .then((successResponse) => {
+        document.setFromAPIJSON(successResponse.data.document);
+        loading.value = false;
+        state.loading = false;
+        if (documentTitleFieldRef.value) {
+          nextTick(() => documentTitleFieldRef.value?.focus());
+        }
+      })
+      .catch((errorResponse) => {
+        console.error(errorResponse);
+        loading.value = false;
+        state.apiError = errorResponse.customAPIErrorDetails;
+        switch (errorResponse.response.status) {
+          case 401:
+            state.apiError = errorResponse.customAPIErrorDetails;
+            state.errorMessage = "Auth session expired, requesting new...";
+            bus.emit("reAuthRequired", { emitter: "DocumentPage.onRefresh" });
+            break;
+          default:
+            // TODO: on this error (example 404 not found) do not use error validation fields on title (required, red border, this field is required)
+            state.loadingError = true;
+            state.errorMessage = "API Error: fatal error";
+            break;
+        }
+        state.loading = false;
+      });
+  } else {
+    // TODO
+  }
+}
+
+// submit (add/update) document data to api
 const onSubmitForm = () => {
   loading.value = true;
   state.loading = true;
@@ -263,17 +262,14 @@ const onSubmitForm = () => {
     api.document
       .update(document)
       .then((successResponse) => {
-        // TODO: refactor api response to document
         if (successResponse.data.document) {
-          readOnlyTitle.value = true;
-          readOnlyDescription.value = true;
           document.setFromAPIJSON(successResponse.data.document);
           loading.value = false;
           state.loading = false;
           // TODO: translate "Document saved" label
           state.saveSuccess = true;
           nextTick(() => {
-            titleRef.value?.focus();
+            documentTitleFieldRef.value?.focus();
           });
         } else {
           // TODO
@@ -292,7 +288,7 @@ const onSubmitForm = () => {
               })
             ) {
               state.errorMessage = t("API Error: missing document title param");
-              nextTick(() => titleRef.value?.focus());
+              nextTick(() => documentTitleFieldRef.value?.focus());
             } else if (
               errorResponse.response.data.invalidOrMissingParams.find(function (e) {
                 return e === "note_body";
@@ -340,7 +336,7 @@ const onSubmitForm = () => {
               })
             ) {
               state.errorMessage = t("API Error: missing document title param");
-              nextTick(() => titleRef.value?.focus());
+              nextTick(() => documentTitleFieldRef.value?.focus());
             } else if (
               errorResponse.response.data.invalidOrMissingParams.find(function (e) {
                 return e === "note_body";
@@ -365,13 +361,45 @@ const onSubmitForm = () => {
   }
 }
 
+const onDeleteDocument = () => {
+  loading.value = true;
+  api.document.
+    remove(document.id)
+    .then((successResponse) => {
+      loading.value = false;
+      // TODO (notification ?)
+      router.push({
+        name: "index",
+      });
+    })
+    .catch((errorResponse) => {
+      showConfirmDeleteDocumentDialog.value = false;
+      loading.value = false;
+      switch (errorResponse.response.status) {
+        case 401:
+          state.apiError = errorResponse.customAPIErrorDetails;
+          state.errorMessage = "Auth session expired, requesting new...";
+          bus.emit("reAuthRequired", { emitter: "DocumentPage.onRefresh" });
+          break;
+        case 403:
+          // TODO
+          break;
+        case 404:
+          // TODO
+          break;
+        default:
+          // TODO
+          break;
+      }
+    });
+}
+
 const onShowAttachmentsPicker = () => {
-  tab.value = 'attachments';
+  rightDetailsTab.value = 'attachments';
   nextTick(() => {
     uploaderRef.value.pickFiles();
   });
 }
-
 
 function onRemoveSelectedFile(index) {
   if (document.files[index].isNew) {
@@ -393,12 +421,14 @@ function onRemoveSelectedFile(index) {
   }
 }
 
-function onFileUploaded(e) {
+// q-uploader component event => file was uploaded
+const onFileUploaded = (e) => {
   console.log("onFileUploaded");
   document.addFile((JSON.parse(e.xhr.response).data).id, e.files[0].name, e.files[0].size);
 }
 
-function onUploadRejected(e) {
+// q-uploader component event => file upload is rejected
+const onUploadRejected = (e) => {
   console.log("onUploadRejected");
   if (e[0].failedPropValidation == "max-file-size") {
     // TODO
@@ -407,53 +437,22 @@ function onUploadRejected(e) {
   }
 }
 
-function onUploadFailed(e) {
+// q-uploader component event => file upload failed
+const onUploadFailed = (e) => {
   console.log("onUploadFailed");
   // TODO
 }
 
-function onUploadsStart(e) {
+// q-uploader component event => file upload starts
+const onUploadsStart = (e) => {
   console.log("onUploadsStart");
   uploading.value = true;
 }
 
-function onUploadsFinish(e) {
+// q-uploader component event => file upload finish
+const onUploadsFinish = (e) => {
   console.log("onUploadsFinish");
   uploading.value = false;
-}
-
-
-function onDeleteDocument() {
-  loading.value = true;
-  api.document.
-    remove(document.id)
-    .then((response) => {
-      loading.value = false;
-      // TODO (notification ?)
-      router.push({
-        name: "index",
-      });
-    })
-    .catch((error) => {
-      showConfirmDeleteDocumentDialog.value = false;
-      loading.value = false;
-      switch (error.response.status) {
-        case 401:
-          this.$router.push({
-            name: "signIn",
-          });
-          break;
-        case 403:
-          // TODO
-          break;
-        case 404:
-          // TODO
-          break;
-        default:
-          // TODO
-          break;
-      }
-    });
 }
 
 onMounted(() => {
@@ -462,7 +461,7 @@ onMounted(() => {
       document.id = route.params.id;
       onRefresh();
     } else {
-      // TODO: ERROR
+      // TODO: ROUTE ERROR (MISSING PARAM)
     }
   }
   bus.on("reAuthSucess", (msg) => {
