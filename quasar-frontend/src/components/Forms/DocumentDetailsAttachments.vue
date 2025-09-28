@@ -43,7 +43,7 @@
         </q-item-section>
       </q-item>
     </div>
-    <CustomBanner v-else-if="!disable" warning text="No document notes found" class="q-ma-none">
+    <CustomBanner v-else-if="!disable" warning text="No document attachments found" class="q-ma-none">
     </CustomBanner>
   </q-list>
 
