@@ -54,14 +54,12 @@ import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { format } from "quasar";
 
-import { useFormUtils } from "src/composables/formUtils"
 import { useFileUtils } from "src/composables/fileUtils"
 
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
 
 const { t } = useI18n();
 
-const { requiredFieldRules, fieldIsRequiredLabel } = useFormUtils();
 const { allowPreview } = useFileUtils();
 
 const emit = defineEmits(['update:attachments', 'addAttachment', 'removeAttachmentAtIndex', 'previewAttachmentAtIndex', 'filter']);
