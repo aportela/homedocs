@@ -1,6 +1,11 @@
 <template>
   <q-page>
     <div @dragover.prevent @dragenter.prevent @dragleave="handleDragLeave" @drop="handleDrop">
+      <q-uploader ref="uploaderRef" class="q-mb-md hidden" :label="t('Add new file (Drag & Drop supported)')" flat
+        bordered auto-upload hide-upload-btn color="dark" field-name="file" method="post" url="api2/file"
+        :max-file-size="maxFileSize" multiple @uploaded="onFileUploaded" @rejected="onUploadRejected"
+        @failed="onUploadFailed" style="width: 100%;" :disable="loading || saving" no-thumbnails @start="onUploadsStart"
+        @finish="onUploadsFinish" />
       <q-card flat class="bg-transparent">
         <q-card-section>
           <div class="row items-center">
@@ -73,12 +78,6 @@
                 <q-card-section class="q-pa-none">
                   <q-tab-panels v-model="tab" animated class="bg-transparent">
                     <q-tab-panel name="attachments" class="q-pa-none">
-                      <q-uploader ref="uploaderRef" class="q-mb-md hidden"
-                        :label="t('Add new file (Drag & Drop supported)')" flat bordered auto-upload hide-upload-btn
-                        color="dark" field-name="file" method="post" url="api2/file" :max-file-size="maxFileSize"
-                        multiple @uploaded="onFileUploaded" @rejected="onUploadRejected" @failed="onUploadFailed"
-                        style="width: 100%;" :disable="loading || saving" no-thumbnails @start="onUploadsStart"
-                        @finish="onUploadsFinish" />
                       <q-item class="transparent-background text-color-primary q-pa-sm">
                         <q-item-section>
                           <q-input type="search" icon="search" outlined dense clearable
