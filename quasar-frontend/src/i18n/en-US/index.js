@@ -210,5 +210,5 @@ export default {
   "No document notes found": "No document notes found",
   "Filter by text on note body": "Filter by text on note body",
   "Filter by text on file name": "Filter by text on file name",
-  "text search condition": "text search condition",
+  "type text search condition": "type text search condition",
 };

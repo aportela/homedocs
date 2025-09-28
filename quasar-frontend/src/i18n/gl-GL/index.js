@@ -209,5 +209,5 @@ export default {
   "No document notes found": "O documento non ten notas",
   "Filter by text on note body": "Filtrar por texto no corpo da nota",
   "Filter by text on file name": "Filtrar por texto no nome do arquivo",
-  "text search condition": "condición de búsqueda por texto",
+  "type text search condition": "teclee a condición de búsqueda por texto",
 };
