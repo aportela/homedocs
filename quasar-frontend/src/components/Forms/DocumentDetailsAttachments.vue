@@ -50,7 +50,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { format } from "quasar";
 
@@ -82,6 +82,24 @@ const props = defineProps({
 const hasAttachments = computed(() => props.attachments.length > 0);
 
 const filterAttachmentsByFilename = ref(null);
+
+const escapeRegExp = (string) => {
+  return string.replace(/[.*+?^=!:${}()|\[\]\/\\]/g, '\\$&');
+};
+
+const onFilterAttachments = (text) => {
+  if (text) {
+    const regex = new RegExp(escapeRegExp(text), 'i');
+    props.attachments.forEach((attachment) => { attachment.visible = !!attachment.name?.match(regex); });
+  } else {
+    props.attachments.forEach((attachment) => { attachment.visible = true; });
+  }
+};
+
+watch(() => filterAttachmentsByFilename.value, val => {
+  onFilterAttachments(val);
+});
+
 
 const onAddAttachment = () => {
   emit("addAttachment");
