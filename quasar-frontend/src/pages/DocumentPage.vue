@@ -78,55 +78,10 @@
                 <q-card-section class="q-pa-none">
                   <q-tab-panels v-model="tab" animated class="bg-transparent">
                     <q-tab-panel name="attachments" class="q-pa-none">
-                      <q-item class="transparent-background text-color-primary q-pa-sm">
-                        <q-item-section>
-                          <q-input type="search" icon="search" outlined dense clearable
-                            :disable="state.loading || !hasAttachments" v-model.trim="filterAttachmentByText"
-                            :label="t('Filter by text on file name')"
-                            :placeholder="t('text search condition')"></q-input>
-                        </q-item-section>
-                        <q-item-section side>
-                          <q-btn size="md" :label="t('Add attachment')" icon="add" class="bg-blue text-white full-width"
-                            :disable="state.loading" @click.stop="onShowAttachmentsPicker"></q-btn>
-                        </q-item-section>
-                      </q-item>
-                      <q-list class="scroll" style="min-height: 50vh; max-height: 50vh;" v-if="hasAttachments">
-                        <div v-for="file, index in document.files" :key="file.id">
-                          <q-item class="transparent-background text-color-primary q-pa-sm" v-show="file.visible"
-                            clickable="">
-                            <q-item-section class="q-mx-md">
-                              <q-item-label>
-                                Filename: {{ file.name }}
-                              </q-item-label>
-                              <q-item-label caption>
-                                Length: {{ format.humanStorageSize(file.size) }}
-                              </q-item-label>
-                              <q-item-label caption>
-                                Uploaded on: {{ file.createdOn }}
-                              </q-item-label>
-                            </q-item-section>
-                            <q-item-section side top>
-                              <q-chip size="md" square class="theme-default-q-chip shadow-1 full-width"
-                                :class="{ 'cursor-not-allowed': state.loading }" :clickable="!state.loading"
-                                @click.stop.prevent="onRemoveFile(index)">
-                                <q-avatar class="theme-default-q-avatar text-white bg-blue-6" icon="delete" />
-                                {{ t("Remove") }}
-                              </q-chip>
-                              <q-chip size="md" square class="theme-default-q-chip shadow-1 full-width"
-                                :class="{ 'cursor-not-allowed': state.loading || !allowPreview(file.name) }"
-                                :clickable="!state.loading && allowPreview(file.name)"
-                                @click.stop.prevent="onPreviewFile(index)">
-                                <q-avatar class="theme-default-q-avatar text-white bg-blue-6" icon="preview" />
-                                {{ t("Preview") }}
-                              </q-chip>
-                            </q-item-section>
-                          </q-item>
-                          <q-separator v-if="file.visible && index !== document.files.length - 1" class="q-my-xs" />
-                        </div>
-                      </q-list>
-                      <CustomBanner v-else-if="!state.loading" warning text="No document attachments found"
-                        class="q-ma-sm">
-                      </CustomBanner>
+                      <DocumentDetailsAttachments v-model:attachments="document.files"
+                        :disable="loading || saving || state.loading" @add-attachment="onShowAttachmentsPicker"
+                        @remove-attachment-at-idx="(index) => removeAttachmentAtIdx(index)"
+                        @preview-attachment-at-idx="(index) => onPreviewFile(index)"></DocumentDetailsAttachments>
                     </q-tab-panel>
                     <q-tab-panel name="notes" class="q-pa-none scroll" style="min-height: 50vh; max-height: 50vh;">
                       <DocumentDetailsNotes v-model:notes="document.notes" :disable="loading || saving || state.loading"
@@ -233,6 +188,7 @@ import { default as InteractiveTagsFieldCustomSelect } from "src/components/Form
 //import { default as ConfirmationDialog } from "src/components/Dialogs/ConfirmationDialog.vue";
 //import { default as DocumentFilesPreviewDialog } from "src/components/Dialogs/DocumentFilesPreviewDialog.vue";
 import { default as DocumentMetadataTopForm } from "src/components/Forms/DocumentMetadataTopForm.vue"
+import { default as DocumentDetailsAttachments } from "src/components/Forms/DocumentDetailsAttachments.vue"
 import { default as DocumentDetailsNotes } from "src/components/Forms/DocumentDetailsNotes.vue"
 import { default as InteractiveTextFieldCustomInput } from "src/components/Forms/Fields/InteractiveTextFieldCustomInput.vue"
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
