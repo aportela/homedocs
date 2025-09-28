@@ -72,7 +72,7 @@
                     <q-tab name="history" icon="view_timeline" :disable="state.loading" :label="t('History')"
                       v-if="document.id">
                       <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                      }}</q-badge>
+                        }}</q-badge>
                     </q-tab>
                   </q-tabs>
                 </q-card-section>
@@ -92,7 +92,7 @@
                       </DocumentDetailsNotes>
                     </q-tab-panel>
                     <q-tab-panel name="history" class="q-pa-none" v-if="document.id">
-                      <DocumentDetailsHistory v-model:operations="document.historyOperations"
+                      <DocumentDetailsHistory v-model:history-operations="document.historyOperations"
                         :disable="loading || saving || state.loading"></DocumentDetailsHistory>
                     </q-tab-panel>
                   </q-tab-panels>
@@ -148,7 +148,7 @@ const { t } = useI18n();
 
 const { requiredFieldRules, fieldIsRequiredLabel } = useFormUtils();
 
-const { getNewDocument } = useDocument();
+const document = useDocument().getNewDocument();
 
 const route = useRoute();
 const router = useRouter();
@@ -186,8 +186,6 @@ const readOnlyDescription = ref(!isNewDocument.value);
 
 const topTab = ref("metadata");
 const leftTab = ref("metadata");
-
-const document = getNewDocument();
 
 router.beforeEach(async (to, from) => {
   if (to.name == "newDocument") {

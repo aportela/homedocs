@@ -1,5 +1,5 @@
 <template>
-  <q-markup-table class="bg-transparent q-pa-sm q-list-history-container scroll" v-if="hasHistory">
+  <q-markup-table class="bg-transparent q-pa-sm q-list-history-container scroll" v-if="hasHistoryOperations">
     <thead>
       <tr>
         <th class="text-left">{{ t("Date") }}</th>
@@ -7,7 +7,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="operation in operations" :key="operation.operationTimestamp">
+      <tr v-for="operation in historyOperations" :key="operation.operationTimestamp">
         <td>{{ operation.creationDate }} ({{ operation.creationDateTimeAgo }})</td>
         <td><q-icon size="md" :name="operation.icon" class="q-mr-sm"></q-icon>{{
           t(operation.label) }}
@@ -29,7 +29,7 @@ import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue
 const { t } = useI18n();
 
 const props = defineProps({
-  operations: {
+  historyOperations: {
     type: Array,
     required: false,
     default: () => []
@@ -41,7 +41,7 @@ const props = defineProps({
   }
 });
 
-const hasHistory = computed(() => props.operations.length > 0);
+const hasHistoryOperations = computed(() => props.historyOperations.length > 0);
 
 </script>
 
