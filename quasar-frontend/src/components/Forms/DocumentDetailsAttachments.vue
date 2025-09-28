@@ -1,5 +1,5 @@
 <template>
-  <q-list class="bg-transparent scroll q-pa-sm q-list-notes-container">
+  <q-list class="bg-transparent scroll q-pa-sm q-list-attachments-container">
     <q-item class="transparent-background text-color-primary q-pa-none">
       <q-item-section>
         <q-input type="search" icon="search" outlined dense clearable :disable="disable || !hasAttachments"
@@ -98,7 +98,7 @@ const onPreviewAttachment = (index) => {
 </script>
 
 <style scoped>
-.q-list-notes-container {
+.q-list-attachments-container {
   min-height: 50vh;
   max-height: 50vh;
 }
