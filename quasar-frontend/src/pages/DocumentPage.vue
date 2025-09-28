@@ -100,7 +100,7 @@
               </q-card>
             </div>
           </q-card-section>
-          <q-card-section class="q-ma-xs q-mt-sm q-px-sm">
+          <q-card-section class="q-ma-xs q-mt-sm q-px-xs">
             <q-btn :label="t('Save changes')" type="submit" icon="save" class="full-width" color="dark"
               :disable="loading || saving || uploading || !document.title">
               <template v-slot:loading v-if="saving">
