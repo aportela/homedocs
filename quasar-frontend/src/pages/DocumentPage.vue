@@ -72,7 +72,7 @@
                     <q-tab name="history" icon="view_timeline" :disable="state.loading" :label="t('History')"
                       v-if="document.id">
                       <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                      }}</q-badge>
+                        }}</q-badge>
                     </q-tab>
                   </q-tabs>
                 </q-card-section>
@@ -81,8 +81,8 @@
                     <q-tab-panel name="attachments" class="q-pa-none">
                       <DocumentDetailsAttachments v-model:attachments="document.files"
                         :disable="loading || saving || state.loading" @add-attachment="onShowAttachmentsPicker"
-                        @remove-attachment-at-idx="(index) => onRemoveSelectedFile(index)"
-                        @preview-attachment-at-idx="(index) => document.previewFile(index)"
+                        @remove-attachment-at-index="(index) => onRemoveSelectedFile(index)"
+                        @preview-attachment-at-index="(index) => document.previewFile(index)"
                         @filter="(text) => document.filterFiles(text)"></DocumentDetailsAttachments>
                     </q-tab-panel>
                     <q-tab-panel name="notes" class="q-pa-none">
