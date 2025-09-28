@@ -461,7 +461,7 @@ return function (App $app) {
                     $file->remove($this->get(\aportela\DatabaseWrapper\DB::class));
                     $payload = json_encode(
                         [
-                            'initialState' => json_encode(\HomeDocs\Utils::getInitialState($this))
+                            'initialState' => \HomeDocs\Utils::getInitialState($this),
                         ]
                     );
                     $response->getBody()->write($payload);
