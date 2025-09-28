@@ -3,7 +3,7 @@
     <q-item class="transparent-background text-color-primary q-pa-none">
       <q-item-section>
         <q-input type="search" icon="search" outlined dense clearable :disable="disable || !hasAttachments"
-          v-model.trim="filterAttachmentsByFilename" :label="t('Filter by text on filename')"
+          v-model.trim="filterAttachmentsByFilename" :label="t('Filter by text on file name')"
           :placeholder="t('type text search condition')"></q-input>
       </q-item-section>
       <q-item-section side>
