@@ -23,7 +23,7 @@
             Length: {{ format.humanStorageSize(attachment.size) }}
           </q-item-label>
           <q-item-label caption>
-            Uploaded on: {{ attachment.createdOn }}
+            Uploaded on: {{ attachment.creationDate }} ({{ attachment.creationDateTimeAgo }})
           </q-item-label>
         </q-item-section>
         <q-item-section side top>

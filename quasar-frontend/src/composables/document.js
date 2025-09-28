@@ -106,11 +106,11 @@ export function useDocument() {
         if (Array.isArray(data.files)) {
           doc.files.push(
             ...JSON.parse(JSON.stringify(data.files)).map((file) => {
-              file.isNew = false;
               file.creationDate = fullDateTimeHuman(file.createdOnTimestamp);
               file.creationDateTimeAgo = timeAgo(file.createdOnTimestamp);
               file.humanSize = format.humanStorageSize(file.size);
               file.url = "api2/file/" + file.id;
+              file.isNew = false;
               file.visible = true;
               return file;
             }),
@@ -160,6 +160,25 @@ export function useDocument() {
             }),
           );
         }
+      },
+
+      addFile(id, name, size) {
+        const fileId = id || uid();
+        doc.files.unshift(
+          reactive({
+            id: fileId,
+            createdOnTimestamp: currentTimestamp(),
+            creationDate: currentFullDateTimeHuman(),
+            creationDateTimeAgo: currentTimeAgo(),
+            name: name,
+            size: size || 0,
+            hash: null,
+            humanSize: size > 0 ? format.humanStorageSize(size) : null,
+            url: "api2/file/" + fileId,
+            isNew: true,
+            visible: true,
+          }),
+        );
       },
 
       removeFileAtIdx(index) {

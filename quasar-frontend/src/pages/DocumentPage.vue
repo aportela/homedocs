@@ -81,7 +81,7 @@
                     <q-tab-panel name="attachments" class="q-pa-none">
                       <DocumentDetailsAttachments v-model:attachments="document.files"
                         :disable="loading || saving || state.loading" @add-attachment="onShowAttachmentsPicker"
-                        @remove-attachment-at-idx="(index) => document.removeFileAtIdx(index)"
+                        @remove-attachment-at-idx="(index) => onRemoveSelectedFile(index)"
                         @preview-attachment-at-idx="(index) => document.previewFile(index)"
                         @filter="(text) => document.filterFiles(text)"></DocumentDetailsAttachments>
                     </q-tab-panel>
@@ -162,7 +162,6 @@ const { timeAgo, fullDateTimeHuman, currentTimestamp, currentFullDateTimeHuman, 
 
 const maxFileSize = computed(() => initialState.maxUploadFileSize);
 const uploaderRef = ref(null);
-const selectedFileIndex = ref(null);
 const showConfirmDeleteFileDialog = ref(false);
 const showConfirmDeleteDocumentDialog = ref(false);
 const titleRef = ref(null);
@@ -252,7 +251,7 @@ const handleDrop = (event) => {
   };
 };
 
-function onSubmitForm() {
+const onSubmitForm = () => {
   loading.value = true;
   state.loading = true;
   state.loadingError = false;
@@ -366,7 +365,7 @@ function onSubmitForm() {
   }
 }
 
-function onShowAttachmentsPicker() {
+const onShowAttachmentsPicker = () => {
   tab.value = 'attachments';
   nextTick(() => {
     uploaderRef.value.pickFiles();
@@ -374,79 +373,43 @@ function onShowAttachmentsPicker() {
 }
 
 
-function onRemoveSelectedFile() {
-  if (selectedFileIndex.value > -1) {
-    if (document.files[selectedFileIndex.value].isNew) {
-      loading.value = true;
-      api.document.
-        removeFile(document.files[selectedFileIndex.value].id)
-        .then((response) => {
-          document.files.splice(selectedFileIndex.value, 1);
-          selectedFileIndex.value = null;
-          showConfirmDeleteFileDialog.value = false;
-          loading.value = false;
-        })
-        .catch((error) => {
-          loading.value = false;
-          /*
-          $q.notify({
-            type: "negative",
-            message: t("API Error: error removing file"),
-            caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
-          });
-          */
-        });
-    } else {
-      document.files.splice(selectedFileIndex.value, 1);
-      selectedFileIndex.value = null;
-      showConfirmDeleteFileDialog.value = false;
-    }
+function onRemoveSelectedFile(index) {
+  if (document.files[index].isNew) {
+    loading.value = true;
+    api.document.
+      removeFile(document.files[index].id)
+      .then((successResponse) => {
+        document.removeFileAtIdx(index)
+        loading.value = false;
+        state.loading = false;
+      })
+      .catch((errorResponse) => {
+        loading.value = false;
+        state.loading = false;
+        // TODO
+      });
+  } else {
+    document.removeFileAtIdx(index)
   }
 }
 
 function onFileUploaded(e) {
   console.log("onFileUploaded");
-  document.files.push(
-    {
-      id: (JSON.parse(e.xhr.response).data).id,
-      createdOnTimestamp: currentTimestamp(),
-      createdOn: currentFullDateTimeHuman(),
-      name: e.files[0].name,
-      size: e.files[0].size,
-      hash: null,
-      humanSize: format.humanStorageSize(e.files[0].size),
-      isNew: true,
-      visible: true
-    });
+  document.addFile((JSON.parse(e.xhr.response).data).id, e.files[0].name, e.files[0].size);
 }
 
 function onUploadRejected(e) {
   console.log("onUploadRejected");
   if (e[0].failedPropValidation == "max-file-size") {
-    /*
-    $q.notify({
-      type: "negative",
-      message: "Can not upload file " + e[0].file.name + ' (max upload filesize: ' + format.humanStorageSize(maxFileSize.value) + ', current file size: ' + format.humanStorageSize(e[0].file.size) + ')',
-    });
-    */
+    // TODO
   } else {
-    /*
-    $q.notify({
-      type: "negative",
-      message: t("Can not upload file", { filename: e[0].file.name })
-    });
-    */
+    // TODO
   }
 }
 
 function onUploadFailed(e) {
   console.log("onUploadFailed");
-  /*
-  $q.notify({
-    type: "negative",
-    message: "Can not upload file " + e.files[0].name + ', API error: ' + e.xhr.status + ' - ' + e.xhr.statusText,
-  });
-  */
+  // TODO
 }
 
 function onUploadsStart(e) {
@@ -466,12 +429,7 @@ function onDeleteDocument() {
     remove(document.id)
     .then((response) => {
       loading.value = false;
-      /*
-      $q.notify({
-        type: "positive",
-        message: t("Document has been removed"),
-      });
-      */
+      // TODO (notification ?)
       router.push({
         name: "index",
       });
@@ -486,29 +444,13 @@ function onDeleteDocument() {
           });
           break;
         case 403:
-          /*
-          $q.notify({
-            type: "negative",
-            message: t("Access denied"),
-          });
-          */
+          // TODO
           break;
         case 404:
-          /*
-          $q.notify({
-            type: "negative",
-            message: t("Document not found"),
-          });
-          */
+          // TODO
           break;
         default:
-          /*
-          $q.notify({
-            type: "negative",
-            message: t("API Error: error deleting document"),
-            caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
-          });
-          */
+          // TODO
           break;
       }
     });
@@ -536,6 +478,5 @@ onMounted(() => {
 onBeforeUnmount(() => {
   bus.off("reAuthSucess");
 });
-
 
 </script>
