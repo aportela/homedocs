@@ -90,22 +90,8 @@
                     </q-tab-panel>
                     <q-tab-panel name="history" class="q-pa-none scroll" style="min-height: 50vh; max-height: 50vh;"
                       v-if="document.id">
-                      <q-markup-table>
-                        <thead>
-                          <tr>
-                            <th class="text-left">{{ t("Date") }}</th>
-                            <th class="text-left">{{ t("Operation") }}</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr v-for="operation in document.history" :key="operation.operationTimestamp">
-                            <td>{{ operation.date }} ({{ timeAgo(operation.operationTimestamp) }})</td>
-                            <td><q-icon size="md" :name="operation.icon" class="q-mr-sm"></q-icon>{{
-                              t(operation.label) }}
-                            </td>
-                          </tr>
-                        </tbody>
-                      </q-markup-table>
+                      <DocumentDetailsHistory v-model:operations="document.history"
+                        :disable="loading || saving || state.loading"></DocumentDetailsHistory>
                     </q-tab-panel>
                   </q-tab-panels>
                 </q-card-section>
@@ -190,6 +176,7 @@ import { default as InteractiveTagsFieldCustomSelect } from "src/components/Form
 import { default as DocumentMetadataTopForm } from "src/components/Forms/DocumentMetadataTopForm.vue"
 import { default as DocumentDetailsAttachments } from "src/components/Forms/DocumentDetailsAttachments.vue"
 import { default as DocumentDetailsNotes } from "src/components/Forms/DocumentDetailsNotes.vue"
+import { default as DocumentDetailsHistory } from "src/components/Forms/DocumentDetailsHistory.vue"
 import { default as InteractiveTextFieldCustomInput } from "src/components/Forms/Fields/InteractiveTextFieldCustomInput.vue"
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue"
@@ -314,7 +301,8 @@ const parseDocumentJSONResponse = (documentData) => {
     return (note);
   });
   document.history.map((operation) => {
-    operation.date = fullDateTimeHuman(operation.operationTimestamp);
+    operation.createdOn = fullDateTimeHuman(operation.operationTimestamp);
+    operation.createdOnTimeAgo = timeAgo(operation.operationTimestamp);
     switch (operation.operationType) {
       case 1:
         operation.label = "Document created";
