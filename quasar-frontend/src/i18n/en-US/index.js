@@ -68,6 +68,7 @@ export default {
     "API Error: missing document title param",
   "API Error: invalid response data": "API Error: invalid response data",
   "Document metadata": "Document metadata",
+  "Document details": "Document details",
   Name: "Name",
   Size: "Size",
   Actions: "Actions",
@@ -204,4 +205,10 @@ export default {
     "Document attachment preview|Document attachments preview",
   "FileDownloadedMessage": "File {filename} has been downloaded ({length})",
   "FileDownloadeErrorMessage": "Error downloading file {filename}",
+  "Reload document": "Reload document",
+  "No document attachments found": "No document attachments found",
+  "No document notes found": "No document notes found",
+  "Filter by text on note body": "Filter by text on note body",
+  "Filter by text on file name": "Filter by text on file name",
+  "text search condition": "text search condition",
 };

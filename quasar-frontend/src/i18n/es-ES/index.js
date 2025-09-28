@@ -71,6 +71,7 @@ export default {
   "API Error: invalid response data":
     "Error de API: datos de respuesta no válidos",
   "Document metadata": "Metadatos del documento",
+  "Document details": "Detalles del documento",
   Name: "Nombre",
   Size: "Tamaño",
   Actions: "Acciones",
@@ -205,4 +206,10 @@ export default {
   "View document notes": "Ver las notas del documento",
   "Document attachments preview":
     "Previsualización del archivo del documento|Previsualización de los archivos del documento",
+  "Reload document": "Recargar documento",
+  "No document attachments found": "El documento no tiene archivos",
+  "No document notes found": "El documento no tiene notas",
+  "Filter by text on note body": "Filtrar por texto en el cuerpo de la nota",
+  "Filter by text on file name": "Filtrar por texto en el nombre del archivo",
+  "text search condition": "condición de búsqueda por texto",
 };

@@ -83,7 +83,8 @@
                         <q-item-section>
                           <q-input type="search" icon="search" outlined dense clearable
                             :disable="state.loading || !hasAttachments" v-model.trim="filterAttachmentByText"
-                            :label="t('Filter by text on file name')" :placeholder="t('text condition')"></q-input>
+                            :label="t('Filter by text on file name')"
+                            :placeholder="t('text search condition')"></q-input>
                         </q-item-section>
                         <q-item-section side>
                           <q-btn size="md" :label="t('Add attachment')" icon="add" class="bg-blue text-white full-width"
@@ -129,46 +130,9 @@
                       </CustomBanner>
                     </q-tab-panel>
                     <q-tab-panel name="notes" class="q-pa-none scroll" style="min-height: 50vh; max-height: 50vh;">
-                      <q-item class="transparent-background text-color-primary q-pa-sm">
-                        <q-item-section>
-                          <q-input type="search" icon="search" outlined dense clearable
-                            :disable="state.loading || !hasNotes" v-model.trim="filterNotesByText"
-                            :label="t('Filter by text on note body')" :placeholder="t('text condition')"></q-input>
-                        </q-item-section>
-                        <q-item-section side>
-                          <q-btn size="md" :label="t('Add note')" icon="add" class="bg-blue text-white full-width"
-                            :disable="state.loading" @click.stop="onAddNote"></q-btn>
-                        </q-item-section>
-                      </q-item>
-                      <q-list class="bg-transparent scroll q-pa-sm" style="min-height: 50vh; max-height: 50vh;"
-                        v-if="hasNotes">
-                        <q-item class="q-pa-none bg-transparent" v-for="note, noteIndex in document.notes"
-                          :key="note.id" v-show="note.visible">
-                          <q-item-section>
-                            <InteractiveTextFieldCustomInput v-model.trim="note.body" dense outlined type="textarea"
-                              maxlength="4096" autogrow name="description"
-                              :label="`${note.creationDate} (${timeAgo(note.createdOnTimestamp)})`"
-                              :start-mode-editable="!!note.startOnEditMode" :disable="loading || saving" clearable
-                              :max-lines="6" :rules="requiredFieldRules" :error="!note.body"
-                              :error-message="fieldIsRequiredLabel" :autofocus="note.startOnEditMode">
-                              <template v-slot:top-icon-append="{ showTopHoverIcons }">
-                                <q-icon name="delete" size="sm" class="q-ml-sm q-mr-sm" clickable
-                                  v-show="showTopHoverIcons" @click.prevent="onRemoveNote(noteIndex)">
-                                  <q-tooltip>{{ t("Click to remove note") }}</q-tooltip>
-                                </q-icon>
-                              </template>
-                              <template v-slot:icon-append-on-edit>
-                                <q-icon name="delete" size="sm" class="cursor-pointer" clickable
-                                  @click.prevent="onRemoveNote(noteIndex)">
-                                </q-icon>
-                              </template>
-                              <!-- TODO: NOT FOCUSING ON TEXTAREA CHANGE TO EDIT MODE -->
-                            </InteractiveTextFieldCustomInput>
-                          </q-item-section>
-                        </q-item>
-                      </q-list>
-                      <CustomBanner v-else-if="!state.loading" warning text="No document notes found" class="q-ma-sm">
-                      </CustomBanner>
+                      <DocumentDetailsNotes v-model:notes="document.notes"
+                        :disable="loading || saving || state.loading">
+                      </DocumentDetailsNotes>
                     </q-tab-panel>
                     <q-tab-panel name="history" class="q-pa-none scroll" style="min-height: 50vh; max-height: 50vh;"
                       v-if="document.id">
@@ -270,11 +234,12 @@ import { default as InteractiveTagsFieldCustomSelect } from "src/components/Form
 //import { default as ConfirmationDialog } from "src/components/Dialogs/ConfirmationDialog.vue";
 //import { default as DocumentFilesPreviewDialog } from "src/components/Dialogs/DocumentFilesPreviewDialog.vue";
 import { default as DocumentMetadataTopForm } from "src/components/Forms/DocumentMetadataTopForm.vue"
+import { default as DocumentDetailsNotes } from "src/components/Forms/DocumentDetailsNotes.vue"
 import { default as InteractiveTextFieldCustomInput } from "src/components/Forms/Fields/InteractiveTextFieldCustomInput.vue"
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue"
 
-const tab = ref("attachments");
+const tab = ref("notes");
 
 const { t } = useI18n();
 
