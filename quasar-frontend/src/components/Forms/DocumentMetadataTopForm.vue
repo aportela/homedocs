@@ -29,6 +29,7 @@ import { useI18n } from "vue-i18n";
 import { useQuasar } from "quasar";
 
 import { useFormatDates } from "src/composables/formatDate";
+
 const props = defineProps({
   createdOnTimestamp: {
     type: Number,
@@ -41,8 +42,9 @@ const props = defineProps({
 });
 
 const { t } = useI18n();
-const { fullDateTimeHuman, timeAgo } = useFormatDates();
 const { screen } = useQuasar();
+
+const { fullDateTimeHuman, timeAgo } = useFormatDates();
 
 const isScreenGreaterThanXS = computed(() => screen.gt.xs);
 

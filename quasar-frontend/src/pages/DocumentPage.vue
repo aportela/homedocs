@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <div @dragover.prevent @dragenter.prevent @dragleave="handleDragLeave" @drop="handleDrop">
+    <div @dragover.prevent @dragenter.prevent @drop="handleDrop">
       <q-uploader ref="uploaderRef" class="q-mb-md hidden" :label="t('Add new file (Drag & Drop supported)')" flat
         bordered auto-upload hide-upload-btn color="dark" field-name="file" method="post" url="api2/file"
         :max-file-size="maxFileSize" multiple @uploaded="onFileUploaded" @rejected="onUploadRejected"
@@ -41,8 +41,8 @@
                   </q-tabs>
                 </q-card-section>
                 <q-card-section class="q-pa-md">
-                  <DocumentMetadataTopForm v-if="!isNewDocument" :created-on-timestamp="document.createdOnTimestamp"
-                    :last-update-timestamp="document.lastUpdateTimestamp"></DocumentMetadataTopForm>
+                  <DocumentMetadataTopForm v-if="!isNewDocument" :created-on-timestamp="document.createdOn.timestamp"
+                    :last-update-timestamp="document.lastUpdate.timestamp"></DocumentMetadataTopForm>
                   <InteractiveTextFieldCustomInput ref="titleRef" dense class="q-mb-md" maxlength="128" outlined
                     v-model.trim="document.title" type="textarea" autogrow name="title" :label="t('Document title')"
                     :disable="loading || saving" :autofocus="true" clearable :start-mode-editable="isNewDocument"
@@ -64,14 +64,15 @@
                 <q-card-section class="q-pa-none q-mb-sm" style="border-bottom: 2px solid rgba(0, 0, 0, 0.12);">
                   <q-tabs v-model="tab" align="left">
                     <q-tab name="attachments" icon="attach_file" :disable="state.loading" :label="t('Attachments')">
-                      <q-badge floating v-show="document.files.length > 0">{{ document.files.length }}</q-badge>
+                      <q-badge floating v-show="document.hasFiles">{{ document.files.length }}</q-badge>
                     </q-tab>
                     <q-tab name="notes" icon="forum" :disable="state.loading" :label="t('Notes')">
-                      <q-badge floating v-show="document.notes.length > 0">{{ document.notes.length }}</q-badge>
+                      <q-badge floating v-show="document.hasNotes">{{ document.notes.length }}</q-badge>
                     </q-tab>
                     <q-tab name="history" icon="view_timeline" :disable="state.loading" :label="t('History')"
                       v-if="document.id">
-                      <q-badge floating v-show="document.history.length > 0">{{ document.history.length }}</q-badge>
+                      <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
+                      }}</q-badge>
                     </q-tab>
                   </q-tabs>
                 </q-card-section>
@@ -80,16 +81,18 @@
                     <q-tab-panel name="attachments" class="q-pa-none">
                       <DocumentDetailsAttachments v-model:attachments="document.files"
                         :disable="loading || saving || state.loading" @add-attachment="onShowAttachmentsPicker"
-                        @remove-attachment-at-idx="(index) => removeAttachmentAtIdx(index)"
-                        @preview-attachment-at-idx="(index) => onPreviewFile(index)"></DocumentDetailsAttachments>
+                        @remove-attachment-at-idx="(index) => document.removeFileAtIdx(index)"
+                        @preview-attachment-at-idx="(index) => document.previewFile(index)"
+                        @filter="(text) => document.filterFiles(text)"></DocumentDetailsAttachments>
                     </q-tab-panel>
                     <q-tab-panel name="notes" class="q-pa-none">
                       <DocumentDetailsNotes v-model:notes="document.notes" :disable="loading || saving || state.loading"
-                        @add-note="onAddNote" @remove-note-at-index="(index) => onRemoveNoteAtIndex(index)">
+                        @add-note="document.addNote" @remove-note-at-index="(index) => document.removeNoteAtIdx(index)"
+                        @filter="(text) => document.filterNotes(text)">
                       </DocumentDetailsNotes>
                     </q-tab-panel>
                     <q-tab-panel name="history" class="q-pa-none" v-if="document.id">
-                      <DocumentDetailsHistory v-model:operations="document.history"
+                      <DocumentDetailsHistory v-model:operations="document.historyOperations"
                         :disable="loading || saving || state.loading"></DocumentDetailsHistory>
                     </q-tab-panel>
                   </q-tab-panels>
@@ -127,7 +130,7 @@ import { bus } from "src/boot/bus";
 import { api } from "src/boot/axios";
 import { useFormatDates } from "src/composables/formatDate"
 import { useFormUtils } from "src/composables/formUtils"
-import { useFileUtils } from "src/composables/fileUtils"
+import { useDocument } from "src/composables/document"
 import { useInitialStateStore } from "src/stores/initialState";
 
 import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
@@ -139,11 +142,13 @@ import { default as InteractiveTextFieldCustomInput } from "src/components/Forms
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue"
 
-const tab = ref("notes");
+const tab = ref("attachments");
 
 const { t } = useI18n();
 
 const { requiredFieldRules, fieldIsRequiredLabel } = useFormUtils();
+
+const { getNewDocument } = useDocument();
 
 const route = useRoute();
 const router = useRouter();
@@ -155,14 +160,11 @@ const isScreenGreaterThanMD = computed(() => screen.gt.md);
 
 const { timeAgo, fullDateTimeHuman, currentTimestamp, currentFullDateTimeHuman, currentTimeAgo } = useFormatDates();
 
-const { allowPreview } = useFileUtils();
-
 const maxFileSize = computed(() => initialState.maxUploadFileSize);
 const uploaderRef = ref(null);
 const selectedFileIndex = ref(null);
 const showConfirmDeleteFileDialog = ref(false);
 const showConfirmDeleteDocumentDialog = ref(false);
-const showConfirmDeleteNoteDialog = ref(false);
 const titleRef = ref(null);
 const loading = ref(false);
 const saving = ref(false);
@@ -185,43 +187,7 @@ const readOnlyDescription = ref(!isNewDocument.value);
 const topTab = ref("metadata");
 const leftTab = ref("metadata");
 
-const document = reactive({
-  id: null,
-  title: null,
-  description: null,
-  createdOnTimestamp: null,
-  lastUpdateTimestamp: null,
-  files: [],
-  tags: [],
-  notes: [],
-  history: [],
-  reset() {
-    this.id = null;
-    this.title = null;
-    this.description = null;
-    this.createdOnTimestamp = null;
-    this.lastUpdateTimestamp = null;
-    this.files = [];
-    this.tags = [];
-    this.notes = [];
-    this.history = [];
-  },
-  set(doc) {
-    this.id = doc.id;
-    this.title = doc.title;
-    this.description = doc.description;
-    this.createdOnTimestamp = doc.createdOnTimestamp;
-    this.lastUpdateTimestamp = doc.lastUpdateTimestamp;
-    this.files = JSON.parse(JSON.stringify(doc.files))
-    this.tags = JSON.parse(JSON.stringify(doc.tags))
-    this.notes = JSON.parse(JSON.stringify(doc.notes))
-    this.history = JSON.parse(JSON.stringify(doc.history))
-  }
-});
-
-const hasAttachments = computed(() => document?.files?.length > 0);
-
-const hasNotes = computed(() => document?.notes?.length > 0);
+const document = getNewDocument();
 
 router.beforeEach(async (to, from) => {
   if (to.name == "newDocument") {
@@ -255,12 +221,13 @@ const parseDocumentJSONResponse = (documentData) => {
     note.creationDate = fullDateTimeHuman(note.createdOnTimestamp);
     note.creationDateTimeAgo = timeAgo(note.createdOnTimestamp);
     note.expanded = false;
-    note.visible = true;
+    note.startOnEditMode = false; // this is only required when adding new note
+    note.visible = true; // all notes visible by default
     return (note);
   });
-  document.history.map((operation) => {
-    operation.createdOn = fullDateTimeHuman(operation.operationTimestamp);
-    operation.createdOnTimeAgo = timeAgo(operation.operationTimestamp);
+  document.historyOperations.map((operation) => {
+    operation.creationDate = fullDateTimeHuman(operation.operationTimestamp);
+    operation.creationDateTimeAgo = timeAgo(operation.operationTimestamp);
     switch (operation.operationType) {
       case 1:
         operation.label = "Document created";
@@ -316,11 +283,6 @@ const onRefresh = () => {
     });
 }
 
-
-const handleDragLeave = () => {
-
-};
-
 const handleDrop = (event) => {
   event.preventDefault();
   // Aquí puedes obtener los archivos arrastrados
@@ -329,42 +291,6 @@ const handleDrop = (event) => {
     // Si ya estás usando el q-uploader, puedes agregar los archivos directamente
     uploaderRef.value?.addFiles(files);
   };
-};
-
-const filterAttachmentByText = ref(null);
-
-const filterNotesByText = ref(null);
-
-watch(() => filterAttachmentByText.value, val => {
-  onFilterAttachments(val);
-});
-
-watch(() => filterNotesByText.value, val => {
-  onFilterNotes(val);
-});
-
-const escapeRegExp = (string) => {
-  return string.replace(/[.*+?^=!:${}()|\[\]\/\\]/g, '\\$&');
-};
-
-const onFilterAttachments = (text) => {
-  if (text) {
-    const regex = new RegExp(escapeRegExp(text), 'i');
-    document.files.forEach((file) => { file.visible = !!file.name.match(regex); });
-  } else {
-    document.files.forEach((file) => { file.visible = true; });
-  }
-};
-
-const onFilterNotes = (text) => {
-  if (text) {
-    const regex = new RegExp(escapeRegExp(text), 'i');
-    // WARNING, empty notes will be hidden
-    document.notes.forEach((note) => { note.visible = !!note.body?.match(regex); });
-    // TODO: map new fragment with bold
-  } else {
-    document.notes.forEach((note) => { note.visible = true; });
-  }
 };
 
 function onSubmitForm() {
@@ -481,10 +407,6 @@ function onSubmitForm() {
   }
 }
 
-function onPreviewFile(index) {
-  bus.emit("showDocumentFilePreviewDialog", { document: { id: document.id, title: document.title, attachments: document.files }, currentIndex: index });
-};
-
 function onShowAttachmentsPicker() {
   tab.value = 'attachments';
   nextTick(() => {
@@ -492,13 +414,6 @@ function onShowAttachmentsPicker() {
   });
 }
 
-const onRemoveNoteAtIndex = (index) => {
-  document.notes.splice(index, 1);
-};
-
-const onRemoveFile = (index) => {
-  document.files.splice(index, 1);
-};
 
 function onRemoveSelectedFile() {
   if (selectedFileIndex.value > -1) {
@@ -585,17 +500,6 @@ function onUploadsFinish(e) {
   uploading.value = false;
 }
 
-function onAddNote() {
-  document.notes.unshift({
-    id: uid(),
-    body: null,
-    createdOnTimestamp: currentTimestamp(),
-    creationDate: currentFullDateTimeHuman(),
-    creationDateTimeAgo: currentTimeAgo(),
-    startOnEditMode: true,
-    visible: true
-  });
-}
 
 function onDeleteDocument() {
   loading.value = true;

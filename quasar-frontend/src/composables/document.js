@@ -135,7 +135,7 @@ export function useDocument() {
       },
 
       addNote() {
-        doc.notes.push(
+        doc.notes.unshift(
           reactive({
             id: uid(),
             body: null,

@@ -8,7 +8,7 @@
     </thead>
     <tbody>
       <tr v-for="operation in operations" :key="operation.operationTimestamp">
-        <td>{{ operation.createdOn }} ({{ operation.createdOnTimeAgo }})</td>
+        <td>{{ operation.creationDate }} ({{ operation.creationDateTimeAgo }})</td>
         <td><q-icon size="md" :name="operation.icon" class="q-mr-sm"></q-icon>{{
           t(operation.label) }}
         </td>

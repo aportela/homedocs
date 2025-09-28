@@ -3,7 +3,7 @@
     <q-item class="transparent-background text-color-primary q-pa-none">
       <q-item-section v-show="hasAttachments">
         <q-input type="search" icon="search" outlined dense clearable :disable="disable || !hasAttachments"
-          v-model.trim="filterAttachmentsByFilename" :label="t('Filter by text on file name')"
+          v-model.trim="searchText" :label="t('Filter by text on file name')"
           :placeholder="t('type text search condition')"></q-input>
       </q-item-section>
       <q-item-section side>
@@ -64,7 +64,7 @@ const { t } = useI18n();
 const { requiredFieldRules, fieldIsRequiredLabel } = useFormUtils();
 const { allowPreview } = useFileUtils();
 
-const emit = defineEmits(['update:attachments', 'addAttachment', 'removeAttachmentAtIndex', 'previewAttachmentAtIndex']);
+const emit = defineEmits(['update:attachments', 'addAttachment', 'removeAttachmentAtIndex', 'previewAttachmentAtIndex', 'filter']);
 
 const props = defineProps({
   attachments: {
@@ -81,23 +81,10 @@ const props = defineProps({
 
 const hasAttachments = computed(() => props.attachments.length > 0);
 
-const filterAttachmentsByFilename = ref(null);
+const searchText = ref(null);
 
-const escapeRegExp = (string) => {
-  return string.replace(/[.*+?^=!:${}()|\[\]\/\\]/g, '\\$&');
-};
-
-const onFilterAttachments = (text) => {
-  if (text) {
-    const regex = new RegExp(escapeRegExp(text), 'i');
-    props.attachments.forEach((attachment) => { attachment.visible = !!attachment.name?.match(regex); });
-  } else {
-    props.attachments.forEach((attachment) => { attachment.visible = true; });
-  }
-};
-
-watch(() => filterAttachmentsByFilename.value, val => {
-  onFilterAttachments(val);
+watch(() => searchText.value, val => {
+  emit("filter", val);
 });
 
 const onAddAttachment = () => {
