@@ -1,6 +1,6 @@
 <template>
-  <q-list class="bg-transparent scroll q-pa-sm" style="min-height: 50vh; max-height: 50vh;">
-    <q-item class="transparent-background text-color-primary q-pa-sm">
+  <q-list class="bg-transparent scroll q-pa-sm q-list-notes-container">
+    <q-item class="transparent-background text-color-primary q-pa-none">
       <q-item-section>
         <q-input type="search" icon="search" outlined dense clearable :disable="disable || !hasNotes"
           v-model.trim="filterNotesByText" :label="t('Filter by text on note body')"
@@ -11,12 +11,12 @@
           @click.stop.prevent="onAddNote"></q-btn>
       </q-item-section>
     </q-item>
+    <q-separator class="q-my-md" />
     <div v-if="hasNotes">
-      <q-item class="q-pa-none bg-transparent" v-for="note, noteIndex in localNotes" :key="note.id"
-        v-show="note.visible">
+      <q-item class="q-pa-none bg-transparent" v-for="note, noteIndex in notes" :key="note.id" v-show="note.visible">
         <q-item-section>
           <InteractiveTextFieldCustomInput v-model.trim="note.body" dense outlined type="textarea" maxlength="4096"
-            autogrow name="description" :label="`${note.creationDate} (${timeAgo(note.createdOnTimestamp)})`"
+            autogrow name="description" :label="`${note.creationDate} (${note.creationDateTimeAgo})`"
             :start-mode-editable="!!note.startOnEditMode" :disable="disable" clearable :max-lines="6"
             :rules="requiredFieldRules" :error="!note.body" :error-message="fieldIsRequiredLabel"
             :autofocus="note.startOnEditMode">
@@ -31,24 +31,21 @@
                 @click.stop.prevent="onRemoveNote(noteIndex)">
               </q-icon>
             </template>
-            <!-- TODO: NOT FOCUSING ON TEXTAREA CHANGE TO EDIT MODE -->
           </InteractiveTextFieldCustomInput>
         </q-item-section>
       </q-item>
     </div>
-    <CustomBanner v-else-if="!disable" warning text="No document notes found" class="q-ma-sm">
+    <CustomBanner v-else-if="!disable" warning text="No document notes found" class="q-ma-none">
     </CustomBanner>
   </q-list>
 
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch, nextTick } from "vue";
+import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { uid } from "quasar";
 
 import { useFormUtils } from "src/composables/formUtils"
-import { useFormatDates } from "src/composables/formatDate"
 
 import { default as InteractiveTextFieldCustomInput } from "src/components/Forms/Fields/InteractiveTextFieldCustomInput.vue"
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
@@ -56,9 +53,8 @@ import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue
 const { t } = useI18n();
 
 const { requiredFieldRules, fieldIsRequiredLabel } = useFormUtils();
-const { timeAgo, fullDateTimeHuman, currentTimestamp, currentFullDateTimeHuman } = useFormatDates();
 
-const emit = defineEmits(['update:notes']);
+const emit = defineEmits(['update:notes', 'addNote', 'removeNoteAtIndex']);
 
 const props = defineProps({
   notes: {
@@ -73,38 +69,23 @@ const props = defineProps({
   }
 });
 
-const localNotes = reactive([...props.notes]);
-const hasNotes = computed(() => localNotes.length > 0);
-
-watch(() => props.notes, (newNotes) => {
-  localNotes.length = 0;
-  localNotes.push(...newNotes);
-});
+const hasNotes = computed(() => props.notes.length > 0);
 
 const filterNotesByText = ref(null);
 
 const onAddNote = () => {
-  localNotes.push(
-    reactive({ // TODO: GET NEW NOTE FROM COMPOSABLE
-      id: uid(),
-      body: null,
-      // TODO: timeAgo
-      createdOnTimestamp: currentTimestamp(),
-      creationDate: currentFullDateTimeHuman(),
-      startOnEditMode: true,
-      visible: true
-    })
-  );
-  emit("update:notes", localNotes);
-};
-
-const onUpdateNote = () => {
-  emit("update:notes", localNotes);
+  emit("addNote");
 };
 
 const onRemoveNote = (index) => {
-  localNotes?.splice(index, 1);
-  emit("update:notes", localNotes);
+  emit("removeNoteAtIndex", index);
 };
 
 </script>
+
+<style scoped>
+.q-list-notes-container {
+  min-height: 50vh;
+  max-height: 50vh;
+}
+</style>

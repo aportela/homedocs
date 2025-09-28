@@ -130,8 +130,8 @@
                       </CustomBanner>
                     </q-tab-panel>
                     <q-tab-panel name="notes" class="q-pa-none scroll" style="min-height: 50vh; max-height: 50vh;">
-                      <DocumentDetailsNotes v-model:notes="document.notes"
-                        :disable="loading || saving || state.loading">
+                      <DocumentDetailsNotes v-model:notes="document.notes" :disable="loading || saving || state.loading"
+                        @add-note="onAddNote" @remove-note-at-index="(index) => onRemoveNoteAtIndex(index)">
                       </DocumentDetailsNotes>
                     </q-tab-panel>
                     <q-tab-panel name="history" class="q-pa-none scroll" style="min-height: 50vh; max-height: 50vh;"
@@ -253,7 +253,7 @@ const { screen } = useQuasar();
 
 const isScreenGreaterThanMD = computed(() => screen.gt.md);
 
-const { timeAgo, fullDateTimeHuman, currentTimestamp, currentFullDateTimeHuman } = useFormatDates();
+const { timeAgo, fullDateTimeHuman, currentTimestamp, currentFullDateTimeHuman, currentTimeAgo } = useFormatDates();
 
 const { allowPreview } = useFileUtils();
 
@@ -607,7 +607,7 @@ function onShowAttachmentsPicker() {
   });
 }
 
-const onRemoveNote = (index) => {
+const onRemoveNoteAtIndex = (index) => {
   document.notes.splice(index, 1);
 };
 
@@ -706,6 +706,7 @@ function onAddNote() {
     body: null,
     createdOnTimestamp: currentTimestamp(),
     creationDate: currentFullDateTimeHuman(),
+    creationDateTimeAgo: currentTimeAgo(),
     startOnEditMode: true,
     visible: true
   });
