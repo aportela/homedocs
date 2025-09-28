@@ -83,13 +83,12 @@
                         @remove-attachment-at-idx="(index) => removeAttachmentAtIdx(index)"
                         @preview-attachment-at-idx="(index) => onPreviewFile(index)"></DocumentDetailsAttachments>
                     </q-tab-panel>
-                    <q-tab-panel name="notes" class="q-pa-none scroll" style="min-height: 50vh; max-height: 50vh;">
+                    <q-tab-panel name="notes" class="q-pa-none">
                       <DocumentDetailsNotes v-model:notes="document.notes" :disable="loading || saving || state.loading"
                         @add-note="onAddNote" @remove-note-at-index="(index) => onRemoveNoteAtIndex(index)">
                       </DocumentDetailsNotes>
                     </q-tab-panel>
-                    <q-tab-panel name="history" class="q-pa-none scroll" style="min-height: 50vh; max-height: 50vh;"
-                      v-if="document.id">
+                    <q-tab-panel name="history" class="q-pa-none" v-if="document.id">
                       <DocumentDetailsHistory v-model:operations="document.history"
                         :disable="loading || saving || state.loading"></DocumentDetailsHistory>
                     </q-tab-panel>

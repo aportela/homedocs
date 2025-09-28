@@ -1,5 +1,5 @@
 <template>
-  <q-list class="bg-transparent scroll q-pa-sm q-list-notes-container">
+  <q-list class="bg-transparent q-pa-sm">
     <q-item class="transparent-background text-color-primary q-pa-none">
       <q-item-section v-show="hasNotes">
         <q-input type="search" icon="search" outlined dense clearable :disable="disable || !hasNotes"
@@ -12,7 +12,7 @@
       </q-item-section>
     </q-item>
     <q-separator class="q-my-md" />
-    <div v-if="hasNotes">
+    <div v-if="hasNotes" class="q-list-notes-container scroll">
       <q-item class="q-pa-none bg-transparent" v-for="note, noteIndex in notes" :key="note.id" v-show="note.visible">
         <q-item-section>
           <InteractiveTextFieldCustomInput v-model.trim="note.body" dense outlined type="textarea" maxlength="4096"

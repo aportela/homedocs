@@ -1,5 +1,5 @@
 <template>
-  <q-list class="bg-transparent scroll q-pa-sm q-list-attachments-container">
+  <q-list class="bg-transparent q-pa-sm">
     <q-item class="transparent-background text-color-primary q-pa-none">
       <q-item-section v-show="hasAttachments">
         <q-input type="search" icon="search" outlined dense clearable :disable="disable || !hasAttachments"
@@ -12,7 +12,7 @@
       </q-item-section>
     </q-item>
     <q-separator class="q-my-md" />
-    <div v-if="hasAttachments">
+    <div v-if="hasAttachments" class="q-list-attachments-container scroll">
       <q-item class="q-pa-none bg-transparent" v-for="attachment, attachmentIndex in attachments" :key="attachment.id"
         v-show="attachment.visible">
         <q-item-section class="q-mx-md">
