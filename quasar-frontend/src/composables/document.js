@@ -1,5 +1,5 @@
 import { reactive } from "vue";
-import { uid } from "quasar";
+import { uid, format } from "quasar";
 import { bus } from "src/boot/bus";
 
 import { useFormatDates } from "src/composables/formatDate";
@@ -40,12 +40,15 @@ export function useDocument() {
       hasFiles() {
         return doc.files?.length > 0;
       },
+
       hasTags() {
         return doc.tags?.length > 0;
       },
+
       hasNotes() {
         return doc.notes?.length > 0;
       },
+
       hasHistoryOperations() {
         return doc.historyOperations?.length > 0;
       },
@@ -69,7 +72,7 @@ export function useDocument() {
         doc.historyOperations.length = 0;
       },
 
-      set(data) {
+      setFromAPIJSON(data) {
         doc.id = data.id;
         doc.title = data.title;
         doc.description = data.description;
@@ -101,18 +104,60 @@ export function useDocument() {
 
         doc.files.length = 0;
         if (Array.isArray(data.files)) {
-          doc.files.push(...JSON.parse(JSON.stringify(data.files)));
+          doc.files.push(
+            ...JSON.parse(JSON.stringify(data.files)).map((file) => {
+              file.isNew = false;
+              file.creationDate = fullDateTimeHuman(file.createdOnTimestamp);
+              file.creationDateTimeAgo = timeAgo(file.createdOnTimestamp);
+              file.humanSize = format.humanStorageSize(file.size);
+              file.url = "api2/file/" + file.id;
+              file.visible = true;
+              return file;
+            }),
+          );
         }
 
         doc.notes.length = 0;
         if (Array.isArray(data.notes)) {
-          doc.notes.push(...JSON.parse(JSON.stringify(data.notes)));
+          doc.notes.push(
+            ...JSON.parse(JSON.stringify(data.notes)).map((note) => {
+              note.isNew = false;
+              note.creationDate = fullDateTimeHuman(note.createdOnTimestamp);
+              note.creationDateTimeAgo = timeAgo(note.createdOnTimestamp);
+              note.expanded = false;
+              note.startOnEditMode = false; // this is only required when adding new note
+              note.visible = true; // all notes visible by default
+              return note;
+            }),
+          );
         }
 
         doc.historyOperations.length = 0;
         if (Array.isArray(data.history)) {
           doc.historyOperations.push(
-            ...JSON.parse(JSON.stringify(data.history)),
+            ...JSON.parse(JSON.stringify(data.history)).map((operation) => {
+              operation.creationDate = fullDateTimeHuman(
+                operation.operationTimestamp,
+              );
+              operation.creationDateTimeAgo = timeAgo(
+                operation.operationTimestamp,
+              );
+              switch (operation.operationType) {
+                case 1:
+                  operation.label = "Document created";
+                  operation.icon = "post_add";
+                  break;
+                case 2:
+                  operation.label = "Document updated";
+                  operation.icon = "edit_note";
+                  break;
+                default:
+                  operation.label = "Unknown operation";
+                  operation.icon = "error";
+                  break;
+              }
+              return operation;
+            }),
           );
         }
       },

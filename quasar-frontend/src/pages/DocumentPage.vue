@@ -72,7 +72,7 @@
                     <q-tab name="history" icon="view_timeline" :disable="state.loading" :label="t('History')"
                       v-if="document.id">
                       <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                        }}</q-badge>
+                      }}</q-badge>
                     </q-tab>
                   </q-tabs>
                 </q-card-section>
@@ -204,46 +204,6 @@ router.beforeEach(async (to, from) => {
   }
 });
 
-const parseDocumentJSONResponse = (documentData) => {
-  document.set(documentData);
-  document.files.map((file) => {
-    file.isNew = false;
-    file.createdOn = fullDateTimeHuman(file.createdOnTimestamp);
-    file.humanSize = format.humanStorageSize(file.size);
-    file.url = "api2/file/" + file.id;
-    file.visible = true;
-    return (file);
-  });
-  document.notes.map((note) => {
-    note.isNew = false;
-    note.creationDate = fullDateTimeHuman(note.createdOnTimestamp);
-    note.creationDateTimeAgo = timeAgo(note.createdOnTimestamp);
-    note.expanded = false;
-    note.startOnEditMode = false; // this is only required when adding new note
-    note.visible = true; // all notes visible by default
-    return (note);
-  });
-  document.historyOperations.map((operation) => {
-    operation.creationDate = fullDateTimeHuman(operation.operationTimestamp);
-    operation.creationDateTimeAgo = timeAgo(operation.operationTimestamp);
-    switch (operation.operationType) {
-      case 1:
-        operation.label = "Document created";
-        operation.icon = "post_add";
-        break;
-      case 2:
-        operation.label = "Document updated";
-        operation.icon = "edit_note";
-        break;
-      default:
-        operation.label = "Unknown operation";
-        operation.icon = "error";
-        break;
-    }
-    return (operation);
-  });
-};
-
 const onRefresh = () => {
   loading.value = true;
   state.loading = true;
@@ -255,7 +215,7 @@ const onRefresh = () => {
   api.document
     .get(document.id)
     .then((successResponse) => {
-      parseDocumentJSONResponse(successResponse.data.document);
+      document.setFromAPIJSON(successResponse.data.document);
       loading.value = false;
       state.loading = false;
       if (titleRef.value) {
@@ -263,6 +223,7 @@ const onRefresh = () => {
       }
     })
     .catch((errorResponse) => {
+      console.error(errorResponse);
       loading.value = false;
       state.apiError = errorResponse.customAPIErrorDetails;
       switch (errorResponse.response.status) {
@@ -307,7 +268,7 @@ function onSubmitForm() {
         if (successResponse.data.document) {
           readOnlyTitle.value = true;
           readOnlyDescription.value = true;
-          parseDocumentJSONResponse(successResponse.data.document);
+          document.setFromAPIJSON(successResponse.data.document);
           loading.value = false;
           state.loading = false;
           // TODO: translate "Document saved" label
