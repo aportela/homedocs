@@ -493,7 +493,8 @@ const onFilterAttachments = (text) => {
 const onFilterNotes = (text) => {
   if (text) {
     const regex = new RegExp(escapeRegExp(text), 'i');
-    document.notes.forEach((note) => { note.visible = !!note.body.match(regex); });
+    // WARNING, empty notes will be hidden
+    document.notes.forEach((note) => { note.visible = !!note.body?.match(regex); });
     // TODO: map new fragment with bold
   } else {
     document.notes.forEach((note) => { note.visible = true; });
