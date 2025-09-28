@@ -74,7 +74,7 @@
                     <q-tab name="history" icon="view_timeline" :disable="state.loading" :label="t('History')"
                       v-if="document.id">
                       <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                      }}</q-badge>
+                        }}</q-badge>
                     </q-tab>
                   </q-tabs>
                 </q-card-section>
@@ -449,10 +449,11 @@ const onUploadsStart = (e) => {
   uploading.value = true;
 }
 
-// q-uploader component event => file upload finish
+// q-uploader component event => file upload finish (all files)
 const onUploadsFinish = (e) => {
   console.log("onUploadsFinish");
   uploading.value = false;
+  uploaderRef.value?.reset();
 }
 
 onMounted(() => {
