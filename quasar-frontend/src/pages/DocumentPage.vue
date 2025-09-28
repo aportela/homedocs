@@ -20,7 +20,7 @@
         </q-card-section>
         <form @submit.prevent.stop="onSubmitForm" autocorrect="off" autocapitalize="off" autocomplete="off"
           spellcheck="false">
-          <q-tabs class="lt-lg" v-model="topTab">
+          <q-tabs class="lt-lg q-mb-sm" v-model="topTab">
             <q-tab name="metadata" icon="description" :label="t('Document metadata')"
               class="cursor-default full-width"></q-tab>
             <q-tab name="details" icon="list_alt" :label="t('Document details')"
