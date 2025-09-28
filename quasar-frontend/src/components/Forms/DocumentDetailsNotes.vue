@@ -3,7 +3,7 @@
     <q-item class="transparent-background text-color-primary q-pa-none">
       <q-item-section>
         <q-input type="search" icon="search" outlined dense clearable :disable="disable || !hasNotes"
-          v-model.trim="filterNotesByText" :label="t('Filter by text on note body')"
+          v-model.trim="filterNotesByBody" :label="t('Filter by text on note body')"
           :placeholder="t('type text search condition')"></q-input>
       </q-item-section>
       <q-item-section side>
@@ -42,7 +42,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { useFormUtils } from "src/composables/formUtils"
@@ -71,7 +71,24 @@ const props = defineProps({
 
 const hasNotes = computed(() => props.notes.length > 0);
 
-const filterNotesByText = ref(null);
+const filterNotesByBody = ref(null);
+
+const escapeRegExp = (string) => {
+  return string.replace(/[.*+?^=!:${}()|\[\]\/\\]/g, '\\$&');
+};
+
+const onFilterNotes = (text) => {
+  if (text) {
+    const regex = new RegExp(escapeRegExp(text), 'i');
+    props.notes.forEach((note) => { note.visible = !!note.body?.match(regex); });
+  } else {
+    props.notes.forEach((note) => { note.visible = true; });
+  }
+};
+
+watch(() => filterNotesByBody.value, val => {
+  onFilterNotes(val);
+});
 
 const onAddNote = () => {
   emit("addNote");
