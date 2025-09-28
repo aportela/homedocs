@@ -114,45 +114,6 @@
         </form>
       </q-card>
     </div>
-    <!--
-    <DocumentFilesPreviewDialog v-if="showPreviewFileDialog" :files="document.files" :index="selectedFileIndex"
-      @close="showPreviewFileDialog = false">
-    </DocumentFilesPreviewDialog>
-    <NoteModal v-if="showNoteDialog" @close="showNoteDialog = false" @cancel="showNoteDialog = false" @add="onAddNote"
-      @update="onUpdateNote" :note="currentNote">
-    </NoteModal>
-    <ConfirmationDialog
-      v-if="showConfirmDeleteFileDialog || showConfirmDeleteDocumentDialog || showConfirmDeleteNoteDialog"
-      @close="onCancelConfirmationModal" @cancel="onCancelConfirmationModal" @ok="onSuccessConfirmationModal">
-      <template v-slot:header v-if="showConfirmDeleteFileDialog">
-        <div class="text-h6">{{ t("Remove document file") }}</div>
-        <div class="text-subtitle2">{{ document.files[selectedFileIndex].name }}</div>
-      </template>
-      <template v-slot:header v-else-if="showConfirmDeleteDocumentDialog">
-        <div class="text-h6">{{ t("Delete document") }}</div>
-        <div class="text-subtitle2">{{ t("Document title") + ": " + document.title }}</div>
-      </template>
-      <template v-slot:header v-else-if="showConfirmDeleteNoteDialog">
-        <div class="text-h6">{{ t("Delete note") }}</div>
-      </template>
-      <template v-slot:body v-if="showConfirmDeleteFileDialog">
-        <strong>{{ t("Are you sure ? (You must save the document after deleting this file)") }}</strong>
-      </template>
-      <template v-slot:body v-else-if="showConfirmDeleteNoteDialog">
-        <q-card>
-          <q-card-section class="white-space-pre-line">
-            {{ document.notes[selectedNoteIndex].body }}
-          </q-card-section>
-        </q-card>
-        <p class="q-mt-md">
-          <strong>{{ t("Are you sure ? (You must save the document after deleting this note)") }}</strong>
-        </p>
-      </template>
-      <template v-slot:body v-else-if="showConfirmDeleteDocumentDialog">
-        <strong>{{ t("This operation cannot be undone. Would you like to proceed ?") }}</strong>
-      </template>
-    </ConfirmationDialog>
-    -->
   </q-page>
 </template>
 
@@ -171,8 +132,6 @@ import { useFileUtils } from "src/composables/fileUtils"
 import { useInitialStateStore } from "src/stores/initialState";
 
 import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
-//import { default as ConfirmationDialog } from "src/components/Dialogs/ConfirmationDialog.vue";
-//import { default as DocumentFilesPreviewDialog } from "src/components/Dialogs/DocumentFilesPreviewDialog.vue";
 import { default as DocumentMetadataTopForm } from "src/components/Forms/DocumentMetadataTopForm.vue"
 import { default as DocumentDetailsAttachments } from "src/components/Forms/DocumentDetailsAttachments.vue"
 import { default as DocumentDetailsNotes } from "src/components/Forms/DocumentDetailsNotes.vue"
@@ -526,22 +485,6 @@ function onSubmitForm() {
 function onPreviewFile(index) {
   bus.emit("showDocumentFilePreviewDialog", { document: { id: document.id, title: document.title, attachments: document.files }, currentIndex: index });
 };
-
-
-function onCancelConfirmationModal() {
-  showConfirmDeleteFileDialog.value = false;
-  showConfirmDeleteDocumentDialog.value = false;
-  showConfirmDeleteNoteDialog.value = false;
-}
-
-function onSuccessConfirmationModal() {
-  if (showConfirmDeleteFileDialog.value) {
-    onRemoveSelectedFile();
-  } else if (showConfirmDeleteNoteDialog.value) {
-  } else if (showConfirmDeleteDocumentDialog.value) {
-    onDeleteDocument();
-  }
-}
 
 function onShowAttachmentsPicker() {
   tab.value = 'attachments';
