@@ -100,7 +100,6 @@ watch(() => filterAttachmentsByFilename.value, val => {
   onFilterAttachments(val);
 });
 
-
 const onAddAttachment = () => {
   emit("addAttachment");
 };
