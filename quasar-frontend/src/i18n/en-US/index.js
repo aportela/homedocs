@@ -211,4 +211,5 @@ export default {
   "Filter by text on note body": "Filter by text on note body",
   "Filter by text on file name": "Filter by text on file name",
   "type text search condition": "type text search condition",
+  "type note body": "type note body",
 };

@@ -1,7 +1,7 @@
 <template>
   <q-list class="bg-transparent scroll q-pa-sm q-list-notes-container">
     <q-item class="transparent-background text-color-primary q-pa-none">
-      <q-item-section>
+      <q-item-section v-show="hasNotes">
         <q-input type="search" icon="search" outlined dense clearable :disable="disable || !hasNotes"
           v-model.trim="filterNotesByBody" :label="t('Filter by text on note body')"
           :placeholder="t('type text search condition')"></q-input>
@@ -19,7 +19,7 @@
             autogrow name="description" :label="`${note.creationDate} (${note.creationDateTimeAgo})`"
             :start-mode-editable="!!note.startOnEditMode" :disable="disable" clearable :max-lines="6"
             :rules="requiredFieldRules" :error="!note.body" :error-message="fieldIsRequiredLabel"
-            :autofocus="note.startOnEditMode">
+            :autofocus="note.startOnEditMode" :placeholder="t('type note body')">
             <template v-slot:top-icon-append="{ showTopHoverIcons }">
               <q-icon name="delete" size="sm" class="q-ml-sm q-mr-sm" clickable v-show="showTopHoverIcons"
                 @click.stop.prevent="onRemoveNote(noteIndex)">

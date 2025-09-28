@@ -1,7 +1,7 @@
 <template>
   <q-list class="bg-transparent scroll q-pa-sm q-list-attachments-container">
     <q-item class="transparent-background text-color-primary q-pa-none">
-      <q-item-section>
+      <q-item-section v-show="hasAttachments">
         <q-input type="search" icon="search" outlined dense clearable :disable="disable || !hasAttachments"
           v-model.trim="filterAttachmentsByFilename" :label="t('Filter by text on file name')"
           :placeholder="t('type text search condition')"></q-input>

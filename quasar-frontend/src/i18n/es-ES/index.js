@@ -212,4 +212,5 @@ export default {
   "Filter by text on note body": "Filtrar por texto en el cuerpo de la nota",
   "Filter by text on file name": "Filtrar por texto en el nombre del archivo",
   "type text search condition": "teclee la condición de búsqueda por texto",
+  "type note body": "teclee el texto de la nota",
 };
