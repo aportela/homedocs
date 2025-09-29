@@ -72,7 +72,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.loading" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                      }}</q-badge>
+                    }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
@@ -368,39 +368,6 @@ const onShowDeleteDocumentConfirmationDialog = () => {
     showDeleteDocumentConfirmationDialog.value = true;
   }
 };
-
-const onDeleteDocument = () => {
-  loading.value = true;
-  api.document.
-    remove(document.id)
-    .then((successResponse) => {
-      loading.value = false;
-      // TODO (notification ?)
-      router.push({
-        name: "index",
-      });
-    })
-    .catch((errorResponse) => {
-      // TODO
-      loading.value = false;
-      switch (errorResponse.response.status) {
-        case 401:
-          state.apiError = errorResponse.customAPIErrorDetails;
-          state.errorMessage = "Auth session expired, requesting new...";
-          bus.emit("reAuthRequired", { emitter: "DocumentPage.onRefresh" });
-          break;
-        case 403:
-          // TODO
-          break;
-        case 404:
-          // TODO
-          break;
-        default:
-          // TODO
-          break;
-      }
-    });
-}
 
 const onShowAttachmentsPicker = () => {
   rightDetailsTab.value = 'attachments';
