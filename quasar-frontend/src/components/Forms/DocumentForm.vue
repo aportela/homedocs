@@ -149,27 +149,26 @@ const { screen } = useQuasar();
 const initialState = useInitialStateStore();
 const { requiredFieldRules, fieldIsRequiredLabel } = useFormUtils();
 
-router.beforeEach(async (to, from) => {
-  if (to.name == "newDocument") {
-    // new document, reset form fields
-    document.reset();
-  } else if (from.name == "newDocument" && to.name == "document" && to.params.id) {
-    // existent document from creation
-    document.reset();
-    document.id = to.params.id
-    onRefresh();
-  } else if (from.name != "newDocument" && to.name == "document" && to.params.id) {
-    // existent document
-    document.reset();
-    document.id = to.params.id
-    onRefresh();
+const props = defineProps({
+  documentId: {
+    type: String,
+    required: false,
   }
 });
 
 const isScreenGreaterThanMD = computed(() => screen.gt.md);
-const isNewDocument = computed(() => router.currentRoute.value.name == 'newDocument');
+const isNewDocument = computed(() => !!props.documentId);
 
 const document = useDocument().getNewDocument();
+
+watch(() => props.documentId, val => {
+  if (val) {
+    document.id = val;
+    document.onRefresh();
+  } else {
+    document.reset();
+  }
+});
 
 const maxUploadFileSize = computed(() => initialState.maxUploadFileSize);
 const uploaderRef = ref(null);
