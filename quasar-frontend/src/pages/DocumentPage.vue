@@ -74,7 +74,7 @@
                     <q-tab name="history" icon="view_timeline" :disable="state.loading" :label="t('History')"
                       v-if="document.id">
                       <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                        }}</q-badge>
+                      }}</q-badge>
                     </q-tab>
                   </q-tabs>
                 </q-card-section>
@@ -288,6 +288,7 @@ const onSubmitForm = () => {
               })
             ) {
               state.errorMessage = t("API Error: missing document title param");
+              smallScreensTopTab.value = "metadata";
               nextTick(() => documentTitleFieldRef.value?.focus());
             } else if (
               errorResponse.response.data.invalidOrMissingParams.find(function (e) {
@@ -295,6 +296,8 @@ const onSubmitForm = () => {
               })
             ) {
               state.errorMessage = t("API Error: missing document note body");
+              smallScreensTopTab.value = "details";
+              rightDetailsTab.value = "notes";
               // TODO: focus note without body ???
             } else {
               state.errorMessage = "API Error: fatal error";
@@ -336,6 +339,7 @@ const onSubmitForm = () => {
               })
             ) {
               state.errorMessage = t("API Error: missing document title param");
+              smallScreensTopTab.value = "metadata";
               nextTick(() => documentTitleFieldRef.value?.focus());
             } else if (
               errorResponse.response.data.invalidOrMissingParams.find(function (e) {
@@ -343,6 +347,8 @@ const onSubmitForm = () => {
               })
             ) {
               state.errorMessage = t("API Error: missing document note body");
+              smallScreensTopTab.value = "details";
+              rightDetailsTab.value = "notes";
               // TODO: focus note without body ???
             } else {
               state.errorMessage = "API Error: fatal error";
