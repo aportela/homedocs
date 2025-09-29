@@ -130,7 +130,6 @@ import { uid, format, date, useQuasar } from "quasar";
 
 import { bus } from "src/boot/bus";
 import { api } from "src/boot/axios";
-import { useFormatDates } from "src/composables/formatDate"
 import { useFormUtils } from "src/composables/formUtils"
 import { useDocument } from "src/composables/document"
 import { useInitialStateStore } from "src/stores/initialState";
@@ -150,7 +149,6 @@ const router = useRouter();
 const { screen } = useQuasar();
 const initialState = useInitialStateStore();
 const { requiredFieldRules, fieldIsRequiredLabel } = useFormUtils();
-const { timeAgo, fullDateTimeHuman, currentTimestamp, currentFullDateTimeHuman, currentTimeAgo } = useFormatDates();
 
 router.beforeEach(async (to, from) => {
   if (to.name == "newDocument") {
