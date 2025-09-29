@@ -57,9 +57,7 @@
                 <span class="text-weight-bold">{{ t("Description") }}:</span> {{ recentDocument.description
                 }}</q-item-label>
               <q-item-label v-if="recentDocument.tags?.length > 0">
-                <BrowseByTagButton v-for="tag in recentDocument.tags" :key="tag"
-                  :to="{ name: 'advancedSearchByTag', params: { tag: tag } }" :tag="tag" icon="tag">
-                </BrowseByTagButton>
+                <BrowseByTagButton v-for="tag in recentDocument.tags" :key="tag" :tag="tag" icon="tag" />
               </q-item-label>
             </q-item-section>
             <q-item-section side top>
