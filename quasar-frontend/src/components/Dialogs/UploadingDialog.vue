@@ -1,14 +1,13 @@
 <template>
   <q-dialog v-model="visible" @hide="onClose">
-    <q-card style="width: 60%; max-width: 80vw;">
+    <q-card class="q-card-uploading-dialog">
       <q-card-section class="row q-p-none">
-        <div class="q-card-attachments-dialog-header col">File uploader
-        </div>
+        <div class="q-card-attachments-dialog-header col">{{ t("HomeDocs file upload manager") }}</div>
         <q-space />
         <div>
           <q-chip size="md" square class="gt-sm theme-default-q-chip">
-            <q-avatar class="theme-default-q-avatar">{{ files.length }}</q-avatar>
-            {{ t("Total files", { count: files.length }) }}
+            <q-avatar class="theme-default-q-avatar">{{ transfers.length }}</q-avatar>
+            {{ t("Total transfers", { count: transfers.length }) }}
           </q-chip>
           <q-btn icon="close" flat round dense v-close-popup aria-label="Close modal" />
         </div>
@@ -16,19 +15,40 @@
       <q-separator class="q-mb-md"></q-separator>
       <q-card-section class="q-p-none">
         <slot name="body">
-          <div v-if="files">
-            <p v-for="file, fileIndex in files" :key="fileIndex">
-              <q-icon name="cancel" v-if="file.error" />
-              <q-icon name="check" v-else-if="file.done" />
-              <q-spinner v-else />
-              Filename: {{ file.name }} ({{
-                format.humanStorageSize(file.size) }})
-              - {{ file.start || 0 }} -- {{ file.end || 0 }}
-              <span v-if="file.start && file.end">Total transfer time: {{ diff(file.start, file.end) }}</span>
-            </p>
-          </div>
-
-          <q-linear-progress indeterminate class="q-mt-sm" v-if="transfering" />
+          <q-markup-table v-if="transfers?.length > 0">
+            <thead>
+              <tr>
+                <th class="text-left">{{ t("Name") }}</th>
+                <th class="text-right">{{ t("Size") }}</th>
+                <th class="text-right">{{ t("Start") }}</th>
+                <th class="text-right">{{ t("End") }}</th>
+                <th class="text-center">{{ t("Status") }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="transfer, transferIndex in transfers" :key="transferIndex" class="text-white"
+                :class="{ 'bg-green-5': transfer.done, 'bg-red-4': transfer.error, 'bg-light-blue': transfer.uploading }">
+                <td class="text-left">{{ transfer.filename }}</td>
+                <td class="text-right">{{ format.humanStorageSize(transfer.filesize) }}</td>
+                <td class="text-right">{{ fullDateTimeHuman(transfer.start) }}</td>
+                <td class="text-right">{{ fullDateTimeHuman(transfer.end) }}</td>
+                <td class="text-center">
+                  <q-chip square v-if="transfer.error" class="full-width bg-red-9 text-white">
+                    <q-avatar icon="cancel" class="q-ma-xs" />
+                    {{ t(transfer.errorMessage) }}
+                  </q-chip>
+                  <q-chip square v-else-if="transfer.done" class="full-width bg-green-9 text-white">
+                    <q-avatar icon="check" class="q-ma-xs" />
+                    {{ t("Upload complete") }}
+                  </q-chip>
+                  <q-chip square v-else-if="transfer.uploading" class="full-width bg-light-blue-9 text-white">
+                    <q-spinner size="sm" class="q-ma-xs" />
+                    {{ t("Uploading...") }}
+                  </q-chip>
+                </td>
+              </tr>
+            </tbody>
+          </q-markup-table>
         </slot>
       </q-card-section>
       <q-separator class="q-my-sm"></q-separator>
@@ -40,7 +60,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { format } from "quasar";
 import { useI18n } from "vue-i18n";
 
@@ -48,28 +68,41 @@ import { useFormatDates } from "src/composables/formatDate"
 
 const { t } = useI18n();
 
-const { diff } = useFormatDates();
+const { fullDateTimeHuman } = useFormatDates();
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(['update:modelValue', 'close']);
 
 const props = defineProps({
-  files: {
+  modelValue: {
+    type: Boolean,
+    required: true
+  },
+  transfers: {
     type: Array,
     required: false,
-    default: () => []
-  },
-  transfering: {
-    type: Boolean,
-    required: false,
-    default: true,
+    default: () => [],
+    validator(value) {
+      return Array.isArray(value);
+    }
   }
 });
 
-const visible = ref(true);
+const visible = ref(props.modelValue);
+
+watch(() => props.modelValue, val => { visible.value = val; });
+
+watch(() => visible, val => { emit('update:modelValue', val); });
 
 const onClose = () => {
   visible.value = false;
-  emit('close');
+  emit('update:modelValue', false);
 }
 
 </script>
+
+<style scoped>
+.q-card-uploading-dialog {
+  min-width: 50vw;
+  max-width: 90vw;
+}
+</style>

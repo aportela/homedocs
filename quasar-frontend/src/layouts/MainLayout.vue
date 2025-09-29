@@ -42,8 +42,7 @@
       :document-id="dialogs.documentNotesPreview.document.id"
       :document-title="dialogs.documentNotesPreview.document.title"
       @close="dialogs.documentNotesPreview.visible = false" />
-    <UploadingDialog v-if="dialogs.uploading.visible" :files="dialogs.uploading.files"
-      :transfering="dialogs.uploading.transfering" @close="dialogs.uploading.visible = false" />
+    <UploadingDialog v-model="dialogs.uploading.visible" :transfers="dialogs.uploading.transfers" />
   </q-layout>
 </template>
 
@@ -51,6 +50,8 @@
 import { ref, reactive, watch, computed, onMounted, onBeforeUnmount } from "vue";
 import { useQuasar, LocalStorage } from "quasar";
 import { useI18n } from "vue-i18n";
+
+import { useFormatDates } from "src/composables/formatDate"
 import { useSessionStore } from "src/stores/session";
 import { bus } from "src/boot/bus";
 
@@ -72,6 +73,8 @@ const $q = useQuasar();
 const { t } = useI18n();
 
 const session = useSessionStore();
+
+const { currentTimestamp } = useFormatDates();
 
 if (!session.isLoaded) {
   session.load();
@@ -109,7 +112,7 @@ const dialogs = reactive({
   },
   uploading: {
     visible: false,
-    files: []
+    transfers: []
   }
 });
 
@@ -183,95 +186,90 @@ onMounted(() => {
   });
 
   bus.on("showUploadingDialog", (msg) => {
-    dialogs.uploading.files = msg.files.map((file) => {
+    dialogs.uploading.transfers = msg.transfers.map((transfer) => {
       return ({
-        name: file.name,
-        size: file.size,
-        start: file.start,
+        filename: transfer.name,
+        filesize: transfer.size,
+        start: currentTimestamp(),
         end: null,
+        uploading: true,
         done: false,
-        error: false
+        error: false,
+        errorMessage: null,
       })
     }) || [];
-    dialogs.uploading.transfering = true;
-    dialogs.uploading.visible = true;
+    dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0;
   });
 
-  bus.on("refreshUploadingDialog", (msg) => {
-    if (dialogs.uploading.files.length > 0) {
-      msg.files?.forEach((uploadedFile) => {
-        const existentFile = dialogs.uploading.files?.find((file) => uploadedFile.name == file.name && uploadedFile.size == file.size);
-        if (existentFile) {
-          existentFile.done = true;
-          existentFile.end = uploadedFile.end;
+  bus.on("refreshUploadingDialog.fileUploaded", (msg) => {
+    if (dialogs.uploading.transfers.length > 0) {
+      msg.transfers?.forEach((completedTransfer) => {
+        const foundTransfer = dialogs.uploading.transfers?.find((transfer) => completedTransfer.name == transfer.filename && completedTransfer.size == transfer.filesize);
+        if (foundTransfer) {
+          foundTransfer.end = currentTimestamp();
+          foundTransfer.uploading = false;
+          foundTransfer.done = true;
         } else {
-          dialogs.uploading.files.push({
-            name: uploadedFile.name,
-            size: uploadedFile.size,
-            start: uploadedFile.start, // TODO: exists ?
-            end: uploadedFile.end,
-            done: true,
-            error: false
-          });
+          // TODO:
+          console.error("Transfer not found");
         }
       });
     } else {
-      dialogs.uploading.files = msg.files?.map((file) => {
-        return ({
-          name: file.name,
-          size: file.size,
-          start: file.start, // TODO: exists ?
-          end: file.end,
-          done: true,
-          error: false
-        });
-      })
+      console.error("Missing previous transfers");
     }
-    const totalDone = dialogs.uploading.files?.filter((file) => file.done == true).length;
-    const totalError = dialogs.uploading.files?.filter((file) => file.error == true).length;
-    dialogs.uploading.transfering = totalDone + totalError != dialogs.uploading.files?.length;
-    dialogs.uploading.visible = true;
+    dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0;
   });
 
-  bus.on("refreshUploadingDialogErrors", (msg) => {
-    if (dialogs.uploading.files.length > 0) {
-      msg.files?.forEach((errorFile) => {
-        const existentFile = dialogs.uploading.files?.find((file) => errorFile.name == file.name && errorFile.size == file.size);
-        if (existentFile) {
-          existentFile.done = true;
-          existentFile.end = errorFile.end;
-        } else {
-          dialogs.uploading.files.push({
-            name: errorFile.name,
-            size: errorFile.size,
-            start: errorFile.start,
-            end: errorFile.end,
-            done: false,
-            error: true
-          });
-        }
-      });
-    } else {
-      dialogs.uploading.files = msg.files?.map((file) => {
-        return ({
-          name: file.name,
-          size: file.size,
-          start: file.start,
-          end: file.end,
+  bus.on("refreshUploadingDialog.fileUploadRejected", (msg) => {
+    msg.transfers?.forEach((transferUploadedWithError) => {
+      const foundTransfer = dialogs.uploading.transfers?.find((transfer) => transferUploadedWithError.name == transfer.filename && transferUploadedWithError.size == transfer.filesize);
+      if (foundTransfer) {
+        foundTransfer.end = currentTimestamp();
+        foundTransfer.uploading = false;
+        foundTransfer.error = true;
+        foundTransfer.errorMessage = "Upload rejected";
+      } else {
+        dialogs.uploading.transfers.unshift({
+          filename: transferUploadedWithError.name,
+          filesize: transferUploadedWithError.size,
+          start: currentTimestamp(),
+          end: currentTimestamp(),
+          uploading: false,
           done: false,
-          error: true
+          error: true,
+          errorMessage: "Upload rejected",
         });
-      })
-    }
-    const totalDone = dialogs.uploading.files?.filter((file) => file.done == true).length;
-    const totalError = dialogs.uploading.files?.filter((file) => file.error == true).length;
-    dialogs.uploading.transfering = totalDone + totalError != dialogs.uploading.files?.length;
-    dialogs.uploading.visible = true;
+      }
+    });
+    dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0;
+  });
+
+  bus.on("refreshUploadingDialog.fileUploadFailed", (msg) => {
+    msg.transfers?.forEach((transferUploadedWithError) => {
+      const foundTransfer = dialogs.uploading.transfers?.find((transfer) => transferUploadedWithError.name == transfer.filename && transferUploadedWithError.size == transfer.filesize);
+      if (foundTransfer) {
+        foundTransfer.end = currentTimestamp();
+        foundTransfer.uploading = false;
+        foundTransfer.error = true;
+        foundTransfer.errorMessage = "Upload failed";
+      } else {
+        dialogs.uploading.transfers.unshift({
+          filename: transferUploadedWithError.name,
+          filesize: transferUploadedWithError.size,
+          start: currentTimestamp(),
+          end: currentTimestamp(),
+          uploading: false,
+          done: false,
+          error: true,
+          errorMessage: "Upload rejected",
+        });
+      }
+    });
+    dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0;
   });
 
   bus.on("hideUploadingDialog", (msg) => {
-    dialogs.uploading.transfering = false;
-    dialogs.uploading.visible = false;
+    dialogs.uploading.visible = dialogs.uploading.transfers.filter((transfer) => transfer.error == true)?.length > 0;
   });
 });
 
@@ -281,6 +279,9 @@ onBeforeUnmount(() => {
   bus.off("showDocumentFilesPreviewDialog");
   bus.off("showDocumentNotesPreviewDialog");
   bus.off("showUploadingDialog");
+  bus.off("refreshUploadingDialog.fileUploaded");
+  bus.off("refreshUploadingDialog.fileUploadRejected");
+  bus.off("refreshUploadingDialog.fileUploadFailed");
   bus.off("hideUploadingDialog");
 });
 

@@ -77,7 +77,7 @@ export default {
   Operations: "Operacións",
   "Save document": "Gardar documento",
   "Remove document": "Eliminar documento",
-  "Preview": "Previsualizar",
+  Preview: "Previsualizar",
   Download: "Descargar",
   "Click to download": "Faga click pra descargar",
   Remove: "Eliminar",
@@ -109,7 +109,8 @@ export default {
   notes: "notas",
   "File preview": "Previsualizar arquivo",
   "Error loading preview": "Error cargando a previsualización",
-  "File preview not available": "O arquivo {filename} non se pode previsualizar",
+  "File preview not available":
+    "O arquivo {filename} non se pode previsualizar",
   "Your browser does not support the audio element":
     "O seu navegador non soporta o elemento audio",
   "Remove document file": "Eliminar arquivo do documento",
@@ -179,6 +180,7 @@ export default {
   "Total tags": "{count} etiqueta|{count} etiquetas",
   "Total files": "arquivo|arquivos",
   "Total notes": "nota|notas",
+  "Total transfers": "transferencia|transferencias",
   "Click to toggle edit mode": "Faga click pra alterna-lo modo de edición",
   "Click to expand": "Faga click pra expandir",
   "Click to collapse": "Faga click pra contraer",

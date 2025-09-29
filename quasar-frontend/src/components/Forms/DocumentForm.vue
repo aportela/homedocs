@@ -72,7 +72,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.loading" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                    }}</q-badge>
+                      }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
@@ -131,7 +131,6 @@ import { bus } from "src/boot/bus";
 import { api } from "src/boot/axios";
 import { useFormUtils } from "src/composables/formUtils"
 import { useDocument } from "src/composables/document"
-import { useFormatDates } from "src/composables/formatDate"
 import { useInitialStateStore } from "src/stores/initialState";
 
 import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
@@ -150,7 +149,6 @@ const { screen } = useQuasar();
 const initialState = useInitialStateStore();
 const { requiredFieldRules, fieldIsRequiredLabel } = useFormUtils();
 
-const { currentTimestamp } = useFormatDates();
 
 const props = defineProps({
   documentId: {
@@ -399,49 +397,57 @@ function onRemoveSelectedFile(index) {
   }
 }
 
+// q-uploader component event => file upload starts
+const onUploadsStart = (e) => {
+  uploading.value = true;
+  bus.emit("showUploadingDialog", { transfers: uploaderRef.value?.files.map((file) => { return { name: file.name, size: file.size } }) });
+}
+
 // q-uploader component event => file was uploaded
 const onFileUploaded = (e) => {
-  console.log("onFileUploaded");
-  bus.emit("refreshUploadingDialog", { files: e.files.map((file) => { return { name: file.name, size: file.size, end: currentTimestamp() } }) });
+  bus.emit("refreshUploadingDialog.fileUploaded", { transfers: e.files.map((file) => { return { name: file.name, size: file.size } }) });
   document.addFile((JSON.parse(e.xhr.response).data).id, e.files[0].name, e.files[0].size);
 }
 
 // q-uploader component event => file upload is rejected
 const onUploadRejected = (e) => {
-  const files =
+  const transfers =
     e.map((error) => {
       return ({
         name: error.file.name,
         size: error.file.size,
-        start: currentTimestamp(),
-        end: currentTimestamp(),
         error: {
-          maxFileSizeExceed: error.failedPropValidation == "max-file-size",
+          status: error.failedPropValidation == "max-file-size" ? 413 : 500,
+          statusText: error.failedPropValidation == "max-file-size" ? "Content Too Large" : "Internal Server Error"
         }
       });
     });
-  bus.emit("refreshUploadingDialogErrors", { files: files });
+  bus.emit("refreshUploadingDialog.fileUploadRejected", { transfers: transfers });
 }
 
 // q-uploader component event => file upload failed
 const onUploadFailed = (e) => {
-  console.log("onUploadFailed");
-  // TODO
+  const transfers =
+    e.map((error) => {
+      return ({
+        name: error.file.name,
+        size: error.file.size,
+        error: {
+          status: xhr.status,
+          statusText: xhr.statusText
+        }
+      });
+    });
+  bus.emit("refreshUploadingDialog.fileUploadFailed", { transfers: transfers });
 }
 
-// q-uploader component event => file upload starts
-const onUploadsStart = (e) => {
-  console.log("onUploadsStart");
-  uploading.value = true;
-  bus.emit("showUploadingDialog", { files: uploaderRef.value?.files.map((file) => { return { name: file.name, size: file.size, start: currentTimestamp() } }) });
-}
 
 // q-uploader component event => file upload finish (all files)
 const onUploadsFinish = () => {
   console.log("onUploadsFinish");
   uploading.value = false;
   uploaderRef.value?.reset();
-  //bus.emit("hideUploadingDialog");
+  bus.emit("hideUploadingDialog");
 }
 
 onMounted(() => {
