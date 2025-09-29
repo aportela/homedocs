@@ -13,37 +13,40 @@
     </q-item>
     <q-separator class="q-my-md" />
     <div v-if="hasAttachments" class="q-list-attachments-container scroll">
-      <q-item class="q-pa-xs bg-transparent" v-for="attachment, attachmentIndex in attachments" :key="attachment.id"
-        v-show="attachment.visible" clickable :href="attachment.url"
-        @click.stop.prevent="onDownload(attachment.url, attachment.name)">
-        <q-item-section class="q-mx-sm">
-          <q-item-label>
-            Filename: {{ attachment.name }}
-          </q-item-label>
-          <q-item-label caption>
-            Length: {{ format.humanStorageSize(attachment.size) }}
-          </q-item-label>
-          <q-item-label caption>
-            Uploaded on: {{ attachment.creationDate }} ({{ attachment.creationDateTimeAgo }})
-          </q-item-label>
-        </q-item-section>
-        <q-item-section side middle class="q-mr-sm q-item-section-attachment-actions">
-          <q-chip size="md" square class="theme-default-q-chip shadow-1 full-width text-center"
-            :class="{ 'cursor-not-allowed': disable }" :clickable="!disable"
-            @click.stop.prevent="onRemoveAttachment(attachmentIndex)">
-            <q-avatar class="theme-default-q-avatar text-white bg-blue-6" icon="delete" />
-            {{ t("Remove") }}
-          </q-chip>
-          <q-chip size="md" square class="theme-default-q-chip shadow-1 full-width" v-if="allowPreview(attachment.name)"
-            :class="{ 'cursor-not-allowed': disable || !allowPreview(attachment.name) }"
-            :clickable="!disable && allowPreview(attachment.name)"
-            @click.stop.prevent="onPreviewAttachment(attachmentIndex)">
-            <q-avatar class="theme-default-q-avatar text-white bg-blue-6" icon="preview" />
-            {{ t("Preview") }}
-          </q-chip>
-        </q-item-section>
-        <q-tooltip>{{ t("Click to download") }}</q-tooltip>
-      </q-item>
+      <div v-for="attachment, attachmentIndex in attachments" :key="attachment.id">
+        <q-item class="q-pa-xs bg-transparent" v-show="attachment.visible" clickable :href="attachment.url"
+          @click.stop.prevent="onDownload(attachment.url, attachment.name)">
+          <q-item-section class="q-mx-sm">
+            <q-item-label>
+              Filename: {{ attachment.name }}
+            </q-item-label>
+            <q-item-label caption>
+              Length: {{ format.humanStorageSize(attachment.size) }}
+            </q-item-label>
+            <q-item-label caption>
+              Uploaded on: {{ attachment.creationDate }} ({{ attachment.creationDateTimeAgo }})
+            </q-item-label>
+          </q-item-section>
+          <q-item-section side middle class="q-mr-sm q-item-section-attachment-actions">
+            <q-chip size="md" square class="theme-default-q-chip shadow-1 full-width text-center"
+              :class="{ 'cursor-not-allowed': disable }" :clickable="!disable"
+              @click.stop.prevent="onRemoveAttachment(attachmentIndex)">
+              <q-avatar class="theme-default-q-avatar text-white bg-blue-6" icon="delete" />
+              {{ t("Remove") }}
+            </q-chip>
+            <q-chip size="md" square class="theme-default-q-chip shadow-1 full-width"
+              v-if="allowPreview(attachment.name)"
+              :class="{ 'cursor-not-allowed': disable || !allowPreview(attachment.name) }"
+              :clickable="!disable && allowPreview(attachment.name)"
+              @click.stop.prevent="onPreviewAttachment(attachmentIndex)">
+              <q-avatar class="theme-default-q-avatar text-white bg-blue-6" icon="preview" />
+              {{ t("Preview") }}
+            </q-chip>
+          </q-item-section>
+          <q-tooltip>{{ t("Click to download") }}</q-tooltip>
+        </q-item>
+        <q-separator v-if="attachmentIndex !== attachments.length - 1" class="q-my-sm" />
+      </div>
     </div>
     <CustomBanner v-else-if="!disable" warning text="No document attachments found" class="q-ma-none">
     </CustomBanner>
