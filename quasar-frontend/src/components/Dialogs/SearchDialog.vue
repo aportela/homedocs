@@ -4,7 +4,7 @@
       <q-card-section class="row items-center q-pb-none">
         <div class="text-h6">{{ t('Search on HomeDocs...') }}</div>
         <q-space />
-        <q-btn icon="close" flat round dense v-close-popup />
+        <q-btn icon="close" flat round dense v-close-popup aria-label="Close modal" />
       </q-card-section>
       <q-card-section>
         <div class="row items-center q-gutter-sm">
