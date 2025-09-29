@@ -45,7 +45,7 @@
               </q-item-section>
               <q-item-section top side>
                 <q-btn size="md" color="primary" class="q-mt-sm" v-if="allowPreview(attachment.name)"
-                  :disable="state.loading" icon="preview" :label="t('Preview')"
+                  :disable="state.loading" icon="preview" :label="t('Preview')" no-caps
                   @click.stop.prevent="onFilePreview(index)"></q-btn>
               </q-item-section>
               <q-tooltip>{{ t("Click to download") }}</q-tooltip>
