@@ -31,19 +31,19 @@
       <router-view class="q-pa-sm" />
     </q-page-container>
     <!-- main common dialogs block, this dialogs will be launched from ANY page so we declare here and manage with bus events -->
-    <ReAuthDialog v-if="dialogs.reauth.visible" @success="onSuccessReauth" @close="dialogs.reauth.visible = false">
-    </ReAuthDialog>
+    <ReAuthDialog v-if="dialogs.reauth.visible" @success="onSuccessReauth" @close="dialogs.reauth.visible = false" />
     <FilePreviewDialog v-if="dialogs.filePreview.visible" :document="dialogs.filePreview.document"
-      :current-index="dialogs.filePreview.currentIndex" @close="dialogs.filePreview.visible = false">
-    </FilePreviewDialog>
+      :current-index="dialogs.filePreview.currentIndex" @close="dialogs.filePreview.visible = false" />
     <DocumentFilesPreviewDialog v-if="dialogs.documentFilesPreview.visible"
       :document-id="dialogs.documentFilesPreview.document.id"
       :document-title="dialogs.documentFilesPreview.document.title"
-      @close="dialogs.documentFilesPreview.visible = false"></DocumentFilesPreviewDialog>
+      @close="dialogs.documentFilesPreview.visible = false" />
     <DocumentNotesPreviewDialog v-if="dialogs.documentNotesPreview.visible"
       :document-id="dialogs.documentNotesPreview.document.id"
       :document-title="dialogs.documentNotesPreview.document.title"
-      @close="dialogs.documentNotesPreview.visible = false"></DocumentNotesPreviewDialog>
+      @close="dialogs.documentNotesPreview.visible = false" />
+    <UploadingDialog v-if="dialogs.uploading.visible" :files="dialogs.uploading.files"
+      :transfering="dialogs.uploading.transfering" @close="dialogs.uploading.visible = false" />
   </q-layout>
 </template>
 
@@ -65,6 +65,7 @@ import { default as ReAuthDialog } from "src/components/Dialogs/ReAuthDialog.vue
 import { default as FilePreviewDialog } from "src/components/Dialogs/FilePreviewDialog.vue"
 import { default as DocumentFilesPreviewDialog } from "src/components/Dialogs/DocumentFilesPreviewDialog.vue"
 import { default as DocumentNotesPreviewDialog } from "src/components/Dialogs/DocumentNotesPreviewDialog.vue";
+import { default as UploadingDialog } from "src/components/Dialogs/UploadingDialog.vue";
 
 const $q = useQuasar();
 
@@ -105,6 +106,10 @@ const dialogs = reactive({
   },
   fastSearch: {
     visible: false
+  },
+  uploading: {
+    visible: false,
+    files: []
   }
 });
 
@@ -176,6 +181,98 @@ onMounted(() => {
     dialogs.documentNotesPreview.document.title = msg?.document?.title;
     dialogs.documentNotesPreview.visible = true;
   });
+
+  bus.on("showUploadingDialog", (msg) => {
+    dialogs.uploading.files = msg.files.map((file) => {
+      return ({
+        name: file.name,
+        size: file.size,
+        start: file.start,
+        end: null,
+        done: false,
+        error: false
+      })
+    }) || [];
+    dialogs.uploading.transfering = true;
+    dialogs.uploading.visible = true;
+  });
+
+  bus.on("refreshUploadingDialog", (msg) => {
+    if (dialogs.uploading.files.length > 0) {
+      msg.files?.forEach((uploadedFile) => {
+        const existentFile = dialogs.uploading.files?.find((file) => uploadedFile.name == file.name && uploadedFile.size == file.size);
+        if (existentFile) {
+          existentFile.done = true;
+          existentFile.end = uploadedFile.end;
+        } else {
+          dialogs.uploading.files.push({
+            name: uploadedFile.name,
+            size: uploadedFile.size,
+            start: uploadedFile.start, // TODO: exists ?
+            end: uploadedFile.end,
+            done: true,
+            error: false
+          });
+        }
+      });
+    } else {
+      dialogs.uploading.files = msg.files?.map((file) => {
+        return ({
+          name: file.name,
+          size: file.size,
+          start: file.start, // TODO: exists ?
+          end: file.end,
+          done: true,
+          error: false
+        });
+      })
+    }
+    const totalDone = dialogs.uploading.files?.filter((file) => file.done == true).length;
+    const totalError = dialogs.uploading.files?.filter((file) => file.error == true).length;
+    dialogs.uploading.transfering = totalDone + totalError != dialogs.uploading.files?.length;
+    dialogs.uploading.visible = true;
+  });
+
+  bus.on("refreshUploadingDialogErrors", (msg) => {
+    if (dialogs.uploading.files.length > 0) {
+      msg.files?.forEach((errorFile) => {
+        const existentFile = dialogs.uploading.files?.find((file) => errorFile.name == file.name && errorFile.size == file.size);
+        if (existentFile) {
+          existentFile.done = true;
+          existentFile.end = errorFile.end;
+        } else {
+          dialogs.uploading.files.push({
+            name: errorFile.name,
+            size: errorFile.size,
+            start: errorFile.start,
+            end: errorFile.end,
+            done: false,
+            error: true
+          });
+        }
+      });
+    } else {
+      dialogs.uploading.files = msg.files?.map((file) => {
+        return ({
+          name: file.name,
+          size: file.size,
+          start: file.start,
+          end: file.end,
+          done: false,
+          error: true
+        });
+      })
+    }
+    const totalDone = dialogs.uploading.files?.filter((file) => file.done == true).length;
+    const totalError = dialogs.uploading.files?.filter((file) => file.error == true).length;
+    dialogs.uploading.transfering = totalDone + totalError != dialogs.uploading.files?.length;
+    dialogs.uploading.visible = true;
+  });
+
+  bus.on("hideUploadingDialog", (msg) => {
+    dialogs.uploading.transfering = false;
+    dialogs.uploading.visible = false;
+  });
 });
 
 onBeforeUnmount(() => {
@@ -183,6 +280,8 @@ onBeforeUnmount(() => {
   bus.off("showDocumentFilePreviewDialog");
   bus.off("showDocumentFilesPreviewDialog");
   bus.off("showDocumentNotesPreviewDialog");
+  bus.off("showUploadingDialog");
+  bus.off("hideUploadingDialog");
 });
 
 </script>

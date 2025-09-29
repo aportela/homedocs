@@ -131,6 +131,7 @@ import { bus } from "src/boot/bus";
 import { api } from "src/boot/axios";
 import { useFormUtils } from "src/composables/formUtils"
 import { useDocument } from "src/composables/document"
+import { useFormatDates } from "src/composables/formatDate"
 import { useInitialStateStore } from "src/stores/initialState";
 
 import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
@@ -148,6 +149,8 @@ const router = useRouter();
 const { screen } = useQuasar();
 const initialState = useInitialStateStore();
 const { requiredFieldRules, fieldIsRequiredLabel } = useFormUtils();
+
+const { currentTimestamp } = useFormatDates();
 
 const props = defineProps({
   documentId: {
@@ -399,17 +402,25 @@ function onRemoveSelectedFile(index) {
 // q-uploader component event => file was uploaded
 const onFileUploaded = (e) => {
   console.log("onFileUploaded");
+  bus.emit("refreshUploadingDialog", { files: e.files.map((file) => { return { name: file.name, size: file.size, end: currentTimestamp() } }) });
   document.addFile((JSON.parse(e.xhr.response).data).id, e.files[0].name, e.files[0].size);
 }
 
 // q-uploader component event => file upload is rejected
 const onUploadRejected = (e) => {
-  console.log("onUploadRejected");
-  if (e[0].failedPropValidation == "max-file-size") {
-    // TODO
-  } else {
-    // TODO
-  }
+  const files =
+    e.map((error) => {
+      return ({
+        name: error.file.name,
+        size: error.file.size,
+        start: currentTimestamp(),
+        end: currentTimestamp(),
+        error: {
+          maxFileSizeExceed: error.failedPropValidation == "max-file-size",
+        }
+      });
+    });
+  bus.emit("refreshUploadingDialogErrors", { files: files });
 }
 
 // q-uploader component event => file upload failed
@@ -422,13 +433,15 @@ const onUploadFailed = (e) => {
 const onUploadsStart = (e) => {
   console.log("onUploadsStart");
   uploading.value = true;
+  bus.emit("showUploadingDialog", { files: uploaderRef.value?.files.map((file) => { return { name: file.name, size: file.size, start: currentTimestamp() } }) });
 }
 
 // q-uploader component event => file upload finish (all files)
-const onUploadsFinish = (e) => {
+const onUploadsFinish = () => {
   console.log("onUploadsFinish");
   uploading.value = false;
   uploaderRef.value?.reset();
+  //bus.emit("hideUploadingDialog");
 }
 
 onMounted(() => {
