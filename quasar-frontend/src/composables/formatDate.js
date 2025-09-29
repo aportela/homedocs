@@ -4,34 +4,6 @@ import { useI18n } from "vue-i18n";
 export function useFormatDates() {
   const { t } = useI18n();
 
-  const diff = (timestamp, toTimestamp = null) => {
-    const now = toTimestamp || Date.now();
-    const diff = now - new Date(timestamp).getTime();
-
-    const seconds = Math.floor(diff / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
-    const months = Math.floor(days / 30); // WARNING: NOT EXACT (30 days / month)
-    const years = Math.floor(days / 365); // WARNING: NOT EXACT (365 days / year)
-
-    if (years > 0) {
-      return t("timeAgo.year", { count: years });
-    } else if (months > 0) {
-      return t("timeAgo.month", { count: months });
-    } else if (days > 0) {
-      return t("timeAgo.day", { count: days });
-    } else if (hours > 0) {
-      return t("timeAgo.hour", { count: hours });
-    } else if (minutes > 0) {
-      return t("timeAgo.minute", { count: minutes });
-    } else if (seconds > 0) {
-      return t("timeAgo.second", { count: seconds });
-    } else {
-      return t("timeAgo.now");
-    }
-  };
-
   const timeAgo = (timestamp) => {
     const now = Date.now();
     const diff = now - new Date(timestamp).getTime();
@@ -65,11 +37,11 @@ export function useFormatDates() {
   };
 
   const timestamp = (dateObj) => {
-    return date.formatDate(dateObj, 'X');
+    return Number(date.formatDate(dateObj, "x"));
   };
 
   const currentTimestamp = () => {
-    return timestamp(new Date());
+    return Number(timestamp(new Date()));
   };
 
   const dateHuman = (timestamp) => {
@@ -88,5 +60,14 @@ export function useFormatDates() {
     return fullDateTimeHuman(new Date());
   };
 
-  return { diff, timeAgo, currentTimeAgo, timestamp, currentTimestamp, dateHuman, currentDateHuman, fullDateTimeHuman, currentFullDateTimeHuman };
+  return {
+    timeAgo,
+    currentTimeAgo,
+    timestamp,
+    currentTimestamp,
+    dateHuman,
+    currentDateHuman,
+    fullDateTimeHuman,
+    currentFullDateTimeHuman,
+  };
 }
