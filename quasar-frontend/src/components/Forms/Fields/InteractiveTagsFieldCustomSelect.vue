@@ -8,14 +8,7 @@
       class="absolute-top-right text-grey cursor-pointer q-mr-sm q-mt-sm" v-show="showUpdateHoverIcon">
       <q-tooltip>{{ t("Click to toggle edit mode") }}</q-tooltip>
     </q-icon>
-    <q-chip :dense="dense" v-for="tag, index in currentTags" :key="tag" @remove="removeTagAtIndex(index)"
-      color="primary" text-color="white" icon="tag">
-      <router-link :to="{ name: 'advancedSearchByTag', params: { tag: tag } }"
-        style="text-decoration: none; color: white;">
-        {{ tag }}
-        <q-tooltip>{{ t("Browse by tag: ", { tag: tag }) }}</q-tooltip>
-      </router-link>
-    </q-chip>
+    <BrowseByTagButton v-for="tag in currentTags" :key="tag" :tag="tag" icon="tag" />
   </div>
   <q-select v-else ref="selectRef" :label="t(label)" v-model="currentTags" :dense="dense" :options-dense="dense"
     outlined use-input use-chips multiple hide-dropdown-icon :options="filteredTags" input-debounce="0"
@@ -33,7 +26,7 @@
       </q-icon>
     </template>
     <template v-slot:selected>
-      <q-chip :removable="!readOnly" :dense="dense" v-for="tag, index in currentTags" :key="tag"
+      <q-chip square :removable="!readOnly" :dense="dense" v-for="tag, index in currentTags" :key="tag"
         @remove="removeTagAtIndex(index)" color="primary" text-color="white" icon="tag" :label="tag">
       </q-chip>
     </template>
@@ -47,6 +40,8 @@ import { useI18n } from "vue-i18n";
 
 import { bus } from "src/boot/bus";
 import { api } from "src/boot/axios";
+
+import { default as BrowseByTagButton } from "src/components/Buttons/BrowseByTagButton.vue";
 
 const { t } = useI18n();
 
