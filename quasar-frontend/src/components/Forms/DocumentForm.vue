@@ -1,10 +1,9 @@
 <template>
   <div @dragover.prevent @dragenter.prevent @drop="handleDrop">
-    <q-uploader ref="uploaderRef" class="q-mb-md hidden" :label="t('Add new file (Drag & Drop supported)')" flat
-      bordered auto-upload hide-upload-btn color="dark" field-name="file" method="post" url="api2/file"
-      :max-file-size="maxUploadFileSize" multiple @uploaded="onFileUploaded" @rejected="onUploadRejected"
-      @failed="onUploadFailed" style="width: 100%;" :disable="loading || saving" no-thumbnails @start="onUploadsStart"
-      @finish="onUploadsFinish" />
+    <!-- hidden quasar native uploader component -->
+    <q-uploader ref="uploaderRef" class="hidden" hide-upload-btn no-thumbnails auto-upload field-name="file"
+      method="post" url="api2/file" :max-file-size="maxUploadFileSize" multiple @uploaded="onFileUploaded"
+      @rejected="onUploadRejected" @failed="onUploadFailed" @start="onUploadsStart" @finish="onUploadsFinish" />
     <q-card flat class="bg-transparent">
       <q-card-section>
         <div class="row items-center">
@@ -15,7 +14,7 @@
             <q-btn icon="autorenew" flat square size="xl" :title="t('Reload document')" v-if="!isNewDocument"
               @click="onRefresh" />
             <q-btn icon="delete" flat square size="xl" :title="t('Remove document')" v-if="!isNewDocument"
-              @click="showConfirmDeleteDocumentDialog = true" />
+              @click="onShowDeleteDocumentConfirmationDialog" />
             <q-btn icon="save" flat round size="xl" :title="t('Save document')" @click="onSubmitForm"
               :disable="loading || saving || uploading || !document.title" />
           </q-btn-group>
@@ -73,7 +72,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.loading" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                    }}</q-badge>
+                      }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
@@ -117,15 +116,16 @@
       </form>
     </q-card>
   </div>
-
+  <DeleteDocumentConfirmationDialog v-if="showDeleteDocumentConfirmationDialog" :document-id="document.id"
+    @close="showDeleteDocumentConfirmationDialog = false"></DeleteDocumentConfirmationDialog>
 </template>
 
 <script setup>
 
 import { ref, reactive, nextTick, computed, watch, onMounted, onBeforeUnmount } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { uid, format, date, useQuasar } from "quasar";
+import { uid, useQuasar } from "quasar";
 
 import { bus } from "src/boot/bus";
 import { api } from "src/boot/axios";
@@ -141,9 +141,9 @@ import { default as DocumentDetailsHistory } from "src/components/Forms/Document
 import { default as InteractiveTextFieldCustomInput } from "src/components/Forms/Fields/InteractiveTextFieldCustomInput.vue"
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue"
+import { default as DeleteDocumentConfirmationDialog } from "src/components/Dialogs/DeleteDocumentConfirmationDialog.vue"
 
 const { t } = useI18n();
-const route = useRoute();
 const router = useRouter();
 const { screen } = useQuasar();
 const initialState = useInitialStateStore();
@@ -174,8 +174,6 @@ const maxUploadFileSize = computed(() => initialState.maxUploadFileSize);
 const uploaderRef = ref(null);
 const documentTitleFieldRef = ref(null);
 
-const showConfirmDeleteDocumentDialog = ref(false);
-
 const state = reactive({
   loading: false,
   loadingError: false,
@@ -188,6 +186,8 @@ const state = reactive({
 const loading = ref(false);
 const saving = ref(false);
 const uploading = ref(false);
+
+const showDeleteDocumentConfirmationDialog = ref(false);
 
 const smallScreensTopTab = ref("metadata");
 const leftMetadataTab = ref("metadata");
@@ -363,6 +363,12 @@ const onSubmitForm = () => {
   }
 }
 
+const onShowDeleteDocumentConfirmationDialog = () => {
+  if (document.id) {
+    showDeleteDocumentConfirmationDialog.value = true;
+  }
+};
+
 const onDeleteDocument = () => {
   loading.value = true;
   api.document.
@@ -375,7 +381,7 @@ const onDeleteDocument = () => {
       });
     })
     .catch((errorResponse) => {
-      showConfirmDeleteDocumentDialog.value = false;
+      // TODO
       loading.value = false;
       switch (errorResponse.response.status) {
         case 401:

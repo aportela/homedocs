@@ -212,4 +212,8 @@ export default {
   "Filter by text on file name": "Filter by text on file name",
   "type text search condition": "type text search condition",
   "type note body": "type note body",
+  "You are about to delete the current document. Are you sure? (this action cannot be undone).":
+    "You are about to delete the current document. Are you sure? (this action cannot be undone).",
+  "The document has been deleted. Upon closing this dialog, you will be redirected to the home screen.":
+    "The document has been deleted. Upon closing this dialog, you will be redirected to the home screen.",
 };

@@ -211,4 +211,8 @@ export default {
   "Filter by text on file name": "Filtrar por texto no nome do arquivo",
   "type text search condition": "teclee a condición de búsqueda por texto",
   "type note body": "teclee o texto da nota",
+  "You are about to delete the current document. Are you sure? (this action cannot be undone).":
+    "Está a punto de eliminar o documento actual. ¿ Está seguro ? (esta operación non se pode revertir)",
+  "The document has been deleted. Upon closing this dialog, you will be redirected to the home screen.":
+    "O documento foi eliminado. Unha vez peche este diálogo será redireccionado a pantalla de inicio.",
 };
