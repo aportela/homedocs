@@ -156,19 +156,19 @@ const props = defineProps({
   }
 });
 
-const isScreenGreaterThanMD = computed(() => screen.gt.md);
-const isNewDocument = computed(() => !!props.documentId);
-
-const document = useDocument().getNewDocument();
-
 watch(() => props.documentId, val => {
   if (val) {
     document.id = val;
-    document.onRefresh();
+    onRefresh();
   } else {
     document.reset();
   }
 });
+
+const isScreenGreaterThanMD = computed(() => screen.gt.md);
+const isNewDocument = computed(() => !props.documentId);
+
+const document = useDocument().getNewDocument();
 
 const maxUploadFileSize = computed(() => initialState.maxUploadFileSize);
 const uploaderRef = ref(null);
@@ -222,7 +222,6 @@ const onRefresh = () => {
         nextTick(() => documentTitleFieldRef.value?.focus());
       })
       .catch((errorResponse) => {
-        console.error(errorResponse);
         loading.value = false;
         state.apiError = errorResponse.customAPIErrorDetails;
         switch (errorResponse.response.status) {
@@ -460,13 +459,14 @@ const onUploadsFinish = (e) => {
 }
 
 onMounted(() => {
-  if (!isNewDocument.value) {
-    if (route.params.id) {
-      document.id = route.params.id;
+  if (!isNewDocument.value) { // existent document
+    if (props.documentId) {
+      document.id = props.documentId;
       onRefresh();
     } else {
       // TODO: ROUTE ERROR (MISSING PARAM)
     }
+  } else { // new document
   }
   bus.on("reAuthSucess", (msg) => {
     if (msg.to?.includes("DocumentPage.onRefresh")) {

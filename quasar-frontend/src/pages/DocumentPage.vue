@@ -6,22 +6,21 @@
 
 <script setup>
 
-import { ref, computed } from "vue";
-import { useRouter } from "vue-router";
+import { ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 import { default as DocumentForm } from "src/components/Forms/DocumentForm.vue"
 
 const router = useRouter();
+const currentRoute = useRoute();
 
-const documentId = computed(() => currentDocumentIdRouteParam.value || null);
-
-const currentDocumentIdRouteParam = ref(null);
+const documentId = ref(currentRoute.name == "document" ? currentRoute.params?.id || null : null);
 
 router.beforeEach(async (to, from) => {
   if (to.name == "newDocument") {
-    currentDocumentIdRouteParam.value = null;
+    documentId.value = null;
   } else if (to.name == "document" && to.params.id) {
-    currentDocumentIdRouteParam.value = to.params.id;
+    documentId.value = to.params.id;
   } else {
     // TODO: error
   }
