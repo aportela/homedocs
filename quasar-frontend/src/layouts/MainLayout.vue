@@ -48,7 +48,7 @@
 
 <script setup>
 import { ref, reactive, watch, computed, onMounted, onBeforeUnmount } from "vue";
-import { useQuasar, LocalStorage } from "quasar";
+import { useQuasar, LocalStorage, uid } from "quasar";
 import { useI18n } from "vue-i18n";
 
 import { useFormatDates } from "src/composables/formatDate"
@@ -189,8 +189,9 @@ onMounted(() => {
   });
 
   bus.on("showUploadingDialog", (msg) => {
-    dialogs.uploading.transfers = msg.transfers.map((transfer) => {
+    dialogs.uploading.transfers.unshift(...msg.transfers.map((transfer) => {
       return ({
+        id: uid(),
         filename: transfer.name,
         filesize: transfer.size,
         start: currentTimestamp(),
@@ -200,19 +201,22 @@ onMounted(() => {
         error: false,
         errorHTTPCode: null,
         errorMessage: null,
+        processed: false,
       })
-    }) || [];
+    }) || []);
     dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0 && alwaysOpenUploadDialog.get();
   });
 
   bus.on("refreshUploadingDialog.fileUploaded", (msg) => {
     if (dialogs.uploading.transfers.length > 0) {
       msg.transfers?.forEach((completedTransfer) => {
-        const foundTransfer = dialogs.uploading.transfers?.find((transfer) => completedTransfer.name == transfer.filename && completedTransfer.size == transfer.filesize);
+        const foundTransfer = dialogs.uploading.transfers?.find((transfer) => !transfer.processed && completedTransfer.name == transfer.filename && completedTransfer.size == transfer.filesize);
         if (foundTransfer) {
+          foundTransfer.isNew = false;
           foundTransfer.end = currentTimestamp();
           foundTransfer.uploading = false;
           foundTransfer.done = true;
+          foundTransfer.processed = true;
         } else {
           // TODO:
           console.error("Transfer not found");
@@ -226,15 +230,17 @@ onMounted(() => {
 
   bus.on("refreshUploadingDialog.fileUploadRejected", (msg) => {
     msg.transfers?.forEach((transferUploadedWithError) => {
-      const foundTransfer = dialogs.uploading.transfers?.find((transfer) => transferUploadedWithError.name == transfer.filename && transferUploadedWithError.size == transfer.filesize);
+      const foundTransfer = dialogs.uploading.transfers?.find((transfer) => !transfer.processed && transferUploadedWithError.name == transfer.filename && transferUploadedWithError.size == transfer.filesize);
       if (foundTransfer) {
         foundTransfer.end = currentTimestamp();
         foundTransfer.uploading = false;
         foundTransfer.error = true;
         foundTransfer.errorHTTPCode = transferUploadedWithError.error?.status;
         foundTransfer.errorMessage = "Transfer rejected";
+        foundTransfer.processed = true;
       } else {
         dialogs.uploading.transfers.unshift({
+          id: uid(),
           filename: transferUploadedWithError.name,
           filesize: transferUploadedWithError.size,
           start: currentTimestamp(),
@@ -244,6 +250,7 @@ onMounted(() => {
           error: true,
           errorHTTPCode: transferUploadedWithError.error?.status,
           errorMessage: "Transfer rejected",
+          processed: true,
         });
       }
     });
@@ -252,15 +259,17 @@ onMounted(() => {
 
   bus.on("refreshUploadingDialog.fileUploadFailed", (msg) => {
     msg.transfers?.forEach((transferUploadedWithError) => {
-      const foundTransfer = dialogs.uploading.transfers?.find((transfer) => transferUploadedWithError.name == transfer.filename && transferUploadedWithError.size == transfer.filesize);
+      const foundTransfer = dialogs.uploading.transfers?.find((transfer) => !transfer.processed && transferUploadedWithError.name == transfer.filename && transferUploadedWithError.size == transfer.filesize);
       if (foundTransfer) {
         foundTransfer.end = currentTimestamp();
         foundTransfer.uploading = false;
         foundTransfer.error = true;
         foundTransfer.errorHTTPCode = transferUploadedWithError.error?.status;
         foundTransfer.errorMessage = "Transfer failed";
+        foundTransfer.processed = true;
       } else {
         dialogs.uploading.transfers.unshift({
+          id: uid(),
           filename: transferUploadedWithError.name,
           filesize: transferUploadedWithError.size,
           start: currentTimestamp(),
@@ -270,6 +279,7 @@ onMounted(() => {
           error: true,
           errorHTTPCode: transferUploadedWithError.error?.status,
           errorMessage: "Transfer failed",
+          processed: true,
         });
       }
     });

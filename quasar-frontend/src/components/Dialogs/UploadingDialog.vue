@@ -13,7 +13,7 @@
         </div>
       </q-card-section>
       <q-separator class="q-mb-md"></q-separator>
-      <q-card-section class="q-p-none">
+      <q-card-section class="q-p-none q-markup-table-container scroll">
         <slot name="body">
           <q-markup-table v-if="transfers?.length > 0">
             <thead>
@@ -26,7 +26,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="transfer, transferIndex in transfers" :key="transferIndex" class="text-white"
+              <tr v-for="transfer in transfers" :key="transfer.id" class="text-white"
                 :class="{ 'bg-green-5': transfer.done, 'bg-red-4': transfer.error, 'bg-light-blue': transfer.uploading }">
                 <td class="text-left">{{ transfer.filename }}</td>
                 <td class="text-right">{{ format.humanStorageSize(transfer.filesize) }}</td>
@@ -133,12 +133,19 @@ onMounted(() => {
 
 <style scoped>
 .q-card-uploading-dialog {
-  min-width: 50vw;
-  max-width: 90vw;
+  min-width: 72vw;
+  max-width: 95vw;
+  min-height: 60vh;
+  max-height: 60vh;
 }
 
 .q-card-uploading-dialog-header {
   font-size: 1.2em;
   font-weight: bold;
+}
+
+.q-markup-table-container {
+  min-height: 40vh;
+  max-height: 40vh;
 }
 </style>
