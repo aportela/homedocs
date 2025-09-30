@@ -50,13 +50,13 @@ class Document
                     WITH DOCUMENTS_FILES AS (
                         SELECT DOCUMENT_FILE.document_id, COUNT(*) AS fileCount
                         FROM DOCUMENT_FILE
-                        INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_FILE.document_id AND DOCUMENT_HISTORY.operation_type = :history_operation_add AND DOCUMENT_HISTORY.operation_user_id = :session_user_id
+                        INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_FILE.document_id AND DOCUMENT_HISTORY.operation_type = :history_operation_add AND DOCUMENT_HISTORY.created_by_user_id = :session_user_id
                         GROUP BY DOCUMENT_FILE.document_id
                     ),
                     DOCUMENTS_NOTES AS (
                         SELECT DOCUMENT_NOTE.document_id, COUNT(*) AS noteCount
                         FROM DOCUMENT_NOTE
-                        INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_NOTE.document_id AND DOCUMENT_HISTORY.operation_type = :history_operation_add AND DOCUMENT_HISTORY.operation_user_id = :session_user_id
+                        INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_NOTE.document_id AND DOCUMENT_HISTORY.operation_type = :history_operation_add AND DOCUMENT_HISTORY.created_by_user_id = :session_user_id
                         GROUP BY DOCUMENT_NOTE.document_id
                     ),
                     DOCUMENTS_TAGS AS (
@@ -64,14 +64,14 @@ class Document
                         FROM (
                             SELECT DOCUMENT_TAG.document_id, DOCUMENT_TAG.tag
                             FROM DOCUMENT_TAG
-                            INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_TAG.document_id AND DOCUMENT_HISTORY.operation_type = :history_operation_add AND DOCUMENT_HISTORY.operation_user_id = :session_user_id
+                            INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_TAG.document_id AND DOCUMENT_HISTORY.operation_type = :history_operation_add AND DOCUMENT_HISTORY.created_by_user_id = :session_user_id
                             GROUP BY DOCUMENT_TAG.document_id, DOCUMENT_TAG.tag
                             ORDER BY DOCUMENT_TAG.tag
                         )
                         GROUP BY document_id
                     ),
                     DOCUMENTS_LAST_HISTORY_OPERATION AS (
-                        SELECT document_id, MAX(operation_date) AS max_operation_date
+                        SELECT document_id, MAX(created_on_timestamp) AS max_created_on_timestamp
                         FROM DOCUMENT_HISTORY
                         GROUP BY document_id
                     )
@@ -79,17 +79,17 @@ class Document
                         DOCUMENT.id,
                         DOCUMENT.title,
                         DOCUMENT.description,
-                        CAST(DOCUMENTS_LAST_HISTORY_OPERATION.max_operation_date AS INT) AS lastUpdateTimestamp,
+                        CAST(DOCUMENTS_LAST_HISTORY_OPERATION.max_created_on_timestamp AS INT) AS lastUpdateTimestamp,
                         COALESCE(DOCUMENTS_FILES.fileCount, 0) AS fileCount,
                         COALESCE(DOCUMENTS_NOTES.noteCount, 0) AS noteCount,
                         DOCUMENTS_TAGS.tags
                     FROM DOCUMENT
-                    INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT.id AND DOCUMENT_HISTORY.operation_type = :history_operation_add AND DOCUMENT_HISTORY.operation_user_id = :session_user_id
+                    INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT.id AND DOCUMENT_HISTORY.operation_type = :history_operation_add AND DOCUMENT_HISTORY.created_by_user_id = :session_user_id
                     LEFT JOIN DOCUMENTS_FILES ON DOCUMENTS_FILES.document_id = DOCUMENT.id
                     LEFT JOIN DOCUMENTS_TAGS ON DOCUMENTS_TAGS.document_id = DOCUMENT.id
                     LEFT JOIN DOCUMENTS_NOTES ON DOCUMENTS_NOTES.document_id = DOCUMENT.id
                     LEFT JOIN DOCUMENTS_LAST_HISTORY_OPERATION ON DOCUMENTS_LAST_HISTORY_OPERATION.document_id = DOCUMENT.id
-                    ORDER BY DOCUMENTS_LAST_HISTORY_OPERATION.max_operation_date DESC
+                    ORDER BY DOCUMENTS_LAST_HISTORY_OPERATION.max_created_on_timestamp DESC
                     LIMIT %d;
                 ",
                 $count
@@ -160,7 +160,7 @@ class Document
         } else {
             $params[] = (new \aportela\DatabaseWrapper\Param\NullParam(":description"));
         }
-        if ($dbh->exec(
+        if ($dbh->execute(
             "
                 INSERT INTO DOCUMENT
                     (id, title, description)
@@ -171,17 +171,17 @@ class Document
         )) {
             $historyQuery = "
                 INSERT INTO DOCUMENT_HISTORY
-                    (document_id, operation_date, operation_type, operation_user_id)
+                    (document_id, created_on_timestamp, operation_type, created_by_user_id)
                 VALUES
-                    (:document_id, :operation_date, :operation_type, :created_by_user_id)
+                    (:document_id, :created_on_timestamp, :operation_type, :created_by_user_id)
             ";
             $params = [
                 new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
-                new \aportela\DatabaseWrapper\Param\IntegerParam(":operation_date", intval(microtime(true) * 1000)),
+                new \aportela\DatabaseWrapper\Param\IntegerParam(":created_on_timestamp", intval(microtime(true) * 1000)),
                 new \aportela\DatabaseWrapper\Param\IntegerParam(":operation_type", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
                 new \aportela\DatabaseWrapper\Param\StringParam(":created_by_user_id", \HomeDocs\UserSession::getUserId())
             ];
-            if ($dbh->exec($historyQuery, $params)) {
+            if ($dbh->execute($historyQuery, $params)) {
                 $tagsQuery = "
                     INSERT INTO DOCUMENT_TAG
                         (document_id, tag)
@@ -194,7 +194,7 @@ class Document
                             new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
                             new \aportela\DatabaseWrapper\Param\StringParam(":tag", mb_strtolower($tag))
                         );
-                        $dbh->exec($tagsQuery, $params);
+                        $dbh->execute($tagsQuery, $params);
                     } else {
                         throw new \HomeDocs\Exception\InvalidParamsException("tag");
                     }
@@ -211,7 +211,7 @@ class Document
                             new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
                             new \aportela\DatabaseWrapper\Param\StringParam(":file_id", mb_strtolower($file->id))
                         );
-                        $dbh->exec($filesQuery, $params);
+                        $dbh->execute($filesQuery, $params);
                     } else {
                         throw new \HomeDocs\Exception\InvalidParamsException("fileId");
                     }
@@ -230,7 +230,7 @@ class Document
                         new \aportela\DatabaseWrapper\Param\StringParam(":created_by_user_id", \HomeDocs\UserSession::getUserId()),
                         new \aportela\DatabaseWrapper\Param\StringParam(":note_body", $note->body),
                     );
-                    $dbh->exec($notesQuery, $params);
+                    $dbh->execute($notesQuery, $params);
                 }
             }
         }
@@ -248,7 +248,7 @@ class Document
         } else {
             $params[] = new \aportela\DatabaseWrapper\Param\NullParam(":description");
         }
-        if ($dbh->exec(
+        if ($dbh->execute(
             "
                 UPDATE DOCUMENT SET
                     title = :title,
@@ -260,18 +260,18 @@ class Document
         )) {
             $historyQuery = "
                 INSERT INTO DOCUMENT_HISTORY
-                    (document_id, operation_date, operation_type, operation_user_id)
+                    (document_id, created_on_timestamp, operation_type, created_by_user_id)
                 VALUES
-                    (:document_id, :operation_date, :operation_type, :created_by_user_id)
+                    (:document_id, :created_on_timestamp, :operation_type, :created_by_user_id)
             ";
             $params = [
                 new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
-                new \aportela\DatabaseWrapper\Param\IntegerParam(":operation_date", intval(microtime(true) * 1000)),
+                new \aportela\DatabaseWrapper\Param\IntegerParam(":created_on_timestamp", intval(microtime(true) * 1000)),
                 new \aportela\DatabaseWrapper\Param\IntegerParam(":operation_type", \HomeDocs\DocumentHistoryOperation::OPERATION_UPDATE_DOCUMENT),
                 new \aportela\DatabaseWrapper\Param\StringParam(":created_by_user_id", \HomeDocs\UserSession::getUserId())
             ];
-            if ($dbh->exec($historyQuery, $params)) {
-                $dbh->exec(
+            if ($dbh->execute($historyQuery, $params)) {
+                $dbh->execute(
                     "
                         DELETE FROM DOCUMENT_TAG
                         WHERE document_id = :document_id
@@ -292,7 +292,7 @@ class Document
                             new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
                             new \aportela\DatabaseWrapper\Param\StringParam(":tag", mb_strtolower($tag))
                         );
-                        $dbh->exec($tagsQuery, $params);
+                        $dbh->execute($tagsQuery, $params);
                     } else {
                         throw new \HomeDocs\Exception\InvalidParamsException("tag");
                     }
@@ -306,7 +306,7 @@ class Document
                         }
                     }
                     if ($notFound) {
-                        $dbh->exec(
+                        $dbh->execute(
                             "
                                 DELETE FROM DOCUMENT_FILE
                                 WHERE document_id = :document_id
@@ -334,7 +334,7 @@ class Document
                                 new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
                                 new \aportela\DatabaseWrapper\Param\StringParam(":file_id", mb_strtolower($file->id))
                             );
-                            $dbh->exec(
+                            $dbh->execute(
                                 "
                                     INSERT INTO DOCUMENT_FILE
                                         (document_id, file_id)
@@ -357,7 +357,7 @@ class Document
                         }
                     }
                     if ($notFound) {
-                        $dbh->exec(
+                        $dbh->execute(
                             "
                                 DELETE FROM DOCUMENT_NOTE
                                 WHERE document_id = :document_id
@@ -379,7 +379,7 @@ class Document
                         if ($note->id == $originalNote->id) {
                             $notFound = false;
                             if ($note->body !== $originalNote->body) {
-                                $dbh->exec(
+                                $dbh->execute(
                                     "
                                     UPDATE DOCUMENT_NOTE SET
                                         body = :note_body
@@ -404,7 +404,7 @@ class Document
                         }
                     }
                     if ($notFound) {
-                        $dbh->exec(
+                        $dbh->execute(
                             "
                                 INSERT INTO DOCUMENT_NOTE
                                     (note_id, document_id, created_on_timestamp, created_by_user_id, body)
@@ -428,30 +428,44 @@ class Document
     public function delete(\aportela\DatabaseWrapper\DB $dbh): void
     {
         if (!empty($this->id) && mb_strlen($this->id) == UUID_V4_LENGTH) {
-            $originalFiles = $this->getFiles($dbh);
-            foreach ($originalFiles as $file) {
-                $file = new \HomeDocs\File($this->rootStoragePath, $file->id);
-                $file->remove($dbh);
-            }
             $params = array(
                 new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
             );
 
-            $dbh->exec(
+            $dbh->execute(
                 "
                     DELETE FROM DOCUMENT_TAG
                     WHERE document_id = :document_id
                 ",
                 $params
             );
-            $dbh->exec(
+            $dbh->execute(
                 "
                     DELETE FROM DOCUMENT_FILE
                     WHERE document_id = :document_id
                 ",
                 $params
             );
-            $dbh->exec(
+            $originalFiles = $this->getFiles($dbh);
+            foreach ($originalFiles as $file) {
+                $file = new \HomeDocs\File($this->rootStoragePath, $file->id);
+                $file->remove($dbh);
+            }
+            $dbh->execute(
+                "
+                    DELETE FROM DOCUMENT_NOTE
+                    WHERE document_id = :document_id
+                ",
+                $params
+            );
+            $dbh->execute(
+                "
+                    DELETE FROM DOCUMENT_HISTORY
+                    WHERE document_id = :document_id
+                ",
+                $params
+            );
+            $dbh->execute(
                 "
                     DELETE FROM DOCUMENT
                     WHERE id = :document_id
@@ -469,11 +483,11 @@ class Document
             $data = $dbh->query(
                 "
                     SELECT
-                        title, description, DOCUMENT_HISTORY.operation_date AS createdOnTimestamp, COALESCE(HISTORY_LAST_UPDATE.document_last_update, DOCUMENT_HISTORY.operation_date) AS lastUpdateTimestamp, DOCUMENT_HISTORY.operation_user_id AS createdByUserId
+                        title, description, DOCUMENT_HISTORY.created_on_timestamp AS createdOnTimestamp, COALESCE(HISTORY_LAST_UPDATE.document_last_update, DOCUMENT_HISTORY.created_on_timestamp) AS lastUpdateTimestamp, DOCUMENT_HISTORY.created_by_user_id AS createdByUserId
                     FROM DOCUMENT
                     INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT.id AND DOCUMENT_HISTORY.operation_type = :history_operation_add
                     LEFT JOIN (
-                        SELECT DOCUMENT_HISTORY.document_id, MAX(DOCUMENT_HISTORY.operation_date) AS document_last_update
+                        SELECT DOCUMENT_HISTORY.document_id, MAX(DOCUMENT_HISTORY.created_on_timestamp) AS document_last_update
                         FROM DOCUMENT_HISTORY
                         WHERE DOCUMENT_HISTORY.document_id = :id
                         AND DOCUMENT_HISTORY.operation_type <> :history_operation_add
@@ -537,12 +551,12 @@ class Document
         $data = $dbh->query(
             "
                 SELECT
-                    FILE.id, FILE.name, FILE.size, FILE.sha1_hash AS hash, FILE.uploaded_on_timestamp AS createdOnTimestamp
+                    FILE.id, FILE.name, FILE.size, FILE.sha1_hash AS hash, FILE.created_on_timestamp AS createdOnTimestamp
                 FROM DOCUMENT_FILE
                 INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_FILE.document_id
                 LEFT JOIN FILE ON FILE.id = DOCUMENT_FILE.file_id
                 WHERE DOCUMENT_FILE.document_id = :document_id
-                ORDER BY FILE.name, FILE.uploaded_on_timestamp
+                ORDER BY FILE.name, FILE.created_on_timestamp
             ",
             array(
                 new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id))
@@ -621,10 +635,10 @@ class Document
         $data = $dbh->query(
             "
                 SELECT
-                    DOCUMENT_HISTORY.operation_date AS operationTimestamp, DOCUMENT_HISTORY.operation_type AS operationType
+                    DOCUMENT_HISTORY.created_on_timestamp AS operationTimestamp, DOCUMENT_HISTORY.operation_type AS operationType
                 FROM DOCUMENT_HISTORY
                 WHERE DOCUMENT_HISTORY.document_id = :document_id
-                ORDER BY DOCUMENT_HISTORY.operation_date DESC
+                ORDER BY DOCUMENT_HISTORY.created_on_timestamp DESC
             ",
             array(
                 new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id))
@@ -702,19 +716,19 @@ class Document
         }
         if (isset($filter["fromCreationTimestampCondition"]) && $filter["fromCreationTimestampCondition"] > 0) {
             $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":fromCreationTimestamp", $filter["fromCreationTimestampCondition"]);
-            $queryConditions[] = " DOCUMENT_HISTORY_CREATION_DATE.operation_date >= :fromCreationTimestamp ";
+            $queryConditions[] = " DOCUMENT_HISTORY_CREATION_DATE.created_on_timestamp >= :fromCreationTimestamp ";
         }
         if (isset($filter["toCreationTimestampCondition"]) && $filter["toCreationTimestampCondition"] > 0) {
             $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":toCreationTimestamp", $filter["toCreationTimestampCondition"]);
-            $queryConditions[] = " DOCUMENT_HISTORY_CREATION_DATE.operation_date <= :toCreationTimestamp ";
+            $queryConditions[] = " DOCUMENT_HISTORY_CREATION_DATE.created_on_timestamp <= :toCreationTimestamp ";
         }
         if (isset($filter["fromLastUpdateTimestampCondition"]) && $filter["fromLastUpdateTimestampCondition"] > 0) {
             $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":fromLastUpdateTimestamp", $filter["fromLastUpdateTimestampCondition"]);
-            $queryConditions[] = " COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.operation_date, DOCUMENT_HISTORY_CREATION_DATE.operation_date) >= :fromLastUpdateTimestamp ";
+            $queryConditions[] = " COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.created_on_timestamp, DOCUMENT_HISTORY_CREATION_DATE.created_on_timestamp) >= :fromLastUpdateTimestamp ";
         }
         if (isset($filter["toLastUpdateTimestampCondition"]) && $filter["toLastUpdateTimestampCondition"] > 0) {
             $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":toLastUpdateTimestamp", $filter["toLastUpdateTimestampCondition"]);
-            $queryConditions[] = " COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.operation_date, DOCUMENT_HISTORY_CREATION_DATE.operation_date) <= :toLastUpdateTimestamp ";
+            $queryConditions[] = " COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.created_on_timestamp, DOCUMENT_HISTORY_CREATION_DATE.created_on_timestamp) <= :toLastUpdateTimestamp ";
         }
         if (isset($filter["fromUpdatedOnTimestampCondition"]) && $filter["fromUpdatedOnTimestampCondition"] > 0  && isset($filter["toUpdatedOnTimestampCondition"]) && $filter["toUpdatedOnTimestampCondition"] > 0) {
 
@@ -726,8 +740,8 @@ class Document
                         DOCUMENT_HISTORY_UPDATED_ON.document_id
                     FROM DOCUMENT_HISTORY AS DOCUMENT_HISTORY_UPDATED_ON
                     WHERE DOCUMENT_HISTORY_UPDATED_ON.document_id = DOCUMENT.id
-                    AND DOCUMENT_HISTORY_UPDATED_ON.operation_date >= :fromUpdatedOnTimestamp
-                    AND DOCUMENT_HISTORY_UPDATED_ON.operation_date <= :toUpdatedOnTimestamp
+                    AND DOCUMENT_HISTORY_UPDATED_ON.created_on_timestamp >= :fromUpdatedOnTimestamp
+                    AND DOCUMENT_HISTORY_UPDATED_ON.created_on_timestamp <= :toUpdatedOnTimestamp
                 )
             ";
         } else if (isset($filter["fromUpdatedOnTimestampCondition"]) && $filter["fromUpdatedOnTimestampCondition"] > 0) {
@@ -739,7 +753,7 @@ class Document
                         DOCUMENT_HISTORY_UPDATED_ON.document_id
                     FROM DOCUMENT_HISTORY AS DOCUMENT_HISTORY_UPDATED_ON
                     WHERE DOCUMENT_HISTORY_UPDATED_ON.document_id = DOCUMENT.id
-                    AND DOCUMENT_HISTORY_UPDATED_ON.operation_date >= :fromUpdatedOnTimestamp
+                    AND DOCUMENT_HISTORY_UPDATED_ON.created_on_timestamp >= :fromUpdatedOnTimestamp
                 )
             ";
         } else if (isset($filter["toUpdatedOnTimestampCondition"]) && $filter["toUpdatedOnTimestampCondition"] > 0) {
@@ -750,7 +764,7 @@ class Document
                         DOCUMENT_HISTORY_UPDATED_ON.document_id
                     FROM DOCUMENT_HISTORY AS DOCUMENT_HISTORY_UPDATED_ON
                     WHERE DOCUMENT_HISTORY_UPDATED_ON.document_id = DOCUMENT.id
-                    AND DOCUMENT_HISTORY_UPDATED_ON.operation_date <= :toUpdatedOnTimestamp
+                    AND DOCUMENT_HISTORY_UPDATED_ON.created_on_timestamp <= :toUpdatedOnTimestamp
                 )
             ";
         }
@@ -780,15 +794,15 @@ class Document
                 FROM DOCUMENT
                 INNER JOIN DOCUMENT_HISTORY AS DOCUMENT_HISTORY_CREATION_DATE ON (
                     DOCUMENT_HISTORY_CREATION_DATE.document_id = DOCUMENT.id
-                    AND DOCUMENT_HISTORY_CREATION_DATE.operation_user_id = :session_user_id
+                    AND DOCUMENT_HISTORY_CREATION_DATE.created_by_user_id = :session_user_id
                     AND DOCUMENT_HISTORY_CREATION_DATE.operation_type = :history_operation_add
                 )
                 LEFT JOIN (
                     SELECT
-                        DOCUMENT_HISTORY.document_id, MAX(DOCUMENT_HISTORY.operation_date) AS operation_date
+                        DOCUMENT_HISTORY.document_id, MAX(DOCUMENT_HISTORY.created_on_timestamp) AS created_on_timestamp
                     FROM DOCUMENT_HISTORY
                     WHERE DOCUMENT_HISTORY.operation_type = :history_operation_update
-                    AND DOCUMENT_HISTORY.operation_user_id = :session_user_id
+                    AND DOCUMENT_HISTORY.created_by_user_id = :session_user_id
                     GROUP BY DOCUMENT_HISTORY.document_id
                 ) DOCUMENT_HISTORY_LAST_UPDATE ON DOCUMENT_HISTORY_LAST_UPDATE.document_id = DOCUMENT.id
                 %s
@@ -818,29 +832,29 @@ class Document
                     $sqlSortBy = "TMP_NOTE_COUNT.noteCount";
                     break;
                 case "createdOnTimestamp":
-                    $sqlSortBy = "DOCUMENT_HISTORY_CREATION_DATE.operation_date";
+                    $sqlSortBy = "DOCUMENT_HISTORY_CREATION_DATE.created_on_timestamp";
                     break;
                 case "lastUpdateTimestamp":
-                    $sqlSortBy = "COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.operation_date, DOCUMENT_HISTORY_CREATION_DATE.operation_date)";
+                    $sqlSortBy = "COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.created_on_timestamp, DOCUMENT_HISTORY_CREATION_DATE.created_on_timestamp)";
                     break;
                 default:
-                    $sqlSortBy = "DOCUMENT_HISTORY_CREATION_DATE.operation_date";
+                    $sqlSortBy = "DOCUMENT_HISTORY_CREATION_DATE.created_on_timestamp";
                     break;
             }
             $data->documents = $dbh->query(
                 sprintf(
                     "
                             SELECT
-                                DOCUMENT.id, DOCUMENT.title, DOCUMENT.description, DOCUMENT_HISTORY_CREATION_DATE.operation_date AS createdOnTimestamp, COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.operation_date, DOCUMENT_HISTORY_CREATION_DATE.operation_date) AS lastUpdateTimestamp, TMP_FILE_COUNT.fileCount, TMP_NOTE_COUNT.noteCount
+                                DOCUMENT.id, DOCUMENT.title, DOCUMENT.description, DOCUMENT_HISTORY_CREATION_DATE.created_on_timestamp AS createdOnTimestamp, COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.created_on_timestamp, DOCUMENT_HISTORY_CREATION_DATE.created_on_timestamp) AS lastUpdateTimestamp, TMP_FILE_COUNT.fileCount, TMP_NOTE_COUNT.noteCount
                             FROM DOCUMENT
                             INNER JOIN DOCUMENT_HISTORY AS DOCUMENT_HISTORY_CREATION_DATE ON (
                                 DOCUMENT_HISTORY_CREATION_DATE.document_id = DOCUMENT.id
-                                AND DOCUMENT_HISTORY_CREATION_DATE.operation_user_id = :session_user_id
+                                AND DOCUMENT_HISTORY_CREATION_DATE.created_by_user_id = :session_user_id
                                 AND DOCUMENT_HISTORY_CREATION_DATE.operation_type = :history_operation_add
                             )
                             LEFT JOIN (
                                 SELECT
-                                    DOCUMENT_HISTORY.document_id, MAX(DOCUMENT_HISTORY.operation_date) AS operation_date
+                                    DOCUMENT_HISTORY.document_id, MAX(DOCUMENT_HISTORY.created_on_timestamp) AS created_on_timestamp
                                 FROM DOCUMENT_HISTORY
                                 WHERE DOCUMENT_HISTORY.operation_type = :history_operation_update
                                 GROUP BY DOCUMENT_HISTORY.document_id

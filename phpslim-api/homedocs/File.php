@@ -55,7 +55,7 @@ class File
             $data = $dbh->query(
                 "
                         SELECT
-                            name, size, sha1_hash AS hash, uploaded_on_timestamp AS createdOnTimestamp, uploaded_by_user_id AS uploadedByUserId
+                            name, size, sha1_hash AS hash, created_on_timestamp AS createdOnTimestamp, created_by_user_id AS uploadedByUserId
                         FROM FILE
                         WHERE id = :id
                     ",
@@ -107,15 +107,15 @@ class File
             new \aportela\DatabaseWrapper\Param\StringParam(":sha1_hash", $this->hash),
             new \aportela\DatabaseWrapper\Param\StringParam(":name", $this->name),
             new \aportela\DatabaseWrapper\Param\IntegerParam(":size", $this->size),
-            new \aportela\DatabaseWrapper\Param\StringParam(":uploaded_by_user_id", \HomeDocs\UserSession::getUserId()),
-            new \aportela\DatabaseWrapper\Param\IntegerParam(":uploaded_on_timestamp", intval(microtime(true) * 1000))
+            new \aportela\DatabaseWrapper\Param\StringParam(":created_by_user_id", \HomeDocs\UserSession::getUserId()),
+            new \aportela\DatabaseWrapper\Param\IntegerParam(":created_on_timestamp", intval(microtime(true) * 1000))
         );
-        $dbh->exec(
+        $dbh->execute(
             "
                 INSERT INTO FILE
-                    (id, sha1_hash, name, size, uploaded_by_user_id, uploaded_on_timestamp)
+                    (id, sha1_hash, name, size, created_by_user_id, created_on_timestamp)
                 VALUES
-                    (:id, :sha1_hash, :name, :size, :uploaded_by_user_id, :uploaded_on_timestamp)
+                    (:id, :sha1_hash, :name, :size, :created_by_user_id, :created_on_timestamp)
             ",
             $params
         );
@@ -149,7 +149,7 @@ class File
         $params = array(
             new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id))
         );
-        $dbh->exec(
+        $dbh->execute(
             "
                 DELETE FROM FILE WHERE id = :id
             ",
