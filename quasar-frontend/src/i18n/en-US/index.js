@@ -230,4 +230,7 @@ export default {
   "Transfer failed": "Transfer failed",
   "Transfer rejected": "Transfer rejected",
   "Transfer rejected max filesize": "Transfer rejected (max filesize allowed: {maxUploadFileSize})",
+  "Profile settings": "Profile settings",
+  "Customize how you interact with the platform.": "Customize how you interact with the platform.",
+  "Always show uploading dialog after adding files": "Always show uploading dialog after adding files",
 };
