@@ -46,7 +46,8 @@ return [
         $adapter = new \aportela\DatabaseWrapper\Adapter\PDOSQLiteAdapter(
             $settings["database"],
             // READ upgrade SQL schema file definition on next block of this README.md
-            $settings["upgradeSchemaPath"]
+            $settings["upgradeSchemaPath"],
+            \aportela\DatabaseWrapper\Adapter\PDOSQLiteAdapter::FLAGS_PRAGMA_JOURNAL_WAL | \aportela\DatabaseWrapper\Adapter\PDOSQLiteAdapter::FLAGS_PRAGMA_FOREIGN_KEYS_ON
         );
         $logger = $container->get(\HomeDocs\Logger\DBLogger::class);
         // main object
