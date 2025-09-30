@@ -2,7 +2,7 @@
   <q-dialog v-model="visible" @hide="onClose">
     <q-card class="q-card-uploading-dialog">
       <q-card-section class="row q-p-none">
-        <div class="q-card-attachments-dialog-header col">{{ t("HomeDocs file upload manager") }}</div>
+        <div class="q-card-uploading-dialog-header col">{{ t("File upload activity & status") }}</div>
         <q-space />
         <div>
           <q-chip size="md" square class="gt-sm theme-default-q-chip">
@@ -53,15 +53,17 @@
       </q-card-section>
       <q-separator class="q-my-sm"></q-separator>
       <q-card-actions align="right">
-        <q-btn color="primary" icon="left" :label="t('Close')" v-close-popup />
+        <q-toggle v-model="visibilityCheck" checked-icon="check" color="green" :label="t(visbilityCheckLabel)"
+          unchecked-icon="clear" class="q-mr-md" />
+        <q-btn color="primary" icon="close" :label="t('Close')" v-close-popup />
       </q-card-actions>
     </q-card>
   </q-dialog>
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
-import { format } from "quasar";
+import { ref, watch, computed, onMounted } from "vue";
+import { format, LocalStorage } from "quasar";
 import { useI18n } from "vue-i18n";
 
 import { useFormatDates } from "src/composables/formatDate"
@@ -89,14 +91,32 @@ const props = defineProps({
 
 const visible = ref(props.modelValue);
 
-watch(() => props.modelValue, val => { visible.value = val; });
+watch(() => props.modelValue, val => { visible.value = val; restoreVisibilityCheck(); });
 
 watch(() => visible, val => { emit('update:modelValue', val); });
+
+const visibilityCheck = ref(true);
+
+const visbilityCheckLabel = computed(() => visibilityCheck.value ? "Always display this progress window when uploading files" : "Only display this progress window when uploading failed")
+
+watch(() => visibilityCheck, val => {
+  localStorage.setItem("alwaysOpenUploadDialog", val);
+});
 
 const onClose = () => {
   visible.value = false;
   emit('update:modelValue', false);
 }
+
+const restoreVisibilityCheck = () => {
+  const savedValue = LocalStorage.getItem("alwaysOpenUploadDialog");
+  if (savedValue !== null) {
+    visibilityCheck.value = savedValue;
+  }
+};
+onMounted(() => {
+  restoreVisibilityCheck();
+});
 
 </script>
 
@@ -104,5 +124,10 @@ const onClose = () => {
 .q-card-uploading-dialog {
   min-width: 50vw;
   max-width: 90vw;
+}
+
+.q-card-uploading-dialog-header {
+  font-size: 1.2em;
+  font-weight: bold;
 }
 </style>

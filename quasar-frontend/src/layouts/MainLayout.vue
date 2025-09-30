@@ -269,7 +269,15 @@ onMounted(() => {
   });
 
   bus.on("hideUploadingDialog", (msg) => {
-    dialogs.uploading.visible = dialogs.uploading.transfers.filter((transfer) => transfer.error == true)?.length > 0;
+    let hideDialog = false;
+    const savedValue = LocalStorage.getItem("alwaysOpenUploadDialog");
+    if (savedValue !== null) {
+      hideDialog = savedValue !== true;
+    }
+    console.log(hideDialog);
+    if (hideDialog) {
+      dialogs.uploading.visible = dialogs.uploading.transfers.filter((transfer) => transfer.error == true)?.length > 0;
+    }
   });
 });
 

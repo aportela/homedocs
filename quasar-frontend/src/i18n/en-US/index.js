@@ -217,4 +217,9 @@ export default {
     "You are about to delete the current document. Are you sure? (this action cannot be undone).",
   "The document has been deleted. Upon closing this dialog, you will be redirected to the home screen.":
     "The document has been deleted. Upon closing this dialog, you will be redirected to the home screen.",
+  "File upload activity & status": "File upload activity & status",
+  "Always display this progress window when uploading files":
+    "Always display this progress window when uploading files",
+  "Only display this progress window when uploading failed":
+    "Only display this progress window when uploading failed",
 };

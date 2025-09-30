@@ -217,4 +217,10 @@ export default {
     "Está a punto de eliminar o documento actual. ¿ Está seguro ? (esta operación non se pode revertir)",
   "The document has been deleted. Upon closing this dialog, you will be redirected to the home screen.":
     "O documento foi eliminado. Unha vez peche este diálogo será redireccionado a pantalla de inicio.",
+  "File upload activity & status":
+    "Estado e actividade das subidas de arquivos",
+  "Always display this progress window when uploading files":
+    "Mostrar sempre esta diálogo de progreso o subir arquivos",
+  "Only display this progress window when uploading failed":
+    "Mostrar unicamente este diálogo cando haxa errores o subir arquivos",
 };
