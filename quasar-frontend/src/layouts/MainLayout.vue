@@ -52,6 +52,7 @@ import { useQuasar, LocalStorage } from "quasar";
 import { useI18n } from "vue-i18n";
 
 import { useFormatDates } from "src/composables/formatDate"
+import { useLocalStorage } from "src/composables/localStorage"
 import { useSessionStore } from "src/stores/session";
 import { bus } from "src/boot/bus";
 
@@ -75,6 +76,8 @@ const { t } = useI18n();
 const session = useSessionStore();
 
 const { currentTimestamp } = useFormatDates();
+
+const { alwaysOpenUploadDialog } = useLocalStorage();
 
 if (!session.isLoaded) {
   session.load();
@@ -195,10 +198,11 @@ onMounted(() => {
         uploading: true,
         done: false,
         error: false,
+        errorHTTPCode: null,
         errorMessage: null,
       })
     }) || [];
-    dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0;
+    dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0 && alwaysOpenUploadDialog.get();
   });
 
   bus.on("refreshUploadingDialog.fileUploaded", (msg) => {
@@ -217,7 +221,7 @@ onMounted(() => {
     } else {
       console.error("Missing previous transfers");
     }
-    dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0;
+    dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0 && alwaysOpenUploadDialog.get();
   });
 
   bus.on("refreshUploadingDialog.fileUploadRejected", (msg) => {
@@ -227,7 +231,8 @@ onMounted(() => {
         foundTransfer.end = currentTimestamp();
         foundTransfer.uploading = false;
         foundTransfer.error = true;
-        foundTransfer.errorMessage = "Upload rejected";
+        foundTransfer.errorHTTPCode = transferUploadedWithError.error?.status;
+        foundTransfer.errorMessage = "Transfer rejected";
       } else {
         dialogs.uploading.transfers.unshift({
           filename: transferUploadedWithError.name,
@@ -237,7 +242,8 @@ onMounted(() => {
           uploading: false,
           done: false,
           error: true,
-          errorMessage: "Upload rejected",
+          errorHTTPCode: transferUploadedWithError.error?.status,
+          errorMessage: "Transfer rejected",
         });
       }
     });
@@ -251,7 +257,8 @@ onMounted(() => {
         foundTransfer.end = currentTimestamp();
         foundTransfer.uploading = false;
         foundTransfer.error = true;
-        foundTransfer.errorMessage = "Upload failed";
+        foundTransfer.errorHTTPCode = transferUploadedWithError.error?.status;
+        foundTransfer.errorMessage = "Transfer failed";
       } else {
         dialogs.uploading.transfers.unshift({
           filename: transferUploadedWithError.name,
@@ -261,23 +268,12 @@ onMounted(() => {
           uploading: false,
           done: false,
           error: true,
-          errorMessage: "Upload rejected",
+          errorHTTPCode: transferUploadedWithError.error?.status,
+          errorMessage: "Transfer failed",
         });
       }
     });
     dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0;
-  });
-
-  bus.on("hideUploadingDialog", (msg) => {
-    let hideDialog = false;
-    const savedValue = LocalStorage.getItem("alwaysOpenUploadDialog");
-    if (savedValue !== null) {
-      hideDialog = savedValue !== true;
-    }
-    console.log(hideDialog);
-    if (hideDialog) {
-      dialogs.uploading.visible = dialogs.uploading.transfers.filter((transfer) => transfer.error == true)?.length > 0;
-    }
   });
 });
 
@@ -290,7 +286,6 @@ onBeforeUnmount(() => {
   bus.off("refreshUploadingDialog.fileUploaded");
   bus.off("refreshUploadingDialog.fileUploadRejected");
   bus.off("refreshUploadingDialog.fileUploadFailed");
-  bus.off("hideUploadingDialog");
 });
 
 </script>
