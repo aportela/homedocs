@@ -20,7 +20,7 @@
               <tr>
                 <th class="text-left">{{ t("Name") }}</th>
                 <th class="text-right">{{ t("Size") }}</th>
-                <th class="text-right">{{ t("Start") }}</th>
+                <th class="text-right">{{ t("Started") }}</th>
                 <th class="text-right">{{ t("End") }}</th>
                 <th class="text-center">{{ t("Status") }}</th>
               </tr>
@@ -35,15 +35,23 @@
                 <td class="text-center">
                   <q-chip square v-if="transfer.error" class="full-width bg-red-9 text-white">
                     <q-avatar icon="cancel" class="q-ma-xs" />
-                    {{ t(transfer.errorMessage) }}
+                    {{ transfer.errorHTTPCode == 413
+                      ?
+                      t("Transfer rejected max filesize", {
+                        maxUploadFileSize:
+                          format.humanStorageSize(initialState.maxUploadFileSize)
+                      })
+                      :
+                      t(transfer.errorMessage)
+                    }}
                   </q-chip>
                   <q-chip square v-else-if="transfer.done" class="full-width bg-green-9 text-white">
                     <q-avatar icon="check" class="q-ma-xs" />
-                    {{ t("Upload complete") }}
+                    {{ t("Transfer complete") }}
                   </q-chip>
                   <q-chip square v-else-if="transfer.uploading" class="full-width bg-light-blue-9 text-white">
                     <q-spinner size="sm" class="q-ma-xs" />
-                    {{ t("Uploading...") }}
+                    {{ t("Transfering...") }}
                   </q-chip>
                 </td>
               </tr>
@@ -53,8 +61,8 @@
       </q-card-section>
       <q-separator class="q-my-sm"></q-separator>
       <q-card-actions align="right">
-        <q-toggle v-model="visibilityCheck" checked-icon="check" color="green" :label="t(visbilityCheckLabel)"
-          unchecked-icon="clear" class="q-mr-md" />
+        <q-toggle v-model="visibilityCheck" checked-icon="check" color="green" :label="t(visibilityCheckLabel)"
+          unchecked-icon="clear" class="q-mr-md" @update:modelValue="saveVisibilityCheck" />
         <q-btn color="primary" icon="close" :label="t('Close')" v-close-popup />
       </q-card-actions>
     </q-card>
@@ -63,14 +71,18 @@
 
 <script setup>
 import { ref, watch, computed, onMounted } from "vue";
-import { format, LocalStorage } from "quasar";
+import { format } from "quasar";
 import { useI18n } from "vue-i18n";
 
 import { useFormatDates } from "src/composables/formatDate"
+import { useLocalStorage } from "src/composables/localStorage"
+import { useInitialStateStore } from "src/stores/initialState";
 
 const { t } = useI18n();
 
 const { fullDateTimeHuman } = useFormatDates();
+const { alwaysOpenUploadDialog } = useLocalStorage();
+const initialState = useInitialStateStore();
 
 const emit = defineEmits(['update:modelValue', 'close']);
 
@@ -91,31 +103,30 @@ const props = defineProps({
 
 const visible = ref(props.modelValue);
 
-watch(() => props.modelValue, val => { visible.value = val; restoreVisibilityCheck(); });
+watch(() => props.modelValue, val => {
+  visible.value = val;
+  if (val) {
+    visibilityCheck.value = alwaysOpenUploadDialog.get();
+  }
+});
 
 watch(() => visible, val => { emit('update:modelValue', val); });
 
-const visibilityCheck = ref(true);
+const visibilityCheck = ref(alwaysOpenUploadDialog.get());
 
-const visbilityCheckLabel = computed(() => visibilityCheck.value ? "Always display this progress window when uploading files" : "Only display this progress window when uploading failed")
-
-watch(() => visibilityCheck, val => {
-  localStorage.setItem("alwaysOpenUploadDialog", val);
-});
+const visibilityCheckLabel = computed(() => visibilityCheck.value ? "Always display this progress window when uploading files" : "Only display this progress window when uploading failed");
 
 const onClose = () => {
   visible.value = false;
   emit('update:modelValue', false);
 }
 
-const restoreVisibilityCheck = () => {
-  const savedValue = LocalStorage.getItem("alwaysOpenUploadDialog");
-  if (savedValue !== null) {
-    visibilityCheck.value = savedValue;
-  }
+const saveVisibilityCheck = (val) => {
+  alwaysOpenUploadDialog.set(val);
 };
+
 onMounted(() => {
-  restoreVisibilityCheck();
+  visibilityCheck.value = alwaysOpenUploadDialog.get();
 });
 
 </script>

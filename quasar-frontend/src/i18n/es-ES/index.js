@@ -225,4 +225,12 @@ export default {
     "Mostrar siempre esta diálogo de progreso al subir archivos",
   "Only display this progress window when uploading failed":
     "Mostrar unicamente este diálogo cuando haya errores al subir archivos",
+  "Started": "Iniciado",
+  "End": "Finalizado",
+  "Status": "Estado",
+  "Transfering...": "Transfiriendo...",
+  "Transfer complete": "Transferencia completa",
+  "Transfer failed": "Transferencia fallida",
+  "Transfer rejected": "Transferencia rechazada",
+  "Transfer rejected max filesize": "Transferencia rechazada (tamaño máximo permitido: {maxUploadFileSize})",
 };
