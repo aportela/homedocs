@@ -165,6 +165,43 @@ return (array(
         '
             UPDATE FILE
                 SET uploaded_on_timestamp = uploaded_on_timestamp * 1000
+        ',
         '
+            CREATE TABLE `USER2` (
+                `id` VARCHAR(36) NOT NULL,
+                `email` VARCHAR(255) NOT NULL UNIQUE,
+                `password_hash` VARCHAR(60) NOT NULL,
+                `created_on_timestamp` INTEGER NOT NULL,
+                `last_update_timestamp` INTEGER,
+                PRIMARY KEY (`id`)
+            );
+        ',
+        '
+            INSERT INTO USER2
+                (id, email, password_hash, created_on_timestamp, last_update_timestamp)
+
+            SELECT
+                USER.id, USER.email, USER.password_hash, COALESCE(TMP_USER_MIN_DATE.operation_timestamp, 0), TMP_USER_MAX_DATE.operation_timestamp
+            FROM USER
+            LEFT JOIN (
+                SELECT
+                    DOCUMENT_HISTORY.operation_user_id, MIN(DOCUMENT_HISTORY.operation_date) AS operation_timestamp
+                FROM DOCUMENT_HISTORY
+                GROUP BY DOCUMENT_HISTORY.operation_user_id
+            ) TMP_USER_MIN_DATE ON TMP_USER_MIN_DATE.operation_user_id = USER.id
+            LEFT JOIN (
+                SELECT
+                    DOCUMENT_HISTORY.operation_user_id, MAX(DOCUMENT_HISTORY.operation_date) AS operation_timestamp
+                FROM DOCUMENT_HISTORY
+                GROUP BY DOCUMENT_HISTORY.operation_user_id
+            ) TMP_USER_MAX_DATE ON TMP_USER_MAX_DATE.operation_user_id = USER.id;
+        ',
+        '
+            DROP TABLE `USER`;
+        ',
+        '
+            ALTER TABLE USER2 RENAME TO USER;
+        ',
+
     )
 ));

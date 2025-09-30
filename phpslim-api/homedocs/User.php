@@ -44,13 +44,15 @@ class User
     public function add(\aportela\DatabaseWrapper\DB $dbh): void
     {
         $params = $this->validateAndPrepareParams();
-        $dbh->exec(" INSERT INTO USER (id, email, password_hash) VALUES(:id, :email, :password_hash) ", $params);
+        $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":created_on_timestamp", intval(microtime(true) * 1000));
+        $dbh->exec(" INSERT INTO USER (id, email, password_hash, created_on_timestamp, last_update_timestamp) VALUES(:id, :email, :password_hash, :created_on_timestamp, NULL) ", $params);
     }
 
     public function update(\aportela\DatabaseWrapper\DB $dbh): void
     {
         $params = $this->validateAndPrepareParams();
-        $dbh->exec(" UPDATE USER SET email = :email, password_hash = :password_hash WHERE id = :id ", $params);
+        $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":last_update_timestamp", intval(microtime(true) * 1000));
+        $dbh->exec(" UPDATE USER SET email = :email, password_hash = :password_hash, last_update_timestamp = :last_update_timestamp WHERE id = :id ", $params);
         \HomeDocs\UserSession::set(\HomeDocs\UserSession::getUserId(), $this->email);
     }
 
