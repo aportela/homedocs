@@ -17,7 +17,7 @@ date_default_timezone_set('Europe/Madrid');
 // Path settings
 $settings['paths']['root'] = dirname(__DIR__);
 $settings['paths']['vendor'] = $settings['paths']['root'] . DIRECTORY_SEPARATOR . 'vendor';
-$settings['paths']['database'] = $settings['paths']['root'] . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'homedocs2.sqlite3';
+$settings['paths']['database'] = $settings['paths']['root'] . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'homedocs3.sqlite3';
 $settings['paths']['storage'] = $settings['paths']['root'] . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'storage';
 $settings['paths']['templates'] = $settings['paths']['root'] . DIRECTORY_SEPARATOR . 'templates';
 $settings['paths']['logs'] = $settings['paths']['root'] . DIRECTORY_SEPARATOR . 'logs';
