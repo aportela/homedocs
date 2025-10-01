@@ -1,22 +1,22 @@
 <template>
-  <q-input :type="visiblePassword ? 'text' : 'password'" v-model="model" @update:modelValue="updateValue" :dense="dense"
-    :label="label" :rules="rules" :outlined="outlined" v-bind="attrs" ref="qInputPasswordRef" :error="error"
+  <q-input :type="visiblePassword ? 'text' : 'password'" v-model="internalModel" :dense="dense" :label="label"
+    :rules="rules" :outlined="outlined" v-bind="attrs" ref="qInputPasswordRef" :error="error"
     :errorMessage="errorMessage">
     <template v-slot:prepend>
       <q-icon name="key" />
     </template>
-    <template v-slot:append v-if="model">
-      <q-icon :name="visiblePassword ? 'visibility_off' : 'visibility'" class="cursor-pointer"
-        @click="visiblePassword = !visiblePassword" />
-      <q-tooltip anchor="bottom right" self="top end">{{ t(visiblePassword ? "Hide password" : "Show password")
-      }}</q-tooltip>
+    <template v-slot:append v-if="internalModel">
+      <q-icon :name="visibilityIcon" class="cursor-pointer" @click="visiblePassword = !visiblePassword"
+        :aria-label="t(tooltipLabel)" />
+      <q-tooltip anchor="bottom right" self="top end" :aria-label="t(tooltipLabel)">{{ t(tooltipLabel)
+        }}</q-tooltip>
     </template>
   </q-input>
 </template>
 
 <script setup>
 
-import { ref, watch, useAttrs, onMounted, nextTick } from "vue";
+import { ref, computed, useAttrs, onMounted, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 
 const attrs = useAttrs();
@@ -65,14 +65,19 @@ const props = defineProps({
 
 const qInputPasswordRef = ref(null);
 
-const model = ref(props.modelValue)
 const visiblePassword = ref(false);
 
-watch(() => props.modelValue, val => model.value = val);
+const internalModel = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(value) {
+    emit('update:modelValue', value);
+  }
+});
 
-const updateValue = (newValue) => {
-  emit('update:modelValue', newValue);
-};
+const visibilityIcon = computed(() => visiblePassword.value ? "visibility_off" : "visibility");
+const tooltipLabel = computed(() => visiblePassword.value ? "Hide password" : "Show password");
 
 const focus = () => {
   nextTick(() => {
