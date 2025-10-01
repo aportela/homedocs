@@ -8,9 +8,9 @@
       class="absolute-top-right text-grey cursor-pointer q-mr-sm q-mt-sm" v-show="showUpdateHoverIcon">
       <q-tooltip>{{ t("Click to toggle edit mode") }}</q-tooltip>
     </q-icon>
-    <BrowseByTagButton v-for="tag in currentTags" :key="tag" :tag="tag" icon="tag" />
+    <BrowseByTagButton v-for="tag in internalModel" :key="tag" :tag="tag" icon="tag" />
   </div>
-  <q-select v-else ref="selectRef" :label="t(label)" v-model="currentTags" :dense="dense" :options-dense="dense"
+  <q-select v-else ref="selectRef" :label="t(label)" v-model="internalModel" :dense="dense" :options-dense="dense"
     outlined use-input use-chips multiple hide-dropdown-icon :options="filteredTags" input-debounce="0"
     new-value-mode="add-unique" :disable="disabled || state.loading || state.loadingError" :loading="state.loading"
     :error="state.loadingError" :errorMessage="t('Error loading available tags')" @filter="onFilterTags"
@@ -26,7 +26,7 @@
       </q-icon>
     </template>
     <template v-slot:selected>
-      <q-chip square :removable="!readOnly" :dense="dense" v-for="tag, index in currentTags" :key="tag"
+      <q-chip square :removable="!readOnly" :dense="dense" v-for="tag, index in internalModel" :key="tag"
         @remove="removeTagAtIndex(index)" color="primary" text-color="white" icon="tag" :label="tag">
       </q-chip>
     </template>
@@ -35,7 +35,7 @@
 
 <script setup>
 
-import { ref, reactive, watch, computed, onMounted, onBeforeUnmount, nextTick } from "vue";
+import { ref, reactive, computed, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { bus } from "src/boot/bus";
@@ -46,11 +46,31 @@ import { default as BrowseByTagButton } from "src/components/Buttons/BrowseByTag
 const { t } = useI18n();
 
 const props = defineProps({
-  startModeEditable: Boolean,
-  denyChangeEditableMode: Boolean,
-  modelValue: Array,
-  disabled: Boolean,
-  dense: Boolean,
+  startModeEditable: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
+  denyChangeEditableMode: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
+  modelValue: {
+    type: Array,
+    required: true,
+    default: () => []
+  },
+  disabled: {
+    type: Boolean,
+    required: false,
+    default: true,
+  },
+  dense: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
   label: {
     type: String,
     required: false,
@@ -65,8 +85,15 @@ const showUpdateHoverIcon = ref(false);
 const readOnly = ref(!props.startModeEditable);
 const selectRef = ref(null);
 const filteredTags = ref([]);
-const currentTags = ref([]);
-const selectedTagsProp = computed(() => props.modelValue || []);
+
+const internalModel = computed({
+  get() {
+    return props.modelValue || [];
+  },
+  set(value) {
+    emit('update:modelValue', value);
+  }
+});
 
 const state = reactive({
   loading: false,
@@ -77,25 +104,14 @@ const state = reactive({
 
 const availableTags = reactive([]);
 
-watch(selectedTagsProp, (newValue) => {
-  currentTags.value = newValue || [];
-});
-
-watch(currentTags, (newValue) => {
-  emit('update:modelValue', newValue || []);
-});
-
 function onFilterTags(val, update) {
-  if (val === '') {
-    update(() => {
-      filteredTags.value = availableTags.value;
-    });
-  } else {
-    update(() => {
-      const needle = val.toLowerCase();
-      filteredTags.value = availableTags.filter(v => v.toLowerCase().indexOf(needle) > -1);
-    });
-  }
+  const filtered = val === ''
+    ? availableTags.value
+    : availableTags.filter(tag => tag.toLowerCase().includes(val.toLowerCase()));
+
+  update(() => {
+    filteredTags.value = filtered;
+  });
 }
 
 function onRefresh() {
@@ -107,7 +123,6 @@ function onRefresh() {
     api.tag.search().then((successResponse) => {
       availableTags.length = 0;
       availableTags.push(...successResponse.data.tags);
-      currentTags.value = selectedTagsProp.value;
       state.loading = false;
     }).catch((errorResponse) => {
       state.loadingError = true;
@@ -130,10 +145,12 @@ function onRefresh() {
 
 function onAddTag(tag) {
   selectRef.value?.hidePopup()
+  selectRef.value?.reset();
+  selectRef.value?.updateInputValue("");
 }
 
 function removeTagAtIndex(index) {
-  currentTags.value?.splice(index, 1);
+  internalModel.value?.splice(index, 1);
 }
 
 async function focus() {
