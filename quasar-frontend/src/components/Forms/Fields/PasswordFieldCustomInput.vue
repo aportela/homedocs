@@ -1,6 +1,7 @@
 <template>
-  <q-input :type="visiblePassword ? 'text' : 'password'" v-model="model" :dense="dense" :label="label" :rules="rules"
-    :outlined="outlined" v-bind="attrs" ref="qInputPasswordRef" :error="error" :errorMessage="errorMessage">
+  <q-input :type="visiblePassword ? 'text' : 'password'" v-model="model" @update:modelValue="updateValue" :dense="dense"
+    :label="label" :rules="rules" :outlined="outlined" v-bind="attrs" ref="qInputPasswordRef" :error="error"
+    :errorMessage="errorMessage">
     <template v-slot:prepend>
       <q-icon name="key" />
     </template>
@@ -68,7 +69,10 @@ const model = ref(props.modelValue)
 const visiblePassword = ref(false);
 
 watch(() => props.modelValue, val => model.value = val);
-watch(model, val => emit('update:modelValue', val));
+
+const updateValue = (newValue) => {
+  emit('update:modelValue', newValue);
+};
 
 const focus = () => {
   nextTick(() => {
