@@ -72,7 +72,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.loading" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                      }}</q-badge>
+                    }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
@@ -83,12 +83,13 @@
                       :disable="loading || saving || state.loading" @add-attachment="onShowAttachmentsPicker"
                       @remove-attachment-at-index="(index) => onRemoveSelectedFile(index)"
                       @preview-attachment-at-index="(index) => document.previewFile(index)"
-                      @filter="(text) => document.filterFiles(text)"></DocumentDetailsAttachments>
+                      :filter-by-text="filterByAttachmentFilename" @filter="(text) => onFilterAttachments(text)">
+                    </DocumentDetailsAttachments>
                   </q-tab-panel>
                   <q-tab-panel name="notes" class="q-pa-none">
                     <DocumentDetailsNotes v-model:notes="document.notes" :disable="loading || saving || state.loading"
                       @add-note="document.addNote" @remove-note-at-index="(index) => document.removeNoteAtIdx(index)"
-                      @filter="(text) => document.filterNotes(text)">
+                      :filter-by-text="filterByNoteBody" @filter="(text) => onFilterNotes(text)">
                     </DocumentDetailsNotes>
                   </q-tab-panel>
                   <q-tab-panel name="history" class="q-pa-none" v-if="document.id">
@@ -149,7 +150,6 @@ const { screen } = useQuasar();
 const initialState = useInitialStateStore();
 const { requiredFieldRules, fieldIsRequiredLabel } = useFormUtils();
 
-
 const props = defineProps({
   documentId: {
     type: String,
@@ -187,6 +187,9 @@ const state = reactive({
 const loading = ref(false);
 const saving = ref(false);
 const uploading = ref(false);
+
+const filterByAttachmentFilename = ref(null);
+const filterByNoteBody = ref(null);
 
 const showDeleteDocumentConfirmationDialog = ref(false);
 
@@ -396,6 +399,16 @@ function onRemoveSelectedFile(index) {
     document.removeFileAtIdx(index)
   }
 }
+
+const onFilterAttachments = (text) => {
+  filterByAttachmentFilename.value = text;
+  document.filterFiles(text);
+};
+
+const onFilterNotes = (text) => {
+  filterByNoteBody.value = text;
+  document.filterNotes(text)
+};
 
 // q-uploader component event => file upload starts
 const onUploadsStart = (e) => {

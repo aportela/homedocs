@@ -42,7 +42,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { useFormUtils } from "src/composables/formUtils"
@@ -65,13 +65,17 @@ const props = defineProps({
   disable: {
     type: Boolean,
     required: false,
-    default: false
+    default: false,
+  },
+  filterByText: {
+    type: String,
+    required: false
   }
 });
 
 const hasNotes = computed(() => props.notes.length > 0);
 
-const searchText = ref(null);
+const searchText = ref(props.filterByText || null);
 
 const onSearchTextChanged = (newValue) => {
   emit("filter", newValue);

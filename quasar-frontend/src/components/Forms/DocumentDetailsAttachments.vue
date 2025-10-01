@@ -55,7 +55,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { format } from "quasar";
 
@@ -80,12 +80,16 @@ const props = defineProps({
     type: Boolean,
     required: false,
     default: false
+  },
+  filterByText: {
+    type: String,
+    required: false
   }
 });
 
 const hasAttachments = computed(() => props.attachments.length > 0);
 
-const searchText = ref(null);
+const searchText = ref(props.filterByText || null);
 
 const onSearchTextChanged = (newValue) => {
   emit("filter", newValue);
