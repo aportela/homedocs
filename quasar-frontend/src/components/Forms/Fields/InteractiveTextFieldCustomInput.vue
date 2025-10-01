@@ -23,11 +23,11 @@
     </div>
     <!-- TODO: do not use relative position-->
     <p class="text-red q-ml-sm" style="position: relative; top: -10px; font-size: 0.8em;" v-if="error"> {{ errorMessage
-      }}
+    }}
     </p>
   </div>
-  <q-input v-else v-bind="attrs" ref="qInputRef" :label="label" v-model.trim="model" :rules="rules" :error="error"
-    :errorMessage="errorMessage">
+  <q-input v-else v-bind="attrs" ref="qInputRef" :label="label" v-model.trim="model" @update:modelValue="updateValue"
+    :rules="rules" :error="error" :errorMessage="errorMessage">
     <template v-slot:append>
       <q-icon name="done" class="cursor-pointer" @click.stop="onToggleReadOnly" v-if="!error">
         <q-tooltip>{{ t("Click to toggle edit mode") }}</q-tooltip>
@@ -101,7 +101,11 @@ const collapsedView = ref(true);
 const model = ref(props.modelValue)
 
 watch(() => props.modelValue, val => model.value = val);
-watch(model, val => emit('update:modelValue', val));
+
+const updateValue = (newValue) => {
+  emit('update:modelValue', newValue);
+};
+
 
 const focus = () => {
   nextTick(() => {
