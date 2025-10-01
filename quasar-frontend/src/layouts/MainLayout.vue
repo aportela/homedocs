@@ -7,10 +7,10 @@
         <q-btn flat dense round @click="onToggleminiSidebarCurrentMode" aria-label="Toggle drawer"
           :icon="miniSidebarCurrentMode ? 'arrow_forward_ios' : 'arrow_back_ios_new'" class="q-mr-md"
           v-show="visibleSidebar" />
-        <q-btn type="button" no-caps no-wrap align="left" outline :label="searchButtonLabel" icon-right="search"
+        <q-btn type="button" no-caps no-wrap align="left" outline :label="searchButtonLabel" icon="search"
           class="full-width no-caps theme-default-q-btn" @click.prevent="dialogs.fastSearch.visible = true">
           <q-tooltip anchor="bottom middle" self="top middle">{{ t("Click to open fast search")
-            }}</q-tooltip>
+          }}</q-tooltip>
         </q-btn>
         <!--
         <FastSearchSelector dense class="full-width"></FastSearchSelector>
