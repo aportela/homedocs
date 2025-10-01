@@ -9,25 +9,24 @@
       <span class="absolute-top-right text-grey q-mt-sm">
         <slot name="top-icon-prepend" :showTopHoverIcons="showTopHoverIcons"></slot>
         <q-icon :name="!collapsedView ? 'unfold_less' : 'expand'" size="sm" v-show="showTopHoverIcons"
-          @click.stop="collapsedView = !collapsedView">
+          @click.stop="collapsedView = !collapsedView"
+          :aria-label="t(collapsedView ? 'Click to expand' : 'Click to collapse')">
           <q-tooltip>{{ t(collapsedView ? "Click to expand" : "Click to collapse") }}</q-tooltip>
         </q-icon>
-        <q-icon name="edit" size="sm" class="q-ml-sm" v-show="showTopHoverIcons">
+        <q-icon name="edit" size="sm" class="q-ml-sm" v-show="showTopHoverIcons"
+          :aria-label="t('Click to toggle edit mode')">
           <q-tooltip>{{ t("Click to toggle edit mode") }}</q-tooltip>
         </q-icon>
         <slot name="top-icon-append" :showTopHoverIcons="showTopHoverIcons"></slot>
       </span>
       <div class="q-mt-sm" :class="{ 'collapsed': collapsedView }" :style="`--max-lines: ${maxLines}`">
-        {{ model }}
+        {{ internalModel }}
       </div>
     </div>
-    <!-- TODO: do not use relative position-->
-    <p class="text-red q-ml-sm" style="position: relative; top: -10px; font-size: 0.8em;" v-if="error"> {{ errorMessage
-    }}
-    </p>
+    <p class="text-red q-ml-sm error-message" v-if="error">{{ errorMessage }}</p>
   </div>
-  <q-input v-else v-bind="attrs" ref="qInputRef" :label="label" v-model.trim="model" @update:modelValue="updateValue"
-    :rules="rules" :error="error" :errorMessage="errorMessage">
+  <q-input v-else v-bind="attrs" ref="qInputRef" :label="label" v-model.trim="internalModel" :rules="rules"
+    :error="error" :errorMessage="errorMessage">
     <template v-slot:append>
       <q-icon name="done" class="cursor-pointer" @click.stop="onToggleReadOnly" v-if="!error">
         <q-tooltip>{{ t("Click to toggle edit mode") }}</q-tooltip>
@@ -39,7 +38,7 @@
 
 <script setup>
 
-import { ref, useAttrs, computed, watch, nextTick, onMounted } from "vue";
+import { ref, useAttrs, computed, nextTick, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useQuasar } from "quasar";
 
@@ -96,16 +95,18 @@ const qInputRef = ref(null);
 
 const readOnly = ref(!props.startModeEditable);
 
+const internalModel = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(value) {
+    emit('update:modelValue', value);
+  }
+});
+
 const showTopHoverIcons = ref(!isDesktop.value);
+
 const collapsedView = ref(true);
-const model = ref(props.modelValue)
-
-watch(() => props.modelValue, val => model.value = val);
-
-const updateValue = (newValue) => {
-  emit('update:modelValue', newValue);
-};
-
 
 const focus = () => {
   nextTick(() => {
@@ -160,5 +161,12 @@ onMounted(() => {
 
 .border-error {
   border: 2px solid red !important;
+}
+
+/* TODO: do not use relative position */
+.error-message {
+  position: relative;
+  top: -10px;
+  font-size: 0.8em;
 }
 </style>
