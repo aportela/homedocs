@@ -3,7 +3,7 @@
     <q-item class="transparent-background text-color-primary q-pa-none">
       <q-item-section v-show="hasAttachments">
         <q-input type="search" icon="search" outlined dense clearable :disable="disable || !hasAttachments"
-          v-model.trim="searchText" :label="t('Filter by text on file name')"
+          v-model.trim="searchText" @update:model-value="onSearchTextChanged" :label="t('Filter by text on file name')"
           :placeholder="t('type text search condition')"></q-input>
       </q-item-section>
       <q-item-section side>
@@ -87,9 +87,9 @@ const hasAttachments = computed(() => props.attachments.length > 0);
 
 const searchText = ref(null);
 
-watch(() => searchText.value, val => {
-  emit("filter", val);
-});
+const onSearchTextChanged = (newValue) => {
+  emit("filter", newValue);
+};
 
 const onAddAttachment = () => {
   emit("addAttachment");

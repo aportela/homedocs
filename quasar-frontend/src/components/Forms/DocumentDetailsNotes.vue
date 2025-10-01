@@ -3,7 +3,7 @@
     <q-item class="transparent-background text-color-primary q-pa-none">
       <q-item-section v-show="hasNotes">
         <q-input type="search" icon="search" outlined dense clearable :disable="disable || !hasNotes"
-          v-model.trim="searchText" :label="t('Filter by text on note body')"
+          v-model.trim="searchText" @update:model-value="onSearchTextChanged" :label="t('Filter by text on note body')"
           :placeholder="t('type text search condition')"></q-input>
       </q-item-section>
       <q-item-section side>
@@ -73,9 +73,9 @@ const hasNotes = computed(() => props.notes.length > 0);
 
 const searchText = ref(null);
 
-watch(() => searchText.value, val => {
-  emit("filter", val);
-});
+const onSearchTextChanged = (newValue) => {
+  emit("filter", newValue);
+};
 
 const onAddNote = () => {
   emit("addNote");
