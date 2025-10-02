@@ -11,11 +11,11 @@
         <q-icon :name="!collapsedView ? 'unfold_less' : 'expand'" size="sm" v-show="showTopHoverIcons"
           @click.stop="collapsedView = !collapsedView"
           :aria-label="t(collapsedView ? 'Click to expand' : 'Click to collapse')">
-          <q-tooltip>{{ t(collapsedView ? "Click to expand" : "Click to collapse") }}</q-tooltip>
+          <DesktopToolTip>{{ t(collapsedView ? "Click to expand" : "Click to collapse") }}</DesktopToolTip>
         </q-icon>
         <q-icon name="edit" size="sm" class="q-ml-sm" v-show="showTopHoverIcons"
           :aria-label="t('Click to toggle edit mode')">
-          <q-tooltip>{{ t("Click to toggle edit mode") }}</q-tooltip>
+          <DesktopToolTip>{{ t("Click to toggle edit mode") }}</DesktopToolTip>
         </q-icon>
         <slot name="top-icon-append" :showTopHoverIcons="showTopHoverIcons"></slot>
       </span>
@@ -29,7 +29,7 @@
     :errorMessage="errorMessage">
     <template v-slot:append>
       <q-icon name="done" class="cursor-pointer" @click.stop="onToggleReadOnly" v-if="!error">
-        <q-tooltip>{{ t("Click to toggle edit mode") }}</q-tooltip>
+        <DesktopToolTip>{{ t("Click to toggle edit mode") }}</DesktopToolTip>
       </q-icon>
       <slot name="icon-append-on-edit"></slot>
     </template>
@@ -41,6 +41,8 @@
 import { ref, useAttrs, computed, nextTick, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useQuasar } from "quasar";
+
+import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 
 const props = defineProps({
   startModeEditable: {
@@ -133,8 +135,12 @@ const onToggleReadOnly = () => {
   }
 }
 
+const unsetReadOnly = () => {
+  readOnly.value = false;
+}
+
 defineExpose({
-  focus
+  focus, unsetReadOnly
 });
 
 onMounted(() => {
