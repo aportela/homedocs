@@ -72,7 +72,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.loading" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                    }}</q-badge>
+                      }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
@@ -371,26 +371,6 @@ const onShowAttachmentsPicker = () => {
   nextTick(() => {
     uploaderRef.value.pickFiles();
   });
-}
-
-function onRemoveSelectedFile(index) {
-  if (document.files[index].orphaned) {
-    loading.value = true;
-    api.document.
-      removeFile(document.files[index].id)
-      .then((successResponse) => {
-        document.removeFileAtIdx(index)
-        loading.value = false;
-        state.loading = false;
-      })
-      .catch((errorResponse) => {
-        loading.value = false;
-        state.loading = false;
-        // TODO
-      });
-  } else {
-    document.removeFileAtIdx(index)
-  }
 }
 
 // q-uploader component event => file upload starts
