@@ -72,7 +72,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.loading" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                    }}</q-badge>
+                      }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
@@ -87,9 +87,8 @@
                     </DocumentDetailsAttachments>
                   </q-tab-panel>
                   <q-tab-panel name="notes" class="q-pa-none">
-                    <DocumentDetailsNotes v-model:notes="document.notes" :disable="loading || saving || state.loading"
-                      @add-note="document.addNote" @remove-note-at-index="(index) => document.removeNoteAtIdx(index)"
-                      :filter-by-text="filterByNoteBody" @filter="(text) => onFilterNotes(text)">
+                    <DocumentDetailsNotes v-model="document.notes" :disable="loading || saving || state.loading"
+                      @filter="(text) => onFilterNotes(text)">
                     </DocumentDetailsNotes>
                   </q-tab-panel>
                   <q-tab-panel name="history" class="q-pa-none" v-if="document.id">
