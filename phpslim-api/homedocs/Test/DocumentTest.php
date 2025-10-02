@@ -8,13 +8,17 @@ require_once dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "vendor" . DIRECT
 
 final class DocumentTest extends \HomeDocs\Test\BaseTest
 {
-    public static function setUpBeforeClass(): void
+    /**
+     * Initialize the test case
+     * Called for every defined test
+     */
+    public function setUp(): void
     {
-        parent::setUpBeforeClass();
+        parent::setUp();
         $id = \HomeDocs\Utils::uuidv4();
         $u = new \HomeDocs\User($id, $id . "@server.com", "secret");
         $u->add(self::$dbh);
-        $u->signIn(self::$dbh);
+        \HomeDocs\UserSession::set($id, $id . "@server.com");
     }
 
     public function testAddWithoutId(): void
