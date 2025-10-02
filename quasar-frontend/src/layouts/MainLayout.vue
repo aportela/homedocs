@@ -212,7 +212,6 @@ onMounted(() => {
       msg.transfers?.forEach((completedTransfer) => {
         const foundTransfer = dialogs.uploading.transfers?.find((transfer) => !transfer.processed && completedTransfer.name == transfer.filename && completedTransfer.size == transfer.filesize);
         if (foundTransfer) {
-          foundTransfer.isNew = false;
           foundTransfer.end = currentTimestamp();
           foundTransfer.uploading = false;
           foundTransfer.done = true;
