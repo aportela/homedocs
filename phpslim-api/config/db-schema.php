@@ -17,7 +17,7 @@ return (array(
             CREATE TABLE DOCUMENT (
                 id VARCHAR(36) NOT NULL,
                 title VARCHAR(128) NOT NULL,
-                description VARCHAR(4096) NULL,
+                description VARCHAR(8192) NULL,
                 PRIMARY KEY (id)
             );
 
