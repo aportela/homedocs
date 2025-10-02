@@ -25,8 +25,8 @@
             </q-select>
           </div>
           <div style="flex-grow: 1;">
-            <q-input type="text" dense color="grey-3" label-color="grey-7" :label="t('Search text...')"
-              v-model.trim="text" @update:model-value="onSearch" autofocus="" clearable outlined>
+            <q-input type="text" dense color="grey-3" label-color="grey-7" :label="t('Search text...')" v-model="text"
+              @update:model-value="onSearch" autofocus="" clearable outlined>
               <template v-slot:prepend>
                 <q-icon name="search" />
               </template>
@@ -164,9 +164,9 @@ const onSearch = (val) => {
     state.apiError = null;
     const params = {
       text: {
-        title: searchOn.value.value == "title" ? val : null,
-        description: searchOn.value.value == "description" ? val : null,
-        notes: searchOn.value.value == "notes" ? val : null,
+        title: searchOn.value.value == "title" ? val.trim() : null,
+        description: searchOn.value.value == "description" ? val.trim() : null,
+        notes: searchOn.value.value == "notes" ? val.trim() : null,
       }
     };
     api.document.search(1, 16, params, "lastUpdateTimestamp", "DESC")
