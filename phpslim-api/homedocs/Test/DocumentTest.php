@@ -8,6 +8,15 @@ require_once dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "vendor" . DIRECT
 
 final class DocumentTest extends \HomeDocs\Test\BaseTest
 {
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+        $id = \HomeDocs\Utils::uuidv4();
+        $u = new \HomeDocs\User($id, $id . "@server.com", "secret");
+        $u->add(self::$dbh);
+        $u->signIn(self::$dbh);
+    }
+
     public function testAddWithoutId(): void
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
