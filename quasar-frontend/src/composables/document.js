@@ -253,5 +253,5 @@ export function useDocument() {
     return doc;
   };
 
-  return { getNewNote, getNewDocument };
+  return { escapeRegExp, getNewNote, getNewDocument };
 }
