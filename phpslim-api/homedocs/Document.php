@@ -591,22 +591,25 @@ class Document
             if ($totalWords > 0) {
                 foreach ($words as $word) {
                     $paramName = sprintf(":BODY_%03d", $totalWords);
-                    $params[] = new \aportela\DatabaseWrapper\Param\StringParam($paramName, "%" . $word . "%");
-                    $queryConditions[] = sprintf(" DOCUMENT_NOTE.body LIKE %s ", $paramName);
+                    $params[] = new \aportela\DatabaseWrapper\Param\StringParam($paramName, $word);
+                    $queryConditions[] = sprintf(" DOCUMENT_NOTE_FTS.body MATCH %s ", $paramName);
                     $totalWords--;
                 }
             }
         }
+
         $data = $dbh->query(
             sprintf(
                 "
                     SELECT
                         DOCUMENT_NOTE.note_id AS noteId, DOCUMENT_NOTE.created_on_timestamp AS createdOnTimestamp, DOCUMENT_NOTE.body
                     FROM DOCUMENT_NOTE
+                    %s
                     WHERE DOCUMENT_NOTE.document_id = :document_id
                     %s
                     ORDER BY DOCUMENT_NOTE.created_on_timestamp DESC
                 ",
+                ! empty($search) ? "INNER JOIN DOCUMENT_NOTE_FTS ON DOCUMENT_NOTE.rowid = DOCUMENT_NOTE_FTS.rowid " : "",
                 ! empty($search) ?
                     "
                     AND (
@@ -700,14 +703,15 @@ class Document
                 $notesConditions = [];
                 foreach ($words as $word) {
                     $paramName = sprintf(":NOTES_BODY_%03d", $totalWords);
-                    $params[] = new \aportela\DatabaseWrapper\Param\StringParam($paramName, "%" . $word . "%");
-                    $notesConditions[] = sprintf(" DOCUMENT_NOTE.body LIKE %s ", $paramName);
+                    $params[] = new \aportela\DatabaseWrapper\Param\StringParam($paramName, $word);
+                    $notesConditions[] = sprintf(" DOCUMENT_NOTE_FTS.body MATCH %s ", $paramName);
                     $totalWords--;
                 }
                 $queryConditions[] = sprintf("
                     EXISTS (
                         SELECT DOCUMENT_NOTE.document_id
                         FROM DOCUMENT_NOTE
+                        INNER JOIN DOCUMENT_NOTE_FTS ON DOCUMENT_NOTE.rowid = DOCUMENT_NOTE_FTS.rowid
                         WHERE DOCUMENT_NOTE.DOCUMENT_ID = DOCUMENT.id
                         AND (%s)
                     )
@@ -907,7 +911,7 @@ class Document
                     }
                     if (isset($filter["notesBody"]) && !empty($filter["notesBody"])) {
                         // TODO: this NEEDS to be rewritten with more efficient method
-                        $notes = (new \Homedocs\Document($item->id))->getNotes($dbh);
+                        $notes = (new \Homedocs\Document($item->id))->getNotes($dbh, $filter["notesBody"]);
                         foreach ($notes as $note) {
                             $fragment = \HomeDocs\Utils::getStringFragment($note->body, $filter["notesBody"], 64, true);
                             if (! empty($fragment)) {
