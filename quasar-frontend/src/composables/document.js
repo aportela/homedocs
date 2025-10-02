@@ -17,6 +17,20 @@ export function useDocument() {
     return string.replace(/[.*+?^=!:${}()|\[\]\/\\]/g, "\\$&");
   };
 
+  const getNewNote = () => {
+    const note = reactive({
+      id: uid(),
+      body: null,
+      createdOnTimestamp: currentTimestamp(),
+      creationDate: currentFullDateTimeHuman(),
+      creationDateTimeAgo: currentTimeAgo(),
+      expanded: false,
+      startOnEditMode: true, // new notes start with view mode = "edit" (for allowing input body text)
+      visible: true, // show always new notes (ignoring text filter on note body)
+    });
+    return (note);
+  };
+
   const getNewDocument = () => {
     const doc = reactive({
       id: null,
@@ -200,16 +214,7 @@ export function useDocument() {
 
       addNote() {
         doc.notes.unshift(
-          reactive({
-            id: uid(),
-            body: null,
-            createdOnTimestamp: currentTimestamp(),
-            creationDate: currentFullDateTimeHuman(),
-            creationDateTimeAgo: currentTimeAgo(),
-            expanded: false,
-            startOnEditMode: true, // new notes start with view mode = "edit" (for allowing input body text)
-            visible: true, // show always new notes (ignoring text filter on note body)
-          }),
+          getNewNote()
         );
       },
 
@@ -248,5 +253,5 @@ export function useDocument() {
     return doc;
   };
 
-  return { getNewDocument };
+  return { getNewNote, getNewDocument };
 }
