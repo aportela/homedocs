@@ -1,11 +1,10 @@
 <template>
-  <q-input :type="visiblePassword ? 'text' : 'password'" v-model="internalModel" :dense="dense" :label="label"
-    :rules="rules" :outlined="outlined" v-bind="attrs" ref="qInputPasswordRef" :error="error"
-    :errorMessage="errorMessage">
+  <q-input :type="visiblePassword ? 'text' : 'password'" v-model="password" :dense="dense" :label="label" :rules="rules"
+    :outlined="outlined" v-bind="attrs" ref="qInputPasswordRef" :error="error" :errorMessage="errorMessage">
     <template v-slot:prepend>
       <q-icon name="key" />
     </template>
-    <template v-slot:append v-if="internalModel">
+    <template v-slot:append v-if="password">
       <q-icon :name="visibilityIcon" class="cursor-pointer" @click="visiblePassword = !visiblePassword"
         :aria-label="t(tooltipLabel)" />
       <q-tooltip anchor="bottom right" self="top end" :aria-label="t(tooltipLabel)">{{ t(tooltipLabel)
@@ -67,7 +66,7 @@ const qInputPasswordRef = ref(null);
 
 const visiblePassword = ref(false);
 
-const internalModel = computed({
+const password = computed({
   get() {
     return props.modelValue;
   },

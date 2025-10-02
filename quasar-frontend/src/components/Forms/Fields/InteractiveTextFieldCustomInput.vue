@@ -20,13 +20,13 @@
         <slot name="top-icon-append" :showTopHoverIcons="showTopHoverIcons"></slot>
       </span>
       <div class="q-mt-sm" :class="{ 'collapsed': collapsedView }" :style="`--max-lines: ${maxLines}`">
-        {{ internalModel }}
+        {{ text }}
       </div>
     </div>
     <p class="text-red q-ml-sm error-message" v-if="error">{{ errorMessage }}</p>
   </div>
-  <q-input v-else v-bind="attrs" ref="qInputRef" :label="label" v-model.trim="internalModel" :rules="rules"
-    :error="error" :errorMessage="errorMessage">
+  <q-input v-else v-bind="attrs" ref="qInputRef" :label="label" v-model.trim="text" :rules="rules" :error="error"
+    :errorMessage="errorMessage">
     <template v-slot:append>
       <q-icon name="done" class="cursor-pointer" @click.stop="onToggleReadOnly" v-if="!error">
         <q-tooltip>{{ t("Click to toggle edit mode") }}</q-tooltip>
@@ -95,7 +95,7 @@ const qInputRef = ref(null);
 
 const readOnly = ref(!props.startModeEditable);
 
-const internalModel = computed({
+const text = computed({
   get() {
     return props.modelValue;
   },

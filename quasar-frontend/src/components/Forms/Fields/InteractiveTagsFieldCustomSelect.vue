@@ -8,10 +8,10 @@
       class="absolute-top-right text-grey cursor-pointer q-mr-sm q-mt-sm" v-show="showUpdateHoverIcon">
       <q-tooltip>{{ t("Click to toggle edit mode") }}</q-tooltip>
     </q-icon>
-    <BrowseByTagButton v-for="tag in internalModel" :key="tag" :tag="tag" icon="tag" />
+    <BrowseByTagButton v-for="tag in tags" :key="tag" :tag="tag" icon="tag" />
   </div>
-  <q-select v-else ref="selectRef" :label="t(label)" v-model="internalModel" :dense="dense" :options-dense="dense"
-    outlined use-input use-chips multiple hide-dropdown-icon :options="filteredTags" input-debounce="0"
+  <q-select v-else ref="selectRef" :label="t(label)" v-model="tags" :dense="dense" :options-dense="dense" outlined
+    use-input use-chips multiple hide-dropdown-icon :options="filteredTags" input-debounce="0"
     new-value-mode="add-unique" :disable="disabled || state.loading || state.loadingError" :loading="state.loading"
     :error="state.loadingError" :errorMessage="t('Error loading available tags')" @filter="onFilterTags"
     @add="onAddTag">
@@ -26,7 +26,7 @@
       </q-icon>
     </template>
     <template v-slot:selected>
-      <q-chip square :removable="!readOnly" :dense="dense" v-for="tag, index in internalModel" :key="tag"
+      <q-chip square :removable="!readOnly" :dense="dense" v-for="tag, index in tags" :key="tag"
         @remove="removeTagAtIndex(index)" color="primary" text-color="white" icon="tag" :label="tag">
       </q-chip>
     </template>
@@ -86,7 +86,7 @@ const readOnly = ref(!props.startModeEditable);
 const selectRef = ref(null);
 const filteredTags = ref([]);
 
-const internalModel = computed({
+const tags = computed({
   get() {
     return props.modelValue || [];
   },
@@ -150,7 +150,7 @@ function onAddTag(tag) {
 }
 
 function removeTagAtIndex(index) {
-  internalModel.value?.splice(index, 1);
+  tags.value?.splice(index, 1);
 }
 
 async function focus() {
