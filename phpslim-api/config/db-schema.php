@@ -72,6 +72,24 @@ return (array(
 
             CREATE VIRTUAL TABLE DOCUMENT_NOTE_FTS USING fts5(body);
 
+            CREATE TRIGGER after_document_note_insert AFTER INSERT ON DOCUMENT_NOTE
+            BEGIN
+                INSERT INTO DOCUMENT_NOTE_FTS (rowid, body)
+                VALUES (new.rowid, new.body);
+            END;
+
+            CREATE TRIGGER after_document_note_update AFTER UPDATE ON DOCUMENT_NOTE
+            BEGIN
+                DELETE FROM DOCUMENT_NOTE_FTS WHERE rowid = old.rowid;
+                INSERT INTO DOCUMENT_NOTE_FTS (rowid, body)
+                VALUES (new.rowid, new.body);
+            END;
+
+            CREATE TRIGGER after_document_note_delete AFTER DELETE ON DOCUMENT_NOTE
+            BEGIN
+                DELETE FROM DOCUMENT_NOTE_FTS WHERE rowid = old.rowid;
+            END;
+
             CREATE TABLE DOCUMENT_HISTORY (
                 document_id VARCHAR(36) NOT NULL,
                 created_on_timestamp INTEGER NOT NULL,
