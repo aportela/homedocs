@@ -5,12 +5,6 @@ declare(strict_types=1);
 
 namespace HomeDocs;
 
-define("UUID_V4_LENGTH", 36);
-define("MAX_DOCUMENT_TITLE_LENGTH", 128);
-define("MAX_DOCUMENT_DESCRIPTION_LENGTH", 4096);
-define("MAX_DOCUMENT_TAG_LENGTH", 32);
-define("MAX_DOCUMENT_NOTE_BODY_LENGTH", 16384);
-
 class Document
 {
     private ?string $rootStoragePath;
@@ -114,22 +108,22 @@ class Document
 
     private function validate(): void
     {
-        if (!empty($this->id) && mb_strlen($this->id) == UUID_V4_LENGTH) {
-            if (!empty($this->title) && mb_strlen($this->title) <= MAX_DOCUMENT_TITLE_LENGTH) {
-                if ((!empty($this->description) && mb_strlen($this->description) <= MAX_DOCUMENT_DESCRIPTION_LENGTH) || empty($this->description)) {
+        if (!empty($this->id) && mb_strlen($this->id) == \HomeDocs\Constants::UUID_V4_LENGTH) {
+            if (!empty($this->title) && mb_strlen($this->title) <= \HomeDocs\Constants::MAX_DOCUMENT_TITLE_LENGTH) {
+                if ((!empty($this->description) && mb_strlen($this->description) <= \HomeDocs\Constants::MAX_DOCUMENT_DESCRIPTION_LENGTH) || empty($this->description)) {
                     if (is_array($this->tags) && count($this->tags) > 0) {
                         foreach ($this->tags as $tag) {
                             if (empty($tag)) {
                                 throw new \HomeDocs\Exception\InvalidParamsException("tags");
-                            } elseif (mb_strlen($tag) > MAX_DOCUMENT_TAG_LENGTH) {
+                            } elseif (mb_strlen($tag) > \HomeDocs\Constants::MAX_DOCUMENT_TAG_LENGTH) {
                                 throw new \HomeDocs\Exception\InvalidParamsException("tags");
                             }
                         }
                     }
                     if (is_array($this->notes) && count($this->notes) > 0) {
                         foreach ($this->notes as $note) {
-                            if (! empty($note->id) && mb_strlen($note->id) == UUID_V4_LENGTH) {
-                                if (! (!empty($note->body) && mb_strlen($note->body) <= MAX_DOCUMENT_NOTE_BODY_LENGTH)) {
+                            if (! empty($note->id) && mb_strlen($note->id) == \HomeDocs\Constants::UUID_V4_LENGTH) {
+                                if (! (!empty($note->body) && mb_strlen($note->body) <= \HomeDocs\Constants::MAX_DOCUMENT_NOTE_BODY_LENGTH)) {
                                     throw new \HomeDocs\Exception\InvalidParamsException("note_body");
                                 }
                             } else {
@@ -427,7 +421,7 @@ class Document
 
     public function delete(\aportela\DatabaseWrapper\DB $dbh): void
     {
-        if (!empty($this->id) && mb_strlen($this->id) == UUID_V4_LENGTH) {
+        if (!empty($this->id) && mb_strlen($this->id) == \HomeDocs\Constants::UUID_V4_LENGTH) {
             $params = array(
                 new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
             );
@@ -479,7 +473,7 @@ class Document
 
     public function get(\aportela\DatabaseWrapper\DB $dbh): void
     {
-        if (!empty($this->id) && mb_strlen($this->id) == UUID_V4_LENGTH) {
+        if (!empty($this->id) && mb_strlen($this->id) == \HomeDocs\Constants::UUID_V4_LENGTH) {
             $data = $dbh->query(
                 "
                     SELECT
