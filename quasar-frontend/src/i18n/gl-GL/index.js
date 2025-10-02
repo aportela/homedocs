@@ -223,15 +223,21 @@ export default {
     "Mostrar sempre esta diálogo de progreso o subir arquivos",
   "Only display this progress window when uploading failed":
     "Mostrar unicamente este diálogo cando haxa errores o subir arquivos",
-  "Started": "Iniciado",
-  "End": "Finalizado",
-  "Status": "Estado",
+  Started: "Iniciado",
+  End: "Finalizado",
+  Status: "Estado",
   "Transfering...": "Transferindo...",
   "Transfer complete": "Transferencia completa",
   "Transfer failed": "Transferencia fallida",
   "Transfer rejected": "Transferencia rechazada",
-  "Transfer rejected max filesize": "Transferencia rechazada (tamaño máximo permitido: {maxUploadFileSize})",
+  "Transfer rejected max filesize":
+    "Transferencia rechazada (tamaño máximo permitido: {maxUploadFileSize})",
   "Profile settings": "Preferencias do perfil",
-  "Customize how you interact with the platform.": "Personaliza cómo interactúas coa plataforma.",
-  "Always show uploading dialog after adding files": "Mostrar sempre o diálogo de transferencias o engadir arquivos",
+  "Customize how you interact with the platform.":
+    "Personaliza cómo interactúas coa plataforma.",
+  "Always show uploading dialog after adding files":
+    "Mostrar sempre o diálogo de transferencias o engadir arquivos",
+  "Filename: ": "Nome de arquivo: ",
+  "Size: ": "Tamaño: ",
+  "Uploaded on: ": "Subido en: ",
 };

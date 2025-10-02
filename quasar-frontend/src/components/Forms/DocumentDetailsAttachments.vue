@@ -18,13 +18,13 @@
           :href="attachment.url" @click.stop.prevent="onDownload(attachment.url, attachment.name)">
           <q-item-section class="q-mx-sm">
             <q-item-label>
-              Filename: {{ attachment.name }}
+              {{ t("Filename: ") }} {{ attachment.name }}
             </q-item-label>
             <q-item-label caption>
-              Length: {{ format.humanStorageSize(attachment.size) }}
+              {{ t("Size: ") }}{{ format.humanStorageSize(attachment.size) }}
             </q-item-label>
             <q-item-label caption>
-              Uploaded on: {{ attachment.creationDate }} ({{ attachment.creationDateTimeAgo }})
+              {{ t("Uploaded on: ") }}{{ attachment.creationDate }} ({{ attachment.creationDateTimeAgo }})
             </q-item-label>
           </q-item-section>
           <q-item-section side middle class="q-mr-sm q-item-section-attachment-actions">

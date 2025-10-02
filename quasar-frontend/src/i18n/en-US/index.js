@@ -222,15 +222,21 @@ export default {
     "Always display this progress window when uploading files",
   "Only display this progress window when uploading failed":
     "Only display this progress window when uploading failed",
-  "Started": "Started",
-  "End": "End",
-  "Status": "Status",
+  Started: "Started",
+  End: "End",
+  Status: "Status",
   "Transfering...": "Transfering...",
   "Transfer complete": "Transfer complete",
   "Transfer failed": "Transfer failed",
   "Transfer rejected": "Transfer rejected",
-  "Transfer rejected max filesize": "Transfer rejected (max filesize allowed: {maxUploadFileSize})",
+  "Transfer rejected max filesize":
+    "Transfer rejected (max filesize allowed: {maxUploadFileSize})",
   "Profile settings": "Profile settings",
-  "Customize how you interact with the platform.": "Customize how you interact with the platform.",
-  "Always show uploading dialog after adding files": "Always show uploading dialog after adding files",
+  "Customize how you interact with the platform.":
+    "Customize how you interact with the platform.",
+  "Always show uploading dialog after adding files":
+    "Always show uploading dialog after adding files",
+  "Filename: ": "Filename: ",
+  "Size: ": "Size: ",
+  "Uploaded on: ": "Uploaded on: ",
 };
