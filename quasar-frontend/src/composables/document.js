@@ -26,7 +26,6 @@ export function useDocument() {
       creationDateTimeAgo: currentTimeAgo(),
       expanded: false,
       startOnEditMode: true, // new notes start with view mode = "edit" (for allowing input body text)
-      visible: true, // show always new notes (ignoring text filter on note body)
     });
     return (note);
   };
@@ -135,12 +134,10 @@ export function useDocument() {
         if (Array.isArray(data.notes)) {
           doc.notes.push(
             ...JSON.parse(JSON.stringify(data.notes)).map((note) => {
-              note.isNew = false;
               note.creationDate = fullDateTimeHuman(note.createdOnTimestamp);
               note.creationDateTimeAgo = timeAgo(note.createdOnTimestamp);
               note.expanded = false;
               note.startOnEditMode = false; // this is only required when adding new note
-              note.visible = true; // all notes visible by default
               return note;
             }),
           );
@@ -231,20 +228,6 @@ export function useDocument() {
         } else {
           doc.files?.forEach((file) => {
             file.visible = true;
-          });
-        }
-      },
-
-      filterNotes(text) {
-        if (text) {
-          const regex = new RegExp(escapeRegExp(text), "i");
-          doc.notes?.forEach((note) => {
-            note.visible = !!note.body?.match(regex);
-            // TODO: map new fragment with bold ?
-          });
-        } else {
-          doc.notes?.forEach((note) => {
-            note.visible = true;
           });
         }
       },

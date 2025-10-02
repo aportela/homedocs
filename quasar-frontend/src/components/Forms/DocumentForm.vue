@@ -87,8 +87,7 @@
                     </DocumentDetailsAttachments>
                   </q-tab-panel>
                   <q-tab-panel name="notes" class="q-pa-none">
-                    <DocumentDetailsNotes v-model="document.notes" :disable="loading || saving || state.loading"
-                      @filter="(text) => onFilterNotes(text)">
+                    <DocumentDetailsNotes v-model="document.notes" :disable="loading || saving || state.loading">
                     </DocumentDetailsNotes>
                   </q-tab-panel>
                   <q-tab-panel name="history" class="q-pa-none" v-if="document.id">
@@ -188,7 +187,6 @@ const saving = ref(false);
 const uploading = ref(false);
 
 const filterByAttachmentFilename = ref(null);
-const filterByNoteBody = ref(null);
 
 const showDeleteDocumentConfirmationDialog = ref(false);
 
@@ -404,10 +402,6 @@ const onFilterAttachments = (text) => {
   document.filterFiles(text);
 };
 
-const onFilterNotes = (text) => {
-  filterByNoteBody.value = text;
-  document.filterNotes(text)
-};
 
 // q-uploader component event => file upload starts
 const onUploadsStart = (e) => {
