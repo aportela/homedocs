@@ -123,8 +123,7 @@ export function useDocument() {
               file.creationDateTimeAgo = timeAgo(file.createdOnTimestamp);
               file.humanSize = format.humanStorageSize(file.size);
               file.url = "api2/file/" + file.id;
-              file.isNew = false;
-              file.visible = true;
+              file.orphaned = false;
               return file;
             }),
           );
@@ -186,7 +185,7 @@ export function useDocument() {
             hash: null,
             humanSize: size > 0 ? format.humanStorageSize(size) : null,
             url: "api2/file/" + fileId,
-            isNew: true,
+            orphaned: true, // this property is used for checking if file was uploaded but not associated to document (while not saving document)
           }),
         );
       },
