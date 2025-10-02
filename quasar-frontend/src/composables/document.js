@@ -187,7 +187,6 @@ export function useDocument() {
             humanSize: size > 0 ? format.humanStorageSize(size) : null,
             url: "api2/file/" + fileId,
             isNew: true,
-            visible: true,
           }),
         );
       },
@@ -217,19 +216,6 @@ export function useDocument() {
 
       removeNoteAtIdx(index) {
         doc.notes?.splice(index, 1);
-      },
-
-      filterFiles(text) {
-        if (text) {
-          const regex = new RegExp(escapeRegExp(text), "i");
-          doc.files?.forEach((file) => {
-            file.visible = !!file.name?.match(regex);
-          });
-        } else {
-          doc.files?.forEach((file) => {
-            file.visible = true;
-          });
-        }
       },
     });
 

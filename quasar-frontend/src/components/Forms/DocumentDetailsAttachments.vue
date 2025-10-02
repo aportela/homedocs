@@ -13,9 +13,9 @@
     </q-item>
     <q-separator class="q-my-md" />
     <div v-if="hasAttachments" class="q-list-attachments-container scroll">
-      <div v-for="attachment, attachmentIndex in attachments" :key="attachment.id">
-        <q-item class="q-pa-xs bg-transparent" v-show="attachment.visible" clickable :href="attachment.url"
-          @click.stop.prevent="onDownload(attachment.url, attachment.name)">
+      <div v-for="attachment, attachmentIndex in internalModel" :key="attachment.id">
+        <q-item class="q-pa-xs bg-transparent" v-show="!hiddenIds.includes(attachment.id)" clickable
+          :href="attachment.url" @click.stop.prevent="onDownload(attachment.url, attachment.name)">
           <q-item-section class="q-mx-sm">
             <q-item-label>
               Filename: {{ attachment.name }}
@@ -30,7 +30,7 @@
           <q-item-section side middle class="q-mr-sm q-item-section-attachment-actions">
             <q-chip size="md" square class="theme-default-q-chip shadow-1 full-width text-center"
               :class="{ 'cursor-not-allowed': disable }" :clickable="!disable"
-              @click.stop.prevent="onRemoveAttachment(attachmentIndex)">
+              @click.stop.prevent="onRemoveAttachmentAtIndex(attachmentIndex)">
               <q-avatar class="theme-default-q-avatar text-white bg-blue-6" icon="delete" />
               {{ t("Remove") }}
             </q-chip>
@@ -45,7 +45,8 @@
           </q-item-section>
           <q-tooltip>{{ t("Click to download") }}</q-tooltip>
         </q-item>
-        <q-separator v-if="attachmentIndex !== attachments.length - 1" class="q-my-sm" />
+        <q-separator v-show="!hiddenIds.includes(attachment.id)" v-if="attachmentIndex !== internalModel?.length - 1"
+          class="q-my-sm" />
       </div>
     </div>
     <CustomBanner v-else-if="!disable" warning text="No document attachments found" class="q-ma-none">
@@ -61,17 +62,19 @@ import { format } from "quasar";
 
 import { bgDownload } from "src/boot/axios";
 import { useFileUtils } from "src/composables/fileUtils"
+import { useDocument } from "src/composables/document"
 
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
 
 const { t } = useI18n();
 
 const { allowPreview } = useFileUtils();
+const { escapeRegExp } = useDocument();
 
-const emit = defineEmits(['update:attachments', 'addAttachment', 'removeAttachmentAtIndex', 'previewAttachmentAtIndex', 'filter']);
+const emit = defineEmits(['addAttachment', 'previewAttachmentAtIndex',]);
 
 const props = defineProps({
-  attachments: {
+  modelValue: {
     type: Array,
     required: false,
     default: () => []
@@ -80,27 +83,41 @@ const props = defineProps({
     type: Boolean,
     required: false,
     default: false
-  },
-  filterByText: {
-    type: String,
-    required: false
   }
 });
 
-const hasAttachments = computed(() => props.attachments.length > 0);
+const internalModel = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(value) {
+    emit('update:modelValue', value);
+  }
+});
 
-const searchText = ref(props.filterByText || null);
 
-const onSearchTextChanged = (newValue) => {
-  emit("filter", newValue);
+const hiddenIds = ref([]);
+
+const hasAttachments = computed(() => internalModel.value?.length > 0);
+
+const searchText = ref(null);
+
+const onSearchTextChanged = (text) => {
+  if (text) {
+    const regex = new RegExp(escapeRegExp(text), "i");
+    hiddenIds.value = internalModel.value?.filter(attachment => !attachment.name?.match(regex)).map(attachment => attachment.id);
+    // TODO: map new fragment with bold ?
+  } else {
+    hiddenIds.value = [];
+  }
 };
 
 const onAddAttachment = () => {
   emit("addAttachment");
 };
 
-const onRemoveAttachment = (index) => {
-  emit("removeAttachmentAtIndex", index);
+const onRemoveAttachmentAtIndex = (index) => {
+  internalModel.value = internalModel.value.filter((_, i) => i !== index);
 };
 
 const onPreviewAttachment = (index) => {

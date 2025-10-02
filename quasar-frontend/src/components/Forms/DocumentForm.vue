@@ -79,11 +79,9 @@
               <q-card-section class="q-pa-none">
                 <q-tab-panels v-model="rightDetailsTab" animated class="bg-transparent">
                   <q-tab-panel name="attachments" class="q-pa-none">
-                    <DocumentDetailsAttachments v-model:attachments="document.files"
-                      :disable="loading || saving || state.loading" @add-attachment="onShowAttachmentsPicker"
-                      @remove-attachment-at-index="(index) => onRemoveSelectedFile(index)"
-                      @preview-attachment-at-index="(index) => document.previewFile(index)"
-                      :filter-by-text="filterByAttachmentFilename" @filter="(text) => onFilterAttachments(text)">
+                    <DocumentDetailsAttachments v-model="document.files" :disable="loading || saving || state.loading"
+                      @add-attachment="onShowAttachmentsPicker"
+                      @preview-attachment-at-index="(index) => document.previewFile(index)">
                     </DocumentDetailsAttachments>
                   </q-tab-panel>
                   <q-tab-panel name="notes" class="q-pa-none">
@@ -185,8 +183,6 @@ const state = reactive({
 const loading = ref(false);
 const saving = ref(false);
 const uploading = ref(false);
-
-const filterByAttachmentFilename = ref(null);
 
 const showDeleteDocumentConfirmationDialog = ref(false);
 
@@ -396,12 +392,6 @@ function onRemoveSelectedFile(index) {
     document.removeFileAtIdx(index)
   }
 }
-
-const onFilterAttachments = (text) => {
-  filterByAttachmentFilename.value = text;
-  document.filterFiles(text);
-};
-
 
 // q-uploader component event => file upload starts
 const onUploadsStart = (e) => {
