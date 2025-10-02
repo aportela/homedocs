@@ -70,26 +70,6 @@ return (array(
             CREATE INDEX idx_document_note_document_id ON DOCUMENT_NOTE (document_id);
             CREATE INDEX idx_document_note_user_id ON DOCUMENT_NOTE (created_by_user_id);
 
-            CREATE VIRTUAL TABLE DOCUMENT_NOTE_FTS USING fts5(body);
-
-            CREATE TRIGGER after_document_note_insert AFTER INSERT ON DOCUMENT_NOTE
-            BEGIN
-                INSERT INTO DOCUMENT_NOTE_FTS (rowid, body)
-                VALUES (new.rowid, new.body);
-            END;
-
-            CREATE TRIGGER after_document_note_update AFTER UPDATE ON DOCUMENT_NOTE
-            BEGIN
-                DELETE FROM DOCUMENT_NOTE_FTS WHERE rowid = old.rowid;
-                INSERT INTO DOCUMENT_NOTE_FTS (rowid, body)
-                VALUES (new.rowid, new.body);
-            END;
-
-            CREATE TRIGGER after_document_note_delete AFTER DELETE ON DOCUMENT_NOTE
-            BEGIN
-                DELETE FROM DOCUMENT_NOTE_FTS WHERE rowid = old.rowid;
-            END;
-
             CREATE TABLE DOCUMENT_HISTORY (
                 document_id VARCHAR(36) NOT NULL,
                 created_on_timestamp INTEGER NOT NULL,
