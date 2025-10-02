@@ -13,7 +13,7 @@
     </q-item>
     <q-separator class="q-my-md" />
     <div v-if="hasNotes" class="q-list-notes-container scroll">
-      <q-item class="q-pa-none bg-transparent" v-for="note, noteIndex in internalModel" :key="note.id"
+      <q-item class="q-pa-none bg-transparent" v-for="note, noteIndex in notes" :key="note.id"
         v-show="!hiddenIds.includes(note.id)">
         <q-item-section>
           <InteractiveTextFieldCustomInput v-model.trim="note.body" dense outlined type="textarea" maxlength="4096"
@@ -72,7 +72,7 @@ const props = defineProps({
   }
 });
 
-const internalModel = computed({
+const notes = computed({
   get() {
     return props.modelValue;
   },
@@ -83,14 +83,14 @@ const internalModel = computed({
 
 const hiddenIds = ref([]);
 
-const hasNotes = computed(() => internalModel.value?.length > 0);
+const hasNotes = computed(() => notes.value?.length > 0);
 
 const searchText = ref(null);
 
 const onSearchTextChanged = (text) => {
   if (text) {
     const regex = new RegExp(escapeRegExp(text), "i");
-    hiddenIds.value = internalModel.value?.filter(note => !note.body?.match(regex)).map(note => note.id);
+    hiddenIds.value = notes.value?.filter(note => !note.body?.match(regex)).map(note => note.id);
     // TODO: map new fragment with bold ?
   } else {
     hiddenIds.value = [];
@@ -98,11 +98,11 @@ const onSearchTextChanged = (text) => {
 };
 
 const onAddNote = () => {
-  internalModel.value = [getNewNote(), ...internalModel.value];
+  notes.value = [getNewNote(), ...notes.value];
 };
 
 const onRemoveNoteAtIndex = (index) => {
-  internalModel.value = internalModel.value.filter((_, i) => i !== index);
+  notes.value = notes.value.filter((_, i) => i !== index);
 };
 
 </script>

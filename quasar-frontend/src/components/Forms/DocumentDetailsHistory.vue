@@ -7,10 +7,10 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="operation in internalModel" :key="operation.operationTimestamp">
-        <td>{{ operation.creationDate }} ({{ operation.creationDateTimeAgo }})</td>
-        <td><q-icon size="md" :name="operation.icon" class="q-mr-sm"></q-icon>{{
-          t(operation.label) }}
+      <tr v-for="historyOperation in historyOperations" :key="historyOperation.historyOperationTimestamp">
+        <td>{{ historyOperation.creationDate }} ({{ historyOperation.creationDateTimeAgo }})</td>
+        <td><q-icon size="md" :name="historyOperation.icon" class="q-mr-sm"></q-icon>{{
+          t(historyOperation.label) }}
         </td>
       </tr>
     </tbody>
@@ -41,7 +41,7 @@ const props = defineProps({
   }
 });
 
-const internalModel = computed({
+const historyOperations = computed({
   get() {
     return props.modelValue;
   },
@@ -50,7 +50,7 @@ const internalModel = computed({
   }
 });
 
-const hasHistoryOperations = computed(() => internalModel.value?.length > 0);
+const hasHistoryOperations = computed(() => historyOperations.value?.length > 0);
 
 </script>
 

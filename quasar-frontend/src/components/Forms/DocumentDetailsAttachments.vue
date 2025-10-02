@@ -13,7 +13,7 @@
     </q-item>
     <q-separator class="q-my-md" />
     <div v-if="hasAttachments" class="q-list-attachments-container scroll">
-      <div v-for="attachment, attachmentIndex in internalModel" :key="attachment.id">
+      <div v-for="attachment, attachmentIndex in attachments" :key="attachment.id">
         <q-item class="q-pa-xs bg-transparent" v-show="!hiddenIds.includes(attachment.id)" clickable
           :href="attachment.url" @click.stop.prevent="onDownload(attachment.url, attachment.name)">
           <q-item-section class="q-mx-sm">
@@ -45,7 +45,7 @@
           </q-item-section>
           <q-tooltip>{{ t("Click to download") }}</q-tooltip>
         </q-item>
-        <q-separator v-show="!hiddenIds.includes(attachment.id)" v-if="attachmentIndex !== internalModel?.length - 1"
+        <q-separator v-show="!hiddenIds.includes(attachment.id)" v-if="attachmentIndex !== attachments?.length - 1"
           class="q-my-sm" />
       </div>
     </div>
@@ -86,7 +86,7 @@ const props = defineProps({
   }
 });
 
-const internalModel = computed({
+const attachments = computed({
   get() {
     return props.modelValue;
   },
@@ -97,14 +97,14 @@ const internalModel = computed({
 
 const hiddenIds = ref([]);
 
-const hasAttachments = computed(() => internalModel.value?.length > 0);
+const hasAttachments = computed(() => attachments.value?.length > 0);
 
 const searchText = ref(null);
 
 const onSearchTextChanged = (text) => {
   if (text) {
     const regex = new RegExp(escapeRegExp(text), "i");
-    hiddenIds.value = internalModel.value?.filter(attachment => !attachment.name?.match(regex)).map(attachment => attachment.id);
+    hiddenIds.value = attachments.value?.filter(attachment => !attachment.name?.match(regex)).map(attachment => attachment.id);
     // TODO: map new fragment with bold ?
   } else {
     hiddenIds.value = [];
@@ -118,13 +118,13 @@ const onAddAttachment = () => {
 const onRemoveAttachmentAtIndex = (index) => {
   // orphaned elements are uploaded to server, but not associated (until document saved)
   // so we must remove them
-  if (internalModel.value[index].orphaned) {
+  if (attachments.value[index].orphaned) {
     // TODO
     //loading.value = true;
     api.document.
-      removeFile(internalModel.value[index].id)
+      removeFile(attachments.value[index].id)
       .then((successResponse) => {
-        internalModel.value = internalModel.value.filter((_, i) => i !== index);
+        attachments.value = attachments.value.filter((_, i) => i !== index);
         // TODO
         //loading.value = false;
         //state.loading = false;
@@ -135,7 +135,7 @@ const onRemoveAttachmentAtIndex = (index) => {
         //state.loading = false;
       });
   } else {
-    internalModel.value = internalModel.value.filter((_, i) => i !== index);
+    attachments.value = attachments.value.filter((_, i) => i !== index);
   }
 };
 
