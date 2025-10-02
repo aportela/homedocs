@@ -556,7 +556,7 @@ class Document
                 INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_FILE.document_id
                 LEFT JOIN FILE ON FILE.id = DOCUMENT_FILE.file_id
                 WHERE DOCUMENT_FILE.document_id = :document_id
-                ORDER BY FILE.name, FILE.created_on_timestamp
+                ORDER BY FILE.created_on_timestamp DESC, FILE.name
             ",
             array(
                 new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id))
