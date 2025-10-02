@@ -91,7 +91,7 @@
                     </DocumentDetailsNotes>
                   </q-tab-panel>
                   <q-tab-panel name="history" class="q-pa-none" v-if="document.id">
-                    <DocumentDetailsHistory v-model:history-operations="document.historyOperations"
+                    <DocumentDetailsHistory v-model="document.historyOperations"
                       :disable="loading || saving || state.loading"></DocumentDetailsHistory>
                   </q-tab-panel>
                 </q-tab-panels>
