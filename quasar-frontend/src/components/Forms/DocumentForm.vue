@@ -159,6 +159,8 @@ watch(() => props.documentId, val => {
     onRefresh();
   } else {
     document.reset();
+    documentTitleFieldRef.value?.unsetReadOnly();
+    nextTick(() => documentTitleFieldRef.value?.focus());
   }
 });
 
