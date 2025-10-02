@@ -60,7 +60,7 @@ import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { format } from "quasar";
 
-import { bgDownload } from "src/boot/axios";
+import { api, bgDownload } from "src/boot/axios";
 import { useFileUtils } from "src/composables/fileUtils"
 import { useDocument } from "src/composables/document"
 
@@ -71,7 +71,7 @@ const { t } = useI18n();
 const { allowPreview } = useFileUtils();
 const { escapeRegExp } = useDocument();
 
-const emit = defineEmits(['addAttachment', 'previewAttachmentAtIndex',]);
+const emit = defineEmits(['update:modelValue', 'addAttachment', 'previewAttachmentAtIndex',]);
 
 const props = defineProps({
   modelValue: {
@@ -95,7 +95,6 @@ const internalModel = computed({
   }
 });
 
-
 const hiddenIds = ref([]);
 
 const hasAttachments = computed(() => internalModel.value?.length > 0);
@@ -117,7 +116,27 @@ const onAddAttachment = () => {
 };
 
 const onRemoveAttachmentAtIndex = (index) => {
-  internalModel.value = internalModel.value.filter((_, i) => i !== index);
+  // orphaned elements are uploaded to server, but not associated (until document saved)
+  // so we must remove them
+  if (internalModel.value[index].orphaned) {
+    // TODO
+    //loading.value = true;
+    api.document.
+      removeFile(internalModel.value[index].id)
+      .then((successResponse) => {
+        internalModel.value = internalModel.value.filter((_, i) => i !== index);
+        // TODO
+        //loading.value = false;
+        //state.loading = false;
+      })
+      .catch((errorResponse) => {
+        // TODO
+        //loading.value = false;
+        //state.loading = false;
+      });
+  } else {
+    internalModel.value = internalModel.value.filter((_, i) => i !== index);
+  }
 };
 
 const onPreviewAttachment = (index) => {
@@ -127,8 +146,10 @@ const onPreviewAttachment = (index) => {
 const onDownload = (url, fileName) => {
   bgDownload(url, fileName)
     .then((successResponse) => {
+      // TODO
     })
     .catch((errorResponse) => {
+      // TODO
     });
 }
 </script>
