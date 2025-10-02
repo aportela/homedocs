@@ -5,7 +5,7 @@
         <div class="q-card-attachments-dialog-header col" v-if="documentTitle">{{ t("Document title")
           }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
             documentTitle
-          }}</router-link>
+            }}</router-link>
         </div>
         <div class="q-card-attachments-dialog-header col" v-else>{{ t("Document attachments") }}</div>
         <q-space />
@@ -48,7 +48,7 @@
                   :disable="state.loading" icon="preview" :label="t('Preview')" no-caps
                   @click.stop.prevent="onFilePreview(index)"></q-btn>
               </q-item-section>
-              <q-tooltip>{{ t("Click to download") }}</q-tooltip>
+              <DesktopToolTip>{{ t("Click to download") }}</DesktopToolTip>
             </q-item>
             <q-separator v-if="index !== attachments.length - 1" class="q-my-xs" />
           </div>
@@ -78,6 +78,7 @@ import { useFormatDates } from "src/composables/formatDate"
 import { useFileUtils } from "src/composables/fileUtils"
 import { api, bgDownload } from "src/boot/axios";
 
+import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 

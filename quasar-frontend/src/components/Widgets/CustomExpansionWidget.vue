@@ -6,10 +6,10 @@
         <q-icon v-if="loading && !staticIcon" name="settings" class="animation-spin"></q-icon>
         <q-icon v-else-if="error && !staticIcon" name="error" color="red" @click.stop="onHeaderIconClicked"
           :class="iconClass">
-          <q-tooltip v-if="iconToolTip">{{ t(iconToolTip) }}</q-tooltip>
+          <DesktopToolTip v-if="iconToolTip">{{ t(iconToolTip) }}</DesktopToolTip>
         </q-icon>
         <q-icon v-else :name="icon" @click.stop.prevent="onHeaderIconClicked" :class="iconClass">
-          <q-tooltip v-if="iconToolTip">{{ t(iconToolTip) }}</q-tooltip>
+          <DesktopToolTip v-if="iconToolTip">{{ t(iconToolTip) }}</DesktopToolTip>
         </q-icon>
       </q-item-section>
       <q-item-section>
@@ -31,6 +31,8 @@
 <script setup>
 import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
+
+import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 
 const { t } = useI18n();
 

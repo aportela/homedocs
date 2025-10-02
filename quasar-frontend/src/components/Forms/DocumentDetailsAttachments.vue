@@ -46,7 +46,7 @@
               {{ t("Preview") }}
             </q-chip>
           </q-item-section>
-          <q-tooltip>{{ t("Click to download") }}</q-tooltip>
+          <DesktopToolTip>{{ t("Click to download") }}</DesktopToolTip>
         </q-item>
         <q-separator v-show="!hiddenIds.includes(attachment.id)" v-if="attachmentIndex !== attachments?.length - 1"
           class="q-my-sm" />
@@ -68,6 +68,7 @@ import { bus } from "src/boot/bus";
 import { useFileUtils } from "src/composables/fileUtils"
 import { useDocument } from "src/composables/document"
 
+import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
 

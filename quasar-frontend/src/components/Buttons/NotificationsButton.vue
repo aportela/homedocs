@@ -1,7 +1,7 @@
 <template>
   <q-btn v-bind="attrs" :icon="hasNotifications ? 'notifications_active' : 'notifications'"
     :disabled="!hasNotifications" :class="{ 'shake-animation': hasNotifications }">
-    <q-tooltip v-if="hasNotifications">{{ tooltip }}</q-tooltip>
+    <DesktopToolTip v-if="hasNotifications">{{ tooltip }}</DesktopToolTip>
     <q-menu>
       <div class="no-wrap q-pa-md">
         <div class="text-h6 q-mb-md">Recent notifications</div>
@@ -30,6 +30,8 @@ import { useAttrs, ref, onMounted, nextTick, computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { useNotifications } from "src/composables/notifications"
+
+import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 
 const attrs = useAttrs();
 

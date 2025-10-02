@@ -9,8 +9,8 @@
           v-show="visibleSidebar" />
         <q-btn type="button" no-caps no-wrap align="left" outline :label="searchButtonLabel" icon="search"
           class="full-width no-caps theme-default-q-btn" @click.prevent="dialogs.fastSearch.visible = true">
-          <q-tooltip anchor="bottom middle" self="top middle">{{ t("Click to open fast search")
-          }}</q-tooltip>
+          <DesktopToolTip anchor="bottom middle" self="top middle">{{ t("Click to open fast search")
+          }}</DesktopToolTip>
         </q-btn>
         <!--
         <FastSearchSelector dense class="full-width"></FastSearchSelector>
@@ -64,6 +64,7 @@ import { default as GitHubButton } from "src/components/Buttons/GitHubButton.vue
 import { GITHUB_PROJECT_URL } from "src/constants"
 import { default as ReAuthDialog } from "src/components/Dialogs/ReAuthDialog.vue"
 
+import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 import { default as FilePreviewDialog } from "src/components/Dialogs/FilePreviewDialog.vue"
 import { default as DocumentFilesPreviewDialog } from "src/components/Dialogs/DocumentFilesPreviewDialog.vue"
 import { default as DocumentNotesPreviewDialog } from "src/components/Dialogs/DocumentNotesPreviewDialog.vue";

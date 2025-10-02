@@ -1,7 +1,7 @@
 <template>
   <q-btn v-bind="attrs" :label="shortLabels ? selectedLocale.shortLabel : selectedLocale.label" icon="language"
     icon-right="unfold_more" no-caps dense>
-    <q-tooltip>{{ tooltip }}</q-tooltip>
+    <DesktopToolTip>{{ tooltip }}</DesktopToolTip>
     <q-menu fit anchor="top left" self="bottom left">
       <q-item dense clickable v-close-popup v-for="availableLanguage in availableLocales" :key="availableLanguage.value"
         @click="onSelectLocale(availableLanguage)">
@@ -19,6 +19,8 @@ import { computed, watch, useAttrs, ref } from "vue";
 import { i18n } from "src/boot/i18n";
 import { LocalStorage } from "quasar";
 import { useI18n } from "vue-i18n";
+
+import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 
 const { t } = useI18n();
 

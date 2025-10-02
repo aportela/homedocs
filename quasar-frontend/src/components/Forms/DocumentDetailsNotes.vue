@@ -24,7 +24,7 @@
             <template v-slot:top-icon-append="{ showTopHoverIcons }">
               <q-icon name="delete" size="sm" class="q-ml-sm q-mr-sm" clickable v-show="showTopHoverIcons"
                 @click.stop.prevent="onRemoveNoteAtIndex(noteIndex)">
-                <q-tooltip>{{ t("Click to remove note") }}</q-tooltip>
+                <DesktopToolTip>{{ t("Click to remove note") }}</DesktopToolTip>
               </q-icon>
             </template>
             <template v-slot:icon-append-on-edit>
@@ -49,6 +49,7 @@ import { useI18n } from "vue-i18n";
 import { useFormUtils } from "src/composables/formUtils"
 import { useDocument } from "src/composables/document"
 
+import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 import { default as InteractiveTextFieldCustomInput } from "src/components/Forms/Fields/InteractiveTextFieldCustomInput.vue"
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
 

@@ -6,7 +6,7 @@
       {{ t(label) }}</div>
     <q-icon v-if="!denyChangeEditableMode" name="edit" size="sm"
       class="absolute-top-right text-grey cursor-pointer q-mr-sm q-mt-sm" v-show="showUpdateHoverIcon">
-      <q-tooltip>{{ t("Click to toggle edit mode") }}</q-tooltip>
+      <DesktopToolTip>{{ t("Click to toggle edit mode") }}</DesktopToolTip>
     </q-icon>
     <BrowseByTagButton v-for="tag in tags" :key="tag" :tag="tag" icon="tag" />
   </div>
@@ -22,7 +22,7 @@
     </template>
     <template v-slot:append v-if="!denyChangeEditableMode">
       <q-icon name="done" class="cursor-pointer" @click="onToggleReadOnly">
-        <q-tooltip>{{ t("Click to toggle edit mode") }}</q-tooltip>
+        <DesktopToolTip>{{ t("Click to toggle edit mode") }}</DesktopToolTip>
       </q-icon>
     </template>
     <template v-slot:selected>
@@ -41,6 +41,7 @@ import { useI18n } from "vue-i18n";
 import { bus } from "src/boot/bus";
 import { api } from "src/boot/axios";
 
+import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 import { default as BrowseByTagButton } from "src/components/Buttons/BrowseByTagButton.vue";
 
 const { t } = useI18n();

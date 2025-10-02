@@ -7,8 +7,8 @@
     <template v-slot:append v-if="password">
       <q-icon :name="visibilityIcon" class="cursor-pointer" @click="visiblePassword = !visiblePassword"
         :aria-label="t(tooltipLabel)" />
-      <q-tooltip anchor="bottom right" self="top end" :aria-label="t(tooltipLabel)">{{ t(tooltipLabel)
-        }}</q-tooltip>
+      <DesktopToolTip anchor="bottom right" self="top end" :aria-label="t(tooltipLabel)">{{ t(tooltipLabel)
+      }}</DesktopToolTip>
     </template>
   </q-input>
 </template>
@@ -17,6 +17,8 @@
 
 import { ref, computed, useAttrs, onMounted, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
+
+import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 
 const attrs = useAttrs();
 

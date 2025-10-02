@@ -1,7 +1,7 @@
 <template>
   <q-btn v-bind="attrs" :icon="fabGithub" no-caps target="_blank">
     <slot></slot>
-    <q-tooltip>{{ tooltip }}</q-tooltip>
+    <DesktopToolTip>{{ tooltip }}</DesktopToolTip>
   </q-btn>
 </template>
 
@@ -11,6 +11,8 @@ import { useI18n } from "vue-i18n";
 
 import { useAttrs, computed } from "vue";
 import { fabGithub } from "@quasar/extras/fontawesome-v6";
+
+import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 
 const attrs = useAttrs();
 

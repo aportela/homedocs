@@ -4,10 +4,10 @@
       <q-item-section avatar>
         <q-icon v-if="loading" name="settings" class="animation-spin"></q-icon>
         <q-icon v-else-if="error" name="error" color="red" @click.stop="onHeaderIconClicked" :class="iconClass">
-          <q-tooltip v-if="iconToolTip">{{ t(iconToolTip) }}</q-tooltip>
+          <DesktopToolTip v-if="iconToolTip">{{ t(iconToolTip) }}</DesktopToolTip>
         </q-icon>
         <q-icon v-else :name="icon" @click.stop="onHeaderIconClicked" :class="iconClass">
-          <q-tooltip v-if="iconToolTip">{{ t(iconToolTip) }}</q-tooltip>
+          <DesktopToolTip v-if="iconToolTip">{{ t(iconToolTip) }}</DesktopToolTip>
         </q-icon>
       </q-item-section>
       <q-item-section>
@@ -27,6 +27,8 @@
 import { computed } from "vue";
 
 import { useI18n } from "vue-i18n";
+
+import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 
 const { t } = useI18n();
 

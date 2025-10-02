@@ -9,7 +9,7 @@
       <div class="full-width text-center ellipsis">
         {{ tag }}
       </div>
-      <q-tooltip v-if="toolTip">{{ t("Browse by tag: ", { tag: tag }) }}</q-tooltip>
+      <DesktopToolTip>{{ t("Browse by tag: ", { tag: tag }) }}</DesktopToolTip>
     </q-chip>
   </router-link>
 </template>
@@ -17,6 +17,8 @@
 <script setup>
 
 import { useI18n } from "vue-i18n";
+
+import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 
 const { t } = useI18n();
 

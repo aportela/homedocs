@@ -3,7 +3,7 @@
     <q-card class="q-card-notes-dialog">
       <q-card-section class="row q-p-none">
         <div class="q-card-notes-dialog-header col" v-if="documentTitle">{{ t("Document title")
-          }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
+        }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
             documentTitle
           }}</router-link>
         </div>
@@ -36,7 +36,7 @@
             <q-icon :name="note.expanded ? 'unfold_less' : 'expand'" size="sm"
               class="absolute-top-right text-grey cursor-pointer q-mr-sm q-mt-sm" color="blue"
               @click.stop="note.expanded = !note.expanded">
-              <q-tooltip>{{ t(note.expanded ? "Click to collapse" : "Click to expand") }}</q-tooltip>
+              <DesktopToolTip>{{ t(note.expanded ? "Click to collapse" : "Click to expand") }}</DesktopToolTip>
             </q-icon>
             <div class="q-mt-sm" :class="{ 'collapsed': !note.expanded }" :style="`--max-lines: ${maxLines}`">
               {{ note.body }}
@@ -63,6 +63,7 @@ import { bus } from "src/boot/bus";
 import { useFormatDates } from "src/composables/formatDate"
 import { api } from "src/boot/axios";
 
+import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 

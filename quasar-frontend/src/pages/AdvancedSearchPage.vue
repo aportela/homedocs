@@ -110,8 +110,8 @@
                 @click="onToggleSort(column.field)">
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
-                <q-tooltip v-if="isDesktop">{{ t('Toggle sort by this column', { field: t(column.title) })
-                  }}</q-tooltip>
+                <DesktopToolTip>{{ t('Toggle sort by this column', { field: t(column.title) })
+                }}</DesktopToolTip>
               </th>
             </tr>
           </thead>
@@ -128,7 +128,7 @@
                       <q-item-label caption>{{ t("Creation date") }}: {{ document.creationDate }} ({{
                         document.creationDateTimeAgo }})</q-item-label>
                       <q-item-label caption v-if="document.lastUpdate">{{ t("Last update") }}: {{ document.lastUpdate
-                        }} ({{ document.lastUpdateTimeAgo }})</q-item-label>
+                      }} ({{ document.lastUpdateTimeAgo }})</q-item-label>
                     </q-item-section>
                     <q-item-section side top>
                       <q-chip size="md" square class="theme-default-q-chip shadow-1 q-chip-8em"
@@ -187,7 +187,6 @@
 import { ref, reactive, computed, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { date, useQuasar } from "quasar";
 
 import { bus } from "src/boot/bus";
 import { api } from "src/boot/axios";
@@ -196,6 +195,7 @@ import { useDateFilter } from "src/composables/dateFilter"
 import { useFormatDates } from "src/composables/formatDate"
 import { useBusDialog } from "src/composables/busDialog";
 
+import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
 import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
@@ -207,9 +207,6 @@ import { default as ViewDocumentDetailsButton } from "src/components/Buttons/Vie
 const { t } = useI18n();
 
 const route = useRoute();
-
-const $q = useQuasar();
-const isDesktop = computed(() => $q.platform.is.desktop);
 
 const { onShowDocumentFiles, onShowDocumentNotes } = useBusDialog();
 

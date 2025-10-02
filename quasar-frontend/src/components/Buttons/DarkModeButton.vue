@@ -1,6 +1,6 @@
 <template>
   <q-btn v-bind="attrs" :icon="currentDarkModeIcon" @click="onToggleDarkMode">
-    <q-tooltip>{{ tooltip }}</q-tooltip>
+    <DesktopToolTip>{{ tooltip }}</DesktopToolTip>
     <slot></slot>
   </q-btn>
 </template>
@@ -10,6 +10,8 @@
 import { useAttrs, computed, watch } from "vue";
 import { Dark, LocalStorage } from "quasar";
 import { useI18n } from "vue-i18n";
+
+import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 
 const { t } = useI18n();
 const attrs = useAttrs();
