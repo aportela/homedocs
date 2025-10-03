@@ -61,8 +61,8 @@
       </q-card-section>
       <q-separator class="q-my-sm"></q-separator>
       <q-card-actions align="right">
-        <q-toggle v-model="visibilityCheck" checked-icon="check" color="green" :label="t(visibilityCheckLabel)"
-          unchecked-icon="clear" class="q-mr-md" @update:modelValue="saveVisibilityCheck" />
+        <q-toggle v-model="visibilityCheck" @update:modelValue="saveVisibilityCheck" checked-icon="check" color="green"
+          :label="t(visibilityCheckLabel)" unchecked-icon="clear" class="q-mr-md" />
         <q-btn color="primary" icon="close" :label="t('Close')" v-close-popup />
       </q-card-actions>
     </q-card>
@@ -70,7 +70,7 @@
 </template>
 
 <script setup>
-import { ref, watch, computed, onMounted } from "vue";
+import { ref, computed, watch } from "vue";
 import { format } from "quasar";
 import { useI18n } from "vue-i18n";
 
@@ -101,18 +101,27 @@ const props = defineProps({
   }
 });
 
-const visible = ref(props.modelValue);
-
-watch(() => props.modelValue, val => {
-  visible.value = val;
-  if (val) {
-    visibilityCheck.value = alwaysOpenUploadDialog.get();
+const visible = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(value) {
+    if (value) {
+      // before showing dialog always set q-toggle value
+      const toggleValue = alwaysOpenUploadDialog.get();
+      if (toggleValue !== visibilityCheck.value) {
+        visibilityCheck.value = toggleValue; // only if there are changes
+      }
+    }
+    emit('update:modelValue', value);
   }
 });
 
-watch(() => visible, val => { emit('update:modelValue', val); });
-
 const visibilityCheck = ref(alwaysOpenUploadDialog.get());
+
+const saveVisibilityCheck = (val) => {
+  alwaysOpenUploadDialog.set(val);
+};
 
 const visibilityCheckLabel = computed(() => visibilityCheck.value ? "Always display this progress window when uploading files" : "Only display this progress window when uploading failed");
 
@@ -120,14 +129,6 @@ const onClose = () => {
   visible.value = false;
   emit('update:modelValue', false);
 }
-
-const saveVisibilityCheck = (val) => {
-  alwaysOpenUploadDialog.set(val);
-};
-
-onMounted(() => {
-  visibilityCheck.value = alwaysOpenUploadDialog.get();
-});
 
 </script>
 
