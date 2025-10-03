@@ -67,6 +67,9 @@ const props = defineProps({
   rules: {
     type: Array,
     default: () => [],
+    validator(value) {
+      return Array.isArray(value);
+    }
   },
   autofocus: {
     type: Boolean,

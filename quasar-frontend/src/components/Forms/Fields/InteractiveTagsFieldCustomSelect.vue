@@ -60,7 +60,10 @@ const props = defineProps({
   modelValue: {
     type: Array,
     required: true,
-    default: () => []
+    default: () => [],
+    validator(value) {
+      return Array.isArray(value);
+    }
   },
   disabled: {
     type: Boolean,

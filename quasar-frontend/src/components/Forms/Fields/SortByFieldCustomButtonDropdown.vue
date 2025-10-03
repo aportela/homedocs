@@ -32,7 +32,10 @@ const emit = defineEmits(['change'])
 const props = defineProps({
   options: {
     type: Array,
-    required: true
+    required: true,
+    validator(value) {
+      return Array.isArray(value);
+    }
   },
   current: {
     type: Object,

@@ -8,7 +8,7 @@
       <q-icon :name="visibilityIcon" class="cursor-pointer" @click="visiblePassword = !visiblePassword"
         :aria-label="t(tooltipLabel)" />
       <DesktopToolTip anchor="bottom right" self="top end" :aria-label="t(tooltipLabel)">{{ t(tooltipLabel)
-        }}</DesktopToolTip>
+      }}</DesktopToolTip>
     </template>
   </q-input>
 </template>
@@ -46,6 +46,9 @@ const props = defineProps({
   rules: {
     type: Array,
     default: () => [],
+    validator(value) {
+      return Array.isArray(value);
+    }
   },
   autofocus: {
     type: Boolean,

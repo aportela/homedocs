@@ -31,6 +31,9 @@ const props = defineProps({
     type: Number,
     required: false,
     default: 0,
+    validator(value) {
+      return (value >= 0);
+    }
   },
   toolTip: {
     type: String,

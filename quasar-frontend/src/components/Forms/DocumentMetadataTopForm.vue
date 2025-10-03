@@ -34,10 +34,18 @@ const props = defineProps({
   createdOnTimestamp: {
     type: Number,
     required: false,
+    default: 0,
+    validator(value) {
+      return (value > 0);
+    }
   },
   lastUpdateTimestamp: {
     type: Number,
     required: false,
+    default: 0,
+    validator(value) {
+      return (value > 0);
+    }
   }
 });
 

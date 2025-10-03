@@ -83,7 +83,10 @@ const props = defineProps({
   maxLines: {
     type: Number,
     required: false,
-    default: 2
+    default: 2,
+    validator(value) {
+      return (value > 0);
+    }
   }
 });
 

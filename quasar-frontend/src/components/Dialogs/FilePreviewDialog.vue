@@ -92,6 +92,7 @@ const { allowPreview, isImage, isAudio } = useFileUtils();
 const previewLoadingError = ref(false);
 
 const props = defineProps({
+  // TODO: do not pass complete document
   document: {
     type: Object,
     required: true
@@ -99,7 +100,10 @@ const props = defineProps({
   currentIndex: {
     type: Number,
     required: false,
-    default: 0
+    default: 0,
+    validator(value) {
+      return (value >= 0);
+    }
   }
 });
 
