@@ -7,7 +7,7 @@
 
 <script setup>
 
-import { useAttrs, computed, watch } from "vue";
+import { useAttrs, computed } from "vue";
 import { Dark, LocalStorage } from "quasar";
 import { useI18n } from "vue-i18n";
 
@@ -25,13 +25,9 @@ const toolTipDark = computed(() => t("Switch to dark mode"));
 
 const tooltip = computed(() => Dark.isActive ? toolTipLight : toolTipDark);
 
-watch(
-  () => Dark.isActive,
-  val => LocalStorage.set('darkMode', val)
-)
-
 const onToggleDarkMode = () => {
   Dark.toggle();
+  LocalStorage.set('darkMode', Dark.isActive)
 }
 
 </script>
