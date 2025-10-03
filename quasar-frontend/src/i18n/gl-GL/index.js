@@ -240,4 +240,6 @@ export default {
   "Filename: ": "Nome de arquivo: ",
   "Size: ": "Tamaño: ",
   "Uploaded on: ": "Subido en: ",
+  "Expand sidebar": "Expandir sidebar",
+  "Collapse sidebar": "Contraer sidebar",
 };

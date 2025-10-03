@@ -239,4 +239,6 @@ export default {
   "Filename: ": "Filename: ",
   "Size: ": "Size: ",
   "Uploaded on: ": "Uploaded on: ",
+  "Expand sidebar": "Expand sidebar",
+  "Collapse sidebar": "Collapse sidebar",
 };
