@@ -2,9 +2,13 @@
   <q-list class="bg-transparent q-pa-sm">
     <q-item class="transparent-background text-color-primary q-pa-none">
       <q-item-section v-show="hasAttachments">
-        <q-input type="search" icon="search" outlined dense clearable :disable="isDisabled || !hasAttachments"
+        <q-input type="search" outlined dense clearable :disable="isDisabled || !hasAttachments"
           v-model.trim="searchText" @update:model-value="onSearchTextChanged" :label="t('Filter by text on file name')"
-          :placeholder="t('type text search condition')"></q-input>
+          :placeholder="t('type text search condition')">
+          <template v-slot:prepend>
+            <q-icon name="filter_alt" />
+          </template>
+        </q-input>
       </q-item-section>
       <q-item-section side>
         <q-btn size="md" :label="t('Add attachment')" icon="add" class="bg-blue text-white full-width"

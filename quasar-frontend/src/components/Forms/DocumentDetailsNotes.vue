@@ -2,9 +2,13 @@
   <q-list class="bg-transparent q-pa-sm">
     <q-item class="transparent-background text-color-primary q-pa-none">
       <q-item-section v-show="hasNotes">
-        <q-input type="search" icon="search" outlined dense clearable :disable="disable || !hasNotes"
-          v-model.trim="searchText" @update:model-value="onSearchTextChanged" :label="t('Filter by text on note body')"
-          :placeholder="t('type text search condition')"></q-input>
+        <q-input type="search" outlined dense clearable :disable="disable || !hasNotes" v-model.trim="searchText"
+          @update:model-value="onSearchTextChanged" :label="t('Filter by text on note body')"
+          :placeholder="t('type text search condition')">
+          <template v-slot:prepend>
+            <q-icon name="filter_alt" />
+          </template>
+        </q-input>
       </q-item-section>
       <q-item-section side>
         <q-btn size="md" :label="t('Add note')" icon="add" class="bg-blue text-white full-width" :disable="disable"
