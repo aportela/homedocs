@@ -26,7 +26,13 @@ const { t } = useI18n();
 
 const attrs = useAttrs();
 
-const props = defineProps(["shortLabels"]);
+const props = defineProps({
+  shortLabels: {
+    type: Boolean,
+    required: false,
+    default: false
+  }
+});
 
 const tooltip = computed(() => t("Switch language"));
 
