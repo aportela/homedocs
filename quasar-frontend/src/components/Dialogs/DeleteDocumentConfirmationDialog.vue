@@ -11,7 +11,7 @@
         {{ t("You are about to delete the current document. Are you sure? (this action cannot be undone).") }}
         <custom-banner class="q-mt-lg" v-if="state.deleted" success
           text="The document has been deleted. Upon closing this dialog, you will be redirected to the home screen."></custom-banner>
-        <CustomErrorBanner v-else-if="state.loadingError" :text="state.errorMessage" :apiError="state.apiError"
+        <CustomErrorBanner v-else-if="state.loadingError" :text="state.errorMessage" :api-error="state.apiError"
           class="q-mt-lg">
         </CustomErrorBanner>
       </q-card-section>

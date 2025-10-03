@@ -40,7 +40,7 @@
         </div>
       </q-list>
       <CustomErrorBanner v-else-if="state.loadingError" :text="state.errorMessage || 'Error loading data'"
-        :apiError="state.apiError">
+        :api-error="state.apiError">
       </CustomErrorBanner>
       <q-list v-else-if="hasRecentDocuments">
         <div v-for="recentDocument, index in recentDocuments" :key="recentDocument.id">

@@ -27,7 +27,7 @@
           class="q-mt-lg">
         </CustomBanner>
         <CustomErrorBanner v-else-if="state.loadingError" :text="state.errorMessage || 'Error loading data'"
-          :apiError="state.apiError" class="q-mt-lg">
+          :api-error="state.apiError" class="q-mt-lg">
         </CustomErrorBanner>
       </form>
     </template>

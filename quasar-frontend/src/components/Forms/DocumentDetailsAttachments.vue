@@ -13,7 +13,7 @@
     </q-item>
     <q-separator class="q-my-md" />
     <CustomErrorBanner v-if="state.loadingError && state.errorMessage" :text="state.errorMessage"
-      :apiError="state.apiError" class="q-mt-lg">
+      :api-error="state.apiError" class="q-mt-lg">
     </CustomErrorBanner>
     <div v-if="hasAttachments" class="q-list-attachments-container scroll">
       <div v-for="attachment, attachmentIndex in attachments" :key="attachment.id">

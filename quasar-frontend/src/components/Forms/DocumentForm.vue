@@ -72,7 +72,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.loading" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                      }}</q-badge>
+                    }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
@@ -107,7 +107,7 @@
           </q-btn>
           <CustomBanner v-if="state.saveSuccess" class="q-mt-md" text="Document saved" success></CustomBanner>
           <CustomErrorBanner v-else-if="state.loadingError || state.saveError" class="q-mt-md"
-            :text="state.errorMessage">
+            :api-error="state.apiError" :text="state.errorMessage">
           </CustomErrorBanner>
         </q-card-section>
       </form>

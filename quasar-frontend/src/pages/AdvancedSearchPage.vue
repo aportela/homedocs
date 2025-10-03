@@ -75,7 +75,7 @@
           </q-btn-group>
         </form>
         <CustomErrorBanner v-if="showErrorBanner" :text="state.errorMessage || 'Error loading data'"
-          :apiError="state.apiError" class="q-ma-md">
+          :api-error="state.apiError" class="q-ma-md">
         </CustomErrorBanner>
         <CustomBanner v-else-if="showNoResultsBanner" warning text="No results found with current filter"
           class="q-ma-md">

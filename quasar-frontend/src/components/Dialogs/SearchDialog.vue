@@ -37,7 +37,7 @@
       <q-separator />
       <q-card-section>
         <div v-if="state.loadingError">
-          <CustomErrorBanner :text="state.errorMessage || 'Error loading data'" :apiError="state.apiError">
+          <CustomErrorBanner :text="state.errorMessage || 'Error loading data'" :api-error="state.apiError">
           </CustomErrorBanner>
         </div>
         <q-virtual-scroll v-else component="q-list" :items="searchResults" @virtual-scroll="onVirtualScroll"

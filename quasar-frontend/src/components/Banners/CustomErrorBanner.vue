@@ -1,7 +1,7 @@
 <template>
   <CustomBanner :text="text" error>
     <template v-slot:details v-if="initialState.isDevEnvironment && apiError">
-      <APIErrorDetails class="q-mt-md" :apiError="apiError"></APIErrorDetails>
+      <APIErrorDetails class="q-mt-md" :api-error="apiError"></APIErrorDetails>
     </template>
   </CustomBanner>
 </template>

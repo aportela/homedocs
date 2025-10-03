@@ -19,7 +19,7 @@
               </q-card-section>
               <q-card-section class="text-center text-h4" v-if="!stat.loadingError">{{ stat.total }}</q-card-section>
               <q-card-section v-else>
-                <CustomErrorBanner :text="stat.errorMessage || 'Error loading data'" :apiError="stat.apiError">
+                <CustomErrorBanner :text="stat.errorMessage || 'Error loading data'" :api-error="stat.apiError">
                 </CustomErrorBanner>
               </q-card-section>
             </q-card>

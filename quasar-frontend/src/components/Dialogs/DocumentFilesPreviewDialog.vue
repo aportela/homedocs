@@ -3,9 +3,9 @@
     <q-card class="q-card-attachments-dialog">
       <q-card-section class="row q-p-none">
         <div class="q-card-attachments-dialog-header col" v-if="documentTitle">{{ t("Document title")
-        }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
+          }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
             documentTitle
-          }}</router-link>
+            }}</router-link>
         </div>
         <div class="q-card-attachments-dialog-header col" v-else>{{ t("Document attachments") }}</div>
         <q-space />
@@ -21,7 +21,7 @@
       <q-card-section class="q-pt-none scroll attachments-scrolled-container">
         <div v-if="state.loading"></div>
         <div v-else-if="state.loadingError">
-          <CustomErrorBanner :text="state.errorMessage || 'Error loading data'" :apiError="state.apiError">
+          <CustomErrorBanner :text="state.errorMessage || 'Error loading data'" :api-error="state.apiError">
           </CustomErrorBanner>
         </div>
         <div v-else-if="!hasAttachments">

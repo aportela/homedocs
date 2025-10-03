@@ -21,7 +21,7 @@
       <q-card-section class="q-pt-none scroll notes-scrolled-container">
         <div v-if="state.loading"></div>
         <div v-else-if="state.loadingError">
-          <CustomErrorBanner :text="state.errorMessage || 'Error loading data'" :apiError="state.apiError">
+          <CustomErrorBanner :text="state.errorMessage || 'Error loading data'" :api-error="state.apiError">
           </CustomErrorBanner>
         </div>
         <div v-else-if="!hasNotes">

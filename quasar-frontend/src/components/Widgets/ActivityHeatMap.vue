@@ -8,7 +8,7 @@
         @click.prevent="onRightButtonClicked">{{ t("Next") }}</q-btn>
     </div>
     <CustomErrorBanner v-if="state.loadingError" :text="state.errorMessage || 'Error loading data'"
-      :apiError="state.apiError">
+      :api-error="state.apiError">
     </CustomErrorBanner>
   </div>
 </template>

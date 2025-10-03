@@ -13,7 +13,7 @@
         <q-skeleton square width="12em" height="2em" class="" v-for="j in 32" :key="j"></q-skeleton>
       </div>
       <CustomErrorBanner v-else-if="state.loadingError" :text="state.errorMessage || 'Error loading data'"
-        :apiError="state.apiError">
+        :api-error="state.apiError">
       </CustomErrorBanner>
       <div v-else-if="hasTags">
         <BrowseByTagButton v-for="tag in tags" :key="tag.tag" :tag="tag.tag" :caption="String(tag.total)"

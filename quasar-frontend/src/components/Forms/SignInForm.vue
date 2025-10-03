@@ -38,7 +38,7 @@
         </template>
       </q-btn>
       <CustomErrorBanner v-if="state.loadingError && state.errorMessage" :text="state.errorMessage"
-        :apiError="state.apiError" class="q-mt-lg">
+        :api-error="state.apiError" class="q-mt-lg">
       </CustomErrorBanner>
     </q-card-section>
     <div v-if="showExtraBottom">
