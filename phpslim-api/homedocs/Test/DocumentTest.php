@@ -159,6 +159,15 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
         $d->get(self::$dbh);
     }
 
+    public function testGet(): void
+    {
+        $this->expectNotToPerformAssertions();
+        $this->createValidSession();
+        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["tag1", "tag2"]);
+        $d->add(self::$dbh);
+        $d->get(self::$dbh);
+    }
+
     public function testSearchWithPager(): void
     {
         $results = \HomeDocs\Document::search(self::$dbh, 1, 16, [], "createdOnTimestamp", "DESC");
