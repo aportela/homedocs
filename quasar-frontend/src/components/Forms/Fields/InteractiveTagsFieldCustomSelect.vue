@@ -13,7 +13,7 @@
   <q-select v-else ref="selectRef" :label="t(label)" v-model="tags" :dense="dense" :options-dense="dense" outlined
     use-input use-chips multiple hide-dropdown-icon :options="filteredTags" input-debounce="0"
     new-value-mode="add-unique" :disable="disabled || state.loading || state.loadingError" :loading="state.loading"
-    :error="state.loadingError" :errorMessage="t('Error loading available tags')" @filter="onFilterTags"
+    :error="state.loadingError" :error-message="t('Error loading available tags')" @filter="onFilterTags"
     @add="onAddTag">
     <template v-slot:prepend>
       <slot name="prepend">

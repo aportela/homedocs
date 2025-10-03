@@ -26,7 +26,7 @@
     <p class="text-red q-ml-sm error-message" v-if="error">{{ errorMessage }}</p>
   </div>
   <q-input v-else v-bind="attrs" ref="qInputRef" :label="label" v-model.trim="text" :rules="rules" :error="error"
-    :errorMessage="errorMessage">
+    :error-message="errorMessage">
     <template v-slot:append>
       <q-icon name="done" class="cursor-pointer" @click.stop="onToggleReadOnly" v-if="!error">
         <DesktopToolTip>{{ t("Click to toggle edit mode") }}</DesktopToolTip>

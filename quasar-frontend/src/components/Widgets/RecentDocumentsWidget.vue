@@ -1,6 +1,6 @@
 <template>
-  <CustomExpansionWidget title="Most recent activity" icon="work_history" iconToolTip="Click to refresh data"
-    :onHeaderIconClick="onRefresh" :loading="state.loading" :error="state.loadingError" :expanded="isExpanded"
+  <CustomExpansionWidget title="Most recent activity" icon="work_history" icon-tool-tip="Click to refresh data"
+    :on-header-icon-click="onRefresh" :loading="state.loading" :error="state.loadingError" :expanded="isExpanded"
     @expand="isExpanded = true" @collapse="isExpanded = false">
     <template v-slot:header-extra>
       <q-chip square size="sm" color="grey-7" text-color="white">{{ t("Total document count", {

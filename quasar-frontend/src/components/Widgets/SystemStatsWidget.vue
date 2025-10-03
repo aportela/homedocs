@@ -5,7 +5,7 @@
         <h6 class="text-center text-h6 q-my-sm"><q-icon :name="heatmapStats.loading ? 'settings' : 'insights'"
             :class="{ 'animation-spin': heatmapStats.loading }"></q-icon> {{ t("Activity Heatmap") }}</h6>
         <div>
-          <ActivityHeatMap class="q-mx-auto" :showNavigationButtons="true" @loading="onActivityHeatMapLoading"
+          <ActivityHeatMap class="q-mx-auto" :show-navigation-buttons="true" @loading="onActivityHeatMapLoading"
             @loaded="onActivityHeatMapLoaded" @error="onActivityHeatMapError"></ActivityHeatMap>
         </div>
         <q-separator class="q-my-md" />

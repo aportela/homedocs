@@ -11,7 +11,7 @@
     <q-card-section>
       <q-input dense outlined ref="emailRef" v-model="profile.email" type="email" name="email" :label="t('Email')"
         :disable="state.loading || signUpDenied" :autofocus="true" :rules="formUtils.requiredFieldRules" lazy-rules
-        :error="validator.email.hasErrors" :errorMessage="validator.email.message ? t(validator.email.message) : ''">
+        :error="validator.email.hasErrors" :error-message="validator.email.message ? t(validator.email.message) : ''">
         <template v-slot:prepend>
           <q-icon name="alternate_email" />
         </template>
@@ -19,7 +19,7 @@
       <PasswordFieldCustomInput dense outlined ref="passwordRef" class="q-mt-md" v-model="profile.password"
         name="password" :label="t('Password')" :disable="state.loading || signUpDenied"
         :rules="formUtils.requiredFieldRules" lazy-rules :error="validator.password.hasErrors"
-        :errorMessage="validator.password.message ? t(validator.password.message) : ''">
+        :error-message="validator.password.message ? t(validator.password.message) : ''">
       </PasswordFieldCustomInput>
     </q-card-section>
     <q-card-section>

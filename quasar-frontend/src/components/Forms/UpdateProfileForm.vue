@@ -13,7 +13,7 @@
         </q-input>
         <PasswordFieldCustomInput class="q-my-md" dense outlined v-model="profile.password" name="password"
           :label="t('New password')" :error="validator.password.hasErrors"
-          :errorMessage="validator.password.message ? t(validator.password.message) : ''" :disable="state.loading"
+          :error-message="validator.password.message ? t(validator.password.message) : ''" :disable="state.loading"
           :rules="formUtils.requiredFieldRules" lazy-rules ref="passwordRef">
         </PasswordFieldCustomInput>
         <q-btn color="primary" size="md" :label="$t('Update profile')" no-caps class="full-width q-my-xs"

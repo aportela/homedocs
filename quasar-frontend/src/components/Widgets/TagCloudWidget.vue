@@ -1,7 +1,7 @@
 <template>
-  <CustomExpansionWidget title="Tag cloud" icon="tag" iconToolTip="Click to refresh data" :onHeaderIconClick="onRefresh"
-    :loading="state.loading" :error="state.loadingError" :expanded="isExpanded" @expand="isExpanded = true"
-    @collapse="isExpanded = false">
+  <CustomExpansionWidget title="Tag cloud" icon="tag" icon-tool-tip="Click to refresh data"
+    :on-header-icon-click="onRefresh" :loading="state.loading" :error="state.loadingError" :expanded="isExpanded"
+    @expand="isExpanded = true" @collapse="isExpanded = false">
     <template v-slot:header-extra>
       <q-chip square size="sm" color="grey-7" text-color="white">{{ t("Total tags", {
         count:

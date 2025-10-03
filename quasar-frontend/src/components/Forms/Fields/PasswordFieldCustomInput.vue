@@ -1,6 +1,6 @@
 <template>
   <q-input :type="visiblePassword ? 'text' : 'password'" v-model="password" :dense="dense" :label="label" :rules="rules"
-    :outlined="outlined" v-bind="attrs" ref="qInputPasswordRef" :error="error" :errorMessage="errorMessage">
+    :outlined="outlined" v-bind="attrs" ref="qInputPasswordRef" :error="error" :error-message="errorMessage">
     <template v-slot:prepend>
       <q-icon name="key" />
     </template>
@@ -8,7 +8,7 @@
       <q-icon :name="visibilityIcon" class="cursor-pointer" @click="visiblePassword = !visiblePassword"
         :aria-label="t(tooltipLabel)" />
       <DesktopToolTip anchor="bottom right" self="top end" :aria-label="t(tooltipLabel)">{{ t(tooltipLabel)
-      }}</DesktopToolTip>
+        }}</DesktopToolTip>
     </template>
   </q-input>
 </template>
