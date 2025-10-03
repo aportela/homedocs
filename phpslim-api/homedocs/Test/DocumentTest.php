@@ -8,6 +8,14 @@ require_once dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "vendor" . DIRECT
 
 final class DocumentTest extends \HomeDocs\Test\BaseTest
 {
+    private function createValidSession(): void
+    {
+        $id = \HomeDocs\Utils::uuidv4();
+        $u = new \HomeDocs\User($id, $id . "@server.com", "secret");
+        $u->add(self::$dbh);
+        \HomeDocs\UserSession::set($id, $id . "@server.com");
+    }
+
     /**
      * Initialize the test case
      * Called for every defined test
@@ -15,10 +23,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
     public function setUp(): void
     {
         parent::setUp();
-        $id = \HomeDocs\Utils::uuidv4();
-        $u = new \HomeDocs\User($id, $id . "@server.com", "secret");
-        $u->add(self::$dbh);
-        \HomeDocs\UserSession::set($id, $id . "@server.com");
+        //$this->createValidSession(); // make tests slower, better use only on required tests
     }
 
     public function testAddWithoutId(): void
@@ -64,6 +69,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
     public function testAdd(): void
     {
         $this->expectNotToPerformAssertions();
+        $this->createValidSession();
         $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["tag1", "tag2"]);
         $d->add(self::$dbh);
     }
@@ -111,6 +117,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
     public function testUpdate(): void
     {
         $this->expectNotToPerformAssertions();
+        $this->createValidSession();
         $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["tag1", "tag2"]);
         $d->add(self::$dbh);
         $d->title = "document title updated";
@@ -130,6 +137,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
     public function testDelete(): void
     {
         $this->expectNotToPerformAssertions();
+        $this->createValidSession();
         $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["tag1", "tag2"]);
         $d->add(self::$dbh);
         $d->delete(self::$dbh);
@@ -150,7 +158,6 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
         $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4());
         $d->get(self::$dbh);
     }
-
 
     public function testSearchWithPager(): void
     {
