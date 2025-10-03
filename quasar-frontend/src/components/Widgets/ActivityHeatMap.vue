@@ -244,7 +244,7 @@ onBeforeUnmount(() => {
 
 </script>
 
-<style scoped>
+<style lang="css" scoped>
 #cal-heatmap-container {
   max-width: 882px;
   overflow-x: auto;

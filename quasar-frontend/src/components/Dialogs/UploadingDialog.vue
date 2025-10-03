@@ -131,7 +131,7 @@ onMounted(() => {
 
 </script>
 
-<style scoped>
+<style lang="css" scoped>
 .q-card-uploading-dialog {
   min-width: 72vw;
   max-width: 95vw;

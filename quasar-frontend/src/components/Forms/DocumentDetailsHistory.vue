@@ -54,7 +54,7 @@ const hasHistoryOperations = computed(() => historyOperations.value?.length > 0)
 
 </script>
 
-<style scoped>
+<style lang="css" scoped>
 .q-list-history-container {
   min-height: 50vh;
   max-height: 50vh;

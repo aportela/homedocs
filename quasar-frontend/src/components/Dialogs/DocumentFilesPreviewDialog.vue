@@ -3,9 +3,9 @@
     <q-card class="q-card-attachments-dialog">
       <q-card-section class="row q-p-none">
         <div class="q-card-attachments-dialog-header col" v-if="documentTitle">{{ t("Document title")
-          }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
+        }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
             documentTitle
-            }}</router-link>
+          }}</router-link>
         </div>
         <div class="q-card-attachments-dialog-header col" v-else>{{ t("Document attachments") }}</div>
         <q-space />
@@ -201,7 +201,7 @@ onBeforeUnmount(() => {
 
 </script>
 
-<style scoped>
+<style lang="css" scoped>
 .q-card-attachments-dialog {
   width: 1280px;
   max-width: 80vw;

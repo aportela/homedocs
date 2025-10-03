@@ -103,7 +103,7 @@ onBeforeUnmount(() => {
 
 </script>
 
-<style>
+<style lang="css">
 .q-chip-10em {
   width: 10em;
 }

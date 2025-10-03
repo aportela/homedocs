@@ -68,7 +68,7 @@ onMounted(() => {
 
 </script>
 
-<style scoped>
+<style lang="css" scoped>
 @keyframes shakeKeyFrames {
   0% {
     transform: rotate(0deg);

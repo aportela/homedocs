@@ -194,7 +194,7 @@ onBeforeUnmount(() => {
 
 </script>
 
-<style scoped>
+<style lang="css" scoped>
 .q-list-attachments-container {
   min-height: 50vh;
   max-height: 50vh;

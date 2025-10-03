@@ -33,7 +33,7 @@ const { t } = useI18n();
 
 </script>
 
-<style scoped>
+<style lang="css" scoped>
 .my-profile-header-container {
   height: 350px;
   margin-bottom: 1em;

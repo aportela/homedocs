@@ -73,7 +73,7 @@ const hasResponseData = computed(() => formattedResponse.value || props.apiError
 
 </script>
 
-<style scoped>
+<style lang="css" scoped>
 .q-tab-panel-fixed-height {
   height: 40vh;
 }

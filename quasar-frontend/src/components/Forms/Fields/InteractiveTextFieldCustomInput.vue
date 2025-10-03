@@ -151,7 +151,7 @@ onMounted(() => {
 
 </script>
 
-<style scoped>
+<style lang="css" scoped>
 .collapsed {
   overflow: hidden;
   -webkit-line-clamp: var(--max-lines);

@@ -156,7 +156,7 @@ const onDownload = (url, fileName) => {
 
 </script>
 
-<style scoped>
+<style lang="css" scoped>
 .q-card-file-preview-dialog {
   width: 1024px;
   max-width: 80vw;

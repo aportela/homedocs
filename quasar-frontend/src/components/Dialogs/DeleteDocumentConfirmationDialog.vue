@@ -120,7 +120,7 @@ onBeforeUnmount(() => {
 
 </script>
 
-<style scoped>
+<style lang="css" scoped>
 .q-card-delete-document-dialog {
   width: 1280px;
   max-width: 80vw;
