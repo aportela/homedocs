@@ -1,10 +1,14 @@
 import { boot } from 'quasar/wrappers'
-import { Dark, LocalStorage } from "quasar";
+import { Dark } from "quasar";
+
+import { useLocalStorage } from 'src/composables/useLocalStorage';
+
+const { darkMode } = useLocalStorage();
 
 // "async" is optional;
 // more info on params: https://v2.quasar.dev/quasar-cli/boot-files
 export default boot(async (/* { app, router, ... } */) => {
-  const savedMode = LocalStorage.getItem("darkMode");
+  const savedMode = darkMode.get();
   if (savedMode === true) {
     Dark.set(true);
   } else if (savedMode === false) {

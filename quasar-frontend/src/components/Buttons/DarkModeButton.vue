@@ -8,13 +8,16 @@
 <script setup>
 
 import { useAttrs, computed } from "vue";
-import { Dark, LocalStorage } from "quasar";
+import { Dark } from "quasar";
 import { useI18n } from "vue-i18n";
 
+import { useLocalStorage } from 'src/composables/useLocalStorage';
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 
 const { t } = useI18n();
 const attrs = useAttrs();
+
+const { darkMode } = useLocalStorage();
 
 const currentDarkModeIcon = computed(() => {
   return (Dark.isActive ? "dark_mode" : "light_mode");
@@ -27,7 +30,7 @@ const tooltip = computed(() => Dark.isActive ? toolTipLight : toolTipDark);
 
 const onToggleDarkMode = () => {
   Dark.toggle();
-  LocalStorage.set('darkMode', Dark.isActive)
+  darkMode.set(Dark.isActive);
 }
 
 </script>

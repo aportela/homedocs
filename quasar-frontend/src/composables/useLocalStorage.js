@@ -20,6 +20,15 @@ export function useLocalStorage() {
     }
   };
 
+  const darkMode = {
+    get() {
+      return get("darkMode");
+    },
+    set(value) {
+      set("darkMode", !!value);
+    }
+  };
+
   const alwaysOpenUploadDialog = {
     get() {
       return get("alwaysOpenUploadDialog", true);
@@ -29,5 +38,5 @@ export function useLocalStorage() {
     }
   };
 
-  return { alwaysOpenUploadDialog };
+  return { darkMode, alwaysOpenUploadDialog };
 }
