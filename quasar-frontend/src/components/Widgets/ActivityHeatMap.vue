@@ -17,11 +17,12 @@
 import { ref, reactive, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { date, Dark } from "quasar";
+import { date } from "quasar";
 
 import { usei18n } from "src/composables/usei18n";
 import { useAPI } from "src/composables/useAPI";
 import { useBus } from "src/composables/useBus";
+import { useDarkMode } from 'src/composables/useDarkMode';
 
 import CalHeatmap from "cal-heatmap";
 import "cal-heatmap/cal-heatmap.css";
@@ -34,6 +35,7 @@ const router = useRouter();
 
 const { t } = useI18n();
 
+const { isDarkModeActive } = useDarkMode();
 const { i18n } = usei18n();
 const { api } = useAPI();
 const { bus } = useBus();
@@ -90,7 +92,7 @@ const calOptions = ref({
     label: { text: 'MMM', textAlign: 'start', position: 'top' },
   },
   subDomain: { type: 'ghDay', radius: 2, width: 11, height: 11, gutter: 4 },
-  theme: Dark.isActive ? "dark" : "light"
+  theme: isDarkModeActive() ? "dark" : "light"
 });
 
 const calDefaultPlugins = [
@@ -119,7 +121,8 @@ let cal = new CalHeatmap(calDefaultOptions);
 
 // UGLY-HACK
 // official dynamic cal-heatmap theme toggle is not supported (https://cal-heatmap.com/docs/options/theme)
-watch(() => Dark.isActive, val => {
+watch(() => isDarkModeActive(), val => {
+  console.log(val);
   cal.destroy();
   cal = new CalHeatmap(calDefaultOptions);
   onCalRefresh();
@@ -177,7 +180,7 @@ const onCalRefresh = (data, scaleDomain) => {
     calOptions.value.scale.color.domain = scaleDomain;
   }
   calOptions.value.date.locale = currentLocale.value;
-  calOptions.value.theme = Dark.isActive ? "dark" : "light";
+  calOptions.value.theme = isDarkModeActive() ? "dark" : "light";
   cal.paint(
     calOptions.value,
     calDefaultPlugins
