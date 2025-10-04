@@ -19,7 +19,7 @@ import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { date, Dark } from "quasar";
 
-import { i18n } from "src/boot/i18n";
+import { usei18n } from "src/composables/usei18n";
 import { useAPI } from "src/composables/useAPI";
 import { useBus } from "src/composables/useBus";
 
@@ -34,6 +34,7 @@ const router = useRouter();
 
 const { t } = useI18n();
 
+const { i18n } = usei18n();
 const { api } = useAPI();
 const { bus } = useBus();
 

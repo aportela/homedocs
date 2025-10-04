@@ -16,13 +16,15 @@
 
 <script setup>
 import { computed, watch, useAttrs, ref } from "vue";
-import { i18n } from "src/boot/i18n";
+import { usei18n } from "src/composables/usei18n";
 import { LocalStorage } from "quasar";
 import { useI18n } from "vue-i18n";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 
 const { t } = useI18n();
+
+const { i18n } = usei18n();
 
 const attrs = useAttrs();
 
