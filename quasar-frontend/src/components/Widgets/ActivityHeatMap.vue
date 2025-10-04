@@ -111,11 +111,13 @@ const calDefaultPlugins = [
     {
       width: 30,
       textAlign: 'start',
-      text: () => dayjs.weekdaysShort().map((d, i) => (i % 2 == 0 ? '' : d)),
+      text: () => Array.from({ length: 7 }, (_, i) => new Date(2023, 0, i + 1).toLocaleDateString(currentLocale.value, { weekday: 'short' })).map((d, i) => (i % 2 == 0 ? '' : d)),
       padding: [25, 0, 0, 0],
     },
   ],
 ];
+
+
 
 let cal = new CalHeatmap(calDefaultOptions);
 
