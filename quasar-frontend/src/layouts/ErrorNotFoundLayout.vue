@@ -12,7 +12,8 @@
           <div style="font-size: 30vh">404 </div>
           <div class="text-h2" style="opacity:.4">{{ t('Oops. Nothing here...') }}</div>
           <div class="text-center">
-            <q-btn class="q-mt-xl full-width" color="primary" unelevated to="/" :label="t('Go Home')" no-caps />
+            <q-btn color="primary" size="md" class="q-mt-xl full-width" no-caps :to="{ name: 'index' }"
+              :label="t('Go Home')" />
           </div>
         </div>
       </div>
