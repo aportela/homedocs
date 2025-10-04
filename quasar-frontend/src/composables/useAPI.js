@@ -6,7 +6,7 @@ export function useAPI() {
   const api = {
     common: {
       initialState: function () {
-        return axios.get("api2/initial_state", {});
+        return axios.get("api2/initial_state");
       },
     },
     user: {
@@ -41,171 +41,81 @@ export function useAPI() {
     },
     document: {
       searchRecent: function (count) {
-        return new Promise((resolve, reject) => {
-          const params = {
-            count: count,
-          };
-          axios
-            .post("api2/search/recent_documents", params)
-            .then((response) => {
-              resolve(response);
-            })
-            .catch((error) => {
-              reject(error);
-            });
-        });
+        const params = {
+          count: count,
+        };
+        return axios.post("api2/search/recent_documents", params);
       },
       search: function (currentPage, resultsPage, filter, sortBy, sortOrder) {
-        return new Promise((resolve, reject) => {
-          const params = {
-            title: filter.text?.title || null,
-            description: filter.text?.description || null,
-            notesBody: filter.text?.notes || null,
-            tags: filter.tags || [],
-          };
-          params.fromCreationTimestampCondition =
-            filter.dates?.creationDate?.timestamps?.from || null;
-          params.toCreationTimestampCondition =
-            filter.dates?.creationDate?.timestamps?.to || null;
-          params.fromLastUpdateTimestampCondition =
-            filter.dates?.lastUpdate?.timestamps?.from || null;
-          params.toLastUpdateTimestampCondition =
-            filter.dates?.lastUpdate?.timestamps?.to || null;
-          params.fromUpdatedOnTimestampCondition =
-            filter.dates?.updatedOn?.timestamps?.from || null;
-          params.toUpdatedOnTimestampCondition =
-            filter.dates?.updatedOn?.timestamps?.to || null;
-          params.currentPage = currentPage;
-          params.resultsPage = resultsPage;
-          params.sortBy = sortBy;
-          params.sortOrder = sortOrder;
-          axios
-            .post("api2/search/document", params)
-            .then((response) => {
-              resolve(response);
-            })
-            .catch((error) => {
-              reject(error);
-            });
-        });
+        const params = {
+          title: filter.text?.title || null,
+          description: filter.text?.description || null,
+          notesBody: filter.text?.notes || null,
+          tags: filter.tags || [],
+        };
+        params.fromCreationTimestampCondition =
+          filter.dates?.creationDate?.timestamps?.from || null;
+        params.toCreationTimestampCondition =
+          filter.dates?.creationDate?.timestamps?.to || null;
+        params.fromLastUpdateTimestampCondition =
+          filter.dates?.lastUpdate?.timestamps?.from || null;
+        params.toLastUpdateTimestampCondition =
+          filter.dates?.lastUpdate?.timestamps?.to || null;
+        params.fromUpdatedOnTimestampCondition =
+          filter.dates?.updatedOn?.timestamps?.from || null;
+        params.toUpdatedOnTimestampCondition =
+          filter.dates?.updatedOn?.timestamps?.to || null;
+        params.currentPage = currentPage;
+        params.resultsPage = resultsPage;
+        params.sortBy = sortBy;
+        params.sortOrder = sortOrder;
+        return axios.post("api2/search/document", params);
       },
       add: function (document) {
-        return new Promise((resolve, reject) => {
-          const params = {
-            id: document.id,
-            title: document.title,
-            tags: document.tags || [],
-            files: document.files || [],
-            notes: document.notes || [],
-          };
-          if (document.description) {
-            params.description = document.description;
-          }
-          axios
-            .post("api2/document/" + document.id, params)
-            .then((response) => {
-              resolve(response);
-            })
-            .catch((error) => {
-              reject(error);
-            });
-        });
+        const params = {
+          id: document.id,
+          title: document.title,
+          tags: document.tags || [],
+          files: document.files || [],
+          notes: document.notes || [],
+        };
+        if (document.description) {
+          params.description = document.description;
+        }
+        return axios.post("api2/document/" + document.id, params);
       },
       update: function (document) {
-        return new Promise((resolve, reject) => {
-          const params = {
-            id: document.id,
-            title: document.title,
-            tags: document.tags || [],
-            files: document.files || [],
-            notes: document.notes || [],
-          };
-          if (document.description) {
-            params.description = document.description;
-          }
-          axios
-            .put("api2/document/" + document.id, params)
-            .then((response) => {
-              resolve(response);
-            })
-            .catch((error) => {
-              reject(error);
-            });
-        });
+        const params = {
+          id: document.id,
+          title: document.title,
+          tags: document.tags || [],
+          files: document.files || [],
+          notes: document.notes || [],
+        };
+        if (document.description) {
+          params.description = document.description;
+        }
+        return axios.put("api2/document/" + document.id, params);
       },
       remove: function (id) {
-        return new Promise((resolve, reject) => {
-          axios
-            .delete("api2/document/" + id, {})
-            .then((response) => {
-              resolve(response);
-            })
-            .catch((error) => {
-              reject(error);
-            });
-        });
+        return axios.delete("api2/document/" + id);
       },
       get: function (id) {
-        return new Promise((resolve, reject) => {
-          axios
-            .get("api2/document/" + id, {})
-            .then((response) => {
-              resolve(response);
-            })
-            .catch((error) => {
-              reject(error);
-            });
-        });
+        return axios.get("api2/document/" + id);
       },
       getNotes: function (id) {
-        return new Promise((resolve, reject) => {
-          axios
-            .get("api2/document/" + id + "/notes", {})
-            .then((response) => {
-              resolve(response);
-            })
-            .catch((error) => {
-              reject(error);
-            });
-        });
+        return axios.get("api2/document/" + id + "/notes");
       },
       getAttachments: function (id) {
-        return new Promise((resolve, reject) => {
-          axios
-            .get("api2/document/" + id + "/attachments", {})
-            .then((response) => {
-              resolve(response);
-            })
-            .catch((error) => {
-              reject(error);
-            });
-        });
+        return axios.get("api2/document/" + id + "/attachments");
       },
       addFile: function (id, file) {
-        return new Promise((resolve, reject) => {
-          let formData = new FormData();
-          formData.append("file", file);
-          axios
-            .post("api2/file/" + id, formData)
-            .then((response) => {
-              resolve(response);
-            })
-            .catch((error) => {
-              reject(error);
-            });
-        });
+        let formData = new FormData();
+        formData.append("file", file);
+        return axios.post("api2/file/" + id, formData);
       },
       removeFile: function (id) {
-        return new Promise((resolve, reject) => {
-          axios
-            .delete("api2/file/" + id)
-            .then((response) => {
-              resolve(response);
-            })
-            .catch((error) => {
-              reject(error);
-            });
-        });
+        return axios.delete("api2/file/" + id);
       },
     },
     tag: {
