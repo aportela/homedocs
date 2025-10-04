@@ -1,12 +1,13 @@
 import { boot } from "quasar/wrappers";
+
 import { useSessionStore } from "src/stores/session";
+
+const session = useSessionStore();
 
 export default boot(({ app, router, store }) => {
   router.beforeEach((to, from, next) => {
-    const session = useSessionStore();
-
     if (!to.matched.length) {
-      next({ name: 'notFound' });
+      next({ name: "notFound" });
       return;
     }
 
@@ -14,19 +15,17 @@ export default boot(({ app, router, store }) => {
       session.load();
     }
 
-    const isLogged = session.isLogged;
-
-    if (isLogged) {
-      if (to.name === 'signIn' || to.name === 'signUp') {
-        next({ name: 'index' });
+    if (session.isLogged) {
+      if (to.name === "signIn" || to.name === "signUp") {
+        next({ name: "index" });
       } else {
         next();
       }
     } else {
-      if (to.name === 'signIn' || to.name === 'signUp') {
+      if (to.name === "signIn" || to.name === "signUp") {
         next();
       } else {
-        next({ name: 'signIn' });
+        next({ name: "signIn" });
       }
     }
   });

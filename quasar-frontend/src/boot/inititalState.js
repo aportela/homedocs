@@ -1,4 +1,5 @@
-import { boot } from 'quasar/wrappers'
+import { boot } from "quasar/wrappers";
+
 import { useAPI } from "src/composables/useAPI";
 
 const { api } = useAPI();
