@@ -6,16 +6,7 @@ export function useAPI() {
   const api = {
     common: {
       initialState: function () {
-        return new Promise((resolve, reject) => {
-          axios
-            .get("api2/initial_state", {})
-            .then((response) => {
-              resolve(response);
-            })
-            .catch((error) => {
-              reject(error);
-            });
-        });
+        return axios.get("api2/initial_state", {});
       },
     },
     user: {
@@ -264,28 +255,10 @@ export function useAPI() {
     },
     tag: {
       getCloud: function () {
-        return new Promise((resolve, reject) => {
-          axios
-            .get("api2/tag-cloud", {})
-            .then((response) => {
-              resolve(response);
-            })
-            .catch((error) => {
-              reject(error);
-            });
-        });
+        return axios.get("api2/tag-cloud", {});
       },
       search: function () {
-        return new Promise((resolve, reject) => {
-          axios
-            .get("api2/tags", {})
-            .then((response) => {
-              resolve(response);
-            })
-            .catch((error) => {
-              reject(error);
-            });
-        });
+        return axios.get("api2/tags", {});
       },
     },
     stats: {
