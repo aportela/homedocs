@@ -29,7 +29,7 @@ import { useAttrs, ref, onMounted, nextTick, computed } from "vue";
 
 import { useI18n } from "vue-i18n";
 
-import { useNotifications } from "src/composables/notifications"
+import { useNotifications } from "src/composables/useNotifications"
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 
