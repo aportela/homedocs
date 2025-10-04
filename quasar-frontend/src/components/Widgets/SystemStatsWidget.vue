@@ -38,13 +38,14 @@ import { useI18n } from "vue-i18n";
 import { format } from "quasar";
 
 import { bus } from "src/boot/bus";
-import { api } from "src/boot/axios";
+import { useAPI } from "src/composables/useAPI";
 
 import ActivityHeatMap from "src/components/Widgets/ActivityHeatMap.vue";
 import { default as BaseWidget } from "src/components/Widgets/BaseWidget.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
 
 const { t } = useI18n();
+const { api } = useAPI();
 
 const heatmapStats = reactive({
   loading: false,

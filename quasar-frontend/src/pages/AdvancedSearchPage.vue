@@ -111,7 +111,7 @@
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <DesktopToolTip>{{ t('Toggle sort by this column', { field: t(column.title) })
-                  }}</DesktopToolTip>
+                }}</DesktopToolTip>
               </th>
             </tr>
           </thead>
@@ -128,7 +128,7 @@
                       <q-item-label caption>{{ t("Creation date") }}: {{ document.creationDate }} ({{
                         document.creationDateTimeAgo }})</q-item-label>
                       <q-item-label caption v-if="document.lastUpdate">{{ t("Last update") }}: {{ document.lastUpdate
-                        }} ({{ document.lastUpdateTimeAgo }})</q-item-label>
+                      }} ({{ document.lastUpdateTimeAgo }})</q-item-label>
                     </q-item-section>
                     <q-item-section side top>
                       <q-chip size="md" square class="theme-default-q-chip shadow-1 q-chip-8em"
@@ -189,7 +189,7 @@ import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 
 import { bus } from "src/boot/bus";
-import { api } from "src/boot/axios";
+import { useAPI } from "src/composables/useAPI";
 import { useAdvancedSearchData } from "src/stores/advancedSearchData"
 import { useDateFilter } from "src/composables/dateFilter"
 import { useFormatDates } from "src/composables/formatDate"
@@ -207,6 +207,8 @@ import { default as ViewDocumentDetailsButton } from "src/components/Buttons/Vie
 const { t } = useI18n();
 
 const route = useRoute();
+
+const { api } = useAPI();
 
 const { onShowDocumentFiles, onShowDocumentNotes } = useBusDialog();
 

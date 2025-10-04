@@ -92,7 +92,7 @@ import { useRouter } from "vue-router";
 import { useQuasar, date } from "quasar";
 
 import { bus } from "src/boot/bus";
-import { api } from "src/boot/axios";
+import { useAPI } from "src/composables/useAPI";
 import { useBusDialog } from "src/composables/busDialog";
 
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
@@ -112,6 +112,8 @@ const router = useRouter();
 const $q = useQuasar();
 
 const { t } = useI18n();
+
+const { api } = useAPI();
 
 const { onShowDocumentFiles, onShowDocumentNotes } = useBusDialog();
 

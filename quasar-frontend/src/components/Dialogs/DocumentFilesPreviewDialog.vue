@@ -3,9 +3,9 @@
     <q-card class="q-card-attachments-dialog">
       <q-card-section class="row q-p-none">
         <div class="q-card-attachments-dialog-header col" v-if="documentTitle">{{ t("Document title")
-          }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
+        }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
             documentTitle
-            }}</router-link>
+          }}</router-link>
         </div>
         <div class="q-card-attachments-dialog-header col" v-else>{{ t("Document attachments") }}</div>
         <q-space />
@@ -76,7 +76,7 @@ import { date, format } from "quasar";
 import { bus } from "src/boot/bus";
 import { useFormatDates } from "src/composables/formatDate"
 import { useFileUtils } from "src/composables/fileUtils"
-import { api, bgDownload } from "src/boot/axios";
+import { useAPI } from "src/composables/useAPI";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
@@ -85,6 +85,7 @@ import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue
 const { t } = useI18n();
 const { timeAgo } = useFormatDates();
 const { allowPreview } = useFileUtils();
+const { api, bgDownload } = useAxios();
 
 const props = defineProps({
   documentId: {

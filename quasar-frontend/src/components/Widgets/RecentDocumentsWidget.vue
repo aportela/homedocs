@@ -86,7 +86,7 @@ import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { bus } from "src/boot/bus";
-import { api } from "src/boot/axios";
+import { useAPI } from "src/composables/useAPI";
 import { useFormatDates } from "src/composables/formatDate"
 import { useBusDialog } from "src/composables/busDialog";
 
@@ -99,6 +99,7 @@ import { default as ViewDocumentDetailsButton } from "src/components/Buttons/Vie
 const { t } = useI18n();
 const { onShowDocumentFiles, onShowDocumentNotes } = useBusDialog();
 const { timeAgo } = useFormatDates();
+const { api } = useAPI();
 
 const props = defineProps({
   expanded: {

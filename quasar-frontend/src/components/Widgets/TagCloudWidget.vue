@@ -29,7 +29,7 @@
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import { bus } from "src/boot/bus";
-import { api } from "src/boot/axios";
+import { useAPI } from "src/composables/useAPI";
 
 import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
@@ -37,6 +37,7 @@ import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue
 import { default as BrowseByTagButton } from "src/components/Buttons/BrowseByTagButton.vue";
 
 const { t } = useI18n();
+const { api } = useAPI();
 
 const props = defineProps({
   expanded: {

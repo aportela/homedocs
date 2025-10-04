@@ -33,12 +33,14 @@
 <script setup>
 
 import { ref, useAttrs } from "vue";
-import { api } from "src/boot/axios";
+import { useAPI } from "src/composables/useAPI";
 import { useI18n } from "vue-i18n";
 import { date } from "quasar";
 
 const attrs = useAttrs();
 const { t } = useI18n();
+const { api } = useAPI();
+
 const text = ref("");
 const filteredOptions = ref([]);
 const searching = ref(false);

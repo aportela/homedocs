@@ -1,5 +1,7 @@
 import { defineStore } from "pinia";
-import { api } from "src/boot/axios";
+import { useAPI } from "src/composables/useAPI";
+
+const { api } = useAPI();
 
 export const useInitialStateStore = defineStore("initialState", {
   state: () => ({

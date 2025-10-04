@@ -33,7 +33,7 @@ import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 
 import { bus } from "src/boot/bus";
-import { api } from "src/boot/axios";
+import { useAPI } from "src/composables/useAPI";
 
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue"
@@ -41,6 +41,8 @@ import { default as CustomErrorBanner } from "src/components/Banners/CustomError
 const { t } = useI18n();
 
 const emit = defineEmits(['close']);
+
+const { api } = useAPI();
 
 const router = useRouter();
 

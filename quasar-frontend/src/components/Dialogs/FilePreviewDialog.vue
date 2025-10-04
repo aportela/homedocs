@@ -77,7 +77,7 @@
 <script setup>
 import { ref, reactive, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { bgDownload } from "src/boot/axios";
+import { useAPI } from "src/composables/useAPI";
 import { useFileUtils } from "src/composables/fileUtils";
 
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
@@ -88,6 +88,7 @@ const emit = defineEmits(['close']);
 
 const dialogModel = ref(true);
 
+const { bgDownload } = useAxios();
 const { allowPreview, isImage, isAudio } = useFileUtils();
 const previewLoadingError = ref(false);
 

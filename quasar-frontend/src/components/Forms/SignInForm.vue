@@ -67,7 +67,7 @@ import { ref, reactive, nextTick, computed } from "vue";
 import { LocalStorage } from "quasar";
 import { useI18n } from "vue-i18n";
 
-import { api } from "src/boot/axios";
+import { useAPI } from "src/composables/useAPI";
 import { useFormUtils } from "src/composables/formUtils";
 import { useInitialStateStore } from "src/stores/initialState";
 
@@ -89,6 +89,8 @@ const props = defineProps({
 const emit = defineEmits(['success']);
 
 const { t } = useI18n();
+
+const { api } = useAPI();
 
 const formUtils = useFormUtils();
 

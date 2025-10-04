@@ -20,7 +20,7 @@ import { useI18n } from "vue-i18n";
 import { date, Dark } from "quasar";
 
 import { i18n } from "src/boot/i18n";
-import { api } from "src/boot/axios";
+import { useAPI } from "src/composables/useAPI";
 import { bus } from "src/boot/bus";
 
 import CalHeatmap from "cal-heatmap";
@@ -33,6 +33,8 @@ import { default as CustomErrorBanner } from "src/components/Banners/CustomError
 const router = useRouter();
 
 const { t } = useI18n();
+
+const { api } = useAPI();
 
 const emit = defineEmits(['loading', 'loaded', 'error']);
 

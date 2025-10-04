@@ -1,0 +1,346 @@
+import { useAxios } from "src/composables/useAxios";
+
+const { axios } = useAxios();
+
+export function useAPI() {
+  const api = {
+    common: {
+      initialState: function () {
+        return new Promise((resolve, reject) => {
+          axios
+            .get("api2/initial_state", {})
+            .then((response) => {
+              resolve(response);
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        });
+      },
+    },
+    user: {
+      signIn: function (email, password) {
+        return new Promise((resolve, reject) => {
+          const params = {
+            email: email,
+            password: password,
+          };
+          axios
+            .post("api2/user/sign-in", params)
+            .then((response) => {
+              resolve(response);
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        });
+      },
+      signOut: function () {
+        return new Promise((resolve, reject) => {
+          axios
+            .post("api2/user/sign-out", {})
+            .then((response) => {
+              resolve(response);
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        });
+      },
+      signUp: function (id, email, password) {
+        return new Promise((resolve, reject) => {
+          const params = {
+            id: id,
+            email: email,
+            password: password,
+          };
+          axios
+            .post("api2/user/sign-up", params)
+            .then((response) => {
+              resolve(response);
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        });
+      },
+      getProfile: function () {
+        return new Promise((resolve, reject) => {
+          axios
+            .get("api2/user/profile")
+            .then((response) => {
+              resolve(response);
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        });
+      },
+      updateProfile: function (email, password) {
+        return new Promise((resolve, reject) => {
+          const params = {
+            email: email,
+            password: password,
+          };
+          axios
+            .put("api2/user/profile", params)
+            .then((response) => {
+              resolve(response);
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        });
+      },
+    },
+    document: {
+      searchRecent: function (count) {
+        return new Promise((resolve, reject) => {
+          const params = {
+            count: count,
+          };
+          axios
+            .post("api2/search/recent_documents", params)
+            .then((response) => {
+              resolve(response);
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        });
+      },
+      search: function (currentPage, resultsPage, filter, sortBy, sortOrder) {
+        return new Promise((resolve, reject) => {
+          const params = {
+            title: filter.text?.title || null,
+            description: filter.text?.description || null,
+            notesBody: filter.text?.notes || null,
+            tags: filter.tags || [],
+          };
+          params.fromCreationTimestampCondition =
+            filter.dates?.creationDate?.timestamps?.from || null;
+          params.toCreationTimestampCondition =
+            filter.dates?.creationDate?.timestamps?.to || null;
+          params.fromLastUpdateTimestampCondition =
+            filter.dates?.lastUpdate?.timestamps?.from || null;
+          params.toLastUpdateTimestampCondition =
+            filter.dates?.lastUpdate?.timestamps?.to || null;
+          params.fromUpdatedOnTimestampCondition =
+            filter.dates?.updatedOn?.timestamps?.from || null;
+          params.toUpdatedOnTimestampCondition =
+            filter.dates?.updatedOn?.timestamps?.to || null;
+          params.currentPage = currentPage;
+          params.resultsPage = resultsPage;
+          params.sortBy = sortBy;
+          params.sortOrder = sortOrder;
+          axios
+            .post("api2/search/document", params)
+            .then((response) => {
+              resolve(response);
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        });
+      },
+      add: function (document) {
+        return new Promise((resolve, reject) => {
+          const params = {
+            id: document.id,
+            title: document.title,
+            tags: document.tags || [],
+            files: document.files || [],
+            notes: document.notes || [],
+          };
+          if (document.description) {
+            params.description = document.description;
+          }
+          axios
+            .post("api2/document/" + document.id, params)
+            .then((response) => {
+              resolve(response);
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        });
+      },
+      update: function (document) {
+        return new Promise((resolve, reject) => {
+          const params = {
+            id: document.id,
+            title: document.title,
+            tags: document.tags || [],
+            files: document.files || [],
+            notes: document.notes || [],
+          };
+          if (document.description) {
+            params.description = document.description;
+          }
+          axios
+            .put("api2/document/" + document.id, params)
+            .then((response) => {
+              resolve(response);
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        });
+      },
+      remove: function (id) {
+        return new Promise((resolve, reject) => {
+          axios
+            .delete("api2/document/" + id, {})
+            .then((response) => {
+              resolve(response);
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        });
+      },
+      get: function (id) {
+        return new Promise((resolve, reject) => {
+          axios
+            .get("api2/document/" + id, {})
+            .then((response) => {
+              resolve(response);
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        });
+      },
+      getNotes: function (id) {
+        return new Promise((resolve, reject) => {
+          axios
+            .get("api2/document/" + id + "/notes", {})
+            .then((response) => {
+              resolve(response);
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        });
+      },
+      getAttachments: function (id) {
+        return new Promise((resolve, reject) => {
+          axios
+            .get("api2/document/" + id + "/attachments", {})
+            .then((response) => {
+              resolve(response);
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        });
+      },
+      addFile: function (id, file) {
+        return new Promise((resolve, reject) => {
+          let formData = new FormData();
+          formData.append("file", file);
+          axios
+            .post("api2/file/" + id, formData)
+            .then((response) => {
+              resolve(response);
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        });
+      },
+      removeFile: function (id) {
+        return new Promise((resolve, reject) => {
+          axios
+            .delete("api2/file/" + id)
+            .then((response) => {
+              resolve(response);
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        });
+      },
+    },
+    tag: {
+      getCloud: function () {
+        return new Promise((resolve, reject) => {
+          axios
+            .get("api2/tag-cloud", {})
+            .then((response) => {
+              resolve(response);
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        });
+      },
+      search: function () {
+        return new Promise((resolve, reject) => {
+          axios
+            .post("api2/tag/search", {})
+            .then((response) => {
+              resolve(response);
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        });
+      },
+    },
+    stats: {
+      documentCount: function () {
+        return new Promise((resolve, reject) => {
+          axios
+            .get("api2/stats/total-published-documents", {})
+            .then((response) => {
+              resolve(response);
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        });
+      },
+      attachmentCount: function () {
+        return new Promise((resolve, reject) => {
+          axios
+            .get("api2/stats/total-uploaded-attachments", {})
+            .then((response) => {
+              resolve(response);
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        });
+      },
+      attachmentDiskSize: function () {
+        return new Promise((resolve, reject) => {
+          axios
+            .get("api2/stats/total-uploaded-attachments-disk-usage", {})
+            .then((response) => {
+              resolve(response);
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        });
+      },
+      getActivityHeatMapData: function (fromTimestamp) {
+        return new Promise((resolve, reject) => {
+          axios
+            .get("api2/stats/heatmap-activity-data", {
+              params: { fromTimestamp: fromTimestamp || null },
+            })
+            .then((response) => {
+              resolve(response);
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        });
+      },
+    },
+  };
+
+  return { api };
+};

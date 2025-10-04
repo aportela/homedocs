@@ -39,7 +39,7 @@ import { ref, reactive, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { bus } from "src/boot/bus";
-import { api } from "src/boot/axios";
+import { useAPI } from "src/composables/useAPI";
 import { useFormUtils } from "src/composables/formUtils";
 
 import { default as BaseWidget } from "src/components/Widgets/BaseWidget.vue";
@@ -48,6 +48,7 @@ import { default as CustomErrorBanner } from "src/components/Banners/CustomError
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 
 const { t } = useI18n();
+const { api } = useAPI();
 const formUtils = useFormUtils();
 
 const props = defineProps({
