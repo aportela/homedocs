@@ -93,7 +93,6 @@ import { useQuasar, date } from "quasar";
 
 import { useBus } from "src/composables/useBus";
 import { useAPI } from "src/composables/useAPI";
-import { useBusDialog } from "src/composables/busDialog";
 
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
@@ -114,9 +113,7 @@ const $q = useQuasar();
 const { t } = useI18n();
 
 const { api } = useAPI();
-const { bus } = useBus();
-
-const { onShowDocumentFiles, onShowDocumentNotes } = useBusDialog();
+const { bus, onShowDocumentFiles, onShowDocumentNotes } = useBus();
 
 const emit = defineEmits(['close']);
 

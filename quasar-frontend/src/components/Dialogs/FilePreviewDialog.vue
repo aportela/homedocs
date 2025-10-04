@@ -77,7 +77,7 @@
 <script setup>
 import { ref, reactive, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { useAPI } from "src/composables/useAPI";
+import { useAxios } from "src/composables/useAxios";
 import { useFileUtils } from "src/composables/fileUtils";
 
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";

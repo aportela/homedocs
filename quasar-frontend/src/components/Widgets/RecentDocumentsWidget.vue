@@ -88,7 +88,6 @@ import { useI18n } from "vue-i18n";
 import { useBus } from "src/composables/useBus";
 import { useAPI } from "src/composables/useAPI";
 import { useFormatDates } from "src/composables/formatDate"
-import { useBusDialog } from "src/composables/busDialog";
 
 import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
@@ -97,10 +96,9 @@ import { default as BrowseByTagButton } from "src/components/Buttons/BrowseByTag
 import { default as ViewDocumentDetailsButton } from "src/components/Buttons/ViewDocumentDetailsButton.vue";
 
 const { t } = useI18n();
-const { onShowDocumentFiles, onShowDocumentNotes } = useBusDialog();
 const { timeAgo } = useFormatDates();
 const { api } = useAPI();
-const { bus } = useBus();
+const { bus, onShowDocumentFiles, onShowDocumentNotes } = useBus();
 
 const props = defineProps({
   expanded: {
