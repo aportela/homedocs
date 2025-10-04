@@ -5,9 +5,7 @@ const { axios } = useAxios();
 export function useAPI() {
   const api = {
     common: {
-      initialState: function () {
-        return axios.get("api2/initial_state");
-      },
+      initialState: () => axios.get("api2/initial_state"),
     },
     user: {
       signIn: function (email, password) {
@@ -17,9 +15,7 @@ export function useAPI() {
         };
         return axios.post("api2/user/sign-in", params);
       },
-      signOut: function () {
-        return axios.post("api2/user/sign-out");
-      },
+      signOut: () => axios.post("api2/user/sign-out"),
       signUp: function (id, email, password) {
         const params = {
           id: id,
@@ -28,9 +24,7 @@ export function useAPI() {
         };
         return axios.post("api2/user/sign-up", params);
       },
-      getProfile: function () {
-        return axios.get("api2/user/profile");
-      },
+      getProfile: () => axios.get("api2/user/profile"),
       updateProfile: function (email, password) {
         const params = {
           email: email,
@@ -97,50 +91,32 @@ export function useAPI() {
         }
         return axios.put("api2/document/" + document.id, params);
       },
-      remove: function (id) {
-        return axios.delete("api2/document/" + id);
-      },
-      get: function (id) {
-        return axios.get("api2/document/" + id);
-      },
-      getNotes: function (id) {
-        return axios.get("api2/document/" + id + "/notes");
-      },
-      getAttachments: function (id) {
-        return axios.get("api2/document/" + id + "/attachments");
-      },
+      remove: (id) => axios.delete("api2/document/" + id),
+      get: (id) => axios.get("api2/document/" + id),
+      getNotes: (id) => axios.get("api2/document/" + id + "/notes"),
+      getAttachments: (id) => axios.get("api2/document/" + id + "/attachments"),
       addFile: function (id, file) {
         let formData = new FormData();
         formData.append("file", file);
         return axios.post("api2/file/" + id, formData);
       },
-      removeFile: function (id) {
-        return axios.delete("api2/file/" + id);
-      },
+      removeFile: (id) => axios.delete("api2/file/" + id),
     },
     tag: {
-      getCloud: function () {
-        return axios.get("api2/tag-cloud");
-      },
-      search: function () {
-        return axios.get("api2/tags");
-      },
+      getCloud: () => axios.get("api2/tag-cloud"),
+      search: () => axios.get("api2/tags"),
     },
     stats: {
-      documentCount: function () {
-        return axios.get("api2/stats/total-published-documents");
-      },
-      attachmentCount: function () {
-        return axios.get("api2/stats/total-uploaded-attachments");
-      },
-      attachmentDiskSize: function () {
-        return axios.get("api2/stats/total-uploaded-attachments-disk-usage");
-      },
-      getActivityHeatMapData: function (fromTimestamp) {
-        return axios.get("api2/stats/heatmap-activity-data", { params: { fromTimestamp: fromTimestamp || null } });
-      },
+      documentCount: () => axios.get("api2/stats/total-published-documents"),
+      attachmentCount: () => axios.get("api2/stats/total-uploaded-attachments"),
+      attachmentDiskSize: () =>
+        axios.get("api2/stats/total-uploaded-attachments-disk-usage"),
+      getActivityHeatMapData: (fromTimestamp) =>
+        axios.get("api2/stats/heatmap-activity-data", {
+          params: { fromTimestamp: fromTimestamp || null },
+        }),
     },
   };
 
   return { api };
-};
+}
