@@ -87,7 +87,7 @@ import { useI18n } from "vue-i18n";
 
 import { useBus } from "src/composables/useBus";
 import { useAPI } from "src/composables/useAPI";
-import { useFormatDates } from "src/composables/formatDate"
+import { useFormatDates } from "src/composables/useFormatDates"
 
 import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";

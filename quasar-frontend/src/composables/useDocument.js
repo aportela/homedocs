@@ -2,7 +2,7 @@ import { reactive } from "vue";
 import { uid, format } from "quasar";
 
 import { useBus } from "src/composables/useBus";
-import { useFormatDates } from "src/composables/formatDate";
+import { useFormatDates } from "src/composables/useFormatDates";
 
 export function useDocument() {
 

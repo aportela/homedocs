@@ -3,9 +3,9 @@
     <q-card class="q-card-attachments-dialog">
       <q-card-section class="row q-p-none">
         <div class="q-card-attachments-dialog-header col" v-if="documentTitle">{{ t("Document title")
-        }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
+          }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
             documentTitle
-          }}</router-link>
+            }}</router-link>
         </div>
         <div class="q-card-attachments-dialog-header col" v-else>{{ t("Document attachments") }}</div>
         <q-space />
@@ -74,7 +74,7 @@ import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import { date, format } from "quasar";
 import { useBus } from "src/composables/useBus";
-import { useFormatDates } from "src/composables/formatDate"
+import { useFormatDates } from "src/composables/useFormatDates"
 import { useFileUtils } from "src/composables/useFileUtils"
 import { useAxios } from "src/composables/useAxios";
 import { useAPI } from "src/composables/useAPI";

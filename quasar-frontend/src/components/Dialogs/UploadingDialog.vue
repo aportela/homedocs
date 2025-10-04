@@ -74,7 +74,7 @@ import { ref, computed, watch } from "vue";
 import { format } from "quasar";
 import { useI18n } from "vue-i18n";
 
-import { useFormatDates } from "src/composables/formatDate"
+import { useFormatDates } from "src/composables/useFormatDates"
 import { useLocalStorage } from "src/composables/useLocalStorage"
 import { useInitialStateStore } from "src/stores/initialState";
 
