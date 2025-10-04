@@ -1,6 +1,9 @@
-import { uid, date, EventBus } from "quasar";
+import { uid } from "quasar";
+import { useBus } from "src/composables/useBus";
+import { useFormatDates } from "src/composables/useFormatDates";
 
-const bus = new EventBus();
+const { bus } = new useBus();
+const { currentTimestamp, fullDateTimeHuman } = new useFormatDates();
 
 export function useNotifications() {
   const on = (event, callback) => {
@@ -12,11 +15,11 @@ export function useNotifications() {
   };
 
   const emit = (event, message) => {
-    const d = new Date();
+    const t = currentTimestamp();
     bus.emit(event, {
       id: message.id || uid(),
-      timestamp: date.formatDate(d, "x"),
-      date: date.formatDate(d, "YYYY-MM-DD HH:mm:ss"),
+      timestamp: currentTimestamp(),
+      date: fullDateTimeHuman(t),
       type: message.type,
       body: message.body,
       caption: message.caption || null,
