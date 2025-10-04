@@ -111,7 +111,7 @@
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <DesktopToolTip>{{ t('Toggle sort by this column', { field: t(column.title) })
-                }}</DesktopToolTip>
+                  }}</DesktopToolTip>
               </th>
             </tr>
           </thead>
@@ -128,7 +128,7 @@
                       <q-item-label caption>{{ t("Creation date") }}: {{ document.creationDate }} ({{
                         document.creationDateTimeAgo }})</q-item-label>
                       <q-item-label caption v-if="document.lastUpdate">{{ t("Last update") }}: {{ document.lastUpdate
-                      }} ({{ document.lastUpdateTimeAgo }})</q-item-label>
+                        }} ({{ document.lastUpdateTimeAgo }})</q-item-label>
                     </q-item-section>
                     <q-item-section side top>
                       <q-chip size="md" square class="theme-default-q-chip shadow-1 q-chip-8em"
@@ -191,7 +191,7 @@ import { useI18n } from "vue-i18n";
 import { useBus } from "src/composables/useBus";
 import { useAPI } from "src/composables/useAPI";
 import { useAdvancedSearchData } from "src/stores/advancedSearchData"
-import { useDateFilter } from "src/composables/dateFilter"
+import { useDateFilter } from "src/composables/useDateFilter"
 import { useFormatDates } from "src/composables/formatDate"
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
