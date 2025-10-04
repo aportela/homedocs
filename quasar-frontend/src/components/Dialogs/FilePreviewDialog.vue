@@ -78,7 +78,7 @@
 import { ref, reactive, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAxios } from "src/composables/useAxios";
-import { useFileUtils } from "src/composables/fileUtils";
+import { useFileUtils } from "src/composables/useFileUtils";
 
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 

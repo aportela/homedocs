@@ -70,7 +70,7 @@ import { format } from "quasar";
 import { useAxios } from "src/composables/useAxios";
 import { useAPI } from "src/composables/useAPI";
 import { useBus } from "src/composables/useBus";
-import { useFileUtils } from "src/composables/fileUtils"
+import { useFileUtils } from "src/composables/useFileUtils"
 import { useDocument } from "src/composables/useDocument"
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
