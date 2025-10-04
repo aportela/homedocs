@@ -1,12 +1,12 @@
 import axios from "axios";
 import { useSessionStore } from "src/stores/session";
-//import { useInitialStateStore } from "src/stores/initialState";
+import { useInitialStateStore } from "src/stores/initialState";
 
 export function useAxios() {
 
   const session = useSessionStore();
 
-  //const initialStateStore = useInitialStateStore();
+  const initialStateStore = useInitialStateStore();
 
   if (!session.isLoaded) {
     session.load();
@@ -35,7 +35,7 @@ export function useAxios() {
         }
       }
       if (response.data.initialState) {
-        //initialStateStore.set(response.data.initialState);
+        initialStateStore.set(response.data.initialState);
       }
       return response;
     },

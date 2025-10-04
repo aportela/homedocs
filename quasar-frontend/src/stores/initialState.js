@@ -1,7 +1,4 @@
 import { defineStore } from "pinia";
-import { useAPI } from "src/composables/useAPI";
-
-const { api } = useAPI();
 
 export const useInitialStateStore = defineStore("initialState", {
   state: () => ({
@@ -23,23 +20,6 @@ export const useInitialStateStore = defineStore("initialState", {
       state.initialState.environment == "development",
   },
   actions: {
-    async load() {
-      try {
-        const success = await api.common.initialState();
-        this.initialState.allowSignUp = success.data.initialState.allowSignUp;
-        this.initialState.maxUploadFileSize =
-          success.data.initialState.maxUploadFileSize || 20;
-        this.initialState.session.id = success.data.initialState.session.id;
-        this.initialState.session.email =
-          success.data.initialState.session.email;
-        this.initialState.environment =
-          success.data.initialState.environment == "production"
-            ? "production"
-            : "development";
-      } catch (error) {
-        console.error(error);
-      }
-    },
     set(initialState) {
       this.initialState.allowSignUp = initialState.allowSignUp;
       this.initialState.maxUploadFileSize = initialState.maxUploadFileSize;
