@@ -290,54 +290,16 @@ export function useAPI() {
     },
     stats: {
       documentCount: function () {
-        return new Promise((resolve, reject) => {
-          axios
-            .get("api2/stats/total-published-documents", {})
-            .then((response) => {
-              resolve(response);
-            })
-            .catch((error) => {
-              reject(error);
-            });
-        });
+        return axios.get("api2/stats/total-published-documents", {});
       },
       attachmentCount: function () {
-        return new Promise((resolve, reject) => {
-          axios
-            .get("api2/stats/total-uploaded-attachments", {})
-            .then((response) => {
-              resolve(response);
-            })
-            .catch((error) => {
-              reject(error);
-            });
-        });
+        return axios.get("api2/stats/total-uploaded-attachments", {});
       },
       attachmentDiskSize: function () {
-        return new Promise((resolve, reject) => {
-          axios
-            .get("api2/stats/total-uploaded-attachments-disk-usage", {})
-            .then((response) => {
-              resolve(response);
-            })
-            .catch((error) => {
-              reject(error);
-            });
-        });
+        return axios.get("api2/stats/total-uploaded-attachments-disk-usage", {});
       },
       getActivityHeatMapData: function (fromTimestamp) {
-        return new Promise((resolve, reject) => {
-          axios
-            .get("api2/stats/heatmap-activity-data", {
-              params: { fromTimestamp: fromTimestamp || null },
-            })
-            .then((response) => {
-              resolve(response);
-            })
-            .catch((error) => {
-              reject(error);
-            });
-        });
+        return axios.get("api2/stats/heatmap-activity-data", { params: { fromTimestamp: fromTimestamp || null } });
       },
     },
   };
