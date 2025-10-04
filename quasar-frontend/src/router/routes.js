@@ -17,6 +17,8 @@ const routes = [
   },
   {
     path: "/",
+    name: "root",
+    redirect: "/index",
     component: () => import("layouts/MainLayout.vue"),
     children: [
       {
@@ -76,7 +78,7 @@ const routes = [
   // but you can also remove it
   {
     path: "/:catchAll(.*)*",
-    name: 'notFound',
+    name: "notFound",
     component: () => import("layouts/ErrorNotFoundLayout.vue"),
   },
 ];
