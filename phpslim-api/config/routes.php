@@ -480,7 +480,7 @@ return function (App $app) {
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $group->post('/tag/search', function (Request $request, Response $response, array $args) {
+            $group->get('/tags', function (Request $request, Response $response, array $args) {
                 $payload = json_encode(
                     [
                         'initialState' => \HomeDocs\Utils::getInitialState($this),

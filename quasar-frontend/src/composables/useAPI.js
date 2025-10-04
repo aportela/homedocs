@@ -278,7 +278,7 @@ export function useAPI() {
       search: function () {
         return new Promise((resolve, reject) => {
           axios
-            .post("api2/tag/search", {})
+            .get("api2/tags", {})
             .then((response) => {
               resolve(response);
             })
