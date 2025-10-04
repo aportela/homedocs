@@ -75,7 +75,7 @@ import { format } from "quasar";
 import { useI18n } from "vue-i18n";
 
 import { useFormatDates } from "src/composables/formatDate"
-import { useLocalStorage } from "src/composables/localStorage"
+import { useLocalStorage } from "src/composables/useLocalStorage"
 import { useInitialStateStore } from "src/stores/initialState";
 
 const { t } = useI18n();
