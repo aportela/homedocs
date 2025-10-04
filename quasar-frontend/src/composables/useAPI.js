@@ -11,77 +11,32 @@ export function useAPI() {
     },
     user: {
       signIn: function (email, password) {
-        return new Promise((resolve, reject) => {
-          const params = {
-            email: email,
-            password: password,
-          };
-          axios
-            .post("api2/user/sign-in", params)
-            .then((response) => {
-              resolve(response);
-            })
-            .catch((error) => {
-              reject(error);
-            });
-        });
+        const params = {
+          email: email,
+          password: password,
+        };
+        return axios.post("api2/user/sign-in", params);
       },
       signOut: function () {
-        return new Promise((resolve, reject) => {
-          axios
-            .post("api2/user/sign-out", {})
-            .then((response) => {
-              resolve(response);
-            })
-            .catch((error) => {
-              reject(error);
-            });
-        });
+        return axios.post("api2/user/sign-out");
       },
       signUp: function (id, email, password) {
-        return new Promise((resolve, reject) => {
-          const params = {
-            id: id,
-            email: email,
-            password: password,
-          };
-          axios
-            .post("api2/user/sign-up", params)
-            .then((response) => {
-              resolve(response);
-            })
-            .catch((error) => {
-              reject(error);
-            });
-        });
+        const params = {
+          id: id,
+          email: email,
+          password: password,
+        };
+        return axios.post("api2/user/sign-up", params);
       },
       getProfile: function () {
-        return new Promise((resolve, reject) => {
-          axios
-            .get("api2/user/profile")
-            .then((response) => {
-              resolve(response);
-            })
-            .catch((error) => {
-              reject(error);
-            });
-        });
+        return axios.get("api2/user/profile");
       },
       updateProfile: function (email, password) {
-        return new Promise((resolve, reject) => {
-          const params = {
-            email: email,
-            password: password,
-          };
-          axios
-            .put("api2/user/profile", params)
-            .then((response) => {
-              resolve(response);
-            })
-            .catch((error) => {
-              reject(error);
-            });
-        });
+        const params = {
+          email: email,
+          password: password,
+        };
+        return axios.put("api2/user/profile", params);
       },
     },
     document: {
@@ -255,21 +210,21 @@ export function useAPI() {
     },
     tag: {
       getCloud: function () {
-        return axios.get("api2/tag-cloud", {});
+        return axios.get("api2/tag-cloud");
       },
       search: function () {
-        return axios.get("api2/tags", {});
+        return axios.get("api2/tags");
       },
     },
     stats: {
       documentCount: function () {
-        return axios.get("api2/stats/total-published-documents", {});
+        return axios.get("api2/stats/total-published-documents");
       },
       attachmentCount: function () {
-        return axios.get("api2/stats/total-uploaded-attachments", {});
+        return axios.get("api2/stats/total-uploaded-attachments");
       },
       attachmentDiskSize: function () {
-        return axios.get("api2/stats/total-uploaded-attachments-disk-usage", {});
+        return axios.get("api2/stats/total-uploaded-attachments-disk-usage");
       },
       getActivityHeatMapData: function (fromTimestamp) {
         return axios.get("api2/stats/heatmap-activity-data", { params: { fromTimestamp: fromTimestamp || null } });
