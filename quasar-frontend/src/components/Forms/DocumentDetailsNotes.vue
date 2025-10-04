@@ -51,7 +51,7 @@ import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { useFormUtils } from "src/composables/formUtils"
-import { useDocument } from "src/composables/document"
+import { useDocument } from "src/composables/useDocument"
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 import { default as InteractiveTextFieldCustomInput } from "src/components/Forms/Fields/InteractiveTextFieldCustomInput.vue"

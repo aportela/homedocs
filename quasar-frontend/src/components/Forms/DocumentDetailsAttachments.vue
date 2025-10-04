@@ -71,7 +71,7 @@ import { useAxios } from "src/composables/useAxios";
 import { useAPI } from "src/composables/useAPI";
 import { useBus } from "src/composables/useBus";
 import { useFileUtils } from "src/composables/fileUtils"
-import { useDocument } from "src/composables/document"
+import { useDocument } from "src/composables/useDocument"
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
