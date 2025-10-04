@@ -50,7 +50,7 @@
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 
-import { useFormUtils } from "src/composables/formUtils"
+import { useFormUtils } from "src/composables/useFormUtils"
 import { useDocument } from "src/composables/useDocument"
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";

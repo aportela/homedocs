@@ -40,7 +40,7 @@ import { useI18n } from "vue-i18n";
 
 import { useBus } from "src/composables/useBus";
 import { useAPI } from "src/composables/useAPI";
-import { useFormUtils } from "src/composables/formUtils";
+import { useFormUtils } from "src/composables/useFormUtils";
 
 import { default as BaseWidget } from "src/components/Widgets/BaseWidget.vue";
 import { default as PasswordFieldCustomInput } from "src/components/Forms/Fields/PasswordFieldCustomInput.vue";

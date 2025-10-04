@@ -8,10 +8,10 @@
       <slot name="slogan">
         <h4 class="q-mt-sm q-mb-md text-h4 text-weight-bolder">{{
           t(!!savedEmail ? "Glad to see you again!" : "Welcome aboard!")
-          }}</h4>
+        }}</h4>
         <div class="text-color-secondary">{{
           t(!!savedEmail ? "Let's get back to organizing." : "Let's start organizing.")
-          }}
+        }}
         </div>
       </slot>
     </q-card-section>
@@ -68,7 +68,7 @@ import { LocalStorage } from "quasar";
 import { useI18n } from "vue-i18n";
 
 import { useAPI } from "src/composables/useAPI";
-import { useFormUtils } from "src/composables/formUtils";
+import { useFormUtils } from "src/composables/useFormUtils";
 import { useInitialStateStore } from "src/stores/initialState";
 
 import { default as DarkModeButton } from "src/components/Buttons/DarkModeButton.vue"

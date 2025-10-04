@@ -67,7 +67,7 @@ import { uid } from "quasar";
 import { useI18n } from "vue-i18n";
 
 import { useAPI } from "src/composables/useAPI";
-import { useFormUtils } from "src/composables/formUtils";
+import { useFormUtils } from "src/composables/useFormUtils";
 import { useInitialStateStore } from "src/stores/initialState";
 
 import { default as DarkModeButton } from "src/components/Buttons/DarkModeButton.vue"
