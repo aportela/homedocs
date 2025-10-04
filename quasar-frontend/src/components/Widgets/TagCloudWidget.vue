@@ -28,7 +28,7 @@
 
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
-import { bus } from "src/boot/bus";
+import { useBus } from "src/composables/useBus";
 import { useAPI } from "src/composables/useAPI";
 
 import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
@@ -38,6 +38,7 @@ import { default as BrowseByTagButton } from "src/components/Buttons/BrowseByTag
 
 const { t } = useI18n();
 const { api } = useAPI();
+const { bus } = useBus();
 
 const props = defineProps({
   expanded: {

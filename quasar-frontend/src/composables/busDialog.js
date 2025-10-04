@@ -1,6 +1,9 @@
-import { bus } from "src/boot/bus";
+import { useBus } from "src/composables/useBus";
 
 export function useBusDialog() {
+
+  const bus = useBus();
+
   const onShowDocumentFiles = (documentId, documentTitle) => {
     bus.emit("showDocumentFilesPreviewDialog", {
       document: {

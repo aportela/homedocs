@@ -1,10 +1,13 @@
 import { reactive } from "vue";
 import { uid, format } from "quasar";
-import { bus } from "src/boot/bus";
 
+import { useBus } from "src/composables/useBus";
 import { useFormatDates } from "src/composables/formatDate";
 
 export function useDocument() {
+
+  const { bus } = useBus();
+
   const {
     fullDateTimeHuman,
     timeAgo,

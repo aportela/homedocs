@@ -124,7 +124,7 @@ import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { uid, useQuasar } from "quasar";
 
-import { bus } from "src/boot/bus";
+import { useBus } from "src/composables/useBus";
 import { useAPI } from "src/composables/useAPI";
 import { useFormUtils } from "src/composables/formUtils"
 import { useDocument } from "src/composables/document"
@@ -143,6 +143,7 @@ import { default as DeleteDocumentConfirmationDialog } from "src/components/Dial
 const { t } = useI18n();
 const router = useRouter();
 const { screen } = useQuasar();
+const { bus } = useBus();
 const { api } = useAPI();
 const initialState = useInitialStateStore();
 const { requiredFieldRules, fieldIsRequiredLabel } = useFormUtils();

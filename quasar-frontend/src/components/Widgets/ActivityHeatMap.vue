@@ -21,7 +21,7 @@ import { date, Dark } from "quasar";
 
 import { i18n } from "src/boot/i18n";
 import { useAPI } from "src/composables/useAPI";
-import { bus } from "src/boot/bus";
+import { useBus } from "src/composables/useBus";
 
 import CalHeatmap from "cal-heatmap";
 import "cal-heatmap/cal-heatmap.css";
@@ -35,6 +35,7 @@ const router = useRouter();
 const { t } = useI18n();
 
 const { api } = useAPI();
+const { bus } = useBus();
 
 const emit = defineEmits(['loading', 'loaded', 'error']);
 

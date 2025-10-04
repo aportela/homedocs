@@ -85,7 +85,7 @@
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 
-import { bus } from "src/boot/bus";
+import { useBus } from "src/composables/useBus";
 import { useAPI } from "src/composables/useAPI";
 import { useFormatDates } from "src/composables/formatDate"
 import { useBusDialog } from "src/composables/busDialog";
@@ -100,6 +100,7 @@ const { t } = useI18n();
 const { onShowDocumentFiles, onShowDocumentNotes } = useBusDialog();
 const { timeAgo } = useFormatDates();
 const { api } = useAPI();
+const { bus } = useBus();
 
 const props = defineProps({
   expanded: {

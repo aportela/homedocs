@@ -73,7 +73,7 @@
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import { date, format } from "quasar";
-import { bus } from "src/boot/bus";
+import { useBus } from "src/composables/useBus";
 import { useFormatDates } from "src/composables/formatDate"
 import { useFileUtils } from "src/composables/fileUtils"
 import { useAPI } from "src/composables/useAPI";
@@ -85,7 +85,9 @@ import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue
 const { t } = useI18n();
 const { timeAgo } = useFormatDates();
 const { allowPreview } = useFileUtils();
-const { api, bgDownload } = useAxios();
+const { bus } = useBus();
+const { bgDownload } = useAxios();
+const { api } = useAPI();
 
 const props = defineProps({
   documentId: {

@@ -91,7 +91,7 @@ import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useQuasar, date } from "quasar";
 
-import { bus } from "src/boot/bus";
+import { useBus } from "src/composables/useBus";
 import { useAPI } from "src/composables/useAPI";
 import { useBusDialog } from "src/composables/busDialog";
 
@@ -114,6 +114,7 @@ const $q = useQuasar();
 const { t } = useI18n();
 
 const { api } = useAPI();
+const { bus } = useBus();
 
 const { onShowDocumentFiles, onShowDocumentNotes } = useBusDialog();
 

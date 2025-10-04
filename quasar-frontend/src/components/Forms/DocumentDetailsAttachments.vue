@@ -67,8 +67,9 @@ import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import { format } from "quasar";
 
+import { useAxios } from "src/composables/useAxios";
 import { useAPI } from "src/composables/useAPI";
-import { bus } from "src/boot/bus";
+import { useBus } from "src/composables/useBus";
 import { useFileUtils } from "src/composables/fileUtils"
 import { useDocument } from "src/composables/document"
 
@@ -78,7 +79,9 @@ import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue
 
 const { t } = useI18n();
 
-const { api, bgDownload } = useAxios();
+const { bgDownload } = useAxios();
+const { api } = useAPI();
+const { bus } = useBus();
 
 const { allowPreview } = useFileUtils();
 const { escapeRegExp } = useDocument();

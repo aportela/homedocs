@@ -38,7 +38,7 @@
 import { ref, reactive, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 
-import { bus } from "src/boot/bus";
+import { useBus } from "src/composables/useBus";
 import { useAPI } from "src/composables/useAPI";
 import { useFormUtils } from "src/composables/formUtils";
 
@@ -49,6 +49,7 @@ import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue
 
 const { t } = useI18n();
 const { api } = useAPI();
+const { bus } = useBus();
 const formUtils = useFormUtils();
 
 const props = defineProps({

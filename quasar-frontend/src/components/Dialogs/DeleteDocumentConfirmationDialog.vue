@@ -32,7 +32,7 @@ import { ref, reactive, onMounted, onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 
-import { bus } from "src/boot/bus";
+import { useBus } from "src/composables/useBus";
 import { useAPI } from "src/composables/useAPI";
 
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
@@ -42,6 +42,7 @@ const { t } = useI18n();
 
 const emit = defineEmits(['close']);
 
+const { bus } = useBus();
 const { api } = useAPI();
 
 const router = useRouter();
