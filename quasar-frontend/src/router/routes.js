@@ -76,6 +76,7 @@ const routes = [
   // but you can also remove it
   {
     path: "/:catchAll(.*)*",
+    name: 'notFound',
     component: () => import("layouts/ErrorNotFoundLayout.vue"),
   },
 ];
