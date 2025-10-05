@@ -238,4 +238,5 @@ export default {
   "Uploaded on: ": "Uploaded on: ",
   "Expand sidebar": "Expand sidebar",
   "Collapse sidebar": "Collapse sidebar",
+  "Document saved": "Document saved",
 };

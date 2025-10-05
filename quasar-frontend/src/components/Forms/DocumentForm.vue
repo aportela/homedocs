@@ -100,7 +100,6 @@
               </q-card-section>
             </q-card>
           </div>
-
         </q-card-section>
         <q-card-section class="q-ma-xs q-mt-sm q-px-xs">
           <CustomBanner v-if="state.saveSuccess" class="q-mt-md" text="Document saved" success></CustomBanner>
@@ -281,7 +280,6 @@ const onSubmitForm = () => {
           loading.value = false;
           state.loading = false;
           saving.value = false;
-          // TODO: translate "Document saved" label
           state.saveSuccess = true;
           if (smallScreensTopTab.value == "metadata") {
             nextTick(() => {
