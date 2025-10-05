@@ -5,24 +5,27 @@
       method="post" url="api2/file" :max-file-size="maxUploadFileSize" multiple @uploaded="onFileUploaded"
       @rejected="onUploadRejected" @failed="onUploadFailed" @start="onUploadsStart" @finish="onUploadsFinish" />
     <q-card flat class="bg-transparent">
-      <q-card-section>
-        <div class="row items-center">
-          <h3 class="q-mt-sm q-mb-sm" v-if="!document.id">{{ t("New document") }}</h3>
-          <h3 class="q-mt-sm q-mb-sm" v-else>{{ t("Document card") }}</h3>
-          <q-space />
-          <q-btn-group flat square>
-            <q-btn icon="autorenew" flat square size="xl" :title="t('Reload document')" v-if="!isNewDocument"
-              @click="onRefresh" />
-            <q-btn icon="delete" flat square size="xl" :title="t('Remove document')" v-if="!isNewDocument"
-              @click="onShowDeleteDocumentConfirmationDialog" />
-            <q-btn icon="save" flat round size="xl" :title="t('Save document')" @click="onSubmitForm"
-              :disable="loading || saving || uploading || !document.title" />
-          </q-btn-group>
-        </div>
-        <q-separator />
-      </q-card-section>
       <form @submit.prevent.stop="onSubmitForm" autocorrect="off" autocapitalize="off" autocomplete="off"
         spellcheck="false">
+        <q-btn-group class="q-ma-sm" spread>
+          <q-btn type="submit" icon="save" size="md" color="primary" :title="t('Save')" :label="t('Save')" no-caps
+            @click="onSubmitForm" :disable2="loading || saving || uploading || !document.title" :loading="saving">
+            <template v-slot:loading>
+              <q-spinner-hourglass class="on-left" />
+              {{ t("Saving...") }}
+            </template>
+          </q-btn>
+          <q-btn type="button" icon="autorenew" size="md" color="secondary" :title="t('Reload')" :label="t('Reload')"
+            no-caps v-if="!isNewDocument" @click="onRefresh" :loading="loading">
+            <template v-slot:loading>
+              <q-spinner-hourglass class="on-left" />
+              {{ t("Loading...") }}
+            </template>
+          </q-btn>
+          <q-btn type="button" icon="delete" size="md" color="red" :title="t('Delete')" :label="t('Delete')" no-caps
+            v-if="!isNewDocument" @click="onShowDeleteDocumentConfirmationDialog">
+          </q-btn>
+        </q-btn-group>
         <q-tabs class="lt-lg q-mb-sm" v-model="smallScreensTopTab">
           <q-tab name="metadata" icon="description" :label="t('Document metadata')"
             class="cursor-default full-width"></q-tab>
@@ -90,26 +93,40 @@
                   </q-tab-panel>
                   <q-tab-panel name="history" class="q-pa-none" v-if="document.id">
                     <DocumentDetailsHistory v-model="document.historyOperations"
-                      :disable="loading || saving || state.loading"></DocumentDetailsHistory>
+                      :disable="loading || saving || state.loading">
+                    </DocumentDetailsHistory>
                   </q-tab-panel>
                 </q-tab-panels>
               </q-card-section>
             </q-card>
           </div>
+
         </q-card-section>
         <q-card-section class="q-ma-xs q-mt-sm q-px-xs">
-          <q-btn :label="t('Save changes')" type="submit" icon="save" class="full-width" color="dark"
-            :disable="loading || saving || uploading || !document.title">
-            <template v-slot:loading v-if="saving">
-              <q-spinner-hourglass class="on-left" />
-              {{ t("Saving...") }}
-            </template>
-          </q-btn>
           <CustomBanner v-if="state.saveSuccess" class="q-mt-md" text="Document saved" success></CustomBanner>
           <CustomErrorBanner v-else-if="state.loadingError || state.saveError" class="q-mt-md"
             :api-error="state.apiError" :text="state.errorMessage">
           </CustomErrorBanner>
         </q-card-section>
+        <q-btn-group class="q-ma-sm" spread>
+          <q-btn type="submit" icon="save" size="md" color="primary" :title="t('Save')" :label="t('Save')" no-caps
+            @click="onSubmitForm" :disable2="loading || saving || uploading || !document.title" :loading="saving">
+            <template v-slot:loading>
+              <q-spinner-hourglass class="on-left" />
+              {{ t("Saving...") }}
+            </template>
+          </q-btn>
+          <q-btn type="button" icon="autorenew" size="md" color="secondary" :title="t('Reload')" :label="t('Reload')"
+            no-caps v-if="!isNewDocument" @click="onRefresh" :loading="loading">
+            <template v-slot:loading>
+              <q-spinner-hourglass class="on-left" />
+              {{ t("Loading...") }}
+            </template>
+          </q-btn>
+          <q-btn type="button" icon="delete" size="md" color="red" :title="t('Delete')" :label="t('Delete')" no-caps
+            v-if="!isNewDocument" @click="onShowDeleteDocumentConfirmationDialog">
+          </q-btn>
+        </q-btn-group>
       </form>
     </q-card>
   </div>
@@ -186,6 +203,7 @@ const state = reactive({
 
 const loading = ref(false);
 const saving = ref(false);
+const deleting = ref(false);
 const uploading = ref(false);
 
 const showDeleteDocumentConfirmationDialog = ref(false);
@@ -253,6 +271,7 @@ const onSubmitForm = () => {
   state.apiError = null;
   state.saveSuccess = false;
   state.saveError = false;
+  saving.value = true;
   if (!isNewDocument.value) {
     api.document
       .update(document)
@@ -261,6 +280,7 @@ const onSubmitForm = () => {
           document.setFromAPIJSON(successResponse.data.document);
           loading.value = false;
           state.loading = false;
+          saving.value = false;
           // TODO: translate "Document saved" label
           state.saveSuccess = true;
           if (smallScreensTopTab.value == "metadata") {
@@ -277,6 +297,7 @@ const onSubmitForm = () => {
         loading.value = false;
         state.apiError = errorResponse.customAPIErrorDetails;
         state.saveError = true;
+        saving.value = false;
         switch (errorResponse.response.status) {
           case 400:
             if (
@@ -318,6 +339,7 @@ const onSubmitForm = () => {
       .add(document)
       .then((successResponse) => {
         loading.value = false;
+        saving.value = false;
         router.push({
           name: "document",
           params: { id: document.id }
@@ -328,6 +350,7 @@ const onSubmitForm = () => {
         loading.value = false;
         state.apiError = errorResponse.customAPIErrorDetails;
         state.saveError = true;
+        saving.value = false;
         switch (errorResponse.response.status) {
           case 400:
             if (
