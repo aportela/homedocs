@@ -1,9 +1,9 @@
 <template>
   <q-dialog v-model="visible" @hide="onHide">
     <q-card class="q-card-base-dialog">
-      <q-card-section class="q-p-none row">
+      <q-card-section class="q-py-sm row self-center q-dialog-header">
         <slot name="header">
-          <div class="col">
+          <div class="col flex items-center">
             <slot name="title">Title</slot>
           </div>
           <q-space />
@@ -12,18 +12,18 @@
           </div>
         </slot>
       </q-card-section>
-      <q-separator class="q-mb-md"></q-separator>
-      <q-card-section class="q-p-none">
+      <q-card-section class="q-py-sm q-dialog-body">
         <slot name="body"></slot>
       </q-card-section>
-      <slot name="footer">
-        <q-separator class="q-my-sm"></q-separator>
-        <q-card-actions align="right">
-          <slot name="actions">
-            <q-btn color="primary" size="md" no-caps @click.stop="onHide" icon="close" :label="t('Close')" />
-          </slot>
-        </q-card-actions>
-      </slot>
+      <q-card-section class="q-py-sm q-dialog-footer">
+        <slot name="footer">
+          <q-card-actions align="right">
+            <slot name="actions">
+              <q-btn color="primary" size="md" no-caps @click.stop="onHide" icon="close" :label="t('Close')" />
+            </slot>
+          </q-card-actions>
+        </slot>
+      </q-card-section>
     </q-card>
   </q-dialog>
 </template>
@@ -49,5 +49,17 @@ const onHide = () => {
 <style lang="css" scoped>
 .q-card-base-dialog {
   width: 60vw;
+  background: var(--color-zinc-100);
+}
+
+.q-dialog-header {
+  background: var(--color-zinc-200);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+
+.q-dialog-footer {
+  background: var(--color-zinc-200);
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
 }
 </style>
