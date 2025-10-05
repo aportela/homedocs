@@ -45,21 +45,3 @@ const onHide = () => {
 }
 
 </script>
-
-<style lang="css" scoped>
-.q-card-base-dialog {
-  width: 60vw;
-  background: var(--color-zinc-100);
-}
-
-.q-dialog-header {
-  background: var(--color-zinc-200);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-}
-
-
-.q-dialog-footer {
-  background: var(--color-zinc-200);
-  border-top: 1px solid rgba(0, 0, 0, 0.12);
-}
-</style>

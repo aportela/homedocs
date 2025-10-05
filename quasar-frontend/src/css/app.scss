@@ -214,6 +214,23 @@ body {
     background-color: #000 !important;
     cursor: not-allowed;
   }
+
+  .q-card-base-dialog {
+    width: 60vw;
+    background-color: $default-light-primary-bg-color !important;
+    color: $default-light-primary-text-color !important;
+  }
+
+  .q-dialog-header {
+    background: var(--color-zinc-200); // TODO: $default-light-secondary-bg-color ?
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+  .q-dialog-footer {
+    background: var(--color-zinc-200);
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
 }
 
 .body--dark {
@@ -355,6 +372,22 @@ body {
     background-color: #ddd !important;
     color : var(--color-zinc-950) !important;
     cursor: not-allowed;
+  }
+
+  .q-card-base-dialog {
+    width: 60vw;
+    background-color: $default-dark-primary-bg-color !important;
+    color: $default-dark-primary-text-color !important;
+  }
+
+  .q-dialog-header {
+    background-color: var(--color-zinc-700);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.28);
+  }
+
+  .q-dialog-footer {
+    background-color: var(--color-zinc-700);
+    border-top: 1px solid rgba(255, 255, 255, 0.28);
   }
 
 }
