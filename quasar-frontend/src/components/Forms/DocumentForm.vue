@@ -9,7 +9,7 @@
         spellcheck="false">
         <q-btn-group class="q-ma-sm" spread>
           <q-btn type="submit" icon="save" size="md" color="primary" :title="t('Save')" :label="t('Save')" no-caps
-            @click="onSubmitForm" :disable2="loading || saving || uploading || !document.title" :loading="saving">
+            @click="onSubmitForm" :disable="loading || saving || uploading || !document.title" :loading="saving">
             <template v-slot:loading>
               <q-spinner-hourglass class="on-left" />
               {{ t("Saving...") }}
@@ -75,7 +75,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.loading" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                      }}</q-badge>
+                    }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
@@ -109,7 +109,7 @@
         </q-card-section>
         <q-btn-group class="q-ma-sm" spread>
           <q-btn type="submit" icon="save" size="md" color="primary" :title="t('Save')" :label="t('Save')" no-caps
-            @click="onSubmitForm" :disable2="loading || saving || uploading || !document.title" :loading="saving">
+            @click="onSubmitForm" :disable="loading || saving || uploading || !document.title" :loading="saving">
             <template v-slot:loading>
               <q-spinner-hourglass class="on-left" />
               {{ t("Saving...") }}
