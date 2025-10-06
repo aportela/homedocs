@@ -137,7 +137,7 @@
                         <q-avatar class="theme-default-q-avatar"
                           :class="{ 'text-white bg-blue': document.fileCount > 0 }">{{
                             document.fileCount }}</q-avatar>
-                        {{ t('Total files', { count: document.fileCount }) }}
+                        {{ t('Total attachments count', { count: document.fileCount }) }}
                       </q-chip>
                       <q-chip size="md" square class="theme-default-q-chip shadow-1 q-chip-8em"
                         :clickable="document.noteCount > 0 && !state.loading"
@@ -159,7 +159,7 @@
               <td class="gt-lg">{{ document.lastUpdate }}</td>
               <td class="gt-lg">
                 <ViewDocumentDetailsButton size="md" square class="min-width-8em" :count="document.fileCount"
-                  :label="'Total files'" :tool-tip="'View document attachments'" :disable="state.loading"
+                  :label="'Total attachments count'" :tool-tip="'View document attachments'" :disable="state.loading"
                   @click.stop.prevent="onShowDocumentFiles(document.id, document.title)" q-chip-class="'q-chip-8em'">
                 </ViewDocumentDetailsButton>
               </td>

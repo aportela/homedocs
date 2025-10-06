@@ -11,7 +11,7 @@
     <template v-slot:header-right>
       <q-chip size="md" square class="gt-sm theme-default-q-chip shadow-1" v-if="!state.loading && !state.loadingError">
         <q-avatar class="theme-default-q-avatar">{{ attachments.length }}</q-avatar>
-        {{ t("Total files", { count: attachments.length }) }}
+        {{ t("Total attachments count", { count: attachments.length }) }}
       </q-chip>
     </template>
     <template v-slot:body>

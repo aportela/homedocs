@@ -59,7 +59,7 @@
                 <q-item-label caption>{{ item.lastUpdate }}
                 </q-item-label>
                 <ViewDocumentDetailsButton size="md" square class="min-width-7em" :count="item.fileCount"
-                  :label="'Total files'" :tool-tip="'View document attachments'" :disable="state.loading"
+                  :label="'Total attachments count'" :tool-tip="'View document attachments'" :disable="state.loading"
                   @click.stop.prevent="onShowDocumentFiles(item.id, item.label)">
                 </ViewDocumentDetailsButton>
                 <ViewDocumentDetailsButton size="md" square class="min-width-7em" :count="item.noteCount"
