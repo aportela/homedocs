@@ -244,4 +244,8 @@ export default {
   "Expand sidebar": "Expandir sidebar",
   "Collapse sidebar": "Contraer sidebar",
   "Document saved": "Documento guardado",
+  "Session lost... re-auth required":
+    "La sesión se ha perdido... se requiere re-autentificación",
+  "Please enter again your credentials":
+    "Por favor introduzca de nuevo sus credenciales",
 };
