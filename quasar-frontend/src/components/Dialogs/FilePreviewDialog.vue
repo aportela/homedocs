@@ -10,6 +10,12 @@
           attachmentsCount
       }) }}</div>
     </template>
+    <template v-slot:header-right>
+      <q-chip size="md" square class="gt-sm theme-default-q-chip shadow-1">
+        <q-avatar class="theme-default-q-avatar">{{ attachmentsCount }}</q-avatar>
+        {{ t("Total attachments count", { count: attachmentsCount }) }}
+      </q-chip>
+    </template>
     <template v-slot:body>
       <div>
         <p class="text-center text-bold q-my-md">{{ currentAttachment.name }} ({{ currentAttachment.humanSize }})</p>
