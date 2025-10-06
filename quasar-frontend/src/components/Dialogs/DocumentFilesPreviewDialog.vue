@@ -1,12 +1,12 @@
 <template>
   <BaseDialog @close="onClose" width="1280px" max-width="80vw">
     <template v-slot:header-left>
-      <div class="q-card-attachments-dialog-header col" v-if="documentTitle">{{ t("Document title")
+      <div v-if="documentTitle">{{ t("Document title")
       }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
           documentTitle
         }}</router-link>
       </div>
-      <div class="q-card-attachments-dialog-header col" v-else>{{ t("Document attachments") }}</div>
+      <div v-else>{{ t("Document attachments") }}</div>
     </template>
     <template v-slot:body>
       <div class="q-pt-none scroll attachments-scrolled-container">
