@@ -1,30 +1,28 @@
 <template>
-  <q-dialog v-model="visible" @hide="onClose">
-    <q-card class="q-card-delete-document-dialog">
-      <q-card-section class="row items-center q-pb-none">
-        <div class="text-h6">{{ t('Delete document') }}</div>
-        <q-space />
-        <q-btn icon="close" flat round dense v-close-popup aria-label="Close modal" />
-      </q-card-section>
-      <q-separator class="q-mb-md"></q-separator>
-      <q-card-section class="q-p-none">
-        {{ t("You are about to delete the current document. Are you sure? (this action cannot be undone).") }}
+  <BaseDialog @close="onClose" width="1280px" max-width="80vw">
+    <template v-slot:header-left>
+      {{ t('Delete document') }}
+    </template>
+    <template v-slot:body>
+      <div class="q-ma-md">
+        <p>
+          {{ t("You are about to delete the current document. Are you sure? (this action cannot be undone).") }}
+        </p>
         <custom-banner class="q-mt-lg" v-if="state.deleted" success
           text="The document has been deleted. Upon closing this dialog, you will be redirected to the home screen."></custom-banner>
         <CustomErrorBanner v-else-if="state.loadingError" :text="state.errorMessage" :api-error="state.apiError"
           class="q-mt-lg">
         </CustomErrorBanner>
-      </q-card-section>
-      <q-separator class="q-my-sm"></q-separator>
-      <q-card-actions align="right">
-        <q-btn class="action-secondary" @click.stop="onClose" icon="close" :label="t('Cancel')" :disable="state.loading"
-          v-if="!state.deleted" />
-        <q-btn color="primary" @click.stop="onDelete" icon="done" :label="t('Ok')" :disable="state.loading"
-          v-if="!state.deleted" />
-        <q-btn color="primary" @click.stop="onClose" icon="done" :label="t('Close')" v-if="state.deleted" />
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
+      </div>
+    </template>
+    <template v-slot:actions>
+      <q-btn class="action-secondary" @click.stop="onClose" icon="close" :label="t('Cancel')" :disable="state.loading"
+        v-if="!state.deleted" />
+      <q-btn color="primary" @click.stop="onDelete" icon="done" :label="t('Ok')" :disable="state.loading"
+        v-if="!state.deleted" />
+      <q-btn color="primary" @click.stop="onClose" icon="done" :label="t('Close')" v-if="state.deleted" />
+    </template>
+  </BaseDialog>
 </template>
 
 <script setup>
@@ -35,6 +33,7 @@ import { useI18n } from "vue-i18n";
 import { useBus } from "src/composables/useBus";
 import { useAPI } from "src/composables/useAPI";
 
+import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue"
 
@@ -122,10 +121,3 @@ onBeforeUnmount(() => {
 });
 
 </script>
-
-<style lang="css" scoped>
-.q-card-delete-document-dialog {
-  width: 1280px;
-  max-width: 80vw;
-}
-</style>
