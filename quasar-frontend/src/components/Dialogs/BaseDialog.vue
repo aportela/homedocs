@@ -21,14 +21,12 @@
           <q-card-actions align="right">
             <slot name="actions">
               <slot name="actions-prepend"></slot>
-              <q-btn class="action-secondary" v-if="confirmationDialog" @click.stop="onCancel"><q-icon left
-                  name="close" />{{ t("Cancel")
-                  }}</q-btn>
-              <q-btn color="primary" v-if="confirmationDialog" @click.stop="onConfirm"><q-icon left name="done" />{{
-                t("Ok")
-              }}</q-btn>
-              <q-btn color="primary" v-if="!confirmationDialog" size="md" no-caps @click.stop="onHide" icon="close"
-                :label="t('Close')" />
+              <q-btn class="action-secondary" v-if="confirmationDialog" @click.stop="onCancel" :disable="disable"
+                icon="close" :label="t('Cancel')" />
+              <q-btn color="primary" v-if="confirmationDialog" @click.stop="onConfirm" :disable="disable" icon="done"
+                :label="t('Ok')" />
+              <q-btn color="primary" v-if="!confirmationDialog" size="md" no-caps @click.stop="onHide"
+                :disable="disable" icon="close" :label="t('Close')" />
             </slot>
           </q-card-actions>
         </slot>
@@ -68,6 +66,11 @@ const props = defineProps({
     default: ""
   },
   confirmationDialog: {
+    type: Boolean,
+    required: false,
+    default: false
+  },
+  disable: {
     type: Boolean,
     required: false,
     default: false
