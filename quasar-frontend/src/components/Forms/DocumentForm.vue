@@ -67,7 +67,7 @@
               <q-card-section class="q-pa-none q-mb-sm" style="border-bottom: 2px solid rgba(0, 0, 0, 0.12);">
                 <q-tabs v-model="rightDetailsTab" align="left">
                   <q-tab name="attachments" icon="attach_file" :disable="state.loading" :label="t('Attachments')">
-                    <q-badge floating v-show="document.hasFiles">{{ document.files.length }}</q-badge>
+                    <q-badge floating v-show="document.hasAttachments">{{ document.attachments.length }}</q-badge>
                   </q-tab>
                   <q-tab name="notes" icon="forum" :disable="state.loading" :label="t('Notes')">
                     <q-badge floating v-show="document.hasNotes">{{ document.notes.length }}</q-badge>
@@ -75,16 +75,16 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.loading" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                    }}</q-badge>
+                      }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
               <q-card-section class="q-pa-none">
                 <q-tab-panels v-model="rightDetailsTab" animated class="bg-transparent">
                   <q-tab-panel name="attachments" class="q-pa-none">
-                    <DocumentDetailsAttachments v-model="document.files" :disable="loading || saving || state.loading"
-                      @add-attachment="onShowAttachmentsPicker"
-                      @preview-attachment-at-index="(index) => document.previewFile(index)">
+                    <DocumentDetailsAttachments v-model="document.attachments"
+                      :disable="loading || saving || state.loading" @add-attachment="onShowAttachmentsPicker"
+                      @preview-attachment-at-index="(index) => document.previewAttachment(index)">
                     </DocumentDetailsAttachments>
                   </q-tab-panel>
                   <q-tab-panel name="notes" class="q-pa-none">

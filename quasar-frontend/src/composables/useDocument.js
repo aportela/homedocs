@@ -5,7 +5,6 @@ import { useBus } from "src/composables/useBus";
 import { useFormatDates } from "src/composables/useFormatDates";
 
 export function useDocument() {
-
   const { bus } = useBus();
 
   const {
@@ -30,7 +29,7 @@ export function useDocument() {
       expanded: false,
       startOnEditMode: true, // new notes start with view mode = "edit" (for allowing input body text)
     });
-    return (note);
+    return note;
   };
 
   const getNewDocument = () => {
@@ -48,13 +47,13 @@ export function useDocument() {
         dateTime: null,
         timeAgo: null,
       },
-      files: [],
+      attachments: [],
       tags: [],
       notes: [],
       historyOperations: [],
 
-      hasFiles() {
-        return doc.files?.length > 0;
+      hasAttachments() {
+        return doc.attachments?.length > 0;
       },
 
       hasTags() {
@@ -82,7 +81,7 @@ export function useDocument() {
         doc.lastUpdate.dateTime = null;
         doc.lastUpdate.timeAgo = null;
 
-        doc.files.length = 0;
+        doc.attachments.length = 0;
         doc.tags.length = 0;
         doc.notes.length = 0;
         doc.historyOperations.length = 0;
@@ -118,9 +117,9 @@ export function useDocument() {
           doc.tags.push(...data.tags);
         }
 
-        doc.files.length = 0;
+        doc.attachments.length = 0;
         if (Array.isArray(data.files)) {
-          doc.files.push(
+          doc.attachments.push(
             ...JSON.parse(JSON.stringify(data.files)).map((file) => {
               file.creationDate = fullDateTimeHuman(file.createdOnTimestamp);
               file.creationDateTimeAgo = timeAgo(file.createdOnTimestamp);
@@ -177,7 +176,7 @@ export function useDocument() {
 
       addFile(id, name, size) {
         const fileId = id || uid();
-        doc.files.unshift(
+        doc.attachments.unshift(
           reactive({
             id: fileId,
             createdOnTimestamp: currentTimestamp(),
@@ -193,17 +192,17 @@ export function useDocument() {
         );
       },
 
-      removeFileAtIdx(index) {
-        doc.files?.splice(index, 1);
+      removeAttachmentAtIdx(index) {
+        doc.attachments?.splice(index, 1);
       },
 
-      previewFile(index) {
-        if (index >= 0 && index < doc.files?.length) {
+      previewAttachment(index) {
+        if (index >= 0 && index < doc.attachments?.length) {
           bus.emit("showDocumentFilePreviewDialog", {
             document: {
               id: doc.id,
               title: doc.title,
-              attachments: doc.files,
+              attachments: doc.attachments,
             },
             currentIndex: index,
           });
@@ -211,9 +210,7 @@ export function useDocument() {
       },
 
       addNote() {
-        doc.notes.unshift(
-          getNewNote()
-        );
+        doc.notes.unshift(getNewNote());
       },
 
       removeNoteAtIdx(index) {
