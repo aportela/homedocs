@@ -8,6 +8,13 @@
       </div>
       <div v-else>{{ t("Document attachments") }}</div>
     </template>
+    <template v-slot:header-right>
+      <!-- TODO: qchip border || bg color -->
+      <q-chip size="md" square class="gt-sm theme-default-q-chip" v-if="!state.loading && !state.loadingError">
+        <q-avatar class="theme-default-q-avatar">{{ attachments.length }}</q-avatar>
+        {{ t("Total files", { count: attachments.length }) }}
+      </q-chip>
+    </template>
     <template v-slot:body>
       <div class="q-pt-none scroll attachments-scrolled-container">
         <div v-if="state.loading"></div>
