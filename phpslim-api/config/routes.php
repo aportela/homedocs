@@ -458,14 +458,19 @@ return function (App $app) {
                         $this->get('settings')['paths']['storage'],
                         $args['id']
                     );
-                    $file->remove($this->get(\aportela\DatabaseWrapper\DB::class));
-                    $payload = json_encode(
-                        [
-                            'initialState' => \HomeDocs\Utils::getInitialState($this),
-                        ]
-                    );
-                    $response->getBody()->write($payload);
-                    return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                    $dbh = $this->get(\aportela\DatabaseWrapper\DB::class);
+                    if ($file->isLinkedToDocument($dbh)) {
+                        throw new \HomeDocs\Exception\AccessDeniedException();
+                    } else {
+                        $file->remove($dbh);
+                        $payload = json_encode(
+                            [
+                                'initialState' => \HomeDocs\Utils::getInitialState($this),
+                            ]
+                        );
+                        $response->getBody()->write($payload);
+                        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                    }
                 })->add(\HomeDocs\Middleware\CheckAuth::class);
             });
 

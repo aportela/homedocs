@@ -157,7 +157,22 @@ class File
         );
     }
 
-
+    public function isLinkedToDocument(\aportela\DatabaseWrapper\DB $dbh): bool
+    {
+        $params = array(
+            new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id))
+        );
+        $result = $dbh->query(
+            "
+                SELECT
+                    COUNT(DOCUMENT_FILE.document_id) AS total
+                FROM DOCUMENT_FILE
+                WHERE DOCUMENT_FILE.file_id = :id
+            ",
+            $params
+        );
+        return (intval($result[0]->total) > 0);
+    }
 
     public function remove(\aportela\DatabaseWrapper\DB $dbh): void
     {
