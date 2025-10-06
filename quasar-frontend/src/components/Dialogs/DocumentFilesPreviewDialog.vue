@@ -2,9 +2,9 @@
   <BaseDialog @close="onClose" width="1280px" max-width="80vw">
     <template v-slot:header-left>
       <div v-if="documentTitle">{{ t("Document title")
-      }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
+        }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
           documentTitle
-        }}</router-link>
+          }}</router-link>
       </div>
       <div v-else>{{ t("Document attachments") }}</div>
     </template>
@@ -42,7 +42,8 @@
                   </div>
                   <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col-xs-12">
                     <q-btn align="left" size="md" color="primary" class="q-mt-sm full-width" :disable="state.loading"
-                      icon="save" :label="t('Download')" no-caps @click="onDownload(attachment.url, attachment.name)" />
+                      icon="save" :label="t('Download')" no-caps
+                      @click.stop.prevent="onDownload(attachment.url, attachment.name)" :href="attachment.url" />
                     <q-btn align="left" size="md" color="primary" class="q-mt-sm full-width"
                       v-if="allowPreview(attachment.name)" :disable="state.loading" icon="preview" :label="t('Preview')"
                       no-caps @click.stop.prevent="onFilePreview(index)" />
