@@ -11,15 +11,17 @@
       }) }}</div>
     </template>
     <template v-slot:body>
-      <div class="q-pt-none scroll file-preview-scrolled-container">
-        <p class="text-center text-bold">{{ currentAttachment.name }} ({{ currentAttachment.humanSize }})</p>
+      <div>
+        <p class="text-center text-bold q-my-md">{{ currentAttachment.name }} ({{ currentAttachment.humanSize }})</p>
         <q-pagination class="flex flex-center q-my-md" v-if="attachmentsCount > 1" v-model="currentAttachmentIndex"
           :max="attachmentsCount" color="dark" :max-pages="5" boundary-numbers direction-links
           icon-first="skip_previous" icon-last="skip_next" icon-prev="fast_rewind" icon-next="fast_forward" gutter="md"
           @update:model-value="onPaginationChange" />
+      </div>
+      <div class="q-pt-none">
         <q-img v-if="isImage(currentAttachment.name)" v-show="!previewLoadingError" :src="currentAttachment.url"
-          loading="lazy" spinner-color="white" @error="onImageLoadError" fit>
-        </q-img>
+          loading="lazy" spinner-color="white" @error="onImageLoadError" alt="image preview" fit="scale-down"
+          class="q-img-max-height q-my-md" img-class="q-mx-auto" />
         <div v-else-if="isAudio(currentAttachment.name)">
           <p class="text-center q-my-md">
             <q-icon name="audio_file" size="128px"></q-icon>
@@ -143,8 +145,8 @@ const onDownload = (url, fileName) => {
 
 </script>
 
-<style lang="css" scoped>
-.file-preview-scrolled-container {
-  height: 50vh
+<style>
+.q-img-max-height {
+  max-height: 40vh;
 }
 </style>
