@@ -2,9 +2,9 @@
   <BaseDialog @close="onClose" width="1280px" max-width="80vw">
     <template v-slot:header-left>
       <div v-if="documentTitle">{{ t("Document title")
-        }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
+      }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
           documentTitle
-          }}</router-link>
+        }}</router-link>
       </div>
       <div v-else>{{ t("Document attachments") }}</div>
     </template>
@@ -26,8 +26,7 @@
         </div>
         <q-list v-else>
           <div v-for="attachment, index in attachments" :key="attachment.id" class="border-bottom-except-last-item">
-            <q-item class="transparent-background text-color-primary q-pa-sm" clickable
-              @click="onDownload(attachment.url, attachment.name)">
+            <q-item class="transparent-background text-color-primary q-pa-sm cursor-default" clickable>
               <q-item-section>
                 <div class="row full-width">
                   <div class="col-xl-10 col-lg-10 col-md-9 col-sm-12 col-xs-12">
@@ -42,12 +41,11 @@
                       }})</q-item-label>
                   </div>
                   <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col-xs-12">
-                    <q-btn align="left" size="md" color="primary" class="q-mt-sm full-width"
-                      v-if="allowPreview(attachment.name)" :disable="state.loading" icon="save" :label="t('Download')"
-                      no-caps></q-btn>
+                    <q-btn align="left" size="md" color="primary" class="q-mt-sm full-width" :disable="state.loading"
+                      icon="save" :label="t('Download')" no-caps @click="onDownload(attachment.url, attachment.name)" />
                     <q-btn align="left" size="md" color="primary" class="q-mt-sm full-width"
                       v-if="allowPreview(attachment.name)" :disable="state.loading" icon="preview" :label="t('Preview')"
-                      no-caps @click.stop.prevent="onFilePreview(index)"></q-btn>
+                      no-caps @click.stop.prevent="onFilePreview(index)" />
                   </div>
                 </div>
               </q-item-section>
@@ -126,8 +124,6 @@ const onDownload = (url, fileName) => {
   downloadBanner.success = false;
   downloadBanner.error = false;
   downloadBanner.text = null;
-  console.log(fileName);
-  console.log(url);
   bgDownload(url, fileName)
     .then((successResponse) => {
       downloadBanner.success = true;
