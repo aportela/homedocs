@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="visible" @hide="onHide">
+  <q-dialog v-model="visible" :persistent="persistent" @hide="onHide">
     <q-card class="q-card-base-dialog" :style="{ width: width, minWidth: minWidth, maxWidth: maxWidth }">
       <q-card-section class="q-py-xs row self-center q-dialog-header">
         <slot name="header">
@@ -9,14 +9,15 @@
           <q-space />
           <div>
             <slot name="header-right"></slot>
-            <q-btn icon="close" flat round dense v-close-popup aria-label="Close modal" v-if="showHeaderCloseButton" />
+            <q-btn icon="close" flat round dense v-close-popup aria-label="Close modal"
+              v-if="showHeaderCloseButton && !persistent" />
           </div>
         </slot>
       </q-card-section>
       <q-card-section class="q-pa-none q-dialog-body">
         <slot name="body"></slot>
       </q-card-section>
-      <q-card-section class="q-pa-none q-dialog-footer">
+      <q-card-section class="q-pa-none q-dialog-footer" v-if="!hideFooter">
         <slot name="footer">
           <q-card-actions align="right">
             <slot name="actions">
@@ -71,6 +72,16 @@ const props = defineProps({
     default: false
   },
   disable: {
+    type: Boolean,
+    required: false,
+    default: false
+  },
+  persistent: {
+    type: Boolean,
+    required: false,
+    default: false
+  },
+  hideFooter: {
     type: Boolean,
     required: false,
     default: false
