@@ -27,7 +27,7 @@
               <q-btn color="primary" v-if="confirmationDialog" @click.stop="onConfirm" :disable="disable" icon="done"
                 :label="t('Ok')" />
               <q-btn color="primary" v-if="!confirmationDialog" size="md" no-caps @click.stop="onHide"
-                :disable="disable" icon="close" :label="t('Close')" />
+                :disable="disable || persistent" icon="close" :label="t('Close')" />
             </slot>
           </q-card-actions>
         </slot>
