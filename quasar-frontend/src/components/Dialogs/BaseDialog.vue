@@ -21,7 +21,14 @@
           <q-card-actions align="right">
             <slot name="actions">
               <slot name="actions-prepend"></slot>
-              <q-btn color="primary" size="md" no-caps @click.stop="onHide" icon="close" :label="t('Close')" />
+              <q-btn class="action-secondary" v-if="confirmationDialog" @click.stop="onCancel"><q-icon left
+                  name="close" />{{ t("Cancel")
+                  }}</q-btn>
+              <q-btn color="primary" v-if="confirmationDialog" @click.stop="onConfirm"><q-icon left name="done" />{{
+                t("Ok")
+              }}</q-btn>
+              <q-btn color="primary" v-if="!confirmationDialog" size="md" no-caps @click.stop="onHide" icon="close"
+                :label="t('Close')" />
             </slot>
           </q-card-actions>
         </slot>
@@ -37,7 +44,7 @@ import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close', 'confirm', 'cancel']);
 
 const props = defineProps({
   showHeaderCloseButton: {
@@ -59,6 +66,11 @@ const props = defineProps({
     type: String,
     required: false,
     default: ""
+  },
+  confirmationDialog: {
+    type: Boolean,
+    required: false,
+    default: false
   }
 });
 
@@ -67,6 +79,16 @@ const visible = ref(true);
 const onHide = () => {
   visible.value = false;
   emit('close');
+}
+
+const onConfirm = () => {
+  visible.value = false;
+  emit('confirm');
+}
+
+const onCancel = () => {
+  visible.value = false;
+  emit('cancel');
 }
 
 </script>
