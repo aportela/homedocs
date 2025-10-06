@@ -62,11 +62,11 @@
             </q-item-section>
             <q-item-section side top>
               <q-item-label caption>{{ recentDocument.lastUpdateTimeAgo }}</q-item-label>
-              <ViewDocumentDetailsButton size="md" square class="min-width-7em" :count="recentDocument.fileCount"
+              <ViewDocumentDetailsButton size="md" square class="min-width-8em" :count="recentDocument.fileCount"
                 :label="'Total attachments count'" :tool-tip="'View document attachments'" :disable="state.loading"
                 @click.stop.prevent="onShowDocumentFiles(recentDocument.id, recentDocument.title)">
               </ViewDocumentDetailsButton>
-              <ViewDocumentDetailsButton size="md" square class="min-width-7em" :count="recentDocument.noteCount"
+              <ViewDocumentDetailsButton size="md" square class="min-width-8em" :count="recentDocument.noteCount"
                 :label="'Total notes'" :tool-tip="'View document notes'" :disable="state.loading"
                 @click.stop.prevent="onShowDocumentNotes(recentDocument.id, recentDocument.title)">
               </ViewDocumentDetailsButton>
