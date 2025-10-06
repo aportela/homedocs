@@ -1,24 +1,22 @@
 <template>
-  <q-dialog v-model="dialogModel" @hide="onHide">
-    <q-card class="q-card-notes-dialog">
-      <q-card-section class="row q-p-none">
-        <div class="q-card-notes-dialog-header col" v-if="documentTitle">{{ t("Document title")
+  <BaseDialog @close="onClose" width="1280px" max-width="80vw">
+    <template v-slot:header-left>
+      <div v-if="documentTitle">{{ t("Document title")
         }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
-            documentTitle
+          documentTitle
           }}</router-link>
-        </div>
-        <div class="q-card-notes-dialog-header col" v-else>{{ t("Document notes") }}</div>
-        <q-space />
-        <div>
-          <q-chip size="md" square class="gt-sm theme-default-q-chip" v-if="!state.loading && !state.loadingError">
-            <q-avatar class="theme-default-q-avatar">{{ notes.length }}</q-avatar>
-            {{ t("Total notes", { count: notes.length }) }}
-          </q-chip>
-          <q-btn icon="close" flat round dense v-close-popup aria-label="Close modal" :disable="state.loading" />
-        </div>
-      </q-card-section>
-      <q-separator class="q-mb-md"></q-separator>
-      <q-card-section class="q-pt-none scroll notes-scrolled-container">
+      </div>
+      <div v-else>{{ t("Document notes") }}</div>
+    </template>
+    <template v-slot:header-right>
+      <!-- TODO: qchip border || bg color -->
+      <q-chip size="md" square class="gt-sm theme-default-q-chip" v-if="!state.loading && !state.loadingError">
+        <q-avatar class="theme-default-q-avatar">{{ notes.length }}</q-avatar>
+        {{ t("Total notes", { count: notes.length }) }}
+      </q-chip>
+    </template>
+    <template v-slot:body>
+      <div class="q-pt-none scroll notes-scrolled-container">
         <div v-if="state.loading"></div>
         <div v-else-if="state.loadingError">
           <CustomErrorBanner :text="state.errorMessage || 'Error loading data'" :api-error="state.apiError">
@@ -28,9 +26,8 @@
           <CustomBanner warning text="This document has no associated notes."></CustomBanner>
         </div>
         <div v-else>
-          <div v-for="note, index in notes" :key="note.id"
-            class="note-container q-pa-sm relative-position white-space-pre-line"
-            :class="{ 'q-mb-md': index < notes.length - 1 }">
+          <div v-for="note in notes" :key="note.id"
+            class="q-pa-sm relative-position white-space-pre-line border-bottom-except-last-item">
             <div class="note-date-label">
               {{ note.createdOn }} ({{ timeAgo(note.createdOnTimestamp) }})</div>
             <q-icon :name="note.expanded ? 'unfold_less' : 'expand'" size="sm"
@@ -43,16 +40,9 @@
             </div>
           </div>
         </div>
-      </q-card-section>
-      <q-separator class="q-my-sm"></q-separator>
-      <q-card-section class="q-pt-none">
-        <q-card-actions align="right">
-          <q-btn color="primary" :disable="state.loading" v-close-popup :label="t('Close')" icon="close"
-            aria-label="Close modal" />
-        </q-card-actions>
-      </q-card-section>
-    </q-card>
-  </q-dialog>
+      </div>
+    </template>
+  </BaseDialog>
 </template>
 
 <script setup>
@@ -63,6 +53,7 @@ import { useBus } from "src/composables/useBus";
 import { useFormatDates } from "src/composables/useFormatDates"
 import { useAPI } from "src/composables/useAPI";
 
+import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
@@ -105,8 +96,6 @@ const notes = reactive([]);
 
 const hasNotes = computed(() => notes?.length > 0);
 
-const dialogModel = ref(true);
-
 const onRefresh = (documentId) => {
   if (documentId) {
     if (!state.loading) {
@@ -147,7 +136,7 @@ const onRefresh = (documentId) => {
   }
 };
 
-const onHide = () => {
+const onClose = () => {
   emit('close');
 };
 
@@ -167,27 +156,12 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="css" scoped>
-.q-card-notes-dialog {
-  width: 1280px;
-  max-width: 80vw;
-}
-
-.q-card-notes-dialog-header {
-  font-size: 1.2em;
-  font-weight: bold;
-}
-
-.q-card-notes-dialog-header a {
-  font-weight: normal;
-}
-
 .notes-scrolled-container {
   max-height: 50vh
 }
 
-.note-container {
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 4px;
+.border-bottom-except-last-item:not(:last-child) {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 }
 
 .note-date-label {
