@@ -118,13 +118,13 @@ export function useDocument() {
         }
 
         doc.attachments.length = 0;
-        if (Array.isArray(data.files)) {
+        if (Array.isArray(data.attachments)) {
           doc.attachments.push(
-            ...JSON.parse(JSON.stringify(data.files)).map((file) => {
+            ...JSON.parse(JSON.stringify(data.attachments)).map((file) => {
               file.creationDate = fullDateTimeHuman(file.createdOnTimestamp);
               file.creationDateTimeAgo = timeAgo(file.createdOnTimestamp);
               file.humanSize = format.humanStorageSize(file.size);
-              file.url = "api2/file/" + file.id;
+              file.url = "api2/attachment/" + file.id;
               file.orphaned = false;
               return file;
             }),
@@ -174,7 +174,7 @@ export function useDocument() {
         }
       },
 
-      addFile(id, name, size) {
+      addAttachment(id, name, size) {
         const fileId = id || uid();
         doc.attachments.unshift(
           reactive({
@@ -186,7 +186,7 @@ export function useDocument() {
             size: size || 0,
             hash: null,
             humanSize: size > 0 ? format.humanStorageSize(size) : null,
-            url: "api2/file/" + fileId,
+            url: "api2/attachment/" + fileId,
             orphaned: true, // this property is used for checking if file was uploaded but not associated to document (while not saving document)
           }),
         );

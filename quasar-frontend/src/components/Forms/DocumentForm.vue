@@ -2,7 +2,7 @@
   <div @dragover.prevent @dragenter.prevent @drop="handleDrop">
     <!-- hidden quasar native uploader component -->
     <q-uploader ref="uploaderRef" class="hidden" hide-upload-btn no-thumbnails auto-upload field-name="file"
-      method="post" url="api2/file" :max-file-size="maxUploadFileSize" multiple @uploaded="onFileUploaded"
+      method="post" url="api2/attachment" :max-file-size="maxUploadFileSize" multiple @uploaded="onFileUploaded"
       @rejected="onUploadRejected" @failed="onUploadFailed" @start="onUploadsStart" @finish="onUploadsFinish" />
     <q-card flat class="bg-transparent">
       <form @submit.prevent.stop="onSubmitForm" autocorrect="off" autocapitalize="off" autocomplete="off"
@@ -407,7 +407,7 @@ const onUploadsStart = (e) => {
 // q-uploader component event => file was uploaded
 const onFileUploaded = (e) => {
   bus.emit("refreshUploadingDialog.fileUploaded", { transfers: e.files.map((file) => { return { name: file.name, size: file.size } }) });
-  document.addFile((JSON.parse(e.xhr.response).data).id, e.files[0].name, e.files[0].size);
+  document.addAttachment((JSON.parse(e.xhr.response).data).id, e.files[0].name, e.files[0].size);
 }
 
 // q-uploader component event => file upload is rejected

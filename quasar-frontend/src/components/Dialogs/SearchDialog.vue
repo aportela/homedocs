@@ -58,7 +58,7 @@
               <q-item-section side top>
                 <q-item-label caption>{{ item.lastUpdate }}
                 </q-item-label>
-                <ViewDocumentDetailsButton size="md" square class="min-width-7em" :count="item.fileCount"
+                <ViewDocumentDetailsButton size="md" square class="min-width-7em" :count="item.attachmentCount"
                   :label="'Total attachments count'" :tool-tip="'View document attachments'" :disable="state.loading"
                   @click.stop.prevent="onShowDocumentFiles(item.id, item.label)">
                 </ViewDocumentDetailsButton>
@@ -188,7 +188,7 @@ const onSearch = (val) => {
               label: document.title,
               createdOn: date.formatDate(document.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss'),
               lastUpdate: date.formatDate(document.lastUpdateTimestamp, 'YYYY-MM-DD HH:mm:ss'),
-              fileCount: document.fileCount,
+              attachmentCount: document.attachmentCount,
               noteCount: document.noteCount,
               matchedOnFragment: document.matchedOnFragment
             });

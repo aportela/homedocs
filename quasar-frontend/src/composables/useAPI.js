@@ -70,7 +70,7 @@ export function useAPI() {
           id: document.id,
           title: document.title,
           tags: document.tags || [],
-          files: document.files || [],
+          attachments: document.attachments || [],
           notes: document.notes || [],
         };
         if (document.description) {
@@ -83,7 +83,7 @@ export function useAPI() {
           id: document.id,
           title: document.title,
           tags: document.tags || [],
-          files: document.files || [],
+          attachments: document.attachments || [],
           notes: document.notes || [],
         };
         if (document.description) {
@@ -95,12 +95,12 @@ export function useAPI() {
       get: (id) => axios.get("api2/document/" + id),
       getNotes: (id) => axios.get("api2/document/" + id + "/notes"),
       getAttachments: (id) => axios.get("api2/document/" + id + "/attachments"),
-      addFile: function (id, file) {
+      addAttachment: function (id, file) {
         let formData = new FormData();
         formData.append("file", file);
-        return axios.post("api2/file/" + id, formData);
+        return axios.post("api2/attachment/" + id, formData);
       },
-      removeFile: (id) => axios.delete("api2/file/" + id),
+      removeFile: (id) => axios.delete("api2/attachment/" + id),
     },
     tag: {
       getCloud: () => axios.get("api2/tag-cloud"),

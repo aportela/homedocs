@@ -132,12 +132,12 @@
                     </q-item-section>
                     <q-item-section side top>
                       <q-chip size="md" square class="theme-default-q-chip shadow-1 q-chip-8em"
-                        :clickable="document.fileCount > 0 && !state.loading"
+                        :clickable="document.attachmentCount > 0 && !state.loading"
                         @click.stop.prevent="onShowDocumentFiles(document.id, document.title)">
                         <q-avatar class="theme-default-q-avatar"
-                          :class="{ 'text-white bg-blue': document.fileCount > 0 }">{{
-                            document.fileCount }}</q-avatar>
-                        {{ t('Total attachments count', { count: document.fileCount }) }}
+                          :class="{ 'text-white bg-blue': document.attachmentCount > 0 }">{{
+                            document.attachmentCount }}</q-avatar>
+                        {{ t('Total attachments count', { count: document.attachmentCount }) }}
                       </q-chip>
                       <q-chip size="md" square class="theme-default-q-chip shadow-1 q-chip-8em"
                         :clickable="document.noteCount > 0 && !state.loading"
@@ -158,7 +158,7 @@
               <td class="gt-lg">{{ document.creationDate }}</td>
               <td class="gt-lg">{{ document.lastUpdate }}</td>
               <td class="gt-lg">
-                <ViewDocumentDetailsButton size="md" square class="min-width-8em" :count="document.fileCount"
+                <ViewDocumentDetailsButton size="md" square class="min-width-8em" :count="document.attachmentCount"
                   :label="'Total attachments count'" :tool-tip="'View document attachments'" :disable="state.loading"
                   @click.stop.prevent="onShowDocumentFiles(document.id, document.title)" q-chip-class="'q-chip-8em'">
                 </ViewDocumentDetailsButton>
@@ -216,7 +216,7 @@ const columns = [
   { field: 'title', title: 'Title', defaultClass: "gt-lg" },
   { field: 'createdOnTimestamp', title: 'Creation date', defaultClass: "gt-lg" },
   { field: 'lastUpdateTimestamp', title: 'Last update', defaultClass: "gt-lg" },
-  { field: 'fileCount', title: 'Files', defaultClass: "gt-lg" },
+  { field: 'attachmentCount', title: 'Files', defaultClass: "gt-lg" },
   { field: 'noteCount', title: 'Notes', defaultClass: "gt-lg" }
 ];
 

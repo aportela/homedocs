@@ -62,7 +62,7 @@
             </q-item-section>
             <q-item-section side top>
               <q-item-label caption>{{ recentDocument.lastUpdateTimeAgo }}</q-item-label>
-              <ViewDocumentDetailsButton size="md" square class="min-width-8em" :count="recentDocument.fileCount"
+              <ViewDocumentDetailsButton size="md" square class="min-width-8em" :count="recentDocument.attachmentCount"
                 :label="'Total attachments count'" :tool-tip="'View document attachments'" :disable="state.loading"
                 @click.stop.prevent="onShowDocumentFiles(recentDocument.id, recentDocument.title)">
               </ViewDocumentDetailsButton>

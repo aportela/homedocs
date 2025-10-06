@@ -221,7 +221,7 @@ return function (App $app) {
                     $payload = json_encode(
                         [
                             'initialState' => \HomeDocs\Utils::getInitialState($this),
-                            'attachments' => $document->files
+                            'attachments' => $document->attachments
                         ]
                     );
                     $response->getBody()->write($payload);
@@ -230,12 +230,12 @@ return function (App $app) {
 
                 $group->post('/{id}', function (Request $request, Response $response, array $args) {
                     $params = $request->getParsedBody();
-                    $documentFiles = $params["files"] ?? [];
+                    $documentAttachments = $params["attachments"] ?? [];
                     $rootStoragePath = $this->get('settings')['paths']['storage'];
-                    $files = array();
-                    if (is_array($documentFiles) && count($documentFiles) > 0) {
-                        foreach ($documentFiles as $documentFile) {
-                            $files[] = new \HomeDocs\File(
+                    $attachments = array();
+                    if (is_array($documentAttachments) && count($documentAttachments) > 0) {
+                        foreach ($documentAttachments as $documentFile) {
+                            $attachments[] = new \HomeDocs\File(
                                 $rootStoragePath,
                                 $documentFile["id"],
                                 $documentFile["name"],
@@ -262,7 +262,7 @@ return function (App $app) {
                         null,
                         null,
                         $params["tags"] ?? [],
-                        $files,
+                        $attachments,
                         $notes,
                     );
                     $document->setRootStoragePath($this->get('settings')['paths']['storage']);
@@ -296,12 +296,12 @@ return function (App $app) {
                     // test existence && check permissions
                     $document->setRootStoragePath($this->get('settings')['paths']['storage']);
                     $document->get($dbh);
-                    $documentFiles = $params["files"] ?? [];
+                    $documentAttachments = $params["attachments"] ?? [];
                     $rootStoragePath = $this->get('settings')['paths']['storage'];
-                    $files = array();
-                    if (is_array($documentFiles) && count($documentFiles) > 0) {
-                        foreach ($documentFiles as $documentFile) {
-                            $files[] = new \HomeDocs\File(
+                    $attachments = array();
+                    if (is_array($documentAttachments) && count($documentAttachments) > 0) {
+                        foreach ($documentAttachments as $documentFile) {
+                            $attachments[] = new \HomeDocs\File(
                                 $rootStoragePath,
                                 $documentFile["id"],
                                 $documentFile["name"],
@@ -329,7 +329,7 @@ return function (App $app) {
                         null,
                         null,
                         $params["tags"] ?? [],
-                        $files,
+                        $attachments,
                         $notes
                     );
                     // TODO: required ?
@@ -379,7 +379,7 @@ return function (App $app) {
                 });
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $group->group('/file', function (RouteCollectorProxy $group) {
+            $group->group('/attachment', function (RouteCollectorProxy $group) {
                 $group->get('/{id}', function (Request $request, Response $response, array $args) {
                     $route = $request->getAttribute('route');
                     $file = new \HomeDocs\File(

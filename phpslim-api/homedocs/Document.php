@@ -13,11 +13,11 @@ class Document
     public ?int $createdOnTimestamp;
     public ?int $lastUpdateTimestamp;
     public ?array $tags = [];
-    public ?array $files = [];
+    public ?array $attachments = [];
     public ?array $notes = [];
     public ?array $history = [];
 
-    public function __construct(?string $id = null, ?string $title = null, ?string $description = null, ?int $createdOnTimestamp = null, ?int $lastUpdateTimestamp = null,  ?array $tags = [], ?array $files = [], ?array $notes = [], ?array $history = [])
+    public function __construct(?string $id = null, ?string $title = null, ?string $description = null, ?int $createdOnTimestamp = null, ?int $lastUpdateTimestamp = null,  ?array $tags = [], ?array $attachments = [], ?array $notes = [], ?array $history = [])
     {
         $this->id = $id;
         $this->title = $title;
@@ -25,7 +25,7 @@ class Document
         $this->createdOnTimestamp = $createdOnTimestamp;
         $this->lastUpdateTimestamp = $lastUpdateTimestamp;
         $this->tags = $tags;
-        $this->files = $files;
+        $this->attachments = $attachments;
         $this->notes = $notes;
         $this->history = $history;
     }
@@ -41,7 +41,7 @@ class Document
             sprintf(
                 "
                     WITH DOCUMENTS_FILES AS (
-                        SELECT DOCUMENT_FILE.document_id, COUNT(*) AS fileCount
+                        SELECT DOCUMENT_FILE.document_id, COUNT(*) AS attachmentCount
                         FROM DOCUMENT_FILE
                         INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_FILE.document_id AND DOCUMENT_HISTORY.operation_type = :history_operation_add AND DOCUMENT_HISTORY.created_by_user_id = :session_user_id
                         GROUP BY DOCUMENT_FILE.document_id
@@ -73,7 +73,7 @@ class Document
                         DOCUMENT.title,
                         DOCUMENT.description,
                         CAST(DOCUMENTS_LAST_HISTORY_OPERATION.max_created_on_timestamp AS INT) AS lastUpdateTimestamp,
-                        COALESCE(DOCUMENTS_FILES.fileCount, 0) AS fileCount,
+                        COALESCE(DOCUMENTS_FILES.attachmentCount, 0) AS attachmentCount,
                         COALESCE(DOCUMENTS_NOTES.noteCount, 0) AS noteCount,
                         DOCUMENTS_TAGS.tags
                     FROM DOCUMENT
@@ -95,7 +95,7 @@ class Document
         $results = array_map(
             function ($item) {
                 $item->lastUpdateTimestamp = intval($item->lastUpdateTimestamp);
-                $item->fileCount = intval($item->fileCount);
+                $item->attachmentCount = intval($item->attachmentCount);
                 $item->noteCount = intval($item->noteCount);
                 $item->tags = $item->tags ? explode(",", $item->tags) : [];
                 return ($item);
@@ -192,19 +192,19 @@ class Document
                         throw new \HomeDocs\Exception\InvalidParamsException("tag");
                     }
                 }
-                $filesQuery = "
+                $attachmentsQuery = "
                     INSERT INTO DOCUMENT_FILE
                         (document_id, file_id)
                     VALUES
                         (:document_id, :file_id)
                     ";
-                foreach ($this->files as $file) {
+                foreach ($this->attachments as $file) {
                     if (!empty($file->id)) {
                         $params = array(
                             new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
                             new \aportela\DatabaseWrapper\Param\StringParam(":file_id", mb_strtolower($file->id))
                         );
-                        $dbh->execute($filesQuery, $params);
+                        $dbh->execute($attachmentsQuery, $params);
                     } else {
                         throw new \HomeDocs\Exception\InvalidParamsException("fileId");
                     }
@@ -290,10 +290,10 @@ class Document
                         throw new \HomeDocs\Exception\InvalidParamsException("tag");
                     }
                 }
-                $originalFiles = $this->getFiles($dbh);
+                $originalFiles = $this->getAttachments($dbh);
                 foreach ($originalFiles as $originalFile) {
                     $notFound = true;
-                    foreach ($this->files as $file) {
+                    foreach ($this->attachments as $file) {
                         if ($file->id == $originalFile->id) {
                             $notFound = false;
                         }
@@ -314,7 +314,7 @@ class Document
                         $file->remove($dbh);
                     }
                 }
-                foreach ($this->files as $file) {
+                foreach ($this->attachments as $file) {
                     if (!empty($file->id)) {
                         $notFound = true;
                         foreach ($originalFiles as $originalFile) {
@@ -439,7 +439,7 @@ class Document
                 ",
                 $params
             );
-            $originalFiles = $this->getFiles($dbh);
+            $originalFiles = $this->getAttachments($dbh);
             foreach ($originalFiles as $file) {
                 $file = new \HomeDocs\File($this->rootStoragePath, $file->id);
                 $file->remove($dbh);
@@ -500,7 +500,7 @@ class Document
                     $this->createdOnTimestamp = intval($data[0]->createdOnTimestamp);
                     $this->lastUpdateTimestamp = intval($data[0]->lastUpdateTimestamp);
                     $this->tags = $this->getTags($dbh);
-                    $this->files = $this->getFiles($dbh);
+                    $this->attachments = $this->getAttachments($dbh);
                     $this->notes = $this->getNotes($dbh);
                     $this->history = $this->getHistory($dbh);
                 } else {
@@ -538,7 +538,7 @@ class Document
         return ($tags);
     }
 
-    private function getFiles(\aportela\DatabaseWrapper\DB $dbh): array
+    private function getAttachments(\aportela\DatabaseWrapper\DB $dbh): array
     {
         $files = [];
         $data = $dbh->query(
@@ -819,8 +819,8 @@ class Document
                 case "description":
                     $sqlSortBy = "DOCUMENT.description";
                     break;
-                case "fileCount":
-                    $sqlSortBy = "TMP_FILE_COUNT.fileCount";
+                case "attachmentCount":
+                    $sqlSortBy = "TMP_FILE_COUNT.attachmentCount";
                     break;
                 case "noteCount":
                     $sqlSortBy = "TMP_NOTE_COUNT.noteCount";
@@ -839,7 +839,7 @@ class Document
                 sprintf(
                     "
                             SELECT
-                                DOCUMENT.id, DOCUMENT.title, DOCUMENT.description, DOCUMENT_HISTORY_CREATION_DATE.created_on_timestamp AS createdOnTimestamp, COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.created_on_timestamp, DOCUMENT_HISTORY_CREATION_DATE.created_on_timestamp) AS lastUpdateTimestamp, TMP_FILE_COUNT.fileCount, TMP_NOTE_COUNT.noteCount
+                                DOCUMENT.id, DOCUMENT.title, DOCUMENT.description, DOCUMENT_HISTORY_CREATION_DATE.created_on_timestamp AS createdOnTimestamp, COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.created_on_timestamp, DOCUMENT_HISTORY_CREATION_DATE.created_on_timestamp) AS lastUpdateTimestamp, TMP_FILE_COUNT.attachmentCount, TMP_NOTE_COUNT.noteCount
                             FROM DOCUMENT
                             INNER JOIN DOCUMENT_HISTORY AS DOCUMENT_HISTORY_CREATION_DATE ON (
                                 DOCUMENT_HISTORY_CREATION_DATE.document_id = DOCUMENT.id
@@ -854,7 +854,7 @@ class Document
                                 GROUP BY DOCUMENT_HISTORY.document_id
                             ) DOCUMENT_HISTORY_LAST_UPDATE ON DOCUMENT_HISTORY_LAST_UPDATE.document_id = DOCUMENT.id
                             LEFT JOIN (
-                                SELECT COUNT(*) AS fileCount, document_id
+                                SELECT COUNT(*) AS attachmentCount, document_id
                                 FROM DOCUMENT_FILE
                                 GROUP BY document_id
                             ) TMP_FILE_COUNT ON TMP_FILE_COUNT.document_id = DOCUMENT.id
@@ -878,7 +878,7 @@ class Document
                 function ($item) use ($filter, $dbh) {
                     $item->createdOnTimestamp = intval($item->createdOnTimestamp);
                     $item->lastUpdateTimestamp = intval($item->lastUpdateTimestamp);
-                    $item->fileCount = intval($item->fileCount);
+                    $item->attachmentCount = intval($item->attachmentCount);
                     $item->noteCount = intval($item->noteCount);
                     $item->matchedFragments = [];
                     if (isset($filter["title"]) && !empty($filter["title"])) {
