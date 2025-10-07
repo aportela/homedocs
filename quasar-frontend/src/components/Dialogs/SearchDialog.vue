@@ -300,6 +300,8 @@ const onKeyDown = (event) => {
 };
 
 const onShow = () => {
+  totalResults.value = 0;
+  resultsPage.value = searchDialogResultsPage.get();
   // this is required here because this dialog v-model is controller from MainLayout.vue
   // DOES NOT WORK with onMounted/onBeforeUnmount. WE ONLY WANT CAPTURE KEY EVENTS WHEN DIALOG IS VISIBLE
   window.addEventListener('keydown', onKeyDown);
