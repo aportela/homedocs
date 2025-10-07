@@ -1,51 +1,47 @@
 <template>
-  <q-dialog v-model="isVisible" @show="onShow" @hide="onClose">
-    <q-card style="width: 60%; max-width: 80vw;">
-      <q-card-section class="row items-center q-pb-none">
-        <div class="text-h6">{{ t('Search on HomeDocs...') }}</div>
-        <q-space />
-        <q-btn icon="close" flat round dense v-close-popup aria-label="Close modal" />
-      </q-card-section>
-      <q-card-section>
-        <div class="row items-center q-gutter-sm">
-          <div class="col-auto">
-            <q-select v-model="searchOn" :options="searchOnOptions"
-              :display-value="`${searchOn ? t(searchOn.label) : ''}`" dense options-dense outlined
-              style="min-width: 8em;" :label="t('Search on')" @update:model-value="onSearch(text)"
-              :disable="state.loading">
-              <template v-slot:option="scope">
-                <q-item v-bind="scope.itemProps">
-                  <q-item-section>
-                    <q-item-label>
-                      {{ t(scope.label) }}
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
-          </div>
-          <div style="flex-grow: 1;">
-            <q-input type="text" dense color="grey-3" label-color="grey-7" :label="t('Search text...')" v-model="text"
-              @update:model-value="onSearch" autofocus="" clearable outlined>
-              <template v-slot:prepend>
-                <q-icon name="search" />
-              </template>
-            </q-input>
-          </div>
+  <BaseDialog v-model="visible" @show="onShow" @close="onClose" width="1280px" max-width="80vw">
+    <template v-slot:header-left>
+      {{ t('Search on HomeDocs...') }}
+    </template>
+    <template v-slot:body>
+      <div class="q-pa-sm row items-center q-gutter-sm">
+        <div class="col-auto">
+          <q-select v-model="searchOn" :options="searchOnOptions"
+            :display-value="`${searchOn ? t(searchOn.label) : ''}`" dense options-dense outlined style="min-width: 8em;"
+            :label="t('Search on')" @update:model-value="onSearch(text)" :disable="state.loading">
+            <template v-slot:option="scope">
+              <q-item v-bind="scope.itemProps">
+                <q-item-section>
+                  <q-item-label>
+                    {{ t(scope.label) }}
+                  </q-item-label>
+                </q-item-section>
+              </q-item>
+            </template>
+          </q-select>
         </div>
-      </q-card-section>
+        <div style="flex-grow: 1;">
+          <q-input type="text" dense color="grey-3" label-color="grey-7" :label="t('Search text...')" v-model="text"
+            @update:model-value="onSearch" autofocus="" clearable outlined>
+            <template v-slot:prepend>
+              <q-icon name="search" />
+            </template>
+          </q-input>
+        </div>
+      </div>
       <q-separator />
-      <q-card-section>
-        <div v-if="state.loadingError">
-          <CustomErrorBanner :text="state.errorMessage || 'Error loading data'" :api-error="state.apiError">
-          </CustomErrorBanner>
-        </div>
-        <q-virtual-scroll v-else component="q-list" :items="searchResults" @virtual-scroll="onVirtualScroll"
-          ref="virtualListRef" style="height: 50vh; max-height: 50vh">
-          <template v-slot="{ item, index }">
-            <q-item :key="item.id" class="cursor-pointer"
-              :class="{ 'bg-grey-5': currentSearchResultSelectedIndex === index }"
-              :to="{ name: 'document', params: { id: item.id } }">
+      <div v-if="state.loadingError">
+        <CustomErrorBanner :text="state.errorMessage || 'Error loading data'" :api-error="state.apiError">
+        </CustomErrorBanner>
+      </div>
+      <q-virtual-scroll v-else component="q-list" :items="searchResults" @virtual-scroll="onVirtualScroll"
+        ref="virtualListRef" class="q-virtual-scroll-container">
+        <template v-slot="{ item, index }">
+          <div class="border-bottom-except-last-item"
+            :class="{ 'current-keyboard-selected-item': currentSearchResultSelectedIndex === index }">
+            <q-item :key="item.id" class="transparent-background text-color-primary q-pa-sm"
+              :class="{ 'cursor-not-allowed': item.id === currentDocumentId }"
+              :clickable="item.id !== currentDocumentId" :to="{ name: 'document', params: { id: item.id } }">
               <q-item-section side>
                 <q-icon name="collections_bookmark" />
               </q-item-section>
@@ -58,68 +54,72 @@
               <q-item-section side top>
                 <q-item-label caption>{{ item.lastUpdate }}
                 </q-item-label>
-                <ViewDocumentDetailsButton size="md" square class="min-width-7em" :count="item.attachmentCount"
+                <ViewDocumentDetailsButton size="md" square class="min-width-8em" :count="item.attachmentCount"
                   :label="'Total attachments count'" :tool-tip="'View document attachments'" :disable="state.loading"
                   @click.stop.prevent="onShowDocumentFiles(item.id, item.label)">
                 </ViewDocumentDetailsButton>
-                <ViewDocumentDetailsButton size="md" square class="min-width-7em" :count="item.noteCount"
+                <ViewDocumentDetailsButton size="md" square class="min-width-8em" :count="item.noteCount"
                   :label="'Total notes'" :tool-tip="'View document notes'" :disable="state.loading"
                   @click.stop.prevent="onShowDocumentNotes(item.id, item.label)">
                 </ViewDocumentDetailsButton>
               </q-item-section>
             </q-item>
-            <!--
-            <q-separator v-if="index !== searchResults.length - 1" class="q-my-md" />
-            -->
-          </template>
-          <template v-slot:before>
-            <q-item v-show="showNoSearchResults">
-              <CustomBanner warning :text="noResultsMessage"></CustomBanner>
-            </q-item>
-          </template>
-        </q-virtual-scroll>
-      </q-card-section>
-      <q-separator />
-    </q-card>
-  </q-dialog>
+          </div>
+        </template>
+        <template v-slot:before>
+          <q-item v-show="showNoSearchResults">
+            <CustomBanner warning :text="noResultsMessage"></CustomBanner>
+          </q-item>
+        </template>
+      </q-virtual-scroll>
+    </template>
+  </BaseDialog>
 </template>
 
 <script setup>
 
-import { ref, watch, reactive, computed, onMounted, onBeforeUnmount } from "vue";
+import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
-import { useQuasar, date } from "quasar";
+import { useRoute, useRouter } from "vue-router";
 
 import { useBus } from "src/composables/useBus";
 import { useAPI } from "src/composables/useAPI";
+import { useFormatDates } from "src/composables/useFormatDates"
 
+import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue"
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 import { default as ViewDocumentDetailsButton } from "src/components/Buttons/ViewDocumentDetailsButton.vue";
 
 const props = defineProps({
-  visible: {
+  modelValue: {
     type: Boolean,
-    required: true,
-    default: false,
+    required: true
   }
 });
 
 const router = useRouter();
+const currentRoute = useRoute();
 
-const $q = useQuasar();
+// if we are on document page, get current document id
+const currentDocumentId = ref(currentRoute.name == "document" ? currentRoute.params?.id || null : null);
 
 const { t } = useI18n();
 
 const { api } = useAPI();
+const { fullDateTimeHuman } = useFormatDates();
 const { bus, onShowDocumentFiles, onShowDocumentNotes } = useBus();
 
 const emit = defineEmits(['close']);
 
-const isVisible = ref(props.visible);
-
-watch(() => props.visible, val => isVisible.value = val);
+const visible = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(value) {
+    emit('update:modelValue', value);
+  }
+});
 
 const state = reactive({
   loading: false,
@@ -186,8 +186,8 @@ const onSearch = (val) => {
             {
               id: document.id,
               label: document.title,
-              createdOn: date.formatDate(document.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss'),
-              lastUpdate: date.formatDate(document.lastUpdateTimestamp, 'YYYY-MM-DD HH:mm:ss'),
+              createdOn: fullDateTimeHuman(document.createdOnTimestamp),
+              lastUpdate: fullDateTimeHuman(document.lastUpdateTimestamp),
               attachmentCount: document.attachmentCount,
               noteCount: document.noteCount,
               matchedOnFragment: document.matchedOnFragment
@@ -260,13 +260,12 @@ const onKeyDown = (event) => {
 };
 
 const onShow = () => {
-  // this is required here because this modal dialog is persistent (from MainLayout.vue).
+  // this is required here because this dialog v-model is controller from MainLayout.vue
   // DOES NOT WORK with onMounted/onBeforeUnmount. WE ONLY WANT CAPTURE KEY EVENTS WHEN DIALOG IS VISIBLE
   window.addEventListener('keydown', onKeyDown);
 }
 
 const onClose = () => {
-  isVisible.value = false;
   searchResults.length = 0;
   text.value = null;
   showNoSearchResults.value = false;
@@ -289,3 +288,28 @@ onBeforeUnmount(() => {
 });
 
 </script>
+
+<style lang="css" scoped>
+.q-virtual-scroll-container {
+  height: 50vh;
+}
+
+.border-bottom-except-last-item:not(:last-child) {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.body--light {
+  .current-keyboard-selected-item {
+    /* TODO */
+    background: var(--color-grey-4);
+  }
+}
+
+
+.body--dark {
+  .current-keyboard-selected-item {
+    /* TODO */
+    background: var(--color-grey-4);
+  }
+}
+</style>

@@ -29,7 +29,7 @@
       </q-toolbar>
     </q-header>
     <SidebarDrawer v-model="visibleSidebar" :mini="miniSidebarCurrentMode"></SidebarDrawer>
-    <SearchDialog :visible="dialogs.fastSearch.visible" @close="dialogs.fastSearch.visible = false"></SearchDialog>
+    <SearchDialog v-model="dialogs.fastSearch.visible"></SearchDialog>
     <q-page-container>
       <router-view class="q-pa-sm" />
     </q-page-container>
