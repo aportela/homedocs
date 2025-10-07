@@ -3,6 +3,16 @@
     <template v-slot:header-left>
       {{ t('Search on HomeDocs...') }}
     </template>
+    <template v-slot:header-right>
+      <q-chip size="md" square class="gt-sm theme-default-q-chip shadow-1" v-if="!state.loading && !state.loadingError">
+        <q-avatar class="theme-default-q-avatar">{{ totalResults }}</q-avatar>
+        {{ t("Results count",
+          {
+            count:
+              totalResults
+          }) }}
+      </q-chip>
+    </template>
     <template v-slot:body>
       <div class="q-pa-sm row items-center q-gutter-sm">
         <div class="col-auto">
@@ -139,6 +149,8 @@ const searchOn = ref(searchOnOptions.value[0]);
 
 const virtualListRef = ref(null);
 
+const totalResults = ref(0);
+
 const text = ref("");
 const searchResults = reactive([]);
 const currentSearchResultSelectedIndex = ref(-1);
@@ -161,6 +173,7 @@ const onSearch = (val) => {
     state.loadingError = false;
     state.errorMessage = null;
     state.apiError = null;
+    totalResults.value = 0;
     const params = {
       text: {
         title: searchOn.value.value == "title" ? val.trim() : null,
@@ -172,6 +185,7 @@ const onSearch = (val) => {
     api.document.search(1, 16, params, "lastUpdateTimestamp", "DESC")
       .then((successResponse) => {
         searchResults.length = 0;
+        totalResults.value = successResponse.data.results.pagination.totalResults;
         searchResults.push(...successResponse.data.results.documents.map((document) => {
           document.matchedOnFragment = null;
           if (Array.isArray(document.matchedFragments) && document.matchedFragments.length > 0) {

@@ -175,6 +175,7 @@ export default {
   "Total tags": "{count} tag|{count} tags",
   "Total attachments count": "attachment|attachments",
   "Total notes": "note|notes",
+  "Results count": "result|results",
   "Total transfers": "upload|uploads",
   "Click to toggle edit mode": "Click to toggle edit mode",
   "Click to expand": "Click to expand",

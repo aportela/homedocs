@@ -179,6 +179,7 @@ export default {
   "Total tags": "{count} etiqueta|{count} etiquetas",
   "Total attachments count": "adjunto|adjuntos",
   "Total notes": "nota|notas",
+  "Results count": "resultado|resultados",
   "Total transfers": "transferencia|transferencias",
   "Click to toggle edit mode": "Haga click para alternar el modo de edición",
   "Click to expand": "Haga click para expandir",
