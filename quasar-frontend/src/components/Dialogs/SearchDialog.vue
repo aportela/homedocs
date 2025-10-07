@@ -89,7 +89,7 @@
 
 <script setup>
 
-import { ref, reactive, computed, onMounted, onBeforeUnmount, nextTick } from "vue";
+import { ref, reactive, computed, watch, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 
@@ -147,6 +147,12 @@ const searchOnOptions = computed(() => [
 ]);
 
 const searchOn = ref(searchOnOptions.value[0]);
+
+watch(() => searchOn.value, val => {
+  nextTick(() => {
+    searchTextField.value?.focus();
+  });
+});
 
 const virtualListRef = ref(null);
 
