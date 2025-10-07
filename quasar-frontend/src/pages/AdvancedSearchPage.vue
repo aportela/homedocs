@@ -19,27 +19,27 @@
                 clearable :label="t('Document title')" :disable="state.loading" :autofocus="true"
                 :placeholder="t('Type text condition')">
                 <template v-slot:prepend>
-                  <q-icon name="search" />
+                  <q-icon name="article" />
                 </template>
               </q-input>
               <q-input class="q-mb-md" dense outlined v-model.trim="filters.text.description" type="text"
                 name="description" clearable :label="t('Document description')" :disable="state.loading"
                 :placeholder="t('Type text condition')">
                 <template v-slot:prepend>
-                  <q-icon name="search" />
+                  <q-icon name="article" />
                 </template>
               </q-input>
               <q-input class="q-mb-md" dense outlined v-model.trim="filters.text.notesBody" type="text" name="notesBody"
                 clearable :label="t('Document notes')" :disable="state.loading" :placeholder="t('Type text condition')">
                 <template v-slot:prepend>
-                  <q-icon name="search" />
+                  <q-icon name="speaker_notes" />
                 </template>
               </q-input>
               <q-input class="q-mb-md" dense outlined v-model.trim="filters.text.attachmentsFilename" type="text"
                 name="notesBody" clearable :label="t('Document attachment filenames')" :disable="state.loading"
                 :placeholder="t('Type text condition')">
                 <template v-slot:prepend>
-                  <q-icon name="search" />
+                  <q-icon name="attach_file" />
                 </template>
               </q-input>
             </div>
@@ -47,9 +47,6 @@
               <InteractiveTagsFieldCustomSelect v-model="filters.tags" label="Document tags" :disabled="state.loading"
                 dense :start-mode-editable="true" :deny-change-editable-mode="true" clearable
                 :placeholder="t('Type text condition')">
-                <template v-slot:prepend>
-                  <q-icon name="search" />
-                </template>
               </InteractiveTagsFieldCustomSelect>
               <DateFieldCustomInput :options="dateFilterTypeOptions" :label="t('Document creation date')"
                 :disable="state.loading || hasCreationDateRouteParamsFilter" v-model="filters.dates.creationDate"
@@ -114,7 +111,7 @@
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <DesktopToolTip>{{ t('Toggle sort by this column', { field: t(column.title) })
-                }}</DesktopToolTip>
+                  }}</DesktopToolTip>
               </th>
             </tr>
           </thead>
@@ -131,7 +128,7 @@
                       <q-item-label caption>{{ t("Creation date") }}: {{ document.creationDate }} ({{
                         document.creationDateTimeAgo }})</q-item-label>
                       <q-item-label caption v-if="document.lastUpdate">{{ t("Last update") }}: {{ document.lastUpdate
-                      }} ({{ document.lastUpdateTimeAgo }})</q-item-label>
+                        }} ({{ document.lastUpdateTimeAgo }})</q-item-label>
                     </q-item-section>
                     <q-item-section side top>
                       <q-chip size="md" square class="theme-default-q-chip shadow-1 q-chip-8em"
