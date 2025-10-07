@@ -164,6 +164,7 @@ return function (App $app) {
                                     "title" => $params["title"] ?? null,
                                     "description" => $params["description"] ?? null,
                                     "notesBody" => $params["notesBody"] ?? null,
+                                    "attachmentsFilename" => $params["attachmentsFilename"] ?? null,
                                     "fromCreationTimestampCondition" => intval($params["fromCreationTimestampCondition"] ?? 0),
                                     "toCreationTimestampCondition" => intval($params["toCreationTimestampCondition"] ?? 0),
                                     "fromLastUpdateTimestampCondition" => intval($params["fromLastUpdateTimestampCondition"] ?? 0),

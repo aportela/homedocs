@@ -555,7 +555,7 @@ class Document
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $item) {
                 $attachments[] = new \HomeDocs\Attachment(
-                    $this->rootStoragePath,
+                    $this->rootStoragePath ?? null,
                     $item->id,
                     $item->name,
                     intval($item->size),
@@ -699,7 +699,30 @@ class Document
                     EXISTS (
                         SELECT DOCUMENT_NOTE.document_id
                         FROM DOCUMENT_NOTE
-                        WHERE DOCUMENT_NOTE.DOCUMENT_ID = DOCUMENT.id
+                        WHERE DOCUMENT_NOTE.document_id = DOCUMENT.id
+                        AND (%s)
+                    )
+                ", implode(" AND ", $notesConditions));
+            }
+        }
+        if (isset($filter["attachmentsFilename"]) && !empty($filter["attachmentsFilename"])) {
+            // explode into words, remove duplicated & empty elements
+            $words = array_filter(array_unique(explode(" ", trim(mb_strtolower($filter["attachmentsFilename"])))));
+            $totalWords = count($words);
+            if ($totalWords > 0) {
+                $notesConditions = [];
+                foreach ($words as $word) {
+                    $paramName = sprintf(":ATTACHMENTS_FILENAME_%03d", $totalWords);
+                    $params[] = new \aportela\DatabaseWrapper\Param\StringParam($paramName, "%" . $word . "%");
+                    $notesConditions[] = sprintf(" ATTACHMENT.name LIKE %s ", $paramName);
+                    $totalWords--;
+                }
+                $queryConditions[] = sprintf("
+                    EXISTS (
+                        SELECT DOCUMENT_ATTACHMENT.document_id
+                        FROM DOCUMENT_ATTACHMENT
+                        INNER JOIN ATTACHMENT ON ATTACHMENT.id = DOCUMENT_ATTACHMENT.attachment_id
+                        WHERE DOCUMENT_ATTACHMENT.document_id = DOCUMENT.id
                         AND (%s)
                     )
                 ", implode(" AND ", $notesConditions));
@@ -904,6 +927,19 @@ class Document
                             if (! empty($fragment)) {
                                 $item->matchedFragments[] = [
                                     "matchedOn" => "note",
+                                    "fragment" => $fragment
+                                ];
+                            }
+                        }
+                    }
+                    if (isset($filter["attachmentsFilename"]) && !empty($filter["attachmentsFilename"])) {
+                        // TODO: this NEEDS to be rewritten with more efficient method
+                        $attachments = (new \Homedocs\Document($item->id))->getAttachments($dbh, $filter["attachmentsFilename"]);
+                        foreach ($attachments as $attachment) {
+                            $fragment = \HomeDocs\Utils::getStringFragment($attachment->name, $filter["attachmentsFilename"], 64, true);
+                            if (! empty($fragment)) {
+                                $item->matchedFragments[] = [
+                                    "matchedOn" => "attachment",
                                     "fragment" => $fragment
                                 ];
                             }

@@ -213,6 +213,15 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
         $this->assertTrue($results->pagination->totalResults >= count($results->documents));
     }
 
+    public function testSearchWithPagerAndAttachmentsFilenameFilter(): void
+    {
+        $results = \HomeDocs\Document::search(self::$dbh, 1, 16, ["attachmentsFilename" => "condition"], "createdOnTimestamp", "DESC");
+        $this->assertIsObject($results);
+        $this->assertIsObject($results->pagination);
+        $this->assertIsArray($results->documents);
+        $this->assertTrue($results->pagination->totalResults >= count($results->documents));
+    }
+
     public function testSearchWithPagerAndFromCreationTimestampFilter(): void
     {
         $results = \HomeDocs\Document::search(self::$dbh, 1, 16, ["fromCreationTimestampCondition" => 1690236000], "createdOnTimestamp", "DESC");
