@@ -1,8 +1,8 @@
 <template>
   <div class="row q-col-gutter-xs">
     <div class="col">
-      <q-select class="q-mb-md" dense options-dense outlined clearable v-model="dateFilter.filterType"
-        :options="dateFilterTypeOptions" :label="label" :disable="disable">
+      <q-select class="q-mb-md" dense options-dense outlined :clearable="dateFilter.filterType.value !== 0"
+        v-model="dateFilter.filterType" :options="dateFilterTypeOptions" :label="label" :disable="disable">
         <template v-slot:prepend>
           <slot name="prepend">
             <q-icon name="calendar_month" />
