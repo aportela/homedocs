@@ -66,10 +66,10 @@
             </q-item>
           </div>
         </template>
-        <template v-slot:before>
-          <q-item v-show="showNoSearchResults">
-            <CustomBanner warning :text="noResultsMessage"></CustomBanner>
-          </q-item>
+        <template v-slot:before v-if="showNoSearchResults">
+          <CustomBanner warning class="q-ma-md"
+            text="Unfortunately, your search didn't return any results. You might want to modify your filters or search terms">
+          </CustomBanner>
         </template>
       </q-virtual-scroll>
     </template>
@@ -144,8 +144,6 @@ const currentSearchResultSelectedIndex = ref(-1);
 const virtualListIndex = ref(0);
 
 const showNoSearchResults = ref(false);
-
-const noResultsMessage = "Unfortunately, your search didn't return any results. You might want to modify your filters or search terms";
 
 const boldStringMatch = (str, matchWord) => {
   return str.replace(
@@ -293,7 +291,6 @@ onBeforeUnmount(() => {
 .q-virtual-scroll-container {
   height: 50vh;
 }
-
 
 .body--light {
   .current-keyboard-selected-item {
