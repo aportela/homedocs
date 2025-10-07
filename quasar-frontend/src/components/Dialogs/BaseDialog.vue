@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="visible" :persistent="persistent" @hide="onHide">
+  <q-dialog v-model="visible" :persistent="persistent" @hide="onHide" @show="onShow">
     <q-card class="q-card-base-dialog" :style="{ width: width, minWidth: minWidth, maxWidth: maxWidth }">
       <q-card-section class="q-py-xs row self-center q-dialog-header">
         <slot name="header">
@@ -44,7 +44,7 @@ import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 
-const emit = defineEmits(['update:modelValue', 'close', 'confirm', 'cancel']);
+const emit = defineEmits(['update:modelValue', 'show', 'close', 'confirm', 'cancel']);
 
 const props = defineProps({
   modelValue: {
@@ -101,6 +101,10 @@ const visible = computed({
     emit('update:modelValue', value);
   }
 });
+
+const onShow = () => {
+  emit('show');
+};
 
 const onHide = () => {
   visible.value = false;
