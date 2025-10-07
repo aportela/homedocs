@@ -246,4 +246,5 @@ export default {
   "note body": "note body",
   "attachment filename": "attachment filename",
   "Document attachment filenames": "Document attachment filenames",
+  "Max results": "Max results",
 };

@@ -253,4 +253,5 @@ export default {
   "note body": "texto de la nota",
   "attachment filename": "nombre del adjunto",
   "Document attachment filenames": "Nombres de adjuntos del documento",
+  "Max results": "Nº resultados máximos",
 };

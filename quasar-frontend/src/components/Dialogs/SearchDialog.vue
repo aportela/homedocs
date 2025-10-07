@@ -88,7 +88,7 @@
     <template v-slot:actions-prepend>
       <q-space />
       <q-select v-model="resultsPage" filled @update:model-value="onChangeResultsPage" :options="resultsPageOptions"
-        label="Max results to show" stack-label dense options-dense class="q-mr-md" style="min-width: 12em" />
+        :label="t('Max results')" stack-label dense options-dense class="q-mr-md" style="min-width: 12em" />
     </template>
   </BaseDialog>
 </template>
