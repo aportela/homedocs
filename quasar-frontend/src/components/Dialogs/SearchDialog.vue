@@ -17,9 +17,10 @@
     <template v-slot:body>
       <div class="q-pa-sm row items-center q-gutter-sm">
         <div class="col-auto">
-          <q-select v-model="searchOn" :options="searchOnOptions"
-            :display-value="`${searchOn ? t(searchOn.label) : ''}`" dense options-dense outlined style="min-width: 8em;"
-            :label="t('Search on')" @update:model-value="onSearch(text)" :disable="state.loading">
+          <q-select v-model="searchOn" :resultsPageOptions="searchOnOptions"
+            :display-value="`${searchOn ? t(searchOn.label) : ''}`" dense resultsPageOptions-dense outlined
+            style="min-width: 8em;" :label="t('Search on')" @update:model-value="onSearch(text)"
+            :disable="state.loading">
             <template v-slot:option="scope">
               <q-item v-bind="scope.itemProps">
                 <q-item-section>
@@ -33,7 +34,7 @@
         </div>
         <div style="flex-grow: 1;">
           <q-input type="text" dense color="grey-3" label-color="grey-7" :label="t('Search text...')" v-model="text"
-            @update:model-value="onSearch" clearable outlined ref="searchTextField">
+            @update:model-value="onSearch(text)" clearable outlined ref="searchTextField">
             <template v-slot:prepend>
               <q-icon name="search" />
             </template>
@@ -84,6 +85,11 @@
         </template>
       </q-virtual-scroll>
     </template>
+    <template v-slot:actions-prepend>
+      <q-space />
+      <q-select v-model="resultsPage" filled @update:model-value="onChangeResultsPage" :options="resultsPageOptions"
+        label="Max results to show" stack-label dense options-dense class="q-mr-md" style="min-width: 12em" />
+    </template>
   </BaseDialog>
 </template>
 
@@ -96,6 +102,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useBus } from "src/composables/useBus";
 import { useAPI } from "src/composables/useAPI";
 import { useFormatDates } from "src/composables/useFormatDates"
+import { useLocalStorage } from "src/composables/useLocalStorage"
 
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue"
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
@@ -120,6 +127,7 @@ const { t } = useI18n();
 const { api } = useAPI();
 const { fullDateTimeHuman } = useFormatDates();
 const { bus, onShowDocumentFiles, onShowDocumentNotes } = useBus();
+const { searchDialogResultsPage } = useLocalStorage();
 
 const emit = defineEmits(['update:modelValue', 'close']);
 
@@ -158,6 +166,15 @@ const virtualListRef = ref(null);
 
 const totalResults = ref(0);
 
+const resultsPage = ref(searchDialogResultsPage.get());
+
+const resultsPageOptions = [4, 8, 16, 32];
+
+const onChangeResultsPage = (value) => {
+  searchDialogResultsPage.set(value);
+  onSearch(text.value);
+};
+
 const text = ref("");
 const searchResults = reactive([]);
 const currentSearchResultSelectedIndex = ref(-1);
@@ -191,7 +208,7 @@ const onSearch = (val) => {
         attachmentsFilename: searchOn.value.value == "attachmentsFilename" ? val.trim() : null,
       }
     };
-    api.document.search(1, 16, params, "lastUpdateTimestamp", "DESC")
+    api.document.search(1, resultsPage.value, params, "lastUpdateTimestamp", "DESC")
       .then((successResponse) => {
         searchResults.length = 0;
         totalResults.value = successResponse.data.results.pagination.totalResults;

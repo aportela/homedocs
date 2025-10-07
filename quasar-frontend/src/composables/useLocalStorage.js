@@ -38,5 +38,14 @@ export function useLocalStorage() {
     }
   };
 
-  return { darkMode, alwaysOpenUploadDialog };
+  const searchDialogResultsPage = {
+    get() {
+      return get("searchDialogResultsPage", 8);
+    },
+    set(value) {
+      set("searchDialogResultsPage", parseInt(value || 8));
+    }
+  };
+
+  return { darkMode, alwaysOpenUploadDialog, searchDialogResultsPage };
 }
