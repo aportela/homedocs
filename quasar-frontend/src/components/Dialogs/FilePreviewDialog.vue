@@ -58,7 +58,7 @@
           {{ t("File preview not available", { filename: currentAttachment.name }) }}
         </template>
       </CustomBanner>
-      <q-space></q-space>
+      <q-space />
       <q-btn color="primary" :href="currentAttachment.url" :label="t('Download')" icon="download"
         @click.stop.prevent="onDownload(currentAttachment.url, currentAttachment.name)" aria-label="Download file" />
     </template>
