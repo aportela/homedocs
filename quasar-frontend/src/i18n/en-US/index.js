@@ -245,4 +245,5 @@ export default {
   "Attachment names": "Attachment names",
   "note body": "note body",
   "attachment filename": "attachment filename",
+  "Document attachment filenames": "Document attachment filenames",
 };

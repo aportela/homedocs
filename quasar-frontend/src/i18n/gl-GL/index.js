@@ -250,4 +250,5 @@ export default {
   "Attachment names": "Nomes de adxuntos",
   "note body": "texto da nota",
   "attachment filename": "nome do adxunto",
+  "Document attachment filenames": "Nomes de adxuntos do documento",
 };

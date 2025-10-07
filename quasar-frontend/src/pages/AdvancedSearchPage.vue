@@ -35,8 +35,22 @@
                   <q-icon name="search" />
                 </template>
               </q-input>
+              <q-input class="q-mb-md" dense outlined v-model.trim="filters.text.attachmentsFilename" type="text"
+                name="notesBody" clearable :label="t('Document attachment filenames')" :disable="state.loading"
+                :placeholder="t('Type text condition')">
+                <template v-slot:prepend>
+                  <q-icon name="search" />
+                </template>
+              </q-input>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
+              <InteractiveTagsFieldCustomSelect v-model="filters.tags" label="Document tags" :disabled="state.loading"
+                dense :start-mode-editable="true" :deny-change-editable-mode="true" clearable
+                :placeholder="t('Type text condition')">
+                <template v-slot:prepend>
+                  <q-icon name="search" />
+                </template>
+              </InteractiveTagsFieldCustomSelect>
               <DateFieldCustomInput :options="dateFilterTypeOptions" :label="t('Document creation date')"
                 :disable="state.loading || hasCreationDateRouteParamsFilter" v-model="filters.dates.creationDate"
                 :auto-open-pop-ups="!hasCreationDateRouteParamsFilter">
@@ -49,17 +63,6 @@
                 :disable="state.loading || hasUpdatedOnRouteParamsFilter" v-model="filters.dates.updatedOn"
                 :auto-open-pop-ups="!hasUpdatedOnRouteParamsFilter">
               </DateFieldCustomInput>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-12">
-              <InteractiveTagsFieldCustomSelect v-model="filters.tags" label="Document tags" :disabled="state.loading"
-                dense :start-mode-editable="true" :deny-change-editable-mode="true" clearable
-                :placeholder="t('Type text condition')">
-                <template v-slot:prepend>
-                  <q-icon name="search" />
-                </template>
-              </InteractiveTagsFieldCustomSelect>
             </div>
           </div>
           <q-btn-group spread>
@@ -296,6 +299,9 @@ const totalSearchConditions = computed(() => {
   if (filters.text.notesBody) {
     total++;
   }
+  if (filters.text.attachmentsFilename) {
+    total++;
+  }
   if (filters.tags && filters.tags.length > 0) {
     total += filters.tags.length;
   }
@@ -392,6 +398,7 @@ const onResetForm = () => {
   filters.text.title = null;
   filters.text.description = null;
   filters.text.notesBody = null;
+  filters.text.attachmentsFilename = null;
   filters.tags.length = 0;
   filters.dates = {
     creationDate: getDateFilterInstance(),
@@ -421,6 +428,7 @@ onMounted(() => {
     filters.text.title = store.filters?.text.title || null;
     filters.text.description = store.filters?.text.description || null;
     filters.text.notesBody = store.filters?.text.notesBody || null;
+    filters.text.attachmentsFilename = store.filters?.text.attachmentsFilename || null;
     filters.tags = store.filters?.tags || [];
     if (store.filters?.dates) {
       // creation date
