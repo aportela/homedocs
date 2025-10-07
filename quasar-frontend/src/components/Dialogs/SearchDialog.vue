@@ -4,7 +4,8 @@
       {{ t('Search on HomeDocs...') }}
     </template>
     <template v-slot:header-right>
-      <q-chip size="md" square class="gt-sm theme-default-q-chip shadow-1" v-if="!state.loading && !state.loadingError">
+      <q-chip size="md" square class="gt-sm theme-default-q-chip shadow-1" v-if="!state.loading && !state.loadingError"
+        v-show="totalResults > 0">
         <q-avatar class="theme-default-q-avatar">{{ totalResults }}</q-avatar>
         {{ t("Results count",
           {
@@ -167,13 +168,13 @@ const boldStringMatch = (str, matchWord) => {
 
 const onSearch = (val) => {
   showNoSearchResults.value = false;
+  totalResults.value = 0;
   if (val && val.trim().length > 0) {
     currentSearchResultSelectedIndex.value = -1;
     state.loading = true;
     state.loadingError = false;
     state.errorMessage = null;
     state.apiError = null;
-    totalResults.value = 0;
     const params = {
       text: {
         title: searchOn.value.value == "title" ? val.trim() : null,
