@@ -926,7 +926,7 @@ class Document
                             $fragment = \HomeDocs\Utils::getStringFragment($note->body, $filter["notesBody"], 64, true);
                             if (! empty($fragment)) {
                                 $item->matchedFragments[] = [
-                                    "matchedOn" => "note",
+                                    "matchedOn" => "note body",
                                     "fragment" => $fragment
                                 ];
                             }
@@ -939,7 +939,7 @@ class Document
                             $fragment = \HomeDocs\Utils::getStringFragment($attachment->name, $filter["attachmentsFilename"], 64, true);
                             if (! empty($fragment)) {
                                 $item->matchedFragments[] = [
-                                    "matchedOn" => "attachment",
+                                    "matchedOn" => "attachment filename",
                                     "fragment" => $fragment
                                 ];
                             }
