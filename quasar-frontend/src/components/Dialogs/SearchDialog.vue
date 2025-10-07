@@ -121,7 +121,7 @@ const { api } = useAPI();
 const { fullDateTimeHuman } = useFormatDates();
 const { bus, onShowDocumentFiles, onShowDocumentNotes } = useBus();
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(['update:modelValue', 'close']);
 
 const visible = computed({
   get() {
