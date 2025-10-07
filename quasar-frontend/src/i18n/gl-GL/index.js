@@ -247,4 +247,7 @@ export default {
     "Perdeuse a sesión... requírese re-autentificación",
   "Please enter again your credentials":
     "Por favor introduzca de nuevo as suas credenciais",
+  "Attachment names": "Nomes de adxuntos",
+  "note body": "texto da nota",
+  "attachment filename": "nome do adxunto",
 };

@@ -242,4 +242,7 @@ export default {
   "Document saved": "Document saved",
   "Session lost... re-auth required": "Session lost... re-auth required",
   "Please enter again your credentials": "Please enter again your credentials",
+  "Attachment names": "Attachment names",
+  "note body": "note body",
+  "attachment filename": "attachment filename",
 };
