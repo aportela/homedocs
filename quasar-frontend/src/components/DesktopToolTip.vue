@@ -13,7 +13,7 @@ import { useLocalStorage } from "src/composables/useLocalStorage";
 
 const $q = useQuasar()
 
-const isDesktop = computed(() => $q.screen.gt.sm);
+const isDesktop = computed(() => $q.platform.is.desktop);
 
 const { showToolTips } = useLocalStorage();
 
