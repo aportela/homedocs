@@ -29,7 +29,7 @@
                   <q-icon name="search" />
                 </template>
               </q-input>
-              <q-input class="q-mb-md" dense outlined v-model.trim="filters.text.notes" type="text" name="notesBody"
+              <q-input class="q-mb-md" dense outlined v-model.trim="filters.text.notesBody" type="text" name="notesBody"
                 clearable :label="t('Document notes')" :disable="state.loading" :placeholder="t('Type text condition')">
                 <template v-slot:prepend>
                   <q-icon name="search" />
@@ -111,7 +111,7 @@
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <DesktopToolTip>{{ t('Toggle sort by this column', { field: t(column.title) })
-                }}</DesktopToolTip>
+                  }}</DesktopToolTip>
               </th>
             </tr>
           </thead>
@@ -128,7 +128,7 @@
                       <q-item-label caption>{{ t("Creation date") }}: {{ document.creationDate }} ({{
                         document.creationDateTimeAgo }})</q-item-label>
                       <q-item-label caption v-if="document.lastUpdate">{{ t("Last update") }}: {{ document.lastUpdate
-                      }} ({{ document.lastUpdateTimeAgo }})</q-item-label>
+                        }} ({{ document.lastUpdateTimeAgo }})</q-item-label>
                     </q-item-section>
                     <q-item-section side top>
                       <q-chip size="md" square class="theme-default-q-chip shadow-1 q-chip-8em"
@@ -293,7 +293,7 @@ const totalSearchConditions = computed(() => {
   if (filters.text.description) {
     total++;
   }
-  if (filters.text.notes) {
+  if (filters.text.notesBody) {
     total++;
   }
   if (filters.tags && filters.tags.length > 0) {
@@ -391,7 +391,7 @@ const onSubmitForm = (resetPager) => {
 const onResetForm = () => {
   filters.text.title = null;
   filters.text.description = null;
-  filters.text.notes = null;
+  filters.text.notesBody = null;
   filters.tags.length = 0;
   filters.dates = {
     creationDate: getDateFilterInstance(),
@@ -420,7 +420,7 @@ onMounted(() => {
   } else if (useStoreFilter.value) {
     filters.text.title = store.filters?.text.title || null;
     filters.text.description = store.filters?.text.description || null;
-    filters.text.notes = store.filters?.text.notes || null;
+    filters.text.notesBody = store.filters?.text.notesBody || null;
     filters.tags = store.filters?.tags || [];
     if (store.filters?.dates) {
       // creation date
