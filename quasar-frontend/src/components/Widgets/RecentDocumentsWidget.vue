@@ -61,11 +61,11 @@
             </q-item-section>
             <q-item-section side top>
               <q-item-label caption>{{ recentDocument.lastUpdateTimeAgo }}</q-item-label>
-              <ViewDocumentDetailsButton size="md" square class="min-width-8em" :count="recentDocument.attachmentCount"
+              <ViewDocumentDetailsButton size="md" square class="min-width-9em" :count="recentDocument.attachmentCount"
                 :label="'Total attachments count'" :tool-tip="'View document attachments'" :disable="state.loading"
                 @click.stop.prevent="onShowDocumentFiles(recentDocument.id, recentDocument.title)">
               </ViewDocumentDetailsButton>
-              <ViewDocumentDetailsButton size="md" square class="min-width-8em" :count="recentDocument.noteCount"
+              <ViewDocumentDetailsButton size="md" square class="min-width-9em" :count="recentDocument.noteCount"
                 :label="'Total notes'" :tool-tip="'View document notes'" :disable="state.loading"
                 @click.stop.prevent="onShowDocumentNotes(recentDocument.id, recentDocument.title)">
               </ViewDocumentDetailsButton>
@@ -165,9 +165,3 @@ onBeforeUnmount(() => {
 });
 
 </script>
-
-<style lang="css" scoped>
-.border-bottom-except-last-item:not(:last-child) {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-}
-</style>

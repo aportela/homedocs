@@ -54,11 +54,11 @@
               <q-item-section side top>
                 <q-item-label caption>{{ item.lastUpdate }}
                 </q-item-label>
-                <ViewDocumentDetailsButton size="md" square class="min-width-8em" :count="item.attachmentCount"
+                <ViewDocumentDetailsButton size="md" square class="min-width-9em" :count="item.attachmentCount"
                   :label="'Total attachments count'" :tool-tip="'View document attachments'" :disable="state.loading"
                   @click.stop.prevent="onShowDocumentFiles(item.id, item.label)">
                 </ViewDocumentDetailsButton>
-                <ViewDocumentDetailsButton size="md" square class="min-width-8em" :count="item.noteCount"
+                <ViewDocumentDetailsButton size="md" square class="min-width-9em" :count="item.noteCount"
                   :label="'Total notes'" :tool-tip="'View document notes'" :disable="state.loading"
                   @click.stop.prevent="onShowDocumentNotes(item.id, item.label)">
                 </ViewDocumentDetailsButton>
@@ -294,22 +294,16 @@ onBeforeUnmount(() => {
   height: 50vh;
 }
 
-.border-bottom-except-last-item:not(:last-child) {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-}
 
 .body--light {
   .current-keyboard-selected-item {
-    /* TODO */
-    background: var(--color-grey-4);
+    background: var(--color-zinc-300);
   }
 }
 
-
 .body--dark {
   .current-keyboard-selected-item {
-    /* TODO */
-    background: var(--color-grey-4);
+    background: var(--color-zinc-600);
   }
 }
 </style>

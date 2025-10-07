@@ -230,6 +230,9 @@ body {
     border-top: 1px solid rgba(0, 0, 0, 0.12);
   }
 
+  .border-bottom-except-last-item:not(:last-child) {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  }
 }
 
 .body--dark {
@@ -388,4 +391,7 @@ body {
     border-top: 1px solid rgba(255, 255, 255, 0.28);
   }
 
+  .border-bottom-except-last-item:not(:last-child) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
 }

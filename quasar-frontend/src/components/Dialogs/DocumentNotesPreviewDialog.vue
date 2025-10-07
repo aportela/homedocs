@@ -2,9 +2,9 @@
   <BaseDialog v-model="visible" @close="onClose" width="1280px" max-width="80vw">
     <template v-slot:header-left>
       <div v-if="documentTitle">{{ t("Document title")
-        }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
+      }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
           documentTitle
-          }}</router-link>
+        }}</router-link>
       </div>
       <div v-else>{{ t("Document notes") }}</div>
     </template>
@@ -159,10 +159,6 @@ onBeforeUnmount(() => {
 <style lang="css" scoped>
 .notes-scrolled-container {
   max-height: 50vh
-}
-
-.border-bottom-except-last-item:not(:last-child) {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 }
 
 .note-date-label {
