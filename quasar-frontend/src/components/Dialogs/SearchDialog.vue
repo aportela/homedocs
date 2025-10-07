@@ -33,7 +33,7 @@
         </div>
         <div style="flex-grow: 1;">
           <q-input type="text" dense color="grey-3" label-color="grey-7" :label="t('Search text...')" v-model="text"
-            @update:model-value="onSearch" autofocus="" clearable outlined>
+            @update:model-value="onSearch" clearable outlined ref="searchTextField">
             <template v-slot:prepend>
               <q-icon name="search" />
             </template>
@@ -89,7 +89,7 @@
 
 <script setup>
 
-import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
+import { ref, reactive, computed, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 
@@ -158,6 +158,8 @@ const currentSearchResultSelectedIndex = ref(-1);
 const virtualListIndex = ref(0);
 
 const showNoSearchResults = ref(false);
+
+const searchTextField = ref(null);
 
 const boldStringMatch = (str, matchWord) => {
   return str.replace(
@@ -278,6 +280,9 @@ const onShow = () => {
   // this is required here because this dialog v-model is controller from MainLayout.vue
   // DOES NOT WORK with onMounted/onBeforeUnmount. WE ONLY WANT CAPTURE KEY EVENTS WHEN DIALOG IS VISIBLE
   window.addEventListener('keydown', onKeyDown);
+  nextTick(() => {
+    searchTextField.value?.focus();
+  });
 }
 
 const onClose = () => {
