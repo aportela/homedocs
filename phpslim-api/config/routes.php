@@ -234,13 +234,13 @@ return function (App $app) {
                     $rootStoragePath = $this->get('settings')['paths']['storage'];
                     $attachments = array();
                     if (is_array($documentAttachments) && count($documentAttachments) > 0) {
-                        foreach ($documentAttachments as $documentFile) {
-                            $attachments[] = new \HomeDocs\File(
+                        foreach ($documentAttachments as $documentAttachment) {
+                            $attachments[] = new \HomeDocs\Attachment(
                                 $rootStoragePath,
-                                $documentFile["id"],
-                                $documentFile["name"],
-                                $documentFile["size"],
-                                $documentFile["hash"] ?? ""
+                                $documentAttachment["id"],
+                                $documentAttachment["name"],
+                                $documentAttachment["size"],
+                                $documentAttachment["hash"] ?? ""
                             );
                         }
                     }
@@ -255,6 +255,7 @@ return function (App $app) {
                             );
                         }
                     }
+                    $rootStoragePath = $this->get('settings')['paths']['storage'];
                     $document = new \HomeDocs\Document(
                         $args['id'],
                         $params["title"] ?? "",
@@ -265,7 +266,7 @@ return function (App $app) {
                         $attachments,
                         $notes,
                     );
-                    $document->setRootStoragePath($this->get('settings')['paths']['storage']);
+                    $document->setRootStoragePath($rootStoragePath);
                     $dbh = $this->get(\aportela\DatabaseWrapper\DB::class);
                     $dbh->beginTransaction();
                     try {
@@ -275,7 +276,7 @@ return function (App $app) {
                         $dbh->rollBack();
                         throw $e;
                     }
-                    $document->setRootStoragePath($this->get('settings')['paths']['storage']);
+                    $document->setRootStoragePath($rootStoragePath);
                     $document->get($dbh);
                     $payload = json_encode(
                         [
@@ -294,19 +295,19 @@ return function (App $app) {
                         $args['id']
                     );
                     // test existence && check permissions
-                    $document->setRootStoragePath($this->get('settings')['paths']['storage']);
+                    $rootStoragePath = $this->get('settings')['paths']['storage'];
+                    $document->setRootStoragePath($rootStoragePath);
                     $document->get($dbh);
                     $documentAttachments = $params["attachments"] ?? [];
-                    $rootStoragePath = $this->get('settings')['paths']['storage'];
                     $attachments = array();
                     if (is_array($documentAttachments) && count($documentAttachments) > 0) {
-                        foreach ($documentAttachments as $documentFile) {
-                            $attachments[] = new \HomeDocs\File(
+                        foreach ($documentAttachments as $documentAttachment) {
+                            $attachments[] = new \HomeDocs\Attachment(
                                 $rootStoragePath,
-                                $documentFile["id"],
-                                $documentFile["name"],
-                                $documentFile["size"],
-                                $documentFile["hash"] ?? ""
+                                $documentAttachment["id"],
+                                $documentAttachment["name"],
+                                $documentAttachment["size"],
+                                $documentAttachment["hash"] ?? ""
                             );
                         }
                     }
@@ -332,8 +333,7 @@ return function (App $app) {
                         $attachments,
                         $notes
                     );
-                    // TODO: required ?
-                    $document->setRootStoragePath($this->get('settings')['paths']['storage']);
+                    $document->setRootStoragePath($rootStoragePath);
                     try {
                         $dbh->beginTransaction();
                         $document->update($dbh);
@@ -382,17 +382,17 @@ return function (App $app) {
             $group->group('/attachment', function (RouteCollectorProxy $group) {
                 $group->get('/{id}', function (Request $request, Response $response, array $args) {
                     $route = $request->getAttribute('route');
-                    $file = new \HomeDocs\File(
+                    $attachment = new \HomeDocs\Attachment(
                         $this->get('settings')['paths']['storage'],
                         $args['id']
                     );
-                    $file->get($this->get(\aportela\DatabaseWrapper\DB::class));
-                    $localStoragePath = $file->getLocalStoragePath();
+                    $attachment->get($this->get(\aportela\DatabaseWrapper\DB::class));
+                    $localStoragePath = $attachment->getLocalStoragePath();
                     if (file_exists($localStoragePath)) {
                         $partialContent = false;
-                        $filesize = filesize($localStoragePath);
+                        $attachmentSize = filesize($localStoragePath);
                         $offset = 0;
-                        $length = $filesize;
+                        $length = $attachmentSize;
                         if (isset($_SERVER['HTTP_RANGE'])) {
                             // if the HTTP_RANGE header is set we're dealing with partial content
                             $partialContent = true;
@@ -401,7 +401,7 @@ return function (App $app) {
                             // multiple ranges, which can become pretty complex, so ignore it for now
                             preg_match('/bytes=(\d+)-(\d+)?/', $_SERVER['HTTP_RANGE'], $matches);
                             $offset = intval($matches[1]);
-                            $length = ((isset($matches[2])) ? intval($matches[2]) : $file->size) - $offset;
+                            $length = ((isset($matches[2])) ? intval($matches[2]) : $attachment->size) - $offset;
                         }
                         $f = fopen($localStoragePath, 'r');
                         fseek($f, $offset);
@@ -411,16 +411,16 @@ return function (App $app) {
                         if ($partialContent) {
                             // output the right headers for partial content
                             return $response->withStatus(206)
-                                ->withHeader('Content-Type', \HomeDocs\Utils::getMimeType($file->name))
-                                ->withHeader('Content-Disposition', 'attachment; filename="' . basename($file->name) . '"')
+                                ->withHeader('Content-Type', \HomeDocs\Utils::getMimeType($attachment->name))
+                                ->withHeader('Content-Disposition', 'attachment; filename="' . basename($attachment->name) . '"')
                                 ->withHeader('Content-Length', (string) $length)
-                                ->withHeader('Content-Range', 'bytes ' . $offset . '-' . ($offset + $length - 1) . '/' . $filesize)
+                                ->withHeader('Content-Range', 'bytes ' . $offset . '-' . ($offset + $length - 1) . '/' . $attachmentSize)
                                 ->withHeader('Accept-Ranges', 'bytes');
                         } else {
                             return $response->withStatus(200)
-                                ->withHeader('Content-Type', \HomeDocs\Utils::getMimeType($file->name))
-                                ->withHeader('Content-Disposition', 'attachment; filename="' . basename($file->name) . '"')
-                                ->withHeader('Content-Length', (string) $filesize)
+                                ->withHeader('Content-Type', \HomeDocs\Utils::getMimeType($attachment->name))
+                                ->withHeader('Content-Disposition', 'attachment; filename="' . basename($attachment->name) . '"')
+                                ->withHeader('Content-Length', (string) $attachmentSize)
                                 ->withHeader('Accept-Ranges', 'bytes');
                         }
                     } else {
@@ -430,22 +430,22 @@ return function (App $app) {
 
                 $group->post('[/{id}]', function (Request $request, Response $response, array $args) {
                     $uploadedFiles = $request->getUploadedFiles();
-                    $file = new \HomeDocs\File(
+                    $attachment = new \HomeDocs\Attachment(
                         $this->get('settings')['paths']['storage'],
                         isset($args['id']) ? $args['id'] : \HomeDocs\Utils::uuidv4(),
                         $uploadedFiles["file"]->getClientFilename(),
                         $uploadedFiles["file"]->getSize()
                     );
-                    $file->add($this->get(\aportela\DatabaseWrapper\DB::class), $uploadedFiles["file"]);
+                    $attachment->add($this->get(\aportela\DatabaseWrapper\DB::class), $uploadedFiles["file"]);
                     $payload = json_encode(
                         [
                             'initialState' => \HomeDocs\Utils::getInitialState($this),
                             'data' => array(
-                                "id" => $file->id,
-                                "name" => $file->name,
-                                "size" => $file->size,
-                                "hash" => $file->hash,
-                                "createdOnTimestamp" => $file->createdOnTimestamp
+                                "id" => $attachment->id,
+                                "name" => $attachment->name,
+                                "size" => $attachment->size,
+                                "hash" => $attachment->hash,
+                                "createdOnTimestamp" => $attachment->createdOnTimestamp
                             )
                         ]
                     );
@@ -454,15 +454,15 @@ return function (App $app) {
                 })->add(\HomeDocs\Middleware\CheckAuth::class);
 
                 $group->delete('/{id}', function (Request $request, Response $response, array $args) {
-                    $file = new \HomeDocs\File(
+                    $attachment = new \HomeDocs\Attachment(
                         $this->get('settings')['paths']['storage'],
                         $args['id']
                     );
                     $dbh = $this->get(\aportela\DatabaseWrapper\DB::class);
-                    if ($file->isLinkedToDocument($dbh)) {
+                    if ($attachment->isLinkedToDocument($dbh)) {
                         throw new \HomeDocs\Exception\AccessDeniedException();
                     } else {
-                        $file->remove($dbh);
+                        $attachment->remove($dbh);
                         $payload = json_encode(
                             [
                                 'initialState' => \HomeDocs\Utils::getInitialState($this),

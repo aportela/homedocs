@@ -40,11 +40,11 @@ class Document
         $results = $dbh->query(
             sprintf(
                 "
-                    WITH DOCUMENTS_FILES AS (
-                        SELECT DOCUMENT_FILE.document_id, COUNT(*) AS attachmentCount
-                        FROM DOCUMENT_FILE
-                        INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_FILE.document_id AND DOCUMENT_HISTORY.operation_type = :history_operation_add AND DOCUMENT_HISTORY.created_by_user_id = :session_user_id
-                        GROUP BY DOCUMENT_FILE.document_id
+                    WITH DOCUMENTS_ATTACHMENTS AS (
+                        SELECT DOCUMENT_ATTACHMENT.document_id, COUNT(*) AS attachmentCount
+                        FROM DOCUMENT_ATTACHMENT
+                        INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_ATTACHMENT.document_id AND DOCUMENT_HISTORY.operation_type = :history_operation_add AND DOCUMENT_HISTORY.created_by_user_id = :session_user_id
+                        GROUP BY DOCUMENT_ATTACHMENT.document_id
                     ),
                     DOCUMENTS_NOTES AS (
                         SELECT DOCUMENT_NOTE.document_id, COUNT(*) AS noteCount
@@ -73,12 +73,12 @@ class Document
                         DOCUMENT.title,
                         DOCUMENT.description,
                         CAST(DOCUMENTS_LAST_HISTORY_OPERATION.max_created_on_timestamp AS INT) AS lastUpdateTimestamp,
-                        COALESCE(DOCUMENTS_FILES.attachmentCount, 0) AS attachmentCount,
+                        COALESCE(DOCUMENTS_ATTACHMENTS.attachmentCount, 0) AS attachmentCount,
                         COALESCE(DOCUMENTS_NOTES.noteCount, 0) AS noteCount,
                         DOCUMENTS_TAGS.tags
                     FROM DOCUMENT
                     INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT.id AND DOCUMENT_HISTORY.operation_type = :history_operation_add AND DOCUMENT_HISTORY.created_by_user_id = :session_user_id
-                    LEFT JOIN DOCUMENTS_FILES ON DOCUMENTS_FILES.document_id = DOCUMENT.id
+                    LEFT JOIN DOCUMENTS_ATTACHMENTS ON DOCUMENTS_ATTACHMENTS.document_id = DOCUMENT.id
                     LEFT JOIN DOCUMENTS_TAGS ON DOCUMENTS_TAGS.document_id = DOCUMENT.id
                     LEFT JOIN DOCUMENTS_NOTES ON DOCUMENTS_NOTES.document_id = DOCUMENT.id
                     LEFT JOIN DOCUMENTS_LAST_HISTORY_OPERATION ON DOCUMENTS_LAST_HISTORY_OPERATION.document_id = DOCUMENT.id
@@ -123,7 +123,7 @@ class Document
                         foreach ($this->notes as $note) {
                             if (! empty($note->id) && mb_strlen($note->id) == \HomeDocs\Constants::UUID_V4_LENGTH) {
                                 if (! (!empty($note->body) && mb_strlen($note->body) <= \HomeDocs\Constants::MAX_DOCUMENT_NOTE_BODY_LENGTH)) {
-                                    throw new \HomeDocs\Exception\InvalidParamsException("note_body");
+                                    throw new \HomeDocs\Exception\InvalidParamsException("noteBody");
                                 }
                             } else {
                                 $note->id = \HomeDocs\Utils::uuidv4();
@@ -193,20 +193,20 @@ class Document
                     }
                 }
                 $attachmentsQuery = "
-                    INSERT INTO DOCUMENT_FILE
-                        (document_id, file_id)
+                    INSERT INTO DOCUMENT_ATTACHMENT
+                        (document_id, attachment_id)
                     VALUES
-                        (:document_id, :file_id)
+                        (:document_id, :attachment_id)
                     ";
-                foreach ($this->attachments as $file) {
-                    if (!empty($file->id)) {
+                foreach ($this->attachments as $attachment) {
+                    if (!empty($attachment->id)) {
                         $params = array(
                             new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
-                            new \aportela\DatabaseWrapper\Param\StringParam(":file_id", mb_strtolower($file->id))
+                            new \aportela\DatabaseWrapper\Param\StringParam(":attachment_id", mb_strtolower($attachment->id))
                         );
                         $dbh->execute($attachmentsQuery, $params);
                     } else {
-                        throw new \HomeDocs\Exception\InvalidParamsException("fileId");
+                        throw new \HomeDocs\Exception\InvalidParamsException("attachment_id");
                     }
                 }
                 $notesQuery = "
@@ -290,55 +290,54 @@ class Document
                         throw new \HomeDocs\Exception\InvalidParamsException("tag");
                     }
                 }
-                $originalFiles = $this->getAttachments($dbh);
-                foreach ($originalFiles as $originalFile) {
+                $originalAttachments = $this->getAttachments($dbh);
+                foreach ($originalAttachments as $originalAttachment) {
                     $notFound = true;
-                    foreach ($this->attachments as $file) {
-                        if ($file->id == $originalFile->id) {
+                    foreach ($this->attachments as $attachment) {
+                        if ($attachment->id == $originalAttachment->id) {
                             $notFound = false;
                         }
                     }
                     if ($notFound) {
                         $dbh->execute(
                             "
-                                DELETE FROM DOCUMENT_FILE
+                                DELETE FROM DOCUMENT_ATTACHMENT
                                 WHERE document_id = :document_id
-                                AND file_id = :file_id
+                                AND attachment_id = :attachment_id
                             ",
                             array(
                                 new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
-                                new \aportela\DatabaseWrapper\Param\StringParam(":file_id", mb_strtolower($originalFile->id))
+                                new \aportela\DatabaseWrapper\Param\StringParam(":attachment_id", mb_strtolower($originalAttachment->id))
                             )
                         );
-                        $file = new \HomeDocs\File($this->rootStoragePath, $originalFile->id);
-                        $file->remove($dbh);
+                        $originalAttachment->remove($dbh);
                     }
                 }
-                foreach ($this->attachments as $file) {
-                    if (!empty($file->id)) {
+                foreach ($this->attachments as $attachment) {
+                    if (!empty($attachment->id)) {
                         $notFound = true;
-                        foreach ($originalFiles as $originalFile) {
-                            if ($file->id == $originalFile->id) {
+                        foreach ($originalAttachments as $originalAttachment) {
+                            if ($attachment->id == $originalAttachment->id) {
                                 $notFound = false;
                             }
                         }
                         if ($notFound) {
                             $params = array(
                                 new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
-                                new \aportela\DatabaseWrapper\Param\StringParam(":file_id", mb_strtolower($file->id))
+                                new \aportela\DatabaseWrapper\Param\StringParam(":attachment_id", mb_strtolower($attachment->id))
                             );
                             $dbh->execute(
                                 "
-                                    INSERT INTO DOCUMENT_FILE
-                                        (document_id, file_id)
+                                    INSERT INTO DOCUMENT_ATTACHMENT
+                                        (document_id, attachment_id)
                                     VALUES
-                                        (:document_id, :file_id)
+                                        (:document_id, :attachment_id)
                                 ",
                                 $params
                             );
                         }
                     } else {
-                        throw new \HomeDocs\Exception\InvalidParamsException("fileId");
+                        throw new \HomeDocs\Exception\InvalidParamsException("attachmentId");
                     }
                 }
                 $originalNotes = $this->getNotes($dbh);
@@ -424,7 +423,6 @@ class Document
             $params = array(
                 new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
             );
-
             $dbh->execute(
                 "
                     DELETE FROM DOCUMENT_TAG
@@ -434,15 +432,14 @@ class Document
             );
             $dbh->execute(
                 "
-                    DELETE FROM DOCUMENT_FILE
+                    DELETE FROM DOCUMENT_ATTACHMENT
                     WHERE document_id = :document_id
                 ",
                 $params
             );
-            $originalFiles = $this->getAttachments($dbh);
-            foreach ($originalFiles as $file) {
-                $file = new \HomeDocs\File($this->rootStoragePath, $file->id);
-                $file->remove($dbh);
+            $originalAttachments = $this->getAttachments($dbh);
+            foreach ($originalAttachments as $attachment) {
+                $attachment->remove($dbh);
             }
             $dbh->execute(
                 "
@@ -540,16 +537,16 @@ class Document
 
     private function getAttachments(\aportela\DatabaseWrapper\DB $dbh): array
     {
-        $files = [];
+        $attachments = [];
         $data = $dbh->query(
             "
                 SELECT
-                    FILE.id, FILE.name, FILE.size, FILE.sha1_hash AS hash, FILE.created_on_timestamp AS createdOnTimestamp
-                FROM DOCUMENT_FILE
-                INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_FILE.document_id
-                LEFT JOIN FILE ON FILE.id = DOCUMENT_FILE.file_id
-                WHERE DOCUMENT_FILE.document_id = :document_id
-                ORDER BY FILE.created_on_timestamp DESC, FILE.name
+                    ATTACHMENT.id, ATTACHMENT.name, ATTACHMENT.size, ATTACHMENT.sha1_hash AS hash, ATTACHMENT.created_on_timestamp AS createdOnTimestamp
+                FROM DOCUMENT_ATTACHMENT
+                INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_ATTACHMENT.document_id
+                LEFT JOIN ATTACHMENT ON ATTACHMENT.id = DOCUMENT_ATTACHMENT.attachment_id
+                WHERE DOCUMENT_ATTACHMENT.document_id = :document_id
+                ORDER BY ATTACHMENT.created_on_timestamp DESC, ATTACHMENT.name
             ",
             array(
                 new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id))
@@ -557,7 +554,7 @@ class Document
         );
         if (is_array($data) && count($data) > 0) {
             foreach ($data as $item) {
-                $files[] = new \HomeDocs\File(
+                $attachments[] = new \HomeDocs\Attachment(
                     $this->rootStoragePath,
                     $item->id,
                     $item->name,
@@ -567,7 +564,7 @@ class Document
                 );
             }
         }
-        return ($files);
+        return ($attachments);
     }
 
     private function getNotes(\aportela\DatabaseWrapper\DB $dbh, ?string $search = null): array
@@ -820,7 +817,7 @@ class Document
                     $sqlSortBy = "DOCUMENT.description";
                     break;
                 case "attachmentCount":
-                    $sqlSortBy = "TMP_FILE_COUNT.attachmentCount";
+                    $sqlSortBy = "TMP_ATTACHMENT_COUNT.attachmentCount";
                     break;
                 case "noteCount":
                     $sqlSortBy = "TMP_NOTE_COUNT.noteCount";
@@ -839,7 +836,7 @@ class Document
                 sprintf(
                     "
                             SELECT
-                                DOCUMENT.id, DOCUMENT.title, DOCUMENT.description, DOCUMENT_HISTORY_CREATION_DATE.created_on_timestamp AS createdOnTimestamp, COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.created_on_timestamp, DOCUMENT_HISTORY_CREATION_DATE.created_on_timestamp) AS lastUpdateTimestamp, TMP_FILE_COUNT.attachmentCount, TMP_NOTE_COUNT.noteCount
+                                DOCUMENT.id, DOCUMENT.title, DOCUMENT.description, DOCUMENT_HISTORY_CREATION_DATE.created_on_timestamp AS createdOnTimestamp, COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.created_on_timestamp, DOCUMENT_HISTORY_CREATION_DATE.created_on_timestamp) AS lastUpdateTimestamp, TMP_ATTACHMENT_COUNT.attachmentCount, TMP_NOTE_COUNT.noteCount
                             FROM DOCUMENT
                             INNER JOIN DOCUMENT_HISTORY AS DOCUMENT_HISTORY_CREATION_DATE ON (
                                 DOCUMENT_HISTORY_CREATION_DATE.document_id = DOCUMENT.id
@@ -855,9 +852,9 @@ class Document
                             ) DOCUMENT_HISTORY_LAST_UPDATE ON DOCUMENT_HISTORY_LAST_UPDATE.document_id = DOCUMENT.id
                             LEFT JOIN (
                                 SELECT COUNT(*) AS attachmentCount, document_id
-                                FROM DOCUMENT_FILE
+                                FROM DOCUMENT_ATTACHMENT
                                 GROUP BY document_id
-                            ) TMP_FILE_COUNT ON TMP_FILE_COUNT.document_id = DOCUMENT.id
+                            ) TMP_ATTACHMENT_COUNT ON TMP_ATTACHMENT_COUNT.document_id = DOCUMENT.id
                             LEFT JOIN (
                                 SELECT COUNT(*) AS noteCount, document_id
                                 FROM DOCUMENT_NOTE

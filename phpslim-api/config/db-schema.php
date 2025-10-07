@@ -32,7 +32,7 @@ return (array(
 
             CREATE INDEX idx_document_tag_document_id ON DOCUMENT_TAG (document_id);
 
-            CREATE TABLE FILE (
+            CREATE TABLE ATTACHMENT (
                 id VARCHAR(36) NOT NULL,
                 sha1_hash VARCHAR(40) NOT NULL,
                 name VARCHAR(256) NOT NULL,
@@ -43,18 +43,18 @@ return (array(
                 FOREIGN KEY (created_by_user_id) REFERENCES USER(id)
             );
 
-            CREATE INDEX idx_file_created_by_user_id_user_id ON FILE (created_by_user_id);
+            CREATE INDEX idx_attachment_created_by_user_id_user_id ON ATTACHMENT (created_by_user_id);
 
-            CREATE TABLE DOCUMENT_FILE (
+            CREATE TABLE DOCUMENT_ATTACHMENT (
                 document_id VARCHAR(36) NOT NULL,
-                file_id VARCHAR(36) NOT NULL,
-                PRIMARY KEY (document_id, file_id),
+                attachment_id VARCHAR(36) NOT NULL,
+                PRIMARY KEY (document_id, attachment_id),
                 FOREIGN KEY (document_id) REFERENCES DOCUMENT(id),
-                FOREIGN KEY (file_id) REFERENCES FILE(id)
+                FOREIGN KEY (attachment_id) REFERENCES ATTACHMENT(id)
             );
 
-            CREATE INDEX idx_document_file_document_id ON DOCUMENT_FILE (document_id);
-            CREATE INDEX idx_document_file_file_id ON DOCUMENT_FILE (file_id);
+            CREATE INDEX idx_document_attachment_document_id ON DOCUMENT_ATTACHMENT (document_id);
+            CREATE INDEX idx_document_attachment_attachment_id ON DOCUMENT_ATTACHMENT (attachment_id);
 
             CREATE TABLE DOCUMENT_NOTE (
                 note_id VARCHAR(36) NOT NULL,

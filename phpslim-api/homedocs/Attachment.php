@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace HomeDocs;
 
-class File
+class Attachment
 {
     public ?string $id;
     public ?string $name;
@@ -21,11 +21,11 @@ class File
         $this->hash = $hash;
         $this->createdOnTimestamp = $createdOnTimestamp;
         if (! empty($rootStoragePath) && ! empty($this->id)) {
-            $this->localStoragePath = $this->getFileStoragePath($rootStoragePath);
+            $this->localStoragePath = $this->getAttachmentStoragePath($rootStoragePath);
         }
     }
 
-    private function getFileStoragePath(string $rootStoragePath): string
+    private function getAttachmentStoragePath(string $rootStoragePath): string
     {
         if (!empty($this->id) && mb_strlen($this->id) == 36) {
             return (sprintf(
@@ -56,7 +56,7 @@ class File
                 "
                         SELECT
                             name, size, sha1_hash AS hash, created_on_timestamp AS createdOnTimestamp, created_by_user_id AS uploadedByUserId
-                        FROM FILE
+                        FROM ATTACHMENT
                         WHERE id = :id
                     ",
                 array(
@@ -112,7 +112,7 @@ class File
         );
         $dbh->execute(
             "
-                INSERT INTO FILE
+                INSERT INTO ATTACHMENT
                     (id, sha1_hash, name, size, created_by_user_id, created_on_timestamp)
                 VALUES
                     (:id, :sha1_hash, :name, :size, :created_by_user_id, :created_on_timestamp)
@@ -151,7 +151,7 @@ class File
         );
         $dbh->execute(
             "
-                DELETE FROM FILE WHERE id = :id
+                DELETE FROM ATTACHMENT WHERE id = :id
             ",
             $params
         );
@@ -165,9 +165,9 @@ class File
         $result = $dbh->query(
             "
                 SELECT
-                    COUNT(DOCUMENT_FILE.document_id) AS total
-                FROM DOCUMENT_FILE
-                WHERE DOCUMENT_FILE.file_id = :id
+                    COUNT(DOCUMENT_ATTACHMENT.document_id) AS total
+                FROM DOCUMENT_ATTACHMENT
+                WHERE DOCUMENT_ATTACHMENT.attachment_id = :id
             ",
             $params
         );

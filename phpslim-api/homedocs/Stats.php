@@ -31,9 +31,9 @@ class Stats
         $result = $dbh->query(
             "
                 SELECT
-                    COALESCE(COUNT(DOCUMENT_FILE.file_id), 0) AS total
-                FROM DOCUMENT_FILE
-                INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_FILE.document_id
+                    COALESCE(COUNT(DOCUMENT_ATTACHMENT.attachment_id), 0) AS total
+                FROM DOCUMENT_ATTACHMENT
+                INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_ATTACHMENT.document_id
                 WHERE
                     DOCUMENT_HISTORY.operation_type = :history_operation_add
                 AND
@@ -52,10 +52,10 @@ class Stats
         $result = $dbh->query(
             "
                 SELECT
-                    COALESCE(SUM(FILE.size), 0) AS total
-                FROM DOCUMENT_FILE
-                INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_FILE.document_id
-                INNER JOIN FILE ON FILE.id = DOCUMENT_FILE.file_id
+                    COALESCE(SUM(ATTACHMENT.size), 0) AS total
+                FROM DOCUMENT_ATTACHMENT
+                INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_ATTACHMENT.document_id
+                INNER JOIN ATTACHMENT ON ATTACHMENT.id = DOCUMENT_ATTACHMENT.attachment_id
                 WHERE
                     DOCUMENT_HISTORY.operation_type = :history_operation_add
                 AND
