@@ -1,7 +1,6 @@
 import { LocalStorage } from "quasar";
 
 export function useLocalStorage() {
-
   const get = (key, defaultValue = null) => {
     try {
       const savedValue = LocalStorage.getItem(key);
@@ -26,7 +25,7 @@ export function useLocalStorage() {
     },
     set(value) {
       set("darkMode", !!value);
-    }
+    },
   };
 
   const alwaysOpenUploadDialog = {
@@ -35,7 +34,16 @@ export function useLocalStorage() {
     },
     set(value) {
       set("alwaysOpenUploadDialog", !!value);
-    }
+    },
+  };
+
+  const showToolTips = {
+    get() {
+      return get("showToolTips", false);
+    },
+    set(value) {
+      set("showToolTips", !!value);
+    },
   };
 
   const searchDialogResultsPage = {
@@ -44,8 +52,13 @@ export function useLocalStorage() {
     },
     set(value) {
       set("searchDialogResultsPage", parseInt(value || 8));
-    }
+    },
   };
 
-  return { darkMode, alwaysOpenUploadDialog, searchDialogResultsPage };
+  return {
+    darkMode,
+    alwaysOpenUploadDialog,
+    showToolTips,
+    searchDialogResultsPage,
+  };
 }

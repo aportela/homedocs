@@ -254,4 +254,5 @@ export default {
   "attachment filename": "nombre del adjunto",
   "Document attachment filenames": "Nombres de adjuntos del documento",
   "Max results": "Nº máximo resultados",
+  "Show tooltips": "Mostrar pistas/sugerencias emergentes",
 };

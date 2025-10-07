@@ -1,5 +1,5 @@
 <template>
-  <q-tooltip v-if="isDesktop" :delay="delay" :anchor="anchor" :self="self">
+  <q-tooltip v-if="isDesktop && visibleToolTips" :delay="delay" :anchor="anchor" :self="self">
     <slot></slot>
   </q-tooltip>
 </template>
@@ -9,9 +9,15 @@
 import { computed } from "vue";
 import { useQuasar } from "quasar";
 
+import { useLocalStorage } from "src/composables/useLocalStorage";
+
 const $q = useQuasar()
 
 const isDesktop = computed(() => $q.screen.gt.sm);
+
+const { showToolTips } = useLocalStorage();
+
+const visibleToolTips = showToolTips.get();
 
 const props = defineProps({
   delay: {

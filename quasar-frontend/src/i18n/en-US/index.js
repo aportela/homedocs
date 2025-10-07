@@ -247,4 +247,5 @@ export default {
   "attachment filename": "attachment filename",
   "Document attachment filenames": "Document attachment filenames",
   "Max results": "Max results",
+  "Show tooltips": "Show tooltips",
 };
