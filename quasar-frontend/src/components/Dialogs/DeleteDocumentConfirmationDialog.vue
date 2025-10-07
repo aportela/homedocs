@@ -1,5 +1,5 @@
 <template>
-  <BaseDialog @close="onClose" width="1280px" max-width="80vw">
+  <BaseDialog v-model="visible" @close="onClose" width="1280px" max-width="80vw">
     <template v-slot:header-left>
       {{ t('Delete document') }}
     </template>

@@ -1,5 +1,5 @@
 <template>
-  <BaseDialog @close="onClose" width="1280px" max-width="80vw">
+  <BaseDialog v-model="visible" @close="onClose" width="1280px" max-width="80vw">
     <template v-slot:header-left>
       <div v-if="document.title">{{ t("Document title") }}:
         <router-link :to="{ name: 'document', params: { id: document.id } }" class="text-decoration-hover">{{
@@ -97,6 +97,8 @@ const props = defineProps({
     }
   }
 });
+
+const visible = ref(true);
 
 const hasAttachments = computed(() => props.document?.attachments?.length > 0);
 const attachmentsCount = computed(() => hasAttachments.value ? props.document?.attachments?.length : 0);

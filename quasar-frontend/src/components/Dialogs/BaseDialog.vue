@@ -38,14 +38,19 @@
 
 <script setup>
 
-import { ref } from "vue";
+import { computed } from "vue";
+
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 
-const emit = defineEmits(['close', 'confirm', 'cancel']);
+const emit = defineEmits(['update:modelValue', 'close', 'confirm', 'cancel']);
 
 const props = defineProps({
+  modelValue: {
+    type: Boolean,
+    required: true
+  },
   showHeaderCloseButton: {
     type: Boolean,
     required: false,
@@ -88,7 +93,14 @@ const props = defineProps({
   }
 });
 
-const visible = ref(true);
+const visible = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(value) {
+    emit('update:modelValue', value);
+  }
+});
 
 const onHide = () => {
   visible.value = false;

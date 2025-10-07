@@ -1,5 +1,5 @@
 <template>
-  <BaseDialog @close="onClose" width="512px" max-width="80vw" hide-footer persistent>
+  <BaseDialog v-model="visible" @close="onClose" width="512px" max-width="80vw" hide-footer persistent>
     <template v-slot:header-left>
       {{ t("Session lost... re-auth required") }}
     </template>
@@ -24,6 +24,8 @@ import { default as SignInForm } from "src/components/Forms/SignInForm.vue"
 const { t } = useI18n();
 
 const emit = defineEmits(['close', 'success']);
+
+const visible = ref(true);
 
 const onClose = () => {
   emit('close');
