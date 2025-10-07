@@ -55,7 +55,7 @@
               :class="{ 'cursor-not-allowed': item.id === currentDocumentId }"
               :clickable="item.id !== currentDocumentId" :to="{ name: 'document', params: { id: item.id } }">
               <q-item-section side>
-                <q-icon name="collections_bookmark" />
+                <q-icon name="work" />
               </q-item-section>
               <q-item-section>
                 <q-item-label>{{ item.label }}</q-item-label>
