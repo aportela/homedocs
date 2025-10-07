@@ -44,7 +44,8 @@ export function useAPI() {
         const params = {
           title: filter.text?.title || null,
           description: filter.text?.description || null,
-          notesBody: filter.text?.notes || null,
+          notesBody: filter.text?.notesBody || null,
+          attachmentsFilename: filter.text?.attachmentsFilename || null,
           tags: filter.tags || [],
         };
         params.fromCreationTimestampCondition =

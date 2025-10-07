@@ -131,7 +131,8 @@ const state = reactive({
 const searchOnOptions = computed(() => [
   { label: 'Title', value: 'title' },
   { label: 'Description', value: 'description' },
-  { label: 'Notes', value: 'notes' },
+  { label: 'Notes', value: 'notesBody' },
+  { label: 'Attachment names', value: 'attachmentsFilename' },
 ]);
 
 const searchOn = ref(searchOnOptions.value[0]);
@@ -164,7 +165,8 @@ const onSearch = (val) => {
       text: {
         title: searchOn.value.value == "title" ? val.trim() : null,
         description: searchOn.value.value == "description" ? val.trim() : null,
-        notes: searchOn.value.value == "notes" ? val.trim() : null,
+        notesBody: searchOn.value.value == "notesBody" ? val.trim() : null,
+        attachmentsFilename: searchOn.value.value == "attachmentsFilename" ? val.trim() : null,
       }
     };
     api.document.search(1, 16, params, "lastUpdateTimestamp", "DESC")
