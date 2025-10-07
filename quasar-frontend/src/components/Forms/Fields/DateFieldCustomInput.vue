@@ -3,6 +3,11 @@
     <div class="col">
       <q-select class="q-mb-md" dense options-dense outlined clearable v-model="dateFilter.filterType"
         :options="dateFilterTypeOptions" :label="label" :disable="disable">
+        <template v-slot:prepend>
+          <slot name="prepend">
+            <q-icon name="calendar_month" />
+          </slot>
+        </template>
       </q-select>
     </div>
     <div class="col" v-if="dateFilter.state.hasFrom">
