@@ -54,7 +54,7 @@
             <q-item :key="item.id" class="transparent-background text-color-primary q-pa-sm"
               :class="{ 'cursor-not-allowed': item.id === currentDocumentId }"
               :clickable="item.id !== currentDocumentId" :to="{ name: 'document', params: { id: item.id } }">
-              <q-item-section side>
+              <q-item-section side class="gt-sm">
                 <q-icon name="work" />
               </q-item-section>
               <q-item-section>
