@@ -186,24 +186,6 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
         $this->assertTrue($results->pagination->totalResults >= count($results->documents));
     }
 
-    public function testSearchWithPagerAndFromTimestampFilter(): void
-    {
-        $results = \HomeDocs\Document::search(self::$dbh, 1, 16, ["fromCreationTimestampCondition" => 1690236000], "createdOnTimestamp", "DESC");
-        $this->assertIsObject($results);
-        $this->assertIsObject($results->pagination);
-        $this->assertIsArray($results->documents);
-        $this->assertTrue($results->pagination->totalResults >= count($results->documents));
-    }
-
-    public function testSearchWithPagerAndToTimestampFilter(): void
-    {
-        $results = \HomeDocs\Document::search(self::$dbh, 1, 16, ["toCreationTimestampCondition" => 1690408799], "createdOnTimestamp", "DESC");
-        $this->assertIsObject($results);
-        $this->assertIsObject($results->pagination);
-        $this->assertIsArray($results->documents);
-        $this->assertTrue($results->pagination->totalResults >= count($results->documents));
-    }
-
     public function testSearchWithPagerAndDescriptionFilter(): void
     {
         $results = \HomeDocs\Document::search(self::$dbh, 1, 16, ["description" => "condition"], "createdOnTimestamp", "DESC");
@@ -216,6 +198,69 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
     public function testSearchWithPagerAndTagsFilter(): void
     {
         $results = \HomeDocs\Document::search(self::$dbh, 1, 16, ["tags" => ["tag1", "tag2"]], "createdOnTimestamp", "DESC");
+        $this->assertIsObject($results);
+        $this->assertIsObject($results->pagination);
+        $this->assertIsArray($results->documents);
+        $this->assertTrue($results->pagination->totalResults >= count($results->documents));
+    }
+
+    public function testSearchWithPagerAndNotesBodyFilter(): void
+    {
+        $results = \HomeDocs\Document::search(self::$dbh, 1, 16, ["notesBody" => "condition"], "createdOnTimestamp", "DESC");
+        $this->assertIsObject($results);
+        $this->assertIsObject($results->pagination);
+        $this->assertIsArray($results->documents);
+        $this->assertTrue($results->pagination->totalResults >= count($results->documents));
+    }
+
+    public function testSearchWithPagerAndFromCreationTimestampFilter(): void
+    {
+        $results = \HomeDocs\Document::search(self::$dbh, 1, 16, ["fromCreationTimestampCondition" => 1690236000], "createdOnTimestamp", "DESC");
+        $this->assertIsObject($results);
+        $this->assertIsObject($results->pagination);
+        $this->assertIsArray($results->documents);
+        $this->assertTrue($results->pagination->totalResults >= count($results->documents));
+    }
+
+    public function testSearchWithPagerAndToCreationTimestampFilter(): void
+    {
+        $results = \HomeDocs\Document::search(self::$dbh, 1, 16, ["toCreationTimestampCondition" => 1690408799], "createdOnTimestamp", "DESC");
+        $this->assertIsObject($results);
+        $this->assertIsObject($results->pagination);
+        $this->assertIsArray($results->documents);
+        $this->assertTrue($results->pagination->totalResults >= count($results->documents));
+    }
+
+    public function testSearchWithPagerAndFromLastUpdateTimestampFilter(): void
+    {
+        $results = \HomeDocs\Document::search(self::$dbh, 1, 16, ["fromLastUpdateTimestampCondition" => 1690236000], "lastUpdateTimestamp", "DESC");
+        $this->assertIsObject($results);
+        $this->assertIsObject($results->pagination);
+        $this->assertIsArray($results->documents);
+        $this->assertTrue($results->pagination->totalResults >= count($results->documents));
+    }
+
+    public function testSearchWithPagerAndToLastUpdateTimestampFilter(): void
+    {
+        $results = \HomeDocs\Document::search(self::$dbh, 1, 16, ["toLastUpdateTimestampCondition" => 1690408799], "lastUpdateTimestamp", "DESC");
+        $this->assertIsObject($results);
+        $this->assertIsObject($results->pagination);
+        $this->assertIsArray($results->documents);
+        $this->assertTrue($results->pagination->totalResults >= count($results->documents));
+    }
+
+    public function testSearchWithPagerAndFromUpdatedOnTimestampFilter(): void
+    {
+        $results = \HomeDocs\Document::search(self::$dbh, 1, 16, ["fromUpdatedOnTimestampCondition" => 1690236000], "lastUpdateTimestamp", "DESC");
+        $this->assertIsObject($results);
+        $this->assertIsObject($results->pagination);
+        $this->assertIsArray($results->documents);
+        $this->assertTrue($results->pagination->totalResults >= count($results->documents));
+    }
+
+    public function testSearchWithPagerAndToUpdatedOnTimestampFilter(): void
+    {
+        $results = \HomeDocs\Document::search(self::$dbh, 1, 16, ["toUpdatedOnTimestampCondition" => 1690408799], "lastUpdateTimestamp", "DESC");
         $this->assertIsObject($results);
         $this->assertIsObject($results->pagination);
         $this->assertIsArray($results->documents);
