@@ -10,7 +10,7 @@
     </template>
     <template v-slot:content>
       <q-list v-if="state.loading">
-        <div v-for="i in 4" :key="i">
+        <div v-for="i in 4" :key="i" class="border-bottom-except-last-item">
           <q-item class="transparent-background text-color-primary q-pa-sm">
             <q-item-section top avatar class="gt-xs q-mt-lg">
               <q-skeleton type="QAvatar" square size="32px"></q-skeleton>
@@ -36,15 +36,14 @@
               </q-item-label>
             </q-item-section>
           </q-item>
-          <q-separator v-if="i < 3" class="q-my-xs" />
         </div>
       </q-list>
       <CustomErrorBanner v-else-if="state.loadingError" :text="state.errorMessage || 'Error loading data'"
         :api-error="state.apiError">
       </CustomErrorBanner>
       <q-list v-else-if="hasRecentDocuments">
-        <div v-for="recentDocument, index in recentDocuments" :key="recentDocument.id">
-          <q-item class="transparent-background text-color-primary q-pa-sm" clickable
+        <div v-for="recentDocument in recentDocuments" :key="recentDocument.id" class="border-bottom-except-last-item">
+          <q-item class="transparent-background text-color-primary q-pa-sm " clickable
             :to="{ name: 'document', params: { id: recentDocument.id } }">
             <q-item-section top avatar class="gt-xs">
               <q-avatar square icon="work" size="64px" aria-label="Document avatar" />
@@ -72,7 +71,6 @@
               </ViewDocumentDetailsButton>
             </q-item-section>
           </q-item>
-          <q-separator v-if="index !== recentDocuments.length - 1" class="q-my-xs" />
         </div>
       </q-list>
       <CustomBanner v-else warning text="You haven't created any documents yet"></CustomBanner>
@@ -167,3 +165,9 @@ onBeforeUnmount(() => {
 });
 
 </script>
+
+<style lang="css" scoped>
+.border-bottom-except-last-item:not(:last-child) {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+</style>
