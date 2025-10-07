@@ -17,10 +17,9 @@
     <template v-slot:body>
       <div class="q-pa-sm row items-center q-gutter-sm">
         <div class="col-auto">
-          <q-select v-model="searchOn" :resultsPageOptions="searchOnOptions"
-            :display-value="`${searchOn ? t(searchOn.label) : ''}`" dense resultsPageOptions-dense outlined
-            style="min-width: 8em;" :label="t('Search on')" @update:model-value="onSearch(text)"
-            :disable="state.loading">
+          <q-select v-model="searchOn" :options="searchOnOptions"
+            :display-value="`${searchOn ? t(searchOn.label) : ''}`" dense options-dense outlined style="min-width: 8em;"
+            :label="t('Search on')" @update:model-value="onSearch(text)" :disable="state.loading">
             <template v-slot:option="scope">
               <q-item v-bind="scope.itemProps">
                 <q-item-section>
