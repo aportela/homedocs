@@ -800,7 +800,34 @@ class Document
             }
         }
         $whereCondition = count($queryConditions) > 0 ? " WHERE " .  implode(" AND ", $queryConditions) : "";
+        /*
+        $pager = new \aportela\DatabaseBrowserWrapper\Pager(true, $currentPage, $resultsPage);
+        $sort = new \aportela\DatabaseBrowserWrapper\Sort(
+            [
+                new \aportela\DatabaseBrowserWrapper\SortItem("age", \aportela\DatabaseBrowserWrapper\Order::DESC, false),
+                new \aportela\DatabaseBrowserWrapper\SortItem("name", \aportela\DatabaseBrowserWrapper\Order::ASC, true)
+            ]
+        );
+        $fieldDefinitions = [
+            "id" => "TABLEV1.id",
+            "name" => "TABLEV1.name",
+            "age" => "TABLEV1.age"
+        ];
+        $fieldCountDefinition = [
+            "totalResults" => "COUNT(TABLEV1.id)"
+        ];
+        $browser = new \aportela\DatabaseBrowserWrapper\Browser(
+            $dbh,
+            $fieldDefinitions,
+            $fieldCountDefinition,
+            $pager,
+            $sort,
+            new \aportela\DatabaseBrowserWrapper\Filter()
+        );
+        //$browser->addDBQueryParam();
+        //$browser->launch($query, $queryCount);
 
+        */
         // TODO: only LEFT JOIN LAST UPDATE IF REQUIRED BY FILTERS
         $queryCount = sprintf('
                 SELECT
