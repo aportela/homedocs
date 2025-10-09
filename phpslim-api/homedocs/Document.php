@@ -17,7 +17,7 @@ class Document
     public ?array $notes = [];
     public ?array $history = [];
 
-    public function __construct(?string $id = null, ?string $title = null, ?string $description = null, ?int $createdOnTimestamp = null, ?int $lastUpdateTimestamp = null,  ?array $tags = [], ?array $attachments = [], ?array $notes = [], ?array $history = [])
+    public function __construct(?string $id = null, ?string $title = null, ?string $description = null, ?int $createdOnTimestamp = null, ?int $lastUpdateTimestamp = null, ?array $tags = [], ?array $attachments = [], ?array $notes = [], ?array $history = [])
     {
         $this->id = $id;
         $this->title = $title;
@@ -758,7 +758,7 @@ class Document
                     AND DOCUMENT_HISTORY_UPDATED_ON.created_on_timestamp <= :toUpdatedOnTimestamp
                 )
             ";
-        } else if (isset($filter["fromUpdatedOnTimestampCondition"]) && $filter["fromUpdatedOnTimestampCondition"] > 0) {
+        } elseif (isset($filter["fromUpdatedOnTimestampCondition"]) && $filter["fromUpdatedOnTimestampCondition"] > 0) {
 
             $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":fromUpdatedOnTimestamp", $filter["fromUpdatedOnTimestampCondition"]);
             $queryConditions[] = "
@@ -770,7 +770,7 @@ class Document
                     AND DOCUMENT_HISTORY_UPDATED_ON.created_on_timestamp >= :fromUpdatedOnTimestamp
                 )
             ";
-        } else if (isset($filter["toUpdatedOnTimestampCondition"]) && $filter["toUpdatedOnTimestampCondition"] > 0) {
+        } elseif (isset($filter["toUpdatedOnTimestampCondition"]) && $filter["toUpdatedOnTimestampCondition"] > 0) {
             $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":toUpdatedOnTimestamp", $filter["toUpdatedOnTimestampCondition"]);
             $queryConditions[] = "
                 EXISTS (

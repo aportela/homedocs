@@ -6,9 +6,9 @@ namespace HomeDocs;
 
 class Constants
 {
-    const UUID_V4_LENGTH = 36;
-    const MAX_DOCUMENT_TITLE_LENGTH = 128;
-    const MAX_DOCUMENT_DESCRIPTION_LENGTH = 8192;
-    const MAX_DOCUMENT_TAG_LENGTH = 32;
-    const MAX_DOCUMENT_NOTE_BODY_LENGTH = 16384;
+    public const UUID_V4_LENGTH = 36;
+    public const MAX_DOCUMENT_TITLE_LENGTH = 128;
+    public const MAX_DOCUMENT_DESCRIPTION_LENGTH = 8192;
+    public const MAX_DOCUMENT_TAG_LENGTH = 32;
+    public const MAX_DOCUMENT_NOTE_BODY_LENGTH = 16384;
 }
