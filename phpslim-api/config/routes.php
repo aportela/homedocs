@@ -515,7 +515,7 @@ return function (App $app) {
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
 
-                $group->get('/total-uploaded-attachments', function (Request $request, Response $response, array $args) use ($app) {
+                $group->get('/total-uploaded-attachments', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $payload = json_encode(
                         [
                             'initialState' => $initialState,
@@ -526,7 +526,7 @@ return function (App $app) {
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
 
-                $group->get('/total-uploaded-attachments-disk-usage', function (Request $request, Response $response, array $args) use ($app) {
+                $group->get('/total-uploaded-attachments-disk-usage', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $payload = json_encode(
                         [
                             'initialState' => $initialState,
@@ -537,7 +537,7 @@ return function (App $app) {
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
 
-                $group->get('/heatmap-activity-data', function (Request $request, Response $response, array $args) use ($app) {
+                $group->get('/heatmap-activity-data', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $queryParams = $request->getQueryParams();
                     $payload = json_encode(
                         [
