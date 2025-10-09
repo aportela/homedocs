@@ -386,7 +386,6 @@ return function (App $app) {
 
             $group->group('/attachment', function (RouteCollectorProxy $group) use ($app) {
                 $group->get('/{id}', function (Request $request, Response $response, array $args) use ($app) {
-                    $route = $request->getAttribute('route');
                     $attachment = new \HomeDocs\Attachment(
                         $app->getContainer()->get('settings')['paths']['storage'],
                         $args['id']
