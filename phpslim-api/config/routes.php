@@ -19,22 +19,22 @@ return function (App $app) {
 
     $app->group(
         '/api2',
-        function (RouteCollectorProxy $group) {
-            $group->get('/initial_state', function (Request $request, Response $response, array $args) {
+        function (RouteCollectorProxy $group) use ($app) {
+            $group->get('/initial_state', function (Request $request, Response $response, array $args) use ($app) {
                 $payload = json_encode(
                     [
-                        'initialState' => \HomeDocs\Utils::getInitialState($this)
+                        'initialState' => \HomeDocs\Utils::getInitialState($app->getContainer())
                     ]
                 );
                 $response->getBody()->write($payload);
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             });
 
-            $group->post('/user/sign-up', function (Request $request, Response $response, array $args) {
-                $settings = $this->get('settings');
+            $group->post('/user/sign-up', function (Request $request, Response $response, array $args) use ($app) {
+                $settings = $app->getContainer()->get('settings');
                 if ($settings['common']['allowSignUp']) {
                     $params = $request->getParsedBody();
-                    $db = $this->get(\aportela\DatabaseWrapper\DB::class);
+                    $db = $app->getContainer()->get(\aportela\DatabaseWrapper\DB::class);
                     if (\HomeDocs\User::isEmailUsed($db, $params["email"] ?? "")) {
                         throw new \HomeDocs\Exception\AlreadyExistsException("email");
                     } else {
@@ -46,7 +46,7 @@ return function (App $app) {
                         $user->add($db);
                         $payload = json_encode(
                             [
-                                'initialState' => \HomeDocs\Utils::getInitialState($this)
+                                'initialState' => \HomeDocs\Utils::getInitialState($app->getContainer())
                             ]
                         );
                         $response->getBody()->write($payload);
@@ -57,9 +57,9 @@ return function (App $app) {
                 }
             });
 
-            $group->post('/user/sign-in', function (Request $request, Response $response, array $args) {
+            $group->post('/user/sign-in', function (Request $request, Response $response, array $args) use ($app) {
                 $params = $request->getParsedBody();
-                $db = $this->get(\aportela\DatabaseWrapper\DB::class);
+                $db = $app->getContainer()->get(\aportela\DatabaseWrapper\DB::class);
                 $user = new \HomeDocs\User(
                     "",
                     $params["email"] ?? "",
@@ -68,35 +68,34 @@ return function (App $app) {
                 $user->signIn($db);
                 $payload = json_encode(
                     [
-                        'initialState' => \HomeDocs\Utils::getInitialState($this)
+                        'initialState' => \HomeDocs\Utils::getInitialState($app->getContainer())
                     ]
                 );
                 $response->getBody()->write($payload);
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             });
 
-            $group->post('/user/sign-out', function (Request $request, Response $response, array $args) {
-                $settings = $this->get('settings');
+            $group->post('/user/sign-out', function (Request $request, Response $response, array $args) use ($app) {
                 \HomeDocs\User::signOut();
                 $payload = json_encode(
                     [
-                        'initialState' => \HomeDocs\Utils::getInitialState($this)
+                        'initialState' => \HomeDocs\Utils::getInitialState($app->getContainer())
                     ]
                 );
                 $response->getBody()->write($payload);
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             });
 
-            $group->group('/user', function (RouteCollectorProxy $group) {
-                $group->get('/profile', function (Request $request, Response $response, array $args) {
+            $group->group('/user', function (RouteCollectorProxy $group) use ($app) {
+                $group->get('/profile', function (Request $request, Response $response, array $args) use ($app) {
                     $user = new \HomeDocs\User();
                     $user->id = \HomeDocs\UserSession::getUserId();
-                    $user->get($this->get(\aportela\DatabaseWrapper\DB::class));
+                    $user->get($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class));
                     unset($user->password);
                     unset($user->passwordHash);
                     $payload = json_encode(
                         [
-                            'initialState' => \HomeDocs\Utils::getInitialState($this),
+                            'initialState' => \HomeDocs\Utils::getInitialState($app->getContainer()),
                             'data' => $user
                         ]
                     );
@@ -104,9 +103,9 @@ return function (App $app) {
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
 
-                $group->put('/profile', function (Request $request, Response $response, array $args) {
+                $group->put('/profile', function (Request $request, Response $response, array $args) use ($app) {
                     $params = $request->getParsedBody();
-                    $db = $this->get(\aportela\DatabaseWrapper\DB::class);
+                    $db = $app->getContainer()->get(\aportela\DatabaseWrapper\DB::class);
                     $user = new \HomeDocs\User(
                         \HomeDocs\UserSession::getUserId(),
                         "",
@@ -129,7 +128,7 @@ return function (App $app) {
                     unset($user->passwordHash);
                     $payload = json_encode(
                         [
-                            'initialState' => \HomeDocs\Utils::getInitialState($this),
+                            'initialState' => \HomeDocs\Utils::getInitialState($app->getContainer()),
                             'data' => $user
                         ]
                     );
@@ -138,16 +137,16 @@ return function (App $app) {
                 });
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $group->group('/search', function (RouteCollectorProxy $group) {
+            $group->group('/search', function (RouteCollectorProxy $group) use ($app) {
                 // TODO: is this required ? can be recplaced only with /search/document with custom params
-                $group->post('/recent_documents', function (Request $request, Response $response, array $args) {
-                    $settings = $this->get('settings');
+                $group->post('/recent_documents', function (Request $request, Response $response, array $args) use ($app) {
+                    $settings = $app->getContainer()->get('settings');
                     $params = $request->getParsedBody();
                     $payload = json_encode(
                         [
-                            'initialState' => \HomeDocs\Utils::getInitialState($this),
+                            'initialState' => \HomeDocs\Utils::getInitialState($app->getContainer()),
                             'recentDocuments' => \HomeDocs\Document::searchRecent(
-                                $this->get(\aportela\DatabaseWrapper\DB::class),
+                                $app->getContainer()->get(\aportela\DatabaseWrapper\DB::class),
                                 $params["count"] ?? $settings["common"]["defaultResultsPage"]
                             )
                         ]
@@ -156,14 +155,14 @@ return function (App $app) {
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
 
-                $group->post('/document', function (Request $request, Response $response, array $args) {
-                    $settings = $this->get('settings');
+                $group->post('/document', function (Request $request, Response $response, array $args) use ($app) {
+                    $settings = $app->getContainer()->get('settings');
                     $params = $request->getParsedBody();
                     $payload = json_encode(
                         [
-                            'initialState' => \HomeDocs\Utils::getInitialState($this),
+                            'initialState' => \HomeDocs\Utils::getInitialState($app->getContainer()),
                             'results' => \HomeDocs\Document::search(
-                                $this->get(\aportela\DatabaseWrapper\DB::class),
+                                $app->getContainer()->get(\aportela\DatabaseWrapper\DB::class),
                                 new \aportela\DatabaseBrowserWrapper\Pager(true, intval($params["currentPage"] ?? 1), intval($params["resultsPage"] ?? $settings["common"]["defaultResultsPage"])),
                                 [
                                     "title" => $params["title"] ?? null,
@@ -188,15 +187,15 @@ return function (App $app) {
                 });
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $group->group('/document', function (RouteCollectorProxy $group) {
-                $group->get('/{id}', function (Request $request, Response $response, array $args) {
+            $group->group('/document', function (RouteCollectorProxy $group) use ($app) {
+                $group->get('/{id}', function (Request $request, Response $response, array $args) use ($app) {
                     $document = new \HomeDocs\Document();
                     $document->id = $args['id'];
-                    $document->setRootStoragePath($this->get('settings')['paths']['storage']);
-                    $document->get($this->get(\aportela\DatabaseWrapper\DB::class));
+                    $document->setRootStoragePath($app->getContainer()->get('settings')['paths']['storage']);
+                    $document->get($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class));
                     $payload = json_encode(
                         [
-                            'initialState' => \HomeDocs\Utils::getInitialState($this),
+                            'initialState' => \HomeDocs\Utils::getInitialState($app->getContainer()),
                             'document' => $document
                         ]
                     );
@@ -204,14 +203,14 @@ return function (App $app) {
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
 
-                $group->get('/{id}/notes', function (Request $request, Response $response, array $args) {
+                $group->get('/{id}/notes', function (Request $request, Response $response, array $args) use ($app) {
                     $document = new \HomeDocs\Document();
                     $document->id = $args['id'];
-                    $document->setRootStoragePath($this->get('settings')['paths']['storage']);
-                    $document->get($this->get(\aportela\DatabaseWrapper\DB::class));
+                    $document->setRootStoragePath($app->getContainer()->get('settings')['paths']['storage']);
+                    $document->get($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class));
                     $payload = json_encode(
                         [
-                            'initialState' => \HomeDocs\Utils::getInitialState($this),
+                            'initialState' => \HomeDocs\Utils::getInitialState($app->getContainer()),
                             'notes' => $document->notes
                         ]
                     );
@@ -219,14 +218,14 @@ return function (App $app) {
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
 
-                $group->get('/{id}/attachments', function (Request $request, Response $response, array $args) {
+                $group->get('/{id}/attachments', function (Request $request, Response $response, array $args) use ($app) {
                     $document = new \HomeDocs\Document();
                     $document->id = $args['id'];
-                    $document->setRootStoragePath($this->get('settings')['paths']['storage']);
-                    $document->get($this->get(\aportela\DatabaseWrapper\DB::class));
+                    $document->setRootStoragePath($app->getContainer()->get('settings')['paths']['storage']);
+                    $document->get($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class));
                     $payload = json_encode(
                         [
-                            'initialState' => \HomeDocs\Utils::getInitialState($this),
+                            'initialState' => \HomeDocs\Utils::getInitialState($app->getContainer()),
                             'attachments' => $document->attachments
                         ]
                     );
@@ -234,10 +233,10 @@ return function (App $app) {
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
 
-                $group->post('/{id}', function (Request $request, Response $response, array $args) {
+                $group->post('/{id}', function (Request $request, Response $response, array $args) use ($app) {
                     $params = $request->getParsedBody();
                     $documentAttachments = $params["attachments"] ?? [];
-                    $rootStoragePath = $this->get('settings')['paths']['storage'];
+                    $rootStoragePath = $app->getContainer()->get('settings')['paths']['storage'];
                     $attachments = array();
                     if (is_array($documentAttachments) && count($documentAttachments) > 0) {
                         foreach ($documentAttachments as $documentAttachment) {
@@ -261,7 +260,7 @@ return function (App $app) {
                             );
                         }
                     }
-                    $rootStoragePath = $this->get('settings')['paths']['storage'];
+                    $rootStoragePath = $app->getContainer()->get('settings')['paths']['storage'];
                     $document = new \HomeDocs\Document(
                         $args['id'],
                         $params["title"] ?? "",
@@ -273,7 +272,7 @@ return function (App $app) {
                         $notes,
                     );
                     $document->setRootStoragePath($rootStoragePath);
-                    $dbh = $this->get(\aportela\DatabaseWrapper\DB::class);
+                    $dbh = $app->getContainer()->get(\aportela\DatabaseWrapper\DB::class);
                     $dbh->beginTransaction();
                     try {
                         $document->add($dbh);
@@ -286,7 +285,7 @@ return function (App $app) {
                     $document->get($dbh);
                     $payload = json_encode(
                         [
-                            'initialState' => \HomeDocs\Utils::getInitialState($this),
+                            'initialState' => \HomeDocs\Utils::getInitialState($app->getContainer()),
                             'document' => $document
                         ]
                     );
@@ -294,14 +293,14 @@ return function (App $app) {
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
 
-                $group->put('/{id}', function (Request $request, Response $response, array $args) {
+                $group->put('/{id}', function (Request $request, Response $response, array $args) use ($app) {
                     $params = $request->getParsedBody();
-                    $dbh = $this->get(\aportela\DatabaseWrapper\DB::class);
+                    $dbh = $app->getContainer()->get(\aportela\DatabaseWrapper\DB::class);
                     $document = new \HomeDocs\Document(
                         $args['id']
                     );
                     // test existence && check permissions
-                    $rootStoragePath = $this->get('settings')['paths']['storage'];
+                    $rootStoragePath = $app->getContainer()->get('settings')['paths']['storage'];
                     $document->setRootStoragePath($rootStoragePath);
                     $document->get($dbh);
                     $documentAttachments = $params["attachments"] ?? [];
@@ -348,10 +347,10 @@ return function (App $app) {
                         $dbh->rollBack();
                         throw $e;
                     }
-                    $document->get($this->get(\aportela\DatabaseWrapper\DB::class));
+                    $document->get($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class));
                     $payload = json_encode(
                         [
-                            'initialState' => \HomeDocs\Utils::getInitialState($this),
+                            'initialState' => \HomeDocs\Utils::getInitialState($app->getContainer()),
                             'document' => $document
                         ]
                     );
@@ -359,12 +358,12 @@ return function (App $app) {
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
 
-                $group->delete('/{id}', function (Request $request, Response $response, array $args) {
+                $group->delete('/{id}', function (Request $request, Response $response, array $args) use ($app) {
                     $document = new \HomeDocs\Document(
                         $args['id']
                     );
-                    $document->setRootStoragePath($this->get('settings')['paths']['storage']);
-                    $dbh = $this->get(\aportela\DatabaseWrapper\DB::class);
+                    $document->setRootStoragePath($app->getContainer()->get('settings')['paths']['storage']);
+                    $dbh = $app->getContainer()->get(\aportela\DatabaseWrapper\DB::class);
                     // test existence && check permissions
                     $document->get($dbh);
                     try {
@@ -377,7 +376,7 @@ return function (App $app) {
                     }
                     $payload = json_encode(
                         [
-                            'initialState' => \HomeDocs\Utils::getInitialState($this)
+                            'initialState' => \HomeDocs\Utils::getInitialState($app->getContainer())
                         ]
                     );
                     $response->getBody()->write($payload);
@@ -385,14 +384,14 @@ return function (App $app) {
                 });
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $group->group('/attachment', function (RouteCollectorProxy $group) {
-                $group->get('/{id}', function (Request $request, Response $response, array $args) {
+            $group->group('/attachment', function (RouteCollectorProxy $group) use ($app) {
+                $group->get('/{id}', function (Request $request, Response $response, array $args) use ($app) {
                     $route = $request->getAttribute('route');
                     $attachment = new \HomeDocs\Attachment(
-                        $this->get('settings')['paths']['storage'],
+                        $app->getContainer()->get('settings')['paths']['storage'],
                         $args['id']
                     );
-                    $attachment->get($this->get(\aportela\DatabaseWrapper\DB::class));
+                    $attachment->get($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class));
                     $localStoragePath = $attachment->getLocalStoragePath();
                     if (file_exists($localStoragePath)) {
                         $partialContent = false;
@@ -434,18 +433,18 @@ return function (App $app) {
                     }
                 })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-                $group->post('[/{id}]', function (Request $request, Response $response, array $args) {
+                $group->post('[/{id}]', function (Request $request, Response $response, array $args) use ($app) {
                     $uploadedFiles = $request->getUploadedFiles();
                     $attachment = new \HomeDocs\Attachment(
-                        $this->get('settings')['paths']['storage'],
+                        $app->getContainer()->get('settings')['paths']['storage'],
                         isset($args['id']) ? $args['id'] : \HomeDocs\Utils::uuidv4(),
                         $uploadedFiles["file"]->getClientFilename(),
                         $uploadedFiles["file"]->getSize()
                     );
-                    $attachment->add($this->get(\aportela\DatabaseWrapper\DB::class), $uploadedFiles["file"]);
+                    $attachment->add($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class), $uploadedFiles["file"]);
                     $payload = json_encode(
                         [
-                            'initialState' => \HomeDocs\Utils::getInitialState($this),
+                            'initialState' => \HomeDocs\Utils::getInitialState($app->getContainer()),
                             'data' => array(
                                 "id" => $attachment->id,
                                 "name" => $attachment->name,
@@ -459,19 +458,19 @@ return function (App $app) {
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-                $group->delete('/{id}', function (Request $request, Response $response, array $args) {
+                $group->delete('/{id}', function (Request $request, Response $response, array $args) use ($app) {
                     $attachment = new \HomeDocs\Attachment(
-                        $this->get('settings')['paths']['storage'],
+                        $app->getContainer()->get('settings')['paths']['storage'],
                         $args['id']
                     );
-                    $dbh = $this->get(\aportela\DatabaseWrapper\DB::class);
+                    $dbh = $app->getContainer()->get(\aportela\DatabaseWrapper\DB::class);
                     if ($attachment->isLinkedToDocument($dbh)) {
                         throw new \HomeDocs\Exception\AccessDeniedException();
                     } else {
                         $attachment->remove($dbh);
                         $payload = json_encode(
                             [
-                                'initialState' => \HomeDocs\Utils::getInitialState($this),
+                                'initialState' => \HomeDocs\Utils::getInitialState($app->getContainer()),
                             ]
                         );
                         $response->getBody()->write($payload);
@@ -480,69 +479,69 @@ return function (App $app) {
                 })->add(\HomeDocs\Middleware\CheckAuth::class);
             });
 
-            $group->get('/tag-cloud', function (Request $request, Response $response, array $args) {
+            $group->get('/tag-cloud', function (Request $request, Response $response, array $args) use ($app) {
                 $payload = json_encode(
                     [
-                        'initialState' => \HomeDocs\Utils::getInitialState($this),
-                        'tags' => \HomeDocs\Tag::getCloud($this->get(\aportela\DatabaseWrapper\DB::class))
+                        'initialState' => \HomeDocs\Utils::getInitialState($app->getContainer()),
+                        'tags' => \HomeDocs\Tag::getCloud($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class))
                     ]
                 );
                 $response->getBody()->write($payload);
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $group->get('/tags', function (Request $request, Response $response, array $args) {
+            $group->get('/tags', function (Request $request, Response $response, array $args) use ($app) {
                 $payload = json_encode(
                     [
-                        'initialState' => \HomeDocs\Utils::getInitialState($this),
-                        'tags' => \HomeDocs\Tag::search($this->get(\aportela\DatabaseWrapper\DB::class))
+                        'initialState' => \HomeDocs\Utils::getInitialState($app->getContainer()),
+                        'tags' => \HomeDocs\Tag::search($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class))
                     ]
                 );
                 $response->getBody()->write($payload);
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $group->group('/stats', function (RouteCollectorProxy $group) {
-                $group->get('/total-published-documents', function (Request $request, Response $response, array $args) {
+            $group->group('/stats', function (RouteCollectorProxy $group) use ($app) {
+                $group->get('/total-published-documents', function (Request $request, Response $response, array $args) use ($app) {
                     $payload = json_encode(
                         [
-                            'initialState' => \HomeDocs\Utils::getInitialState($this),
-                            'count' => \HomeDocs\Stats::getTotalPublishedDocuments($this->get(\aportela\DatabaseWrapper\DB::class))
+                            'initialState' => \HomeDocs\Utils::getInitialState($app->getContainer()),
+                            'count' => \HomeDocs\Stats::getTotalPublishedDocuments($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class))
                         ]
                     );
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
 
-                $group->get('/total-uploaded-attachments', function (Request $request, Response $response, array $args) {
+                $group->get('/total-uploaded-attachments', function (Request $request, Response $response, array $args) use ($app) {
                     $payload = json_encode(
                         [
-                            'initialState' => \HomeDocs\Utils::getInitialState($this),
-                            'count' => \HomeDocs\Stats::getTotalUploadedAttachments($this->get(\aportela\DatabaseWrapper\DB::class))
+                            'initialState' => \HomeDocs\Utils::getInitialState($app->getContainer()),
+                            'count' => \HomeDocs\Stats::getTotalUploadedAttachments($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class))
                         ]
                     );
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
 
-                $group->get('/total-uploaded-attachments-disk-usage', function (Request $request, Response $response, array $args) {
+                $group->get('/total-uploaded-attachments-disk-usage', function (Request $request, Response $response, array $args) use ($app) {
                     $payload = json_encode(
                         [
-                            'initialState' => \HomeDocs\Utils::getInitialState($this),
-                            'size' => \HomeDocs\Stats::getTotalUploadedAttachmentsDiskUsage($this->get(\aportela\DatabaseWrapper\DB::class))
+                            'initialState' => \HomeDocs\Utils::getInitialState($app->getContainer()),
+                            'size' => \HomeDocs\Stats::getTotalUploadedAttachmentsDiskUsage($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class))
                         ]
                     );
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
 
-                $group->get('/heatmap-activity-data', function (Request $request, Response $response, array $args) {
+                $group->get('/heatmap-activity-data', function (Request $request, Response $response, array $args) use ($app) {
                     $queryParams = $request->getQueryParams();
                     $payload = json_encode(
                         [
-                            'initialState' => \HomeDocs\Utils::getInitialState($this),
+                            'initialState' => \HomeDocs\Utils::getInitialState($app->getContainer()),
                             'heatmap' => \HomeDocs\Stats::getActivityHeatMapData(
-                                $this->get(\aportela\DatabaseWrapper\DB::class),
+                                $app->getContainer()->get(\aportela\DatabaseWrapper\DB::class),
                                 isset($queryParams["fromTimestamp"]) ? $queryParams["fromTimestamp"] : 0
                             )
                         ]
