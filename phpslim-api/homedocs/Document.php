@@ -646,11 +646,46 @@ class Document
         return ($operations);
     }
 
-    public static function search(\aportela\DatabaseWrapper\DB $dbh, int $currentPage = 1, int $resultsPage = 16, $filter = array(), string $sortBy = "createdOnTimestamp", string $sortOrder = "DESC"): \stdClass
+    public static function search(\aportela\DatabaseWrapper\DB $dbh, int $currentPage = 1, int $resultsPage = 16, $filter = array(), string $sortBy = "createdOnTimestamp", \aportela\DatabaseBrowserWrapper\Order $sortOrder = \aportela\DatabaseBrowserWrapper\Order::DESC): \stdClass
     {
-        $data = new \stdClass();
-        $data->pagination = new \stdClass();
-        $data->documents = array();
+
+        $fieldDefinitions = [
+            "id" => "DOCUMENT.id",
+            "title" => "DOCUMENT.title",
+            "description" => "DOCUMENT.description",
+            "createdOnTimestamp" => "DOCUMENT_HISTORY_CREATION_DATE.created_on_timestamp",
+            "lastUpdateTimestamp" => "COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.created_on_timestamp, DOCUMENT_HISTORY_CREATION_DATE.created_on_timestamp)",
+            "attachmentCount" => "TMP_ATTACHMENT_COUNT.attachmentCount",
+            "noteCount" => "TMP_ATTACHMENT_COUNT.attachmentCount",
+        ];
+        $fieldCountDefinition = [
+            "total" => "COUNT (DOCUMENT.id)"
+        ];
+        $sortItems = [];
+        switch ($sortBy) {
+            case "title":
+            case "description":
+            case "attachmentCount":
+            case "noteCount":
+            case "createdOnTimestamp":
+            case "lastUpdateTimestamp":
+                $sortItems[] = new \aportela\DatabaseBrowserWrapper\SortItem($sortBy, $sortOrder, true);
+                break;
+            default:
+                $sortItems[] = new \aportela\DatabaseBrowserWrapper\SortItem("createdOnTimestamp", $sortOrder, true);
+                break;
+        }
+        // TODO
+        $afterBrowse = function () {};
+        $browser = new \aportela\DatabaseBrowserWrapper\Browser(
+            $dbh,
+            $fieldDefinitions,
+            $fieldCountDefinition,
+            new \aportela\DatabaseBrowserWrapper\Pager(true, $currentPage, $resultsPage),
+            new \aportela\DatabaseBrowserWrapper\Sort($sortItems),
+            new \aportela\DatabaseBrowserWrapper\Filter(),
+            $afterBrowse
+        );
         $queryConditions = array();
         $params = array(
             new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
@@ -800,183 +835,129 @@ class Document
             }
         }
         $whereCondition = count($queryConditions) > 0 ? " WHERE " .  implode(" AND ", $queryConditions) : "";
-        /*
-        $pager = new \aportela\DatabaseBrowserWrapper\Pager(true, $currentPage, $resultsPage);
-        $sort = new \aportela\DatabaseBrowserWrapper\Sort(
-            [
-                new \aportela\DatabaseBrowserWrapper\SortItem("age", \aportela\DatabaseBrowserWrapper\Order::DESC, false),
-                new \aportela\DatabaseBrowserWrapper\SortItem("name", \aportela\DatabaseBrowserWrapper\Order::ASC, true)
-            ]
-        );
-        $fieldDefinitions = [
-            "id" => "TABLEV1.id",
-            "name" => "TABLEV1.name",
-            "age" => "TABLEV1.age"
-        ];
-        $fieldCountDefinition = [
-            "totalResults" => "COUNT(TABLEV1.id)"
-        ];
-        $browser = new \aportela\DatabaseBrowserWrapper\Browser(
-            $dbh,
-            $fieldDefinitions,
-            $fieldCountDefinition,
-            $pager,
-            $sort,
-            new \aportela\DatabaseBrowserWrapper\Filter()
-        );
-        //$browser->addDBQueryParam();
-        //$browser->launch($query, $queryCount);
-
-        */
-        // TODO: only LEFT JOIN LAST UPDATE IF REQUIRED BY FILTERS
-        $queryCount = sprintf('
-                SELECT
-                    COUNT (DOCUMENT.id) AS total
-                FROM DOCUMENT
-                INNER JOIN DOCUMENT_HISTORY AS DOCUMENT_HISTORY_CREATION_DATE ON (
-                    DOCUMENT_HISTORY_CREATION_DATE.document_id = DOCUMENT.id
-                    AND DOCUMENT_HISTORY_CREATION_DATE.created_by_user_id = :session_user_id
-                    AND DOCUMENT_HISTORY_CREATION_DATE.operation_type = :history_operation_add
-                )
-                LEFT JOIN (
+        $browser->addDBQueryParams($params);
+        $query = $browser->buildQuery(
+            sprintf(
+                "
                     SELECT
-                        DOCUMENT_HISTORY.document_id, MAX(DOCUMENT_HISTORY.created_on_timestamp) AS created_on_timestamp
-                    FROM DOCUMENT_HISTORY
-                    WHERE DOCUMENT_HISTORY.operation_type = :history_operation_update
-                    AND DOCUMENT_HISTORY.created_by_user_id = :session_user_id
-                    GROUP BY DOCUMENT_HISTORY.document_id
-                ) DOCUMENT_HISTORY_LAST_UPDATE ON DOCUMENT_HISTORY_LAST_UPDATE.document_id = DOCUMENT.id
-                %s
-            ', $whereCondition);
-        $result = $dbh->query($queryCount, $params);
+                        %%s
+                    FROM DOCUMENT
+                    INNER JOIN DOCUMENT_HISTORY AS DOCUMENT_HISTORY_CREATION_DATE ON (
+                        DOCUMENT_HISTORY_CREATION_DATE.document_id = DOCUMENT.id
+                        AND DOCUMENT_HISTORY_CREATION_DATE.created_by_user_id = :session_user_id
+                        AND DOCUMENT_HISTORY_CREATION_DATE.operation_type = :history_operation_add
+                    )
+                    LEFT JOIN (
+                        SELECT
+                            DOCUMENT_HISTORY.document_id, MAX(DOCUMENT_HISTORY.created_on_timestamp) AS created_on_timestamp
+                        FROM DOCUMENT_HISTORY
+                        WHERE DOCUMENT_HISTORY.operation_type = :history_operation_update
+                        GROUP BY DOCUMENT_HISTORY.document_id
+                    ) DOCUMENT_HISTORY_LAST_UPDATE ON DOCUMENT_HISTORY_LAST_UPDATE.document_id = DOCUMENT.id
+                    LEFT JOIN (
+                        SELECT COUNT(*) AS attachmentCount, document_id
+                        FROM DOCUMENT_ATTACHMENT
+                        GROUP BY document_id
+                    ) TMP_ATTACHMENT_COUNT ON TMP_ATTACHMENT_COUNT.document_id = DOCUMENT.id
+                    LEFT JOIN (
+                        SELECT COUNT(*) AS noteCount, document_id
+                        FROM DOCUMENT_NOTE
+                        GROUP BY document_id
+                    ) TMP_NOTE_COUNT ON TMP_NOTE_COUNT.document_id = DOCUMENT.id
+                    %s
+                    %%s
+                    %%s
+                ",
+                $whereCondition
+            )
+        );
+        // TODO: only LEFT JOIN LAST UPDATE IF REQUIRED BY FILTERS
+        $queryCount = $browser->buildQueryCount(
+            sprintf(
+                "
+                    SELECT
+                        %%s
+                    FROM DOCUMENT
+                    INNER JOIN DOCUMENT_HISTORY AS DOCUMENT_HISTORY_CREATION_DATE ON (
+                        DOCUMENT_HISTORY_CREATION_DATE.document_id = DOCUMENT.id
+                        AND DOCUMENT_HISTORY_CREATION_DATE.created_by_user_id = :session_user_id
+                        AND DOCUMENT_HISTORY_CREATION_DATE.operation_type = :history_operation_add
+                    )
+                    LEFT JOIN (
+                        SELECT
+                            DOCUMENT_HISTORY.document_id, MAX(DOCUMENT_HISTORY.created_on_timestamp) AS created_on_timestamp
+                        FROM DOCUMENT_HISTORY
+                        WHERE DOCUMENT_HISTORY.operation_type = :history_operation_update
+                        AND DOCUMENT_HISTORY.created_by_user_id = :session_user_id
+                        GROUP BY DOCUMENT_HISTORY.document_id
+                    ) DOCUMENT_HISTORY_LAST_UPDATE ON DOCUMENT_HISTORY_LAST_UPDATE.document_id = DOCUMENT.id
+                    %s
+                ",
+                $whereCondition
+            )
+        );
+        $browserResults = $browser->launch($query, $queryCount);
+        $data = new \stdClass();
+        $data->documents = array_map(
+            function ($item) use ($filter, $dbh) {
+                $item->createdOnTimestamp = intval($item->createdOnTimestamp);
+                $item->lastUpdateTimestamp = intval($item->lastUpdateTimestamp);
+                $item->attachmentCount = intval($item->attachmentCount);
+                $item->noteCount = intval($item->noteCount);
+                $item->matchedFragments = [];
+                if (isset($filter["title"]) && !empty($filter["title"])) {
+                    $fragment = \HomeDocs\Utils::getStringFragment($item->title, $filter["title"], 64, true);
+                    if (! empty($fragment)) {
+                        $item->matchedFragments[] = [
+                            "matchedOn" => "title",
+                            "fragment" => $fragment
+                        ];
+                    }
+                }
+                if (isset($filter["description"]) && !empty($filter["description"])) {
+                    $fragment = \HomeDocs\Utils::getStringFragment($item->description, $filter["description"], 64, true);
+                    if (! empty($fragment)) {
+                        $item->matchedFragments[] = [
+                            "matchedOn" => "description",
+                            "fragment" => $fragment
+                        ];
+                    }
+                }
+                if (isset($filter["notesBody"]) && !empty($filter["notesBody"])) {
+                    // TODO: this NEEDS to be rewritten with more efficient method
+                    $notes = (new \Homedocs\Document($item->id))->getNotes($dbh, $filter["notesBody"]);
+                    foreach ($notes as $note) {
+                        $fragment = \HomeDocs\Utils::getStringFragment($note->body, $filter["notesBody"], 64, true);
+                        if (! empty($fragment)) {
+                            $item->matchedFragments[] = [
+                                "matchedOn" => "note body",
+                                "fragment" => $fragment
+                            ];
+                        }
+                    }
+                }
+                if (isset($filter["attachmentsFilename"]) && !empty($filter["attachmentsFilename"])) {
+                    // TODO: this NEEDS to be rewritten with more efficient method
+                    $attachments = (new \Homedocs\Document($item->id))->getAttachments($dbh, $filter["attachmentsFilename"]);
+                    foreach ($attachments as $attachment) {
+                        $fragment = \HomeDocs\Utils::getStringFragment($attachment->name, $filter["attachmentsFilename"], 64, true);
+                        if (! empty($fragment)) {
+                            $item->matchedFragments[] = [
+                                "matchedOn" => "attachment filename",
+                                "fragment" => $fragment
+                            ];
+                        }
+                    }
+                }
+                return ($item);
+            },
+            $browserResults->items
+        );
+        $data->pagination = new \stdClass();
         $data->pagination->currentPage = $currentPage;
         $data->pagination->resultsPage = $resultsPage;
-        $data->pagination->totalResults = intval($result[0]->total);
-        if ($data->pagination->resultsPage > 0) {
-            $data->pagination->totalPages = ceil($data->pagination->totalResults / $resultsPage);
-        } else {
-            $data->pagination->totalPages = $data->pagination->totalResults > 0 ? 1 : 0;
-        }
-        if ($data->pagination->totalResults > 0) {
-            $sqlSortBy = "";
-            switch ($sortBy) {
-                case "title":
-                    $sqlSortBy = "DOCUMENT.title";
-                    break;
-                case "description":
-                    $sqlSortBy = "DOCUMENT.description";
-                    break;
-                case "attachmentCount":
-                    $sqlSortBy = "TMP_ATTACHMENT_COUNT.attachmentCount";
-                    break;
-                case "noteCount":
-                    $sqlSortBy = "TMP_NOTE_COUNT.noteCount";
-                    break;
-                case "createdOnTimestamp":
-                    $sqlSortBy = "DOCUMENT_HISTORY_CREATION_DATE.created_on_timestamp";
-                    break;
-                case "lastUpdateTimestamp":
-                    $sqlSortBy = "COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.created_on_timestamp, DOCUMENT_HISTORY_CREATION_DATE.created_on_timestamp)";
-                    break;
-                default:
-                    $sqlSortBy = "DOCUMENT_HISTORY_CREATION_DATE.created_on_timestamp";
-                    break;
-            }
-            $data->documents = $dbh->query(
-                sprintf(
-                    "
-                            SELECT
-                                DOCUMENT.id, DOCUMENT.title, DOCUMENT.description, DOCUMENT_HISTORY_CREATION_DATE.created_on_timestamp AS createdOnTimestamp, COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.created_on_timestamp, DOCUMENT_HISTORY_CREATION_DATE.created_on_timestamp) AS lastUpdateTimestamp, TMP_ATTACHMENT_COUNT.attachmentCount, TMP_NOTE_COUNT.noteCount
-                            FROM DOCUMENT
-                            INNER JOIN DOCUMENT_HISTORY AS DOCUMENT_HISTORY_CREATION_DATE ON (
-                                DOCUMENT_HISTORY_CREATION_DATE.document_id = DOCUMENT.id
-                                AND DOCUMENT_HISTORY_CREATION_DATE.created_by_user_id = :session_user_id
-                                AND DOCUMENT_HISTORY_CREATION_DATE.operation_type = :history_operation_add
-                            )
-                            LEFT JOIN (
-                                SELECT
-                                    DOCUMENT_HISTORY.document_id, MAX(DOCUMENT_HISTORY.created_on_timestamp) AS created_on_timestamp
-                                FROM DOCUMENT_HISTORY
-                                WHERE DOCUMENT_HISTORY.operation_type = :history_operation_update
-                                GROUP BY DOCUMENT_HISTORY.document_id
-                            ) DOCUMENT_HISTORY_LAST_UPDATE ON DOCUMENT_HISTORY_LAST_UPDATE.document_id = DOCUMENT.id
-                            LEFT JOIN (
-                                SELECT COUNT(*) AS attachmentCount, document_id
-                                FROM DOCUMENT_ATTACHMENT
-                                GROUP BY document_id
-                            ) TMP_ATTACHMENT_COUNT ON TMP_ATTACHMENT_COUNT.document_id = DOCUMENT.id
-                            LEFT JOIN (
-                                SELECT COUNT(*) AS noteCount, document_id
-                                FROM DOCUMENT_NOTE
-                                GROUP BY document_id
-                            ) TMP_NOTE_COUNT ON TMP_NOTE_COUNT.document_id = DOCUMENT.id
-                            %s
-                            ORDER BY %s COLLATE NOCASE %s
-                            %s;
-                        ",
-                    $whereCondition,
-                    $sqlSortBy,
-                    $sortOrder == "DESC" ? "DESC" : "ASC",
-                    $data->pagination->resultsPage > 0 ? sprintf("LIMIT %d OFFSET %d", $data->pagination->resultsPage, $data->pagination->resultsPage * ($data->pagination->currentPage - 1)) : null
-                ),
-                $params
-            );
-            $data->documents = array_map(
-                function ($item) use ($filter, $dbh) {
-                    $item->createdOnTimestamp = intval($item->createdOnTimestamp);
-                    $item->lastUpdateTimestamp = intval($item->lastUpdateTimestamp);
-                    $item->attachmentCount = intval($item->attachmentCount);
-                    $item->noteCount = intval($item->noteCount);
-                    $item->matchedFragments = [];
-                    if (isset($filter["title"]) && !empty($filter["title"])) {
-                        $fragment = \HomeDocs\Utils::getStringFragment($item->title, $filter["title"], 64, true);
-                        if (! empty($fragment)) {
-                            $item->matchedFragments[] = [
-                                "matchedOn" => "title",
-                                "fragment" => $fragment
-                            ];
-                        }
-                    }
-                    if (isset($filter["description"]) && !empty($filter["description"])) {
-                        $fragment = \HomeDocs\Utils::getStringFragment($item->description, $filter["description"], 64, true);
-                        if (! empty($fragment)) {
-                            $item->matchedFragments[] = [
-                                "matchedOn" => "description",
-                                "fragment" => $fragment
-                            ];
-                        }
-                    }
-                    if (isset($filter["notesBody"]) && !empty($filter["notesBody"])) {
-                        // TODO: this NEEDS to be rewritten with more efficient method
-                        $notes = (new \Homedocs\Document($item->id))->getNotes($dbh, $filter["notesBody"]);
-                        foreach ($notes as $note) {
-                            $fragment = \HomeDocs\Utils::getStringFragment($note->body, $filter["notesBody"], 64, true);
-                            if (! empty($fragment)) {
-                                $item->matchedFragments[] = [
-                                    "matchedOn" => "note body",
-                                    "fragment" => $fragment
-                                ];
-                            }
-                        }
-                    }
-                    if (isset($filter["attachmentsFilename"]) && !empty($filter["attachmentsFilename"])) {
-                        // TODO: this NEEDS to be rewritten with more efficient method
-                        $attachments = (new \Homedocs\Document($item->id))->getAttachments($dbh, $filter["attachmentsFilename"]);
-                        foreach ($attachments as $attachment) {
-                            $fragment = \HomeDocs\Utils::getStringFragment($attachment->name, $filter["attachmentsFilename"], 64, true);
-                            if (! empty($fragment)) {
-                                $item->matchedFragments[] = [
-                                    "matchedOn" => "attachment filename",
-                                    "fragment" => $fragment
-                                ];
-                            }
-                        }
-                    }
-                    return ($item);
-                },
-                $data->documents
-            );
-        }
+        $data->pagination->totalResults = $browserResults->pager->getTotalResults();
+        $data->pagination->totalPages = $browserResults->pager->getTotalPages();
         return ($data);
     }
 }

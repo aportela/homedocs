@@ -174,7 +174,7 @@ return function (App $app) {
                                     "tags" => $params["tags"] ?? [],
                                 ],
                                 $params["sortBy"] ?? null,
-                                $params["sortOrder"] ?? null
+                                $params["sortOrder"] == "ASC" ? \aportela\DatabaseBrowserWrapper\Order::ASC : \aportela\DatabaseBrowserWrapper\Order::DESC
                             )
                         ]
                     );
