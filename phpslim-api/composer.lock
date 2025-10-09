@@ -4,30 +4,31 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c49984ee67ce6e5b17da35c15ac5805d",
+    "content-hash": "47631323e2f60c9630d1d542c1353954",
     "packages": [
         {
             "name": "aportela/db-browser-wrapper",
-            "version": "1.0.9",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aportela/db-browser-wrapper.git",
-                "reference": "afc4e274cba33512e1f028c984399c1867fd7a40"
+                "reference": "556a922fee5b3d60a1bc36e22ab2a2d19ac79d7a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aportela/db-browser-wrapper/zipball/afc4e274cba33512e1f028c984399c1867fd7a40",
-                "reference": "afc4e274cba33512e1f028c984399c1867fd7a40",
+                "url": "https://api.github.com/repos/aportela/db-browser-wrapper/zipball/556a922fee5b3d60a1bc36e22ab2a2d19ac79d7a",
+                "reference": "556a922fee5b3d60a1bc36e22ab2a2d19ac79d7a",
                 "shasum": ""
             },
             "require": {
-                "aportela/db-wrapper": "^2.0",
-                "php": ">=8.1",
+                "aportela/db-wrapper": "^2.1",
+                "php": ">=8.4",
                 "psr/log": "^3.0"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.28",
-                "phpunit/phpunit": "^10.3"
+                "friendsofphp/php-cs-fixer": "^3.88",
+                "phpstan/phpstan": "^2.1",
+                "phpunit/phpunit": "^10.5"
             },
             "type": "library",
             "autoload": {
@@ -49,31 +50,31 @@
             "homepage": "https://github.com/aportela/db-browser-wrapper",
             "support": {
                 "issues": "https://github.com/aportela/db-browser-wrapper/issues",
-                "source": "https://github.com/aportela/db-browser-wrapper/tree/1.0.9"
+                "source": "https://github.com/aportela/db-browser-wrapper/tree/1.1.0"
             },
-            "time": "2023-10-18T11:56:28+00:00"
+            "time": "2025-10-09T09:21:59+00:00"
         },
         {
             "name": "aportela/db-wrapper",
-            "version": "2.0.10",
+            "version": "2.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aportela/db-wrapper.git",
-                "reference": "7cff5edf9e0d135cda3bf05f472b25293bbebea5"
+                "reference": "802c39789d0fd1107e6bcf57c5548c0f61ee9738"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aportela/db-wrapper/zipball/7cff5edf9e0d135cda3bf05f472b25293bbebea5",
-                "reference": "7cff5edf9e0d135cda3bf05f472b25293bbebea5",
+                "url": "https://api.github.com/repos/aportela/db-wrapper/zipball/802c39789d0fd1107e6bcf57c5548c0f61ee9738",
+                "reference": "802c39789d0fd1107e6bcf57c5548c0f61ee9738",
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.1",
+                "php": ">=8.4",
                 "psr/log": "^3.0"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.45",
-                "phpstan/phpstan": "^1.10",
+                "friendsofphp/php-cs-fixer": "^3.88",
+                "phpstan/phpstan": "^2.1",
                 "phpunit/phpunit": "^10.5"
             },
             "type": "library",
@@ -96,9 +97,9 @@
             "homepage": "https://github.com/aportela/db-wrapper",
             "support": {
                 "issues": "https://github.com/aportela/db-wrapper/issues",
-                "source": "https://github.com/aportela/db-wrapper/tree/2.0.10"
+                "source": "https://github.com/aportela/db-wrapper/tree/2.1.1"
             },
-            "time": "2025-09-30T20:51:37+00:00"
+            "time": "2025-10-08T22:58:56+00:00"
         },
         {
             "name": "fig/http-message-util",
@@ -5584,12 +5585,12 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": ">=8.1"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
 }
