@@ -11,7 +11,7 @@ return function (App $app) {
         $filePath = dirname(__DIR__) . '/templates/index-quasar.html';
         if (file_exists($filePath)) {
             $response->getBody()->write(file_get_contents($filePath));
-            return $response->withHeader('Content-Type', 'text/html');
+            return $response->withHeader('Content-Type', 'text/html; charset=UTF-8');
         } else {
             return $response->withStatus(404);
         }
