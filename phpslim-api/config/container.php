@@ -1,8 +1,6 @@
 <?php
 
-use Nyholm\Psr7\Factory\Psr17Factory;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ResponseFactoryInterface;
 use Slim\App;
 use Slim\Factory\AppFactory;
 use Slim\Middleware\ErrorMiddleware;
@@ -17,10 +15,6 @@ return [
     App::class => function (ContainerInterface $container) {
         AppFactory::setContainer($container);
         return AppFactory::create();
-    },
-
-    ResponseFactoryInterface::class => function (ContainerInterface $container) {
-        return $container->get(Psr17Factory::class);
     },
 
     ErrorMiddleware::class => function (ContainerInterface $container) {
