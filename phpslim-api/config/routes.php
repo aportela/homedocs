@@ -34,8 +34,8 @@ return function (App $app) {
                 $settings = $app->getContainer()->get('settings');
                 if ($settings['common']['allowSignUp']) {
                     $params = $request->getParsedBody();
-                    $db = $app->getContainer()->get(\aportela\DatabaseWrapper\DB::class);
-                    if (\HomeDocs\User::isEmailUsed($db, $params["email"] ?? "")) {
+                    $dbh = $app->getContainer()->get(\aportela\DatabaseWrapper\DB::class);
+                    if (\HomeDocs\User::isEmailUsed($dbh, $params["email"] ?? "")) {
                         throw new \HomeDocs\Exception\AlreadyExistsException("email");
                     } else {
                         $user = new \HomeDocs\User(
@@ -43,7 +43,7 @@ return function (App $app) {
                             $params["email"] ?? "",
                             $params["password"] ?? ""
                         );
-                        $user->add($db);
+                        $user->add($dbh);
                         $payload = json_encode(
                             [
                                 'initialState' => \HomeDocs\Utils::getInitialState($app->getContainer())
@@ -59,13 +59,13 @@ return function (App $app) {
 
             $group->post('/user/sign-in', function (Request $request, Response $response, array $args) use ($app) {
                 $params = $request->getParsedBody();
-                $db = $app->getContainer()->get(\aportela\DatabaseWrapper\DB::class);
+                $dbh = $app->getContainer()->get(\aportela\DatabaseWrapper\DB::class);
                 $user = new \HomeDocs\User(
                     "",
                     $params["email"] ?? "",
                     $params["password"] ?? ""
                 );
-                $user->signIn($db);
+                $user->signIn($dbh);
                 $payload = json_encode(
                     [
                         'initialState' => \HomeDocs\Utils::getInitialState($app->getContainer())
@@ -105,25 +105,25 @@ return function (App $app) {
 
                 $group->put('/profile', function (Request $request, Response $response, array $args) use ($app) {
                     $params = $request->getParsedBody();
-                    $db = $app->getContainer()->get(\aportela\DatabaseWrapper\DB::class);
+                    $dbh = $app->getContainer()->get(\aportela\DatabaseWrapper\DB::class);
                     $user = new \HomeDocs\User(
                         \HomeDocs\UserSession::getUserId(),
                         "",
                         ""
                     );
-                    $user->get($db);
+                    $user->get($dbh);
                     if ($params["email"] != \HomeDocs\UserSession::getEmail()) {
                         $tmpUser = new \HomeDocs\User(
                             "",
                             $params["email"]
                         );
-                        if ($tmpUser->exists($db)) {
+                        if ($tmpUser->exists($dbh)) {
                             throw new \HomeDocs\Exception\AlreadyExistsException("email");
                         }
                     }
                     $user->email = $params["email"] ?? "";
                     $user->password = $params["password"] ?? "";
-                    $user->update($db);
+                    $user->update($dbh);
                     unset($user->password);
                     unset($user->passwordHash);
                     $payload = json_encode(
