@@ -8,7 +8,13 @@ use Slim\Routing\RouteCollectorProxy;
 // TODO: CheckAuth & JWT middlewares (combine ?)
 return function (App $app) {
     $app->get('/', function (Request $request, Response $response, array $args) {
-        return $this->get('Twig')->render($response, 'index-quasar.html.twig', []);
+        $filePath = dirname(__DIR__) . '/templates/index-quasar.html';
+        if (file_exists($filePath)) {
+            $response->getBody()->write(file_get_contents($filePath));
+            return $response->withHeader('Content-Type', 'text/html');
+        } else {
+            return $response->withStatus(404);
+        }
     })->add(\HomeDocs\Middleware\JWT::class);
 
     $app->group(

@@ -111,7 +111,7 @@ module.exports = configure(function (ctx) {
       // move default html to twig template path
       htmlFilename:
         ctx.mode.spa && ctx.prod
-          ? "../templates/index-quasar.html.twig"
+          ? "../templates/index-quasar.html"
           : "index.html",
     },
 

@@ -83,11 +83,6 @@ $settings['db'] = [
     'upgradeSchemaPath' => $settings['paths']['root'] . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'db-schema.php'
 ];
 
-$settings['twig'] = [
-    'path' =>  $settings['paths']['templates'],
-    'options' =>  ['auto_reload' => true, 'cache' => $settings['environment'] == 'development' ? false : dirname(__DIR__) . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'twig_cache']
-];
-
 $settings['common'] = [
     'defaultResultsPage' => 64,
     'allowSignUp' => true
