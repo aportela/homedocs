@@ -646,9 +646,8 @@ class Document
         return ($operations);
     }
 
-    public static function search(\aportela\DatabaseWrapper\DB $dbh, int $currentPage = 1, int $resultsPage = 16, $filter = array(), string $sortBy = "createdOnTimestamp", \aportela\DatabaseBrowserWrapper\Order $sortOrder = \aportela\DatabaseBrowserWrapper\Order::DESC): \stdClass
+    public static function search(\aportela\DatabaseWrapper\DB $dbh, \aportela\DatabaseBrowserWrapper\Pager $pager, $filter = array(), string $sortBy = "createdOnTimestamp", \aportela\DatabaseBrowserWrapper\Order $sortOrder = \aportela\DatabaseBrowserWrapper\Order::DESC): \stdClass
     {
-
         $fieldDefinitions = [
             "id" => "DOCUMENT.id",
             "title" => "DOCUMENT.title",
@@ -681,7 +680,7 @@ class Document
             $dbh,
             $fieldDefinitions,
             $fieldCountDefinition,
-            new \aportela\DatabaseBrowserWrapper\Pager(true, $currentPage, $resultsPage),
+            $pager,
             new \aportela\DatabaseBrowserWrapper\Sort($sortItems),
             new \aportela\DatabaseBrowserWrapper\Filter(),
             $afterBrowse
@@ -954,8 +953,8 @@ class Document
             $browserResults->items
         );
         $data->pagination = new \stdClass();
-        $data->pagination->currentPage = $currentPage;
-        $data->pagination->resultsPage = $resultsPage;
+        $data->pagination->currentPage = $pager->getCurrentPageIndex();
+        $data->pagination->resultsPage = $pager->getResultsPage();
         $data->pagination->totalResults = $browserResults->pager->getTotalResults();
         $data->pagination->totalPages = $browserResults->pager->getTotalPages();
         return ($data);

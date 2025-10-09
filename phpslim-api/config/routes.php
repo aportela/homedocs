@@ -158,8 +158,7 @@ return function (App $app) {
                             'initialState' => \HomeDocs\Utils::getInitialState($this),
                             'results' => \HomeDocs\Document::search(
                                 $this->get(\aportela\DatabaseWrapper\DB::class),
-                                intval($params["currentPage"] ?? 1),
-                                intval($params["resultsPage"] ?? $settings["common"]["defaultResultsPage"]),
+                                new \aportela\DatabaseBrowserWrapper\Pager(true, intval($params["currentPage"] ?? 1), intval($params["resultsPage"] ?? $settings["common"]["defaultResultsPage"])),
                                 [
                                     "title" => $params["title"] ?? null,
                                     "description" => $params["description"] ?? null,
