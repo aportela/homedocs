@@ -20,7 +20,7 @@ $settings['paths']['vendor'] = $settings['paths']['root'] . DIRECTORY_SEPARATOR 
 $settings['paths']['database'] = $settings['paths']['root'] . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'homedocs3.sqlite3';
 $settings['paths']['storage'] = $settings['paths']['root'] . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'storage';
 $settings['paths']['templates'] = $settings['paths']['root'] . DIRECTORY_SEPARATOR . 'templates';
-$settings['paths']['logs'] = $settings['paths']['root'] . DIRECTORY_SEPARATOR . 'logs';
+$settings['paths']['logs'] = $settings['paths']['root'] . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'logs';
 
 // Error Handling Middleware settings
 $settings['error'] = [
