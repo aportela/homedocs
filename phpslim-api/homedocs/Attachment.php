@@ -63,7 +63,7 @@ class Attachment
                     new \aportela\DatabaseWrapper\Param\StringParam(":id", $this->id)
                 )
             );
-            if (is_array($data) && count($data) == 1) {
+            if (count($data) == 1) {
                 if ($data[0]->uploadedByUserId == \HomeDocs\UserSession::getUserId()) {
                     $this->name = $data[0]->name;
                     $this->size = intval($data[0]->size);

@@ -12,11 +12,29 @@ class Document
     public ?string $description;
     public ?int $createdOnTimestamp;
     public ?int $lastUpdateTimestamp;
+    /**
+     * @var array<string>
+     */
     public ?array $tags = [];
+    /**
+     * @var array<mixed>
+     */
     public ?array $attachments = [];
+    /**
+     * @var array<mixed>
+     */
     public ?array $notes = [];
+    /**
+     * @var array<mixed>
+     */
     public ?array $history = [];
 
+    /**
+     * @param array<string> $tags
+     * @param array<mixed> $attachments
+     * @param array<mixed> $notes
+     * @param array<mixed> $history
+     */
     public function __construct(?string $id = null, ?string $title = null, ?string $description = null, ?int $createdOnTimestamp = null, ?int $lastUpdateTimestamp = null, ?array $tags = [], ?array $attachments = [], ?array $notes = [], ?array $history = [])
     {
         $this->id = $id;
@@ -110,7 +128,7 @@ class Document
         if (!empty($this->id) && mb_strlen($this->id) == \HomeDocs\Constants::UUID_V4_LENGTH) {
             if (!empty($this->title) && mb_strlen($this->title) <= \HomeDocs\Constants::MAX_DOCUMENT_TITLE_LENGTH) {
                 if ((!empty($this->description) && mb_strlen($this->description) <= \HomeDocs\Constants::MAX_DOCUMENT_DESCRIPTION_LENGTH) || empty($this->description)) {
-                    if (is_array($this->tags) && count($this->tags) > 0) {
+                    if (count($this->tags) > 0) {
                         foreach ($this->tags as $tag) {
                             if (empty($tag)) {
                                 throw new \HomeDocs\Exception\InvalidParamsException("tags");
@@ -119,7 +137,7 @@ class Document
                             }
                         }
                     }
-                    if (is_array($this->notes) && count($this->notes) > 0) {
+                    if (count($this->notes) > 0) {
                         foreach ($this->notes as $note) {
                             if (! empty($note->id) && mb_strlen($note->id) == \HomeDocs\Constants::UUID_V4_LENGTH) {
                                 if (! (!empty($note->body) && mb_strlen($note->body) <= \HomeDocs\Constants::MAX_DOCUMENT_NOTE_BODY_LENGTH)) {
@@ -511,6 +529,9 @@ class Document
         }
     }
 
+    /**
+     * @return array<string>
+     */
     private function getTags(\aportela\DatabaseWrapper\DB $dbh): array
     {
         $tags = [];
@@ -535,6 +556,9 @@ class Document
         return ($tags);
     }
 
+    /**
+     * @return array<mixed>
+     */
     private function getAttachments(\aportela\DatabaseWrapper\DB $dbh): array
     {
         $attachments = [];
@@ -567,6 +591,9 @@ class Document
         return ($attachments);
     }
 
+    /**
+     * @return array<mixed>
+     */
     private function getNotes(\aportela\DatabaseWrapper\DB $dbh, ?string $search = null): array
     {
         $notes = [];
@@ -620,6 +647,9 @@ class Document
         return ($notes);
     }
 
+    /**
+     * @return array<mixed>
+     */
     private function getHistory(\aportela\DatabaseWrapper\DB $dbh): array
     {
         $operations = [];

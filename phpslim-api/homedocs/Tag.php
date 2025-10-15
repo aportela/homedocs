@@ -7,7 +7,7 @@ namespace HomeDocs;
 class Tag
 {
     /**
-     * @return array<string>
+     * @return array<mixed>
      */
     public static function getCloud(\aportela\DatabaseWrapper\DB $dbh): array
     {

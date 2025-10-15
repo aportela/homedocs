@@ -6,6 +6,9 @@ namespace HomeDocs;
 
 class Utils
 {
+    /**
+     * @return array<mixed>
+     */
     public static function getInitialState(\Psr\Container\ContainerInterface $container): array
     {
         $settings = $container->get('settings');

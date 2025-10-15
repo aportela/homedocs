@@ -23,6 +23,9 @@ class User
         return (password_hash($password, PASSWORD_BCRYPT, array('cost' => 12)));
     }
 
+    /**
+     * @return array<\aportela\DatabaseWrapper\Param\InterfaceParam>
+     */
     private function validateAndPrepareParams(): array
     {
         if (empty($this->id) || mb_strlen($this->id) !== 36) {
