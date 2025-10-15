@@ -48,7 +48,7 @@ return [
 
     \HomeDocs\Logger\HTTPRequestLogger::class => function (ContainerInterface $container) {
         $settings = $container->get('settings')['logger'];
-        $logger = new \HomeDocs\Logger\HTTPRequestLogger($settings['channels']['http']['name']);
+        $logger = new \Monolog\Logger($settings['channels']['http']['name']);
         $logger->pushProcessor(new \Monolog\Processor\UidProcessor());
         $handler = new \Monolog\Handler\RotatingFileHandler($settings['channels']['http']['path'], 0, $settings['defaultLevel']);
         $handler->setFilenameFormat('{date}/{filename}', \Monolog\Handler\RotatingFileHandler::FILE_PER_DAY);
@@ -60,7 +60,7 @@ return [
 
     \HomeDocs\Logger\DefaultLogger::class => function (ContainerInterface $container) {
         $settings = $container->get('settings')['logger'];
-        $logger = new \HomeDocs\Logger\DefaultLogger($settings['channels']['default']['name']);
+        $logger = new \Monolog\Logger($settings['channels']['default']['name']);
         $logger->pushProcessor(new \Monolog\Processor\UidProcessor());
         $handler = new \Monolog\Handler\RotatingFileHandler($settings['channels']['default']['path'], 0, $settings['defaultLevel']);
         $handler->setFilenameFormat('{date}/{filename}', \Monolog\Handler\RotatingFileHandler::FILE_PER_DAY);
@@ -72,7 +72,7 @@ return [
 
     \HomeDocs\Logger\DBLogger::class => function (ContainerInterface $container) {
         $settings = $container->get('settings')['logger'];
-        $logger = new \HomeDocs\Logger\DBLogger($settings['channels']['database']['name']);
+        $logger = new \Monolog\Logger($settings['channels']['database']['name']);
         $logger->pushProcessor(new \Monolog\Processor\UidProcessor());
         $handler = new \Monolog\Handler\RotatingFileHandler($settings['channels']['database']['path'], 0, $settings['defaultLevel']);
         $handler->setFilenameFormat('{date}/{filename}', \Monolog\Handler\RotatingFileHandler::FILE_PER_DAY);
@@ -84,7 +84,7 @@ return [
 
     \HomeDocs\Logger\InstallerLogger::class => function (ContainerInterface $container) {
         $settings = $container->get('settings')['logger'];
-        $logger = new \HomeDocs\Logger\InstallerLogger($settings['channels']['installer']['name']);
+        $logger = new \Monolog\Logger($settings['channels']['installer']['name']);
         $logger->pushProcessor(new \Monolog\Processor\UidProcessor());
         $handler = new \Monolog\Handler\RotatingFileHandler($settings['channels']['installer']['path'], 0, $settings['defaultLevel']);
         $handler->setFilenameFormat('{date}/{filename}', \Monolog\Handler\RotatingFileHandler::FILE_PER_DAY);

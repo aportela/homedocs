@@ -4,6 +4,4 @@ declare(strict_types=1);
 
 namespace HomeDocs\Logger;
 
-final class DefaultLogger extends \Monolog\Logger
-{
-}
+final class DefaultLogger extends \Psr\Log\LoggerInterface {}
