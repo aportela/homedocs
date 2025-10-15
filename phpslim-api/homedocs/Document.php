@@ -562,19 +562,44 @@ class Document
     private function getAttachments(\aportela\DatabaseWrapper\DB $dbh, ?string $search = null): array
     {
         $attachments = [];
+        $params = array(
+            new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id))
+        );
+        $queryConditions = [];
+        if (! empty($search)) {
+            // explode into words, remove duplicated & empty elements
+            $words = array_filter(array_unique(explode(" ", trim(mb_strtolower($search)))));
+            $totalWords = count($words);
+            if ($totalWords > 0) {
+                foreach ($words as $word) {
+                    $paramName = sprintf(":ATTACHMENT_NAME_%03d", $totalWords);
+                    $params[] = new \aportela\DatabaseWrapper\Param\StringParam($paramName, "%" . $word . "%");
+                    $queryConditions[] = sprintf(" ATTACHMENT.name LIKE %s ", $paramName);
+                    $totalWords--;
+                }
+            }
+        }
         $data = $dbh->query(
-            "
+            sprintf(
+                "
                 SELECT
                     ATTACHMENT.id, ATTACHMENT.name, ATTACHMENT.size, ATTACHMENT.sha1_hash AS hash, ATTACHMENT.created_on_timestamp AS createdOnTimestamp
                 FROM DOCUMENT_ATTACHMENT
                 INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_ATTACHMENT.document_id
                 LEFT JOIN ATTACHMENT ON ATTACHMENT.id = DOCUMENT_ATTACHMENT.attachment_id
                 WHERE DOCUMENT_ATTACHMENT.document_id = :document_id
+                %s
                 ORDER BY ATTACHMENT.created_on_timestamp DESC, ATTACHMENT.name
             ",
-            array(
-                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id))
-            )
+                ! empty($search) ?
+                    "
+                    AND (
+                        " .  implode(" AND ", $queryConditions) . "
+                    )"
+                    :
+                    ""
+            ),
+            $params
         );
         if (count($data) > 0) {
             foreach ($data as $item) {
