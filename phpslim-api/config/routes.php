@@ -23,7 +23,7 @@ return function (App $app) {
 
             $initialState = \HomeDocs\Utils::getInitialState($app->getContainer());
 
-            $group->get('/initial_state', function (Request $request, Response $response, array $args) use ($app, $initialState) {
+            $group->get('/initial_state', function (Request $request, Response $response, array $args) use ($initialState) {
                 $payload = json_encode(
                     [
                         'initialState' => $initialState
