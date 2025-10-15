@@ -14,7 +14,7 @@
     "process-timeout": 0
   },
   "require": {
-    "php": ">=8.1",
+    "php": ">=8.4",
     "aportela/db-browser-wrapper": "^1.1",
     "aportela/db-wrapper": "^2.1",
     "firebase/php-jwt": "^6.11",
