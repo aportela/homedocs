@@ -69,6 +69,9 @@ class Stats
         return (intval($result[0]->total));
     }
 
+    /**
+     * @return array<mixed>
+     */
     public static function getActivityHeatMapData(\aportela\DatabaseWrapper\DB $dbh, int $fromTimestamp = 0): array
     {
         $whereCondition = null;

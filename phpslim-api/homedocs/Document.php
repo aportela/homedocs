@@ -53,6 +53,9 @@ class Document
         $this->rootStoragePath = $rootStoragePath;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public static function searchRecent(\aportela\DatabaseWrapper\DB $dbh, int $count = 16): array
     {
         $results = $dbh->query(
