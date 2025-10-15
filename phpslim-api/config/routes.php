@@ -78,7 +78,7 @@ return function (App $app) {
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             });
 
-            $group->post('/user/sign-out', function (Request $request, Response $response, array $args) use ($app, $initialState) {
+            $group->post('/user/sign-out', function (Request $request, Response $response, array $args) use ($initialState) {
                 \HomeDocs\User::signOut();
                 $payload = json_encode(
                     [
