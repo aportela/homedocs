@@ -732,8 +732,64 @@ class Document
                 $sortItems[] = new \aportela\DatabaseBrowserWrapper\SortItem("createdOnTimestamp", $sortOrder, true);
                 break;
         }
-        // TODO
-        $afterBrowse = function () {};
+        // after launch search we need to make some changes foreach result
+        $afterBrowse = function ($data) use ($filter, $dbh) {
+            array_map(
+                function ($item) use ($filter, $dbh) {
+                    $item->createdOnTimestamp = intval($item->createdOnTimestamp);
+                    $item->lastUpdateTimestamp = intval($item->lastUpdateTimestamp);
+                    $item->attachmentCount = intval($item->attachmentCount);
+                    $item->noteCount = intval($item->noteCount);
+                    $item->matchedFragments = [];
+                    if (isset($filter["title"]) && !empty($filter["title"])) {
+                        $fragment = \HomeDocs\Utils::getStringFragment($item->title, $filter["title"], 64, true);
+                        if (! empty($fragment)) {
+                            $item->matchedFragments[] = [
+                                "matchedOn" => "title",
+                                "fragment" => $fragment
+                            ];
+                        }
+                    }
+                    if (isset($filter["description"]) && !empty($filter["description"])) {
+                        $fragment = \HomeDocs\Utils::getStringFragment($item->description, $filter["description"], 64, true);
+                        if (! empty($fragment)) {
+                            $item->matchedFragments[] = [
+                                "matchedOn" => "description",
+                                "fragment" => $fragment
+                            ];
+                        }
+                    }
+                    if (isset($filter["notesBody"]) && !empty($filter["notesBody"])) {
+                        // TODO: this NEEDS to be rewritten with more efficient method
+                        $notes = (new \HomeDocs\Document($item->id))->getNotes($dbh, $filter["notesBody"]);
+                        foreach ($notes as $note) {
+                            $fragment = \HomeDocs\Utils::getStringFragment($note->body, $filter["notesBody"], 64, true);
+                            if (! empty($fragment)) {
+                                $item->matchedFragments[] = [
+                                    "matchedOn" => "note body",
+                                    "fragment" => $fragment
+                                ];
+                            }
+                        }
+                    }
+                    if (isset($filter["attachmentsFilename"]) && !empty($filter["attachmentsFilename"])) {
+                        // TODO: this NEEDS to be rewritten with more efficient method
+                        $attachments = (new \HomeDocs\Document($item->id))->getAttachments($dbh, $filter["attachmentsFilename"]);
+                        foreach ($attachments as $attachment) {
+                            $fragment = \HomeDocs\Utils::getStringFragment($attachment->name, $filter["attachmentsFilename"], 64, true);
+                            if (! empty($fragment)) {
+                                $item->matchedFragments[] = [
+                                    "matchedOn" => "attachment filename",
+                                    "fragment" => $fragment
+                                ];
+                            }
+                        }
+                    }
+                    return ($item);
+                },
+                $data->items
+            );
+        };
         $browser = new \aportela\DatabaseBrowserWrapper\Browser(
             $dbh,
             $fieldDefinitions,
@@ -954,62 +1010,9 @@ class Document
             )
         );
         $browserResults = $browser->launch($query, $queryCount);
+        // TODO: reuse $browserResults object ?
         $data = new \stdClass();
-        $data->documents = array_map(
-            function ($item) use ($filter, $dbh) {
-                $item->createdOnTimestamp = intval($item->createdOnTimestamp);
-                $item->lastUpdateTimestamp = intval($item->lastUpdateTimestamp);
-                $item->attachmentCount = intval($item->attachmentCount);
-                $item->noteCount = intval($item->noteCount);
-                $item->matchedFragments = [];
-                if (isset($filter["title"]) && !empty($filter["title"])) {
-                    $fragment = \HomeDocs\Utils::getStringFragment($item->title, $filter["title"], 64, true);
-                    if (! empty($fragment)) {
-                        $item->matchedFragments[] = [
-                            "matchedOn" => "title",
-                            "fragment" => $fragment
-                        ];
-                    }
-                }
-                if (isset($filter["description"]) && !empty($filter["description"])) {
-                    $fragment = \HomeDocs\Utils::getStringFragment($item->description, $filter["description"], 64, true);
-                    if (! empty($fragment)) {
-                        $item->matchedFragments[] = [
-                            "matchedOn" => "description",
-                            "fragment" => $fragment
-                        ];
-                    }
-                }
-                if (isset($filter["notesBody"]) && !empty($filter["notesBody"])) {
-                    // TODO: this NEEDS to be rewritten with more efficient method
-                    $notes = (new \HomeDocs\Document($item->id))->getNotes($dbh, $filter["notesBody"]);
-                    foreach ($notes as $note) {
-                        $fragment = \HomeDocs\Utils::getStringFragment($note->body, $filter["notesBody"], 64, true);
-                        if (! empty($fragment)) {
-                            $item->matchedFragments[] = [
-                                "matchedOn" => "note body",
-                                "fragment" => $fragment
-                            ];
-                        }
-                    }
-                }
-                if (isset($filter["attachmentsFilename"]) && !empty($filter["attachmentsFilename"])) {
-                    // TODO: this NEEDS to be rewritten with more efficient method
-                    $attachments = (new \HomeDocs\Document($item->id))->getAttachments($dbh, $filter["attachmentsFilename"]);
-                    foreach ($attachments as $attachment) {
-                        $fragment = \HomeDocs\Utils::getStringFragment($attachment->name, $filter["attachmentsFilename"], 64, true);
-                        if (! empty($fragment)) {
-                            $item->matchedFragments[] = [
-                                "matchedOn" => "attachment filename",
-                                "fragment" => $fragment
-                            ];
-                        }
-                    }
-                }
-                return ($item);
-            },
-            $browserResults->items
-        );
+        $data->documents = $browserResults->items;
         $data->pagination = new \stdClass();
         $data->pagination->currentPage = $pager->getCurrentPageIndex();
         $data->pagination->resultsPage = $pager->getResultsPage();
