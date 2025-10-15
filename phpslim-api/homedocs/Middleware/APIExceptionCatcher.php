@@ -12,6 +12,10 @@ class APIExceptionCatcher
     {
         $this->logger = $logger;
     }
+
+    /**
+     * @param array<mixed> $payload
+     */
     private function handleException(\Exception $e, int $statusCode, array $payload): \Psr\Http\Message\ResponseInterface
     {
         $this->logger->debug(sprintf("Exception caught (%s) - Message: %s", get_class($e), $e->getMessage()));

@@ -508,7 +508,7 @@ class Document
                     new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id))
                 )
             );
-            if (is_array($data) && count($data) == 1) {
+            if (count($data) == 1) {
                 if ($data[0]->createdByUserId == \HomeDocs\UserSession::getUserId()) {
                     $this->title = $data[0]->title;
                     $this->description = $data[0]->description;
@@ -548,7 +548,7 @@ class Document
                 new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id))
             )
         );
-        if (is_array($data) && count($data) > 0) {
+        if (count($data) > 0) {
             foreach ($data as $item) {
                 $tags[] = $item->tag;
             }
@@ -559,7 +559,7 @@ class Document
     /**
      * @return array<mixed>
      */
-    private function getAttachments(\aportela\DatabaseWrapper\DB $dbh): array
+    private function getAttachments(\aportela\DatabaseWrapper\DB $dbh, ?string $search = null): array
     {
         $attachments = [];
         $data = $dbh->query(
@@ -576,7 +576,7 @@ class Document
                 new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id))
             )
         );
-        if (is_array($data) && count($data) > 0) {
+        if (count($data) > 0) {
             foreach ($data as $item) {
                 $attachments[] = new \HomeDocs\Attachment(
                     $this->rootStoragePath ?? null,
@@ -635,7 +635,7 @@ class Document
             ),
             $params
         );
-        if (is_array($data) && count($data) > 0) {
+        if (count($data) > 0) {
             foreach ($data as $item) {
                 $notes[] = new \HomeDocs\Note(
                     $item->noteId,
@@ -665,7 +665,7 @@ class Document
                 new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id))
             )
         );
-        if (is_array($data) && count($data) > 0) {
+        if (count($data) > 0) {
             foreach ($data as $item) {
                 $operations[] = new \HomeDocs\DocumentHistoryOperation(
                     intval($item->operationTimestamp),
@@ -676,6 +676,9 @@ class Document
         return ($operations);
     }
 
+    /**
+     * @param array<mixed> $filter
+     */
     public static function search(\aportela\DatabaseWrapper\DB $dbh, \aportela\DatabaseBrowserWrapper\Pager $pager, $filter = array(), string $sortBy = "createdOnTimestamp", \aportela\DatabaseBrowserWrapper\Order $sortOrder = \aportela\DatabaseBrowserWrapper\Order::DESC): \stdClass
     {
         $fieldDefinitions = [
@@ -954,7 +957,7 @@ class Document
                 }
                 if (isset($filter["notesBody"]) && !empty($filter["notesBody"])) {
                     // TODO: this NEEDS to be rewritten with more efficient method
-                    $notes = (new \Homedocs\Document($item->id))->getNotes($dbh, $filter["notesBody"]);
+                    $notes = (new \HomeDocs\Document($item->id))->getNotes($dbh, $filter["notesBody"]);
                     foreach ($notes as $note) {
                         $fragment = \HomeDocs\Utils::getStringFragment($note->body, $filter["notesBody"], 64, true);
                         if (! empty($fragment)) {
@@ -967,7 +970,7 @@ class Document
                 }
                 if (isset($filter["attachmentsFilename"]) && !empty($filter["attachmentsFilename"])) {
                     // TODO: this NEEDS to be rewritten with more efficient method
-                    $attachments = (new \Homedocs\Document($item->id))->getAttachments($dbh, $filter["attachmentsFilename"]);
+                    $attachments = (new \HomeDocs\Document($item->id))->getAttachments($dbh, $filter["attachmentsFilename"]);
                     foreach ($attachments as $attachment) {
                         $fragment = \HomeDocs\Utils::getStringFragment($attachment->name, $filter["attachmentsFilename"], 64, true);
                         if (! empty($fragment)) {

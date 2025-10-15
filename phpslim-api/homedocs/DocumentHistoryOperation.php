@@ -12,7 +12,7 @@ class DocumentHistoryOperation
     public ?int $operationTimestamp;
     public ?int $operationType;
 
-    public function __construct(?int $operationTimestamp = null, ?int $operationType = null, ?string $name = null, ?int $size = null, ?string $hash = null, ?int $createdOnTimestamp = null)
+    public function __construct(?int $operationTimestamp = null, ?int $operationType = null)
     {
         $this->operationTimestamp = $operationTimestamp;
         $this->operationType = $operationType;
