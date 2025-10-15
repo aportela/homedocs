@@ -55,7 +55,7 @@ return [
         $formatter = new \Monolog\Formatter\LineFormatter(null, null, true, true);
         //$handler->setFormatter($formatter);
         $logger->pushHandler($handler);
-        return ($logger);
+        return (new \HomeDocs\Logger\HTTPRequestLogger($logger));
     },
 
     \HomeDocs\Logger\DefaultLogger::class => function (ContainerInterface $container) {
@@ -67,7 +67,7 @@ return [
         $formatter = new \Monolog\Formatter\LineFormatter(null, null, true, true);
         //$handler->setFormatter($formatter);
         $logger->pushHandler($handler);
-        return ($logger);
+        return (new \HomeDocs\Logger\DefaultLogger($logger));
     },
 
     \HomeDocs\Logger\DBLogger::class => function (ContainerInterface $container) {
@@ -79,7 +79,7 @@ return [
         $formatter = new \Monolog\Formatter\LineFormatter(null, null, true, true);
         //$handler->setFormatter($formatter);
         $logger->pushHandler($handler);
-        return ($logger);
+        return (new \HomeDocs\Logger\DBLogger($logger));
     },
 
     \HomeDocs\Logger\InstallerLogger::class => function (ContainerInterface $container) {
@@ -91,7 +91,7 @@ return [
         $formatter = new \Monolog\Formatter\LineFormatter(null, null, true, true);
         //$handler->setFormatter($formatter);
         $logger->pushHandler($handler);
-        return ($logger);
+        return (new \HomeDocs\Logger\InstallerLogger($logger));
     },
 
     \HomeDocs\Middleware\APIExceptionCatcher::class => function (ContainerInterface $container) {

@@ -4,4 +4,4 @@ declare(strict_types=1);
 
 namespace HomeDocs\Logger;
 
-final class HTTPRequestLogger extends \Psr\Log\LoggerInterface {}
+final class HTTPRequestLogger extends BaseLogger {}
