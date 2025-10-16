@@ -1,218 +1,305 @@
 <template>
-  <q-layout class="bg-grey-1">
-    <q-header elevated class="text-white" style="background: #24292e" height-hint="61.59">
-      <q-toolbar class="q-py-sm q-px-md">
-        <q-btn class="mobile-only" flat dense round @click="leftDrawerOpen = !leftDrawerOpen" aria-label="Menu"
-          icon="menu" v-if="isLogged" />
-        <q-avatar square size="42px">
-          <img src="icons/favicon-128x128.png" />
-        </q-avatar>
-        HomeDocs
-        <q-select ref="search" dark dense standout use-input hide-selected class="q-mx-md" color="black"
-          :stack-label="false" :label="t('Search...')" v-model="text" :options="filteredOptions" @filter="onFilter"
-          style="width: 100%" v-if="isLogged">
-          <template v-slot:no-option v-if="searching">
-            <q-item>
-              <q-item-section>
-                <div class="text-center">
-                  <q-spinner-pie color="grey-5" size="24px" />
-                </div>
-              </q-item-section>
-            </q-item>
-          </template>
-          <template v-slot:option="scope">
-            <q-list class="bg-grey-9 text-white">
-              <q-item v-bind="scope.itemProps" :to="{ name: 'document', params: { id: scope.opt.id } }">
-                <q-item-section side>
-                  <q-icon name="collections_bookmark" />
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label>{{ scope.opt.label }}</q-item-label>
-                  <q-item-label caption>{{ scope.opt.caption }}</q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </template>
-        </q-select>
-        <q-space />
-        <!--
-        <q-btn :icon="iconDarkMode" @click="toggleDarkMode"></q-btn>
-        -->
-        <q-btn dense flat no-wrap>
-          <q-avatar rounded size="24px" class="q-mr-sm">
-            <q-icon name="language" />
-          </q-avatar>
-          {{ selectedLocale.shortLabel }}
-          <q-icon name="arrow_drop_down" size="16px" />
-          <q-menu auto-close>
-            <q-list dense style="min-width: 200px">
-              <q-item class="GL__menu-link-signed-in">
-                <q-item-section>
-                  <div>{{ t("Selected language") }}: <strong>{{ selectedLocale.label }}</strong></div>
-                </q-item-section>
-              </q-item>
-              <q-separator />
-              <q-item clickable :disable="selectedLocale.value == availableLanguage.value" v-close-popup
-                v-for="availableLanguage in availableLocales" :key="availableLanguage.value"
-                @click="onSelectLocale(availableLanguage, true)">
-                <q-item-section>
-                  <div>{{ availableLanguage.label }}</div>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-menu>
+  <q-layout view="lHh lpR lFf" class="theme-default-q-layout">
+    <q-header height-hint="61.59" class="theme-default-q-header" bordered>
+      <q-toolbar class="theme-default-q-toolbar">
+        <q-btn flat dense round @click="visibleSidebar = !visibleSidebar;" aria-label="Toggle drawer" icon="menu"
+          v-show="!visibleSidebar" class="q-mr-md" />
+        <q-btn flat dense round @click="onToggleminiSidebarCurrentMode" aria-label="Toggle drawer"
+          :icon="miniSidebarCurrentMode ? 'arrow_forward_ios' : 'arrow_back_ios_new'" class="q-mr-md"
+          v-show="visibleSidebar">
+          <DesktopToolTip>{{ t(miniSidebarCurrentMode ? "Expand sidebar" : "Collapse sidebar") }}
+          </DesktopToolTip>
         </q-btn>
-        <q-btn round dense flat :ripple="false" :icon="fabGithub" size="md" color="white" class="q-ml-sm" no-caps href="http://github.com/aportela/homedocs" target="_blank" />
+        <q-btn type="button" no-caps no-wrap align="left" outline :label="searchButtonLabel" icon="search"
+          class="full-width no-caps theme-default-q-btn" @click.prevent="dialogs.fastSearch.visible = true">
+          <DesktopToolTip anchor="bottom middle" self="top middle">{{ t("Click to open fast search")
+          }}</DesktopToolTip>
+        </q-btn>
+        <!--
+        <FastSearchSelector dense class="full-width"></FastSearchSelector>
+        -->
+        <q-btn-group flat class="q-ml-md">
+          <DarkModeButton dense />
+          <SwitchLanguageButton :short-labels="true" style="min-width: 9em" />
+          <GitHubButton dense :href="GITHUB_PROJECT_URL" />
+          <!--
+          <NotificationsButton dense no-caps></NotificationsButton>
+          -->
+        </q-btn-group>
       </q-toolbar>
     </q-header>
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="bg-grey-2" :width="240" v-if="isLogged">
-      <q-scroll-area class="fit">
-        <q-list padding>
-          <q-item-label header class="text-weight-bold text-uppercase">
-            Menu
-          </q-item-label>
-          <q-item v-for="link in menuItems" :key="link.text" v-ripple clickable :to="{ name: link.routeName }">
-            <q-item-section avatar>
-              <q-icon color="grey" :name="link.icon" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ t(link.text) }}</q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item v-ripple clickable @click="signOut">
-            <q-item-section avatar>
-              <q-icon color="grey" name="logout" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ t("Sign out") }}</q-item-label>
-            </q-item-section>
-          </q-item>
-        </q-list>
-      </q-scroll-area>
-    </q-drawer>
+    <SidebarDrawer v-model="visibleSidebar" :mini="miniSidebarCurrentMode"></SidebarDrawer>
+    <SearchDialog v-model="dialogs.fastSearch.visible"></SearchDialog>
     <q-page-container>
-      <router-view />
+      <router-view class="q-pa-sm" />
     </q-page-container>
+    <!-- main common dialogs block, this dialogs will be launched from ANY page so we declare here and manage with bus events -->
+    <ReAuthDialog v-if="dialogs.reauth.visible" @success="onSuccessReauth" @close="dialogs.reauth.visible = false" />
+    <FilePreviewDialog v-if="dialogs.filePreview.visible" :document="dialogs.filePreview.document"
+      :current-index="dialogs.filePreview.currentIndex" @close="dialogs.filePreview.visible = false" />
+    <DocumentFilesPreviewDialog v-if="dialogs.documentFilesPreview.visible"
+      :document-id="dialogs.documentFilesPreview.document.id"
+      :document-title="dialogs.documentFilesPreview.document.title"
+      @close="dialogs.documentFilesPreview.visible = false" />
+    <DocumentNotesPreviewDialog v-if="dialogs.documentNotesPreview.visible"
+      :document-id="dialogs.documentNotesPreview.document.id"
+      :document-title="dialogs.documentNotesPreview.document.title"
+      @close="dialogs.documentNotesPreview.visible = false" />
+    <UploadingDialog v-model="dialogs.uploading.visible" :transfers="dialogs.uploading.transfers" />
   </q-layout>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
-import { api } from "boot/axios";
-import { useSessionStore } from "stores/session";
-import { useInitialStateStore } from "stores/initialState";
-import { useRouter } from "vue-router";
+import { ref, reactive, watch, computed, onMounted, onBeforeUnmount } from "vue";
+import { useQuasar, LocalStorage, uid } from "quasar";
 import { useI18n } from "vue-i18n";
-import { date, useQuasar } from "quasar";
-import { i18n, defaultLocale } from "src/boot/i18n";
-import { fabGithub } from "@quasar/extras/fontawesome-v6";
+
+import { useFormatDates } from "src/composables/useFormatDates"
+import { useLocalStorage } from "src/composables/useLocalStorage"
+import { useSessionStore } from "src/stores/session";
+import { useBus } from "src/composables/useBus";
+
+import { default as SidebarDrawer } from "src/components/SidebarDrawer.vue"
+import { default as SearchDialog } from "src/components/Dialogs/SearchDialog.vue"
+import { default as DarkModeButton } from "src/components/Buttons/DarkModeButton.vue"
+import { default as SwitchLanguageButton } from "src/components/Buttons/SwitchLanguageButton.vue"
+import { default as GitHubButton } from "src/components/Buttons/GitHubButton.vue"
+import { GITHUB_PROJECT_URL } from "src/constants"
+import { default as ReAuthDialog } from "src/components/Dialogs/ReAuthDialog.vue"
+
+import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
+import { default as FilePreviewDialog } from "src/components/Dialogs/FilePreviewDialog.vue"
+import { default as DocumentFilesPreviewDialog } from "src/components/Dialogs/DocumentFilesPreviewDialog.vue"
+import { default as DocumentNotesPreviewDialog } from "src/components/Dialogs/DocumentNotesPreviewDialog.vue";
+import { default as UploadingDialog } from "src/components/Dialogs/UploadingDialog.vue";
+
+const $q = useQuasar();
 
 const { t } = useI18n();
-const $q = useQuasar();
+
 const session = useSessionStore();
+
+const { bus } = useBus();
+const { currentTimestamp } = useFormatDates();
+
+const { alwaysOpenUploadDialog } = useLocalStorage();
+
 if (!session.isLoaded) {
   session.load();
 }
-const initialState = useInitialStateStore();
-const router = useRouter();
-const isLogged = computed(() => session.isLogged);
-const leftDrawerOpen = ref($q.screen.gt.lg);
-const text = ref("");
-const filteredOptions = ref([]);
-const searching = ref(false);
 
-const availableLocales = [
-  {
-    shortLabel: 'EN',
-    label: 'English',
-    value: 'en-US'
+const dialogs = reactive({
+  reauth: {
+    visible: false
   },
-  {
-    shortLabel: 'ES',
-    label: 'Español',
-    value: 'es-ES'
+  filePreview: {
+    visible: false,
+    document: {
+      id: null,
+      title: null,
+      attachments: [],
+    },
+    currentIndex: 0
   },
-  {
-    shortLabel: 'GL',
-    label: 'Galego',
-    value: 'gl-GL'
+  documentFilesPreview: {
+    visible: false,
+    document: {
+      id: null,
+      title: null,
+    }
+  },
+  documentNotesPreview: {
+    visible: false,
+    document: {
+      id: null,
+      title: null,
+    }
+  },
+  fastSearch: {
+    visible: false
+  },
+  uploading: {
+    visible: false,
+    transfers: []
   }
-];
-
-const menuItems = [
-  { icon: 'storage', text: "Dashboard", routeName: 'index' },
-  { icon: 'note_add', text: "Add", routeName: 'newDocument' },
-  { icon: 'find_in_page', text: "Advanced search", routeName: 'advancedSearch' }
-];
-
-const iconDarkMode = computed(() => {
-  return($q.dark.isActive ? "dark_mode": "light_mode");
 });
 
-const defaultBrowserLocale = availableLocales.find((lang) => lang.value == defaultLocale);
-const selectedLocale = ref(defaultBrowserLocale || availableLocales[0]);
+const reAuthEmitters = reactive([]);
 
-function toggleDarkMode() {
-  $q.dark.toggle();
+const onSuccessReauth = () => {
+  dialogs.reauth.visible = false;
+  bus.emit("reAuthSucess", ({ to: reAuthEmitters }))
+  reAuthEmitters.length = 0;
+};
+
+const lockminiSidebarCurrentModeMode = ref(false);
+
+const visibleSidebar = ref($q.screen.gt.sm);
+
+// toggle this for using current mini sidebar saved mode
+const saveMiniSidebarMode = true;
+
+const miniSidebarCurrentModeSavedMode = saveMiniSidebarMode ? LocalStorage.getItem("miniSidebarCurrentMode") : null;
+
+if (saveMiniSidebarMode && miniSidebarCurrentModeSavedMode != null) {
+  lockminiSidebarCurrentModeMode.value = true;
 }
 
-function onFilter(val, update) {
-  if (val && val.trim().length > 0) {
-    filteredOptions.value = [];
-    searching.value = true;
-    update(() => {
-      api.document.search(1, 8, { title: val }, "title", "ASC")
-        .then((success) => {
-          filteredOptions.value = success.data.results.documents.map((document) => {
-            return ({ id: document.id, label: document.title, caption: t("Fast search caption", { creation: date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss'), attachmentCount: document.fileCount }) });
-          });
-          searching.value = false;
-          return;
-        })
-        .catch((error) => {
-          searching.value = false;
-          $q.notify({
-            type: "negative",
-            message: t("API Error: fatal error"),
-            caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
-          });
-          return;
+const miniSidebarCurrentMode = ref(miniSidebarCurrentModeSavedMode != null ? miniSidebarCurrentModeSavedMode == true : $q.screen.md);
+
+const currentScreenSize = computed(() => $q.screen.name);
+
+watch(currentScreenSize, (newValue) => {
+  if (!lockminiSidebarCurrentModeMode.value) {
+    miniSidebarCurrentMode.value = $q.screen.lt.lg;
+  }
+});
+
+const searchButtonLabel = computed(() => $q.screen.gt.xs ? t('Search on HomeDocs...') : '');
+
+const onToggleminiSidebarCurrentMode = (value) => {
+  miniSidebarCurrentMode.value = !miniSidebarCurrentMode.value;
+  lockminiSidebarCurrentModeMode.value = true;
+  if (saveMiniSidebarMode) {
+    LocalStorage.set("miniSidebarCurrentMode", miniSidebarCurrentMode.value);
+  }
+}
+
+onMounted(() => {
+  bus.on("reAuthRequired", (msg) => {
+    if (msg.emitter) {
+      reAuthEmitters.push(msg.emitter);
+    }
+    dialogs.reauth.visible = true;
+  });
+
+  bus.on("showDocumentFilePreviewDialog", (msg) => {
+    dialogs.filePreview.document.id = msg?.document?.id;
+    dialogs.filePreview.document.title = msg?.document?.title;
+    dialogs.filePreview.document.attachments = msg?.document?.attachments || [];
+    dialogs.filePreview.currentIndex = msg?.currentIndex;
+    dialogs.filePreview.visible = true;
+  });
+
+  bus.on("showDocumentFilesPreviewDialog", (msg) => {
+    dialogs.documentFilesPreview.document.id = msg?.document?.id;
+    dialogs.documentFilesPreview.document.title = msg?.document?.title;
+    dialogs.documentFilesPreview.visible = true;
+  });
+
+  bus.on("showDocumentNotesPreviewDialog", (msg) => {
+    dialogs.documentNotesPreview.document.id = msg?.document?.id;
+    dialogs.documentNotesPreview.document.title = msg?.document?.title;
+    dialogs.documentNotesPreview.visible = true;
+  });
+
+  bus.on("showUploadingDialog", (msg) => {
+    dialogs.uploading.transfers.unshift(...msg.transfers.map((transfer) => {
+      return ({
+        id: uid(),
+        filename: transfer.name,
+        filesize: transfer.size,
+        start: currentTimestamp(),
+        end: null,
+        uploading: true,
+        done: false,
+        error: false,
+        errorHTTPCode: null,
+        errorMessage: null,
+        processed: false,
+      })
+    }) || []);
+    dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0 && alwaysOpenUploadDialog.get();
+  });
+
+  bus.on("refreshUploadingDialog.fileUploaded", (msg) => {
+    if (dialogs.uploading.transfers.length > 0) {
+      msg.transfers?.forEach((completedTransfer) => {
+        const foundTransfer = dialogs.uploading.transfers?.find((transfer) => !transfer.processed && completedTransfer.name == transfer.filename && completedTransfer.size == transfer.filesize);
+        if (foundTransfer) {
+          foundTransfer.end = currentTimestamp();
+          foundTransfer.uploading = false;
+          foundTransfer.done = true;
+          foundTransfer.processed = true;
+        } else {
+          // TODO:
+          console.error("Transfer not found");
+        }
+      });
+    } else {
+      console.error("Missing previous transfers");
+    }
+    dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0 && alwaysOpenUploadDialog.get();
+  });
+
+  bus.on("refreshUploadingDialog.fileUploadRejected", (msg) => {
+    msg.transfers?.forEach((transferUploadedWithError) => {
+      const foundTransfer = dialogs.uploading.transfers?.find((transfer) => !transfer.processed && transferUploadedWithError.name == transfer.filename && transferUploadedWithError.size == transfer.filesize);
+      if (foundTransfer) {
+        foundTransfer.end = currentTimestamp();
+        foundTransfer.uploading = false;
+        foundTransfer.error = true;
+        foundTransfer.errorHTTPCode = transferUploadedWithError.error?.status;
+        foundTransfer.errorMessage = "Transfer rejected";
+        foundTransfer.processed = true;
+      } else {
+        dialogs.uploading.transfers.unshift({
+          id: uid(),
+          filename: transferUploadedWithError.name,
+          filesize: transferUploadedWithError.size,
+          start: currentTimestamp(),
+          end: currentTimestamp(),
+          uploading: false,
+          done: false,
+          error: true,
+          errorHTTPCode: transferUploadedWithError.error?.status,
+          errorMessage: "Transfer rejected",
+          processed: true,
         });
+      }
     });
-  } else {
-    update(() => {
-      filteredOptions.value = [];
+    dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0;
+  });
+
+  bus.on("refreshUploadingDialog.fileUploadFailed", (msg) => {
+    msg.transfers?.forEach((transferUploadedWithError) => {
+      const foundTransfer = dialogs.uploading.transfers?.find((transfer) => !transfer.processed && transferUploadedWithError.name == transfer.filename && transferUploadedWithError.size == transfer.filesize);
+      if (foundTransfer) {
+        foundTransfer.end = currentTimestamp();
+        foundTransfer.uploading = false;
+        foundTransfer.error = true;
+        foundTransfer.errorHTTPCode = transferUploadedWithError.error?.status;
+        foundTransfer.errorMessage = "Transfer failed";
+        foundTransfer.processed = true;
+      } else {
+        dialogs.uploading.transfers.unshift({
+          id: uid(),
+          filename: transferUploadedWithError.name,
+          filesize: transferUploadedWithError.size,
+          start: currentTimestamp(),
+          end: currentTimestamp(),
+          uploading: false,
+          done: false,
+          error: true,
+          errorHTTPCode: transferUploadedWithError.error?.status,
+          errorMessage: "Transfer failed",
+          processed: true,
+        });
+      }
     });
-    return;
-  }
-}
+    dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0;
+  });
+});
 
-function onSelectLocale(locale, save) {
-  selectedLocale.value = locale;
-  i18n.global.locale.value = locale.value;
-  if (save) {
-    session.saveLocale(locale.value);
-  }
-}
-
-function signOut() {
-  api.user
-    .signOut()
-    .then((success) => {
-      session.signOut();
-      router.push({
-        name: "signIn",
-      });
-    })
-    .catch((error) => {
-      $q.notify({
-        type: "negative",
-        message: t("API Error: fatal error"),
-        caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
-      });
-    });
-}
-
-initialState.load();
+onBeforeUnmount(() => {
+  bus.off("reAuthRequired");
+  bus.off("showDocumentFilePreviewDialog");
+  bus.off("showDocumentFilesPreviewDialog");
+  bus.off("showDocumentNotesPreviewDialog");
+  bus.off("showUploadingDialog");
+  bus.off("refreshUploadingDialog.fileUploaded");
+  bus.off("refreshUploadingDialog.fileUploadRejected");
+  bus.off("refreshUploadingDialog.fileUploadFailed");
+});
 
 </script>

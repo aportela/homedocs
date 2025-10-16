@@ -8,6 +8,24 @@ require_once dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "vendor" . DIRECT
 
 final class DocumentTest extends \HomeDocs\Test\BaseTest
 {
+    private function createValidSession(): void
+    {
+        $id = \HomeDocs\Utils::uuidv4();
+        $u = new \HomeDocs\User($id, $id . "@server.com", "secret");
+        $u->add(self::$dbh);
+        \HomeDocs\UserSession::set($id, $id . "@server.com");
+    }
+
+    /**
+     * Initialize the test case
+     * Called for every defined test
+     */
+    public function setUp(): void
+    {
+        parent::setUp();
+        //$this->createValidSession(); // make tests slower, better use only on required tests
+    }
+
     public function testAddWithoutId(): void
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
@@ -28,7 +46,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("title");
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), str_repeat("0", 129));
+        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), str_repeat("0", \HomeDocs\Constants::MAX_DOCUMENT_TITLE_LENGTH + 1));
         $d->add(self::$dbh);
     }
 
@@ -36,7 +54,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("description");
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", str_repeat("0", 4097));
+        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", str_repeat("0", \HomeDocs\Constants::MAX_DOCUMENT_DESCRIPTION_LENGTH + 1));
         $d->add(self::$dbh);
     }
 
@@ -44,14 +62,15 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("tag");
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", ["", "tag2"]);
+        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["", "tag2"]);
         $d->add(self::$dbh);
     }
 
     public function testAdd(): void
     {
         $this->expectNotToPerformAssertions();
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", ["tag1", "tag2"]);
+        $this->createValidSession();
+        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["tag1", "tag2"]);
         $d->add(self::$dbh);
     }
 
@@ -59,7 +78,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("title");
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", ["tag1", "tag2"]);
+        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), null, "document description", null, null, ["tag1", "tag2"]);
         $d->add(self::$dbh);
         $d->title = null;
         $d->update(self::$dbh);
@@ -69,7 +88,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("title");
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), str_repeat("0", 129), "document description", ["tag1", "tag2"]);
+        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), str_repeat("0", \HomeDocs\Constants::MAX_DOCUMENT_TITLE_LENGTH + 1), "document description", null, null, ["tag1", "tag2"]);
         $d->add(self::$dbh);
         $d->title = null;
         $d->update(self::$dbh);
@@ -79,7 +98,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("description");
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", str_repeat("0", 4097), ["tag1", "tag2"]);
+        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", str_repeat("0", \HomeDocs\Constants::MAX_DOCUMENT_DESCRIPTION_LENGTH + 1), null, null, ["tag1", "tag2"]);
         $d->add(self::$dbh);
         $d->title = null;
         $d->update(self::$dbh);
@@ -89,7 +108,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("tag");
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", ["tag1", "tag2"]);
+        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["", "tag2"]);
         $d->add(self::$dbh);
         $d->tags = ["", ""];
         $d->update(self::$dbh);
@@ -98,7 +117,8 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
     public function testUpdate(): void
     {
         $this->expectNotToPerformAssertions();
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", ["tag1", "tag2"]);
+        $this->createValidSession();
+        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["tag1", "tag2"]);
         $d->add(self::$dbh);
         $d->title = "document title updated";
         $d->description = "document description updated";
@@ -117,7 +137,8 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
     public function testDelete(): void
     {
         $this->expectNotToPerformAssertions();
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", ["tag1", "tag2"]);
+        $this->createValidSession();
+        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["tag1", "tag2"]);
         $d->add(self::$dbh);
         $d->delete(self::$dbh);
     }
@@ -138,10 +159,18 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
         $d->get(self::$dbh);
     }
 
+    public function testGet(): void
+    {
+        $this->expectNotToPerformAssertions();
+        $this->createValidSession();
+        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["tag1", "tag2"]);
+        $d->add(self::$dbh);
+        $d->get(self::$dbh);
+    }
 
     public function testSearchWithPager(): void
     {
-        $results = \HomeDocs\Document::search(self::$dbh, 1, 16, [], "createdOnTimestamp", "DESC");
+        $results = \HomeDocs\Document::search(self::$dbh, new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16), [], "createdOnTimestamp", \aportela\DatabaseBrowserWrapper\Order::ASC);
         $this->assertIsObject($results);
         $this->assertIsObject($results->pagination);
         $this->assertIsArray($results->documents);
@@ -150,25 +179,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
 
     public function testSearchWithPagerAndTitleFilter(): void
     {
-        $results = \HomeDocs\Document::search(self::$dbh, 1, 16, ["title" => "condition"], "createdOnTimestamp", "DESC");
-        $this->assertIsObject($results);
-        $this->assertIsObject($results->pagination);
-        $this->assertIsArray($results->documents);
-        $this->assertTrue($results->pagination->totalResults >= count($results->documents));
-    }
-
-    public function testSearchWithPagerAndFromTimestampFilter(): void
-    {
-        $results = \HomeDocs\Document::search(self::$dbh, 1, 16, ["fromTimestampCondition" => 1690236000], "createdOnTimestamp", "DESC");
-        $this->assertIsObject($results);
-        $this->assertIsObject($results->pagination);
-        $this->assertIsArray($results->documents);
-        $this->assertTrue($results->pagination->totalResults >= count($results->documents));
-    }
-
-    public function testSearchWithPagerAndToTimestampFilter(): void
-    {
-        $results = \HomeDocs\Document::search(self::$dbh, 1, 16, ["toTimestampCondition" => 1690408799], "createdOnTimestamp", "DESC");
+        $results = \HomeDocs\Document::search(self::$dbh, new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16), ["title" => "condition"], "createdOnTimestamp", \aportela\DatabaseBrowserWrapper\Order::DESC);
         $this->assertIsObject($results);
         $this->assertIsObject($results->pagination);
         $this->assertIsArray($results->documents);
@@ -177,7 +188,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
 
     public function testSearchWithPagerAndDescriptionFilter(): void
     {
-        $results = \HomeDocs\Document::search(self::$dbh, 1, 16, ["description" => "condition"], "createdOnTimestamp", "DESC");
+        $results = \HomeDocs\Document::search(self::$dbh, new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16), ["description" => "condition"], "createdOnTimestamp", \aportela\DatabaseBrowserWrapper\Order::ASC);
         $this->assertIsObject($results);
         $this->assertIsObject($results->pagination);
         $this->assertIsArray($results->documents);
@@ -186,22 +197,83 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
 
     public function testSearchWithPagerAndTagsFilter(): void
     {
-        $results = \HomeDocs\Document::search(self::$dbh, 1, 16, ["tags" => ["tag1", "tag2"]], "createdOnTimestamp", "DESC");
+        $results = \HomeDocs\Document::search(self::$dbh, new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16), ["tags" => ["tag1", "tag2"]], "createdOnTimestamp", \aportela\DatabaseBrowserWrapper\Order::DESC);
         $this->assertIsObject($results);
         $this->assertIsObject($results->pagination);
         $this->assertIsArray($results->documents);
         $this->assertTrue($results->pagination->totalResults >= count($results->documents));
     }
 
-
-
-    public function testSearchWithoutPager(): void
+    public function testSearchWithPagerAndNotesBodyFilter(): void
     {
-        $results = \HomeDocs\Document::search(self::$dbh, 1, 0, [], "createdOnTimestamp", "DESC");
+        $results = \HomeDocs\Document::search(self::$dbh, new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16), ["notesBody" => "condition"], "createdOnTimestamp", \aportela\DatabaseBrowserWrapper\Order::ASC);
         $this->assertIsObject($results);
         $this->assertIsObject($results->pagination);
         $this->assertIsArray($results->documents);
-        $this->assertTrue($results->pagination->totalResults == count($results->documents));
+        $this->assertTrue($results->pagination->totalResults >= count($results->documents));
+    }
+
+    public function testSearchWithPagerAndAttachmentsFilenameFilter(): void
+    {
+        $results = \HomeDocs\Document::search(self::$dbh, new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16), ["attachmentsFilename" => "condition"], "createdOnTimestamp", \aportela\DatabaseBrowserWrapper\Order::DESC);
+        $this->assertIsObject($results);
+        $this->assertIsObject($results->pagination);
+        $this->assertIsArray($results->documents);
+        $this->assertTrue($results->pagination->totalResults >= count($results->documents));
+    }
+
+    public function testSearchWithPagerAndFromCreationTimestampFilter(): void
+    {
+        $results = \HomeDocs\Document::search(self::$dbh, new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16), ["fromCreationTimestampCondition" => 1690236000], "createdOnTimestamp", \aportela\DatabaseBrowserWrapper\Order::ASC);
+        $this->assertIsObject($results);
+        $this->assertIsObject($results->pagination);
+        $this->assertIsArray($results->documents);
+        $this->assertTrue($results->pagination->totalResults >= count($results->documents));
+    }
+
+    public function testSearchWithPagerAndToCreationTimestampFilter(): void
+    {
+        $results = \HomeDocs\Document::search(self::$dbh, new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16), ["toCreationTimestampCondition" => 1690408799], "createdOnTimestamp", \aportela\DatabaseBrowserWrapper\Order::DESC);
+        $this->assertIsObject($results);
+        $this->assertIsObject($results->pagination);
+        $this->assertIsArray($results->documents);
+        $this->assertTrue($results->pagination->totalResults >= count($results->documents));
+    }
+
+    public function testSearchWithPagerAndFromLastUpdateTimestampFilter(): void
+    {
+        $results = \HomeDocs\Document::search(self::$dbh, new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16), ["fromLastUpdateTimestampCondition" => 1690236000], "lastUpdateTimestamp", \aportela\DatabaseBrowserWrapper\Order::ASC);
+        $this->assertIsObject($results);
+        $this->assertIsObject($results->pagination);
+        $this->assertIsArray($results->documents);
+        $this->assertTrue($results->pagination->totalResults >= count($results->documents));
+    }
+
+    public function testSearchWithPagerAndToLastUpdateTimestampFilter(): void
+    {
+        $results = \HomeDocs\Document::search(self::$dbh, new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16), ["toLastUpdateTimestampCondition" => 1690408799], "lastUpdateTimestamp", \aportela\DatabaseBrowserWrapper\Order::DESC);
+        $this->assertIsObject($results);
+        $this->assertIsObject($results->pagination);
+        $this->assertIsArray($results->documents);
+        $this->assertTrue($results->pagination->totalResults >= count($results->documents));
+    }
+
+    public function testSearchWithPagerAndFromUpdatedOnTimestampFilter(): void
+    {
+        $results = \HomeDocs\Document::search(self::$dbh, new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16), ["fromUpdatedOnTimestampCondition" => 1690236000], "lastUpdateTimestamp", \aportela\DatabaseBrowserWrapper\Order::ASC);
+        $this->assertIsObject($results);
+        $this->assertIsObject($results->pagination);
+        $this->assertIsArray($results->documents);
+        $this->assertTrue($results->pagination->totalResults >= count($results->documents));
+    }
+
+    public function testSearchWithPagerAndToUpdatedOnTimestampFilter(): void
+    {
+        $results = \HomeDocs\Document::search(self::$dbh, new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16), ["toUpdatedOnTimestampCondition" => 1690408799], "lastUpdateTimestamp", \aportela\DatabaseBrowserWrapper\Order::DESC);
+        $this->assertIsObject($results);
+        $this->assertIsObject($results->pagination);
+        $this->assertIsArray($results->documents);
+        $this->assertTrue($results->pagination->totalResults >= count($results->documents));
     }
 
     public function testSearchRecent(): void

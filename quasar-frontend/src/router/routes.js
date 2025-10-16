@@ -1,6 +1,24 @@
 const routes = [
   {
+    path: "/auth",
+    component: () => import("layouts/AuthRegisterLayout.vue"),
+    children: [
+      {
+        name: "signIn",
+        path: "sign-in",
+        component: () => import("pages/SignInPage.vue"),
+      },
+      {
+        name: "signUp",
+        path: "sign-up",
+        component: () => import("pages/SignUpPage.vue"),
+      },
+    ],
+  },
+  {
     path: "/",
+    name: "root",
+    redirect: "/index",
     component: () => import("layouts/MainLayout.vue"),
     children: [
       {
@@ -9,8 +27,13 @@ const routes = [
         component: () => import("pages/IndexPage.vue"),
       },
       {
+        name: "profile",
+        path: "profile",
+        component: () => import("pages/ProfilePage.vue"),
+      },
+      {
         name: "newDocument",
-        path: "new_document",
+        path: "new-document",
         component: () => import("pages/DocumentPage.vue"),
       },
       {
@@ -20,32 +43,43 @@ const routes = [
       },
       {
         name: "advancedSearch",
-        path: "advanced_search",
+        path: "advanced-search",
         component: () => import("pages/AdvancedSearchPage.vue"),
+        meta: { conditionsFilterExpanded: true, autoLaunchSearch: false },
       },
       {
         name: "advancedSearchByTag",
-        path: "advanced_search/tag/:tag",
+        path: "advanced-search/tag/:tag",
         component: () => import("pages/AdvancedSearchPage.vue"),
+        meta: { conditionsFilterExpanded: false, autoLaunchSearch: true },
       },
       {
-        name: "signIn",
-        path: "sign_in",
-        component: () => import("pages/SignInPage.vue"),
+        name: "advancedSearchByFixedCreationDate",
+        path: "advanced-search/fixed-creation-date/:fixedCreationDate",
+        component: () => import("pages/AdvancedSearchPage.vue"),
+        meta: { conditionsFilterExpanded: false, autoLaunchSearch: true },
       },
       {
-        name: "signUp",
-        path: "sign_up",
-        component: () => import("pages/SignUpPage.vue"),
+        name: "advancedSearchByFixedLastUpdate",
+        path: "advanced-search/fixed-last-update/:fixedLastUpdate",
+
+        component: () => import("pages/AdvancedSearchPage.vue"),
+        meta: { conditionsFilterExpanded: false, autoLaunchSearch: true },
+      },
+      {
+        name: "advancedSearchByFixedUpdatedOn",
+        path: "advanced-search/fixed-updated-on/:fixedUpdatedOn",
+        component: () => import("pages/AdvancedSearchPage.vue"),
+        meta: { conditionsFilterExpanded: false, autoLaunchSearch: true },
       },
     ],
   },
-
   // Always leave this as last one,
   // but you can also remove it
   {
     path: "/:catchAll(.*)*",
-    component: () => import("pages/ErrorNotFound.vue"),
+    name: "notFound",
+    component: () => import("layouts/ErrorNotFoundLayout.vue"),
   },
 ];
 

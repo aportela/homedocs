@@ -2,7 +2,7 @@
 
 // Settings
 $settings = [
-    'environment' => 'production' // (development|production)
+    'environment' => 'development' // (development|production)
 ];
 
 // Should be set to 0 (E_NONE) in production
@@ -17,10 +17,10 @@ date_default_timezone_set('Europe/Madrid');
 // Path settings
 $settings['paths']['root'] = dirname(__DIR__);
 $settings['paths']['vendor'] = $settings['paths']['root'] . DIRECTORY_SEPARATOR . 'vendor';
-$settings['paths']['database'] = $settings['paths']['root'] . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'homedocs2.sqlite3';
+$settings['paths']['database'] = $settings['paths']['root'] . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'homedocs3.sqlite3';
 $settings['paths']['storage'] = $settings['paths']['root'] . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'storage';
 $settings['paths']['templates'] = $settings['paths']['root'] . DIRECTORY_SEPARATOR . 'templates';
-$settings['paths']['logs'] = $settings['paths']['root'] . DIRECTORY_SEPARATOR . 'logs';
+$settings['paths']['logs'] = $settings['paths']['root'] . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'logs';
 
 // Error Handling Middleware settings
 $settings['error'] = [
@@ -83,15 +83,9 @@ $settings['db'] = [
     'upgradeSchemaPath' => $settings['paths']['root'] . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'db-schema.php'
 ];
 
-$settings['twig'] = [
-    'path' =>  $settings['paths']['templates'],
-    'options' =>  ['auto_reload' => true, 'cache' => $settings['environment'] == 'development' ? false : dirname(__DIR__) . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'twig_cache']
-];
-
 $settings['common'] = [
     'defaultResultsPage' => 64,
-    'allowSignUp' => true,
-    'locale' => 'en' // (en | es | gl)
+    'allowSignUp' => true
 ];
 
 $settings['jwt'] = [

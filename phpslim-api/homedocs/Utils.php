@@ -6,11 +6,13 @@ namespace HomeDocs;
 
 class Utils
 {
+    /**
+     * @return array<mixed>
+     */
     public static function getInitialState(\Psr\Container\ContainerInterface $container): array
     {
         $settings = $container->get('settings');
         return ([
-            'locale' => $settings['common']['locale'],
             'allowSignUp' => $settings['common']['allowSignUp'],
             'defaultResultsPage' => $settings['common']['defaultResultsPage'],
             'environment' => $settings['environment'],
@@ -155,5 +157,24 @@ class Utils
             bin2hex(chr((ord(random_bytes(1)) & 0x3F) | 0x80)) . bin2hex(random_bytes(1)),
             bin2hex(random_bytes(6))
         ]);
+    }
+
+    /**
+     * return (if found) matched fragment of string
+     */
+    public static function getStringFragment(string $text, string $search, int $maxFragmentLength, bool $ignoreCase): ?string
+    {
+        $pos = $ignoreCase ? mb_stripos($text, $search) : mb_strpos($text, $search);
+        if ($pos !== false) {
+            $text_len = mb_strlen($text);
+            if ($text_len <= $maxFragmentLength) {
+                return ($text);
+            } else {
+                $len =  $text_len - $pos;
+                return ($pos > 0 ? "..." : "") . trim(mb_substr($text, $pos, $maxFragmentLength > $len ? $len : $maxFragmentLength)) . "...";
+            }
+        } else {
+            return null;
+        }
     }
 }

@@ -44,7 +44,7 @@ module.exports = configure(function (ctx) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-webpack/boot-files
-    boot: ["router", "axios", "i18n"],
+    boot: ["router", "i18n", "dark", "inititalState"],
 
     // https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js#Property%3A-css
     css: ["app.scss"],
@@ -111,7 +111,7 @@ module.exports = configure(function (ctx) {
       // move default html to twig template path
       htmlFilename:
         ctx.mode.spa && ctx.prod
-          ? "../templates/index-quasar.html.twig"
+          ? "../templates/index-quasar.html"
           : "index.html",
     },
 
@@ -136,7 +136,12 @@ module.exports = configure(function (ctx) {
 
     // https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js#Property%3A-framework
     framework: {
-      config: {},
+      components: ["QBtn"],
+      directives: ["Ripple"],
+      config: {
+        dark: "auto",
+        ripple: false,
+      },
 
       // iconSet: 'material-icons', // Quasar icon set
       // lang: 'en-US', // Quasar language pack

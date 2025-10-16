@@ -7,7 +7,7 @@ namespace HomeDocs;
 class Tag
 {
     /**
-     * @return array<string>
+     * @return array<mixed>
      */
     public static function getCloud(\aportela\DatabaseWrapper\DB $dbh): array
     {
@@ -16,12 +16,16 @@ class Tag
                     SELECT
                         COUNT(*) AS total, tag
                     FROM DOCUMENT_TAG
-                    INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_TAG.document_id
-                    WHERE DOCUMENT.created_by_user_id = :session_user_id
+                    INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_TAG.document_id
+                    WHERE
+                        DOCUMENT_HISTORY.created_by_user_id = :session_user_id
+                    AND
+                        DOCUMENT_HISTORY.operation_type = :history_operation_add
                     GROUP BY tag
                     ORDER BY tag
                 ",
             array(
+                new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
                 new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
             )
         );
@@ -45,11 +49,15 @@ class Tag
                     SELECT
                         DISTINCT tag
                     FROM DOCUMENT_TAG
-                    INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_TAG.document_id
-                    WHERE DOCUMENT.created_by_user_id = :session_user_id
+                    INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_TAG.document_id
+                    WHERE
+                        DOCUMENT_HISTORY.created_by_user_id = :session_user_id
+                    AND
+                        DOCUMENT_HISTORY.operation_type = :history_operation_add
                     ORDER BY tag
                 ",
             array(
+                new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
                 new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
             )
         );

@@ -23,48 +23,42 @@ class User
         return (password_hash($password, PASSWORD_BCRYPT, array('cost' => 12)));
     }
 
-    public function add(\aportela\DatabaseWrapper\DB $dbh): void
+    /**
+     * @return array<\aportela\DatabaseWrapper\Param\InterfaceParam>
+     */
+    private function validateAndPrepareParams(): array
     {
-        if (!empty($this->id) && mb_strlen($this->id) == 36) {
-            if (!empty($this->email) && mb_strlen($this->email) <= 255 && filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
-                if (!empty($this->password)) {
-                    $params = array(
-                        new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id)),
-                        new \aportela\DatabaseWrapper\Param\StringParam(":email", mb_strtolower($this->email)),
-                        new \aportela\DatabaseWrapper\Param\StringParam(":password_hash", $this->passwordHash($this->password))
-                    );
-                    $dbh->exec(" INSERT INTO USER (id, email, password_hash) VALUES(:id, :email, :password_hash) ", $params);
-                } else {
-                    throw new \HomeDocs\Exception\InvalidParamsException("password");
-                }
-            } else {
-                throw new \HomeDocs\Exception\InvalidParamsException("email");
-            }
-        } else {
+        if (empty($this->id) || mb_strlen($this->id) !== 36) {
             throw new \HomeDocs\Exception\InvalidParamsException("id");
         }
+        if (empty($this->email) || mb_strlen($this->email) > 255 || !filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
+            throw new \HomeDocs\Exception\InvalidParamsException("email");
+        }
+        if (empty($this->password)) {
+            throw new \HomeDocs\Exception\InvalidParamsException("password");
+        }
+
+        return [
+            new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id)),
+            new \aportela\DatabaseWrapper\Param\StringParam(":email", mb_strtolower($this->email)),
+            new \aportela\DatabaseWrapper\Param\StringParam(":password_hash", $this->passwordHash($this->password)),
+        ];
+    }
+    public function add(\aportela\DatabaseWrapper\DB $dbh): void
+    {
+        $params = $this->validateAndPrepareParams();
+        $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":created_on_timestamp", intval(microtime(true) * 1000));
+        $dbh->execute(" INSERT INTO USER (id, email, password_hash, created_on_timestamp, last_update_timestamp) VALUES(:id, :email, :password_hash, :created_on_timestamp, NULL) ", $params);
     }
 
     public function update(\aportela\DatabaseWrapper\DB $dbh): void
     {
-        if (!empty($this->id) && mb_strlen($this->id) == 36) {
-            if (!empty($this->email) && mb_strlen($this->email) <= 255 && filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
-                if (!empty($this->password)) {
-                    $params = array(
-                        new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id)),
-                        new \aportela\DatabaseWrapper\Param\StringParam(":email", mb_strtolower($this->email)),
-                        new \aportela\DatabaseWrapper\Param\StringParam(":password_hash", $this->passwordHash($this->password))
-                    );
-                    $dbh->exec(" UPDATE USER SET email = :email, password_hash = :password_hash WHERE id = :id ", $params);
-                } else {
-                    throw new \HomeDocs\Exception\InvalidParamsException("password");
-                }
-            } else {
-                throw new \HomeDocs\Exception\InvalidParamsException("email");
-            }
-        } else {
-            throw new \HomeDocs\Exception\InvalidParamsException("id");
-        }
+        $params = $this->validateAndPrepareParams();
+        $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":last_update_timestamp", intval(microtime(true) * 1000));
+        $dbh->execute(" UPDATE USER SET email = :email, password_hash = :password_hash, last_update_timestamp = :last_update_timestamp WHERE id = :id ", $params);
+        //print_r($params);
+        //exit;
+        \HomeDocs\UserSession::set(\HomeDocs\UserSession::getUserId(), $this->email);
     }
 
     public function get(\aportela\DatabaseWrapper\DB $dbh): void
@@ -108,13 +102,11 @@ class User
 
     public function exists(\aportela\DatabaseWrapper\DB $dbh): bool
     {
-        $exists = false;
         try {
             $this->get($dbh);
-            $exists = true;
+            return (true);
         } catch (\HomeDocs\Exception\NotFoundException $e) {
-        } finally {
-            return ($exists);
+            return (false);
         }
     }
 

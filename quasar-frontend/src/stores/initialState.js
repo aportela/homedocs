@@ -1,34 +1,32 @@
 import { defineStore } from "pinia";
-import { api } from "boot/axios";
-
-const hashedSite = Array.from(window.location.host).reduce(
-  (hash, char) => 0 | (31 * hash + char.charCodeAt(0)),
-  0
-);
 
 export const useInitialStateStore = defineStore("initialState", {
   state: () => ({
     initialState: {
+      environment: "production",
       allowSignUp: false,
-      maxUploadFileSize: 1,
+      maxUploadFileSize: 0,
+      session: {
+        id: null,
+        email: null,
+      },
     },
   }),
   getters: {
     isSignUpAllowed: (state) => state.initialState.allowSignUp,
     maxUploadFileSize: (state) => state.initialState.maxUploadFileSize,
+    session: (state) => state.initialState.session,
+    isDevEnvironment: (state) =>
+      state.initialState.environment == "development",
   },
   actions: {
-    load() {
-      api.common
-        .initialState()
-        .then((success) => {
-          this.initialState.allowSignUp = success.data.initialState.allowSignUp;
-          this.initialState.maxUploadFileSize =
-            success.data.initialState.maxUploadFileSize;
-        })
-        .catch((error) => {
-          console.error(error.response);
-        });
+    set(initialState) {
+      this.initialState.allowSignUp = initialState.allowSignUp;
+      this.initialState.maxUploadFileSize = initialState.maxUploadFileSize;
+      this.initialState.session.id = initialState.session.id;
+      this.initialState.session.email = initialState.session.email;
+      this.initialState.environment =
+        initialState.environment == "production" ? "production" : "development";
     },
   },
 });

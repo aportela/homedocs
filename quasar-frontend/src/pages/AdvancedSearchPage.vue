@@ -1,260 +1,487 @@
 <template>
-  <q-page class="bg-grey-2">
-    <div class="q-pa-md">
-      <h3 class="q-mt-sm">{{ t("Advanced search") }}</h3>
-      <div class="q-gutter-y-md">
-        <q-card>
-          <q-card-section>
-            <q-expansion-item expand-separator icon="filter_alt" :label="t('Conditions')" :model-value="expandedFilter">
-              <form @submit.prevent.stop="onSubmitForm(true)" autocorrect="off" autocapitalize="off" autocomplete="off"
-                spellcheck="false" class="q-mt-md">
-                <q-input class="q-mb-md" dense outlined v-model="advancedSearchData.filter.title" type="text" name="title"
-                  clearable :label="t('Document title')" :disable="searching" :autofocus="true">
-                  <template v-slot:prepend>
-                    <q-icon name="search" />
-                  </template>
-                </q-input>
-                <q-input class="q-mb-md" dense outlined v-model="advancedSearchData.filter.description" type="text"
-                  name="description" clearable :label="t('Document description')" :disable="searching">
-                  <template v-slot:prepend>
-                    <q-icon name="search" />
-                  </template>
-                </q-input>
-                <div class="row">
-                  <div class="col">
-                    <q-select class="q-mb-md" dense outlined v-model="advancedSearchData.filter.dateFilterType"
-                      :options="dateFilterOptions" :label="t('Document date')" :disable="searching" />
-                  </div>
-                  <div class="col" v-if="advancedSearchData.hasFromDateFilter">
-                    <q-input dense outlined mask="date" v-model="advancedSearchData.filter.fromDate"
-                      :label="t('From date')" :disable="searching || advancedSearchData.denyChangeDateFilters">
-                      <template v-slot:append>
-                        <q-icon name="event" class="cursor-pointer">
-                          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                            <q-date v-model="advancedSearchData.filter.fromDate" today-btn
-                              :disable="searching || advancedSearchData.denyChangeDateFilters">
-                              <div class="row items-center justify-end">
-                                <q-btn v-close-popup label="Close" color="primary" flat />
-                              </div>
-                            </q-date>
-                          </q-popup-proxy>
-                        </q-icon>
-                      </template>
-                    </q-input>
-                  </div>
-                  <div class="col" v-if="advancedSearchData.hasToDateFilter">
-                    <q-input dense outlined mask="date" v-model="advancedSearchData.filter.toDate" :label="t('To date')"
-                      :disable="searching || advancedSearchData.denyChangeDateFilters">
-                      <template v-slot:append>
-                        <q-icon name="event" class="cursor-pointer">
-                          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                            <q-date v-model="advancedSearchData.filter.toDate" today-btn
-                              :disable="searching || advancedSearchData.denyChangeDateFilters">
-                              <div class="row items-center justify-end">
-                                <q-btn v-close-popup label="Close" color="primary" flat />
-                              </div>
-                            </q-date>
-                          </q-popup-proxy>
-                        </q-icon>
-                      </template>
-                    </q-input>
-                  </div>
-                  <div class="col" v-if="advancedSearchData.hasFixedDateFilter">
-                    <q-input dense outlined mask="date" v-model="advancedSearchData.filter.fromDate"
-                      :label="t('Fixed date')" :disable="searching || advancedSearchData.denyChangeDateFilters">
-                      <template v-slot:append>
-                        <q-icon name="event" class="cursor-pointer">
-                          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                            <q-date v-model="advancedSearchData.filter.fromDate" today-btn
-                              :disable="searching || advancedSearchData.denyChangeDateFilters">
-                              <div class="row items-center justify-end">
-                                <q-btn v-close-popup label="Close" color="primary" flat />
-                              </div>
-                            </q-date>
-                          </q-popup-proxy>
-                        </q-icon>
-                      </template>
-                    </q-input>
-                  </div>
-                </div>
-                <TagSelector v-model="advancedSearchData.filter.tags"
-                  :disabled="searching || advancedSearchData.denyChangeDateFilters" dense>
-                </TagSelector>
-                <q-btn color="dark" size="md" :label="$t('Search')" no-caps class="full-width" icon="search"
-                  :disable="searching" :loading="searching" type="submit">
-                  <template v-slot:loading>
-                    <q-spinner-hourglass class="on-left" />
-                    {{ t("Searching...") }}
-                  </template>
-                </q-btn>
-              </form>
-            </q-expansion-item>
-          </q-card-section>
-        </q-card>
-        <q-card v-if="searchLaunched">
-          <q-card-section>
-            <q-expansion-item expand-separator icon="folder_open"
-              :label="t('Results') + ' (' + advancedSearchData.pager.totalResults + ')'" :model-value="expandedResults"
-              v-if="advancedSearchData.hasResults">
-              <div class="q-pa-lg flex flex-center" v-if="advancedSearchData.pager.totalPages > 1">
-                <q-pagination v-model="advancedSearchData.pager.currentPage" color="dark"
-                  :max="advancedSearchData.pager.totalPages" :max-pages="5" boundary-numbers direction-links
-                  boundary-links @update:model-value="onPaginationChanged" :disable="searching" />
-              </div>
-              <q-markup-table>
-                <thead>
-                  <tr>
-                    <th style="width: 60%;" class="text-left cursor-pointer" @click="onToggleSort('title')">{{
-                      t("Title") }}
-                      <q-icon :name="sortOrderIcon" v-if="advancedSearchData.isSortedByField('title')" size="sm"></q-icon>
-                    </th>
-                    <th style="width: 20%;" class="text-left cursor-pointer" @click="onToggleSort('createdOnTimestamp')">
-                      {{ t("Date") }}
-                      <q-icon :name="sortOrderIcon" v-if="advancedSearchData.isSortedByField('createdOnTimestamp')"
-                        size=" sm"></q-icon>
-                    </th>
-                    <th style="width: 10%;" class="text-right cursor-pointer" @click="onToggleSort('fileCount')">
-                      {{ t("Files") }}<q-icon :name="sortOrderIcon" v-if="advancedSearchData.isSortedByField('fileCount')"
-                        size="sm"></q-icon>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for=" document in advancedSearchData.results " :key="document.id">
-                    <td class="text-left"><router-link :to="{ name: 'document', params: { id: document.id } }">{{
-                      document.title }}</router-link>
-                    </td>
-                    <td class="text-left">{{ document.createdOn }}</td>
-                    <td class="text-right">{{ document.fileCount }}</td>
-                  </tr>
-                </tbody>
-              </q-markup-table>
-              <div class="q-pa-lg flex flex-center" v-if="advancedSearchData.pager.totalPages > 1">
-                <q-pagination v-model="advancedSearchData.pager.currentPage" color="dark"
-                  :max="advancedSearchData.pager.totalPages" :max-pages="5" boundary-numbers direction-links
-                  boundary-links @update:model-value="onPaginationChanged" :disable="searching" />
-              </div>
-            </q-expansion-item>
-            <q-banner dense v-else>
-              <template v-slot:avatar>
-                <q-icon name="error" />
+  <q-page>
+    <CustomExpansionWidget title="Advanced search" icon="filter_alt" :loading="state.loading"
+      :error="state.loadingError" :expanded="isFilterWidgetExpanded">
+      <template v-slot:header-extra>
+        <q-chip square size="sm" color="grey-7" text-color="white">{{
+          t("Total search conditions count", {
+            count:
+              totalSearchConditions
+          }) }}
+        </q-chip>
+      </template>
+      <template v-slot:content>
+        <form @submit.prevent.stop="onSubmitForm(true)" @reset.prevent.stop="onResetForm" autocorrect="off"
+          autocapitalize="off" autocomplete="off" spellcheck="false" class="q-pa-md">
+          <div class="row q-col-gutter-sm">
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
+              <q-input class="q-mb-md" dense outlined v-model.trim="filters.text.title" type="text" name="title"
+                clearable :label="t('Document title')" :disable="state.loading" :autofocus="true"
+                :placeholder="t('Type text condition')">
+                <template v-slot:prepend>
+                  <q-icon name="article" />
+                </template>
+              </q-input>
+              <q-input class="q-mb-md" dense outlined v-model.trim="filters.text.description" type="text"
+                name="description" clearable :label="t('Document description')" :disable="state.loading"
+                :placeholder="t('Type text condition')">
+                <template v-slot:prepend>
+                  <q-icon name="article" />
+                </template>
+              </q-input>
+              <q-input class="q-mb-md" dense outlined v-model.trim="filters.text.notesBody" type="text" name="notesBody"
+                clearable :label="t('Document notes')" :disable="state.loading" :placeholder="t('Type text condition')">
+                <template v-slot:prepend>
+                  <q-icon name="speaker_notes" />
+                </template>
+              </q-input>
+              <q-input class="q-mb-md" dense outlined v-model.trim="filters.text.attachmentsFilename" type="text"
+                name="notesBody" clearable :label="t('Document attachment filenames')" :disable="state.loading"
+                :placeholder="t('Type text condition')">
+                <template v-slot:prepend>
+                  <q-icon name="attach_file" />
+                </template>
+              </q-input>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
+              <InteractiveTagsFieldCustomSelect v-model="filters.tags" label="Document tags" :disabled="state.loading"
+                dense :start-mode-editable="true" :deny-change-editable-mode="true" clearable
+                :placeholder="t('Type text condition')">
+              </InteractiveTagsFieldCustomSelect>
+              <DateFieldCustomInput :options="dateFilterTypeOptions" :label="t('Document creation date')"
+                :disable="state.loading || hasCreationDateRouteParamsFilter" v-model="filters.dates.creationDate"
+                :auto-open-pop-ups="!hasCreationDateRouteParamsFilter">
+              </DateFieldCustomInput>
+              <DateFieldCustomInput :options="dateFilterTypeOptions" :label="t('Document last update')"
+                :disable="state.loading || hasLastUpdateRouteParamsFilter" v-model="filters.dates.lastUpdate"
+                :auto-open-pop-ups="!hasLastUpdateRouteParamsFilter">
+              </DateFieldCustomInput>
+              <DateFieldCustomInput :options="dateFilterTypeOptions" :label="t('Document updated on')"
+                :disable="state.loading || hasUpdatedOnRouteParamsFilter" v-model="filters.dates.updatedOn"
+                :auto-open-pop-ups="!hasUpdatedOnRouteParamsFilter">
+              </DateFieldCustomInput>
+            </div>
+          </div>
+          <q-btn-group spread>
+            <q-btn color="primary" size="md" :label="$t('Search')" no-caps icon="search" :disable="state.loading"
+              :loading="state.loading" type="submit">
+              <template v-slot:loading>
+                <q-spinner-hourglass class="on-left" />
+                {{ t("Searching...") }}
               </template>
-              {{ t("No results found with current filter") }}</q-banner>
-          </q-card-section>
-        </q-card>
-      </div>
-    </div>
+            </q-btn>
+            <q-btn class="action-secondary" size="md" :label="$t('Reset filters')" no-caps icon="undo"
+              :disable="state.loading || totalSearchConditions < 1" type="reset" v-if="useStoreFilter"></q-btn>
+          </q-btn-group>
+        </form>
+        <CustomErrorBanner v-if="showErrorBanner" :text="state.errorMessage || 'Error loading data'"
+          :api-error="state.apiError" class="q-ma-md">
+        </CustomErrorBanner>
+        <CustomBanner v-else-if="showNoResultsBanner" warning text="No results found with current filter"
+          class="q-ma-md">
+        </CustomBanner>
+      </template>
+    </CustomExpansionWidget>
+    <CustomExpansionWidget v-show="hasResults" title="Results" icon="folder_open" :staticIcon="true"
+      :loading="state.loading" :error="state.loadingError" expanded class="q-mt-sm" ref="resultsWidgetRef">
+      <template v-slot:header-extra>
+        <q-chip square size="sm" color="grey-7" text-color="white">{{ t("Total search results count",
+          {
+            count:
+              pager.totalResults
+          }) }}</q-chip>
+      </template>
+      <template v-slot:content>
+        <div class="q-ma-md flex flex-center" v-if="pager.totalPages > 1">
+          <q-pagination v-model="pager.currentPage" color="dark" :max="pager.totalPages" :max-pages="5" boundary-numbers
+            direction-links boundary-links @update:model-value="onPaginationChanged" :disable="state.loading"
+            class="theme-default-q-pagination" />
+        </div>
+        <q-markup-table class="q-ma-md">
+          <thead>
+            <tr>
+              <th class="lt-xl">
+                <SortByFieldCustomButtonDropdown square dense no-caps :options="sortFields" :current="sort"
+                  @change="(opt) => onToggleSort(opt.field, opt.order)" flat class="action-primary fit full-height">
+                </SortByFieldCustomButtonDropdown>
+              </th>
+              <th v-for="(column, index) in columns" :key="index" :style2="{ width: column.width }"
+                :class="['text-left', column.defaultClass, { 'cursor-not-allowed': state.loading, 'cursor-pointer': !state.loading, 'action-primary': sort.field === column.field }]"
+                @click="onToggleSort(column.field)">
+                <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
+                {{ t(column.title) }}
+                <DesktopToolTip>{{ t('Toggle sort by this column', { field: t(column.title) })
+                }}</DesktopToolTip>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="document in results" :key="document.id">
+              <td class="lt-xl">
+                <q-list dense>
+                  <q-item clickable :disable="state.loading" :to="{ name: 'document', params: { id: document.id } }"
+                    class="bg-transparent">
+                    <q-item-section>
+                      <q-item-label>
+                        {{ t("Title") }}: {{ document.title }}
+                      </q-item-label>
+                      <q-item-label caption>{{ t("Creation date") }}: {{ document.creationDate }} ({{
+                        document.creationDateTimeAgo }})</q-item-label>
+                      <q-item-label caption v-if="document.lastUpdate">{{ t("Last update") }}: {{ document.lastUpdate
+                        }} ({{ document.lastUpdateTimeAgo }})</q-item-label>
+                    </q-item-section>
+                    <q-item-section side top>
+                      <ViewDocumentDetailsButton size="md" square class="min-width-9em"
+                        :count="document.attachmentCount" :label="'Total attachments count'"
+                        :tool-tip="'View document attachments'" :disable="state.loading"
+                        @click.stop.prevent="onShowDocumentFiles(document.id, document.title)">
+                      </ViewDocumentDetailsButton>
+                      <ViewDocumentDetailsButton size="md" square class="min-width-9em" :count="document.noteCount"
+                        :label="'Total notes'" :tool-tip="'View document notes'" :disable="state.loading"
+                        @click.stop.prevent="onShowDocumentNotes(document.id, document.title)">
+                      </ViewDocumentDetailsButton>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </td>
+              <td class="td-document-link gt-lg">
+                <q-btn align="left" no-caps flat :to="{ name: 'document', params: { id: document.id } }"
+                  class="fit text-decoration-hover" :label="document.title"></q-btn>
+              </td>
+              <td class="gt-lg">{{ document.creationDate }}</td>
+              <td class="gt-lg">{{ document.lastUpdate }}</td>
+              <td class="gt-lg">
+                <ViewDocumentDetailsButton size="md" square class="min-width-8em" :count="document.attachmentCount"
+                  :label="'Total attachments count'" :tool-tip="'View document attachments'" :disable="state.loading"
+                  @click.stop.prevent="onShowDocumentFiles(document.id, document.title)" q-chip-class="'q-chip-8em'">
+                </ViewDocumentDetailsButton>
+              </td>
+              <td class="gt-lg">
+                <ViewDocumentDetailsButton size="md" square class="min-width-8em" :count="document.noteCount"
+                  :label="'Total notes'" :tool-tip="'View document notes'" :disable="state.loading"
+                  @click.stop.prevent="onShowDocumentNotes(document.id, document.title)" q-chip-class="'q-chip-8em'">
+                </ViewDocumentDetailsButton>
+              </td>
+            </tr>
+          </tbody>
+        </q-markup-table>
+        <div class="q-ma-md flex flex-center" v-if="pager.totalPages > 1">
+          <q-pagination v-model="pager.currentPage" color="dark" :max="pager.totalPages" :max-pages="5" boundary-numbers
+            direction-links boundary-links @update:model-value="onPaginationChanged" :disable="state.loading"
+            class="theme-default-q-pagination" />
+        </div>
+      </template>
+    </CustomExpansionWidget>
   </q-page>
 </template>
 
 <script setup>
 
-import { ref, computed, watch } from "vue";
+import { ref, reactive, computed, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useRoute } from "vue-router";
-import { date, useQuasar } from "quasar";
 import { useI18n } from "vue-i18n";
-import { api } from "boot/axios";
-import { useAdvancedSearchData } from "stores/advancedSearchData";
-import { default as TagSelector } from "components/TagSelector.vue";
 
-const $q = useQuasar();
+import { useBus } from "src/composables/useBus";
+import { useAPI } from "src/composables/useAPI";
+import { useAdvancedSearchData } from "src/stores/advancedSearchData"
+import { useDateFilter } from "src/composables/useDateFilter"
+import { useFormatDates } from "src/composables/useFormatDates"
+
+import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
+import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
+import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
+import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
+import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
+import { default as DateFieldCustomInput } from "src/components/Forms/Fields/DateFieldCustomInput.vue";
+import { default as SortByFieldCustomButtonDropdown } from "src/components/Forms/Fields/SortByFieldCustomButtonDropdown.vue";
+import { default as ViewDocumentDetailsButton } from "src/components/Buttons/ViewDocumentDetailsButton.vue";
+
 const { t } = useI18n();
+
 const route = useRoute();
-const searching = ref(false);
-const searchLaunched = ref(false);
-const expandedFilter = ref(true);
-const expandedResults = ref(false);
-const dateFilterOptions = ref([
-  { label: t('Any date'), value: 0 },
-  { label: t('Today'), value: 1 },
-  { label: t('Yesterday'), value: 2 },
-  { label: t('Last 7 days'), value: 3 },
-  { label: t('Last 15 days'), value: 4 },
-  { label: t('Last 31 days'), value: 5 },
-  { label: t('Last 365 days'), value: 6 },
-  { label: t('Fixed date'), value: 7 },
-  { label: t('From date'), value: 8 },
-  { label: t('To date'), value: 9 },
-  { label: t('Between dates'), value: 10 }
-]);
-const advancedSearchData = useAdvancedSearchData();
-advancedSearchData.filter.dateFilterType = dateFilterOptions.value[0];
-advancedSearchData.filter.tags = route.params.tag !== undefined ? [route.params.tag] : [];
 
-const sortOrderIcon = computed(() => advancedSearchData.isSortAscending ? "keyboard_double_arrow_up" : "keyboard_double_arrow_down");
+const { api } = useAPI();
+const { bus, onShowDocumentFiles, onShowDocumentNotes } = useBus();
 
-watch(
-  () => advancedSearchData.filter.dateFilterType,
-  (dateFilterType) => {
-    advancedSearchData.recalcDates(dateFilterType)
+const { fullDateTimeHuman, timeAgo } = useFormatDates();
+
+const columns = [
+  { field: 'title', title: 'Title', defaultClass: "gt-lg" },
+  { field: 'createdOnTimestamp', title: 'Creation date', defaultClass: "gt-lg" },
+  { field: 'lastUpdateTimestamp', title: 'Last update', defaultClass: "gt-lg" },
+  { field: 'attachmentCount', title: 'Attachments', defaultClass: "gt-lg" },
+  { field: 'noteCount', title: 'Notes', defaultClass: "gt-lg" }
+];
+
+const sortFields = columns.map(column => ({
+  field: column.field,
+  label: column.title
+}));
+
+const state = reactive({
+  loading: false,
+  loadingError: false,
+  errorMessage: null,
+  apiError: null,
+  searchLaunched: false
+});
+
+const isFilterWidgetExpanded = ref(route.meta.conditionsFilterExpanded);
+
+const resultsWidgetRef = ref(null);
+
+const { getDateFilterInstance, dateFilterTypeOptions } = useDateFilter();
+
+const useStoreFilter = computed(() => route.name == 'advancedSearch');
+
+const store = useAdvancedSearchData();
+
+const filters = reactive({
+  text: {
+    title: null,
+    description: null,
+    notes: null
+  },
+  tags: [],
+  dates: {
+    creationDate: getDateFilterInstance(),
+    lastUpdate: getDateFilterInstance(),
+    updatedOn: getDateFilterInstance()
   }
-);
+});
 
-function onPaginationChanged(pageIndex) {
-  advancedSearchData.setCurrentPage(pageIndex);
+const pager = reactive({
+  currentPage: 1,
+  resultsPage: 32,
+  totalResults: 0,
+  totalPages: 0,
+});
+
+const sort = reactive({
+  field: "lastUpdateTimestamp",
+  order: "DESC",
+});
+
+const results = reactive([]);
+const hasResults = computed(() => results.length > 0);
+
+const showErrorBanner = computed(() => !state.loading && state.loadingError);
+const showNoResultsBanner = computed(() => !state.loading && state.searchLaunched && !hasResults.value);
+
+if (route.params.tag !== undefined) {
+  filters.tags.push(route.params.tag);
+}
+
+const hasCreationDateRouteParamsFilter = computed(() => route.params.fixedCreationDate !== undefined);
+const hasLastUpdateRouteParamsFilter = computed(() => route.params.fixedLastUpdate !== undefined);
+const hasUpdatedOnRouteParamsFilter = computed(() => route.params.fixedUpdatedOn !== undefined);
+
+const sortOrderIcon = computed(() => sort.order == "ASC" ? "keyboard_double_arrow_up" : "keyboard_double_arrow_down");
+
+const totalSearchConditions = computed(() => {
+  let total = 0;
+  if (filters.text.title) {
+    total++;
+  }
+  if (filters.text.description) {
+    total++;
+  }
+  if (filters.text.notesBody) {
+    total++;
+  }
+  if (filters.text.attachmentsFilename) {
+    total++;
+  }
+  if (filters.tags && filters.tags.length > 0) {
+    total += filters.tags.length;
+  }
+  if (filters.dates.creationDate.state.hasValue) {
+    total++;
+  }
+  if (filters.dates.lastUpdate.state.hasValue) {
+    total++;
+  }
+  if (filters.dates.updatedOn.state.hasValue) {
+    total++;
+  }
+  return (total);
+});
+
+const onPaginationChanged = (pageIndex) => {
+  pager.currentPage = pageIndex;
   onSubmitForm(false);
 }
 
-function onToggleSort(field) {
-  advancedSearchData.toggleSort(field);
-  onSubmitForm(false);
+const onToggleSort = (field, order) => {
+  if (!state.loading) {
+    if (sort.field == field) {
+      if (!order) {
+        sort.order = sort.order == "ASC" ? "DESC" : "ASC";
+      } else {
+        sort.order = order;
+      }
+    } else {
+      sort.field = field;
+      sort.order = !order ? "ASC" : order;
+    }
+    onSubmitForm(false);
+  }
 }
 
-function onSubmitForm(resetPager) {
+const onSubmitForm = (resetPager) => {
   if (resetPager) {
-    advancedSearchData.pager.currentPage = 1;
+    pager.currentPage = 1;
   }
-  searching.value = true;
-  if (date.isValid(advancedSearchData.filter.fromDate)) {
-    advancedSearchData.filter.fromTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.fromDate, 'YYYY/MM/DD'), { hour: 0, minute: 0, second: 0, millisecond: 0 }), 'X');
-  } else {
-    advancedSearchData.filter.fromTimestamp = null;
+  state.loading = true;
+  state.loadingError = false;
+  state.errorMessage = null;
+  state.apiError = null;
+  if (useStoreFilter.value) {
+    store.filters = filters;
+    store.sort = sort;
   }
-  if (date.isValid(advancedSearchData.filter.toDate)) {
-    advancedSearchData.filter.toTimestamp = date.formatDate(date.adjustDate(date.extractDate(advancedSearchData.filter.toDate, 'YYYY/MM/DD'), { hour: 23, minute: 59, second: 59, millisecond: 999 }), 'X');
-  } else {
-    advancedSearchData.filter.toTimestamp = null;
-  }
-  api.document.search(advancedSearchData.pager.currentPage, advancedSearchData.pager.resultsPage, advancedSearchData.filter, advancedSearchData.sortField, advancedSearchData.sortOrder)
-    .then((success) => {
-      advancedSearchData.pager = success.data.results.pagination;
-      advancedSearchData.results = success.data.results.documents.map((document) => {
-        document.createdOn = date.formatDate(document.createdOnTimestamp * 1000, 'YYYY-MM-DD HH:mm:ss');
-        return (document);
-      });
-      searching.value = false;
-      searchLaunched.value = true;
-      if (advancedSearchData.hasResults) {
-        expandedResults.value = true;
+  api.document.search(pager.currentPage, pager.resultsPage, filters, sort.field, sort.order)
+    .then((successResponse) => {
+      if (successResponse.data.results) {
+        results.length = 0;
+        pager.currentPage = successResponse.data.results.pagination.currentPage;
+        pager.resultsPage = successResponse.data.results.pagination.resultsPage;
+        pager.totalResults = successResponse.data.results.pagination.totalResults;
+        pager.totalPages = successResponse.data.results.pagination.totalPages;
+        results.push(...successResponse.data.results.documents.map((document) => {
+          document.creationDate = fullDateTimeHuman(document.createdOnTimestamp);
+          document.creationDateTimeAgo = timeAgo(document.createdOnTimestamp);
+          document.lastUpdate = fullDateTimeHuman(document.lastUpdateTimestamp);
+          document.lastUpdateTimeAgo = timeAgo(document.lastUpdateTimestamp);
+          return (document);
+        }));
+        state.searchLaunched = true;
+        resultsWidgetRef.value?.expand();
+        state.loading = false;
+      } else {
+        state.loading = false;
       }
     })
-    .catch((error) => {
-      switch (error.response.status) {
+    .catch((errorResponse) => {
+      state.apiError = errorResponse.customAPIErrorDetails;
+      switch (errorResponse.response.status) {
         case 400:
-          $q.notify({
-            type: "negative",
-            message: t("API Error: invalid/missing param"),
-          });
+          state.loadingError = true;
+          state.errorMessage = "API Error: invalid/missing param";
           break;
         case 401:
-          this.$router.push({
-            name: "signIn",
-          });
+          state.apiError = errorResponse.customAPIErrorDetails;
+          state.errorMessage = "Auth session expired, requesting new...";
+          bus.emit("reAuthRequired", { emitter: "AdvancedSearchPage.onSubmitForm" });
           break;
         default:
-          $q.notify({
-            type: "negative",
-            message: t("API Error: fatal error"),
-            caption: t("API Error: fatal error details", { status: error.response.status, statusText: error.response.statusText })
-          });
+          state.loadingError = true;
+          state.errorMessage = "API Error: fatal error";
           break;
       }
-      searching.value = false;
+      state.loading = false;
+      state.searchLaunched = true;
     });
 }
 
-if (advancedSearchData.filter.tags.length > 0) {
-  onSubmitForm(true);
-}
+const onResetForm = () => {
+  filters.text.title = null;
+  filters.text.description = null;
+  filters.text.notesBody = null;
+  filters.text.attachmentsFilename = null;
+  filters.tags.length = 0;
+  filters.dates = {
+    creationDate: getDateFilterInstance(),
+    lastUpdate: getDateFilterInstance(),
+    updatedOn: getDateFilterInstance()
+  }
+  sort.field = "lastUpdateTimestamp";
+  sort.order = "DESC";
+  state.searchLaunched = false;
+  results.length = 0;
+};
+
+onMounted(() => {
+  if (hasCreationDateRouteParamsFilter.value) {
+    filters.dates.creationDate.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
+    filters.dates.creationDate.filterType = dateFilterTypeOptions.value[7];
+    filters.dates.creationDate.formattedDate.fixed = route.params.fixedCreationDate.replaceAll("-", "/");
+  } else if (hasLastUpdateRouteParamsFilter.value) {
+    filters.dates.lastUpdate.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
+    filters.dates.lastUpdate.filterType = dateFilterTypeOptions.value[7];
+    filters.dates.lastUpdate.formattedDate.fixed = route.params.fixedLastUpdate.replaceAll("-", "/");
+  } else if (hasUpdatedOnRouteParamsFilter.value) {
+    filters.dates.updatedOn.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
+    filters.dates.updatedOn.filterType = dateFilterTypeOptions.value[7];
+    filters.dates.updatedOn.formattedDate.fixed = route.params.fixedUpdatedOn.replaceAll("-", "/");
+  } else if (useStoreFilter.value) {
+    filters.text.title = store.filters?.text.title || null;
+    filters.text.description = store.filters?.text.description || null;
+    filters.text.notesBody = store.filters?.text.notesBody || null;
+    filters.text.attachmentsFilename = store.filters?.text.attachmentsFilename || null;
+    filters.tags = store.filters?.tags || [];
+    if (store.filters?.dates) {
+      // creation date
+      filters.dates.creationDate.skipClearOnRecalc.fixed = true;
+      filters.dates.creationDate.formattedDate.fixed = store.filters.dates.creationDate.formattedDate.fixed;
+      filters.dates.creationDate.skipClearOnRecalc.from = true;
+      filters.dates.creationDate.formattedDate.from = store.filters.dates.creationDate.formattedDate.from;
+      filters.dates.creationDate.skipClearOnRecalc.to = true;
+      filters.dates.creationDate.formattedDate.to = store.filters.dates.creationDate.formattedDate.to;
+      filters.dates.creationDate.filterType = store.filters.dates.creationDate.filterType;
+      // last update
+      filters.dates.lastUpdate.skipClearOnRecalc.fixed = true;
+      filters.dates.lastUpdate.formattedDate.fixed = store.filters.dates.lastUpdate.formattedDate.fixed;
+      filters.dates.lastUpdate.skipClearOnRecalc.from = true;
+      filters.dates.lastUpdate.formattedDate.from = store.filters.dates.lastUpdate.formattedDate.from;
+      filters.dates.lastUpdate.skipClearOnRecalc.to = true;
+      filters.dates.lastUpdate.formattedDate.to = store.filters.dates.lastUpdate.formattedDate.to;
+      filters.dates.lastUpdate.filterType = store.filters.dates.lastUpdate.filterType;
+      // updated on
+      filters.dates.updatedOn.skipClearOnRecalc.fixed = true;
+      filters.dates.updatedOn.formattedDate.fixed = store.filters.dates.updatedOn.formattedDate.fixed;
+      filters.dates.updatedOn.skipClearOnRecalc.from = true;
+      filters.dates.updatedOn.formattedDate.from = store.filters.dates.updatedOn.formattedDate.from;
+      filters.dates.updatedOn.skipClearOnRecalc.to = true;
+      filters.dates.updatedOn.formattedDate.to = store.filters.dates.updatedOn.formattedDate.to;
+      filters.dates.updatedOn.filterType = store.filters.dates.updatedOn.filterType;
+    }
+    if (store.sort?.field) {
+      sort.field = store.sort.field;
+    }
+    if (store.sort?.order) {
+      sort.order = store.sort.order;
+    }
+  }
+  if (route.meta.autoLaunchSearch) {
+    nextTick(() => {
+      onSubmitForm(true);
+    });
+  }
+  bus.on("reAuthSucess", (msg) => {
+    if (msg.to?.includes("AdvancedSearchPage.onSubmitForm")) {
+      onSubmitForm(false);
+    }
+  });
+});
+
+onBeforeUnmount(() => {
+  bus.off("reAuthSucess");
+});
 
 </script>
+
+<style lang="css" scoped>
+th:first-child {
+  height: 100%;
+  padding: 0px !important;
+}
+
+td:first-child {
+  padding: 0px !important;
+}
+
+.q-chip-8em {
+  width: 8em;
+}
+</style>

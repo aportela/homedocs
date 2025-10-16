@@ -1,0 +1,63 @@
+<template>
+  <q-page>
+    <div class="my-profile-header-container">
+      <div class="my-profile-header-background-image-cover flex flex-center q-mx-auto">
+        <q-avatar icon="edit" size="48px" class="bg-dark text-white my-profile-header-top-right-icon" />
+        <h2 class="text-h2 text-white text-weight-bolder q-my-none">{{ t("My profile") }}</h2>
+      </div>
+      <div class="text-center">
+        <q-avatar icon="account_circle" size="160px" class="bg-grey-4 q-mx-auto my-profile-header-center-icon" />
+      </div>
+    </div>
+    <div class="row q-col-gutter-sm">
+      <div class="col-lg-4 col-xl-4 col-12 flex">
+        <ProfileStorageSettingsWidget class="q-mb-sm"></ProfileStorageSettingsWidget>
+        <UpdateProfileForm></UpdateProfileForm>
+      </div>
+      <div class="col-lg-8 col-xl-8 col-12 flex">
+        <SystemStatsWidget></SystemStatsWidget>
+      </div>
+    </div>
+  </q-page>
+</template>
+
+<script setup>
+
+import { useI18n } from "vue-i18n";
+
+import { default as UpdateProfileForm } from "src/components/Forms/UpdateProfileForm.vue";
+import { default as ProfileStorageSettingsWidget } from "src/components/Widgets/ProfileStorageSettingsWidget.vue";
+import { default as SystemStatsWidget } from "src/components/Widgets/SystemStatsWidget.vue";
+
+const { t } = useI18n();
+
+</script>
+
+<style lang="css" scoped>
+.my-profile-header-container {
+  height: 350px;
+  margin-bottom: 1em;
+}
+
+.my-profile-header-background-image-cover {
+  width: 100%;
+  height: 260px;
+  background-image: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.8) 100%), url('https://images.pexels.com/photos/3184460/pexels-photo-3184460.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+  background-size: cover;
+  background-position: bottom;
+  filter: grayscale(100%);
+  border-radius: 16px;
+}
+
+.my-profile-header-top-right-icon {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  color: blue;
+}
+
+.my-profile-header-center-icon {
+  position: relative;
+  top: -80px;
+}
+</style>
