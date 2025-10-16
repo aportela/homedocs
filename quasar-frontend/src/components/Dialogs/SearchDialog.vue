@@ -51,7 +51,7 @@
           <div class="border-bottom-except-last-item"
             :class="{ 'current-keyboard-selected-item': currentSearchResultSelectedIndex === index }">
             <q-item :key="item.id" class="transparent-background text-color-primary q-pa-sm"
-              :class="{ 'cursor-not-allowed': item.id === currentDocumentId }"
+              :class="{ 'cursor-not-allowed is-current': item.id === currentDocumentId }"
               :clickable="item.id !== currentDocumentId" :to="{ name: 'document', params: { id: item.id } }">
               <q-item-section side class="gt-sm">
                 <q-icon name="work" />
@@ -338,6 +338,10 @@ onBeforeUnmount(() => {
   height: 50vh;
 }
 
+.is-current {
+  background-color: #f5e4e4 !important;
+}
+
 .body--light {
   .current-keyboard-selected-item {
     background: var(--color-zinc-300);
@@ -348,5 +352,10 @@ onBeforeUnmount(() => {
   .current-keyboard-selected-item {
     background: var(--color-zinc-600);
   }
+
+  .is-current .q-item__label {
+    color: var(--color-zinc-950) !important;
+  }
+
 }
 </style>
