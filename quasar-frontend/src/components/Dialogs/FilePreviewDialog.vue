@@ -64,7 +64,8 @@
       </CustomBanner>
       <q-space />
       <q-btn color="primary" no-caps :href="currentAttachment.url" :label="t('Download')" icon="download"
-        @click.stop.prevent="onDownload(currentAttachment.url, currentAttachment.name)" aria-label="Download file" />
+        @click.stop.prevent.stop="onDownload(currentAttachment.url + '/inline', currentAttachment.name)"
+        aria-label="Download file" />
     </template>
   </BaseDialog>
 </template>
