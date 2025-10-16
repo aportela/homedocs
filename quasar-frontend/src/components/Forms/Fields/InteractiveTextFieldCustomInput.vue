@@ -4,7 +4,7 @@
     <div class="cursor-pointer q-pa-sm q-mb-md relative-position white-space-pre-line read-only-input-container"
       :class="{ 'border-error': error }" @mouseenter="onMouseEnter" @mouseleave="onMouseLeave"
       @click="onToggleReadOnly">
-      <div style="font-size: 12px; color: rgba(0, 0, 0, 0.6); margin-left: 0px; margin-bottom: 4px;">
+      <div class="readonly-label">
         {{ props.label }}</div>
       <span class="absolute-top-right text-grey q-mt-sm">
         <slot name="top-icon-prepend" :showTopHoverIcons="showTopHoverIcons"></slot>
@@ -183,5 +183,18 @@ onMounted(() => {
   position: relative;
   top: -10px;
   font-size: 0.8em;
+}
+
+.readonly-label {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.6);
+  margin-left: 0px;
+  margin-bottom: 4px;
+}
+
+.body--dark {
+  .readonly-label {
+    color: rgba(255, 255, 255, 0.7);
+  }
 }
 </style>

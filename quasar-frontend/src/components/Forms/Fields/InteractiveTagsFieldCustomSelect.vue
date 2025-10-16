@@ -1,7 +1,7 @@
 <template>
   <div v-if="readOnly" class="cursor-pointer q-pa-sm relative-position white-space-pre-line read-only-input-container"
     @mouseenter="showUpdateHoverIcon = true" @mouseleave="showUpdateHoverIcon = false" @click="onToggleReadOnly">
-    <div style="font-size: 12px; color: rgba(0, 0, 0, 0.6); margin-left: 0px; margin-bottom: 4px;">
+    <div class="readonly-label">
       {{ t(label) }}</div>
     <q-icon v-if="!denyChangeEditableMode" name="edit" size="sm"
       class="absolute-top-right text-grey cursor-pointer q-mr-sm q-mt-sm" v-show="showUpdateHoverIcon">
@@ -191,6 +191,13 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="css" scoped>
+.readonly-label {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.6);
+  margin-left: 0px;
+  margin-bottom: 4px;
+}
+
 .read-only-input-container {
   border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 4px;
@@ -199,6 +206,10 @@ onBeforeUnmount(() => {
 .body--dark {
   .read-only-input-container {
     border: 1px solid rgba(255, 255, 255, 0.28);
+  }
+
+  .readonly-label {
+    color: rgba(255, 255, 255, 0.7);
   }
 }
 </style>
