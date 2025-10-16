@@ -388,7 +388,7 @@ return function (App $app) {
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
             $group->group('/attachment', function (RouteCollectorProxy $group) use ($app, $initialState) {
-                $group->get('/{id}', function (Request $request, Response $response, array $args) use ($app) {
+                $group->get('/{id}[/{inline}]', function (Request $request, Response $response, array $args) use ($app) {
                     $attachment = new \HomeDocs\Attachment(
                         $app->getContainer()->get('settings')['paths']['storage'],
                         $args['id']
@@ -419,14 +419,14 @@ return function (App $app) {
                             // output the right headers for partial content
                             return $response->withStatus(206)
                                 ->withHeader('Content-Type', \HomeDocs\Utils::getMimeType($attachment->name))
-                                ->withHeader('Content-Disposition', 'attachment; filename="' . basename($attachment->name) . '"')
+                                ->withHeader('Content-Disposition', ($args['inline'] ? 'inline' : 'attachment') . '; filename="' . basename($attachment->name) . '"')
                                 ->withHeader('Content-Length', (string) $length)
                                 ->withHeader('Content-Range', 'bytes ' . $offset . '-' . ($offset + $length - 1) . '/' . $attachmentSize)
                                 ->withHeader('Accept-Ranges', 'bytes');
                         } else {
                             return $response->withStatus(200)
                                 ->withHeader('Content-Type', \HomeDocs\Utils::getMimeType($attachment->name))
-                                ->withHeader('Content-Disposition', 'attachment; filename="' . basename($attachment->name) . '"')
+                                ->withHeader('Content-Disposition', ($args['inline'] ? 'inline' : 'attachment') . '; filename="' . basename($attachment->name) . '"')
                                 ->withHeader('Content-Length', (string) $attachmentSize)
                                 ->withHeader('Accept-Ranges', 'bytes');
                         }

@@ -25,17 +25,20 @@
           @update:model-value="onPaginationChange" />
       </div>
       <div class="q-pt-none">
-        <q-img v-if="isImage(currentAttachment.name)" v-show="!previewLoadingError" :src="currentAttachment.url"
-          loading="lazy" spinner-color="white" @error="onImageLoadError" alt="image preview" fit="scale-down"
-          class="q-img-max-height q-my-md" img-class="q-mx-auto" />
+        <q-img v-if="isImage(currentAttachment.name)" v-show="!previewLoadingError"
+          :src="currentAttachment.url + '/inline'" loading="lazy" spinner-color="white" @error="onImageLoadError"
+          alt="image preview" fit="scale-down" class="q-img-max-height q-my-md" img-class="q-mx-auto" />
         <div v-else-if="isAudio(currentAttachment.name)">
           <p class="text-center q-my-md">
             <q-icon name="audio_file" size="128px"></q-icon>
           </p>
           <audio controls class="q-mt-md full-width">
-            <source :src="currentAttachment.url" type="audio/mpeg" />
+            <source :src="currentAttachment.url + '/inline'" type="audio/mpeg" />
             {{ t("Your browser does not support the audio element") }}
           </audio>
+        </div>
+        <div v-else-if="isPDF(currentAttachment.name)">
+          <q-pdfviewer :src="currentAttachment.url + ('/inline')" type="html5" />
         </div>
         <div v-else>
           <p class="text-center q-my-md">
@@ -79,7 +82,7 @@ const { t } = useI18n();
 const emit = defineEmits(['close']);
 
 const { bgDownload } = useAxios();
-const { allowPreview, isImage, isAudio } = useFileUtils();
+const { allowPreview, isImage, isAudio, isPDF } = useFileUtils();
 const previewLoadingError = ref(false);
 
 const props = defineProps({

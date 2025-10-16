@@ -1,6 +1,6 @@
 export function useFileUtils() {
   const allowPreview = (filename) => {
-    return !!filename?.match(/.(jpg|jpeg|png|gif|mp3)$/i);
+    return !!filename?.match(/.(jpg|jpeg|png|gif|mp3|pdf)$/i);
   };
 
   const isImage = (filename) => {
@@ -11,5 +11,9 @@ export function useFileUtils() {
     return !!filename?.match(/.(mp3)$/i);
   };
 
-  return { allowPreview, isImage, isAudio };
+  const isPDF = (filename) => {
+    return !!filename?.match(/.(pdf)$/i);
+  };
+
+  return { allowPreview, isImage, isAudio, isPDF };
 }
