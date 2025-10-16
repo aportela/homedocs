@@ -37,8 +37,9 @@
             {{ t("Your browser does not support the audio element") }}
           </audio>
         </div>
-        <div v-else-if="isPDF(currentAttachment.name)">
-          <q-pdfviewer :src="currentAttachment.url + ('/inline')" type="html5" />
+        <div v-else-if="isPDF(currentAttachment.name)" class="q-pdf-min-height">
+          <q-pdfviewer :src="currentAttachment.url + ('/inline')" type="html5"
+            inner-content-class="q-pdfviewer-min-height" />
         </div>
         <div v-else>
           <p class="text-center q-my-md">
@@ -159,5 +160,13 @@ const onDownload = (url, fileName) => {
 <style>
 .q-img-max-height {
   max-height: 40vh;
+}
+
+.q-pdf-min-height {
+  min-height: 70vh;
+}
+
+.q-pdfviewer-min-height {
+  height: 70vh;
 }
 </style>
