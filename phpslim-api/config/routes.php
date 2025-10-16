@@ -437,27 +437,36 @@ return function (App $app) {
 
                 $group->post('[/{id}]', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $uploadedFiles = $request->getUploadedFiles();
-                    $attachment = new \HomeDocs\Attachment(
-                        $app->getContainer()->get('settings')['paths']['storage'],
-                        isset($args['id']) ? $args['id'] : \HomeDocs\Utils::uuidv4(),
-                        $uploadedFiles["file"]->getClientFilename(),
-                        $uploadedFiles["file"]->getSize()
-                    );
-                    $attachment->add($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class), $uploadedFiles["file"]);
-                    $payload = json_encode(
-                        [
-                            'initialState' => $initialState,
-                            'data' => array(
-                                "id" => $attachment->id,
-                                "name" => $attachment->name,
-                                "size" => $attachment->size,
-                                "hash" => $attachment->hash,
-                                "createdOnTimestamp" => $attachment->createdOnTimestamp
-                            )
-                        ]
-                    );
-                    $response->getBody()->write($payload);
-                    return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                    $file = $uploadedFiles['file'] ?? null;
+                    if ($file) {
+                        if ($file->getError() === UPLOAD_ERR_INI_SIZE) {
+                            throw new \HomeDocs\Exception\UploadException("Content too large", 413);
+                        } else {
+                            $attachment = new \HomeDocs\Attachment(
+                                $app->getContainer()->get('settings')['paths']['storage'],
+                                isset($args['id']) ? $args['id'] : \HomeDocs\Utils::uuidv4(),
+                                $uploadedFiles["file"]->getClientFilename(),
+                                $uploadedFiles["file"]->getSize()
+                            );
+                            $attachment->add($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class), $uploadedFiles["file"]);
+                            $payload = json_encode(
+                                [
+                                    'initialState' => $initialState,
+                                    'data' => array(
+                                        "id" => $attachment->id,
+                                        "name" => $attachment->name,
+                                        "size" => $attachment->size,
+                                        "hash" => $attachment->hash,
+                                        "createdOnTimestamp" => $attachment->createdOnTimestamp
+                                    )
+                                ]
+                            );
+                            $response->getBody()->write($payload);
+                            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                        }
+                    } else {
+                        throw new \HomeDocs\Exception\InvalidParamsException("file");
+                    }
                 })->add(\HomeDocs\Middleware\CheckAuth::class);
 
                 $group->delete('/{id}', function (Request $request, Response $response, array $args) use ($app, $initialState) {
