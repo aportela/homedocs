@@ -25,19 +25,19 @@ The project currently consists of two parts
 
 Install dependencies (under phpslim-api/ path):
 
-```
+```Shell
     composer install
 ```
 
 Execute sqlite database creation/update script
 
-```
+```Shell
     php phpslim-api/tools/install.php
 ```
 
 Check proper permissions, web server process must read/write (files) read/write/execute (dirs) on
 
-```
+```Shell
     Database file
         phpslim-api/data/homedocs2.sqlite3
 
@@ -50,7 +50,7 @@ Check proper permissions, web server process must read/write (files) read/write/
 
 The system should work by default but if you need to modify any configuration the settings file is located at
 
-```
+```Shell
     phpslim-api/config/settings.php
 ```
 
@@ -62,20 +62,38 @@ Customize web server settings according to php slim docs:
 
 https://www.slimframework.com/docs/v4/start/web-servers.html
 
-## Migration from old (1.x) version
+## Migration from previous (2.x) version
+
+**WARNING**: Before making any changes, make a backup copy of the files and database (under path **phpslim-api/data/**)
+
+The storage data is kept/shared from the previous versions (1.x && 2.x) but the database version structure has changed and you will need to install (clean) database and run a small sqlite script from the command line:
+
+```Shell
+php phpslim-api/tools/install.php
+cd phpslim-api/data
+sqlite3 ./homedocs3.sqlite3 < ../tools/migrate-from-v2.sql
+```
+
+For building release, qpdfviewer quasar-extension is required, use this for install:
+
+```Shell
+quasar ext add @quasar/qpdfviewer
+```
+
+## Migration from old (1.x) version to previous version (2.x)
 
 **WARNING**: Before making any changes, make a backup copy of the files and database (under path **phpslim-api/data/**)
 
 The storage data is kept/shared from the previous version (1.0) but the database version structure has changed and you will need to run a small sqlite script from the command line (under **phpslim-api/data/** path, where old sqlite3 database is stored):
 
-```
+```Shell
 cat ../tools/migrate-from-v1.sql | sqlite3 ./homedocs2.sqlite3
 
 ```
 
 Once migrated, run the update script that applies sql version changes
 
-```
+```Shell
     php phpslim-api/tools/update.php
 ```
 
