@@ -75,7 +75,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.loading" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                    }}</q-badge>
+                      }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
@@ -429,13 +429,13 @@ const onUploadRejected = (e) => {
 // q-uploader component event => file upload failed
 const onUploadFailed = (e) => {
   const transfers =
-    e.map((error) => {
+    e.files.map((file) => {
       return ({
-        name: error.file.name,
-        size: error.file.size,
+        name: file.name,
+        size: file.size,
         error: {
-          status: xhr.status,
-          statusText: xhr.statusText
+          status: e.xhr.status,
+          statusText: e.xhr.statusText
         }
       });
     });
