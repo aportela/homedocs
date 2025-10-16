@@ -111,7 +111,7 @@
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <DesktopToolTip>{{ t('Toggle sort by this column', { field: t(column.title) })
-                  }}</DesktopToolTip>
+                }}</DesktopToolTip>
               </th>
             </tr>
           </thead>
@@ -131,22 +131,15 @@
                         }} ({{ document.lastUpdateTimeAgo }})</q-item-label>
                     </q-item-section>
                     <q-item-section side top>
-                      <q-chip size="md" square class="theme-default-q-chip shadow-1 q-chip-8em"
-                        :clickable="document.attachmentCount > 0 && !state.loading"
+                      <ViewDocumentDetailsButton size="md" square class="min-width-9em"
+                        :count="document.attachmentCount" :label="'Total attachments count'"
+                        :tool-tip="'View document attachments'" :disable="state.loading"
                         @click.stop.prevent="onShowDocumentFiles(document.id, document.title)">
-                        <q-avatar class="theme-default-q-avatar"
-                          :class="{ 'text-white bg-blue': document.attachmentCount > 0 }">{{
-                            document.attachmentCount }}</q-avatar>
-                        {{ t('Total attachments count', { count: document.attachmentCount }) }}
-                      </q-chip>
-                      <q-chip size="md" square class="theme-default-q-chip shadow-1 q-chip-8em"
-                        :clickable="document.noteCount > 0 && !state.loading"
+                      </ViewDocumentDetailsButton>
+                      <ViewDocumentDetailsButton size="md" square class="min-width-9em" :count="document.noteCount"
+                        :label="'Total notes'" :tool-tip="'View document notes'" :disable="state.loading"
                         @click.stop.prevent="onShowDocumentNotes(document.id, document.title)">
-                        <q-avatar class="theme-default-q-avatar"
-                          :class="{ 'text-white bg-blue': document.noteCount > 0 }">{{
-                            document.noteCount }}</q-avatar>
-                        {{ t('Total notes', { count: document.noteCount }) }}
-                      </q-chip>
+                      </ViewDocumentDetailsButton>
                     </q-item-section>
                   </q-item>
                 </q-list>
