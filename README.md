@@ -10,7 +10,7 @@ Homedocs is is a simple personal document manager. You can conveniently store yo
 
 ## System requirements
 
-- PHP v8.x
+- PHP v8.4
 - composer
 - 'pdo_sqlite' & 'mbstring' php extensions
 - enough disk space for storing documents
