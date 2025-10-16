@@ -168,6 +168,12 @@ onMounted(() => {
   border-radius: 4px;
 }
 
+.body--dark {
+  .read-only-input-container {
+    border: 1px solid rgba(255, 255, 255, 0.28);
+  }
+}
+
 .border-error {
   border: 2px solid red !important;
 }
