@@ -74,6 +74,8 @@ class APIExceptionCatcher
             return $this->handleException($e, 401, []);
         } catch (\HomeDocs\Exception\AccessDeniedException $e) {
             return $this->handleException($e, 403, []);
+        } catch (\HomeDocs\Exception\UploadException $e) {
+            return $this->handleException($e, $e->getCode(), []);
         } catch (\HomeDocs\Exception\NotFoundException $e) {
             return $this->handleException($e, 404, ['keyNotFound' => $e->getMessage()]);
         } catch (\Throwable $e) {
