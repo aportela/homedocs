@@ -125,7 +125,7 @@ module.exports = configure(function (ctx) {
           target: "http://127.0.0.1:8081",
           changeOrigin: true,
           pathRewrite: {
-            //"^/api2": "/api2",
+            //"^/api3": "/api3",
           },
         },
       },

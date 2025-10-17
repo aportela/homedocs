@@ -124,7 +124,7 @@ export function useDocument() {
               file.creationDate = fullDateTimeHuman(file.createdOnTimestamp);
               file.creationDateTimeAgo = timeAgo(file.createdOnTimestamp);
               file.humanSize = format.humanStorageSize(file.size);
-              file.url = "api2/attachment/" + file.id;
+              file.url = "api3/attachment/" + file.id;
               file.orphaned = false;
               return file;
             }),
@@ -186,7 +186,7 @@ export function useDocument() {
             size: size || 0,
             hash: null,
             humanSize: size > 0 ? format.humanStorageSize(size) : null,
-            url: "api2/attachment/" + fileId,
+            url: "api3/attachment/" + fileId,
             orphaned: true, // this property is used for checking if file was uploaded but not associated to document (while not saving document)
           }),
         );

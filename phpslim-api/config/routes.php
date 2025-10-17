@@ -18,7 +18,7 @@ return function (App $app) {
     })->add(\HomeDocs\Middleware\JWT::class);
 
     $app->group(
-        '/api2',
+        '/api3',
         function (RouteCollectorProxy $group) use ($app) {
 
             $initialState = \HomeDocs\Utils::getInitialState($app->getContainer());

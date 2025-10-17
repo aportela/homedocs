@@ -2,7 +2,7 @@
   <div @dragover.prevent @dragenter.prevent @drop="handleDrop">
     <!-- hidden quasar native uploader component -->
     <q-uploader ref="uploaderRef" class="hidden" hide-upload-btn no-thumbnails auto-upload field-name="file"
-      method="post" url="api2/attachment" :max-file-size="maxUploadFileSize" multiple @uploaded="onFileUploaded"
+      method="post" url="api3/attachment" :max-file-size="maxUploadFileSize" multiple @uploaded="onFileUploaded"
       @rejected="onUploadRejected" @failed="onUploadFailed" @start="onUploadsStart" @finish="onUploadsFinish" />
     <q-card flat class="bg-transparent">
       <form @submit.prevent.stop="onSubmitForm" autocorrect="off" autocapitalize="off" autocomplete="off"
@@ -75,7 +75,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.loading" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                      }}</q-badge>
+                    }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
