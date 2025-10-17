@@ -74,12 +74,6 @@ cd phpslim-api/data
 sqlite3 ./homedocs3.sqlite3 < ../tools/migrate-from-v2.sql
 ```
 
-For building release, qpdfviewer quasar-extension is required, use this for install:
-
-```Shell
-quasar ext add @quasar/qpdfviewer
-```
-
 ## Migration from old (1.x) version to previous version (2.x)
 
 **WARNING**: Before making any changes, make a backup copy of the files and database (under path **phpslim-api/data/**)
