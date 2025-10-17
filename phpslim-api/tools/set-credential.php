@@ -17,8 +17,6 @@ echo "HomeDocs account manager" . PHP_EOL;
 
 $logger = $container->get(\HomeDocs\Logger\InstallerLogger::class);
 
-$logger->info("Scan started");
-
 $settings = $container->get('settings');
 
 $missingExtensions = array_diff($settings["phpRequiredExtensions"], get_loaded_extensions());
