@@ -30,13 +30,12 @@ if (count($missingExtensions) > 0) {
     if ($cmdLine->hasParam("count") && $cmdLine->hasParam("email") && $cmdLine->hasParam("password")) {
         $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
         $u = new \HomeDocs\User("", $cmdLine->getParamValue("email"), $cmdLine->getParamValue("password"));
-
+        $found = false;
         try {
             $u->get($dbh);
             $found = true;
         } catch (\HomeDocs\Exception\NotFoundException $e) {
         }
-
         if ($found) {
             //$c["logger"]->debug("Account exists -> update credentials");
             echo "User found, updating password...";
