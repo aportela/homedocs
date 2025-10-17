@@ -111,9 +111,17 @@ You can create/update an account from the command line with the php script
 
 If the account already exists it will be overwritten with the data provided.
 
-# Development
+## Development
 
-## Backend (php-slim)
+### Mock / example data
+
+Is it possible to create a mock of example data for a user with specific credentials using the following command line:
+
+```Shell
+php phpslim-api/tools/generate-demo-data.php --count 512 --email johndoe@localhost --password secret
+```
+
+### Backend (php-slim)
 
 Install dependencies
 
@@ -128,7 +136,7 @@ Start local php server listening on http://127.0.0.1:8081:
 composer start
 ```
 
-## Frontend (quasar)
+### Frontend (quasar)
 
 Install dependencies
 
@@ -151,7 +159,6 @@ quasar buid
 
 ## TODO
 
-- Document quasar frontend
 - Docker
 - Document API
 - Android app
