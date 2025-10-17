@@ -13,6 +13,9 @@ class Mock
     private int $maxDocumentAttachmentsCount = 0;
     private int $maxDocumentNotes = 0;
 
+    /**
+     * @var array<string,string>
+     */
     private array $documentTemplates = [
         'Gas installation invoice' => 'Provider GasCo, date %s',
         'Home electricity receipt' => 'Company ElecPower, date %s',
@@ -70,7 +73,9 @@ class Mock
         'Workplace safety inspection report' => 'Conducted by SafeWorks on %s'
     ];
 
-
+    /**
+     * @var array<string,string>
+     */
     private array $notesTemplates = [
         'Invoice' => 'Verification of invoice payment. Confirmed that the amount is correct.',
         'Receipt' => 'Reviewed receipt rates. Confirmed that they are correct.',
@@ -126,6 +131,9 @@ class Mock
     ];
 
 
+    /**
+     * @var array<string>
+     */
     private array $attachments = [
         "invoice.pdf",
         "electricity_invoice.pdf",
@@ -180,7 +188,10 @@ class Mock
         $this->maxDocumentNotes = $maxDocumentNotes;
     }
 
-    private function extractKeywords(string $text)
+    /**
+     * @return array<string>
+     */
+    private function extractKeywords(string $text): array
     {
         $text = mb_strtolower($text);
         $text = preg_replace('/[^a-záéíóúöñ0-9\s]/', '', $text);
@@ -191,6 +202,9 @@ class Mock
         return array_values($keywords);
     }
 
+    /**
+     * @return array<string>
+     */
     private function generateTagsFromDocument(string $title, string $description, int $max)
     {
         $tags = [];
@@ -202,7 +216,7 @@ class Mock
         return array_slice($tags, 0, mt_rand(1, $max));
     }
 
-    private function generateNoteBody(string $title)
+    private function generateNoteBody(string $title): string
     {
         foreach ($this->notesTemplates as $key => $note) {
             if (mb_strpos($title, mb_strtolower($key)) !== false) {
