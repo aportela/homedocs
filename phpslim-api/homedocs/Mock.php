@@ -4,11 +4,16 @@ namespace HomeDocs;
 
 class Mock
 {
+    public const int DEFAULT_MAX_DOCUMENT_UPDATES = 3;
+    public const int DEFAULT_MAX_ATTACHMENTS = 4;
+    public const int DEFAULT_MAX_NOTES = 2;
+
     private ?string $userId = null;
     private int $maxDocumentUpdatesCount = 0;
     private int $maxDocumentAttachmentsCount = 0;
-    private array $documentTemplates =      [
-        // Home
+    private int $maxDocumentNotes = 0;
+
+    private array $documentTemplates = [
         'Factura instalación gas' => 'Proveedor GasCo, fecha %s',
         'Recibo electricidad hogar' => 'Compañía ElecPower, fecha %s',
         'Póliza seguro hogar' => 'Compañía Seguros del Hogar, emitido el %s',
@@ -19,8 +24,6 @@ class Mock
         'Recibo gas hogar' => 'Compañía GasCo, fecha %s',
         'Factura electricidad comercial' => 'Proveedor Electra, emitida el %s',
         'Factura alquiler vivienda' => 'Arrendador Juan Pérez, fecha %s',
-
-        // Company
         'Factura compra de equipo' => 'Proveedor TechSupplies, emitida el %s',
         'Recibo alquiler oficina' => 'Inmobiliaria Alfa, fecha de pago %s',
         'Contrato de trabajo administrativo' => 'Empresa Soluciones S.A., firmado el %s',
@@ -41,18 +44,18 @@ class Mock
         'Informe anual de ventas' => 'Generado por el departamento comercial, fin de año %s'
     ];
 
-
-    public function __construct(string $userId, int $maxDocumentUpdatesCount, int $maxDocumentAttachmentsCount)
+    public function __construct(string $userId, int $maxDocumentUpdatesCount = self::DEFAULT_MAX_DOCUMENT_UPDATES, int $maxDocumentAttachmentsCount = self::DEFAULT_MAX_ATTACHMENTS, int $maxDocumentNotes = self::DEFAULT_MAX_NOTES)
     {
         $this->userId = $userId;
         $this->maxDocumentUpdatesCount = $maxDocumentUpdatesCount;
         $this->maxDocumentAttachmentsCount = $maxDocumentAttachmentsCount;
+        $this->maxDocumentNotes = $maxDocumentNotes;
     }
 
     private function extractKeywords(string $text)
     {
-        $text = strtolower($text);
-        $text = preg_replace('/[^a-z0-9\s]/', '', $text);
+        $text = mb_strtolower($text);
+        $text = preg_replace('/[^a-záéíóúö0-9\s]/', '', $text);
         $words = explode(' ', $text);
         $stopWords = ['de', 'el', 'la', 'los', 'las', 'en', 'con', 'por', 'a', 'para'];
         $keywords = array_diff($words, $stopWords);
@@ -68,11 +71,11 @@ class Mock
 
         $keywords = array_merge($titleKeywords, $descriptionKeywords);
 
-        $tags[] = strpos($title, 'Factura') !== false ? 'factura' : '';
-        $tags[] = strpos($title, 'Recibo') !== false ? 'recibo' : '';
-        $tags[] = strpos($title, 'Póliza') !== false ? 'seguro' : '';
-        $tags[] = strpos($title, 'Contrato') !== false ? 'contrato' : '';
-        $tags[] = strpos($title, 'Informe') !== false ? 'informe' : '';
+        $tags[] = mb_strpos($title, 'Factura') !== false ? 'factura' : '';
+        $tags[] = mb_strpos($title, 'Recibo') !== false ? 'recibo' : '';
+        $tags[] = mb_strpos($title, 'Póliza') !== false ? 'seguro' : '';
+        $tags[] = mb_strpos($title, 'Contrato') !== false ? 'contrato' : '';
+        $tags[] = mb_strpos($title, 'Informe') !== false ? 'informe' : '';
 
         $tags = array_merge($tags, $keywords);
 
