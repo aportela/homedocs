@@ -111,6 +111,44 @@ You can create/update an account from the command line with the php script
 
 If the account already exists it will be overwritten with the data provided.
 
+# Development
+
+## Backend (php-slim)
+
+Install dependencies
+
+```Shell
+cd phpslim-api
+composer install
+```
+
+Start local php server listening on http://127.0.0.1:8081:
+
+```Shell
+composer start
+```
+
+## Frontend (quasar)
+
+Install dependencies
+
+```Shell
+cd quasar-frontend
+npm i
+```
+
+Start local front-end webapp listening on http://127.0.0.1:8080:
+
+```Shell
+quasar dev
+```
+
+Build quasar webapp release (on /phpslim-api/public):
+
+```Shell
+quasar buid
+```
+
 ## TODO
 
 - Document quasar frontend
