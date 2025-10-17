@@ -29,6 +29,9 @@ return function (App $app) {
                         'initialState' => $initialState
                     ]
                 );
+                if (json_last_error() != JSON_ERROR_NONE) {
+                    throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
+                }
                 $response->getBody()->write($payload);
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             });
@@ -52,6 +55,9 @@ return function (App $app) {
                                 'initialState' => $initialState
                             ]
                         );
+                        if (json_last_error() != JSON_ERROR_NONE) {
+                            throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
+                        }
                         $response->getBody()->write($payload);
                         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                     }
@@ -74,6 +80,9 @@ return function (App $app) {
                         'initialState' => $initialState
                     ]
                 );
+                if (json_last_error() != JSON_ERROR_NONE) {
+                    throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
+                }
                 $response->getBody()->write($payload);
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             });
@@ -85,6 +94,9 @@ return function (App $app) {
                         'initialState' => $initialState
                     ]
                 );
+                if (json_last_error() != JSON_ERROR_NONE) {
+                    throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
+                }
                 $response->getBody()->write($payload);
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             });
@@ -102,6 +114,9 @@ return function (App $app) {
                             'data' => $user
                         ]
                     );
+                    if (json_last_error() != JSON_ERROR_NONE) {
+                        throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
+                    }
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
@@ -135,6 +150,9 @@ return function (App $app) {
                             'data' => $user
                         ]
                     );
+                    if (json_last_error() != JSON_ERROR_NONE) {
+                        throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
+                    }
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
@@ -154,6 +172,9 @@ return function (App $app) {
                             )
                         ]
                     );
+                    if (json_last_error() != JSON_ERROR_NONE) {
+                        throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
+                    }
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
@@ -185,6 +206,9 @@ return function (App $app) {
                             )
                         ]
                     );
+                    if (json_last_error() != JSON_ERROR_NONE) {
+                        throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
+                    }
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
@@ -202,6 +226,9 @@ return function (App $app) {
                             'document' => $document
                         ]
                     );
+                    if (json_last_error() != JSON_ERROR_NONE) {
+                        throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
+                    }
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
@@ -217,6 +244,9 @@ return function (App $app) {
                             'notes' => $document->notes
                         ]
                     );
+                    if (json_last_error() != JSON_ERROR_NONE) {
+                        throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
+                    }
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
@@ -232,6 +262,9 @@ return function (App $app) {
                             'attachments' => $document->attachments
                         ]
                     );
+                    if (json_last_error() != JSON_ERROR_NONE) {
+                        throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
+                    }
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
@@ -292,6 +325,9 @@ return function (App $app) {
                             'document' => $document
                         ]
                     );
+                    if (json_last_error() != JSON_ERROR_NONE) {
+                        throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
+                    }
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
@@ -357,6 +393,9 @@ return function (App $app) {
                             'document' => $document
                         ]
                     );
+                    if (json_last_error() != JSON_ERROR_NONE) {
+                        throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
+                    }
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
@@ -382,6 +421,9 @@ return function (App $app) {
                             'initialState' => $initialState
                         ]
                     );
+                    if (json_last_error() != JSON_ERROR_NONE) {
+                        throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
+                    }
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
@@ -461,6 +503,9 @@ return function (App $app) {
                                     )
                                 ]
                             );
+                            if (json_last_error() != JSON_ERROR_NONE) {
+                                throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
+                            }
                             $response->getBody()->write($payload);
                             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                         }
@@ -484,6 +529,9 @@ return function (App $app) {
                                 'initialState' => $initialState,
                             ]
                         );
+                        if (json_last_error() != JSON_ERROR_NONE) {
+                            throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
+                        }
                         $response->getBody()->write($payload);
                         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                     }
@@ -497,6 +545,9 @@ return function (App $app) {
                         'tags' => \HomeDocs\Tag::getCloud($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class))
                     ]
                 );
+                if (json_last_error() != JSON_ERROR_NONE) {
+                    throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
+                }
                 $response->getBody()->write($payload);
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             })->add(\HomeDocs\Middleware\CheckAuth::class);
@@ -508,6 +559,9 @@ return function (App $app) {
                         'tags' => \HomeDocs\Tag::search($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class))
                     ]
                 );
+                if (json_last_error() != JSON_ERROR_NONE) {
+                    throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
+                }
                 $response->getBody()->write($payload);
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             })->add(\HomeDocs\Middleware\CheckAuth::class);
@@ -520,6 +574,9 @@ return function (App $app) {
                             'count' => \HomeDocs\Stats::getTotalPublishedDocuments($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class))
                         ]
                     );
+                    if (json_last_error() != JSON_ERROR_NONE) {
+                        throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
+                    }
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
@@ -531,6 +588,9 @@ return function (App $app) {
                             'count' => \HomeDocs\Stats::getTotalUploadedAttachments($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class))
                         ]
                     );
+                    if (json_last_error() != JSON_ERROR_NONE) {
+                        throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
+                    }
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
@@ -542,6 +602,9 @@ return function (App $app) {
                             'size' => \HomeDocs\Stats::getTotalUploadedAttachmentsDiskUsage($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class))
                         ]
                     );
+                    if (json_last_error() != JSON_ERROR_NONE) {
+                        throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
+                    }
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
@@ -557,6 +620,9 @@ return function (App $app) {
                             )
                         ]
                     );
+                    if (json_last_error() != JSON_ERROR_NONE) {
+                        throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
+                    }
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
