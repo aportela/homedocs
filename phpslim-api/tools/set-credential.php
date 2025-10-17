@@ -14,7 +14,6 @@ $container = $containerBuilder->build();
 
 echo "HomeDocs account manager" . PHP_EOL;
 
-
 $logger = $container->get(\HomeDocs\Logger\InstallerLogger::class);
 
 $settings = $container->get('settings');
@@ -46,7 +45,7 @@ if (count($missingExtensions) > 0) {
         if ($found) {
             //$c["logger"]->debug("Account exists -> update credentials");
             echo "User found, updating password...";
-            $u->update($db);
+            $u->update($db, false);
             echo "ok!" . PHP_EOL;
         } else {
             //$c["logger"]->debug("Account not found -> adding credentials");
