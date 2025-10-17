@@ -8,7 +8,7 @@ use Slim\Routing\RouteCollectorProxy;
 // TODO: CheckAuth & JWT middlewares (combine ?)
 return function (App $app) {
     $app->get('/', function (Request $request, Response $response, array $args) {
-        $filePath = dirname(__DIR__) . '/templates/index-quasar.html';
+        $filePath = dirname(__DIR__) . '/public/index.html';
         if (file_exists($filePath)) {
             $response->getBody()->write(file_get_contents($filePath));
             return $response->withHeader('Content-Type', 'text/html; charset=UTF-8');
