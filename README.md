@@ -26,13 +26,13 @@ The project currently consists of two parts
 Install dependencies (under phpslim-api/ path):
 
 ```Shell
-    composer install
+composer install
 ```
 
 Execute sqlite database creation/update script
 
 ```Shell
-    php phpslim-api/tools/install.php
+php phpslim-api/tools/install.php
 ```
 
 Check proper permissions, web server process must read/write (files) read/write/execute (dirs) on
@@ -88,7 +88,7 @@ cat ../tools/migrate-from-v1.sql | sqlite3 ./homedocs2.sqlite3
 Once migrated, run the update script that applies sql version changes
 
 ```Shell
-    php phpslim-api/tools/update.php
+php phpslim-api/tools/update.php
 ```
 
 ## Backup data
@@ -99,8 +99,8 @@ You really want to make (periodic) backups, all (without source code) data (sqli
 
 You can create/update an account from the command line with the php script
 
-```
-    php phpslim-api/tools/set-credential.php --email myuser@myserver.net --password mysecret
+```Shell
+php phpslim-api/tools/set-credential.php --email myuser@myserver.net --password mysecret
 ```
 
 If the account already exists it will be overwritten with the data provided.
