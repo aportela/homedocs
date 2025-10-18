@@ -45,7 +45,7 @@ Check proper permissions, web server process must read/write (files) read/write/
         phpslim-api/data/storage/*.*
 
     Debug files
-        phpslim-api/logs/*.*
+        phpslim-api/data/logs/*.*
 ```
 
 The system should work by default but if you need to modify any configuration the settings file is located at
