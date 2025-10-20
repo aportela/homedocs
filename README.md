@@ -9,9 +9,11 @@ Homedocs is is a simple personal document manager. You can conveniently store yo
 <img width="2560" height="1271" alt="Screenshot 2025-10-20 at 10-43-03 homedocs" src="https://github.com/user-attachments/assets/f3f9de89-8576-47e7-accd-73074a80aa79" />
 
 ### Default home page
+
 <img width="2543" height="1778" alt="Screenshot 2025-10-20 at 10-43-39 homedocs" src="https://github.com/user-attachments/assets/a3cb7e67-46d2-41e1-843d-a7066f2891a1" />
 
 ### Profile page
+
 <img width="2560" height="1271" alt="Screenshot 2025-10-20 at 10-44-07 homedocs" src="https://github.com/user-attachments/assets/54a0ff19-d0c2-4014-a044-8a7775fec534" />
 
 ### Document page
@@ -22,11 +24,11 @@ Homedocs is is a simple personal document manager. You can conveniently store yo
 
 <img width="2543" height="2282" alt="Screenshot 2025-10-20 at 10-44-48 homedocs" src="https://github.com/user-attachments/assets/d8c95c9d-701b-4752-9f17-cdb6ce4c77a6" />
 
-### Preview attachments page
+### Fast search dialog
 
 <img width="2543" height="1271" alt="Screenshot 2025-10-20 at 10-45-04 homedocs" src="https://github.com/user-attachments/assets/de9bdae7-c846-4a73-b839-78872532d59f" />
 
-### Fast search dialog
+### Preview attachments page
 
 <img width="2560" height="1271" alt="Screenshot 2025-10-20 at 10-46-07 homedocs" src="https://github.com/user-attachments/assets/1fec4701-1e91-43dd-ba96-c022d6e28731" />
 
