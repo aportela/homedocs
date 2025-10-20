@@ -8,13 +8,6 @@ require_once dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "vendor" . DIRECT
 
 final class DocumentTest extends \HomeDocs\Test\BaseTest
 {
-    private function createValidSession(): void
-    {
-        $id = \HomeDocs\Utils::uuidv4();
-        $u = new \HomeDocs\User($id, $id . "@server.com", "secret");
-        $u->add(self::$dbh);
-        \HomeDocs\UserSession::set($id, $id . "@server.com");
-    }
 
     /**
      * Initialize the test case
