@@ -103,8 +103,7 @@ return function (App $app) {
 
             $group->group('/user', function (RouteCollectorProxy $group) use ($app, $initialState) {
                 $group->get('/profile', function (Request $request, Response $response, array $args) use ($app, $initialState) {
-                    $user = new \HomeDocs\User();
-                    $user->id = \HomeDocs\UserSession::getUserId();
+                    $user = new \HomeDocs\User(\HomeDocs\UserSession::getUserId());
                     $user->get($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class));
                     unset($user->password);
                     unset($user->passwordHash);
@@ -124,11 +123,7 @@ return function (App $app) {
                 $group->put('/profile', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $params = $request->getParsedBody();
                     $dbh = $app->getContainer()->get(\aportela\DatabaseWrapper\DB::class);
-                    $user = new \HomeDocs\User(
-                        \HomeDocs\UserSession::getUserId(),
-                        "",
-                        ""
-                    );
+                    $user = new \HomeDocs\User(\HomeDocs\UserSession::getUserId());
                     $user->get($dbh);
                     if ($params["email"] != \HomeDocs\UserSession::getEmail()) {
                         $tmpUser = new \HomeDocs\User(
