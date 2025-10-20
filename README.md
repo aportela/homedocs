@@ -4,9 +4,35 @@ Homedocs is is a simple personal document manager. You can conveniently store yo
 
 ## Screenshots
 
-|                                                                                                                         Sign In                                                                                                                          |                                                                                                                         Dashboard                                                                                                                          |                                                                                                                         Search                                                                                                                          |                                                                                                                         Document                                                                                                                          |                                                                                                                         Attachments preview                                                                                                                          |
-| :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-| <a href="https://github.com/aportela/homedocs/assets/705838/cab38a76-8483-46b4-afb1-20ae2b495316" target="_blank"><img src="https://github.com/aportela/homedocs/assets/705838/cab38a76-8483-46b4-afb1-20ae2b495316" alt="Sign In screenshot"></img></a> | <a href="https://github.com/aportela/homedocs/assets/705838/bd6ada10-fac6-44dd-989d-f2f30f5e4405" target="_blank"><img src="https://github.com/aportela/homedocs/assets/705838/bd6ada10-fac6-44dd-989d-f2f30f5e4405" alt="Dashboard screenshot"></img></a> | <a href="https://github.com/aportela/homedocs/assets/705838/dc11dd33-6581-4a05-a989-d906a2a686ae" target="_blank"><img src="https://github.com/aportela/homedocs/assets/705838/dc11dd33-6581-4a05-a989-d906a2a686ae" alt="Search screenshot"></img></a> | <a href="https://github.com/aportela/homedocs/assets/705838/76439723-1be3-4c2a-8108-af3051953f44" target="_blank"><img src="https://github.com/aportela/homedocs/assets/705838/76439723-1be3-4c2a-8108-af3051953f44" alt="Document screenshot"></img></a> | <a href="https://github.com/aportela/homedocs/assets/705838/3acc3cef-165b-425e-97cf-c2935f67036c" target="_blank"><img src="https://github.com/aportela/homedocs/assets/705838/3acc3cef-165b-425e-97cf-c2935f67036c" alt="Attachments preview screenshot"></img></a> |
+### Sign in page
+
+<img width="2560" height="1271" alt="Screenshot 2025-10-20 at 10-43-03 homedocs" src="https://github.com/user-attachments/assets/f3f9de89-8576-47e7-accd-73074a80aa79" />
+
+### Default home page
+<img width="2543" height="1778" alt="Screenshot 2025-10-20 at 10-43-39 homedocs" src="https://github.com/user-attachments/assets/a3cb7e67-46d2-41e1-843d-a7066f2891a1" />
+
+### Profile page
+<img width="2560" height="1271" alt="Screenshot 2025-10-20 at 10-44-07 homedocs" src="https://github.com/user-attachments/assets/54a0ff19-d0c2-4014-a044-8a7775fec534" />
+
+### Document page
+
+<img width="2560" height="1271" alt="Screenshot 2025-10-20 at 10-44-34 homedocs" src="https://github.com/user-attachments/assets/772f81ac-3863-4ec6-b1dd-4e1fce82afc5" />
+
+### Search (advanced) page
+
+<img width="2543" height="2282" alt="Screenshot 2025-10-20 at 10-44-48 homedocs" src="https://github.com/user-attachments/assets/d8c95c9d-701b-4752-9f17-cdb6ce4c77a6" />
+
+### Preview attachments page
+
+<img width="2543" height="1271" alt="Screenshot 2025-10-20 at 10-45-04 homedocs" src="https://github.com/user-attachments/assets/de9bdae7-c846-4a73-b839-78872532d59f" />
+
+### Fast search dialog
+
+<img width="2560" height="1271" alt="Screenshot 2025-10-20 at 10-46-07 homedocs" src="https://github.com/user-attachments/assets/1fec4701-1e91-43dd-ba96-c022d6e28731" />
+
+### Dark mode
+
+<img width="2560" height="1271" alt="Screenshot 2025-10-20 at 10-46-29 homedocs" src="https://github.com/user-attachments/assets/be8705d0-aea3-4d02-9293-c969690efe08" />
 
 ## System requirements
 
