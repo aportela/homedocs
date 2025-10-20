@@ -54,7 +54,7 @@ class BaseTest extends \PHPUnit\Framework\TestCase
     /**
      * Clean up the test case, called for every defined test
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         self::$dbh->rollBack();
     }
