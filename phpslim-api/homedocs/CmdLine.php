@@ -6,13 +6,16 @@ namespace HomeDocs;
 
 class CmdLine
 {
+    /**
+     * @var array<string,string>
+     */
     private $options = array();
 
     /**
      * commandline constructor
      *
-     * @param $short string Each character in this string will be used as option characters and matched against options passed to the script starting with a single hyphen (-). For example, an option string "x" recognizes an option -x. Only a-z, A-Z and 0-9 are allowed.
-     * @param $long array An array of options. Each element in this array will be used as option strings and matched against options passed to the script starting with two hyphens (--). For example, an longopts element "opt" recognizes an option --opt.
+     * @param string $short Each character in this string will be used as option characters and matched against options passed to the script starting with a single hyphen (-). For example, an option string "x" recognizes an option -x. Only a-z, A-Z and 0-9 are allowed.
+     * @param array<string> $long An array of options. Each element in this array will be used as option strings and matched against options passed to the script starting with two hyphens (--). For example, an longopts element "opt" recognizes an option --opt.
      *
      */
     public function __construct(string $short, array $long)
@@ -20,9 +23,7 @@ class CmdLine
         $this->options = getopt($short, $long);
     }
 
-    public function __destruct()
-    {
-    }
+    public function __destruct() {}
 
     /**
      * Check for commandline parameter existence
