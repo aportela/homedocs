@@ -52,7 +52,7 @@ return [
         $logger->pushProcessor(new \Monolog\Processor\UidProcessor());
         $handler = new \Monolog\Handler\RotatingFileHandler($settings['channels']['http']['path'], 0, $settings['defaultLevel']);
         $handler->setFilenameFormat('{date}/{filename}', \Monolog\Handler\RotatingFileHandler::FILE_PER_DAY);
-        $formatter = new \Monolog\Formatter\LineFormatter(null, null, true, true);
+        //$formatter = new \Monolog\Formatter\LineFormatter(null, null, true, true);
         //$handler->setFormatter($formatter);
         $logger->pushHandler($handler);
         return (new \HomeDocs\Logger\HTTPRequestLogger($logger));
@@ -64,7 +64,7 @@ return [
         $logger->pushProcessor(new \Monolog\Processor\UidProcessor());
         $handler = new \Monolog\Handler\RotatingFileHandler($settings['channels']['default']['path'], 0, $settings['defaultLevel']);
         $handler->setFilenameFormat('{date}/{filename}', \Monolog\Handler\RotatingFileHandler::FILE_PER_DAY);
-        $formatter = new \Monolog\Formatter\LineFormatter(null, null, true, true);
+        //$formatter = new \Monolog\Formatter\LineFormatter(null, null, true, true);
         //$handler->setFormatter($formatter);
         $logger->pushHandler($handler);
         return (new \HomeDocs\Logger\DefaultLogger($logger));
@@ -76,7 +76,7 @@ return [
         $logger->pushProcessor(new \Monolog\Processor\UidProcessor());
         $handler = new \Monolog\Handler\RotatingFileHandler($settings['channels']['database']['path'], 0, $settings['defaultLevel']);
         $handler->setFilenameFormat('{date}/{filename}', \Monolog\Handler\RotatingFileHandler::FILE_PER_DAY);
-        $formatter = new \Monolog\Formatter\LineFormatter(null, null, true, true);
+        //$formatter = new \Monolog\Formatter\LineFormatter(null, null, true, true);
         //$handler->setFormatter($formatter);
         $logger->pushHandler($handler);
         return (new \HomeDocs\Logger\DBLogger($logger));
@@ -88,7 +88,7 @@ return [
         $logger->pushProcessor(new \Monolog\Processor\UidProcessor());
         $handler = new \Monolog\Handler\RotatingFileHandler($settings['channels']['installer']['path'], 0, $settings['defaultLevel']);
         $handler->setFilenameFormat('{date}/{filename}', \Monolog\Handler\RotatingFileHandler::FILE_PER_DAY);
-        $formatter = new \Monolog\Formatter\LineFormatter(null, null, true, true);
+        //$formatter = new \Monolog\Formatter\LineFormatter(null, null, true, true);
         //$handler->setFormatter($formatter);
         $logger->pushHandler($handler);
         return (new \HomeDocs\Logger\InstallerLogger($logger));
