@@ -13,7 +13,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
      * Initialize the test case
      * Called for every defined test
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         //$this->createValidSession(); // make tests slower, better use only on required tests
