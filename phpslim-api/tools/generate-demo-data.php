@@ -39,7 +39,7 @@ if (count($missingExtensions) > 0) {
         if ($found) {
             //$c["logger"]->debug("Account exists -> update credentials");
             echo "User found, updating password...";
-            $u->update($dbh, false);
+            $u->update($dbh);
             echo "ok!" . PHP_EOL;
         } else {
             //$c["logger"]->debug("Account not found -> adding credentials");
