@@ -10,36 +10,54 @@ final class StatsTest extends \HomeDocs\Test\BaseTest
 {
     public function testGetTotalPublishedDocuments(): void
     {
-        $total = \HomeDocs\Stats::getTotalPublishedDocuments(self::$dbh);
-        $this->assertIsInt($total);
-        $this->assertTrue($total >= 0);
+        $this->createValidSession();
+        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, []);
+        $d->add(self::$dbh);
+        $this->assertTrue(\HomeDocs\Stats::getTotalPublishedDocuments(self::$dbh) > 0);
     }
 
     public function testGetTotalUploadedAttachments(): void
     {
-        $total = \HomeDocs\Stats::getTotalUploadedAttachments(self::$dbh);
-        $this->assertIsInt($total);
-        $this->assertTrue($total >= 0);
+        $this->createValidSession();
+        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, []);
+        $d->add(self::$dbh);
+        $this->assertTrue(\HomeDocs\Stats::getTotalUploadedAttachments(self::$dbh) >= 0);
     }
 
     public function testGetTotalUploadedAttachmentsDiskUsage(): void
     {
-        $total = \HomeDocs\Stats::getTotalUploadedAttachmentsDiskUsage(self::$dbh);
-        $this->assertIsInt($total);
-        $this->assertTrue($total >= 0);
+        // TODO: simulate file uploading for adding test attachment
+        $this->assertTrue(\HomeDocs\Stats::getTotalUploadedAttachmentsDiskUsage(self::$dbh) >= 0);
     }
 
     public function testGetActivityHeatMapDataWithoutTimestamp(): void
     {
+        $this->createValidSession();
+        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, []);
+        $d->add(self::$dbh);
         $data = \HomeDocs\Stats::getActivityHeatMapData(self::$dbh);
-        $this->assertIsArray($data);
-        $this->assertTrue(count($data) >= 0);
+        $this->assertTrue(count($data) >= 1);
+        $results = array_values(array_filter($data, function ($obj) {
+            return ($obj["date"] == date("Y-m-d"));
+        }));
+        $this->assertEquals(1, count($results));
+        $this->assertEquals(date("Y-m-d"), $results[0]["date"]);
+        $this->assertTrue($results[0]["count"] > 0);
     }
 
     public function testGetActivityHeatMapDataWithTimestamp(): void
     {
-        $data = \HomeDocs\Stats::getActivityHeatMapData(self::$dbh, strtotime('-1 year', time()));
-        $this->assertIsArray($data);
-        $this->assertTrue(count($data) >= 0);
+        $this->createValidSession();
+        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, []);
+        $d->add(self::$dbh);
+        $data = \HomeDocs\Stats::getActivityHeatMapData(self::$dbh, strtotime('-1 day', time()));
+        $this->assertTrue(count($data) >= 1);
+        $this->assertTrue(count($data) >= 1);
+        $results = array_values(array_filter($data, function ($obj) {
+            return ($obj["date"] == date("Y-m-d"));
+        }));
+        $this->assertEquals(1, count($results));
+        $this->assertEquals(date("Y-m-d"), $results[0]["date"]);
+        $this->assertTrue($results[0]["count"] > 0);
     }
 }
