@@ -21,7 +21,9 @@ class JWT
         $this->logger->debug("JWT passphrase", [$passphrase]);
     }
 
-    public function __destruct() {}
+    public function __destruct()
+    {
+    }
 
     public function encode(mixed $payload): string
     {
