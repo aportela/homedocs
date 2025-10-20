@@ -27,9 +27,9 @@ if (count($missingExtensions) > 0) {
     $cmdLine = new \HomeDocs\CmdLine("", array("email:", "password:"));
     if ($cmdLine->hasParam("email") && $cmdLine->hasParam("password")) {
         echo "Setting account credentials..." . PHP_EOL;
-        $db = $container->get(\aportela\DatabaseWrapper\DB::class);
+        $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
         /*
-        if ((new \HomeDocs\Database\Version($dbh, "PDO_SQLITE"))->hasUpgradeAvailable()) {
+        if ((new \HomeDocs\Database\Version($dbhh, "PDO_SQLITE"))->hasUpgradeAvailable()) {
             //$c["logger"]->warning("Process stopped: upgrade database before continue");
             echo "New database version available, an upgrade is required before continue." . PHP_EOL;
             exit;
@@ -38,20 +38,20 @@ if (count($missingExtensions) > 0) {
         $found = false;
         $u = new \HomeDocs\User("", $cmdLine->getParamValue("email"), $cmdLine->getParamValue("password"));
         try {
-            $u->get($db);
+            $u->get($dbh);
             $found = true;
         } catch (\HomeDocs\Exception\NotFoundException $e) {
         }
         if ($found) {
             //$c["logger"]->debug("Account exists -> update credentials");
             echo "User found, updating password...";
-            $u->update($db);
+            $u->update($dbh);
             echo "ok!" . PHP_EOL;
         } else {
             //$c["logger"]->debug("Account not found -> adding credentials");
             echo "User not found, creating account...";
             $u->id = \HomeDocs\Utils::uuidv4();
-            $u->add($db);
+            $u->add($dbh);
             echo "ok!" . PHP_EOL;
         }
     } else {
