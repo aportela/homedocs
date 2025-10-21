@@ -8,7 +8,6 @@ require_once dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "vendor" . DIRECT
 
 final class TagTest extends \HomeDocs\Test\BaseTest
 {
-
     public function testGetCloud(): void
     {
         $tag1 = sprintf("tag_%d", time());

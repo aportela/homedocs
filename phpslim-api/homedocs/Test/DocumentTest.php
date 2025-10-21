@@ -8,7 +8,6 @@ require_once dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "vendor" . DIRECT
 
 final class DocumentTest extends \HomeDocs\Test\BaseTest
 {
-
     public function testAddWithoutId(): void
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
