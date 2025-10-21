@@ -1,9 +1,11 @@
 import { LocalStorage } from "quasar";
 
+import { LOCAL_STORAGE_NAMESPACE } from "src/constants";
+
 export function useLocalStorage() {
   const get = (key, defaultValue = null) => {
     try {
-      const savedValue = LocalStorage.getItem(key);
+      const savedValue = LocalStorage.getItem(LOCAL_STORAGE_NAMESPACE + key);
       return savedValue === null ? defaultValue : savedValue;
     } catch (error) {
       console.error("Error accessing localStorage:", error);
@@ -13,7 +15,7 @@ export function useLocalStorage() {
 
   const set = (key, value) => {
     try {
-      LocalStorage.setItem(key, value);
+      LocalStorage.setItem(LOCAL_STORAGE_NAMESPACE + key, value);
     } catch (error) {
       console.error("Error accessing localStorage:", error);
     }
@@ -21,7 +23,7 @@ export function useLocalStorage() {
 
   const remove = (key) => {
     try {
-      LocalStorage.removeItem(key);
+      LocalStorage.removeItem(LOCAL_STORAGE_NAMESPACE + key);
     } catch (error) {
       console.error("Error accessing localStorage:", error);
     }
@@ -36,7 +38,7 @@ export function useLocalStorage() {
     },
     remove() {
       remove("jwt");
-    }
+    },
   };
 
   const darkMode = {
@@ -48,7 +50,19 @@ export function useLocalStorage() {
     },
     remove() {
       remove("darkMode");
-    }
+    },
+  };
+
+  const locale = {
+    get() {
+      return get("locale");
+    },
+    set(value) {
+      set("locale", value);
+    },
+    remove() {
+      remove("locale");
+    },
   };
 
   const alwaysOpenUploadDialog = {
@@ -60,7 +74,7 @@ export function useLocalStorage() {
     },
     remove() {
       remove("alwaysOpenUploadDialog");
-    }
+    },
   };
 
   const showToolTips = {
@@ -72,7 +86,7 @@ export function useLocalStorage() {
     },
     remove() {
       remove("showToolTips");
-    }
+    },
   };
 
   const searchDialogResultsPage = {
@@ -84,12 +98,13 @@ export function useLocalStorage() {
     },
     remove() {
       remove("searchDialogResultsPage");
-    }
+    },
   };
 
   return {
     jwt,
     darkMode,
+    locale,
     alwaysOpenUploadDialog,
     showToolTips,
     searchDialogResultsPage,
