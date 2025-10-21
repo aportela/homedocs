@@ -19,6 +19,26 @@ export function useLocalStorage() {
     }
   };
 
+  const remove = (key) => {
+    try {
+      LocalStorage.removeItem(key);
+    } catch (error) {
+      console.error("Error accessing localStorage:", error);
+    }
+  };
+
+  const jwt = {
+    get() {
+      return get("jwt");
+    },
+    set(value) {
+      set("jwt", value);
+    },
+    remove() {
+      remove("jwt");
+    }
+  };
+
   const darkMode = {
     get() {
       return get("darkMode");
@@ -26,6 +46,9 @@ export function useLocalStorage() {
     set(value) {
       set("darkMode", !!value);
     },
+    remove() {
+      remove("darkMode");
+    }
   };
 
   const alwaysOpenUploadDialog = {
@@ -35,6 +58,9 @@ export function useLocalStorage() {
     set(value) {
       set("alwaysOpenUploadDialog", !!value);
     },
+    remove() {
+      remove("alwaysOpenUploadDialog");
+    }
   };
 
   const showToolTips = {
@@ -44,6 +70,9 @@ export function useLocalStorage() {
     set(value) {
       set("showToolTips", !!value);
     },
+    remove() {
+      remove("showToolTips");
+    }
   };
 
   const searchDialogResultsPage = {
@@ -53,9 +82,13 @@ export function useLocalStorage() {
     set(value) {
       set("searchDialogResultsPage", parseInt(value || 8));
     },
+    remove() {
+      remove("searchDialogResultsPage");
+    }
   };
 
   return {
+    jwt,
     darkMode,
     alwaysOpenUploadDialog,
     showToolTips,
