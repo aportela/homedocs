@@ -1,4 +1,3 @@
-import { computed } from "vue";
 import { Dark } from "quasar";
 
 import { useLocalStorage } from "src/composables/useLocalStorage";
