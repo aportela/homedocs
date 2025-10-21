@@ -2,10 +2,12 @@ import { useAxios } from "src/composables/useAxios";
 
 const { axios } = useAxios();
 
+const basePath = "api3";
+
 export function useAPI() {
   const api = {
     common: {
-      initialState: () => axios.get("api3/initial_state"),
+      initialState: () => axios.get(basePath + "/initial_state"),
     },
     user: {
       signIn: function (email, password) {
@@ -13,24 +15,24 @@ export function useAPI() {
           email: email,
           password: password,
         };
-        return axios.post("api3/user/sign-in", params);
+        return axios.post(basePath + "/user/sign-in", params);
       },
-      signOut: () => axios.post("api3/user/sign-out"),
+      signOut: () => axios.post(basePath + "/user/sign-out"),
       signUp: function (id, email, password) {
         const params = {
           id: id,
           email: email,
           password: password,
         };
-        return axios.post("api3/user/sign-up", params);
+        return axios.post(basePath + "/user/sign-up", params);
       },
-      getProfile: () => axios.get("api3/user/profile"),
+      getProfile: () => axios.get(basePath + "/user/profile"),
       updateProfile: function (email, password) {
         const params = {
           email: email,
           password: password,
         };
-        return axios.put("api3/user/profile", params);
+        return axios.put(basePath + "/user/profile", params);
       },
     },
     document: {
@@ -38,7 +40,7 @@ export function useAPI() {
         const params = {
           count: count,
         };
-        return axios.post("api3/search/recent_documents", params);
+        return axios.post(basePath + "/search/recent_documents", params);
       },
       search: function (currentPage, resultsPage, filter, sortBy, sortOrder) {
         const params = {
@@ -64,7 +66,7 @@ export function useAPI() {
         params.resultsPage = resultsPage;
         params.sortBy = sortBy;
         params.sortOrder = sortOrder;
-        return axios.post("api3/search/document", params);
+        return axios.post(basePath + "/search/document", params);
       },
       add: function (document) {
         const params = {
@@ -77,7 +79,7 @@ export function useAPI() {
         if (document.description) {
           params.description = document.description;
         }
-        return axios.post("api3/document/" + document.id, params);
+        return axios.post(basePath + "/document/" + document.id, params);
       },
       update: function (document) {
         const params = {
@@ -90,34 +92,34 @@ export function useAPI() {
         if (document.description) {
           params.description = document.description;
         }
-        return axios.put("api3/document/" + document.id, params);
+        return axios.put(basePath + "/document/" + document.id, params);
       },
-      remove: (id) => axios.delete("api3/document/" + id),
-      get: (id) => axios.get("api3/document/" + id),
-      getNotes: (id) => axios.get("api3/document/" + id + "/notes"),
-      getAttachments: (id) => axios.get("api3/document/" + id + "/attachments"),
+      remove: (id) => axios.delete(basePath + "/document/" + id),
+      get: (id) => axios.get(basePath + "/document/" + id),
+      getNotes: (id) => axios.get(basePath + "/document/" + id + "/notes"),
+      getAttachments: (id) => axios.get(basePath + "/document/" + id + "/attachments"),
       addAttachment: function (id, file) {
         let formData = new FormData();
         formData.append("file", file);
-        return axios.post("api3/attachment/" + id, formData);
+        return axios.post(basePath + "/attachment/" + id, formData);
       },
-      removeFile: (id) => axios.delete("api3/attachment/" + id),
+      removeFile: (id) => axios.delete(basePath + "/attachment/" + id),
     },
     tag: {
-      getCloud: () => axios.get("api3/tag-cloud"),
-      search: () => axios.get("api3/tags"),
+      getCloud: () => axios.get(basePath + "/tag-cloud"),
+      search: () => axios.get(basePath + "/tags"),
     },
     stats: {
-      documentCount: () => axios.get("api3/stats/total-published-documents"),
-      attachmentCount: () => axios.get("api3/stats/total-uploaded-attachments"),
+      documentCount: () => axios.get(basePath + "/stats/total-published-documents"),
+      attachmentCount: () => axios.get(basePath + "/stats/total-uploaded-attachments"),
       attachmentDiskSize: () =>
-        axios.get("api3/stats/total-uploaded-attachments-disk-usage"),
+        axios.get(basePath + "/stats/total-uploaded-attachments-disk-usage"),
       getActivityHeatMapData: (fromTimestamp) =>
-        axios.get("api3/stats/heatmap-activity-data", {
+        axios.get(basePath + "/stats/heatmap-activity-data", {
           params: { fromTimestamp: fromTimestamp || null },
         }),
     },
   };
 
-  return { api };
+  return { basePath, api };
 }
