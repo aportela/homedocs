@@ -41,6 +41,18 @@ export function useLocalStorage() {
     },
   };
 
+  const email = {
+    get() {
+      return get("email");
+    },
+    set(value) {
+      set("email", value);
+    },
+    remove() {
+      remove("email");
+    },
+  };
+
   const darkMode = {
     get() {
       return get("darkMode");
@@ -103,6 +115,7 @@ export function useLocalStorage() {
 
   return {
     jwt,
+    email,
     darkMode,
     locale,
     alwaysOpenUploadDialog,
