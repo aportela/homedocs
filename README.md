@@ -6,35 +6,37 @@ Homedocs is is a simple personal document manager. You can conveniently store yo
 
 ### Sign in page
 
-<img width="2560" height="1271" alt="Screenshot 2025-10-20 at 10-43-03 homedocs" src="https://github.com/user-attachments/assets/f3f9de89-8576-47e7-accd-73074a80aa79" />
+<img width="1280" height="607" alt="Signin page screenshot" src="https://github.com/user-attachments/assets/2a8adee1-5993-4893-ae11-a4cfb3c133a1" />
 
-### Default home page
+### Default home page / Dashboard
 
-<img width="2543" height="1778" alt="Screenshot 2025-10-20 at 10-43-39 homedocs" src="https://github.com/user-attachments/assets/a3cb7e67-46d2-41e1-843d-a7066f2891a1" />
+<img width="1280" height="1230" alt="Dashboard page screenshot" src="https://github.com/user-attachments/assets/b985c420-6a84-48d6-b927-457276a822d4" />
 
 ### Profile page
 
-<img width="2560" height="1271" alt="Screenshot 2025-10-20 at 10-44-07 homedocs" src="https://github.com/user-attachments/assets/54a0ff19-d0c2-4014-a044-8a7775fec534" />
+<img width="1280" height="640" alt="Profile page screenshot" src="https://github.com/user-attachments/assets/df521f7d-9ca7-4ffa-8b74-2d2aeb096f84" />
 
 ### Document page
 
-<img width="2560" height="1271" alt="Screenshot 2025-10-20 at 10-44-34 homedocs" src="https://github.com/user-attachments/assets/772f81ac-3863-4ec6-b1dd-4e1fce82afc5" />
+<img width="1280" height="607" alt="Document page screenshot" src="https://github.com/user-attachments/assets/0a13afd8-db97-4459-abe7-1a05646066db" />
 
 ### Search (advanced) page
 
-<img width="2543" height="2282" alt="Screenshot 2025-10-20 at 10-44-48 homedocs" src="https://github.com/user-attachments/assets/d8c95c9d-701b-4752-9f17-cdb6ce4c77a6" />
+<img width="1280" height="607" alt="Advanced search page screenshot" src="https://github.com/user-attachments/assets/06ab6bbd-aa97-49a2-89ca-0e171a9d6089" />
 
 ### Fast search dialog
 
-<img width="2543" height="1271" alt="Screenshot 2025-10-20 at 10-45-04 homedocs" src="https://github.com/user-attachments/assets/de9bdae7-c846-4a73-b839-78872532d59f" />
+<img width="1280" height="607" alt="Fast search dialog screenshot" src="https://github.com/user-attachments/assets/4234cf3e-fd2f-404d-a842-799dcf41ffd4" />
 
 ### Preview attachments page
 
-<img width="2560" height="1271" alt="Screenshot 2025-10-20 at 10-46-07 homedocs" src="https://github.com/user-attachments/assets/1fec4701-1e91-43dd-ba96-c022d6e28731" />
+<img width="1280" height="607" alt="PDF preview dialog screenshot" src="https://github.com/user-attachments/assets/ab6b138f-48ec-4faf-aebc-06863ef59883" />
+
+<img width="1280" height="613" alt="Image preview dialog screenshot" src="https://github.com/user-attachments/assets/421f4681-cba3-432e-86e1-9a01f8fd325f" />
 
 ### Dark mode
 
-<img width="2560" height="1271" alt="Screenshot 2025-10-20 at 10-46-29 homedocs" src="https://github.com/user-attachments/assets/be8705d0-aea3-4d02-9293-c969690efe08" />
+<img width="1280" height="640" alt="Profile page (dark mode)" src="https://github.com/user-attachments/assets/d6d4b259-a17a-4026-91b6-9eacf667b456" />
 
 ## System requirements
 
