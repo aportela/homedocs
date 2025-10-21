@@ -15,7 +15,6 @@
   "dependencies": {
     "@quasar/extras": "^1.17.0",
     "axios": "^1.12.2",
-    "basil.js": "^0.4.11",
     "cal-heatmap": "^4.2.4",
     "core-js": "^3.37.1",
     "pinia": "^2.3.1",
