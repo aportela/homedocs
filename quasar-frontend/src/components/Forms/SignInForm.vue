@@ -64,12 +64,12 @@
 <script setup>
 
 import { ref, reactive, nextTick, computed } from "vue";
-import { LocalStorage } from "quasar";
 import { useI18n } from "vue-i18n";
 
 import { useAPI } from "src/composables/useAPI";
 import { useFormUtils } from "src/composables/useFormUtils";
 import { useInitialStateStore } from "src/stores/initialState";
+import { useLocalStorage } from "src/composables/useLocalStorage";
 
 import { default as DarkModeButton } from "src/components/Buttons/DarkModeButton.vue"
 import { default as SwitchLanguageButton } from "src/components/Buttons/SwitchLanguageButton.vue"
@@ -96,6 +96,8 @@ const formUtils = useFormUtils();
 
 const initialState = useInitialStateStore();
 
+const { email } = useLocalStorage();
+
 const signUpAllowed = computed(() => initialState.isSignUpAllowed === true);
 
 const state = reactive({
@@ -116,7 +118,7 @@ const validator = reactive({
   }
 });
 
-const savedEmail = LocalStorage.getItem("email");
+const savedEmail = email.get();
 
 const profile = reactive(
   {
@@ -154,7 +156,7 @@ const onSubmitForm = () => {
   api.user
     .signIn(profile.email, profile.password)
     .then((successResponse) => {
-      LocalStorage.set("email", profile.email);
+      email.set(profile.email);
       state.loading = false;
       emit("success", successResponse.data);
     })
