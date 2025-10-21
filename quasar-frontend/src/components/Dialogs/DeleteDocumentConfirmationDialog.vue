@@ -77,21 +77,26 @@ const onDelete = () => {
     })
     .catch((errorResponse) => {
       state.loadingError = true;
-      state.apiError = errorResponse.customAPIErrorDetails;
-      switch (errorResponse.response.status) {
-        case 401:
-          state.errorMessage = "Auth session expired, requesting new...";
-          bus.emit("reAuthRequired", { emitter: "DeleteDocumentConfirmationDialog.onDelete" });
-          break;
-        case 403: // access denied
-          state.errorMessage = "Error removing (non existent) document"; // TODO
-          break;
-        case 404: // document not found
-          state.errorMessage = "Error removing document: access denied"; // TODO
-          break;
-        default:
-          state.errorMessage = "API Error: fatal error";
-          break;
+      if (errorResponse.isAPIError) {
+        state.apiError = errorResponse.customAPIErrorDetails;
+        switch (errorResponse.response.status) {
+          case 401:
+            state.errorMessage = "Auth session expired, requesting new...";
+            bus.emit("reAuthRequired", { emitter: "DeleteDocumentConfirmationDialog.onDelete" });
+            break;
+          case 403: // access denied
+            state.errorMessage = "Error removing (non existent) document"; // TODO
+            break;
+          case 404: // document not found
+            state.errorMessage = "Error removing document: access denied"; // TODO
+            break;
+          default:
+            state.errorMessage = "API Error: fatal error";
+            break;
+        }
+      } else {
+        state.errorMessage = `Uncaught exception: ${errorResponse}`;
+        console.error(errorResponse);
       }
       state.loading = false;
     });

@@ -8,10 +8,10 @@
       <slot name="slogan">
         <h4 class="q-mt-sm q-mb-md text-h4 text-weight-bolder">{{
           t(!!savedEmail ? "Glad to see you again!" : "Welcome aboard!")
-        }}</h4>
+          }}</h4>
         <div class="text-color-secondary">{{
           t(!!savedEmail ? "Let's get back to organizing." : "Let's start organizing.")
-        }}
+          }}
         </div>
       </slot>
     </q-card-section>
@@ -159,55 +159,61 @@ const onSubmitForm = () => {
       emit("success", successResponse.data);
     })
     .catch((errorResponse) => {
-      state.apiError = errorResponse.customAPIErrorDetails;
-      switch (errorResponse.response.status) {
-        case 400:
-          if (
-            errorResponse.response.data.invalidOrMissingParams.find(function (e) {
-              return e === "email";
-            })
-          ) {
-            state.loadingError = true;
-            state.errorMessage = "API Error: missing email param";
+      state.loadingError = true;
+      if (errorResponse.isAPIError) {
+        state.apiError = errorResponse.customAPIErrorDetails;
+        switch (errorResponse.response.status) {
+          case 400:
+            if (
+              errorResponse.response.data.invalidOrMissingParams.find(function (e) {
+                return e === "email";
+              })
+            ) {
+              state.loadingError = true;
+              state.errorMessage = "API Error: missing email param";
+              nextTick(() => {
+                emailRef.value?.focus();
+              });
+            } else if (
+              errorResponse.response.data.invalidOrMissingParams.find(function (e) {
+                return e === "password";
+              })
+            ) {
+              state.loadingError = true;
+              state.errorMessage = "API Error: missing password param";
+              nextTick(() => {
+                passwordRef.value?.focus();
+              });
+            } else {
+              state.loadingError = true;
+              state.errorMessage = "API Error: invalid/missing param";
+              nextTick(() => {
+                emailRef.value?.focus();
+              });
+            }
+            break;
+          case 404:
+            validator.email.hasErrors = true;
+            validator.email.message = "Email not registered";
             nextTick(() => {
               emailRef.value?.focus();
             });
-          } else if (
-            errorResponse.response.data.invalidOrMissingParams.find(function (e) {
-              return e === "password";
-            })
-          ) {
-            state.loadingError = true;
-            state.errorMessage = "API Error: missing password param";
+            break;
+          case 401:
+            validator.password.hasErrors = true;
+            validator.password.message = "Invalid password";
             nextTick(() => {
               passwordRef.value?.focus();
             });
-          } else {
+            break;
+          default:
             state.loadingError = true;
-            state.errorMessage = "API Error: invalid/missing param";
-            nextTick(() => {
-              emailRef.value?.focus();
-            });
-          }
-          break;
-        case 404:
-          validator.email.hasErrors = true;
-          validator.email.message = "Email not registered";
-          nextTick(() => {
-            emailRef.value?.focus();
-          });
-          break;
-        case 401:
-          validator.password.hasErrors = true;
-          validator.password.message = "Invalid password";
-          nextTick(() => {
-            passwordRef.value?.focus();
-          });
-          break;
-        default:
-          state.loadingError = true;
-          state.errorMessage = "API Error: fatal error";
-          break;
+            state.errorMessage = "API Error: fatal error";
+            break;
+        }
+      } else {
+        state.errorMessage = `Uncaught exception: ${errorResponse}`;
+        console.error(errorResponse);
       }
       state.loading = false;
     });

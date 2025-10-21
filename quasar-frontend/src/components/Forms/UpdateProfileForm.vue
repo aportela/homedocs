@@ -116,17 +116,22 @@ const onGetProfile = () => {
     })
     .catch((errorResponse) => {
       state.loadingError = true;
-      switch (errorResponse.response.status) {
-        // TODO: invalid fields check
-        case 401:
-          state.apiError = errorResponse.customAPIErrorDetails;
-          state.errorMessage = "Auth session expired, requesting new...";
-          bus.emit("reAuthRequired", { emitter: "UpdateProfileForm.onGetProfile" });
-          break;
-        default:
-          state.apiError = errorResponse.customAPIErrorDetails;
-          state.errorMessage = "API Error: fatal error";
-          break;
+      if (errorResponse.isAPIError) {
+        switch (errorResponse.response.status) {
+          // TODO: invalid fields check
+          case 401:
+            state.apiError = errorResponse.customAPIErrorDetails;
+            state.errorMessage = "Auth session expired, requesting new...";
+            bus.emit("reAuthRequired", { emitter: "UpdateProfileForm.onGetProfile" });
+            break;
+          default:
+            state.apiError = errorResponse.customAPIErrorDetails;
+            state.errorMessage = "API Error: fatal error";
+            break;
+        }
+      } else {
+        state.errorMessage = `Uncaught exception: ${errorResponse}`;
+        console.error(errorResponse);
       }
       state.loading = false;
       if (props.autoFocus) {
@@ -173,25 +178,30 @@ const onSubmitForm = () => {
     })
     .catch((errorResponse) => {
       state.loadingError = true;
-      switch (errorResponse.response.status) {
-        // TODO: invalid fields check
-        case 401:
-          state.apiError = errorResponse.customAPIErrorDetails;
-          state.errorMessage = "Auth session expired, requesting new...";
-          bus.emit("reAuthRequired", { emitter: "UpdateProfileForm.onSubmitForm" });
-          break;
-        case 409: // email already exists
-          validator.email.hasErrors = true;
-          validator.email.message = "Email already used";
-          state.errorMessage = "Error updating profile";
-          nextTick(() => {
-            emailRef.value?.focus();
-          });
-          break;
-        default:
-          state.apiError = errorResponse.customAPIErrorDetails;
-          state.errorMessage = "API Error: fatal error";
-          break;
+      if (errorResponse.isAPIError) {
+        switch (errorResponse.response.status) {
+          // TODO: invalid fields check
+          case 401:
+            state.apiError = errorResponse.customAPIErrorDetails;
+            state.errorMessage = "Auth session expired, requesting new...";
+            bus.emit("reAuthRequired", { emitter: "UpdateProfileForm.onSubmitForm" });
+            break;
+          case 409: // email already exists
+            validator.email.hasErrors = true;
+            validator.email.message = "Email already used";
+            state.errorMessage = "Error updating profile";
+            nextTick(() => {
+              emailRef.value?.focus();
+            });
+            break;
+          default:
+            state.apiError = errorResponse.customAPIErrorDetails;
+            state.errorMessage = "API Error: fatal error";
+            break;
+        }
+      } else {
+        state.errorMessage = `Uncaught exception: ${errorResponse}`;
+        console.error(errorResponse);
       }
       state.loading = false;
     });

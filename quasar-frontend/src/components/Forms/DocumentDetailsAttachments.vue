@@ -157,20 +157,23 @@ const onRemoveAttachmentAtIndex = (index) => {
         attachments.value = attachments.value.filter((_, i) => i !== index);
       })
       .catch((errorResponse) => {
-        state.loading = false;
         state.loadingError = true;
-        state.apiError = errorResponse.customAPIErrorDetails;
-        switch (errorResponse.response.status) {
-          case 401:
-            state.errorMessage = "Auth session expired, requesting new...";
-            bus.emit("reAuthRequired", { emitter: "DocumentDetailsAttachments.onRemoveAttachmentAtIndex" });
-            break;
-          default:
-            state.errorMessage = "API Error: fatal error";
-            break;
+        if (errorResponse.isAPIError) {
+          state.apiError = errorResponse.customAPIErrorDetails;
+          switch (errorResponse.response.status) {
+            case 401:
+              state.errorMessage = "Auth session expired, requesting new...";
+              bus.emit("reAuthRequired", { emitter: "DocumentDetailsAttachments.onRemoveAttachmentAtIndex" });
+              break;
+            default:
+              state.errorMessage = "API Error: fatal error";
+              break;
+          }
+        } else {
+          state.errorMessage = `Uncaught exception: ${errorResponse}`;
+          console.error(errorResponse);
         }
         state.loading = false;
-
       });
   } else {
     attachments.value = attachments.value.filter((_, i) => i !== index);

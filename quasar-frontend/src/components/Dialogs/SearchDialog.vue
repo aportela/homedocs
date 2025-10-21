@@ -237,16 +237,21 @@ const onSearch = (val) => {
       })
       .catch((errorResponse) => {
         state.loadingError = true;
-        switch (errorResponse.response.status) {
-          case 401:
-            state.apiError = errorResponse.customAPIErrorDetails;
-            state.errorMessage = "Auth session expired, requesting new...";
-            bus.emit("reAuthRequired", { emitter: "SearchDialog.onSearch" });
-            break;
-          default:
-            state.apiError = errorResponse.customAPIErrorDetails;
-            state.errorMessage = "API Error: fatal error";
-            break;
+        if (errorResponse.isAPIError) {
+          switch (errorResponse.response.status) {
+            case 401:
+              state.apiError = errorResponse.customAPIErrorDetails;
+              state.errorMessage = "Auth session expired, requesting new...";
+              bus.emit("reAuthRequired", { emitter: "SearchDialog.onSearch" });
+              break;
+            default:
+              state.apiError = errorResponse.customAPIErrorDetails;
+              state.errorMessage = "API Error: fatal error";
+              break;
+          }
+        } else {
+          state.errorMessage = `Uncaught exception: ${errorResponse}`;
+          console.error(errorResponse);
         }
         state.loading = false;
       });

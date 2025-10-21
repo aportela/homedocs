@@ -111,16 +111,21 @@ const onRefreshTotalDocuments = () => {
       })
       .catch((errorResponse) => {
         stats.documents.loadingError = true;
-        switch (errorResponse.response.status) {
-          case 401:
-            stats.documents.apiError = errorResponse.customAPIErrorDetails;
-            stats.documents.errorMessage = "Auth session expired, requesting new...";
-            bus.emit("reAuthRequired", { emitter: "SystemStatsWidget.TotalDocuments" });
-            break;
-          default:
-            stats.documents.apiError = errorResponse.customAPIErrorDetails;
-            stats.documents.errorMessage = "API Error: fatal error";
-            break;
+        if (errorResponse.isAPIError) {
+          switch (errorResponse.response.status) {
+            case 401:
+              stats.documents.apiError = errorResponse.customAPIErrorDetails;
+              stats.documents.errorMessage = "Auth session expired, requesting new...";
+              bus.emit("reAuthRequired", { emitter: "SystemStatsWidget.TotalDocuments" });
+              break;
+            default:
+              stats.documents.apiError = errorResponse.customAPIErrorDetails;
+              stats.documents.errorMessage = "API Error: fatal error";
+              break;
+          }
+        } else {
+          stats.documents.errorMessage = `Uncaught exception: ${errorResponse}`;
+          console.error(errorResponse);
         }
         stats.documents.loading = false;
       });
@@ -141,16 +146,21 @@ const onRefreshTotalAttachments = () => {
       })
       .catch((errorResponse) => {
         stats.attachments.loadingError = true;
-        switch (errorResponse.response.status) {
-          case 401:
-            stats.attachments.apiError = errorResponse.customAPIErrorDetails;
-            stats.attachments.errorMessage = "Auth session expired, requesting new...";
-            bus.emit("reAuthRequired", { emitter: "SystemStatsWidget.TotalAttachments" });
-            break;
-          default:
-            stats.attachments.apiError = errorResponse.customAPIErrorDetails;
-            stats.attachments.errorMessage = "API Error: fatal error";
-            break;
+        if (errorResponse.isAPIError) {
+          switch (errorResponse.response.status) {
+            case 401:
+              stats.attachments.apiError = errorResponse.customAPIErrorDetails;
+              stats.attachments.errorMessage = "Auth session expired, requesting new...";
+              bus.emit("reAuthRequired", { emitter: "SystemStatsWidget.TotalAttachments" });
+              break;
+            default:
+              stats.attachments.apiError = errorResponse.customAPIErrorDetails;
+              stats.attachments.errorMessage = "API Error: fatal error";
+              break;
+          }
+        } else {
+          stats.attachments.errorMessage = `Uncaught exception: ${errorResponse}`;
+          console.error(errorResponse);
         }
         stats.attachments.loading = false;
       });
@@ -171,16 +181,21 @@ const onRefreshTotalAttachmentsDiskUsage = () => {
       })
       .catch((errorResponse) => {
         stats.diskUsage.loadingError = true;
-        switch (errorResponse.response.status) {
-          case 401:
-            stats.diskUsage.apiError = errorResponse.customAPIErrorDetails;
-            stats.diskUsage.errorMessage = "Auth session expired, requesting new...";
-            bus.emit("reAuthRequired", { emitter: "SystemStatsWidget.TotalAttachmentsDiskUsage" });
-            break;
-          default:
-            stats.diskUsage.apiError = errorResponse.customAPIErrorDetails;
-            stats.diskUsage.errorMessage = "API Error: fatal error";
-            break;
+        if (errorResponse.isAPIError) {
+          switch (errorResponse.response.status) {
+            case 401:
+              stats.diskUsage.apiError = errorResponse.customAPIErrorDetails;
+              stats.diskUsage.errorMessage = "Auth session expired, requesting new...";
+              bus.emit("reAuthRequired", { emitter: "SystemStatsWidget.TotalAttachmentsDiskUsage" });
+              break;
+            default:
+              stats.diskUsage.apiError = errorResponse.customAPIErrorDetails;
+              stats.diskUsage.errorMessage = "API Error: fatal error";
+              break;
+          }
+        } else {
+          stats.diskUsage.errorMessage = `Uncaught exception: ${errorResponse}`;
+          console.error(errorResponse);
         }
         stats.diskUsage.loading = false;
       });
