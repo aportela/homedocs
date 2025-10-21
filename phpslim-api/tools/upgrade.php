@@ -26,9 +26,9 @@ if (count($missingExtensions) > 0) {
     echo "Error: missing php extension/s: " . $missingExtensionsStr . PHP_EOL;
     $logger->critical("Error: missing php extension/s: ", [$missingExtensionsStr]);
 } else {
-    $db = $container->get(\aportela\DatabaseWrapper\DB::class);
+    $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
     // try to upgrade SQL schema to last version
-    $currentVersion = $db->upgradeSchema(true);
+    $currentVersion = $dbh->upgradeSchema(true);
     if ($currentVersion !== -1) {
         echo "Database upgraded with success" . PHP_EOL;
         $logger->info("Database upgraded with success");
