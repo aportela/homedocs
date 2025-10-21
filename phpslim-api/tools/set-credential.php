@@ -28,13 +28,6 @@ if (count($missingExtensions) > 0) {
     if ($cmdLine->hasParam("email") && $cmdLine->hasParam("password")) {
         echo "Setting account credentials..." . PHP_EOL;
         $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
-        /*
-        if ((new \HomeDocs\Database\Version($dbhh, "PDO_SQLITE"))->hasUpgradeAvailable()) {
-            //$c["logger"]->warning("Process stopped: upgrade database before continue");
-            echo "New database version available, an upgrade is required before continue." . PHP_EOL;
-            exit;
-        }
-        */
         $found = false;
         $u = new \HomeDocs\User("", $cmdLine->getParamValue("email"), $cmdLine->getParamValue("password"));
         try {
