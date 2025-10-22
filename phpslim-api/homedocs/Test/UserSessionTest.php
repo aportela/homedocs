@@ -8,50 +8,38 @@ require_once dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "vendor" . DIRECT
 
 final class UserSessionTest extends \HomeDocs\Test\BaseTest
 {
-    public function testIsLoggedWithoutSession(): void
+    public function testSet(): void
     {
-        \HomeDocs\User::logout();
-        $this->assertFalse(\HomeDocs\UserSession::isLogged());
+        $id = \HomeDocs\Utils::uuidv4();
+        $email = "john@do.e";
+        \HomeDocs\UserSession::set($id, $email);
+        $this->assertEquals($id, $_SESSION["userId"]);
+        $this->assertEquals($email, $_SESSION["email"]);
     }
 
     public function testIsLogged(): void
     {
+        \HomeDocs\UserSession::clear();
+        $this->assertFalse(\HomeDocs\UserSession::isLogged());
         $id = \HomeDocs\Utils::uuidv4();
-        $u = new \HomeDocs\User($id, $id . "@server.com", "secret");
-        $u->add(self::$dbh);
-        $u->login(self::$dbh);
+        $email = "john@do.e";
+        \HomeDocs\UserSession::set($id, $email);
         $this->assertTrue(\HomeDocs\UserSession::isLogged());
-    }
-
-    public function testGetUserIdWithoutSession(): void
-    {
-        \HomeDocs\User::logout();
-        $this->assertEmpty(\HomeDocs\UserSession::getUserId());
     }
 
     public function testGetUserId(): void
     {
-        \HomeDocs\User::logout();
         $id = \HomeDocs\Utils::uuidv4();
-        $u = new \HomeDocs\User($id, $id . "@server.com", "secret");
-        $u->add(self::$dbh);
-        $u->login(self::$dbh);
-        $this->assertEquals($u->id, \HomeDocs\UserSession::getUserId());
-    }
-
-    public function testGetEmailWithoutSession(): void
-    {
-        \HomeDocs\User::logout();
-        $this->assertEmpty(\HomeDocs\UserSession::getEmail());
+        $email = "john@do.e";
+        \HomeDocs\UserSession::set($id, $email);
+        $this->assertEquals($id, \HomeDocs\UserSession::getUserId());
     }
 
     public function testGetEmail(): void
     {
-        \HomeDocs\User::logout();
         $id = \HomeDocs\Utils::uuidv4();
-        $u = new \HomeDocs\User($id, $id . "@server.com", "secret");
-        $u->add(self::$dbh);
-        $u->login(self::$dbh);
-        $this->assertEquals($u->email, \HomeDocs\UserSession::getEmail());
+        $email = "john@do.e";
+        \HomeDocs\UserSession::set($id, $email);
+        $this->assertEquals($email, \HomeDocs\UserSession::getEmail());
     }
 }
