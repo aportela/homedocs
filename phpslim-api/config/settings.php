@@ -2,7 +2,7 @@
 
 // Settings
 $settings = [
-    'environment' => 'development' // (development|production)
+    'environment' => 'production' // (development|production)
 ];
 
 // Should be set to 0 (E_NONE) in production
@@ -38,7 +38,7 @@ $settings['error'] = [
 ];
 
 $settings['logger'] = [
-    'defaultLevel' => $settings['environment'] == 'development' ? \Monolog\Logger::DEBUG : \Monolog\Logger::ERROR,
+    'defaultLevel' => $settings['environment'] == 'development' ? \Monolog\Level::Debug : \Monolog\Level::Error,
     'channels' => [
         'default'  => [
             'path' => isset($_ENV['docker']) ? 'php://stdout' : $settings['paths']['logs'] . DIRECTORY_SEPARATOR . 'default.log',
