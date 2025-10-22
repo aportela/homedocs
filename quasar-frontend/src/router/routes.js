@@ -1,7 +1,7 @@
 const routes = [
   {
     path: "/auth",
-    component: () => import("layouts/AuthRegisterLayout.vue"),
+    component: () => import("layouts/LoginRegisterLayout.vue"),
     children: [
       {
         name: "login",
