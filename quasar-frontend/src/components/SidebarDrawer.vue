@@ -23,7 +23,7 @@
           <q-item-label>{{ t(link.text) }}</q-item-label>
         </q-item-section>
       </q-item>
-      <q-item v-ripple clickable @click="signOut" class="rounded-borders q-ma-sm theme-default-q-item">
+      <q-item v-ripple clickable @click="logout" class="rounded-borders q-ma-sm theme-default-q-item">
         <q-item-section avatar>
           <q-icon name="logout" />
         </q-item-section>
@@ -82,20 +82,20 @@ function onDrawerClick(e) {
   }
 }
 
-function signOut() {
-  api.user
-    .signOut()
+function logout() {
+  api.auth
+    .logout()
     .then((successResponse) => {
-      session.signOut();
+      session.logout();
       router.push({
-        name: "signIn",
+        name: "login",
       });
     })
     .catch((error) => {
       console.error(errorResponse);
-      session.signOut();
+      session.logout();
       router.push({
-        name: "signIn",
+        name: "login",
       });
     });
 }

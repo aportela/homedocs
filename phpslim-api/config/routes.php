@@ -36,69 +36,71 @@ return function (App $app) {
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             });
 
-            $group->post('/user/sign-up', function (Request $request, Response $response, array $args) use ($app, $initialState) {
-                $settings = $app->getContainer()->get('settings');
-                if ($settings['common']['allowSignUp']) {
+            $group->group('/auth', function (RouteCollectorProxy $group) use ($app, $initialState) {
+                $group->post('/register', function (Request $request, Response $response, array $args) use ($app, $initialState) {
+                    $settings = $app->getContainer()->get('settings');
+                    if ($settings['common']['allowSignUp']) {
+                        $params = $request->getParsedBody();
+                        $dbh = $app->getContainer()->get(\aportela\DatabaseWrapper\DB::class);
+                        if (\HomeDocs\User::isEmailUsed($dbh, $params["email"] ?? "")) {
+                            throw new \HomeDocs\Exception\AlreadyExistsException("email");
+                        } else {
+                            $user = new \HomeDocs\User(
+                                $params["id"] ?? "",
+                                $params["email"] ?? "",
+                                $params["password"] ?? ""
+                            );
+                            $user->add($dbh);
+                            $payload = json_encode(
+                                [
+                                    'initialState' => $initialState
+                                ]
+                            );
+                            if (json_last_error() != JSON_ERROR_NONE) {
+                                throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
+                            }
+                            $response->getBody()->write($payload);
+                            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                        }
+                    } else {
+                        throw new \HomeDocs\Exception\AccessDeniedException("");
+                    }
+                });
+
+                $group->post('/login', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $params = $request->getParsedBody();
                     $dbh = $app->getContainer()->get(\aportela\DatabaseWrapper\DB::class);
-                    if (\HomeDocs\User::isEmailUsed($dbh, $params["email"] ?? "")) {
-                        throw new \HomeDocs\Exception\AlreadyExistsException("email");
-                    } else {
-                        $user = new \HomeDocs\User(
-                            $params["id"] ?? "",
-                            $params["email"] ?? "",
-                            $params["password"] ?? ""
-                        );
-                        $user->add($dbh);
-                        $payload = json_encode(
-                            [
-                                'initialState' => $initialState
-                            ]
-                        );
-                        if (json_last_error() != JSON_ERROR_NONE) {
-                            throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
-                        }
-                        $response->getBody()->write($payload);
-                        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                    $user = new \HomeDocs\User(
+                        "",
+                        $params["email"] ?? "",
+                        $params["password"] ?? ""
+                    );
+                    $user->login($dbh);
+                    $payload = json_encode(
+                        [
+                            'initialState' => $initialState
+                        ]
+                    );
+                    if (json_last_error() != JSON_ERROR_NONE) {
+                        throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
-                } else {
-                    throw new \HomeDocs\Exception\AccessDeniedException("");
-                }
-            });
+                    $response->getBody()->write($payload);
+                    return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                });
 
-            $group->post('/user/sign-in', function (Request $request, Response $response, array $args) use ($app, $initialState) {
-                $params = $request->getParsedBody();
-                $dbh = $app->getContainer()->get(\aportela\DatabaseWrapper\DB::class);
-                $user = new \HomeDocs\User(
-                    "",
-                    $params["email"] ?? "",
-                    $params["password"] ?? ""
-                );
-                $user->signIn($dbh);
-                $payload = json_encode(
-                    [
-                        'initialState' => $initialState
-                    ]
-                );
-                if (json_last_error() != JSON_ERROR_NONE) {
-                    throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
-                }
-                $response->getBody()->write($payload);
-                return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
-            });
-
-            $group->post('/user/sign-out', function (Request $request, Response $response, array $args) use ($initialState) {
-                \HomeDocs\User::signOut();
-                $payload = json_encode(
-                    [
-                        'initialState' => $initialState
-                    ]
-                );
-                if (json_last_error() != JSON_ERROR_NONE) {
-                    throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
-                }
-                $response->getBody()->write($payload);
-                return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                $group->post('/logout', function (Request $request, Response $response, array $args) use ($initialState) {
+                    \HomeDocs\User::logout();
+                    $payload = json_encode(
+                        [
+                            'initialState' => $initialState
+                        ]
+                    );
+                    if (json_last_error() != JSON_ERROR_NONE) {
+                        throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
+                    }
+                    $response->getBody()->write($payload);
+                    return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                });
             });
 
             $group->group('/user', function (RouteCollectorProxy $group) use ($app, $initialState) {

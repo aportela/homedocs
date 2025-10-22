@@ -45,7 +45,7 @@
       <q-card-section class="text-center q-pt-none" v-if="signUpAllowed">
         <div>
           {{ t("Don't have an account yet ?") }}
-          <router-link :to="{ name: 'signUp' }" class="main-app-text-link-hover">{{ t("Click here to sign up") }}
+          <router-link :to="{ name: 'register' }" class="main-app-text-link-hover">{{ t("Click here to sign up") }}
           </router-link>
         </div>
       </q-card-section>
@@ -153,8 +153,8 @@ const onSubmitForm = () => {
   state.loadingError = false;
   state.errorMessage = null;
   state.apiError = null;
-  api.user
-    .signIn(profile.email, profile.password)
+  api.auth
+    .login(profile.email, profile.password)
     .then((successResponse) => {
       email.set(profile.email);
       state.loading = false;

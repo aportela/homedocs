@@ -4,13 +4,13 @@
       {{ t("Session lost... re-auth required") }}
     </template>
     <template v-slot:body>
-      <SignInForm :show-extra-bottom="false" @success="onSuccess">
+      <LoginForm :show-extra-bottom="false" @success="onSuccess">
         <template v-slot:slogan>
           <h4 class="q-mt-sm q-mb-md text-h4 text-weight-bolder">{{ t("Oooops") }}</h4>
           <div class="text-color-secondary">
             {{ t("Please enter again your credentials") }}</div>
         </template>
-      </SignInForm>
+      </LoginForm>
     </template>
   </BaseDialog>
 </template>
@@ -19,7 +19,7 @@
 import { useI18n } from "vue-i18n";
 
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue"
-import { default as SignInForm } from "src/components/Forms/SignInForm.vue"
+import { default as LoginForm } from "src/components/Forms/LoginForm.vue"
 
 const { t } = useI18n();
 

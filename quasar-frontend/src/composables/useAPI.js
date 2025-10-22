@@ -9,23 +9,25 @@ export function useAPI() {
     common: {
       initialState: () => axios.get(basePath + "/initial_state"),
     },
-    user: {
-      signIn: function (email, password) {
+    auth: {
+      login: function (email, password) {
         const params = {
           email: email,
           password: password,
         };
-        return axios.post(basePath + "/user/sign-in", params);
+        return axios.post(basePath + "/auth/login", params);
       },
-      signOut: () => axios.post(basePath + "/user/sign-out"),
-      signUp: function (id, email, password) {
+      logout: () => axios.post(basePath + "/auth/logout"),
+      register: function (id, email, password) {
         const params = {
           id: id,
           email: email,
           password: password,
         };
-        return axios.post(basePath + "/user/sign-up", params);
+        return axios.post(basePath + "/auth/register", params);
       },
+    },
+    user: {
       getProfile: () => axios.get(basePath + "/user/profile"),
       updateProfile: function (email, password) {
         const params = {

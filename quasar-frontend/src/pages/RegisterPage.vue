@@ -1,13 +1,13 @@
 <template>
   <q-page>
     <q-card class="q-pa-xl" flat>
-      <SignUpForm @success="onSuccessSignUp"></SignUpForm>
+      <RegisterForm @success="onSuccessSignUp"></RegisterForm>
     </q-card>
   </q-page>
 </template>
 
 <script setup>
-import { default as SignUpForm } from "src/components/Forms/SignUpForm.vue";
+import { default as RegisterForm } from "src/components/Forms/RegisterForm.vue";
 
 const onSuccessSignUp = (apiResponseData) => {
 };

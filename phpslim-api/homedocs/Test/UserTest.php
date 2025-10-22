@@ -117,7 +117,7 @@ final class UserTest extends \HomeDocs\Test\BaseTest
         $id = \HomeDocs\Utils::uuidv4();
         $u = new \HomeDocs\User($id, $id . "@server.com", "secret");
         $u->add(self::$dbh);
-        $u->signIn(self::$dbh);
+        $u->login(self::$dbh);
         $u->update(self::$dbh);
     }
 
@@ -197,30 +197,30 @@ final class UserTest extends \HomeDocs\Test\BaseTest
         $this->assertTrue(\HomeDocs\User::isEmailUsed(self::$dbh, $u->email));
     }
 
-    public function testSignInWithoutIdOrEmail(): void
+    public function testLoginWithoutIdOrEmail(): void
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("id,email");
         $id = \HomeDocs\Utils::uuidv4();
-        (new \HomeDocs\User("", "", "secret"))->signIn(self::$dbh);
+        (new \HomeDocs\User("", "", "secret"))->login(self::$dbh);
     }
 
-    public function testSignInWithoutPassword(): void
+    public function testLoginWithoutPassword(): void
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("password");
         $id = \HomeDocs\Utils::uuidv4();
-        (new \HomeDocs\User($id, $id . "@server.com", ""))->signIn(self::$dbh);
+        (new \HomeDocs\User($id, $id . "@server.com", ""))->login(self::$dbh);
     }
 
-    public function testSignInWithoutExistentEmail(): void
+    public function testLoginWithoutExistentEmail(): void
     {
         $this->expectException(\HomeDocs\Exception\NotFoundException::class);
         $id = \HomeDocs\Utils::uuidv4();
-        (new \HomeDocs\User($id, $id . "@server.com", "secret"))->signIn(self::$dbh);
+        (new \HomeDocs\User($id, $id . "@server.com", "secret"))->login(self::$dbh);
     }
 
-    public function testSignInWithoutValidEmailLength(): void
+    public function testLoginWithoutValidEmailLength(): void
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("email");
@@ -228,10 +228,10 @@ final class UserTest extends \HomeDocs\Test\BaseTest
         $u = new \HomeDocs\User($id, $id, "secret");
         $u->add(self::$dbh);
         $u->email = str_repeat($id, 10) . "@server.com";
-        $u->signIn(self::$dbh);
+        $u->login(self::$dbh);
     }
 
-    public function testSignInWithoutValidEmail(): void
+    public function testLoginWithoutValidEmail(): void
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("email");
@@ -239,10 +239,10 @@ final class UserTest extends \HomeDocs\Test\BaseTest
         $u = new \HomeDocs\User($id, $id, "secret");
         $u->add(self::$dbh);
         $u->email = $id;
-        $u->signIn(self::$dbh);
+        $u->login(self::$dbh);
     }
 
-    public function testSignInWithInvalidPassword(): void
+    public function testLoginWithInvalidPassword(): void
     {
         $this->expectException(\HomeDocs\Exception\UnauthorizedException::class);
         $this->expectExceptionMessage("password");
@@ -250,19 +250,19 @@ final class UserTest extends \HomeDocs\Test\BaseTest
         $u = new \HomeDocs\User($id, $id . "@server.com", "secret");
         $u->add(self::$dbh);
         $u->password = "other";
-        $u->signIn(self::$dbh);
+        $u->login(self::$dbh);
     }
 
-    public function testSignIn(): void
+    public function testLogin(): void
     {
         $id = \HomeDocs\Utils::uuidv4();
         $u = new \HomeDocs\User($id, $id . "@server.com", "secret");
         $u->add(self::$dbh);
-        $this->assertTrue($u->signIn(self::$dbh));
+        $this->assertTrue($u->login(self::$dbh));
     }
 
-    public function testSignOut(): void
+    public function testLogout(): void
     {
-        $this->assertTrue(\HomeDocs\User::signOut());
+        $this->assertTrue(\HomeDocs\User::logout());
     }
 }

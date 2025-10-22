@@ -5,7 +5,7 @@ Homedocs is is a simple personal document manager. You can conveniently store yo
 ## Screenshots (click to preview)
 
 <details>
-    <summary>Sign in page</summary>
+    <summary>Login page</summary>
     <img width="1280" height="607" alt="Signin page screenshot" src="https://github.com/user-attachments/assets/2a8adee1-5993-4893-ae11-a4cfb3c133a1" />
 </details>
 <details>
