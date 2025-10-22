@@ -3,9 +3,10 @@
 Homedocs is is a simple personal document manager. You can conveniently store your files by classifying them with tags for easy retrieval in the future.
 
 ## Screenshots (click to preview)
+
 <details>
     <summary>Sign in page</summary>
-    <img width="1280" height="607" alt="Signin page screenshot" src="https://github.com/user-attachments/assets/2a8adee1-5993-4893-ae11-a4cfb3c133a1" />    
+    <img width="1280" height="607" alt="Signin page screenshot" src="https://github.com/user-attachments/assets/2a8adee1-5993-4893-ae11-a4cfb3c133a1" />
 </details>
 <details>
     <summary>Default home page / Dashboard</summary>
@@ -68,7 +69,7 @@ Check proper permissions, web server process must read/write (files) read/write/
 
 ```Shell
     Database file
-        phpslim-api/data/homedocs2.sqlite3
+        phpslim-api/data/homedocs3.sqlite3
 
     Storage paths
         phpslim-api/data/storage/*.*
