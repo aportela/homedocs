@@ -44,16 +44,16 @@ export function useFormatDates() {
     return Number(timestamp(new Date()));
   };
 
-  const dateHuman = (timestamp) => {
-    return date.formatDate(timestamp, "YYYY/MM/DD");
+  const dateHuman = (timestamp, format = "YYYY/MM/DD") => {
+    return date.formatDate(timestamp, format);
   };
 
   const currentDateHuman = () => {
     return dateHuman(new Date());
   };
 
-  const fullDateTimeHuman = (timestamp) => {
-    return date.formatDate(timestamp, "YYYY/MM/DD HH:mm:ss");
+  const fullDateTimeHuman = (timestamp, format = "YYYY/MM/DD HH:mm:ss") => {
+    return date.formatDate(timestamp, format);
   };
 
   const currentFullDateTimeHuman = () => {
