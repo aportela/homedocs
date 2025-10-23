@@ -12,8 +12,6 @@ return (array(
                 PRIMARY KEY (id)
             );
 
-            CREATE INDEX idx_user_email ON USER (email);
-
             CREATE TABLE DOCUMENT (
                 id CHAR(36) NOT NULL,
                 title VARCHAR(128) NOT NULL,
