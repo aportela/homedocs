@@ -50,7 +50,7 @@ final class StatsTest extends \HomeDocs\Test\BaseTest
         $this->createValidSession();
         $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, []);
         $d->add(self::$dbh);
-        $data = \HomeDocs\Stats::getActivityHeatMapData(self::$dbh, strtotime('-1 day', time()));
+        $data = \HomeDocs\Stats::getActivityHeatMapData(self::$dbh, strtotime('-1 day', time()) * 1000);
         $this->assertTrue(count($data) >= 1);
         $this->assertTrue(count($data) >= 1);
         $results = array_values(array_filter($data, function ($obj) {
