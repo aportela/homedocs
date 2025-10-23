@@ -113,6 +113,30 @@ export function useLocalStorage() {
     },
   };
 
+  const dateFormat = {
+    get() {
+      return get("dateFormat", "YYYY/MM/DD");
+    },
+    set(value) {
+      set("dateFormat", value);
+    },
+    remove() {
+      remove("dateFormat");
+    },
+  };
+
+  const dateTimeFormat = {
+    get() {
+      return get("dateTimeFormat", "YYYY/MM/DD HH:mm:ss");
+    },
+    set(value) {
+      set("dateTimeFormat", value);
+    },
+    remove() {
+      remove("dateTimeFormat");
+    },
+  };
+
   return {
     jwt,
     email,
@@ -121,5 +145,7 @@ export function useLocalStorage() {
     alwaysOpenUploadDialog,
     showToolTips,
     searchDialogResultsPage,
+    dateFormat,
+    dateTimeFormat,
   };
 }
