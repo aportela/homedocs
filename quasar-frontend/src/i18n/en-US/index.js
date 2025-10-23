@@ -248,4 +248,6 @@ export default {
   "Document attachment filenames": "Document attachment filenames",
   "Max results": "Max results",
   "Show tooltips": "Show tooltips",
+  "Date format": "Date format",
+  "Datetime format": "Datetime format",
 };

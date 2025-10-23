@@ -253,4 +253,6 @@ export default {
   "Document attachment filenames": "Nomes de adxuntos do documento",
   "Max results": "Nº máximo resultados",
   "Show tooltips": "Mostrar pistas/suxerencias emerxentes",
+  "Date format": "Formato de data",
+  "Datetime format": "Formato de data e hora",
 };

@@ -255,4 +255,6 @@ export default {
   "Document attachment filenames": "Nombres de adjuntos del documento",
   "Max results": "Nº máximo resultados",
   "Show tooltips": "Mostrar pistas/sugerencias emergentes",
+  "Date format": "Formato de fecha",
+  "Datetime format": "Formato de fecha y hora",
 };
