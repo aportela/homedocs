@@ -111,7 +111,7 @@
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <DesktopToolTip>{{ t('Toggle sort by this column', { field: t(column.title) })
-                }}</DesktopToolTip>
+                  }}</DesktopToolTip>
               </th>
             </tr>
           </thead>
@@ -186,6 +186,7 @@ import { useAPI } from "src/composables/useAPI";
 import { useAdvancedSearchData } from "src/stores/advancedSearchData"
 import { useDateFilter } from "src/composables/useDateFilter"
 import { useFormatDates } from "src/composables/useFormatDates"
+import { useLocalStorage } from "src/composables/useLocalStorage";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
@@ -204,6 +205,8 @@ const { api } = useAPI();
 const { bus, onShowDocumentFiles, onShowDocumentNotes } = useBus();
 
 const { fullDateTimeHuman, timeAgo } = useFormatDates();
+
+const { dateTimeFormat } = useLocalStorage();
 
 const columns = [
   { field: 'title', title: 'Title', defaultClass: "gt-lg" },
@@ -349,9 +352,9 @@ const onSubmitForm = (resetPager) => {
         pager.totalResults = successResponse.data.results.pagination.totalResults;
         pager.totalPages = successResponse.data.results.pagination.totalPages;
         results.push(...successResponse.data.results.documents.map((document) => {
-          document.creationDate = fullDateTimeHuman(document.createdOnTimestamp);
+          document.creationDate = fullDateTimeHuman(document.createdOnTimestamp, dateTimeFormat.get());
           document.creationDateTimeAgo = timeAgo(document.createdOnTimestamp);
-          document.lastUpdate = fullDateTimeHuman(document.lastUpdateTimestamp);
+          document.lastUpdate = fullDateTimeHuman(document.lastUpdateTimestamp, dateTimeFormat.get());
           document.lastUpdateTimeAgo = timeAgo(document.lastUpdateTimestamp);
           return (document);
         }));
@@ -363,21 +366,26 @@ const onSubmitForm = (resetPager) => {
       }
     })
     .catch((errorResponse) => {
-      state.apiError = errorResponse.customAPIErrorDetails;
-      switch (errorResponse.response.status) {
-        case 400:
-          state.loadingError = true;
-          state.errorMessage = "API Error: invalid/missing param";
-          break;
-        case 401:
-          state.apiError = errorResponse.customAPIErrorDetails;
-          state.errorMessage = "Auth session expired, requesting new...";
-          bus.emit("reAuthRequired", { emitter: "AdvancedSearchPage.onSubmitForm" });
-          break;
-        default:
-          state.loadingError = true;
-          state.errorMessage = "API Error: fatal error";
-          break;
+      if (errorResponse.isAPIError) {
+        state.apiError = errorResponse.customAPIErrorDetails;
+        switch (errorResponse.response.status) {
+          case 400:
+            state.loadingError = true;
+            state.errorMessage = "API Error: invalid/missing param";
+            break;
+          case 401:
+            state.apiError = errorResponse.customAPIErrorDetails;
+            state.errorMessage = "Auth session expired, requesting new...";
+            bus.emit("reAuthRequired", { emitter: "AdvancedSearchPage.onSubmitForm" });
+            break;
+          default:
+            state.loadingError = true;
+            state.errorMessage = "API Error: fatal error";
+            break;
+        }
+      } else {
+        state.errorMessage = `Uncaught exception: ${errorResponse}`;
+        console.error(errorResponse);
       }
       state.loading = false;
       state.searchLaunched = true;
