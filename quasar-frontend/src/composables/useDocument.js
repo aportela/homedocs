@@ -3,6 +3,7 @@ import { uid, format } from "quasar";
 
 import { useBus } from "src/composables/useBus";
 import { useFormatDates } from "src/composables/useFormatDates";
+import { useLocalStorage } from "./useLocalStorage";
 
 export function useDocument() {
   const { bus } = useBus();
@@ -14,6 +15,8 @@ export function useDocument() {
     currentFullDateTimeHuman,
     currentTimeAgo,
   } = useFormatDates();
+
+  const { dateTimeFormat } = useLocalStorage();
 
   const escapeRegExp = (string) => {
     return string.replace(/[.*+?^=!:${}()|\[\]\/\\]/g, "\\$&");
@@ -94,7 +97,7 @@ export function useDocument() {
 
         if (data.createdOnTimestamp) {
           doc.createdOn.timestamp = data.createdOnTimestamp;
-          doc.createdOn.dateTime = fullDateTimeHuman(data.createdOnTimestamp);
+          doc.createdOn.dateTime = fullDateTimeHuman(data.createdOnTimestamp, dateTimeFormat.get());
           doc.createdOn.timeAgo = timeAgo(data.createdOnTimestamp);
         } else {
           doc.createdOn.timestamp = null;
@@ -104,7 +107,7 @@ export function useDocument() {
 
         if (data.lastUpdateTimestamp) {
           doc.lastUpdate.timestamp = data.lastUpdateTimestamp;
-          doc.lastUpdate.dateTime = fullDateTimeHuman(data.lastUpdateTimestamp);
+          doc.lastUpdate.dateTime = fullDateTimeHuman(data.lastUpdateTimestamp, dateTimeFormat.get());
           doc.lastUpdate.timeAgo = timeAgo(data.lastUpdateTimestamp);
         } else {
           doc.lastUpdate.timestamp = null;
@@ -121,7 +124,7 @@ export function useDocument() {
         if (Array.isArray(data.attachments)) {
           doc.attachments.push(
             ...JSON.parse(JSON.stringify(data.attachments)).map((file) => {
-              file.creationDate = fullDateTimeHuman(file.createdOnTimestamp);
+              file.creationDate = fullDateTimeHuman(file.createdOnTimestamp, dateTimeFormat.get());
               file.creationDateTimeAgo = timeAgo(file.createdOnTimestamp);
               file.humanSize = format.humanStorageSize(file.size);
               file.url = "api3/attachment/" + file.id;
@@ -135,7 +138,7 @@ export function useDocument() {
         if (Array.isArray(data.notes)) {
           doc.notes.push(
             ...JSON.parse(JSON.stringify(data.notes)).map((note) => {
-              note.creationDate = fullDateTimeHuman(note.createdOnTimestamp);
+              note.creationDate = fullDateTimeHuman(note.createdOnTimestamp, dateTimeFormat.get());
               note.creationDateTimeAgo = timeAgo(note.createdOnTimestamp);
               note.expanded = false;
               note.startOnEditMode = false; // this is only required when adding new note
@@ -149,7 +152,7 @@ export function useDocument() {
           doc.historyOperations.push(
             ...JSON.parse(JSON.stringify(data.history)).map((operation) => {
               operation.creationDate = fullDateTimeHuman(
-                operation.operationTimestamp,
+                operation.operationTimestamp, dateTimeFormat.get()
               );
               operation.creationDateTimeAgo = timeAgo(
                 operation.operationTimestamp,

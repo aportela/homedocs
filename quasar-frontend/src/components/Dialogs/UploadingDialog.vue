@@ -20,8 +20,8 @@
               :class="{ 'bg-green-5': transfer.done, 'bg-red-4': transfer.error, 'bg-light-blue': transfer.uploading }">
               <td class="text-left">{{ transfer.filename }}</td>
               <td class="text-right">{{ format.humanStorageSize(transfer.filesize) }}</td>
-              <td class="text-right">{{ fullDateTimeHuman(transfer.start) }}</td>
-              <td class="text-right">{{ fullDateTimeHuman(transfer.end) }}</td>
+              <td class="text-right">{{ fullDateTimeHuman(transfer.start, dateTimeFormat.get()) }}</td>
+              <td class="text-right">{{ fullDateTimeHuman(transfer.end, dateTimeFormat.get()) }}</td>
               <td class="text-center">
                 <q-chip square v-if="transfer.error" class="full-width bg-red-9 text-white">
                   <q-avatar icon="cancel" class="q-ma-xs" />
@@ -70,7 +70,7 @@ import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue"
 const { t } = useI18n();
 
 const { fullDateTimeHuman } = useFormatDates();
-const { alwaysOpenUploadDialog } = useLocalStorage();
+const { alwaysOpenUploadDialog, dateTimeFormat } = useLocalStorage();
 const initialState = useInitialStateStore();
 
 const emit = defineEmits(['update:modelValue', 'close']);

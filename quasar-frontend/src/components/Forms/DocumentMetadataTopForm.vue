@@ -29,6 +29,7 @@ import { useI18n } from "vue-i18n";
 import { useQuasar } from "quasar";
 
 import { useFormatDates } from "src/composables/useFormatDates";
+import { useLocalStorage } from "src/composables/useLocalStorage";
 
 const props = defineProps({
   createdOnTimestamp: {
@@ -53,22 +54,23 @@ const { t } = useI18n();
 const { screen } = useQuasar();
 
 const { fullDateTimeHuman, timeAgo } = useFormatDates();
+const { dateTimeFormat } = useLocalStorage();
 
 const isScreenGreaterThanXS = computed(() => screen.gt.xs);
 
-const creationDateTime = ref(props.createdOnTimestamp ? fullDateTimeHuman(props.createdOnTimestamp) : null);
-const lastUpdate = ref(props.lastUpdateTimestamp ? fullDateTimeHuman(props.lastUpdateTimestamp) : null);
+const creationDateTime = ref(props.createdOnTimestamp ? fullDateTimeHuman(props.createdOnTimestamp, dateTimeFormat.get()) : null);
+const lastUpdate = ref(props.lastUpdateTimestamp ? fullDateTimeHuman(props.lastUpdateTimestamp, dateTimeFormat.get()) : null);
 
 const creationTimeAgo = ref(props.createdOnTimestamp ? timeAgo(props.createdOnTimestamp) : null);
 const lastUpdateTimeAgo = ref(props.lastUpdateTimestamp ? timeAgo(props.lastUpdateTimestamp) : null);
 
 watch(() => props.createdOnTimestamp, val => {
-  creationDateTime.value = val ? fullDateTimeHuman(val) : null;
+  creationDateTime.value = val ? fullDateTimeHuman(val, dateTimeFormat.get()) : null;
   creationTimeAgo.value = val ? timeAgo(val) : null;
 });
 
 watch(() => props.lastUpdateTimestamp, val => {
-  lastUpdate.value = val ? fullDateTimeHuman(val) : null;
+  lastUpdate.value = val ? fullDateTimeHuman(val, dateTimeFormat.get()) : null;
   lastUpdateTimeAgo.value = val ? timeAgo(val) : null;
 });
 

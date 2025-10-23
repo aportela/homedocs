@@ -125,8 +125,9 @@ const { t } = useI18n();
 
 const { api } = useAPI();
 const { fullDateTimeHuman } = useFormatDates();
+
 const { bus, onShowDocumentFiles, onShowDocumentNotes } = useBus();
-const { searchDialogResultsPage } = useLocalStorage();
+const { searchDialogResultsPage, dateTimeFormat } = useLocalStorage();
 
 const emit = defineEmits(['update:modelValue', 'close']);
 
@@ -225,8 +226,8 @@ const onSearch = (val) => {
             {
               id: document.id,
               label: document.title,
-              createdOn: fullDateTimeHuman(document.createdOnTimestamp),
-              lastUpdate: fullDateTimeHuman(document.lastUpdateTimestamp),
+              createdOn: fullDateTimeHuman(document.createdOnTimestamp, dateTimeFormat.get()),
+              lastUpdate: fullDateTimeHuman(document.lastUpdateTimestamp, dateTimeFormat.get()),
               attachmentCount: document.attachmentCount,
               noteCount: document.noteCount,
               matchedOnFragment: document.matchedOnFragment

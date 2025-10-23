@@ -1,9 +1,11 @@
 import { uid } from "quasar";
 import { useBus } from "src/composables/useBus";
 import { useFormatDates } from "src/composables/useFormatDates";
+import { useLocalStorage } from "./useLocalStorage";
 
 const { bus } = new useBus();
 const { currentTimestamp, fullDateTimeHuman } = new useFormatDates();
+const { dateTimeFormat } = useLocalStorage();
 
 export function useNotifications() {
   const on = (event, callback) => {
@@ -19,7 +21,7 @@ export function useNotifications() {
     bus.emit(event, {
       id: message.id || uid(),
       timestamp: currentTimestamp(),
-      date: fullDateTimeHuman(t),
+      date: fullDateTimeHuman(t, dateTimeFormat.get()),
       type: message.type,
       body: message.body,
       caption: message.caption || null,
