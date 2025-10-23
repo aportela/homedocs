@@ -101,14 +101,14 @@ class Attachment
 
     private function saveMetadata(\aportela\DatabaseWrapper\DB $dbh): void
     {
-        $this->createdOnTimestamp = intval(microtime(true));
+        $this->createdOnTimestamp = intval(microtime(true) * 1000);
         $params = array(
             new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id)),
             new \aportela\DatabaseWrapper\Param\StringParam(":sha1_hash", $this->hash),
             new \aportela\DatabaseWrapper\Param\StringParam(":name", $this->name),
             new \aportela\DatabaseWrapper\Param\IntegerParam(":size", $this->size),
             new \aportela\DatabaseWrapper\Param\StringParam(":created_by_user_id", \HomeDocs\UserSession::getUserId()),
-            new \aportela\DatabaseWrapper\Param\IntegerParam(":created_on_timestamp", intval(microtime(true) * 1000))
+            new \aportela\DatabaseWrapper\Param\IntegerParam(":created_on_timestamp", $this->createdOnTimestamp)
         );
         $dbh->execute(
             "
