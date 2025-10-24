@@ -5,8 +5,8 @@ on:
     branches: ["master"]
     paths:
       - "**/*.php"
-      - "composer.json"
-      - "composer.lock"
+      - "./phpslim-api/composer.json"
+      - "./phpslim-api/composer.lock"
       - ".github/workflows/php.yml"
   pull_request:
     branches: ["master"]
