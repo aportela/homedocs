@@ -16,7 +16,7 @@ class Stats
                 WHERE
                     DOCUMENT_HISTORY.operation_type = :history_operation_add
                 AND
-                    DOCUMENT_HISTORY.created_by_user_id = :session_user_id
+                    DOCUMENT_HISTORY.cuid = :session_user_id
             ",
             array(
                 new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
@@ -37,7 +37,7 @@ class Stats
                 WHERE
                     DOCUMENT_HISTORY.operation_type = :history_operation_add
                 AND
-                    DOCUMENT_HISTORY.created_by_user_id = :session_user_id
+                    DOCUMENT_HISTORY.cuid = :session_user_id
             ",
             array(
                 new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
@@ -59,7 +59,7 @@ class Stats
                 WHERE
                     DOCUMENT_HISTORY.operation_type = :history_operation_add
                 AND
-                    DOCUMENT_HISTORY.created_by_user_id = :session_user_id
+                    DOCUMENT_HISTORY.cuid = :session_user_id
             ",
             array(
                 new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
@@ -80,17 +80,17 @@ class Stats
         );
         if ($fromTimestamp > 0) {
             $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":from_timestamp", $fromTimestamp);
-            $whereCondition = " AND DOCUMENT_HISTORY.created_on_timestamp >= :from_timestamp ";
+            $whereCondition = " AND DOCUMENT_HISTORY.ctime >= :from_timestamp ";
         }
         $results = $dbh->query(
             sprintf(
                 "
                     SELECT
-                        DATE(DOCUMENT_HISTORY.created_on_timestamp / 1000, 'unixepoch') AS activity_date, COUNT(*) AS total
+                        DATE(DOCUMENT_HISTORY.ctime / 1000, 'unixepoch') AS activity_date, COUNT(*) AS total
                     FROM
                         DOCUMENT_HISTORY
                     WHERE
-                        DOCUMENT_HISTORY.created_by_user_id = :session_user_id
+                        DOCUMENT_HISTORY.cuid = :session_user_id
                     %s
                     GROUP BY activity_date
                     ORDER BY activity_date

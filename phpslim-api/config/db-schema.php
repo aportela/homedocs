@@ -7,8 +7,8 @@ return (array(
                 id CHAR(36) NOT NULL,
                 email VARCHAR(255) NOT NULL UNIQUE,
                 password_hash VARCHAR(60) NOT NULL,
-                created_on_timestamp INTEGER NOT NULL,
-                last_update_timestamp INTEGER,
+                ctime INTEGER NOT NULL,
+                mtime INTEGER,
                 PRIMARY KEY (id)
             );
 
@@ -35,13 +35,13 @@ return (array(
                 sha1_hash CHAR(40) NOT NULL,
                 name VARCHAR(256) NOT NULL,
                 size INTEGER NOT NULL,
-                created_by_user_id CHAR(36) NOT NULL,
-                created_on_timestamp INTEGER NOT NULL,
+                cuid CHAR(36) NOT NULL,
+                ctime INTEGER NOT NULL,
                 PRIMARY KEY (id),
-                FOREIGN KEY (created_by_user_id) REFERENCES USER(id)
+                FOREIGN KEY (cuid) REFERENCES USER(id)
             );
 
-            CREATE INDEX idx_attachment_created_by_user_id_user_id ON ATTACHMENT (created_by_user_id);
+            CREATE INDEX idx_attachment_cuid_user_id ON ATTACHMENT (cuid);
 
             CREATE TABLE DOCUMENT_ATTACHMENT (
                 document_id CHAR(36) NOT NULL,
@@ -57,29 +57,29 @@ return (array(
             CREATE TABLE DOCUMENT_NOTE (
                 note_id CHAR(36) NOT NULL,
                 document_id CHAR(36) NOT NULL,
-                created_on_timestamp INTEGER NOT NULL,
-                created_by_user_id CHAR(36) NOT NULL,
+                ctime INTEGER NOT NULL,
+                cuid CHAR(36) NOT NULL,
                 body VARCHAR(16384) NULL,
                 PRIMARY KEY (note_id),
                 FOREIGN KEY (document_id) REFERENCES DOCUMENT(id),
-                FOREIGN KEY (created_by_user_id) REFERENCES USER(id)
+                FOREIGN KEY (cuid) REFERENCES USER(id)
             );
 
             CREATE INDEX idx_document_note_document_id ON DOCUMENT_NOTE (document_id);
-            CREATE INDEX idx_document_note_user_id ON DOCUMENT_NOTE (created_by_user_id);
+            CREATE INDEX idx_document_note_user_id ON DOCUMENT_NOTE (cuid);
 
             CREATE TABLE DOCUMENT_HISTORY (
                 document_id CHAR(36) NOT NULL,
-                created_on_timestamp INTEGER NOT NULL,
+                ctime INTEGER NOT NULL,
                 operation_type INTEGER NOT NULL,
-                created_by_user_id CHAR(36) NOT NULL,
-                PRIMARY KEY (document_id, created_on_timestamp, operation_type, created_by_user_id),
+                cuid CHAR(36) NOT NULL,
+                PRIMARY KEY (document_id, ctime, operation_type, cuid),
                 FOREIGN KEY (document_id) REFERENCES DOCUMENT(id),
-                FOREIGN KEY (created_by_user_id) REFERENCES USER(id)
+                FOREIGN KEY (cuid) REFERENCES USER(id)
             );
 
             CREATE INDEX idx_document_history_document_id ON DOCUMENT_HISTORY (document_id);
-            CREATE INDEX idx_document_history_user_id ON DOCUMENT_HISTORY (created_by_user_id);
+            CREATE INDEX idx_document_history_user_id ON DOCUMENT_HISTORY (cuid);
         '
     )
 ));

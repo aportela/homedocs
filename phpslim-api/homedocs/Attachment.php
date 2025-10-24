@@ -55,7 +55,7 @@ class Attachment
             $data = $dbh->query(
                 "
                         SELECT
-                            name, size, sha1_hash AS hash, created_on_timestamp AS createdOnTimestamp, created_by_user_id AS uploadedByUserId
+                            name, size, sha1_hash AS hash, ctime AS createdOnTimestamp, cuid AS uploadedByUserId
                         FROM ATTACHMENT
                         WHERE id = :id
                     ",
@@ -107,15 +107,15 @@ class Attachment
             new \aportela\DatabaseWrapper\Param\StringParam(":sha1_hash", $this->hash),
             new \aportela\DatabaseWrapper\Param\StringParam(":name", $this->name),
             new \aportela\DatabaseWrapper\Param\IntegerParam(":size", $this->size),
-            new \aportela\DatabaseWrapper\Param\StringParam(":created_by_user_id", \HomeDocs\UserSession::getUserId()),
-            new \aportela\DatabaseWrapper\Param\IntegerParam(":created_on_timestamp", $this->createdOnTimestamp)
+            new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId()),
+            new \aportela\DatabaseWrapper\Param\IntegerParam(":ctime", $this->createdOnTimestamp)
         );
         $dbh->execute(
             "
                 INSERT INTO ATTACHMENT
-                    (id, sha1_hash, name, size, created_by_user_id, created_on_timestamp)
+                    (id, sha1_hash, name, size, cuid, ctime)
                 VALUES
-                    (:id, :sha1_hash, :name, :size, :created_by_user_id, :created_on_timestamp)
+                    (:id, :sha1_hash, :name, :size, :cuid, :ctime)
             ",
             $params
         );

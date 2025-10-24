@@ -249,12 +249,12 @@ class Mock
             sprintf($this->documentTemplates[$title], date('d-m-Y', $creationTimestamp))
         );
 
-        $queries[] = sprintf('INSERT INTO DOCUMENT_HISTORY (document_id, created_on_timestamp, operation_type, created_by_user_id) VALUES("%s", %d, 1, "%s");', $documentId, $creationTimestamp * 1000, $this->userId);
+        $queries[] = sprintf('INSERT INTO DOCUMENT_HISTORY (document_id, ctime, operation_type, cuid) VALUES("%s", %d, 1, "%s");', $documentId, $creationTimestamp * 1000, $this->userId);
 
         $documentUpdatesCount = mt_rand(0, $this->maxDocumentUpdatesCount);
         for ($j = 0; $j < $documentUpdatesCount; $j++) {
             $queries[] = sprintf(
-                'INSERT INTO DOCUMENT_HISTORY (document_id, created_on_timestamp, operation_type, created_by_user_id) VALUES("%s", %d, 2, "%s");',
+                'INSERT INTO DOCUMENT_HISTORY (document_id, ctime, operation_type, cuid) VALUES("%s", %d, 2, "%s");',
                 $documentId,
                 mt_rand($creationTimestamp + (10 * 60), $creationTimestamp + (5 * 24 * 60 * 60)) * 1000,
                 $this->userId
@@ -291,7 +291,7 @@ class Mock
         foreach ($documentAttachments as $attachment) {
             $attachmentId = \HomeDocs\Utils::uuidv4();
             $queries[] = sprintf(
-                'INSERT INTO ATTACHMENT (id, sha1_hash, name, size, created_by_user_id, created_on_timestamp) VALUES("%s", "%s", "%s", %d, "%s", %d);',
+                'INSERT INTO ATTACHMENT (id, sha1_hash, name, size, cuid, ctime) VALUES("%s", "%s", "%s", %d, "%s", %d);',
                 $attachmentId,
                 sha1(\HomeDocs\Utils::uuidv4()),
                 $attachment,
