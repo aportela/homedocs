@@ -12,17 +12,18 @@ class Utils
     public static function getInitialState(\Psr\Container\ContainerInterface $container): array
     {
         $settings = $container->get('settings');
-        return ([
-            'allowSignUp' => $settings['common']['allowSignUp'],
-            'defaultResultsPage' => $settings['common']['defaultResultsPage'],
-            'environment' => $settings['environment'],
-            'maxUploadFileSize' => self::getMaxUploadFileSize(),
-            'session' => array(
-                'logged' => \HomeDocs\UserSession::isLogged(),
-                'id' => \HomeDocs\UserSession::getUserId(),
-                'email' => \HomeDocs\UserSession::getEmail()
-            )
-        ]
+        return (
+            [
+                'allowSignUp' => $settings['common']['allowSignUp'],
+                'defaultResultsPage' => $settings['common']['defaultResultsPage'],
+                'environment' => $settings['environment'],
+                'maxUploadFileSize' => self::getMaxUploadFileSize(),
+                'session' => [
+                    'logged' => \HomeDocs\UserSession::isLogged(),
+                    'id' => \HomeDocs\UserSession::getUserId(),
+                    'email' => \HomeDocs\UserSession::getEmail()
+                ]
+            ]
         );
     }
 
@@ -32,7 +33,7 @@ class Utils
      */
     public static function getMimeType(string $filename): string
     {
-        $mime_types = array(
+        $mime_types = [
             'txt' => 'text/plain',
             'htm' => 'text/html',
             'html' => 'text/html',
@@ -79,7 +80,7 @@ class Utils
             // open office
             'odt' => 'application/vnd.oasis.opendocument.text',
             'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
-        );
+        ];
         $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
         if (array_key_exists($ext, $mime_types)) {
             return ($mime_types[$ext]);

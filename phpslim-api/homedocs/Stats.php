@@ -18,10 +18,10 @@ class Stats
                 AND
                     DOCUMENT_HISTORY.cuid = :session_user_id
             ",
-            array(
+            [
                 new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
                 new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
-            )
+            ]
         );
         return (intval($result[0]->total));
     }
@@ -39,10 +39,10 @@ class Stats
                 AND
                     DOCUMENT_HISTORY.cuid = :session_user_id
             ",
-            array(
+            [
                 new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
                 new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
-            )
+            ]
         );
         return (intval($result[0]->total));
     }
@@ -61,10 +61,10 @@ class Stats
                 AND
                     DOCUMENT_HISTORY.cuid = :session_user_id
             ",
-            array(
+            [
                 new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
                 new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
-            )
+            ]
         );
         return (intval($result[0]->total));
     }
@@ -75,9 +75,9 @@ class Stats
     public static function getActivityHeatMapData(\aportela\DatabaseWrapper\DB $dbh, int $fromTimestamp = 0): array
     {
         $whereCondition = null;
-        $params = array(
+        $params = [
             new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
-        );
+        ];
         if ($fromTimestamp > 0) {
             $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":from_timestamp", $fromTimestamp);
             $whereCondition = " AND DOCUMENT_HISTORY.ctime >= :from_timestamp ";
@@ -92,8 +92,10 @@ class Stats
                     WHERE
                         DOCUMENT_HISTORY.cuid = :session_user_id
                     %s
-                    GROUP BY activity_date
-                    ORDER BY activity_date
+                    GROUP BY
+                        activity_date
+                    ORDER BY
+                        activity_date
                 ",
                 count($params) == 2 ? $whereCondition : null
             ),

@@ -24,7 +24,7 @@ if (count($missingExtensions) > 0) {
     echo "Error: missing php extension/s: " . $missingExtensionsStr . PHP_EOL;
     $logger->critical("Error: missing php extension/s: ", [$missingExtensionsStr]);
 } else {
-    $cmdLine = new \HomeDocs\CmdLine("", array("email:", "password:"));
+    $cmdLine = new \HomeDocs\CmdLine("", ["email:", "password:"]);
     if ($cmdLine->hasParam("email") && $cmdLine->hasParam("password")) {
         echo "Setting account credentials..." . PHP_EOL;
         $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);

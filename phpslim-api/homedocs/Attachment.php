@@ -54,14 +54,15 @@ class Attachment
         if (!empty($this->id) && mb_strlen($this->id) == 36) {
             $data = $dbh->query(
                 "
-                        SELECT
-                            name, size, sha1_hash AS hash, ctime AS createdOnTimestamp, cuid AS uploadedByUserId
-                        FROM ATTACHMENT
-                        WHERE id = :id
-                    ",
-                array(
+                    SELECT
+                        name, size, sha1_hash AS hash, ctime AS createdOnTimestamp, cuid AS uploadedByUserId
+                    FROM ATTACHMENT
+                    WHERE
+                        id = :id
+                ",
+                [
                     new \aportela\DatabaseWrapper\Param\StringParam(":id", $this->id)
-                )
+                ]
             );
             if (count($data) == 1) {
                 if ($data[0]->uploadedByUserId == \HomeDocs\UserSession::getUserId()) {
@@ -102,14 +103,6 @@ class Attachment
     private function saveMetadata(\aportela\DatabaseWrapper\DB $dbh): void
     {
         $this->createdOnTimestamp = intval(microtime(true) * 1000);
-        $params = array(
-            new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id)),
-            new \aportela\DatabaseWrapper\Param\StringParam(":sha1_hash", $this->hash),
-            new \aportela\DatabaseWrapper\Param\StringParam(":name", $this->name),
-            new \aportela\DatabaseWrapper\Param\IntegerParam(":size", $this->size),
-            new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId()),
-            new \aportela\DatabaseWrapper\Param\IntegerParam(":ctime", $this->createdOnTimestamp)
-        );
         $dbh->execute(
             "
                 INSERT INTO ATTACHMENT
@@ -117,7 +110,14 @@ class Attachment
                 VALUES
                     (:id, :sha1_hash, :name, :size, :cuid, :ctime)
             ",
-            $params
+            [
+                new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id)),
+                new \aportela\DatabaseWrapper\Param\StringParam(":sha1_hash", $this->hash),
+                new \aportela\DatabaseWrapper\Param\StringParam(":name", $this->name),
+                new \aportela\DatabaseWrapper\Param\IntegerParam(":size", $this->size),
+                new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId()),
+                new \aportela\DatabaseWrapper\Param\IntegerParam(":ctime", $this->createdOnTimestamp)
+            ]
         );
     }
 
@@ -146,30 +146,31 @@ class Attachment
 
     private function removeMetadata(\aportela\DatabaseWrapper\DB $dbh): void
     {
-        $params = array(
-            new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id))
-        );
         $dbh->execute(
             "
-                DELETE FROM ATTACHMENT WHERE id = :id
+                DELETE FROM ATTACHMENT
+                WHERE
+                    id = :id
             ",
-            $params
+            [
+                new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id))
+            ]
         );
     }
 
     public function isLinkedToDocument(\aportela\DatabaseWrapper\DB $dbh): bool
     {
-        $params = array(
-            new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id))
-        );
         $result = $dbh->query(
             "
                 SELECT
-                    COUNT(DOCUMENT_ATTACHMENT.document_id) AS total
+                    COUNT(document_id) AS total
                 FROM DOCUMENT_ATTACHMENT
-                WHERE DOCUMENT_ATTACHMENT.attachment_id = :id
+                WHERE
+                    attachment_id = :id
             ",
-            $params
+            [
+                new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id))
+            ]
         );
         return (intval($result[0]->total) > 0);
     }

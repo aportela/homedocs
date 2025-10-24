@@ -270,7 +270,7 @@ return function (App $app) {
                     $params = $request->getParsedBody();
                     $documentAttachments = $params["attachments"] ?? [];
                     $rootStoragePath = $app->getContainer()->get('settings')['paths']['storage'];
-                    $attachments = array();
+                    $attachments = [];
                     if (is_array($documentAttachments) && count($documentAttachments) > 0) {
                         foreach ($documentAttachments as $documentAttachment) {
                             $attachments[] = new \HomeDocs\Attachment(
@@ -283,7 +283,7 @@ return function (App $app) {
                         }
                     }
                     $documentNotes = $params["notes"] ?? [];
-                    $notes = array();
+                    $notes = [];
                     if (is_array($documentNotes) && count($documentNotes) > 0) {
                         foreach ($documentNotes as $documentNote) {
                             $notes[] = new \HomeDocs\Note(
@@ -340,7 +340,7 @@ return function (App $app) {
                     $document->setRootStoragePath($rootStoragePath);
                     $document->get($dbh);
                     $documentAttachments = $params["attachments"] ?? [];
-                    $attachments = array();
+                    $attachments = [];
                     if (is_array($documentAttachments) && count($documentAttachments) > 0) {
                         foreach ($documentAttachments as $documentAttachment) {
                             $attachments[] = new \HomeDocs\Attachment(
@@ -353,7 +353,7 @@ return function (App $app) {
                         }
                     }
                     $documentNotes = $params["notes"] ?? [];
-                    $notes = array();
+                    $notes = [];
                     if (is_array($documentNotes) && count($documentNotes) > 0) {
                         foreach ($documentNotes as $documentNote) {
                             $notes[] = new \HomeDocs\Note(

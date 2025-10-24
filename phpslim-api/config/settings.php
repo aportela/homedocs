@@ -92,6 +92,6 @@ $settings['jwt'] = [
     'passphrase' => '/@q]/?pc`c&bq,P/MCp{5#E~-Nr2]NXQ$pvSKiz$tLQd]K)>eIOOk!&6rKVO7J~' // WARNING: for security reasons, generate a random string for using as your OWN (not default) passphrase
 ];
 
-$settings['phpRequiredExtensions'] = array('pdo_sqlite', 'mbstring');
+$settings['phpRequiredExtensions'] = ['pdo_sqlite', 'mbstring'];
 
 return $settings;

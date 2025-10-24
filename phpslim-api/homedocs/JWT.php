@@ -31,10 +31,10 @@ class JWT
         $this->logger->notice("JWT encoding", [$payload]);
         try {
             $jwt = \Firebase\JWT\JWT::encode(
-                array(
+                [
                     'iat' => time(),
                     'data' => $payload
-                ),
+                ],
                 $this->passphrase,
                 self::ALGORITHM
             );

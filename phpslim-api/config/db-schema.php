@@ -1,7 +1,7 @@
 <?php
 
-return (array(
-    3 => array(
+return ([
+    3 => [
         '
             CREATE TABLE USER (
                 id CHAR(36) NOT NULL,
@@ -81,5 +81,5 @@ return (array(
             CREATE INDEX idx_document_history_document_id ON DOCUMENT_HISTORY (document_id);
             CREATE INDEX idx_document_history_user_id ON DOCUMENT_HISTORY (cuid);
         '
-    )
-));
+    ]
+]);

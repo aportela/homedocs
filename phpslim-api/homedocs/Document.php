@@ -62,32 +62,42 @@ class Document
             sprintf(
                 "
                     WITH DOCUMENTS_ATTACHMENTS AS (
-                        SELECT DOCUMENT_ATTACHMENT.document_id, COUNT(*) AS attachmentCount
+                        SELECT
+                            DOCUMENT_ATTACHMENT.document_id, COUNT(*) AS attachmentCount
                         FROM DOCUMENT_ATTACHMENT
                         INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_ATTACHMENT.document_id AND DOCUMENT_HISTORY.operation_type = :history_operation_add AND DOCUMENT_HISTORY.cuid = :session_user_id
-                        GROUP BY DOCUMENT_ATTACHMENT.document_id
+                        GROUP BY
+                            DOCUMENT_ATTACHMENT.document_id
                     ),
                     DOCUMENTS_NOTES AS (
-                        SELECT DOCUMENT_NOTE.document_id, COUNT(*) AS noteCount
+                        SELECT
+                            DOCUMENT_NOTE.document_id, COUNT(*) AS noteCount
                         FROM DOCUMENT_NOTE
                         INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_NOTE.document_id AND DOCUMENT_HISTORY.operation_type = :history_operation_add AND DOCUMENT_HISTORY.cuid = :session_user_id
-                        GROUP BY DOCUMENT_NOTE.document_id
+                        GROUP BY
+                            DOCUMENT_NOTE.document_id
                     ),
                     DOCUMENTS_TAGS AS (
-                        SELECT document_id, GROUP_CONCAT(tag, ',') AS tags
+                        SELECT
+                            document_id, GROUP_CONCAT(tag, ',') AS tags
                         FROM (
                             SELECT DOCUMENT_TAG.document_id, DOCUMENT_TAG.tag
                             FROM DOCUMENT_TAG
                             INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT_TAG.document_id AND DOCUMENT_HISTORY.operation_type = :history_operation_add AND DOCUMENT_HISTORY.cuid = :session_user_id
-                            GROUP BY DOCUMENT_TAG.document_id, DOCUMENT_TAG.tag
-                            ORDER BY DOCUMENT_TAG.tag
+                            GROUP BY
+                                DOCUMENT_TAG.document_id,
+                                DOCUMENT_TAG.tag
+                            ORDER BY
+                                DOCUMENT_TAG.tag
                         )
                         GROUP BY document_id
                     ),
                     DOCUMENTS_LAST_HISTORY_OPERATION AS (
-                        SELECT document_id, MAX(ctime) AS max_ctime
+                        SELECT
+                            document_id, MAX(ctime) AS max_ctime
                         FROM DOCUMENT_HISTORY
-                        GROUP BY document_id
+                        GROUP BY
+                            document_id
                     )
                     SELECT
                         DOCUMENT.id,
@@ -103,15 +113,16 @@ class Document
                     LEFT JOIN DOCUMENTS_TAGS ON DOCUMENTS_TAGS.document_id = DOCUMENT.id
                     LEFT JOIN DOCUMENTS_NOTES ON DOCUMENTS_NOTES.document_id = DOCUMENT.id
                     LEFT JOIN DOCUMENTS_LAST_HISTORY_OPERATION ON DOCUMENTS_LAST_HISTORY_OPERATION.document_id = DOCUMENT.id
-                    ORDER BY DOCUMENTS_LAST_HISTORY_OPERATION.max_ctime DESC
+                    ORDER BY
+                        DOCUMENTS_LAST_HISTORY_OPERATION.max_ctime DESC
                     LIMIT %d;
                 ",
                 $count
             ),
-            array(
+            [
                 new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
                 new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
-            )
+            ]
         );
         $results = array_map(
             function ($item) {
@@ -165,10 +176,10 @@ class Document
     public function add(\aportela\DatabaseWrapper\DB $dbh): void
     {
         $this->validate();
-        $params = array(
+        $params = [
             (new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id))),
             (new \aportela\DatabaseWrapper\Param\StringParam(":title", $this->title)),
-        );
+        ];
         if (!empty($this->description)) {
             $params[] = (new \aportela\DatabaseWrapper\Param\StringParam(":description", $this->description));
         } else {
@@ -183,68 +194,72 @@ class Document
             ",
             $params
         )) {
-            $historyQuery = "
+            if ($dbh->execute(
+                "
                 INSERT INTO DOCUMENT_HISTORY
                     (document_id, ctime, operation_type, cuid)
                 VALUES
                     (:document_id, :ctime, :operation_type, :cuid)
-            ";
-            $params = [
-                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
-                new \aportela\DatabaseWrapper\Param\IntegerParam(":ctime", intval(microtime(true) * 1000)),
-                new \aportela\DatabaseWrapper\Param\IntegerParam(":operation_type", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
-                new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId())
-            ];
-            if ($dbh->execute($historyQuery, $params)) {
-                $tagsQuery = "
-                    INSERT INTO DOCUMENT_TAG
-                        (document_id, tag)
-                    VALUES
-                        (:document_id, :tag)
-                ";
+            ",
+                [
+                    new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
+                    new \aportela\DatabaseWrapper\Param\IntegerParam(":ctime", intval(microtime(true) * 1000)),
+                    new \aportela\DatabaseWrapper\Param\IntegerParam(":operation_type", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
+                    new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId())
+                ]
+            )) {
                 foreach ($this->tags as $tag) {
                     if (!empty($tag)) {
-                        $params = array(
-                            new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
-                            new \aportela\DatabaseWrapper\Param\StringParam(":tag", mb_strtolower($tag))
+                        $dbh->execute(
+                            "
+                                INSERT INTO DOCUMENT_TAG
+                                    (document_id, tag)
+                                VALUES
+                                    (:document_id, :tag)
+                            ",
+                            [
+                                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
+                                new \aportela\DatabaseWrapper\Param\StringParam(":tag", mb_strtolower($tag))
+                            ]
                         );
-                        $dbh->execute($tagsQuery, $params);
                     } else {
                         throw new \HomeDocs\Exception\InvalidParamsException("tag");
                     }
                 }
-                $attachmentsQuery = "
-                    INSERT INTO DOCUMENT_ATTACHMENT
-                        (document_id, attachment_id)
-                    VALUES
-                        (:document_id, :attachment_id)
-                    ";
                 foreach ($this->attachments as $attachment) {
                     if (!empty($attachment->id)) {
-                        $params = array(
-                            new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
-                            new \aportela\DatabaseWrapper\Param\StringParam(":attachment_id", mb_strtolower($attachment->id))
+                        $dbh->execute(
+                            "
+                                INSERT INTO DOCUMENT_ATTACHMENT
+                                    (document_id, attachment_id)
+                                VALUES
+                                    (:document_id, :attachment_id)
+                            ",
+                            [
+                                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
+                                new \aportela\DatabaseWrapper\Param\StringParam(":attachment_id", mb_strtolower($attachment->id))
+                            ]
                         );
-                        $dbh->execute($attachmentsQuery, $params);
                     } else {
                         throw new \HomeDocs\Exception\InvalidParamsException("attachment_id");
                     }
                 }
-                $notesQuery = "
-                    INSERT INTO DOCUMENT_NOTE
-                        (note_id, document_id, ctime, cuid, body)
-                    VALUES
-                        (:note_id, :document_id, :ctime, :cuid, :note_body)
-                ";
                 foreach ($this->notes as $note) {
-                    $params = array(
-                        new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower($note->id)),
-                        new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
-                        new \aportela\DatabaseWrapper\Param\IntegerParam(":ctime", intval(microtime(true) * 1000)),
-                        new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId()),
-                        new \aportela\DatabaseWrapper\Param\StringParam(":note_body", $note->body),
+                    $dbh->execute(
+                        "
+                            INSERT INTO DOCUMENT_NOTE
+                                (note_id, document_id, ctime, cuid, body)
+                            VALUES
+                                (:note_id, :document_id, :ctime, :cuid, :note_body)
+                        ",
+                        [
+                            new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower($note->id)),
+                            new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
+                            new \aportela\DatabaseWrapper\Param\IntegerParam(":ctime", intval(microtime(true) * 1000)),
+                            new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId()),
+                            new \aportela\DatabaseWrapper\Param\StringParam(":note_body", $note->body),
+                        ]
                     );
-                    $dbh->execute($notesQuery, $params);
                 }
             }
         }
@@ -253,10 +268,10 @@ class Document
     public function update(\aportela\DatabaseWrapper\DB $dbh): void
     {
         $this->validate();
-        $params = array(
+        $params = [
             new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id)),
             new \aportela\DatabaseWrapper\Param\StringParam(":title", $this->title)
-        );
+        ];
         if (!empty($this->description)) {
             $params[] = new \aportela\DatabaseWrapper\Param\StringParam(":description", $this->description);
         } else {
@@ -272,41 +287,44 @@ class Document
             ",
             $params
         )) {
-            $historyQuery = "
-                INSERT INTO DOCUMENT_HISTORY
-                    (document_id, ctime, operation_type, cuid)
-                VALUES
-                    (:document_id, :ctime, :operation_type, :cuid)
-            ";
-            $params = [
-                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
-                new \aportela\DatabaseWrapper\Param\IntegerParam(":ctime", intval(microtime(true) * 1000)),
-                new \aportela\DatabaseWrapper\Param\IntegerParam(":operation_type", \HomeDocs\DocumentHistoryOperation::OPERATION_UPDATE_DOCUMENT),
-                new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId())
-            ];
-            if ($dbh->execute($historyQuery, $params)) {
+            if ($dbh->execute(
+                "
+                    INSERT INTO DOCUMENT_HISTORY
+                        (document_id, ctime, operation_type, cuid)
+                    VALUES
+                        (:document_id, :ctime, :operation_type, :cuid)
+                ",
+                [
+                    new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
+                    new \aportela\DatabaseWrapper\Param\IntegerParam(":ctime", intval(microtime(true) * 1000)),
+                    new \aportela\DatabaseWrapper\Param\IntegerParam(":operation_type", \HomeDocs\DocumentHistoryOperation::OPERATION_UPDATE_DOCUMENT),
+                    new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId())
+                ]
+            )) {
                 $dbh->execute(
                     "
                         DELETE FROM DOCUMENT_TAG
-                        WHERE document_id = :document_id
+                        WHERE
+                            document_id = :document_id
                     ",
-                    array(
+                    [
                         new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
-                    )
+                    ]
                 );
-                $tagsQuery = "
-                    INSERT INTO DOCUMENT_TAG
-                        (document_id, tag)
-                    VALUES
-                        (:document_id, :tag)
-                ";
                 foreach ($this->tags as $tag) {
                     if (!empty($tag)) {
-                        $params = array(
-                            new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
-                            new \aportela\DatabaseWrapper\Param\StringParam(":tag", mb_strtolower($tag))
+                        $dbh->execute(
+                            "
+                                INSERT INTO DOCUMENT_TAG
+                                    (document_id, tag)
+                                VALUES
+                                    (:document_id, :tag)
+                            ",
+                            [
+                                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
+                                new \aportela\DatabaseWrapper\Param\StringParam(":tag", mb_strtolower($tag))
+                            ]
                         );
-                        $dbh->execute($tagsQuery, $params);
                     } else {
                         throw new \HomeDocs\Exception\InvalidParamsException("tag");
                     }
@@ -323,13 +341,15 @@ class Document
                         $dbh->execute(
                             "
                                 DELETE FROM DOCUMENT_ATTACHMENT
-                                WHERE document_id = :document_id
-                                AND attachment_id = :attachment_id
+                                WHERE
+                                    document_id = :document_id
+                                AND
+                                    attachment_id = :attachment_id
                             ",
-                            array(
+                            [
                                 new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
                                 new \aportela\DatabaseWrapper\Param\StringParam(":attachment_id", mb_strtolower($originalAttachment->id))
-                            )
+                            ]
                         );
                         $originalAttachment->remove($dbh);
                     }
@@ -343,10 +363,6 @@ class Document
                             }
                         }
                         if ($notFound) {
-                            $params = array(
-                                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
-                                new \aportela\DatabaseWrapper\Param\StringParam(":attachment_id", mb_strtolower($attachment->id))
-                            );
                             $dbh->execute(
                                 "
                                     INSERT INTO DOCUMENT_ATTACHMENT
@@ -354,7 +370,10 @@ class Document
                                     VALUES
                                         (:document_id, :attachment_id)
                                 ",
-                                $params
+                                [
+                                    new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
+                                    new \aportela\DatabaseWrapper\Param\StringParam(":attachment_id", mb_strtolower($attachment->id))
+                                ]
                             );
                         }
                     } else {
@@ -373,13 +392,15 @@ class Document
                         $dbh->execute(
                             "
                                 DELETE FROM DOCUMENT_NOTE
-                                WHERE document_id = :document_id
-                                AND note_id = :note_id
+                                WHERE
+                                    document_id = :document_id
+                                AND
+                                    note_id = :note_id
                             ",
-                            array(
+                            [
                                 new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
                                 new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower($originalNote->id))
-                            )
+                            ]
                         );
                     }
                 }
@@ -403,12 +424,12 @@ class Document
                                     AND
                                         cuid = :cuid
                                     ",
-                                    array(
+                                    [
                                         new \aportela\DatabaseWrapper\Param\StringParam(":note_body", $note->body),
                                         new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower($note->id)),
                                         new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
                                         new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId())
-                                    )
+                                    ]
                                 );
                                 break;
                             } else {
@@ -424,13 +445,13 @@ class Document
                                 VALUES
                                     (:note_id, :document_id, :ctime, :cuid, :note_body)
                             ",
-                            array(
+                            [
                                 new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower($note->id)),
                                 new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
                                 new \aportela\DatabaseWrapper\Param\IntegerParam(":ctime", intval(microtime(true) * 1000)),
                                 new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId()),
                                 new \aportela\DatabaseWrapper\Param\StringParam(":note_body", $note->body)
-                            )
+                            ]
                         );
                     }
                 }
@@ -441,20 +462,22 @@ class Document
     public function delete(\aportela\DatabaseWrapper\DB $dbh): void
     {
         if (!empty($this->id) && mb_strlen($this->id) == \HomeDocs\Constants::UUID_V4_LENGTH) {
-            $params = array(
+            $params = [
                 new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
-            );
+            ];
             $dbh->execute(
                 "
                     DELETE FROM DOCUMENT_TAG
-                    WHERE document_id = :document_id
+                    WHERE
+                        document_id = :document_id
                 ",
                 $params
             );
             $dbh->execute(
                 "
                     DELETE FROM DOCUMENT_ATTACHMENT
-                    WHERE document_id = :document_id
+                    WHERE
+                        document_id = :document_id
                 ",
                 $params
             );
@@ -465,21 +488,24 @@ class Document
             $dbh->execute(
                 "
                     DELETE FROM DOCUMENT_NOTE
-                    WHERE document_id = :document_id
+                    WHERE
+                        document_id = :document_id
                 ",
                 $params
             );
             $dbh->execute(
                 "
                     DELETE FROM DOCUMENT_HISTORY
-                    WHERE document_id = :document_id
+                    WHERE
+                        document_id = :document_id
                 ",
                 $params
             );
             $dbh->execute(
                 "
                     DELETE FROM DOCUMENT
-                    WHERE id = :document_id
+                    WHERE
+                        id = :document_id
                 ",
                 $params
             );
@@ -498,18 +524,22 @@ class Document
                     FROM DOCUMENT
                     INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT.id AND DOCUMENT_HISTORY.operation_type = :history_operation_add
                     LEFT JOIN (
-                        SELECT DOCUMENT_HISTORY.document_id, MAX(DOCUMENT_HISTORY.ctime) AS document_last_update
+                        SELECT
+                            DOCUMENT_HISTORY.document_id, MAX(DOCUMENT_HISTORY.ctime) AS document_last_update
                         FROM DOCUMENT_HISTORY
-                        WHERE DOCUMENT_HISTORY.document_id = :id
-                        AND DOCUMENT_HISTORY.operation_type <> :history_operation_add
-                        GROUP BY DOCUMENT_HISTORY.document_id
+                        WHERE
+                            DOCUMENT_HISTORY.document_id = :id
+                        AND
+                            DOCUMENT_HISTORY.operation_type <> :history_operation_add
+                        GROUP BY
+                            DOCUMENT_HISTORY.document_id
                     ) HISTORY_LAST_UPDATE ON HISTORY_LAST_UPDATE.document_id = DOCUMENT.id
                     WHERE id = :id
                 ",
-                array(
+                [
                     new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
                     new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id))
-                )
+                ]
             );
             if (count($data) == 1) {
                 if ($data[0]->createdByUserId == \HomeDocs\UserSession::getUserId()) {
@@ -544,12 +574,14 @@ class Document
                     tag
                 FROM DOCUMENT_TAG
                 INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_TAG.document_id
-                WHERE DOCUMENT_TAG.document_id = :document_id
-                ORDER BY DOCUMENT_TAG.tag
+                WHERE
+                    DOCUMENT_TAG.document_id = :document_id
+                ORDER BY
+                    DOCUMENT_TAG.tag
             ",
-            array(
+            [
                 new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id))
-            )
+            ]
         );
         if (count($data) > 0) {
             foreach ($data as $item) {
@@ -565,9 +597,9 @@ class Document
     private function getAttachments(\aportela\DatabaseWrapper\DB $dbh, ?string $search = null): array
     {
         $attachments = [];
-        $params = array(
+        $params = [
             new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id))
-        );
+        ];
         $queryConditions = [];
         if (! empty($search)) {
             // explode into words, remove duplicated & empty elements
@@ -590,9 +622,12 @@ class Document
                 FROM DOCUMENT_ATTACHMENT
                 INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_ATTACHMENT.document_id
                 LEFT JOIN ATTACHMENT ON ATTACHMENT.id = DOCUMENT_ATTACHMENT.attachment_id
-                WHERE DOCUMENT_ATTACHMENT.document_id = :document_id
+                WHERE
+                    DOCUMENT_ATTACHMENT.document_id = :document_id
                 %s
-                ORDER BY ATTACHMENT.ctime DESC, ATTACHMENT.name
+                ORDER BY
+                    ATTACHMENT.ctime DESC,
+                    ATTACHMENT.name
             ",
                 ! empty($search) ?
                     "
@@ -625,9 +660,9 @@ class Document
     private function getNotes(\aportela\DatabaseWrapper\DB $dbh, ?string $search = null): array
     {
         $notes = [];
-        $params = array(
+        $params = [
             new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id))
-        );
+        ];
         $queryConditions = [];
         if (! empty($search)) {
             // explode into words, remove duplicated & empty elements
@@ -649,9 +684,11 @@ class Document
                     SELECT
                         DOCUMENT_NOTE.note_id AS noteId, DOCUMENT_NOTE.ctime AS createdOnTimestamp, DOCUMENT_NOTE.body
                     FROM DOCUMENT_NOTE
-                    WHERE DOCUMENT_NOTE.document_id = :document_id
+                    WHERE
+                        DOCUMENT_NOTE.document_id = :document_id
                     %s
-                    ORDER BY DOCUMENT_NOTE.ctime DESC
+                    ORDER BY
+                        DOCUMENT_NOTE.ctime DESC
                 ",
                 ! empty($search) ?
                     "
@@ -686,12 +723,14 @@ class Document
                 SELECT
                     DOCUMENT_HISTORY.ctime AS operationTimestamp, DOCUMENT_HISTORY.operation_type AS operationType
                 FROM DOCUMENT_HISTORY
-                WHERE DOCUMENT_HISTORY.document_id = :document_id
-                ORDER BY DOCUMENT_HISTORY.ctime DESC
+                WHERE
+                    DOCUMENT_HISTORY.document_id = :document_id
+                ORDER BY
+                    DOCUMENT_HISTORY.ctime DESC
             ",
-            array(
+            [
                 new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id))
-            )
+            ]
         );
         if (count($data) > 0) {
             foreach ($data as $item) {
@@ -707,7 +746,7 @@ class Document
     /**
      * @param array<mixed> $filter
      */
-    public static function search(\aportela\DatabaseWrapper\DB $dbh, \aportela\DatabaseBrowserWrapper\Pager $pager, $filter = array(), string $sortBy = "createdOnTimestamp", \aportela\DatabaseBrowserWrapper\Order $sortOrder = \aportela\DatabaseBrowserWrapper\Order::DESC): \stdClass
+    public static function search(\aportela\DatabaseWrapper\DB $dbh, \aportela\DatabaseBrowserWrapper\Pager $pager, $filter = [], string $sortBy = "createdOnTimestamp", \aportela\DatabaseBrowserWrapper\Order $sortOrder = \aportela\DatabaseBrowserWrapper\Order::DESC): \stdClass
     {
         $fieldDefinitions = [
             "id" => "DOCUMENT.id",
@@ -802,12 +841,12 @@ class Document
             new \aportela\DatabaseBrowserWrapper\Filter(),
             $afterBrowse
         );
-        $queryConditions = array();
-        $params = array(
+        $queryConditions = [];
+        $params = [
             new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
             new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_update", \HomeDocs\DocumentHistoryOperation::OPERATION_UPDATE_DOCUMENT),
             new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
-        );
+        ];
         if (isset($filter["title"]) && !empty($filter["title"])) {
             // explode into words, remove duplicated & empty elements
             $words = array_filter(array_unique(explode(" ", trim(mb_strtolower($filter["title"])))));
@@ -848,10 +887,13 @@ class Document
                 }
                 $queryConditions[] = sprintf("
                     EXISTS (
-                        SELECT DOCUMENT_NOTE.document_id
+                        SELECT
+                            DOCUMENT_NOTE.document_id
                         FROM DOCUMENT_NOTE
-                        WHERE DOCUMENT_NOTE.document_id = DOCUMENT.id
-                        AND (%s)
+                        WHERE
+                            DOCUMENT_NOTE.document_id = DOCUMENT.id
+                        AND
+                            (%s)
                     )
                 ", implode(" AND ", $notesConditions));
             }
@@ -870,11 +912,14 @@ class Document
                 }
                 $queryConditions[] = sprintf("
                     EXISTS (
-                        SELECT DOCUMENT_ATTACHMENT.document_id
+                        SELECT
+                            DOCUMENT_ATTACHMENT.document_id
                         FROM DOCUMENT_ATTACHMENT
                         INNER JOIN ATTACHMENT ON ATTACHMENT.id = DOCUMENT_ATTACHMENT.attachment_id
-                        WHERE DOCUMENT_ATTACHMENT.document_id = DOCUMENT.id
-                        AND (%s)
+                        WHERE
+                            DOCUMENT_ATTACHMENT.document_id = DOCUMENT.id
+                        AND
+                            (%s)
                     )
                 ", implode(" AND ", $notesConditions));
             }
@@ -904,9 +949,12 @@ class Document
                     SELECT
                         DOCUMENT_HISTORY_UPDATED_ON.document_id
                     FROM DOCUMENT_HISTORY AS DOCUMENT_HISTORY_UPDATED_ON
-                    WHERE DOCUMENT_HISTORY_UPDATED_ON.document_id = DOCUMENT.id
-                    AND DOCUMENT_HISTORY_UPDATED_ON.ctime >= :fromUpdatedOnTimestamp
-                    AND DOCUMENT_HISTORY_UPDATED_ON.ctime <= :toUpdatedOnTimestamp
+                    WHERE
+                        DOCUMENT_HISTORY_UPDATED_ON.document_id = DOCUMENT.id
+                    AND
+                        DOCUMENT_HISTORY_UPDATED_ON.ctime >= :fromUpdatedOnTimestamp
+                    AND
+                        DOCUMENT_HISTORY_UPDATED_ON.ctime <= :toUpdatedOnTimestamp
                 )
             ";
         } elseif (isset($filter["fromUpdatedOnTimestampCondition"]) && $filter["fromUpdatedOnTimestampCondition"] > 0) {
@@ -917,8 +965,10 @@ class Document
                     SELECT
                         DOCUMENT_HISTORY_UPDATED_ON.document_id
                     FROM DOCUMENT_HISTORY AS DOCUMENT_HISTORY_UPDATED_ON
-                    WHERE DOCUMENT_HISTORY_UPDATED_ON.document_id = DOCUMENT.id
-                    AND DOCUMENT_HISTORY_UPDATED_ON.ctime >= :fromUpdatedOnTimestamp
+                    WHERE
+                        DOCUMENT_HISTORY_UPDATED_ON.document_id = DOCUMENT.id
+                    AND
+                        DOCUMENT_HISTORY_UPDATED_ON.ctime >= :fromUpdatedOnTimestamp
                 )
             ";
         } elseif (isset($filter["toUpdatedOnTimestampCondition"]) && $filter["toUpdatedOnTimestampCondition"] > 0) {
@@ -928,8 +978,10 @@ class Document
                     SELECT
                         DOCUMENT_HISTORY_UPDATED_ON.document_id
                     FROM DOCUMENT_HISTORY AS DOCUMENT_HISTORY_UPDATED_ON
-                    WHERE DOCUMENT_HISTORY_UPDATED_ON.document_id = DOCUMENT.id
-                    AND DOCUMENT_HISTORY_UPDATED_ON.ctime <= :toUpdatedOnTimestamp
+                    WHERE
+                        DOCUMENT_HISTORY_UPDATED_ON.document_id = DOCUMENT.id
+                    AND
+                        DOCUMENT_HISTORY_UPDATED_ON.ctime <= :toUpdatedOnTimestamp
                 )
             ";
         }
@@ -940,10 +992,13 @@ class Document
                 $queryConditions[] = sprintf(
                     "
                             EXISTS (
-                                SELECT document_id
+                                SELECT
+                                    document_id
                                 FROM DOCUMENT_TAG
-                                WHERE DOCUMENT_TAG.document_id = DOCUMENT.id
-                                AND DOCUMENT_TAG.tag IN (%s)
+                                WHERE
+                                    DOCUMENT_TAG.document_id = DOCUMENT.id
+                                AND
+                                    DOCUMENT_TAG.tag IN (%s)
                             )
                         ",
                     $paramName
@@ -967,18 +1022,24 @@ class Document
                         SELECT
                             DOCUMENT_HISTORY.document_id, MAX(DOCUMENT_HISTORY.ctime) AS ctime
                         FROM DOCUMENT_HISTORY
-                        WHERE DOCUMENT_HISTORY.operation_type = :history_operation_update
-                        GROUP BY DOCUMENT_HISTORY.document_id
+                        WHERE
+                            DOCUMENT_HISTORY.operation_type = :history_operation_update
+                        GROUP BY
+                            DOCUMENT_HISTORY.document_id
                     ) DOCUMENT_HISTORY_LAST_UPDATE ON DOCUMENT_HISTORY_LAST_UPDATE.document_id = DOCUMENT.id
                     LEFT JOIN (
-                        SELECT COUNT(*) AS attachmentCount, document_id
+                        SELECT
+                            COUNT(*) AS attachmentCount, document_id
                         FROM DOCUMENT_ATTACHMENT
-                        GROUP BY document_id
+                        GROUP BY
+                            document_id
                     ) TMP_ATTACHMENT_COUNT ON TMP_ATTACHMENT_COUNT.document_id = DOCUMENT.id
                     LEFT JOIN (
-                        SELECT COUNT(*) AS noteCount, document_id
+                        SELECT
+                            COUNT(*) AS noteCount, document_id
                         FROM DOCUMENT_NOTE
-                        GROUP BY document_id
+                        GROUP BY
+                            document_id
                     ) TMP_NOTE_COUNT ON TMP_NOTE_COUNT.document_id = DOCUMENT.id
                     %s
                     %%s
@@ -1003,9 +1064,12 @@ class Document
                         SELECT
                             DOCUMENT_HISTORY.document_id, MAX(DOCUMENT_HISTORY.ctime) AS ctime
                         FROM DOCUMENT_HISTORY
-                        WHERE DOCUMENT_HISTORY.operation_type = :history_operation_update
-                        AND DOCUMENT_HISTORY.cuid = :session_user_id
-                        GROUP BY DOCUMENT_HISTORY.document_id
+                        WHERE
+                            DOCUMENT_HISTORY.operation_type = :history_operation_update
+                        AND
+                            DOCUMENT_HISTORY.cuid = :session_user_id
+                        GROUP BY
+                            DOCUMENT_HISTORY.document_id
                     ) DOCUMENT_HISTORY_LAST_UPDATE ON DOCUMENT_HISTORY_LAST_UPDATE.document_id = DOCUMENT.id
                     %s
                 ",
