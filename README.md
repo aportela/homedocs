@@ -1,6 +1,6 @@
 # Homedocs
 
-Homedocs is is a simple personal document manager. You can conveniently store your files by classifying them with tags for easy retrieval in the future.
+Homedocs is a simple personal document manager. You can conveniently store your files by classifying them with tags for easy retrieval in the future.
 
 ## Screenshots (click to preview)
 
@@ -47,25 +47,25 @@ Homedocs is is a simple personal document manager. You can conveniently store yo
 
 ## Setup / Installation
 
-The project currently consists of two parts
+The project currently consists of two parts:
 
-**phpslim-api/** : full server api (includes latest compiled quasar web frontend). If you only want to install/use homedocs you can copy/use this path.
+**phpslim-api/** : Back-end (server API, also includes the latest compiled Quasar web interface/front-end). If you only want to install/use Homedocs, you can copy/use just this part.
 
-**quasar-frontend/**: Contains the source code of the frontend (quasar). You won't need this if you only want to use homedocs (without programming or making changes).
+**quasar-frontend/**: Front-end (contains the source code of the Quasar web interface). You won’t need this if you only want to use Homedocs (without developing or making changes).
 
-Install dependencies (under phpslim-api/ path):
+Install the dependencies (in the **phpslim-api/** path).
 
 ```Shell
 composer install
 ```
 
-Execute sqlite database creation/update script
+Execute the SQLite database creation/update script.
 
 ```Shell
 php phpslim-api/tools/install.php
 ```
 
-Check proper permissions, web server process must read/write (files) read/write/execute (dirs) on
+Check proper permissions: The web server process must have read and write permissions for files, and read, write, and execute permissions for directories.
 
 ```Shell
     Database file
@@ -78,7 +78,7 @@ Check proper permissions, web server process must read/write (files) read/write/
         phpslim-api/data/logs/*.*
 ```
 
-The system should work by default but if you need to modify any configuration the settings file is located at
+The system should work by default, but if you need to modify any configuration, the settings file is located at:
 
 ```Shell
     phpslim-api/config/settings.php
@@ -86,17 +86,17 @@ The system should work by default but if you need to modify any configuration th
 
 ## Web server configuration:
 
-The base path you should use for the web server is **phpslim-api/public/**
+The base path for the web server should be: **phpslim-api/public/**
 
-Customize web server settings according to php slim docs:
+Customize the web server settings according to the PHP Slim documentation:
 
 https://www.slimframework.com/docs/v4/start/web-servers.html
 
 ## Migration from previous (2.x) version
 
-**WARNING**: Before making any changes, make a backup copy of the files and database (under path **phpslim-api/data/**)
+**WARNING**: Before making any changes, make a backup of the files and database (located at **phpslim-api/data/**).
 
-The storage data is kept/shared from the previous versions (1.x && 2.x) but the database version structure has changed and you will need to install (clean) database and run a small sqlite script from the command line:
+The storage data is retained/shared from previous versions (1.x & 2.x), but the database structure has changed. You will need to install a clean database and run a small SQLite script from the command line:
 
 ```Shell
 php phpslim-api/tools/install.php
@@ -106,16 +106,16 @@ sqlite3 ./homedocs3.sqlite3 < ../tools/migrate-from-v2.sql
 
 ## Migration from old (1.x) version to previous version (2.x)
 
-**WARNING**: Before making any changes, make a backup copy of the files and database (under path **phpslim-api/data/**)
+**WARNING**: Before making any changes, make a backup of the files and database (located at **phpslim-api/data/**).
 
-The storage data is kept/shared from the previous version (1.0) but the database version structure has changed and you will need to run a small sqlite script from the command line (under **phpslim-api/data/** path, where old sqlite3 database is stored):
+The storage data is retained/shared from the previous version (1.0), but the database structure has changed. You will need to run a small SQLite script from the command line (located under the **phpslim-api/data/** path, where old sqlite3 database is stored):
 
 ```Shell
 cat ../tools/migrate-from-v1.sql | sqlite3 ./homedocs2.sqlite3
 
 ```
 
-Once migrated, run the update script that applies sql version changes
+Once migrated, run the update script to apply the SQL version changes:
 
 ```Shell
 php phpslim-api/tools/update.php
@@ -123,23 +123,23 @@ php phpslim-api/tools/update.php
 
 ## Backup data
 
-You really want to make (periodic) backups, all (without source code) data (sqlite database & file storage) is stored on **phpslim-api/data/** path
+It's highly recommended to make periodic backups. All data (excluding source code), including the SQLite database and file storage, is stored under the **phpslim-api/data/** path.
 
 ## Add/recover user credentials from console
 
-You can create/update an account from the command line with the php script
+You can create or update an account from the command line using the PHP script:
 
 ```Shell
 php phpslim-api/tools/set-credential.php --email myuser@myserver.net --password mysecret
 ```
 
-If the account already exists it will be overwritten with the data provided.
+If the account already exists, it will be overwritten with the provided data.
 
 ## Development
 
 ### Mock / example data
 
-Is it possible to create a mock of example data for a user with specific credentials using the following command line:
+It is possible to generate mock example data for a user with specific credentials using the following command line:
 
 ```Shell
 php phpslim-api/tools/generate-demo-data.php --count 512 --email johndoe@localhost --password secret
@@ -147,14 +147,14 @@ php phpslim-api/tools/generate-demo-data.php --count 512 --email johndoe@localho
 
 ### Backend (php-slim)
 
-Install dependencies
+Install the dependencies:
 
 ```Shell
 cd phpslim-api
 composer install
 ```
 
-Start local php server listening on http://127.0.0.1:8081:
+Start the local PHP (backend/API) server, listening on http://127.0.0.1:8081:
 
 ```Shell
 composer start
@@ -162,20 +162,20 @@ composer start
 
 ### Frontend (quasar)
 
-Install dependencies
+Install the dependencies:
 
 ```Shell
 cd quasar-frontend
 npm i
 ```
 
-Start local front-end webapp listening on http://127.0.0.1:8080:
+Start the local front-end (Quasar web app interface), listening on http://127.0.0.1:8080:
 
 ```Shell
 quasar dev
 ```
 
-Build quasar webapp release (on /phpslim-api/public):
+Build the Quasar web app release (in **/phpslim-api/public**):
 
 ```Shell
 quasar buid
