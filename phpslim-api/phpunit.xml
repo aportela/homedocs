@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="vendor/autoload.php" backupGlobals="false" backupStaticProperties="false" colors="true" processIsolation="false" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.3/phpunit.xsd" displayDetailsOnTestsThatTriggerWarnings="true">
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    bootstrap="vendor/autoload.php"
+    backupGlobals="false"
+    backupStaticProperties="false"
+    colors="true"
+    processIsolation="false"
+    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.3/phpunit.xsd"
+    displayDetailsOnPhpunitDeprecations="true"
+    displayDetailsOnTestsThatTriggerWarnings="true"
+    displayDetailsOnTestsThatTriggerDeprecations="true"
+    displayDetailsOnTestsThatTriggerNotices="true">
     <testsuites>
         <testsuite name="homedocs-test-suite">
             <file>homedocs/Test/UserTest.php</file>
