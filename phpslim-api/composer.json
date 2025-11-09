@@ -38,6 +38,7 @@
     "test": "vendor/bin/phpunit --testdox",
     "fix": "vendor/bin/php-cs-fixer fix homedocs",
     "stan": "vendor/bin/phpstan analyse -c phpstan.neon --memory-limit 1G",
+    "rector": "vendor/bin/rector process",
     "start": "php -S 127.0.0.1:8081 -t public public/cliserver.php"
   }
 }
