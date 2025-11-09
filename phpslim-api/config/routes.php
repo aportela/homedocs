@@ -6,7 +6,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Routing\RouteCollectorProxy;
 
 // TODO: CheckAuth & JWT middlewares (combine ?)
-return function (App $app) {
+return function (App $app): void {
     $app->get('/', function (Request $request, Response $response, array $args) {
         $filePath = dirname(__DIR__) . '/public/index.html';
         if (file_exists($filePath)) {
@@ -19,7 +19,7 @@ return function (App $app) {
 
     $app->group(
         '/api3',
-        function (RouteCollectorProxy $group) use ($app) {
+        function (RouteCollectorProxy $group) use ($app): void {
 
             $initialState = \HomeDocs\Utils::getInitialState($app->getContainer());
 
@@ -36,7 +36,7 @@ return function (App $app) {
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             });
 
-            $group->group('/auth', function (RouteCollectorProxy $group) use ($app, $initialState) {
+            $group->group('/auth', function (RouteCollectorProxy $group) use ($app, $initialState): void {
                 $group->post('/register', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $settings = $app->getContainer()->get('settings');
                     if ($settings['common']['allowSignUp']) {
@@ -103,7 +103,7 @@ return function (App $app) {
                 });
             });
 
-            $group->group('/user', function (RouteCollectorProxy $group) use ($app, $initialState) {
+            $group->group('/user', function (RouteCollectorProxy $group) use ($app, $initialState): void {
                 $group->get('/profile', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $user = new \HomeDocs\User(\HomeDocs\UserSession::getUserId());
                     $user->get($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class));
@@ -155,7 +155,7 @@ return function (App $app) {
                 });
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $group->group('/search', function (RouteCollectorProxy $group) use ($app, $initialState) {
+            $group->group('/search', function (RouteCollectorProxy $group) use ($app, $initialState): void {
                 // TODO: is this required ? can be recplaced only with /search/document with custom params
                 $group->post('/recent_documents', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $settings = $app->getContainer()->get('settings');
@@ -211,7 +211,7 @@ return function (App $app) {
                 });
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $group->group('/document', function (RouteCollectorProxy $group) use ($app, $initialState) {
+            $group->group('/document', function (RouteCollectorProxy $group) use ($app, $initialState): void {
                 $group->get('/{id}', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $document = new \HomeDocs\Document();
                     $document->id = $args['id'];
@@ -426,7 +426,7 @@ return function (App $app) {
                 });
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $group->group('/attachment', function (RouteCollectorProxy $group) use ($app, $initialState) {
+            $group->group('/attachment', function (RouteCollectorProxy $group) use ($app, $initialState): void {
                 $group->get('/{id}[/{inline}]', function (Request $request, Response $response, array $args) use ($app) {
                     $attachment = new \HomeDocs\Attachment(
                         $app->getContainer()->get('settings')['paths']['storage'],
@@ -563,7 +563,7 @@ return function (App $app) {
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $group->group('/stats', function (RouteCollectorProxy $group) use ($app, $initialState) {
+            $group->group('/stats', function (RouteCollectorProxy $group) use ($app, $initialState): void {
                 $group->get('/total-published-documents', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $payload = json_encode(
                         [

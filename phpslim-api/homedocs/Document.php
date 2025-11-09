@@ -775,7 +775,7 @@ class Document
                 break;
         }
         // after launch search we need to make some changes foreach result
-        $afterBrowse = function ($data) use ($filter, $dbh) {
+        $afterBrowse = function ($data) use ($filter, $dbh): void {
             array_map(
                 function ($item) use ($filter, $dbh) {
                     $item->createdOnTimestamp = intval($item->createdOnTimestamp);
