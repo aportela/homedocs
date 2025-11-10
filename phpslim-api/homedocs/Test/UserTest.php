@@ -8,9 +8,19 @@ require_once dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SE
 
 final class UserTest extends \HomeDocs\Test\BaseTest
 {
+    private function isSignUpAllowed(): bool
+    {
+        $allowed = self::$settings['common']['allowSignUp'];
+        if (is_bool($allowed)) {
+            return ($allowed);
+        } else {
+            return (false);
+        }
+    }
+
     public function testAddWithoutId(): void
     {
-        if (self::$settings['common']['allowSignUp']) {
+        if ($this->isSignUpAllowed()) {
             $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
             $this->expectExceptionMessage("id");
             $id = \HomeDocs\Utils::uuidv4();
@@ -22,7 +32,7 @@ final class UserTest extends \HomeDocs\Test\BaseTest
 
     public function testAddWithoutEmail(): void
     {
-        if (self::$settings['common']['allowSignUp']) {
+        if ($this->isSignUpAllowed()) {
             $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
             $this->expectExceptionMessage("email");
             $id = \HomeDocs\Utils::uuidv4();
@@ -34,7 +44,7 @@ final class UserTest extends \HomeDocs\Test\BaseTest
 
     public function testAddWithoutValidEmailLength(): void
     {
-        if (self::$settings['common']['allowSignUp']) {
+        if ($this->isSignUpAllowed()) {
             $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
             $this->expectExceptionMessage("email");
             $id = \HomeDocs\Utils::uuidv4();
@@ -46,7 +56,7 @@ final class UserTest extends \HomeDocs\Test\BaseTest
 
     public function testAddWithoutValidEmail(): void
     {
-        if (self::$settings['common']['allowSignUp']) {
+        if ($this->isSignUpAllowed()) {
             $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
             $this->expectExceptionMessage("email");
             $id = \HomeDocs\Utils::uuidv4();
@@ -58,7 +68,7 @@ final class UserTest extends \HomeDocs\Test\BaseTest
 
     public function testAddWithoutPassword(): void
     {
-        if (self::$settings['common']['allowSignUp']) {
+        if ($this->isSignUpAllowed()) {
             $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
             $this->expectExceptionMessage("password");
             $id = \HomeDocs\Utils::uuidv4();
@@ -70,7 +80,7 @@ final class UserTest extends \HomeDocs\Test\BaseTest
 
     public function testAdd(): void
     {
-        if (self::$settings['common']['allowSignUp']) {
+        if ($this->isSignUpAllowed()) {
             $this->expectNotToPerformAssertions();
             $id = \HomeDocs\Utils::uuidv4();
             new \HomeDocs\User($id, $id . "@localhost.localnet", "secret")->add(self::$dbh);
@@ -193,6 +203,7 @@ final class UserTest extends \HomeDocs\Test\BaseTest
         $id = \HomeDocs\Utils::uuidv4();
         $user = new \HomeDocs\User($id, $id . "@server.com", "secret");
         $user->add(self::$dbh);
+        $this->assertIsString($user->email);
         $this->assertTrue(\HomeDocs\User::isEmailUsed(self::$dbh, $user->email));
     }
 

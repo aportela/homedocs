@@ -8,7 +8,7 @@ class Stats
 {
     public static function getTotalPublishedDocuments(\aportela\DatabaseWrapper\DB $db): int
     {
-        $result = $db->query(
+        $results = $db->query(
             "
                 SELECT
                     COALESCE(COUNT(DOCUMENT_HISTORY.document_id), 0) AS total
@@ -23,12 +23,12 @@ class Stats
                 new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
             ]
         );
-        return (intval($result[0]->total ?? 0));
+        return (count($results) == 1 && property_exists($results[0], "total") && is_numeric($results[0]->total) ? intval($results[0]->total) : 0);
     }
 
     public static function getTotalUploadedAttachments(\aportela\DatabaseWrapper\DB $db): int
     {
-        $result = $db->query(
+        $results = $db->query(
             "
                 SELECT
                     COALESCE(COUNT(DOCUMENT_ATTACHMENT.attachment_id), 0) AS total
@@ -44,12 +44,12 @@ class Stats
                 new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
             ]
         );
-        return (intval($result[0]->total ?? 0));
+        return (count($results) == 1 && property_exists($results[0], "total") && is_numeric($results[0]->total) ? intval($results[0]->total) : 0);
     }
 
     public static function getTotalUploadedAttachmentsDiskUsage(\aportela\DatabaseWrapper\DB $db): int
     {
-        $result = $db->query(
+        $results = $db->query(
             "
                 SELECT
                     COALESCE(SUM(ATTACHMENT.size), 0) AS total
@@ -66,7 +66,7 @@ class Stats
                 new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
             ]
         );
-        return (intval($result[0]->total ?? 0));
+        return (count($results) == 1 && property_exists($results[0], "total") && is_numeric($results[0]->total) ? intval($results[0]->total) : 0);
     }
 
     /**
