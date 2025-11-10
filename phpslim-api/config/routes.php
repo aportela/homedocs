@@ -445,7 +445,7 @@ return function (App $app): void {
                             // find the requested range
                             // this might be too simplistic, apparently the client can request
                             // multiple ranges, which can become pretty complex, so ignore it for now
-                            preg_match('/bytes=(\d+)-(\d+)?/', $_SERVER['HTTP_RANGE'], $matches);
+                            preg_match('/bytes=(\d+)-(\d+)?/', (string) $_SERVER['HTTP_RANGE'], $matches);
                             $offset = intval($matches[1]);
                             $length = ((isset($matches[2])) ? intval($matches[2]) : $attachment->size) - $offset;
                         }
@@ -458,14 +458,14 @@ return function (App $app): void {
                             // output the right headers for partial content
                             return $response->withStatus(206)
                                 ->withHeader('Content-Type', \HomeDocs\Utils::getMimeType($attachment->name))
-                                ->withHeader('Content-Disposition', (isset($args['inline']) ? 'inline' : 'attachment') . '; filename="' . basename($attachment->name) . '"')
+                                ->withHeader('Content-Disposition', (isset($args['inline']) ? 'inline' : 'attachment') . '; filename="' . basename((string) $attachment->name) . '"')
                                 ->withHeader('Content-Length', (string) $length)
                                 ->withHeader('Content-Range', 'bytes ' . $offset . '-' . ($offset + $length - 1) . '/' . $attachmentSize)
                                 ->withHeader('Accept-Ranges', 'bytes');
                         } else {
                             return $response->withStatus(200)
                                 ->withHeader('Content-Type', \HomeDocs\Utils::getMimeType($attachment->name))
-                                ->withHeader('Content-Disposition', (isset($args['inline']) ? 'inline' : 'attachment') . '; filename="' . basename($attachment->name) . '"')
+                                ->withHeader('Content-Disposition', (isset($args['inline']) ? 'inline' : 'attachment') . '; filename="' . basename((string) $attachment->name) . '"')
                                 ->withHeader('Content-Length', (string) $attachmentSize)
                                 ->withHeader('Accept-Ranges', 'bytes');
                         }
@@ -483,7 +483,7 @@ return function (App $app): void {
                         } else {
                             $attachment = new \HomeDocs\Attachment(
                                 $app->getContainer()->get('settings')['paths']['storage'],
-                                isset($args['id']) ? $args['id'] : \HomeDocs\Utils::uuidv4(),
+                                $args['id'] ?? \HomeDocs\Utils::uuidv4(),
                                 $uploadedFiles["file"]->getClientFilename(),
                                 $uploadedFiles["file"]->getSize()
                             );
@@ -491,13 +491,13 @@ return function (App $app): void {
                             $payload = json_encode(
                                 [
                                     'initialState' => $initialState,
-                                    'data' => array(
+                                    'data' => [
                                         "id" => $attachment->id,
                                         "name" => $attachment->name,
                                         "size" => $attachment->size,
                                         "hash" => $attachment->hash,
                                         "createdOnTimestamp" => $attachment->createdOnTimestamp
-                                    )
+                                    ]
                                 ]
                             );
                             if (json_last_error() != JSON_ERROR_NONE) {
@@ -613,7 +613,7 @@ return function (App $app): void {
                             'initialState' => $initialState,
                             'heatmap' => \HomeDocs\Stats::getActivityHeatMapData(
                                 $app->getContainer()->get(\aportela\DatabaseWrapper\DB::class),
-                                isset($queryParams["fromTimestamp"]) ? $queryParams["fromTimestamp"] : 0
+                                $queryParams["fromTimestamp"] ?? 0
                             )
                         ]
                     );

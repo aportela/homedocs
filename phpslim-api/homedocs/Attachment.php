@@ -6,20 +6,10 @@ namespace HomeDocs;
 
 class Attachment
 {
-    public ?string $id;
-    public ?string $name;
-    public ?int $size;
-    public ?string $hash;
-    public ?int $createdOnTimestamp;
     private ?string $localStoragePath;
 
-    public function __construct(?string $rootStoragePath = null, ?string $id = null, ?string $name = null, ?int $size = null, ?string $hash = null, ?int $createdOnTimestamp = null)
+    public function __construct(?string $rootStoragePath = null, public ?string $id = null, public ?string $name = null, public ?int $size = null, public ?string $hash = null, public ?int $createdOnTimestamp = null)
     {
-        $this->id = $id;
-        $this->name = $name;
-        $this->size = $size;
-        $this->hash = $hash;
-        $this->createdOnTimestamp = $createdOnTimestamp;
         if (! empty($rootStoragePath) && ! empty($this->id)) {
             $this->localStoragePath = $this->getAttachmentStoragePath($rootStoragePath);
         }
@@ -89,7 +79,7 @@ class Attachment
     private function saveStorage(\Psr\Http\Message\UploadedFileInterface $uploadedFile): void
     {
         if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
-            $path = pathinfo($this->localStoragePath);
+            $path = pathinfo((string) $this->localStoragePath);
             if (!file_exists($path['dirname'])) {
                 mkdir($path['dirname'], 0777, true);
             }
@@ -111,7 +101,7 @@ class Attachment
                     (:id, :sha1_hash, :name, :size, :cuid, :ctime)
             ",
             [
-                new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id)),
+                new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower((string) $this->id)),
                 new \aportela\DatabaseWrapper\Param\StringParam(":sha1_hash", $this->hash),
                 new \aportela\DatabaseWrapper\Param\StringParam(":name", $this->name),
                 new \aportela\DatabaseWrapper\Param\IntegerParam(":size", $this->size),
@@ -153,7 +143,7 @@ class Attachment
                     id = :id
             ",
             [
-                new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id))
+                new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower((string) $this->id))
             ]
         );
     }
@@ -169,7 +159,7 @@ class Attachment
                     attachment_id = :id
             ",
             [
-                new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id))
+                new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower((string) $this->id))
             ]
         );
         return (intval($result[0]->total) > 0);

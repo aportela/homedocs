@@ -9,12 +9,7 @@ class DocumentHistoryOperation
     public const OPERATION_ADD_DOCUMENT = 1;
     public const OPERATION_UPDATE_DOCUMENT = 2;
 
-    public ?int $operationTimestamp;
-    public ?int $operationType;
-
-    public function __construct(?int $operationTimestamp = null, ?int $operationType = null)
+    public function __construct(public ?int $operationTimestamp = null, public ?int $operationType = null)
     {
-        $this->operationTimestamp = $operationTimestamp;
-        $this->operationType = $operationType;
     }
 }

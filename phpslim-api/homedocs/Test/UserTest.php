@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace HomeDocs\Test;
 
-require_once dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
+require_once dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
 
 final class UserTest extends \HomeDocs\Test\BaseTest
 {
@@ -14,7 +14,7 @@ final class UserTest extends \HomeDocs\Test\BaseTest
             $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
             $this->expectExceptionMessage("id");
             $id = \HomeDocs\Utils::uuidv4();
-            (new \HomeDocs\User("", $id . "@localhost.localnet", "secret"))->add(self::$dbh);
+            new \HomeDocs\User("", $id . "@localhost.localnet", "secret")->add(self::$dbh);
         } else {
             $this->markTestSkipped("This test can not be run (allowSignUp disabled in settings)");
         }
@@ -26,7 +26,7 @@ final class UserTest extends \HomeDocs\Test\BaseTest
             $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
             $this->expectExceptionMessage("email");
             $id = \HomeDocs\Utils::uuidv4();
-            (new \HomeDocs\User($id, "", "secret"))->add(self::$dbh);
+            new \HomeDocs\User($id, "", "secret")->add(self::$dbh);
         } else {
             $this->markTestSkipped("This test can not be run (allowSignUp disabled in settings)");
         }
@@ -38,7 +38,7 @@ final class UserTest extends \HomeDocs\Test\BaseTest
             $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
             $this->expectExceptionMessage("email");
             $id = \HomeDocs\Utils::uuidv4();
-            (new \HomeDocs\User($id, str_repeat($id, 10) . "@localhost.localnet", "secret"))->add(self::$dbh);
+            new \HomeDocs\User($id, str_repeat($id, 10) . "@localhost.localnet", "secret")->add(self::$dbh);
         } else {
             $this->markTestSkipped("This test can not be run (allowSignUp disabled in settings)");
         }
@@ -50,7 +50,7 @@ final class UserTest extends \HomeDocs\Test\BaseTest
             $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
             $this->expectExceptionMessage("email");
             $id = \HomeDocs\Utils::uuidv4();
-            (new \HomeDocs\User($id, $id, "secret"))->add(self::$dbh);
+            new \HomeDocs\User($id, $id, "secret")->add(self::$dbh);
         } else {
             $this->markTestSkipped("This test can not be run (allowSignUp disabled in settings)");
         }
@@ -62,7 +62,7 @@ final class UserTest extends \HomeDocs\Test\BaseTest
             $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
             $this->expectExceptionMessage("password");
             $id = \HomeDocs\Utils::uuidv4();
-            (new \HomeDocs\User($id, $id . "@localhost.localnet", ""))->add(self::$dbh);
+            new \HomeDocs\User($id, $id . "@localhost.localnet", "")->add(self::$dbh);
         } else {
             $this->markTestSkipped("This test can not be run (allowSignUp disabled in settings)");
         }
@@ -73,7 +73,7 @@ final class UserTest extends \HomeDocs\Test\BaseTest
         if (self::$settings['common']['allowSignUp']) {
             $this->expectNotToPerformAssertions();
             $id = \HomeDocs\Utils::uuidv4();
-            (new \HomeDocs\User($id, $id . "@localhost.localnet", "secret"))->add(self::$dbh);
+            new \HomeDocs\User($id, $id . "@localhost.localnet", "secret")->add(self::$dbh);
         } else {
             $this->markTestSkipped("This test can not be run (allowSignUp disabled in settings)");
         }
@@ -84,7 +84,7 @@ final class UserTest extends \HomeDocs\Test\BaseTest
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("id");
         $id = \HomeDocs\Utils::uuidv4();
-        (new \HomeDocs\User("", $id . "@localhost.localnet", "secret"))->update(self::$dbh);
+        new \HomeDocs\User("", $id . "@localhost.localnet", "secret")->update(self::$dbh);
     }
 
     public function testUpdateWithoutEmail(): void
@@ -92,7 +92,7 @@ final class UserTest extends \HomeDocs\Test\BaseTest
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("email");
         $id = \HomeDocs\Utils::uuidv4();
-        (new \HomeDocs\User($id, "", "secret"))->update(self::$dbh);
+        new \HomeDocs\User($id, "", "secret")->update(self::$dbh);
     }
 
     public function testUpdateWithoutValidEmailLength(): void
@@ -100,7 +100,7 @@ final class UserTest extends \HomeDocs\Test\BaseTest
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("email");
         $id = \HomeDocs\Utils::uuidv4();
-        (new \HomeDocs\User($id, str_repeat($id, 10) . "@localhost.localnet", "secret"))->update(self::$dbh);
+        new \HomeDocs\User($id, str_repeat($id, 10) . "@localhost.localnet", "secret")->update(self::$dbh);
     }
 
     public function testUpdateWithoutValidEmail(): void
@@ -108,7 +108,7 @@ final class UserTest extends \HomeDocs\Test\BaseTest
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("email");
         $id = \HomeDocs\Utils::uuidv4();
-        (new \HomeDocs\User($id, $id, "secret"))->update(self::$dbh);
+        new \HomeDocs\User($id, $id, "secret")->update(self::$dbh);
     }
 
     public function testUpdate(): void
@@ -126,7 +126,7 @@ final class UserTest extends \HomeDocs\Test\BaseTest
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("id,email");
         $id = \HomeDocs\Utils::uuidv4();
-        (new \HomeDocs\User("", "", "secret"))->get(self::$dbh);
+        new \HomeDocs\User("", "", "secret")->get(self::$dbh);
     }
 
     public function testGetWithoutValidEmailLength(): void
@@ -134,7 +134,7 @@ final class UserTest extends \HomeDocs\Test\BaseTest
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("id,email");
         $id = \HomeDocs\Utils::uuidv4();
-        (new \HomeDocs\User("", str_repeat($id, 10) . "@server.com", "secret"))->get(self::$dbh);
+        new \HomeDocs\User("", str_repeat($id, 10) . "@server.com", "secret")->get(self::$dbh);
     }
 
     public function testGetWithoutValidEmail(): void
@@ -142,21 +142,21 @@ final class UserTest extends \HomeDocs\Test\BaseTest
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("id,email");
         $id = \HomeDocs\Utils::uuidv4();
-        (new \HomeDocs\User("", $id, "secret"))->get(self::$dbh);
+        new \HomeDocs\User("", $id, "secret")->get(self::$dbh);
     }
 
     public function testGetWithNonExistentId(): void
     {
         $this->expectException(\HomeDocs\Exception\NotFoundException::class);
         $id = \HomeDocs\Utils::uuidv4();
-        (new \HomeDocs\User($id, $id, "secret"))->get(self::$dbh);
+        new \HomeDocs\User($id, $id, "secret")->get(self::$dbh);
     }
 
     public function testGetWithNonExistentEmail(): void
     {
         $this->expectException(\HomeDocs\Exception\NotFoundException::class);
         $id = \HomeDocs\Utils::uuidv4();
-        (new \HomeDocs\User($id, $id . "@server.com", "secret"))->get(self::$dbh);
+        new \HomeDocs\User($id, $id . "@server.com", "secret")->get(self::$dbh);
     }
 
     public function testGet(): void
@@ -202,7 +202,7 @@ final class UserTest extends \HomeDocs\Test\BaseTest
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("id,email");
         $id = \HomeDocs\Utils::uuidv4();
-        (new \HomeDocs\User("", "", "secret"))->login(self::$dbh);
+        new \HomeDocs\User("", "", "secret")->login(self::$dbh);
     }
 
     public function testLoginWithoutPassword(): void
@@ -210,14 +210,14 @@ final class UserTest extends \HomeDocs\Test\BaseTest
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("password");
         $id = \HomeDocs\Utils::uuidv4();
-        (new \HomeDocs\User($id, $id . "@server.com", ""))->login(self::$dbh);
+        new \HomeDocs\User($id, $id . "@server.com", "")->login(self::$dbh);
     }
 
     public function testLoginWithoutExistentEmail(): void
     {
         $this->expectException(\HomeDocs\Exception\NotFoundException::class);
         $id = \HomeDocs\Utils::uuidv4();
-        (new \HomeDocs\User($id, $id . "@server.com", "secret"))->login(self::$dbh);
+        new \HomeDocs\User($id, $id . "@server.com", "secret")->login(self::$dbh);
     }
 
     public function testLoginWithoutValidEmailLength(): void

@@ -98,7 +98,7 @@ class Utils
         $size = intval(preg_replace('/[^0-9\.]/', '', $iniSize)); // Remove the non-numeric characters from the size.
         if ($unit) {
             // Find the position of the unit in the ordered string which is the power of magnitude to multiply a kilobyte by.
-            return round($size * pow(1024, stripos('bkmgtpezy', $unit[0])));
+            return round($size * 1024 ** stripos('bkmgtpezy', $unit[0]));
         } else {
             return round(floatval($size));
         }

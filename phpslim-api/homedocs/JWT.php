@@ -6,19 +6,14 @@ class JWT
 {
     public const ALGORITHM = 'HS256';
 
-    private \Psr\Log\LoggerInterface $logger;
-    private string $passphrase;
-
     /**
      * jwt constructor
      *
      * @param string $passphrase
      */
-    public function __construct(\Psr\Log\LoggerInterface $logger, string $passphrase)
+    public function __construct(private readonly \Psr\Log\LoggerInterface $logger, private readonly string $passphrase)
     {
-        $this->logger = $logger;
-        $this->passphrase = $passphrase;
-        $this->logger->debug("JWT passphrase", [$passphrase]);
+        $this->logger->debug("JWT passphrase", [$this->passphrase]);
     }
 
     public function __destruct()

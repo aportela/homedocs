@@ -6,16 +6,10 @@ namespace HomeDocs;
 
 class User
 {
-    public ?string $id;
-    public ?string $email;
-    public ?string $password;
-    public ?string $passwordHash;
+    public ?string $passwordHash = null;
 
-    public function __construct(string $id = "", string $email = "", string $password = "")
+    public function __construct(public ?string $id = "", public ?string $email = "", public ?string $password = "")
     {
-        $this->id = $id;
-        $this->email = $email;
-        $this->password = $password;
     }
 
     private function passwordHash(string $password = ""): string
@@ -123,7 +117,7 @@ class User
         try {
             $this->get($dbh);
             return (true);
-        } catch (\HomeDocs\Exception\NotFoundException $e) {
+        } catch (\HomeDocs\Exception\NotFoundException) {
             return (false);
         }
     }
@@ -153,7 +147,7 @@ class User
     {
         if (!empty($this->password)) {
             $this->get($dbh);
-            if (password_verify($this->password, $this->passwordHash)) {
+            if (password_verify((string) $this->password, (string) $this->passwordHash)) {
                 \HomeDocs\UserSession::set($this->id, $this->email);
                 return (true);
             } else {

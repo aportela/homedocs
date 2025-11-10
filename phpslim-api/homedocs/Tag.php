@@ -65,9 +65,7 @@ class Tag
             ]
         );
         $results = array_map(
-            function ($item) {
-                return ($item->tag);
-            },
+            fn($item) => $item->tag,
             $results
         );
         return ($results);

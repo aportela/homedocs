@@ -46,6 +46,6 @@ class CmdLine
      */
     public function getParamValue(string $key): string
     {
-        return (isset($this->options[$key]) ? $this->options[$key] : null);
+        return ($this->options[$key] ?? null);
     }
 }

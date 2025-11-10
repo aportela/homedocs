@@ -34,7 +34,7 @@ if (count($missingExtensions) > 0) {
         try {
             $u->get($dbh);
             $found = true;
-        } catch (\HomeDocs\Exception\NotFoundException $e) {
+        } catch (\HomeDocs\Exception\NotFoundException) {
         }
         if ($found) {
             //$c["logger"]->debug("Account exists -> update credentials");

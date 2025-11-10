@@ -8,11 +8,6 @@ class Mock
     public const int DEFAULT_MAX_ATTACHMENTS = 4;
     public const int DEFAULT_MAX_NOTES = 2;
 
-    private ?string $userId = null;
-    private int $maxDocumentUpdatesCount = 0;
-    private int $maxDocumentAttachmentsCount = 0;
-    private int $maxDocumentNotes = 0;
-
     /**
      * @var array<string,string>
      */
@@ -180,12 +175,8 @@ class Mock
         "employee_performance_evaluation.pdf"
     ];
 
-    public function __construct(string $userId, int $maxDocumentUpdatesCount = self::DEFAULT_MAX_DOCUMENT_UPDATES, int $maxDocumentAttachmentsCount = self::DEFAULT_MAX_ATTACHMENTS, int $maxDocumentNotes = self::DEFAULT_MAX_NOTES)
+    public function __construct(private readonly ?string $userId, private readonly int $maxDocumentUpdatesCount = self::DEFAULT_MAX_DOCUMENT_UPDATES, private readonly int $maxDocumentAttachmentsCount = self::DEFAULT_MAX_ATTACHMENTS, private readonly int $maxDocumentNotes = self::DEFAULT_MAX_NOTES)
     {
-        $this->userId = $userId;
-        $this->maxDocumentUpdatesCount = $maxDocumentUpdatesCount;
-        $this->maxDocumentAttachmentsCount = $maxDocumentAttachmentsCount;
-        $this->maxDocumentNotes = $maxDocumentNotes;
     }
 
     /**
@@ -195,10 +186,8 @@ class Mock
     {
         $text = mb_strtolower($text);
         $text = preg_replace('/[^a-záéíóúöñ0-9\s]/', '', $text);
-        $words = explode(' ', $text);
-        $keywords = array_filter($words, function ($word) {
-            return mb_strlen($word) > 4 && mb_strlen($word) < 10;
-        });
+        $words = explode(' ', (string) $text);
+        $keywords = array_filter($words, fn($word) => mb_strlen((string) $word) > 4 && mb_strlen((string) $word) < 10);
         return array_values($keywords);
     }
 

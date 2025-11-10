@@ -6,14 +6,7 @@ namespace HomeDocs;
 
 class Note
 {
-    public ?string $id;
-    public ?int $createdOnTimestamp;
-    public ?string $body;
-
-    public function __construct(?string $id = null, ?int $createdOnTimestamp = null, ?string $body = null)
+    public function __construct(public ?string $id = null, public ?int $createdOnTimestamp = null, public ?string $body = null)
     {
-        $this->id = $id;
-        $this->createdOnTimestamp = $createdOnTimestamp;
-        $this->body = $body;
     }
 }

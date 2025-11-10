@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace HomeDocs\Test;
 
-require_once dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
+require_once dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
 
 abstract class BaseTest extends \PHPUnit\Framework\TestCase
 {
@@ -29,7 +29,7 @@ abstract class BaseTest extends \PHPUnit\Framework\TestCase
         $containerBuilder = new \DI\ContainerBuilder();
 
         // Set up settings
-        $containerBuilder->addDefinitions(dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'container.php');
+        $containerBuilder->addDefinitions(dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'container.php');
 
         // Build PHP-DI Container instance
         self::$container = $containerBuilder->build();

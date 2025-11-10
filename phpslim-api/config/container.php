@@ -8,9 +8,7 @@ use Slim\Middleware\ErrorMiddleware;
 require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 
 return [
-    'settings' => function () {
-        return require __DIR__ . DIRECTORY_SEPARATOR . 'settings.php';
-    },
+    'settings' => fn() => require __DIR__ . DIRECTORY_SEPARATOR . 'settings.php',
 
     App::class => function (ContainerInterface $container) {
         AppFactory::setContainer($container);
@@ -94,7 +92,5 @@ return [
         return (new \HomeDocs\Logger\InstallerLogger($logger));
     },
 
-    \HomeDocs\Middleware\APIExceptionCatcher::class => function (ContainerInterface $container) {
-        return (new \HomeDocs\Middleware\APIExceptionCatcher($container->get(\HomeDocs\Logger\HTTPRequestLogger::class)));
-    }
+    \HomeDocs\Middleware\APIExceptionCatcher::class => fn(ContainerInterface $container) => new \HomeDocs\Middleware\APIExceptionCatcher($container->get(\HomeDocs\Logger\HTTPRequestLogger::class))
 ];

@@ -11,8 +11,4 @@ return RectorConfig::configure()
         __DIR__ . '/public',
         __DIR__ . '/tools',
     ])
-    // uncomment to reach your current PHP version
-    // ->withPhpSets()
-    ->withTypeCoverageLevel(0)
-    ->withDeadCodeLevel(0)
-    ->withCodeQualityLevel(0);
+    ->withPhpSets(php84: true);

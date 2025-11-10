@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace HomeDocs\Test;
 
-require_once dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
+require_once dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
 
 final class TagTest extends \HomeDocs\Test\BaseTest
 {
@@ -17,15 +17,11 @@ final class TagTest extends \HomeDocs\Test\BaseTest
         $d->add(self::$dbh);
         $tagCloud = \HomeDocs\Tag::getCloud(self::$dbh);
         $this->assertTrue(count($tagCloud) >= 2);
-        $tags = array_values(array_filter($tagCloud, function ($obj) use ($tag1) {
-            return ($obj->tag == $tag1);
-        }));
+        $tags = array_values(array_filter($tagCloud, fn($obj) => $obj->tag == $tag1));
         $this->assertEquals(1, count($tags));
         $this->assertEquals($tag1, $tags[0]->tag);
         $this->assertEquals(1, $tags[0]->total);
-        $tags = array_values(array_filter($tagCloud, function ($obj) use ($tag2) {
-            return ($obj->tag == $tag2);
-        }));
+        $tags = array_values(array_filter($tagCloud, fn($obj) => $obj->tag == $tag2));
         $this->assertEquals(1, count($tags));
         $this->assertEquals($tag2, $tags[0]->tag);
         $this->assertEquals(1, $tags[0]->total);

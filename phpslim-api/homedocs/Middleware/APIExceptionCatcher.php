@@ -6,11 +6,8 @@ namespace HomeDocs\Middleware;
 
 class APIExceptionCatcher
 {
-    protected \Psr\Log\LoggerInterface $logger;
-
-    public function __construct(\HomeDocs\Logger\HTTPRequestLogger $logger)
+    public function __construct(protected \Psr\Log\LoggerInterface $logger)
     {
-        $this->logger = $logger;
     }
 
     /**
@@ -18,7 +15,7 @@ class APIExceptionCatcher
      */
     private function handleException(\Exception $e, int $statusCode, array $payload): \Psr\Http\Message\ResponseInterface
     {
-        $this->logger->debug(sprintf("Exception caught (%s) - Message: %s", get_class($e), $e->getMessage()));
+        $this->logger->debug(sprintf("Exception caught (%s) - Message: %s", $e::class, $e->getMessage()));
         $response = new \Slim\Psr7\Response();
         $response->getBody()->write(json_encode($payload));
         return $response->withStatus($statusCode);
@@ -26,11 +23,11 @@ class APIExceptionCatcher
 
     private function handleGenericException(\Throwable $e): \Psr\Http\Message\ResponseInterface
     {
-        $this->logger->error(sprintf("Unhandled exception caught (%s) - Message: %s", get_class($e), $e->getMessage()));
+        $this->logger->error(sprintf("Unhandled exception caught (%s) - Message: %s", $e::class, $e->getMessage()));
         $this->logger->debug($e->getTraceAsString());
         $response = new \Slim\Psr7\Response();
         $exception = [
-            'type' => get_class($e),
+            'type' => $e::class,
             'message' => $e->getMessage(),
             'file' => $e->getFile(),
             'line' => $e->getLine()
@@ -38,7 +35,7 @@ class APIExceptionCatcher
         $parent = $e->getPrevious();
         if ($parent) {
             $exception['parent'] = [
-                'type' => get_class($parent),
+                'type' => $parent::class,
                 'message' => $parent->getMessage(),
                 'file' => $parent->getFile(),
                 'line' => $parent->getLine()
