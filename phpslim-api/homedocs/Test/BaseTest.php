@@ -6,7 +6,7 @@ namespace HomeDocs\Test;
 
 require_once dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
 
-class BaseTest extends \PHPUnit\Framework\TestCase
+abstract class BaseTest extends \PHPUnit\Framework\TestCase
 {
     public static ?\Slim\App $app;
     public static \Psr\Container\ContainerInterface $container;

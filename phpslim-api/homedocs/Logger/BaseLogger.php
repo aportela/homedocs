@@ -6,7 +6,7 @@ namespace HomeDocs\Logger;
 
 use Stringable;
 
-class BaseLogger implements \Psr\Log\LoggerInterface
+abstract class BaseLogger implements \Psr\Log\LoggerInterface
 {
     private \Psr\Log\LoggerInterface $logger;
 
