@@ -37,8 +37,8 @@ return function (App $app): void {
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             });
 
-            $routeCollectorProxy->group('/auth', function (RouteCollectorProxy $group) use ($app, $initialState): void {
-                $group->post('/register', function (Request $request, Response $response, array $args) use ($app, $initialState) {
+            $routeCollectorProxy->group('/auth', function (RouteCollectorProxy $routeCollectorProxy) use ($app, $initialState): void {
+                $routeCollectorProxy->post('/register', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $settings = $app->getContainer()->get('settings');
                     if ($settings['common']['allowSignUp']) {
                         $params = $request->getParsedBody();
@@ -69,7 +69,7 @@ return function (App $app): void {
                     }
                 });
 
-                $group->post('/login', function (Request $request, Response $response, array $args) use ($app, $initialState) {
+                $routeCollectorProxy->post('/login', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $params = $request->getParsedBody();
                     $dbh = $app->getContainer()->get(\aportela\DatabaseWrapper\DB::class);
                     $user = new \HomeDocs\User(
@@ -92,7 +92,7 @@ return function (App $app): void {
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
 
-                $group->post('/logout', function (Request $request, Response $response, array $args) use ($initialState) {
+                $routeCollectorProxy->post('/logout', function (Request $request, Response $response, array $args) use ($initialState) {
                     \HomeDocs\User::logout();
                     $payload = json_encode(
                         [
@@ -108,8 +108,8 @@ return function (App $app): void {
                 });
             });
 
-            $routeCollectorProxy->group('/user', function (RouteCollectorProxy $group) use ($app, $initialState): void {
-                $group->get('/profile', function (Request $request, Response $response, array $args) use ($app, $initialState) {
+            $routeCollectorProxy->group('/user', function (RouteCollectorProxy $routeCollectorProxy) use ($app, $initialState): void {
+                $routeCollectorProxy->get('/profile', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $user = new \HomeDocs\User(\HomeDocs\UserSession::getUserId());
                     $user->get($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class));
                     unset($user->password);
@@ -128,7 +128,7 @@ return function (App $app): void {
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
 
-                $group->put('/profile', function (Request $request, Response $response, array $args) use ($app, $initialState) {
+                $routeCollectorProxy->put('/profile', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $params = $request->getParsedBody();
                     $dbh = $app->getContainer()->get(\aportela\DatabaseWrapper\DB::class);
                     $user = new \HomeDocs\User(\HomeDocs\UserSession::getUserId());
@@ -163,9 +163,9 @@ return function (App $app): void {
                 });
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $routeCollectorProxy->group('/search', function (RouteCollectorProxy $group) use ($app, $initialState): void {
+            $routeCollectorProxy->group('/search', function (RouteCollectorProxy $routeCollectorProxy) use ($app, $initialState): void {
                 // TODO: is this required ? can be recplaced only with /search/document with custom params
-                $group->post('/recent_documents', function (Request $request, Response $response, array $args) use ($app, $initialState) {
+                $routeCollectorProxy->post('/recent_documents', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $settings = $app->getContainer()->get('settings');
                     $params = $request->getParsedBody();
                     $payload = json_encode(
@@ -185,7 +185,7 @@ return function (App $app): void {
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
 
-                $group->post('/document', function (Request $request, Response $response, array $args) use ($app, $initialState) {
+                $routeCollectorProxy->post('/document', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $settings = $app->getContainer()->get('settings');
                     $params = $request->getParsedBody();
                     $payload = json_encode(
@@ -221,8 +221,8 @@ return function (App $app): void {
                 });
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $routeCollectorProxy->group('/document', function (RouteCollectorProxy $group) use ($app, $initialState): void {
-                $group->get('/{id}', function (Request $request, Response $response, array $args) use ($app, $initialState) {
+            $routeCollectorProxy->group('/document', function (RouteCollectorProxy $routeCollectorProxy) use ($app, $initialState): void {
+                $routeCollectorProxy->get('/{id}', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $document = new \HomeDocs\Document();
                     $document->id = $args['id'];
                     $document->setRootStoragePath($app->getContainer()->get('settings')['paths']['storage']);
@@ -242,7 +242,7 @@ return function (App $app): void {
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
 
-                $group->get('/{id}/notes', function (Request $request, Response $response, array $args) use ($app, $initialState) {
+                $routeCollectorProxy->get('/{id}/notes', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $document = new \HomeDocs\Document();
                     $document->id = $args['id'];
                     $document->setRootStoragePath($app->getContainer()->get('settings')['paths']['storage']);
@@ -262,7 +262,7 @@ return function (App $app): void {
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
 
-                $group->get('/{id}/attachments', function (Request $request, Response $response, array $args) use ($app, $initialState) {
+                $routeCollectorProxy->get('/{id}/attachments', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $document = new \HomeDocs\Document();
                     $document->id = $args['id'];
                     $document->setRootStoragePath($app->getContainer()->get('settings')['paths']['storage']);
@@ -282,7 +282,7 @@ return function (App $app): void {
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
 
-                $group->post('/{id}', function (Request $request, Response $response, array $args) use ($app, $initialState) {
+                $routeCollectorProxy->post('/{id}', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $params = $request->getParsedBody();
                     $documentAttachments = $params["attachments"] ?? [];
                     $rootStoragePath = $app->getContainer()->get('settings')['paths']['storage'];
@@ -351,7 +351,7 @@ return function (App $app): void {
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
 
-                $group->put('/{id}', function (Request $request, Response $response, array $args) use ($app, $initialState) {
+                $routeCollectorProxy->put('/{id}', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $params = $request->getParsedBody();
                     $dbh = $app->getContainer()->get(\aportela\DatabaseWrapper\DB::class);
                     $document = new \HomeDocs\Document(
@@ -423,7 +423,7 @@ return function (App $app): void {
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
 
-                $group->delete('/{id}', function (Request $request, Response $response, array $args) use ($app, $initialState) {
+                $routeCollectorProxy->delete('/{id}', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $document = new \HomeDocs\Document(
                         $args['id']
                     );
@@ -455,8 +455,8 @@ return function (App $app): void {
                 });
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $routeCollectorProxy->group('/attachment', function (RouteCollectorProxy $group) use ($app, $initialState): void {
-                $group->get('/{id}[/{inline}]', function (Request $request, Response $response, array $args) use ($app): \Psr\Http\Message\MessageInterface {
+            $routeCollectorProxy->group('/attachment', function (RouteCollectorProxy $routeCollectorProxy) use ($app, $initialState): void {
+                $routeCollectorProxy->get('/{id}[/{inline}]', function (Request $request, Response $response, array $args) use ($app): \Psr\Http\Message\MessageInterface {
                     $attachment = new \HomeDocs\Attachment(
                         $app->getContainer()->get('settings')['paths']['storage'],
                         $args['id']
@@ -505,7 +505,7 @@ return function (App $app): void {
                     }
                 });
 
-                $group->post('[/{id}]', function (Request $request, Response $response, array $args) use ($app, $initialState) {
+                $routeCollectorProxy->post('[/{id}]', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $uploadedFiles = $request->getUploadedFiles();
                     $file = $uploadedFiles['file'] ?? null;
                     if ($file) {
@@ -543,7 +543,7 @@ return function (App $app): void {
                     }
                 });
 
-                $group->delete('/{id}', function (Request $request, Response $response, array $args) use ($app, $initialState) {
+                $routeCollectorProxy->delete('/{id}', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $attachment = new \HomeDocs\Attachment(
                         $app->getContainer()->get('settings')['paths']['storage'],
                         $args['id']
@@ -598,8 +598,8 @@ return function (App $app): void {
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $routeCollectorProxy->group('/stats', function (RouteCollectorProxy $group) use ($app, $initialState): void {
-                $group->get('/total-published-documents', function (Request $request, Response $response, array $args) use ($app, $initialState) {
+            $routeCollectorProxy->group('/stats', function (RouteCollectorProxy $routeCollectorProxy) use ($app, $initialState): void {
+                $routeCollectorProxy->get('/total-published-documents', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $payload = json_encode(
                         [
                             'initialState' => $initialState,
@@ -614,7 +614,7 @@ return function (App $app): void {
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
 
-                $group->get('/total-uploaded-attachments', function (Request $request, Response $response, array $args) use ($app, $initialState) {
+                $routeCollectorProxy->get('/total-uploaded-attachments', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $payload = json_encode(
                         [
                             'initialState' => $initialState,
@@ -629,7 +629,7 @@ return function (App $app): void {
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
 
-                $group->get('/total-uploaded-attachments-disk-usage', function (Request $request, Response $response, array $args) use ($app, $initialState) {
+                $routeCollectorProxy->get('/total-uploaded-attachments-disk-usage', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $payload = json_encode(
                         [
                             'initialState' => $initialState,
@@ -644,7 +644,7 @@ return function (App $app): void {
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
 
-                $group->get('/heatmap-activity-data', function (Request $request, Response $response, array $args) use ($app, $initialState) {
+                $routeCollectorProxy->get('/heatmap-activity-data', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $queryParams = $request->getQueryParams();
                     $payload = json_encode(
                         [
