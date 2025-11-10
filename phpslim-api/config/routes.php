@@ -19,11 +19,11 @@ return function (App $app): void {
 
     $app->group(
         '/api3',
-        function (RouteCollectorProxy $group) use ($app): void {
+        function (RouteCollectorProxy $routeCollectorProxy) use ($app): void {
 
             $initialState = \HomeDocs\Utils::getInitialState($app->getContainer());
 
-            $group->get('/initial_state', function (Request $request, Response $response, array $args) use ($initialState) {
+            $routeCollectorProxy->get('/initial_state', function (Request $request, Response $response, array $args) use ($initialState) {
                 $payload = json_encode(
                     [
                         'initialState' => $initialState
@@ -32,12 +32,12 @@ return function (App $app): void {
                 if (json_last_error() !== JSON_ERROR_NONE) {
                     throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                 }
-                
+
                 $response->getBody()->write($payload);
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             });
 
-            $group->group('/auth', function (RouteCollectorProxy $group) use ($app, $initialState): void {
+            $routeCollectorProxy->group('/auth', function (RouteCollectorProxy $group) use ($app, $initialState): void {
                 $group->post('/register', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $settings = $app->getContainer()->get('settings');
                     if ($settings['common']['allowSignUp']) {
@@ -60,7 +60,7 @@ return function (App $app): void {
                             if (json_last_error() !== JSON_ERROR_NONE) {
                                 throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                             }
-                            
+
                             $response->getBody()->write($payload);
                             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                         }
@@ -78,7 +78,7 @@ return function (App $app): void {
                         $params["password"] ?? ""
                     );
                     $user->login($dbh);
-                    
+
                     $payload = json_encode(
                         [
                             'initialState' => $initialState
@@ -87,7 +87,7 @@ return function (App $app): void {
                     if (json_last_error() !== JSON_ERROR_NONE) {
                         throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
-                    
+
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
@@ -102,13 +102,13 @@ return function (App $app): void {
                     if (json_last_error() !== JSON_ERROR_NONE) {
                         throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
-                    
+
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
             });
 
-            $group->group('/user', function (RouteCollectorProxy $group) use ($app, $initialState): void {
+            $routeCollectorProxy->group('/user', function (RouteCollectorProxy $group) use ($app, $initialState): void {
                 $group->get('/profile', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $user = new \HomeDocs\User(\HomeDocs\UserSession::getUserId());
                     $user->get($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class));
@@ -123,7 +123,7 @@ return function (App $app): void {
                     if (json_last_error() !== JSON_ERROR_NONE) {
                         throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
-                    
+
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
@@ -142,7 +142,7 @@ return function (App $app): void {
                             throw new \HomeDocs\Exception\AlreadyExistsException("email");
                         }
                     }
-                    
+
                     $user->email = $params["email"] ?? "";
                     $user->password = $params["password"] ?? "";
                     $user->update($dbh);
@@ -157,13 +157,13 @@ return function (App $app): void {
                     if (json_last_error() !== JSON_ERROR_NONE) {
                         throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
-                    
+
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $group->group('/search', function (RouteCollectorProxy $group) use ($app, $initialState): void {
+            $routeCollectorProxy->group('/search', function (RouteCollectorProxy $group) use ($app, $initialState): void {
                 // TODO: is this required ? can be recplaced only with /search/document with custom params
                 $group->post('/recent_documents', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $settings = $app->getContainer()->get('settings');
@@ -180,7 +180,7 @@ return function (App $app): void {
                     if (json_last_error() !== JSON_ERROR_NONE) {
                         throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
-                    
+
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
@@ -215,19 +215,19 @@ return function (App $app): void {
                     if (json_last_error() !== JSON_ERROR_NONE) {
                         throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
-                    
+
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $group->group('/document', function (RouteCollectorProxy $group) use ($app, $initialState): void {
+            $routeCollectorProxy->group('/document', function (RouteCollectorProxy $group) use ($app, $initialState): void {
                 $group->get('/{id}', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $document = new \HomeDocs\Document();
                     $document->id = $args['id'];
                     $document->setRootStoragePath($app->getContainer()->get('settings')['paths']['storage']);
                     $document->get($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class));
-                    
+
                     $payload = json_encode(
                         [
                             'initialState' => $initialState,
@@ -237,7 +237,7 @@ return function (App $app): void {
                     if (json_last_error() !== JSON_ERROR_NONE) {
                         throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
-                    
+
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
@@ -247,7 +247,7 @@ return function (App $app): void {
                     $document->id = $args['id'];
                     $document->setRootStoragePath($app->getContainer()->get('settings')['paths']['storage']);
                     $document->get($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class));
-                    
+
                     $payload = json_encode(
                         [
                             'initialState' => $initialState,
@@ -257,7 +257,7 @@ return function (App $app): void {
                     if (json_last_error() !== JSON_ERROR_NONE) {
                         throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
-                    
+
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
@@ -267,7 +267,7 @@ return function (App $app): void {
                     $document->id = $args['id'];
                     $document->setRootStoragePath($app->getContainer()->get('settings')['paths']['storage']);
                     $document->get($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class));
-                    
+
                     $payload = json_encode(
                         [
                             'initialState' => $initialState,
@@ -277,7 +277,7 @@ return function (App $app): void {
                     if (json_last_error() !== JSON_ERROR_NONE) {
                         throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
-                    
+
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
@@ -298,7 +298,7 @@ return function (App $app): void {
                             );
                         }
                     }
-                    
+
                     $documentNotes = $params["notes"] ?? [];
                     $notes = [];
                     if (is_array($documentNotes) && $documentNotes !== []) {
@@ -310,7 +310,7 @@ return function (App $app): void {
                             );
                         }
                     }
-                    
+
                     $rootStoragePath = $app->getContainer()->get('settings')['paths']['storage'];
                     $document = new \HomeDocs\Document(
                         $args['id'],
@@ -323,7 +323,7 @@ return function (App $app): void {
                         $notes,
                     );
                     $document->setRootStoragePath($rootStoragePath);
-                    
+
                     $dbh = $app->getContainer()->get(\aportela\DatabaseWrapper\DB::class);
                     $dbh->beginTransaction();
                     try {
@@ -333,10 +333,10 @@ return function (App $app): void {
                         $dbh->rollBack();
                         throw $dBException;
                     }
-                    
+
                     $document->setRootStoragePath($rootStoragePath);
                     $document->get($dbh);
-                    
+
                     $payload = json_encode(
                         [
                             'initialState' => $initialState,
@@ -346,7 +346,7 @@ return function (App $app): void {
                     if (json_last_error() !== JSON_ERROR_NONE) {
                         throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
-                    
+
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
@@ -361,7 +361,7 @@ return function (App $app): void {
                     $rootStoragePath = $app->getContainer()->get('settings')['paths']['storage'];
                     $document->setRootStoragePath($rootStoragePath);
                     $document->get($dbh);
-                    
+
                     $documentAttachments = $params["attachments"] ?? [];
                     $attachments = [];
                     if (is_array($documentAttachments) && $documentAttachments !== []) {
@@ -375,7 +375,7 @@ return function (App $app): void {
                             );
                         }
                     }
-                    
+
                     $documentNotes = $params["notes"] ?? [];
                     $notes = [];
                     if (is_array($documentNotes) && $documentNotes !== []) {
@@ -407,7 +407,7 @@ return function (App $app): void {
                         $dbh->rollBack();
                         throw $dBException;
                     }
-                    
+
                     $document->get($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class));
                     $payload = json_encode(
                         [
@@ -418,7 +418,7 @@ return function (App $app): void {
                     if (json_last_error() !== JSON_ERROR_NONE) {
                         throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
-                    
+
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
@@ -428,7 +428,7 @@ return function (App $app): void {
                         $args['id']
                     );
                     $document->setRootStoragePath($app->getContainer()->get('settings')['paths']['storage']);
-                    
+
                     $dbh = $app->getContainer()->get(\aportela\DatabaseWrapper\DB::class);
                     // test existence && check permissions
                     $document->get($dbh);
@@ -440,7 +440,7 @@ return function (App $app): void {
                         $dbh->rollBack();
                         throw $dBException;
                     }
-                    
+
                     $payload = json_encode(
                         [
                             'initialState' => $initialState
@@ -449,20 +449,20 @@ return function (App $app): void {
                     if (json_last_error() !== JSON_ERROR_NONE) {
                         throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
-                    
+
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $group->group('/attachment', function (RouteCollectorProxy $group) use ($app, $initialState): void {
+            $routeCollectorProxy->group('/attachment', function (RouteCollectorProxy $group) use ($app, $initialState): void {
                 $group->get('/{id}[/{inline}]', function (Request $request, Response $response, array $args) use ($app): \Psr\Http\Message\MessageInterface {
                     $attachment = new \HomeDocs\Attachment(
                         $app->getContainer()->get('settings')['paths']['storage'],
                         $args['id']
                     );
                     $attachment->get($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class));
-                    
+
                     $localStoragePath = $attachment->getLocalStoragePath();
                     if (file_exists($localStoragePath)) {
                         $partialContent = false;
@@ -479,7 +479,7 @@ return function (App $app): void {
                             $offset = intval($matches[1]);
                             $length = ((isset($matches[2])) ? intval($matches[2]) : $attachment->size) - $offset;
                         }
-                        
+
                         $f = fopen($localStoragePath, 'r');
                         fseek($f, $offset);
                         $data = fread($f, $length);
@@ -534,7 +534,7 @@ return function (App $app): void {
                             if (json_last_error() !== JSON_ERROR_NONE) {
                                 throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                             }
-                            
+
                             $response->getBody()->write($payload);
                             return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                         }
@@ -561,14 +561,14 @@ return function (App $app): void {
                         if (json_last_error() !== JSON_ERROR_NONE) {
                             throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                         }
-                        
+
                         $response->getBody()->write($payload);
                         return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                     }
                 });
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $group->get('/tag-cloud', function (Request $request, Response $response, array $args) use ($app, $initialState) {
+            $routeCollectorProxy->get('/tag-cloud', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                 $payload = json_encode(
                     [
                         'initialState' => $initialState,
@@ -578,12 +578,12 @@ return function (App $app): void {
                 if (json_last_error() !== JSON_ERROR_NONE) {
                     throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                 }
-                
+
                 $response->getBody()->write($payload);
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $group->get('/tags', function (Request $request, Response $response, array $args) use ($app, $initialState) {
+            $routeCollectorProxy->get('/tags', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                 $payload = json_encode(
                     [
                         'initialState' => $initialState,
@@ -593,12 +593,12 @@ return function (App $app): void {
                 if (json_last_error() !== JSON_ERROR_NONE) {
                     throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                 }
-                
+
                 $response->getBody()->write($payload);
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $group->group('/stats', function (RouteCollectorProxy $group) use ($app, $initialState): void {
+            $routeCollectorProxy->group('/stats', function (RouteCollectorProxy $group) use ($app, $initialState): void {
                 $group->get('/total-published-documents', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $payload = json_encode(
                         [
@@ -609,7 +609,7 @@ return function (App $app): void {
                     if (json_last_error() !== JSON_ERROR_NONE) {
                         throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
-                    
+
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
@@ -624,7 +624,7 @@ return function (App $app): void {
                     if (json_last_error() !== JSON_ERROR_NONE) {
                         throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
-                    
+
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
@@ -639,7 +639,7 @@ return function (App $app): void {
                     if (json_last_error() !== JSON_ERROR_NONE) {
                         throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
-                    
+
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
@@ -658,7 +658,7 @@ return function (App $app): void {
                     if (json_last_error() !== JSON_ERROR_NONE) {
                         throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
-                    
+
                     $response->getBody()->write($payload);
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
