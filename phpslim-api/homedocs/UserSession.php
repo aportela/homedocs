@@ -37,11 +37,11 @@ class UserSession
 
     public static function getUserId(): string
     {
-        return $_SESSION["userId"] ?? '';
+        return is_string($_SESSION["userId"]) ? $_SESSION["userId"] : '';
     }
 
     public static function getEmail(): string
     {
-        return $_SESSION["email"] ?? '';
+        return is_string($_SESSION["email"]) ? $_SESSION["email"] : '';
     }
 }

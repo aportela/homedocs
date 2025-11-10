@@ -78,7 +78,7 @@ class User
 
     public function get(\aportela\DatabaseWrapper\DB $db): void
     {
-        $results = null;
+        $results = [];
         if (!in_array($this->id, [null, '', '0'], true) && mb_strlen($this->id) === 36) {
             $results = $db->query(
                 "
@@ -108,9 +108,9 @@ class User
         }
 
         if (count($results) === 1) {
-            $this->id = $results[0]->id ?? null;
-            $this->email = $results[0]->email ?? null;
-            $this->passwordHash = $results[0]->passwordHash ?? null;
+            $this->id = is_string($results[0]->id ?? null) ? $results[0]->id ?? null : null;
+            $this->email = is_string($results[0]->email ?? null) ? $results[0]->email ?? null : null;
+            $this->passwordHash = is_string($results[0]->passwordHash ?? null) ? $results[0]->passwordHash ?? null : null;
         } else {
             throw new \HomeDocs\Exception\NotFoundException("");
         }
