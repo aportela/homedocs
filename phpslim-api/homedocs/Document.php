@@ -579,7 +579,7 @@ class Document
                     $paramName = sprintf(":ATTACHMENT_NAME_%03d", $totalWords);
                     $params[] = new \aportela\DatabaseWrapper\Param\StringParam($paramName, "%" . $word . "%");
                     $queryConditions[] = sprintf(" ATTACHMENT.name LIKE %s ", $paramName);
-                    $totalWords--;
+                    --$totalWords;
                 }
             }
         }
@@ -642,7 +642,7 @@ class Document
                     $paramName = sprintf(":BODY_%03d", $totalWords);
                     $params[] = new \aportela\DatabaseWrapper\Param\StringParam($paramName, "%" . $word . "%");
                     $queryConditions[] = sprintf(" DOCUMENT_NOTE.body LIKE %s ", $paramName);
-                    $totalWords--;
+                    --$totalWords;
                 }
             }
         }
@@ -818,7 +818,7 @@ class Document
                     $paramName = sprintf(":TITLE_%03d", $totalWords);
                     $params[] = new \aportela\DatabaseWrapper\Param\StringParam($paramName, "%" . $word . "%");
                     $queryConditions[] = sprintf(" DOCUMENT.title LIKE %s ", $paramName);
-                    $totalWords--;
+                    --$totalWords;
                 }
             }
         }
@@ -832,7 +832,7 @@ class Document
                     $paramName = sprintf(":DESCRIPTION_%03d", $totalWords);
                     $params[] = new \aportela\DatabaseWrapper\Param\StringParam($paramName, "%" . $word . "%");
                     $queryConditions[] = sprintf(" DOCUMENT.description LIKE %s ", $paramName);
-                    $totalWords--;
+                    --$totalWords;
                 }
             }
         }
@@ -847,7 +847,7 @@ class Document
                     $paramName = sprintf(":NOTES_BODY_%03d", $totalWords);
                     $params[] = new \aportela\DatabaseWrapper\Param\StringParam($paramName, "%" . $word . "%");
                     $notesConditions[] = sprintf(" DOCUMENT_NOTE.body LIKE %s ", $paramName);
-                    $totalWords--;
+                    --$totalWords;
                 }
                 
                 $queryConditions[] = sprintf("
@@ -874,7 +874,7 @@ class Document
                     $paramName = sprintf(":ATTACHMENTS_FILENAME_%03d", $totalWords);
                     $params[] = new \aportela\DatabaseWrapper\Param\StringParam($paramName, "%" . $word . "%");
                     $notesConditions[] = sprintf(" ATTACHMENT.name LIKE %s ", $paramName);
-                    $totalWords--;
+                    --$totalWords;
                 }
                 
                 $queryConditions[] = sprintf("

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HomeDocs;
 
 class Mock
@@ -245,7 +247,7 @@ class Mock
         $queries[] = sprintf('INSERT INTO DOCUMENT_HISTORY (document_id, ctime, operation_type, cuid) VALUES("%s", %d, 1, "%s");', $documentId, $creationTimestamp * 1000, $this->userId);
 
         $documentUpdatesCount = mt_rand(0, $this->maxDocumentUpdatesCount);
-        for ($j = 0; $j < $documentUpdatesCount; $j++) {
+        for ($j = 0; $j < $documentUpdatesCount; ++$j) {
             $queries[] = sprintf(
                 'INSERT INTO DOCUMENT_HISTORY (document_id, ctime, operation_type, cuid) VALUES("%s", %d, 2, "%s");',
                 $documentId,
@@ -268,7 +270,7 @@ class Mock
         }
 
         $documentNotesCount = mt_rand(0, $this->maxDocumentNotes);
-        for ($j = 0; $j < $documentNotesCount; $j++) {
+        for ($j = 0; $j < $documentNotesCount; ++$j) {
             $queries[] = sprintf(
                 'INSERT INTO DOCUMENT_NOTE VALUES("%s", "%s", %d, "%s", "%s");',
                 \HomeDocs\Utils::uuidv4(),

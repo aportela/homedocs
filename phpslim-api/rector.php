@@ -19,5 +19,5 @@ return RectorConfig::configure()
         //naming: true,
         privatization: true,
         //typeDeclarations: true,
-        //rectorPreset: true,
+        rectorPreset: true,
     );

@@ -52,7 +52,7 @@ if ($missingExtensions !== []) {
         
         $totalMocks = $cmdLine->getParamValue("count");
         echo sprintf("Inserting %d mocks: ", $totalMocks);
-        for ($i = 0; $i < $totalMocks; $i++) {
+        for ($i = 0; $i < $totalMocks; ++$i) {
             $mock = new \HomeDocs\Mock($u->id, 3, 5);
             $queries = $mock->getQueries();
             $dbh->beginTransaction();
