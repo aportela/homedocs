@@ -14,7 +14,7 @@ class Document
      * @param array<\HomeDocs\Note> $notes
      * @param array<\HomeDocs\DocumentHistoryOperation> $history
      */
-    public function __construct(public ?string $id = null, public ?string $title = null, public ?string $description = null, public ?int $createdOnTimestamp = null, public ?int $lastUpdateTimestamp = null, public ?array $tags = [], public ?array $attachments = [], public ?array $notes = [], public ?array $history = []) {}
+    public function __construct(public ?string $id = null, public ?string $title = null, public ?string $description = null, public ?int $createdOnTimestamp = null, public ?int $lastUpdateTimestamp = null, public array $tags = [], public array $attachments = [], public array $notes = [], public array $history = []) {}
 
     public function setRootStoragePath(string $rootStoragePath): void
     {
@@ -523,10 +523,10 @@ class Document
             );
             if (count($data) === 1) {
                 if (($data[0]->createdByUserId ?? null) == \HomeDocs\UserSession::getUserId()) {
-                    $this->title = $data[0]->title ?? null;
-                    $this->description = $data[0]->description ?? null;
-                    $this->createdOnTimestamp = intval($data[0]->createdOnTimestamp ?? 0);
-                    $this->lastUpdateTimestamp = intval($data[0]->lastUpdateTimestamp ?? 0);
+                    $this->title = property_exists($data[0], "title") && is_string($data[0]->title) ? $data[0]->title : null;
+                    $this->description = property_exists($data[0], "description") && is_string($data[0]->description) ? $data[0]->description : null;
+                    $this->createdOnTimestamp = property_exists($data[0], "createdOnTimestamp") && is_numeric($data[0]->createdOnTimestamp) ? intval($data[0]->createdOnTimestamp) : 0;
+                    $this->lastUpdateTimestamp = property_exists($data[0], "lastUpdateTimestamp") && is_numeric($data[0]->lastUpdateTimestamp) ? intval($data[0]->lastUpdateTimestamp) : 0;
                     $this->tags = $this->getTags($db);
                     $this->attachments = $this->getAttachments($db);
                     $this->notes = $this->getNotes($db);
@@ -624,11 +624,11 @@ class Document
         foreach ($data as $item) {
             $attachments[] = new \HomeDocs\Attachment(
                 $this->rootStoragePath ?? null,
-                $item->id ?? null,
-                $item->name ?? null,
-                intval($item->size ?? 0),
-                $item->hash ?? null,
-                intval($item->createdOnTimestamp ?? 0)
+                property_exists($item, "id") && is_string($item->id) ? $item->id : null,
+                property_exists($item, "name") && is_string($item->name) ? $item->name : null,
+                property_exists($item, "size") && is_numeric($item->size) ? intval($item->size) : 0,
+                property_exists($item, "hash") && is_string($item->hash) ?  $item->hash : null,
+                property_exists($item, "createdOnTimestamp") && is_numeric($item->createdOnTimestamp) ? intval($item->createdOnTimestamp) : 0
             );
         }
 
@@ -683,9 +683,9 @@ class Document
         );
         foreach ($data as $item) {
             $notes[] = new \HomeDocs\Note(
-                $item->noteId ?? null,
-                intval($item->createdOnTimestamp ?? 0),
-                $item->body ?? null
+                property_exists($item, "noteId") && is_string($item->noteId) ? $item->noteId : null,
+                property_exists($item, "createdOnTimestamp") && is_numeric($item->createdOnTimestamp) ? intval($item->createdOnTimestamp) : 0,
+                property_exists($item, "body") && is_string($item->body) ? $item->body : null
             );
         }
 
@@ -714,8 +714,8 @@ class Document
         );
         foreach ($data as $item) {
             $operations[] = new \HomeDocs\DocumentHistoryOperation(
-                intval($item->operationTimestamp ?? 0),
-                $item->operationType ?? null,
+                property_exists($item, "operationTimestamp") && is_numeric($item->operationTimestamp) ? intval($item->operationTimestamp) : 0,
+                property_exists($item, "operationType") && is_numeric($item->operationType) ? $item->operationType : null,
             );
         }
 
