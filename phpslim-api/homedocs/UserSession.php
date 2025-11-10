@@ -11,6 +11,7 @@ class UserSession
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
+        
         $_SESSION["userId"] = $userId;
         $_SESSION["email"] = $email;
     }
@@ -24,6 +25,7 @@ class UserSession
                 $params = session_get_cookie_params();
                 setcookie(session_name(), '', ['expires' => time() - 42000, 'path' => $params["path"], 'domain' => $params["domain"], 'secure' => $params["secure"], 'httponly' => $params["httponly"]]);
             }
+            
             session_destroy();
         }
     }

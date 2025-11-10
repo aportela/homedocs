@@ -25,9 +25,11 @@ class User
         if (in_array($this->id, [null, '', '0'], true) || mb_strlen($this->id) !== 36) {
             throw new \HomeDocs\Exception\InvalidParamsException("id");
         }
+        
         if (in_array($this->email, [null, '', '0'], true) || mb_strlen($this->email) > 255 || !filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
             throw new \HomeDocs\Exception\InvalidParamsException("email");
         }
+        
         if (in_array($this->password, [null, '', '0'], true)) {
             throw new \HomeDocs\Exception\InvalidParamsException("password");
         }
@@ -38,6 +40,7 @@ class User
             new \aportela\DatabaseWrapper\Param\StringParam(":password_hash", $this->passwordHash($this->password)),
         ];
     }
+    
     public function add(\aportela\DatabaseWrapper\DB $dbh): void
     {
         $params = $this->validateAndPrepareParams();
@@ -103,6 +106,7 @@ class User
         } else {
             throw new \HomeDocs\Exception\InvalidParamsException("id,email");
         }
+        
         if (count($results) === 1) {
             $this->id = $results[0]->id;
             $this->email = $results[0]->email;
@@ -140,6 +144,7 @@ class User
         } else {
             throw new \HomeDocs\Exception\InvalidParamsException("id,email");
         }
+        
         return (count($results) === 1);
     }
 

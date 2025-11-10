@@ -82,6 +82,7 @@ class Stats
             $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":from_timestamp", $fromTimestamp);
             $whereCondition = " AND DOCUMENT_HISTORY.ctime >= :from_timestamp ";
         }
+        
         $results = $dbh->query(
             sprintf(
                 "

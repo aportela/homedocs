@@ -15,6 +15,7 @@ final class TagTest extends \HomeDocs\Test\BaseTest
         $this->createValidSession();
         $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, [$tag1, $tag2]);
         $d->add(self::$dbh);
+        
         $tagCloud = \HomeDocs\Tag::getCloud(self::$dbh);
         $this->assertTrue(count($tagCloud) >= 2);
         $tags = array_values(array_filter($tagCloud, fn($obj) => $obj->tag == $tag1));
@@ -35,6 +36,7 @@ final class TagTest extends \HomeDocs\Test\BaseTest
         $this->createValidSession();
         $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, [$tag1, $tag2]);
         $d->add(self::$dbh);
+        
         $tags = \HomeDocs\Tag::search(self::$dbh);
         $this->assertTrue(count($tags) >= 2);
         $this->assertContains($tag1, $tags);

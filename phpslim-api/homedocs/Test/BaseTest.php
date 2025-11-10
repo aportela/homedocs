@@ -9,8 +9,11 @@ require_once dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SE
 abstract class BaseTest extends \PHPUnit\Framework\TestCase
 {
     public static ?\Slim\App $app;
+    
     public static \Psr\Container\ContainerInterface $container;
+    
     public static $settings;
+    
     public static ?\aportela\DatabaseWrapper\DB $dbh = null;
 
     protected function createValidSession(): void

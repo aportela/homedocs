@@ -27,8 +27,8 @@ class JWT
                 $this->passphrase,
                 self::ALGORITHM
             );
-        } catch (\Throwable $e) {
-            $this->logger->error("JWT encoding error", [$e->getMessage()]);
+        } catch (\Throwable $throwable) {
+            $this->logger->error("JWT encoding error", [$throwable->getMessage()]);
         } finally {
             return ($jwt);
         }

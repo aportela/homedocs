@@ -21,7 +21,7 @@ $logger->info("Install started");
 $settings = $container->get('settings');
 
 $missingExtensions = array_diff($settings["phpRequiredExtensions"], get_loaded_extensions());
-if (count($missingExtensions) > 0) {
+if ($missingExtensions !== []) {
     $missingExtensionsStr = implode(", ", $missingExtensions);
     echo "Error: missing php extension/s: " . $missingExtensionsStr . PHP_EOL;
     $logger->critical("Error: missing php extension/s: ", [$missingExtensionsStr]);

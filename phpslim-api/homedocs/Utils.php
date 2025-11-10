@@ -125,6 +125,7 @@ class Utils
                 $max_size = $upload_max;
             }
         }
+        
         return $max_size;
     }
 

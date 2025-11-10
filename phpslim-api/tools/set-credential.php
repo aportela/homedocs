@@ -19,7 +19,7 @@ $logger = $container->get(\HomeDocs\Logger\InstallerLogger::class);
 $settings = $container->get('settings');
 
 $missingExtensions = array_diff($settings["phpRequiredExtensions"], get_loaded_extensions());
-if (count($missingExtensions) > 0) {
+if ($missingExtensions !== []) {
     $missingExtensionsStr = implode(", ", $missingExtensions);
     echo "Error: missing php extension/s: " . $missingExtensionsStr . PHP_EOL;
     $logger->critical("Error: missing php extension/s: ", [$missingExtensionsStr]);
@@ -35,6 +35,7 @@ if (count($missingExtensions) > 0) {
             $found = true;
         } catch (\HomeDocs\Exception\NotFoundException) {
         }
+        
         if ($found) {
             //$c["logger"]->debug("Account exists -> update credentials");
             echo "User found, updating password...";

@@ -25,6 +25,7 @@ class APIExceptionCatcher
     {
         $this->logger->error(sprintf("Unhandled exception caught (%s) - Message: %s", $e::class, $e->getMessage()));
         $this->logger->debug($e->getTraceAsString());
+        
         $response = new \Slim\Psr7\Response();
         $exception = [
             'type' => $e::class,
@@ -41,6 +42,7 @@ class APIExceptionCatcher
                 'line' => $parent->getLine()
             ];
         }
+        
         $payload = json_encode([
             'exception' => $exception,
             'status' => 500

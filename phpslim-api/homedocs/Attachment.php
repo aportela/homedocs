@@ -83,6 +83,7 @@ class Attachment
             if (!file_exists($path['dirname'])) {
                 mkdir($path['dirname'], 0777, true);
             }
+            
             $uploadedFile->moveTo($this->localStoragePath);
             $this->hash = sha1_file($this->localStoragePath);
         } else {

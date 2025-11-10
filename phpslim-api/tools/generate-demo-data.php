@@ -21,7 +21,7 @@ $logger->info("Mock started");
 $settings = $container->get('settings');
 
 $missingExtensions = array_diff($settings["phpRequiredExtensions"], get_loaded_extensions());
-if (count($missingExtensions) > 0) {
+if ($missingExtensions !== []) {
     $missingExtensionsStr = implode(", ", $missingExtensions);
     echo "Error: missing php extension/s: " . $missingExtensionsStr . PHP_EOL;
     $logger->critical("Error: missing php extension/s: ", [$missingExtensionsStr]);
@@ -36,6 +36,7 @@ if (count($missingExtensions) > 0) {
             $found = true;
         } catch (\HomeDocs\Exception\NotFoundException) {
         }
+        
         if ($found) {
             //$c["logger"]->debug("Account exists -> update credentials");
             echo "User found, updating password...";
@@ -48,6 +49,7 @@ if (count($missingExtensions) > 0) {
             $u->add($dbh);
             echo "ok!" . PHP_EOL;
         }
+        
         $totalMocks = $cmdLine->getParamValue("count");
         echo sprintf("Inserting %d mocks: ", $totalMocks);
         for ($i = 0; $i < $totalMocks; $i++) {
@@ -57,9 +59,11 @@ if (count($missingExtensions) > 0) {
             foreach ($queries as $query) {
                 $dbh->exec($query);
             }
+            
             $dbh->commit();
             echo ".";
         }
+        
         echo "ok!" . PHP_EOL;
     } else {
         echo "No required params found: --count <number> --email <email> --password <secret>" . PHP_EOL;
