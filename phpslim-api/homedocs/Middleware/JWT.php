@@ -7,9 +7,9 @@ namespace HomeDocs\Middleware;
 class JWT
 {
     protected \Psr\Log\LoggerInterface $logger;
-    
+
     private readonly string $passphrase;
-    
+
     protected \aportela\DatabaseWrapper\DB $dbh;
 
     public function __construct(\Psr\Container\ContainerInterface $container)
@@ -44,13 +44,8 @@ class JWT
             } else {
                 throw new \HomeDocs\Exception\InvalidParamsException("jwt");
             }
-            
             $response = $requestHandler->handle($serverRequest);
-            if (!empty($clientHeaderJWT)) {
-                return $response->withHeader("HOMEDOCS-JWT", $clientHeaderJWT);
-            } else {
-                return ($response);
-            }
+            return $response->withHeader("HOMEDOCS-JWT", $clientHeaderJWT);
         } else {
             $response = $requestHandler->handle($serverRequest);
             if (empty($clientHeaderJWT) && \HomeDocs\UserSession::isLogged()) {
@@ -61,7 +56,7 @@ class JWT
                 $jwt = new \HomeDocs\JWT($this->logger, $this->passphrase);
                 $clientHeaderJWT = $jwt->encode($payload);
             }
-            
+
             if ($clientHeaderJWT && \HomeDocs\UserSession::isLogged()) {
                 return $response->withHeader("HOMEDOCS-JWT", $clientHeaderJWT);
             } else {
