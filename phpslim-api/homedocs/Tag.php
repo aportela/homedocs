@@ -33,7 +33,9 @@ class Tag
         );
         return (array_map(
             function (object $item): object {
-                $item->total = intval($item->total);
+                if (property_exists($item, "total")) {
+                    $item->total = intval($item->total);
+                }
                 return ($item);
             },
             $results
@@ -64,7 +66,13 @@ class Tag
             ]
         );
         return (array_map(
-            fn(object $item) => $item->tag,
+            function (object $item): string {
+                if (property_exists($item, "tag")) {
+                    return ($item->tag);
+                } else {
+                    return ("");
+                }
+            },
             $results
         ));
     }
