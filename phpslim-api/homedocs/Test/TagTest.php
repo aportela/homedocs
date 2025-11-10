@@ -18,11 +18,11 @@ final class TagTest extends \HomeDocs\Test\BaseTest
         
         $tagCloud = \HomeDocs\Tag::getCloud(self::$dbh);
         $this->assertTrue(count($tagCloud) >= 2);
-        $tags = array_values(array_filter($tagCloud, fn($obj) => $obj->tag == $tag1));
+        $tags = array_values(array_filter($tagCloud, fn($obj): bool => $obj->tag == $tag1));
         $this->assertEquals(1, count($tags));
         $this->assertEquals($tag1, $tags[0]->tag);
         $this->assertEquals(1, $tags[0]->total);
-        $tags = array_values(array_filter($tagCloud, fn($obj) => $obj->tag == $tag2));
+        $tags = array_values(array_filter($tagCloud, fn($obj): bool => $obj->tag == $tag2));
         $this->assertEquals(1, count($tags));
         $this->assertEquals($tag2, $tags[0]->tag);
         $this->assertEquals(1, $tags[0]->total);

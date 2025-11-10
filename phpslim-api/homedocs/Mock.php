@@ -192,14 +192,14 @@ class Mock
         $text = preg_replace('/[^a-záéíóúöñ0-9\s]/', '', $text);
         
         $words = explode(' ', (string) $text);
-        $keywords = array_filter($words, fn($word) => mb_strlen((string) $word) > 4 && mb_strlen((string) $word) < 10);
+        $keywords = array_filter($words, fn(string $word): bool => mb_strlen($word) > 4 && mb_strlen($word) < 10);
         return array_values($keywords);
     }
 
     /**
      * @return array<string>
      */
-    private function generateTagsFromDocument(string $title, string $description, int $max)
+    private function generateTagsFromDocument(string $title, string $description, int $max): array
     {
         $tags = [];
         $keywords = array_merge($this->extractKeywords($title), $this->extractKeywords($description));

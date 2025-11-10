@@ -32,7 +32,7 @@ class Tag
             ]
         );
         return (array_map(
-            function ($item) {
+            function (object $item): object {
                 $item->total = intval($item->total);
                 return ($item);
             },
@@ -64,7 +64,7 @@ class Tag
             ]
         );
         return (array_map(
-            fn($item) => $item->tag,
+            fn(object $item) => $item->tag,
             $results
         ));
     }

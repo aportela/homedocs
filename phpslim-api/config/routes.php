@@ -7,7 +7,7 @@ use Slim\Routing\RouteCollectorProxy;
 
 // TODO: CheckAuth & JWT middlewares (combine ?)
 return function (App $app): void {
-    $app->get('/', function (Request $request, Response $response, array $args) {
+    $app->get('/', function (Request $request, Response $response, array $args): \Psr\Http\Message\MessageInterface|\Psr\Http\Message\ResponseInterface {
         $filePath = dirname(__DIR__) . '/public/index.html';
         if (file_exists($filePath)) {
             $response->getBody()->write(file_get_contents($filePath));
@@ -456,7 +456,7 @@ return function (App $app): void {
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
             $group->group('/attachment', function (RouteCollectorProxy $group) use ($app, $initialState): void {
-                $group->get('/{id}[/{inline}]', function (Request $request, Response $response, array $args) use ($app) {
+                $group->get('/{id}[/{inline}]', function (Request $request, Response $response, array $args) use ($app): \Psr\Http\Message\MessageInterface {
                     $attachment = new \HomeDocs\Attachment(
                         $app->getContainer()->get('settings')['paths']['storage'],
                         $args['id']

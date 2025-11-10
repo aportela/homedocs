@@ -10,12 +10,12 @@ require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPAR
 return [
     'settings' => fn() => require __DIR__ . DIRECTORY_SEPARATOR . 'settings.php',
 
-    App::class => function (ContainerInterface $container) {
+    App::class => function (ContainerInterface $container): \Slim\App {
         AppFactory::setContainer($container);
         return AppFactory::create();
     },
 
-    ErrorMiddleware::class => function (ContainerInterface $container) {
+    ErrorMiddleware::class => function (ContainerInterface $container): \Slim\Middleware\ErrorMiddleware {
         $app = $container->get(App::class);
         $settings = $container->get('settings')['error'];
         return new ErrorMiddleware(
@@ -27,7 +27,7 @@ return [
         );
     },
 
-    \aportela\DatabaseWrapper\DB::class => function (ContainerInterface $container) {
+    \aportela\DatabaseWrapper\DB::class => function (ContainerInterface $container): \aportela\DatabaseWrapper\DB {
         $settings = $container->get('settings')['db'];
         $adapter = new \aportela\DatabaseWrapper\Adapter\PDOSQLiteAdapter(
             $settings["database"],
@@ -44,7 +44,7 @@ return [
         return ($db);
     },
 
-    \HomeDocs\Logger\HTTPRequestLogger::class => function (ContainerInterface $container) {
+    \HomeDocs\Logger\HTTPRequestLogger::class => function (ContainerInterface $container): \HomeDocs\Logger\HTTPRequestLogger {
         $settings = $container->get('settings')['logger'];
         $logger = new \Monolog\Logger($settings['channels']['http']['name']);
         $logger->pushProcessor(new \Monolog\Processor\UidProcessor());
@@ -57,7 +57,7 @@ return [
         return (new \HomeDocs\Logger\HTTPRequestLogger($logger));
     },
 
-    \HomeDocs\Logger\DefaultLogger::class => function (ContainerInterface $container) {
+    \HomeDocs\Logger\DefaultLogger::class => function (ContainerInterface $container): \HomeDocs\Logger\DefaultLogger {
         $settings = $container->get('settings')['logger'];
         $logger = new \Monolog\Logger($settings['channels']['default']['name']);
         $logger->pushProcessor(new \Monolog\Processor\UidProcessor());
@@ -70,7 +70,7 @@ return [
         return (new \HomeDocs\Logger\DefaultLogger($logger));
     },
 
-    \HomeDocs\Logger\DBLogger::class => function (ContainerInterface $container) {
+    \HomeDocs\Logger\DBLogger::class => function (ContainerInterface $container): \HomeDocs\Logger\DBLogger {
         $settings = $container->get('settings')['logger'];
         $logger = new \Monolog\Logger($settings['channels']['database']['name']);
         $logger->pushProcessor(new \Monolog\Processor\UidProcessor());
@@ -83,7 +83,7 @@ return [
         return (new \HomeDocs\Logger\DBLogger($logger));
     },
 
-    \HomeDocs\Logger\InstallerLogger::class => function (ContainerInterface $container) {
+    \HomeDocs\Logger\InstallerLogger::class => function (ContainerInterface $container): \HomeDocs\Logger\InstallerLogger {
         $settings = $container->get('settings')['logger'];
         $logger = new \Monolog\Logger($settings['channels']['installer']['name']);
         $logger->pushProcessor(new \Monolog\Processor\UidProcessor());
@@ -96,5 +96,5 @@ return [
         return (new \HomeDocs\Logger\InstallerLogger($logger));
     },
 
-    \HomeDocs\Middleware\APIExceptionCatcher::class => fn(ContainerInterface $container) => new \HomeDocs\Middleware\APIExceptionCatcher($container->get(\HomeDocs\Logger\HTTPRequestLogger::class))
+    \HomeDocs\Middleware\APIExceptionCatcher::class => fn(ContainerInterface $container): \HomeDocs\Middleware\APIExceptionCatcher => new \HomeDocs\Middleware\APIExceptionCatcher($container->get(\HomeDocs\Logger\HTTPRequestLogger::class))
 ];

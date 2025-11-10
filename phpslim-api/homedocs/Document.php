@@ -95,7 +95,7 @@ class Document
             ]
         );
         return (array_map(
-            function ($item) {
+            function (object $item): object {
                 $item->lastUpdateTimestamp = intval($item->lastUpdateTimestamp);
                 $item->attachmentCount = intval($item->attachmentCount);
                 $item->noteCount = intval($item->noteCount);
@@ -713,7 +713,7 @@ class Document
     /**
      * @param array<mixed> $filter
      */
-    public static function search(\aportela\DatabaseWrapper\DB $dbh, \aportela\DatabaseBrowserWrapper\Pager $pager, $filter = [], string $sortBy = "createdOnTimestamp", \aportela\DatabaseBrowserWrapper\Order $sortOrder = \aportela\DatabaseBrowserWrapper\Order::DESC): \stdClass
+    public static function search(\aportela\DatabaseWrapper\DB $dbh, \aportela\DatabaseBrowserWrapper\Pager $pager, array $filter = [], string $sortBy = "createdOnTimestamp", \aportela\DatabaseBrowserWrapper\Order $sortOrder = \aportela\DatabaseBrowserWrapper\Order::DESC): \stdClass
     {
         $fieldDefinitions = [
             "id" => "DOCUMENT.id",
