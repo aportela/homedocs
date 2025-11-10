@@ -38,10 +38,13 @@ final class StatsTest extends \HomeDocs\Test\BaseTest
 
         $data = \HomeDocs\Stats::getActivityHeatMapData(self::$dbh);
         $this->assertTrue(count($data) >= 1);
-        $results = array_values(array_filter($data, fn (array $obj): bool => $obj["date"] == date("Y-m-d")));
+        $results = array_values(array_filter($data, fn(array $obj): bool => $obj["date"] == date("Y-m-d")));
         $this->assertEquals(1, count($results));
-        $this->assertEquals(date("Y-m-d"), $results[0]["date"]);
-        $this->assertTrue($results[0]["count"] > 0);
+        $this->assertTrue(property_exists($results[0], "date"));
+        $this->assertEquals(date("Y-m-d"), $results[0]->date);
+        $this->assertTrue(property_exists($results[0], "count"));
+        $this->assertIsInt($results[0]->count);
+        $this->assertTrue($results[0]->count > 0);
     }
 
     public function testGetActivityHeatMapDataWithTimestamp(): void
@@ -52,9 +55,12 @@ final class StatsTest extends \HomeDocs\Test\BaseTest
 
         $data = \HomeDocs\Stats::getActivityHeatMapData(self::$dbh, strtotime('-1 day', time()) * 1000);
         $this->assertTrue(count($data) >= 1);
-        $results = array_values(array_filter($data, fn (array $obj): bool => $obj["date"] == date("Y-m-d")));
+        $results = array_values(array_filter($data, fn(array $obj): bool => $obj["date"] == date("Y-m-d")));
         $this->assertEquals(1, count($results));
-        $this->assertEquals(date("Y-m-d"), $results[0]["date"]);
-        $this->assertTrue($results[0]["count"] > 0);
+        $this->assertTrue(property_exists($results[0], "date"));
+        $this->assertEquals(date("Y-m-d"), $results[0]->date);
+        $this->assertTrue(property_exists($results[0], "count"));
+        $this->assertIsInt($results[0]->count);
+        $this->assertTrue($results[0]->count > 0);
     }
 }

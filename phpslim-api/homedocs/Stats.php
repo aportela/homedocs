@@ -70,7 +70,7 @@ class Stats
     }
 
     /**
-     * @return array<mixed>
+     * @return array<object>
      */
     public static function getActivityHeatMapData(\aportela\DatabaseWrapper\DB $db, int $fromTimestamp = 0): array
     {
@@ -103,7 +103,7 @@ class Stats
             $params
         );
         return (array_map(
-            fn (object $item): array => ["date" => $item->activity_date ?? null, "count" => is_numeric($item->total) ? intval($item->total) : 0],
+            fn(object $item): object => (object)["date" => $item->activity_date ?? null, "count" => is_numeric($item->total) ? intval($item->total) : 0],
             $results
         ));
     }
