@@ -14,7 +14,7 @@ abstract class BaseTest extends \PHPUnit\Framework\TestCase
 
     public static mixed $settings;
 
-    public static ?\aportela\DatabaseWrapper\DB $dbh = null;
+    public static \aportela\DatabaseWrapper\DB $dbh;
 
     protected function createValidSession(): void
     {
@@ -67,7 +67,6 @@ abstract class BaseTest extends \PHPUnit\Framework\TestCase
      */
     public static function tearDownAfterClass(): void
     {
-        self::$dbh = null;
         self::$app = null;
     }
 }
