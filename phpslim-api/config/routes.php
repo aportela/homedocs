@@ -453,6 +453,9 @@ return function (App $app): void {
                     if (file_exists($localStoragePath)) {
                         $partialContent = false;
                         $attachmentSize = filesize($localStoragePath);
+                        if (! is_integer($attachmentSize)) {
+                            throw new \Exception("Error getting attachment size");
+                        }
                         $offset = 0;
                         $length = $attachmentSize;
                         if (isset($_SERVER['HTTP_RANGE'])) {
@@ -467,8 +470,14 @@ return function (App $app): void {
                         }
 
                         $f = fopen($localStoragePath, 'r');
+                        if (! is_resource($f)) {
+                            throw new \Exception("Error opening local storage path");
+                        }
                         fseek($f, $offset);
                         $data = fread($f, $length);
+                        if (! is_string($data)) {
+                            throw new \Exception("Error reading attachment data");
+                        }
                         fclose($f);
                         $response->getBody()->write($data);
                         if ($partialContent) {
