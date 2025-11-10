@@ -6,9 +6,9 @@ namespace HomeDocs;
 
 class Stats
 {
-    public static function getTotalPublishedDocuments(\aportela\DatabaseWrapper\DB $dbh): int
+    public static function getTotalPublishedDocuments(\aportela\DatabaseWrapper\DB $db): int
     {
-        $result = $dbh->query(
+        $result = $db->query(
             "
                 SELECT
                     COALESCE(COUNT(DOCUMENT_HISTORY.document_id), 0) AS total
@@ -26,9 +26,9 @@ class Stats
         return (intval($result[0]->total));
     }
 
-    public static function getTotalUploadedAttachments(\aportela\DatabaseWrapper\DB $dbh): int
+    public static function getTotalUploadedAttachments(\aportela\DatabaseWrapper\DB $db): int
     {
-        $result = $dbh->query(
+        $result = $db->query(
             "
                 SELECT
                     COALESCE(COUNT(DOCUMENT_ATTACHMENT.attachment_id), 0) AS total
@@ -47,9 +47,9 @@ class Stats
         return (intval($result[0]->total));
     }
 
-    public static function getTotalUploadedAttachmentsDiskUsage(\aportela\DatabaseWrapper\DB $dbh): int
+    public static function getTotalUploadedAttachmentsDiskUsage(\aportela\DatabaseWrapper\DB $db): int
     {
-        $result = $dbh->query(
+        $result = $db->query(
             "
                 SELECT
                     COALESCE(SUM(ATTACHMENT.size), 0) AS total
@@ -72,7 +72,7 @@ class Stats
     /**
      * @return array<mixed>
      */
-    public static function getActivityHeatMapData(\aportela\DatabaseWrapper\DB $dbh, int $fromTimestamp = 0): array
+    public static function getActivityHeatMapData(\aportela\DatabaseWrapper\DB $db, int $fromTimestamp = 0): array
     {
         $whereCondition = null;
         $params = [
@@ -83,7 +83,7 @@ class Stats
             $whereCondition = " AND DOCUMENT_HISTORY.ctime >= :from_timestamp ";
         }
         
-        $results = $dbh->query(
+        $results = $db->query(
             sprintf(
                 "
                     SELECT

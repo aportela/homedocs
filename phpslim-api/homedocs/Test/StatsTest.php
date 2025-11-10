@@ -11,16 +11,16 @@ final class StatsTest extends \HomeDocs\Test\BaseTest
     public function testGetTotalPublishedDocuments(): void
     {
         $this->createValidSession();
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, []);
-        $d->add(self::$dbh);
+        $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, []);
+        $document->add(self::$dbh);
         $this->assertTrue(\HomeDocs\Stats::getTotalPublishedDocuments(self::$dbh) > 0);
     }
 
     public function testGetTotalUploadedAttachments(): void
     {
         $this->createValidSession();
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, []);
-        $d->add(self::$dbh);
+        $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, []);
+        $document->add(self::$dbh);
         $this->assertTrue(\HomeDocs\Stats::getTotalUploadedAttachments(self::$dbh) >= 0);
     }
 
@@ -33,8 +33,8 @@ final class StatsTest extends \HomeDocs\Test\BaseTest
     public function testGetActivityHeatMapDataWithoutTimestamp(): void
     {
         $this->createValidSession();
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, []);
-        $d->add(self::$dbh);
+        $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, []);
+        $document->add(self::$dbh);
         
         $data = \HomeDocs\Stats::getActivityHeatMapData(self::$dbh);
         $this->assertTrue(count($data) >= 1);
@@ -47,8 +47,8 @@ final class StatsTest extends \HomeDocs\Test\BaseTest
     public function testGetActivityHeatMapDataWithTimestamp(): void
     {
         $this->createValidSession();
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, []);
-        $d->add(self::$dbh);
+        $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, []);
+        $document->add(self::$dbh);
         
         $data = \HomeDocs\Stats::getActivityHeatMapData(self::$dbh, strtotime('-1 day', time()) * 1000);
         $this->assertTrue(count($data) >= 1);

@@ -12,142 +12,142 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("id");
-        $d = new \HomeDocs\Document();
-        $d->add(self::$dbh);
+        $document = new \HomeDocs\Document();
+        $document->add(self::$dbh);
     }
 
     public function testAddWithoutTitle(): void
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("title");
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4());
-        $d->add(self::$dbh);
+        $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4());
+        $document->add(self::$dbh);
     }
 
     public function testAddWithInvalidTitleLength(): void
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("title");
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), str_repeat("0", \HomeDocs\Constants::MAX_DOCUMENT_TITLE_LENGTH + 1));
-        $d->add(self::$dbh);
+        $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), str_repeat("0", \HomeDocs\Constants::MAX_DOCUMENT_TITLE_LENGTH + 1));
+        $document->add(self::$dbh);
     }
 
     public function testAddWithInvalidDescriptionLength(): void
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("description");
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", str_repeat("0", \HomeDocs\Constants::MAX_DOCUMENT_DESCRIPTION_LENGTH + 1));
-        $d->add(self::$dbh);
+        $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", str_repeat("0", \HomeDocs\Constants::MAX_DOCUMENT_DESCRIPTION_LENGTH + 1));
+        $document->add(self::$dbh);
     }
 
     public function testAddWithInvalidTagName(): void
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("tag");
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["", "tag2"]);
-        $d->add(self::$dbh);
+        $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["", "tag2"]);
+        $document->add(self::$dbh);
     }
 
     public function testAdd(): void
     {
         $this->expectNotToPerformAssertions();
         $this->createValidSession();
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["tag1", "tag2"]);
-        $d->add(self::$dbh);
+        $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["tag1", "tag2"]);
+        $document->add(self::$dbh);
     }
 
     public function testUpdateWithoutTitle(): void
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("title");
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), null, "document description", null, null, ["tag1", "tag2"]);
-        $d->add(self::$dbh);
-        $d->title = null;
-        $d->update(self::$dbh);
+        $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), null, "document description", null, null, ["tag1", "tag2"]);
+        $document->add(self::$dbh);
+        $document->title = null;
+        $document->update(self::$dbh);
     }
 
     public function testUpdateWithInvalidTitleLength(): void
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("title");
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), str_repeat("0", \HomeDocs\Constants::MAX_DOCUMENT_TITLE_LENGTH + 1), "document description", null, null, ["tag1", "tag2"]);
-        $d->add(self::$dbh);
-        $d->title = null;
-        $d->update(self::$dbh);
+        $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), str_repeat("0", \HomeDocs\Constants::MAX_DOCUMENT_TITLE_LENGTH + 1), "document description", null, null, ["tag1", "tag2"]);
+        $document->add(self::$dbh);
+        $document->title = null;
+        $document->update(self::$dbh);
     }
 
     public function testUpdateWithInvalidDescriptionLength(): void
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("description");
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", str_repeat("0", \HomeDocs\Constants::MAX_DOCUMENT_DESCRIPTION_LENGTH + 1), null, null, ["tag1", "tag2"]);
-        $d->add(self::$dbh);
-        $d->title = null;
-        $d->update(self::$dbh);
+        $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", str_repeat("0", \HomeDocs\Constants::MAX_DOCUMENT_DESCRIPTION_LENGTH + 1), null, null, ["tag1", "tag2"]);
+        $document->add(self::$dbh);
+        $document->title = null;
+        $document->update(self::$dbh);
     }
 
     public function testUpdateWithInvalidTagName(): void
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("tag");
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["", "tag2"]);
-        $d->add(self::$dbh);
-        $d->tags = ["", ""];
-        $d->update(self::$dbh);
+        $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["", "tag2"]);
+        $document->add(self::$dbh);
+        $document->tags = ["", ""];
+        $document->update(self::$dbh);
     }
 
     public function testUpdate(): void
     {
         $this->expectNotToPerformAssertions();
         $this->createValidSession();
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["tag1", "tag2"]);
-        $d->add(self::$dbh);
-        $d->title = "document title updated";
-        $d->description = "document description updated";
-        $d->tags = ["tag1_updated", "tag2_updated"];
-        $d->update(self::$dbh);
+        $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["tag1", "tag2"]);
+        $document->add(self::$dbh);
+        $document->title = "document title updated";
+        $document->description = "document description updated";
+        $document->tags = ["tag1_updated", "tag2_updated"];
+        $document->update(self::$dbh);
     }
 
     public function testDeleteWithoutId(): void
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("id");
-        $d = new \HomeDocs\Document();
-        $d->delete(self::$dbh);
+        $document = new \HomeDocs\Document();
+        $document->delete(self::$dbh);
     }
 
     public function testDelete(): void
     {
         $this->expectNotToPerformAssertions();
         $this->createValidSession();
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["tag1", "tag2"]);
-        $d->add(self::$dbh);
-        $d->delete(self::$dbh);
+        $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["tag1", "tag2"]);
+        $document->add(self::$dbh);
+        $document->delete(self::$dbh);
     }
 
     public function testGetWithoutId(): void
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("id");
-        $d = new \HomeDocs\Document();
-        $d->get(self::$dbh);
+        $document = new \HomeDocs\Document();
+        $document->get(self::$dbh);
     }
 
     public function testGetWithNonExistentId(): void
     {
         $this->expectException(\HomeDocs\Exception\NotFoundException::class);
         $this->expectExceptionMessage("id");
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4());
-        $d->get(self::$dbh);
+        $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4());
+        $document->get(self::$dbh);
     }
 
     public function testGet(): void
     {
         $this->expectNotToPerformAssertions();
         $this->createValidSession();
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["tag1", "tag2"]);
-        $d->add(self::$dbh);
-        $d->get(self::$dbh);
+        $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["tag1", "tag2"]);
+        $document->add(self::$dbh);
+        $document->get(self::$dbh);
     }
 
     public function testSearchWithPager(): void

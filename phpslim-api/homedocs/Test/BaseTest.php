@@ -19,8 +19,8 @@ abstract class BaseTest extends \PHPUnit\Framework\TestCase
     protected function createValidSession(): void
     {
         $id = \HomeDocs\Utils::uuidv4();
-        $u = new \HomeDocs\User($id, $id . "@server.com", "secret");
-        $u->add(self::$dbh);
+        $user = new \HomeDocs\User($id, $id . "@server.com", "secret");
+        $user->add(self::$dbh);
         \HomeDocs\UserSession::set($id, $id . "@server.com");
     }
 

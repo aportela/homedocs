@@ -22,12 +22,12 @@ class JWT
     /**
      * middleware to manage JWT authentication HTTP header
      *
-     * @param  \Psr\Http\Message\ServerRequestInterface $request  PSR7 request
-     * @param  \Psr\Http\Server\RequestHandlerInterface $handler  PSR7 request handler object
+     * @param \Psr\Http\Message\ServerRequestInterface $serverRequest PSR7 request
+     * @param \Psr\Http\Server\RequestHandlerInterface $requestHandler PSR7 request handler object
      */
-    public function __invoke(\Psr\Http\Message\ServerRequestInterface $request, \Psr\Http\Server\RequestHandlerInterface $handler): \Psr\Http\Message\ResponseInterface
+    public function __invoke(\Psr\Http\Message\ServerRequestInterface $serverRequest, \Psr\Http\Server\RequestHandlerInterface $requestHandler): \Psr\Http\Message\ResponseInterface
     {
-        $clientHeaderJWT = $request->hasHeader("HOMEDOCS-JWT") ? $request->getHeader("HOMEDOCS-JWT")[0] : null;
+        $clientHeaderJWT = $serverRequest->hasHeader("HOMEDOCS-JWT") ? $serverRequest->getHeader("HOMEDOCS-JWT")[0] : null;
         // user not logged (or session lost) && jwt auth header found => re-auth with jwt
         if (!\HomeDocs\UserSession::isLogged() && !empty($clientHeaderJWT)) {
             // try decoding jwt data
@@ -45,14 +45,14 @@ class JWT
                 throw new \HomeDocs\Exception\InvalidParamsException("jwt");
             }
             
-            $response = $handler->handle($request);
+            $response = $requestHandler->handle($serverRequest);
             if (!empty($clientHeaderJWT)) {
                 return $response->withHeader("HOMEDOCS-JWT", $clientHeaderJWT);
             } else {
                 return ($response);
             }
         } else {
-            $response = $handler->handle($request);
+            $response = $requestHandler->handle($serverRequest);
             if (empty($clientHeaderJWT) && \HomeDocs\UserSession::isLogged()) {
                 $payload = [
                     "userId" => $_SESSION["userId"] ?? null,

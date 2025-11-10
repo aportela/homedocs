@@ -115,10 +115,10 @@ final class UserTest extends \HomeDocs\Test\BaseTest
     {
         $this->expectNotToPerformAssertions();
         $id = \HomeDocs\Utils::uuidv4();
-        $u = new \HomeDocs\User($id, $id . "@server.com", "secret");
-        $u->add(self::$dbh);
-        $u->login(self::$dbh);
-        $u->update(self::$dbh);
+        $user = new \HomeDocs\User($id, $id . "@server.com", "secret");
+        $user->add(self::$dbh);
+        $user->login(self::$dbh);
+        $user->update(self::$dbh);
     }
 
     public function testGetWithoutIdOrEmail(): void
@@ -161,25 +161,25 @@ final class UserTest extends \HomeDocs\Test\BaseTest
     public function testGet(): void
     {
         $id = \HomeDocs\Utils::uuidv4();
-        $u = new \HomeDocs\User($id, $id . "@server.com", "secret");
-        $u->add(self::$dbh);
-        $u->get(self::$dbh);
-        $this->assertTrue($id == $u->id);
+        $user = new \HomeDocs\User($id, $id . "@server.com", "secret");
+        $user->add(self::$dbh);
+        $user->get(self::$dbh);
+        $this->assertTrue($id == $user->id);
     }
 
     public function testExists(): void
     {
         $id = \HomeDocs\Utils::uuidv4();
-        $u = new \HomeDocs\User($id, $id . "@server.com", "secret");
-        $u->add(self::$dbh);
-        $this->assertTrue($u->exists(self::$dbh));
+        $user = new \HomeDocs\User($id, $id . "@server.com", "secret");
+        $user->add(self::$dbh);
+        $this->assertTrue($user->exists(self::$dbh));
     }
 
     public function testNotExists(): void
     {
         $id = \HomeDocs\Utils::uuidv4();
-        $u = new \HomeDocs\User($id, $id . "@server.com", "secret");
-        $this->assertFalse($u->exists(self::$dbh));
+        $user = new \HomeDocs\User($id, $id . "@server.com", "secret");
+        $this->assertFalse($user->exists(self::$dbh));
     }
 
     public function testExistsEmailWithNonExistentEmail(): void
@@ -191,9 +191,9 @@ final class UserTest extends \HomeDocs\Test\BaseTest
     public function testExistsEmailWithExistentEmail(): void
     {
         $id = \HomeDocs\Utils::uuidv4();
-        $u = new \HomeDocs\User($id, $id . "@server.com", "secret");
-        $u->add(self::$dbh);
-        $this->assertTrue(\HomeDocs\User::isEmailUsed(self::$dbh, $u->email));
+        $user = new \HomeDocs\User($id, $id . "@server.com", "secret");
+        $user->add(self::$dbh);
+        $this->assertTrue(\HomeDocs\User::isEmailUsed(self::$dbh, $user->email));
     }
 
     public function testLoginWithoutIdOrEmail(): void
@@ -223,10 +223,10 @@ final class UserTest extends \HomeDocs\Test\BaseTest
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("email");
         $id = \HomeDocs\Utils::uuidv4();
-        $u = new \HomeDocs\User($id, $id, "secret");
-        $u->add(self::$dbh);
-        $u->email = str_repeat($id, 10) . "@server.com";
-        $u->login(self::$dbh);
+        $user = new \HomeDocs\User($id, $id, "secret");
+        $user->add(self::$dbh);
+        $user->email = str_repeat($id, 10) . "@server.com";
+        $user->login(self::$dbh);
     }
 
     public function testLoginWithoutValidEmail(): void
@@ -234,10 +234,10 @@ final class UserTest extends \HomeDocs\Test\BaseTest
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("email");
         $id = \HomeDocs\Utils::uuidv4();
-        $u = new \HomeDocs\User($id, $id, "secret");
-        $u->add(self::$dbh);
-        $u->email = $id;
-        $u->login(self::$dbh);
+        $user = new \HomeDocs\User($id, $id, "secret");
+        $user->add(self::$dbh);
+        $user->email = $id;
+        $user->login(self::$dbh);
     }
 
     public function testLoginWithInvalidPassword(): void
@@ -245,18 +245,18 @@ final class UserTest extends \HomeDocs\Test\BaseTest
         $this->expectException(\HomeDocs\Exception\UnauthorizedException::class);
         $this->expectExceptionMessage("password");
         $id = \HomeDocs\Utils::uuidv4();
-        $u = new \HomeDocs\User($id, $id . "@server.com", "secret");
-        $u->add(self::$dbh);
-        $u->password = "other";
-        $u->login(self::$dbh);
+        $user = new \HomeDocs\User($id, $id . "@server.com", "secret");
+        $user->add(self::$dbh);
+        $user->password = "other";
+        $user->login(self::$dbh);
     }
 
     public function testLogin(): void
     {
         $id = \HomeDocs\Utils::uuidv4();
-        $u = new \HomeDocs\User($id, $id . "@server.com", "secret");
-        $u->add(self::$dbh);
-        $this->assertTrue($u->login(self::$dbh));
+        $user = new \HomeDocs\User($id, $id . "@server.com", "secret");
+        $user->add(self::$dbh);
+        $this->assertTrue($user->login(self::$dbh));
     }
 
     public function testLogout(): void

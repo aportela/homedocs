@@ -26,9 +26,9 @@ class Document
     /**
      * @return array<mixed>
      */
-    public static function searchRecent(\aportela\DatabaseWrapper\DB $dbh, int $count = 16): array
+    public static function searchRecent(\aportela\DatabaseWrapper\DB $db, int $count = 16): array
     {
-        $results = $dbh->query(
+        $results = $db->query(
             sprintf(
                 "
                     WITH DOCUMENTS_ATTACHMENTS AS (
@@ -139,7 +139,7 @@ class Document
         }
     }
 
-    public function add(\aportela\DatabaseWrapper\DB $dbh): void
+    public function add(\aportela\DatabaseWrapper\DB $db): void
     {
         $this->validate();
         $params = [
@@ -152,12 +152,12 @@ class Document
             $params[] = (new \aportela\DatabaseWrapper\Param\NullParam(":description"));
         }
         
-        if ($dbh->execute("
+        if ($db->execute("
                 INSERT INTO DOCUMENT
                     (id, title, description)
                 VALUES
                     (:id, :title, :description)
-            ", $params) && $dbh->execute(
+            ", $params) && $db->execute(
             "
                 INSERT INTO DOCUMENT_HISTORY
                     (document_id, ctime, operation_type, cuid)
@@ -173,7 +173,7 @@ class Document
         )) {
             foreach ($this->tags as $tag) {
                 if (!empty($tag)) {
-                    $dbh->execute(
+                    $db->execute(
                         "
                                 INSERT INTO DOCUMENT_TAG
                                     (document_id, tag)
@@ -192,7 +192,7 @@ class Document
 
             foreach ($this->attachments as $attachment) {
                 if (!empty($attachment->id)) {
-                    $dbh->execute(
+                    $db->execute(
                         "
                                 INSERT INTO DOCUMENT_ATTACHMENT
                                     (document_id, attachment_id)
@@ -210,7 +210,7 @@ class Document
             }
 
             foreach ($this->notes as $note) {
-                $dbh->execute(
+                $db->execute(
                     "
                             INSERT INTO DOCUMENT_NOTE
                                 (note_id, document_id, ctime, cuid, body)
@@ -229,7 +229,7 @@ class Document
         }
     }
 
-    public function update(\aportela\DatabaseWrapper\DB $dbh): void
+    public function update(\aportela\DatabaseWrapper\DB $db): void
     {
         $this->validate();
         $params = [
@@ -242,13 +242,13 @@ class Document
             $params[] = new \aportela\DatabaseWrapper\Param\NullParam(":description");
         }
         
-        if ($dbh->execute("
+        if ($db->execute("
                 UPDATE DOCUMENT SET
                     title = :title,
                     description = :description
                 WHERE
                     id = :id
-            ", $params) && $dbh->execute(
+            ", $params) && $db->execute(
             "
                     INSERT INTO DOCUMENT_HISTORY
                         (document_id, ctime, operation_type, cuid)
@@ -262,7 +262,7 @@ class Document
                 new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId())
             ]
         )) {
-            $dbh->execute(
+            $db->execute(
                 "
                         DELETE FROM DOCUMENT_TAG
                         WHERE
@@ -274,7 +274,7 @@ class Document
             );
             foreach ($this->tags as $tag) {
                 if (!empty($tag)) {
-                    $dbh->execute(
+                    $db->execute(
                         "
                                 INSERT INTO DOCUMENT_TAG
                                     (document_id, tag)
@@ -291,7 +291,7 @@ class Document
                 }
             }
 
-            $originalAttachments = $this->getAttachments($dbh);
+            $originalAttachments = $this->getAttachments($db);
             foreach ($originalAttachments as $originalAttachment) {
                 $notFound = true;
                 foreach ($this->attachments as $attachment) {
@@ -301,7 +301,7 @@ class Document
                 }
                 
                 if ($notFound) {
-                    $dbh->execute(
+                    $db->execute(
                         "
                                 DELETE FROM DOCUMENT_ATTACHMENT
                                 WHERE
@@ -314,7 +314,7 @@ class Document
                             new \aportela\DatabaseWrapper\Param\StringParam(":attachment_id", mb_strtolower((string) $originalAttachment->id))
                         ]
                     );
-                    $originalAttachment->remove($dbh);
+                    $originalAttachment->remove($db);
                 }
             }
 
@@ -328,7 +328,7 @@ class Document
                     }
                     
                     if ($notFound) {
-                        $dbh->execute(
+                        $db->execute(
                             "
                                     INSERT INTO DOCUMENT_ATTACHMENT
                                         (document_id, attachment_id)
@@ -346,7 +346,7 @@ class Document
                 }
             }
 
-            $originalNotes = $this->getNotes($dbh);
+            $originalNotes = $this->getNotes($db);
             foreach ($originalNotes as $originalNote) {
                 $notFound = true;
                 foreach ($this->notes as $note) {
@@ -356,7 +356,7 @@ class Document
                 }
                 
                 if ($notFound) {
-                    $dbh->execute(
+                    $db->execute(
                         "
                                 DELETE FROM DOCUMENT_NOTE
                                 WHERE
@@ -382,7 +382,7 @@ class Document
                     if ($note->id == $originalNote->id) {
                         $notFound = false;
                         if ($note->body !== $originalNote->body) {
-                            $dbh->execute(
+                            $db->execute(
                                 "
                                     UPDATE DOCUMENT_NOTE SET
                                         body = :note_body
@@ -408,7 +408,7 @@ class Document
                 }
                 
                 if ($notFound) {
-                    $dbh->execute(
+                    $db->execute(
                         "
                                 INSERT INTO DOCUMENT_NOTE
                                     (note_id, document_id, ctime, cuid, body)
@@ -428,13 +428,13 @@ class Document
         }
     }
 
-    public function delete(\aportela\DatabaseWrapper\DB $dbh): void
+    public function delete(\aportela\DatabaseWrapper\DB $db): void
     {
         if (!in_array($this->id, [null, '', '0'], true) && mb_strlen($this->id) === \HomeDocs\Constants::UUID_V4_LENGTH) {
             $params = [
                 new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
             ];
-            $dbh->execute(
+            $db->execute(
                 "
                     DELETE FROM DOCUMENT_TAG
                     WHERE
@@ -442,7 +442,7 @@ class Document
                 ",
                 $params
             );
-            $dbh->execute(
+            $db->execute(
                 "
                     DELETE FROM DOCUMENT_ATTACHMENT
                     WHERE
@@ -450,12 +450,12 @@ class Document
                 ",
                 $params
             );
-            $originalAttachments = $this->getAttachments($dbh);
-            foreach ($originalAttachments as $attachment) {
-                $attachment->remove($dbh);
+            $originalAttachments = $this->getAttachments($db);
+            foreach ($originalAttachments as $originalAttachment) {
+                $originalAttachment->remove($db);
             }
             
-            $dbh->execute(
+            $db->execute(
                 "
                     DELETE FROM DOCUMENT_NOTE
                     WHERE
@@ -463,7 +463,7 @@ class Document
                 ",
                 $params
             );
-            $dbh->execute(
+            $db->execute(
                 "
                     DELETE FROM DOCUMENT_HISTORY
                     WHERE
@@ -471,7 +471,7 @@ class Document
                 ",
                 $params
             );
-            $dbh->execute(
+            $db->execute(
                 "
                     DELETE FROM DOCUMENT
                     WHERE
@@ -484,10 +484,10 @@ class Document
         }
     }
 
-    public function get(\aportela\DatabaseWrapper\DB $dbh): void
+    public function get(\aportela\DatabaseWrapper\DB $db): void
     {
         if (!in_array($this->id, [null, '', '0'], true) && mb_strlen($this->id) === \HomeDocs\Constants::UUID_V4_LENGTH) {
-            $data = $dbh->query(
+            $data = $db->query(
                 "
                     SELECT
                         title, description, DOCUMENT_HISTORY.ctime AS createdOnTimestamp, COALESCE(HISTORY_LAST_UPDATE.document_last_update, DOCUMENT_HISTORY.ctime) AS lastUpdateTimestamp, DOCUMENT_HISTORY.cuid AS createdByUserId
@@ -517,10 +517,10 @@ class Document
                     $this->description = $data[0]->description;
                     $this->createdOnTimestamp = intval($data[0]->createdOnTimestamp);
                     $this->lastUpdateTimestamp = intval($data[0]->lastUpdateTimestamp);
-                    $this->tags = $this->getTags($dbh);
-                    $this->attachments = $this->getAttachments($dbh);
-                    $this->notes = $this->getNotes($dbh);
-                    $this->history = $this->getHistory($dbh);
+                    $this->tags = $this->getTags($db);
+                    $this->attachments = $this->getAttachments($db);
+                    $this->notes = $this->getNotes($db);
+                    $this->history = $this->getHistory($db);
                 } else {
                     throw new \HomeDocs\Exception\AccessDeniedException("id");
                 }
@@ -535,10 +535,10 @@ class Document
     /**
      * @return array<string>
      */
-    private function getTags(\aportela\DatabaseWrapper\DB $dbh): array
+    private function getTags(\aportela\DatabaseWrapper\DB $db): array
     {
         $tags = [];
-        $data = $dbh->query(
+        $data = $db->query(
             "
                 SELECT
                     tag
@@ -563,7 +563,7 @@ class Document
     /**
      * @return array<mixed>
      */
-    private function getAttachments(\aportela\DatabaseWrapper\DB $dbh, ?string $search = null): array
+    private function getAttachments(\aportela\DatabaseWrapper\DB $db, ?string $search = null): array
     {
         $attachments = [];
         $params = [
@@ -584,7 +584,7 @@ class Document
             }
         }
         
-        $data = $dbh->query(
+        $data = $db->query(
             sprintf(
                 "
                 SELECT
@@ -626,7 +626,7 @@ class Document
     /**
      * @return array<mixed>
      */
-    private function getNotes(\aportela\DatabaseWrapper\DB $dbh, ?string $search = null): array
+    private function getNotes(\aportela\DatabaseWrapper\DB $db, ?string $search = null): array
     {
         $notes = [];
         $params = [
@@ -647,7 +647,7 @@ class Document
             }
         }
 
-        $data = $dbh->query(
+        $data = $db->query(
             sprintf(
                 "
                     SELECT
@@ -683,10 +683,10 @@ class Document
     /**
      * @return array<mixed>
      */
-    private function getHistory(\aportela\DatabaseWrapper\DB $dbh): array
+    private function getHistory(\aportela\DatabaseWrapper\DB $db): array
     {
         $operations = [];
-        $data = $dbh->query(
+        $data = $db->query(
             "
                 SELECT
                     DOCUMENT_HISTORY.ctime AS operationTimestamp, DOCUMENT_HISTORY.operation_type AS operationType
@@ -713,7 +713,7 @@ class Document
     /**
      * @param array<mixed> $filter
      */
-    public static function search(\aportela\DatabaseWrapper\DB $dbh, \aportela\DatabaseBrowserWrapper\Pager $pager, array $filter = [], string $sortBy = "createdOnTimestamp", \aportela\DatabaseBrowserWrapper\Order $sortOrder = \aportela\DatabaseBrowserWrapper\Order::DESC): \stdClass
+    public static function search(\aportela\DatabaseWrapper\DB $db, \aportela\DatabaseBrowserWrapper\Pager $pager, array $filter = [], string $sortBy = "createdOnTimestamp", \aportela\DatabaseBrowserWrapper\Order $sortOrder = \aportela\DatabaseBrowserWrapper\Order::DESC): \stdClass
     {
         $fieldDefinitions = [
             "id" => "DOCUMENT.id",
@@ -733,9 +733,9 @@ class Document
             default => new \aportela\DatabaseBrowserWrapper\SortItem("createdOnTimestamp", $sortOrder, true),
         };
         // after launch search we need to make some changes foreach result
-        $afterBrowse = function ($data) use ($filter, $dbh): void {
+        $afterBrowse = function ($data) use ($filter, $db): void {
             array_map(
-                function ($item) use ($filter, $dbh) {
+                function ($item) use ($filter, $db) {
                     $item->createdOnTimestamp = intval($item->createdOnTimestamp);
                     $item->lastUpdateTimestamp = intval($item->lastUpdateTimestamp);
                     $item->attachmentCount = intval($item->attachmentCount);
@@ -763,7 +763,7 @@ class Document
                     
                     if (isset($filter["notesBody"]) && !empty($filter["notesBody"])) {
                         // TODO: this NEEDS to be rewritten with more efficient method
-                        $notes = new \HomeDocs\Document($item->id)->getNotes($dbh, $filter["notesBody"]);
+                        $notes = new \HomeDocs\Document($item->id)->getNotes($db, $filter["notesBody"]);
                         foreach ($notes as $note) {
                             $fragment = \HomeDocs\Utils::getStringFragment($note->body, $filter["notesBody"], 64, true);
                             if (!in_array($fragment, [null, '', '0'], true)) {
@@ -777,7 +777,7 @@ class Document
                     
                     if (isset($filter["attachmentsFilename"]) && !empty($filter["attachmentsFilename"])) {
                         // TODO: this NEEDS to be rewritten with more efficient method
-                        $attachments = new \HomeDocs\Document($item->id)->getAttachments($dbh, $filter["attachmentsFilename"]);
+                        $attachments = new \HomeDocs\Document($item->id)->getAttachments($db, $filter["attachmentsFilename"]);
                         foreach ($attachments as $attachment) {
                             $fragment = \HomeDocs\Utils::getStringFragment($attachment->name, $filter["attachmentsFilename"], 64, true);
                             if (!in_array($fragment, [null, '', '0'], true)) {
@@ -795,7 +795,7 @@ class Document
             );
         };
         $browser = new \aportela\DatabaseBrowserWrapper\Browser(
-            $dbh,
+            $db,
             $fieldDefinitions,
             $fieldCountDefinition,
             $pager,

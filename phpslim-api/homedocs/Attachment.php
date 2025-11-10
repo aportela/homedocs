@@ -39,10 +39,10 @@ class Attachment
         return ($this->localStoragePath);
     }
 
-    public function get(\aportela\DatabaseWrapper\DB $dbh): void
+    public function get(\aportela\DatabaseWrapper\DB $db): void
     {
         if (!in_array($this->id, [null, '', '0'], true) && mb_strlen($this->id) === 36) {
-            $data = $dbh->query(
+            $data = $db->query(
                 "
                     SELECT
                         name, size, sha1_hash AS hash, ctime AS createdOnTimestamp, cuid AS uploadedByUserId
@@ -91,10 +91,10 @@ class Attachment
         }
     }
 
-    private function saveMetadata(\aportela\DatabaseWrapper\DB $dbh): void
+    private function saveMetadata(\aportela\DatabaseWrapper\DB $db): void
     {
         $this->createdOnTimestamp = intval(microtime(true) * 1000);
-        $dbh->execute(
+        $db->execute(
             "
                 INSERT INTO ATTACHMENT
                     (id, sha1_hash, name, size, cuid, ctime)
@@ -112,11 +112,11 @@ class Attachment
         );
     }
 
-    public function add(\aportela\DatabaseWrapper\DB $dbh, \Psr\Http\Message\UploadedFileInterface $uploadedFile): void
+    public function add(\aportela\DatabaseWrapper\DB $db, \Psr\Http\Message\UploadedFileInterface $uploadedFile): void
     {
         if (!$this->exists()) {
             $this->saveStorage($uploadedFile);
-            $this->saveMetadata($dbh);
+            $this->saveMetadata($db);
         } else {
             throw new \HomeDocs\Exception\AlreadyExistsException("id");
         }
@@ -135,9 +135,9 @@ class Attachment
 
 
 
-    private function removeMetadata(\aportela\DatabaseWrapper\DB $dbh): void
+    private function removeMetadata(\aportela\DatabaseWrapper\DB $db): void
     {
-        $dbh->execute(
+        $db->execute(
             "
                 DELETE FROM ATTACHMENT
                 WHERE
@@ -149,9 +149,9 @@ class Attachment
         );
     }
 
-    public function isLinkedToDocument(\aportela\DatabaseWrapper\DB $dbh): bool
+    public function isLinkedToDocument(\aportela\DatabaseWrapper\DB $db): bool
     {
-        $result = $dbh->query(
+        $result = $db->query(
             "
                 SELECT
                     COUNT(document_id) AS total
@@ -166,9 +166,9 @@ class Attachment
         return (intval($result[0]->total) > 0);
     }
 
-    public function remove(\aportela\DatabaseWrapper\DB $dbh): void
+    public function remove(\aportela\DatabaseWrapper\DB $db): void
     {
-        $this->removeMetadata($dbh);
+        $this->removeMetadata($db);
         $this->removeStorage();
     }
 }

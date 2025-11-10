@@ -283,13 +283,13 @@ class Mock
 
         shuffle($this->attachments);
         $documentAttachments =  array_slice($this->attachments, 0, mt_rand(1, $this->maxDocumentAttachmentsCount));
-        foreach ($documentAttachments as $attachment) {
+        foreach ($documentAttachments as $documentAttachment) {
             $attachmentId = \HomeDocs\Utils::uuidv4();
             $queries[] = sprintf(
                 'INSERT INTO ATTACHMENT (id, sha1_hash, name, size, cuid, ctime) VALUES("%s", "%s", "%s", %d, "%s", %d);',
                 $attachmentId,
                 sha1(\HomeDocs\Utils::uuidv4()),
-                $attachment,
+                $documentAttachment,
                 mt_rand(1024, 10485760),
                 $this->userId,
                 ($creationTimestamp * 1000) + mt_rand(0, 86400000)

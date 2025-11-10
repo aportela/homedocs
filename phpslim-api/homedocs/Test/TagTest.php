@@ -13,8 +13,8 @@ final class TagTest extends \HomeDocs\Test\BaseTest
         $tag1 = sprintf("tag_%d", time());
         $tag2 =  sprintf("tag_%d", time() + 1);
         $this->createValidSession();
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, [$tag1, $tag2]);
-        $d->add(self::$dbh);
+        $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, [$tag1, $tag2]);
+        $document->add(self::$dbh);
         
         $tagCloud = \HomeDocs\Tag::getCloud(self::$dbh);
         $this->assertTrue(count($tagCloud) >= 2);
@@ -34,8 +34,8 @@ final class TagTest extends \HomeDocs\Test\BaseTest
         $tag1 = sprintf("tag_%d", time());
         $tag2 =  sprintf("tag_%d", time() + 1);
         $this->createValidSession();
-        $d = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, [$tag1, $tag2]);
-        $d->add(self::$dbh);
+        $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, [$tag1, $tag2]);
+        $document->add(self::$dbh);
         
         $tags = \HomeDocs\Tag::search(self::$dbh);
         $this->assertTrue(count($tags) >= 2);

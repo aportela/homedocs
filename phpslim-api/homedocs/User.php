@@ -41,11 +41,11 @@ class User
         ];
     }
     
-    public function add(\aportela\DatabaseWrapper\DB $dbh): void
+    public function add(\aportela\DatabaseWrapper\DB $db): void
     {
         $params = $this->validateAndPrepareParams();
         $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":ctime", intval(microtime(true) * 1000));
-        $dbh->execute(
+        $db->execute(
             "
                 INSERT INTO USER
                     (id, email, password_hash, ctime, mtime)
@@ -56,11 +56,11 @@ class User
         );
     }
 
-    public function update(\aportela\DatabaseWrapper\DB $dbh): void
+    public function update(\aportela\DatabaseWrapper\DB $db): void
     {
         $params = $this->validateAndPrepareParams();
         $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":mtime", intval(microtime(true) * 1000));
-        $dbh->execute(
+        $db->execute(
             "
                 UPDATE USER SET
                     email = :email,
@@ -76,11 +76,11 @@ class User
         }
     }
 
-    public function get(\aportela\DatabaseWrapper\DB $dbh): void
+    public function get(\aportela\DatabaseWrapper\DB $db): void
     {
         $results = null;
         if (!in_array($this->id, [null, '', '0'], true) && mb_strlen($this->id) === 36) {
-            $results = $dbh->query(
+            $results = $db->query(
                 "
                     SELECT
                         USER.id, USER.email, USER.password_hash AS passwordHash
@@ -92,7 +92,7 @@ class User
                 ]
             );
         } elseif (!in_array($this->email, [null, '', '0'], true) && filter_var($this->email, FILTER_VALIDATE_EMAIL) && mb_strlen($this->email) <= 255) {
-            $results = $dbh->query(
+            $results = $db->query(
                 "
                     SELECT
                         USER.id, USER.email, USER.password_hash AS passwordHash
@@ -116,21 +116,21 @@ class User
         }
     }
 
-    public function exists(\aportela\DatabaseWrapper\DB $dbh): bool
+    public function exists(\aportela\DatabaseWrapper\DB $db): bool
     {
         try {
-            $this->get($dbh);
+            $this->get($db);
             return (true);
         } catch (\HomeDocs\Exception\NotFoundException) {
             return (false);
         }
     }
 
-    public static function isEmailUsed(\aportela\DatabaseWrapper\DB $dbh, string $email): bool
+    public static function isEmailUsed(\aportela\DatabaseWrapper\DB $db, string $email): bool
     {
         $results = null;
         if ($email !== '' && $email !== '0' && filter_var($email, FILTER_VALIDATE_EMAIL) && mb_strlen($email) <= 255) {
-            $results = $dbh->query(
+            $results = $db->query(
                 "
                     SELECT
                         USER.id
@@ -148,10 +148,10 @@ class User
         return (count($results) === 1);
     }
 
-    public function login(\aportela\DatabaseWrapper\DB $dbh): bool
+    public function login(\aportela\DatabaseWrapper\DB $db): bool
     {
         if (!in_array($this->password, [null, '', '0'], true)) {
-            $this->get($dbh);
+            $this->get($db);
             if (password_verify((string) $this->password, (string) $this->passwordHash)) {
                 \HomeDocs\UserSession::set($this->id, $this->email);
                 return (true);

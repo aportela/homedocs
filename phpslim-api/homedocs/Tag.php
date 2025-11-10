@@ -9,9 +9,9 @@ class Tag
     /**
      * @return array<mixed>
      */
-    public static function getCloud(\aportela\DatabaseWrapper\DB $dbh): array
+    public static function getCloud(\aportela\DatabaseWrapper\DB $db): array
     {
-        $results = $dbh->query(
+        $results = $db->query(
             "
                     SELECT
                         COUNT(*) AS total, tag
@@ -43,9 +43,9 @@ class Tag
     /**
      * @return array<string>
      */
-    public static function search(\aportela\DatabaseWrapper\DB $dbh): array
+    public static function search(\aportela\DatabaseWrapper\DB $db): array
     {
-        $results = $dbh->query(
+        $results = $db->query(
             "
                     SELECT
                         DISTINCT tag
