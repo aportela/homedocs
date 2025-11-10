@@ -11,11 +11,14 @@ class Utils
      */
     public static function getInitialState(\Psr\Container\ContainerInterface $container): array
     {
+        /**
+         * @var array<string,mixed>
+         */
         $settings = $container->get('settings');
         return (
             [
-                'allowSignUp' => $settings['common']['allowSignUp'],
-                'defaultResultsPage' => $settings['common']['defaultResultsPage'],
+                'allowSignUp' => is_array($settings['common']) ? $settings['common']['allowSignUp'] : false,
+                'defaultResultsPage' => is_array($settings['common']) ? $settings['common']['defaultResultsPage'] : 32,
                 'environment' => $settings['environment'],
                 'maxUploadFileSize' => self::getMaxUploadFileSize(),
                 'session' => [

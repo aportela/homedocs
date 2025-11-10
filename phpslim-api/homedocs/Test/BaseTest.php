@@ -12,7 +12,10 @@ abstract class BaseTest extends \PHPUnit\Framework\TestCase
 
     public static \Psr\Container\ContainerInterface $container;
 
-    public static mixed $settings;
+    /**
+     * @var array<string,mixed>
+     */
+    public static array $settings;
 
     public static \aportela\DatabaseWrapper\DB $dbh;
 

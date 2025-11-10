@@ -14,7 +14,9 @@ class Document
      * @param array<mixed> $notes
      * @param array<mixed> $history
      */
-    public function __construct(public ?string $id = null, public ?string $title = null, public ?string $description = null, public ?int $createdOnTimestamp = null, public ?int $lastUpdateTimestamp = null, public ?array $tags = [], public ?array $attachments = [], public ?array $notes = [], public ?array $history = []) {}
+    public function __construct(public ?string $id = null, public ?string $title = null, public ?string $description = null, public ?int $createdOnTimestamp = null, public ?int $lastUpdateTimestamp = null, public ?array $tags = [], public ?array $attachments = [], public ?array $notes = [], public ?array $history = [])
+    {
+    }
 
     public function setRootStoragePath(string $rootStoragePath): void
     {
@@ -97,19 +99,19 @@ class Document
                 if (property_exists($item, "lastUpdateTimestamp") && is_numeric($item->lastUpdateTimestamp)) {
                     $item->lastUpdateTimestamp = intval($item->lastUpdateTimestamp);
                 }
-                
+
                 if (property_exists($item, "attachmentCount") && is_numeric($item->attachmentCount)) {
                     $item->attachmentCount = intval($item->attachmentCount);
                 }
-                
+
                 if (property_exists($item, "noteCount") && is_numeric($item->noteCount)) {
                     $item->noteCount = intval($item->noteCount);
                 }
-                
+
                 if (property_exists($item, "tags") && is_string($item->tags)) {
                     $item->tags = $item->tags !== '' && $item->tags !== '0' ? explode(",", $item->tags) : [];
                 }
-                
+
                 return ($item);
             },
             $results

@@ -15,16 +15,36 @@ final class TagTest extends \HomeDocs\Test\BaseTest
         $this->createValidSession();
         $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, [$tag1, $tag2]);
         $document->add(self::$dbh);
-        
+
         $tagCloud = \HomeDocs\Tag::getCloud(self::$dbh);
         $this->assertTrue(count($tagCloud) >= 2);
-        $tags = array_values(array_filter($tagCloud, fn($obj): bool => $obj->tag == $tag1));
+        $tags = array_values(
+            array_filter(
+                $tagCloud,
+                fn ($obj): bool =>
+                is_object($obj) &&
+                    property_exists($obj, "tag") &&
+                    is_string($obj->tag) &&
+                    $obj->tag === $tag1
+            )
+        );
         $this->assertEquals(1, count($tags));
         $this->assertEquals($tag1, $tags[0]->tag);
+        $this->assertTrue(property_exists($tags[0], "total"));
         $this->assertEquals(1, $tags[0]->total);
-        $tags = array_values(array_filter($tagCloud, fn($obj): bool => $obj->tag == $tag2));
+        $tags = array_values(
+            array_filter(
+                $tagCloud,
+                fn ($obj): bool =>
+                is_object($obj) &&
+                    property_exists($obj, "tag") &&
+                    is_string($obj->tag)
+                    && $obj->tag === $tag2
+            )
+        );
         $this->assertEquals(1, count($tags));
         $this->assertEquals($tag2, $tags[0]->tag);
+        $this->assertTrue(property_exists($tags[0], "total"));
         $this->assertEquals(1, $tags[0]->total);
     }
 
@@ -36,7 +56,7 @@ final class TagTest extends \HomeDocs\Test\BaseTest
         $this->createValidSession();
         $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, [$tag1, $tag2]);
         $document->add(self::$dbh);
-        
+
         $tags = \HomeDocs\Tag::search(self::$dbh);
         $this->assertTrue(count($tags) >= 2);
         $this->assertContains($tag1, $tags);

@@ -8,7 +8,9 @@ class User
 {
     public ?string $passwordHash = null;
 
-    public function __construct(public ?string $id = "", public ?string $email = "", public ?string $password = "") {}
+    public function __construct(public ?string $id = "", public ?string $email = "", public ?string $password = "")
+    {
+    }
 
     private function passwordHash(string $password = ""): string
     {
@@ -154,7 +156,7 @@ class User
                 if (is_string($this->id) && is_string($this->email)) {
                     \HomeDocs\UserSession::set($this->id, $this->email);
                 }
-                
+
                 return (true);
             } else {
                 throw new \HomeDocs\Exception\UnauthorizedException("password");
