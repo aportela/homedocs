@@ -715,7 +715,7 @@ class Document
         foreach ($data as $item) {
             $operations[] = new \HomeDocs\DocumentHistoryOperation(
                 property_exists($item, "operationTimestamp") && is_numeric($item->operationTimestamp) ? intval($item->operationTimestamp) : 0,
-                property_exists($item, "operationType") && is_numeric($item->operationType) ? $item->operationType : null,
+                property_exists($item, "operationType") && is_int($item->operationType) ? $item->operationType : null,
             );
         }
 
@@ -747,11 +747,19 @@ class Document
         // after launch search we need to make some changes foreach result
         $afterBrowse = function ($data) use ($filter, $db): void {
             array_map(
-                function ($item) use ($filter, $db) {
-                    $item->createdOnTimestamp = intval($item->createdOnTimestamp);
-                    $item->lastUpdateTimestamp = intval($item->lastUpdateTimestamp);
-                    $item->attachmentCount = intval($item->attachmentCount);
-                    $item->noteCount = intval($item->noteCount);
+                function (object $item) use ($filter, $db) {
+                    if (property_exists($item, "createdOnTimestamp") && is_numeric($item->createdOnTimestamp)) {
+                        $item->createdOnTimestamp =  intval($item->createdOnTimestamp);
+                    }
+                    if (property_exists($item, "lastUpdateTimestamp") && is_numeric($item->lastUpdateTimestamp)) {
+                        $item->lastUpdateTimestamp =  intval($item->lastUpdateTimestamp);
+                    }
+                    if (property_exists($item, "attachmentCount") && is_numeric($item->attachmentCount)) {
+                        $item->attachmentCount = intval($item->attachmentCount);
+                    }
+                    if (property_exists($item, "noteCount") && is_numeric($item->noteCount)) {
+                        $item->noteCount = intval($item->noteCount);
+                    }
                     $item->matchedFragments = [];
                     if (isset($filter["title"]) && !empty($filter["title"])) {
                         $fragment = \HomeDocs\Utils::getStringFragment($item->title, $filter["title"], 64, true);
