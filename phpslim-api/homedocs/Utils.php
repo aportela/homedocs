@@ -146,8 +146,6 @@ class Utils
      *
      * @ref https://stackoverflow.com/a/31460273/2224584
      * @ref https://paragonie.com/b/JvICXzh_jhLyt4y3
-     *
-     * @return string
      */
     public static function uuidv4(): string
     {

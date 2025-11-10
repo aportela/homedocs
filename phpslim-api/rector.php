@@ -11,4 +11,13 @@ return RectorConfig::configure()
         __DIR__ . '/public',
         __DIR__ . '/tools',
     ])
-    ->withPhpSets(php84: true);
+    ->withPhpSets(php84: true)
+    ->withPreparedSets(
+        deadCode: true,
+        //codeQuality: true,
+        //codingStyle: true,
+        //naming: true,
+        //privatization: true,
+        //typeDeclarations: true,
+        //rectorPreset: true,
+    );

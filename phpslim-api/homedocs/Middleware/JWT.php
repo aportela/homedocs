@@ -22,8 +22,6 @@ class JWT
      *
      * @param  \Psr\Http\Message\ServerRequestInterface $request  PSR7 request
      * @param  \Psr\Http\Server\RequestHandlerInterface $handler  PSR7 request handler object
-     *
-     * @return \Psr\Http\Message\ResponseInterface
      */
     public function __invoke(\Psr\Http\Message\ServerRequestInterface $request, \Psr\Http\Server\RequestHandlerInterface $handler): \Psr\Http\Message\ResponseInterface
     {

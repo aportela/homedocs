@@ -101,10 +101,9 @@ class Stats
             ),
             $params
         );
-        $results = array_map(
+        return (array_map(
             fn($item) => ["date" => $item->activity_date, "count" => intval($item->total)],
             $results
-        );
-        return ($results);
+        ));
     }
 }

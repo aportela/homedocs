@@ -94,7 +94,7 @@ class Document
                 new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
             ]
         );
-        $results = array_map(
+        return (array_map(
             function ($item) {
                 $item->lastUpdateTimestamp = intval($item->lastUpdateTimestamp);
                 $item->attachmentCount = intval($item->attachmentCount);
@@ -103,8 +103,7 @@ class Document
                 return ($item);
             },
             $results
-        );
-        return ($results);
+        ));
     }
 
     private function validate(): void
@@ -112,24 +111,20 @@ class Document
         if (!empty($this->id) && mb_strlen($this->id) == \HomeDocs\Constants::UUID_V4_LENGTH) {
             if (!empty($this->title) && mb_strlen($this->title) <= \HomeDocs\Constants::MAX_DOCUMENT_TITLE_LENGTH) {
                 if ((!empty($this->description) && mb_strlen($this->description) <= \HomeDocs\Constants::MAX_DOCUMENT_DESCRIPTION_LENGTH) || empty($this->description)) {
-                    if (count($this->tags) > 0) {
-                        foreach ($this->tags as $tag) {
-                            if (empty($tag)) {
-                                throw new \HomeDocs\Exception\InvalidParamsException("tags");
-                            } elseif (mb_strlen($tag) > \HomeDocs\Constants::MAX_DOCUMENT_TAG_LENGTH) {
-                                throw new \HomeDocs\Exception\InvalidParamsException("tags");
-                            }
+                    foreach ($this->tags as $tag) {
+                        if (empty($tag)) {
+                            throw new \HomeDocs\Exception\InvalidParamsException("tags");
+                        } elseif (mb_strlen($tag) > \HomeDocs\Constants::MAX_DOCUMENT_TAG_LENGTH) {
+                            throw new \HomeDocs\Exception\InvalidParamsException("tags");
                         }
                     }
-                    if (count($this->notes) > 0) {
-                        foreach ($this->notes as $note) {
-                            if (! empty($note->id) && mb_strlen((string) $note->id) == \HomeDocs\Constants::UUID_V4_LENGTH) {
-                                if (! (!empty($note->body) && mb_strlen((string) $note->body) <= \HomeDocs\Constants::MAX_DOCUMENT_NOTE_BODY_LENGTH)) {
-                                    throw new \HomeDocs\Exception\InvalidParamsException("noteBody");
-                                }
-                            } else {
-                                $note->id = \HomeDocs\Utils::uuidv4();
+                    foreach ($this->notes as $note) {
+                        if (! empty($note->id) && mb_strlen((string) $note->id) == \HomeDocs\Constants::UUID_V4_LENGTH) {
+                            if (! (!empty($note->body) && mb_strlen((string) $note->body) <= \HomeDocs\Constants::MAX_DOCUMENT_NOTE_BODY_LENGTH)) {
+                                throw new \HomeDocs\Exception\InvalidParamsException("noteBody");
                             }
+                        } else {
+                            $note->id = \HomeDocs\Utils::uuidv4();
                         }
                     }
                 } else {
@@ -553,10 +548,8 @@ class Document
                 new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id))
             ]
         );
-        if (count($data) > 0) {
-            foreach ($data as $item) {
-                $tags[] = $item->tag;
-            }
+        foreach ($data as $item) {
+            $tags[] = $item->tag;
         }
         return ($tags);
     }
@@ -609,17 +602,15 @@ class Document
             ),
             $params
         );
-        if (count($data) > 0) {
-            foreach ($data as $item) {
-                $attachments[] = new \HomeDocs\Attachment(
-                    $this->rootStoragePath ?? null,
-                    $item->id,
-                    $item->name,
-                    intval($item->size),
-                    $item->hash,
-                    intval($item->createdOnTimestamp)
-                );
-            }
+        foreach ($data as $item) {
+            $attachments[] = new \HomeDocs\Attachment(
+                $this->rootStoragePath ?? null,
+                $item->id,
+                $item->name,
+                intval($item->size),
+                $item->hash,
+                intval($item->createdOnTimestamp)
+            );
         }
         return ($attachments);
     }
@@ -670,14 +661,12 @@ class Document
             ),
             $params
         );
-        if (count($data) > 0) {
-            foreach ($data as $item) {
-                $notes[] = new \HomeDocs\Note(
-                    $item->noteId,
-                    intval($item->createdOnTimestamp),
-                    $item->body
-                );
-            }
+        foreach ($data as $item) {
+            $notes[] = new \HomeDocs\Note(
+                $item->noteId,
+                intval($item->createdOnTimestamp),
+                $item->body
+            );
         }
         return ($notes);
     }
@@ -702,13 +691,11 @@ class Document
                 new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id))
             ]
         );
-        if (count($data) > 0) {
-            foreach ($data as $item) {
-                $operations[] = new \HomeDocs\DocumentHistoryOperation(
-                    intval($item->operationTimestamp),
-                    $item->operationType,
-                );
-            }
+        foreach ($data as $item) {
+            $operations[] = new \HomeDocs\DocumentHistoryOperation(
+                intval($item->operationTimestamp),
+                $item->operationType,
+            );
         }
         return ($operations);
     }

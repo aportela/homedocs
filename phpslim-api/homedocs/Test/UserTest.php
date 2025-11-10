@@ -125,7 +125,6 @@ final class UserTest extends \HomeDocs\Test\BaseTest
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("id,email");
-        $id = \HomeDocs\Utils::uuidv4();
         new \HomeDocs\User("", "", "secret")->get(self::$dbh);
     }
 
@@ -201,7 +200,6 @@ final class UserTest extends \HomeDocs\Test\BaseTest
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
         $this->expectExceptionMessage("id,email");
-        $id = \HomeDocs\Utils::uuidv4();
         new \HomeDocs\User("", "", "secret")->login(self::$dbh);
     }
 

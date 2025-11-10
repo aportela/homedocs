@@ -10,7 +10,7 @@ abstract class BaseTest extends \PHPUnit\Framework\TestCase
 {
     public static ?\Slim\App $app;
     public static \Psr\Container\ContainerInterface $container;
-    public static $settings = null;
+    public static $settings;
     public static ?\aportela\DatabaseWrapper\DB $dbh = null;
 
     protected function createValidSession(): void

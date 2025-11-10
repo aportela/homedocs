@@ -8,16 +8,10 @@ class JWT
 
     /**
      * jwt constructor
-     *
-     * @param string $passphrase
      */
     public function __construct(private readonly \Psr\Log\LoggerInterface $logger, private readonly string $passphrase)
     {
         $this->logger->debug("JWT passphrase", [$this->passphrase]);
-    }
-
-    public function __destruct()
-    {
     }
 
     public function encode(mixed $payload): string

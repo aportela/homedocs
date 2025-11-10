@@ -31,14 +31,13 @@ class Tag
                 new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
             ]
         );
-        $results = array_map(
+        return (array_map(
             function ($item) {
                 $item->total = intval($item->total);
                 return ($item);
             },
             $results
-        );
-        return ($results);
+        ));
     }
 
     /**
@@ -64,10 +63,9 @@ class Tag
                 new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
             ]
         );
-        $results = array_map(
+        return (array_map(
             fn($item) => $item->tag,
             $results
-        );
-        return ($results);
+        ));
     }
 }
