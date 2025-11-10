@@ -10,8 +10,14 @@ return function (App $app): void {
     $app->get('/', function (Request $request, Response $response, array $args): \Psr\Http\Message\MessageInterface|\Psr\Http\Message\ResponseInterface {
         $filePath = dirname(__DIR__) . '/public/index.html';
         if (file_exists($filePath)) {
-            $response->getBody()->write(file_get_contents($filePath));
-            return $response->withHeader('Content-Type', 'text/html; charset=UTF-8');
+            $contents = file_get_contents($filePath);
+            if (is_string($contents)) {
+                $response->getBody()->write($contents);
+                return $response->withHeader('Content-Type', 'text/html; charset=UTF-8');
+            } else {
+                $response->getBody()->write("Invalid html template");
+                return $response->withStatus(500);
+            }
         } else {
             return $response->withStatus(404);
         }
@@ -33,7 +39,7 @@ return function (App $app): void {
                     throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                 }
 
-                $response->getBody()->write($payload);
+                $response->getBody()->write(is_string($payload) ? $payload : "{}");
                 return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
             });
 

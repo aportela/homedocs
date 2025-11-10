@@ -23,7 +23,7 @@ class Stats
                 new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
             ]
         );
-        return (intval($result[0]->total));
+        return (intval($result[0]->total ?? 0));
     }
 
     public static function getTotalUploadedAttachments(\aportela\DatabaseWrapper\DB $db): int
@@ -44,7 +44,7 @@ class Stats
                 new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
             ]
         );
-        return (intval($result[0]->total));
+        return (intval($result[0]->total ?? 0));
     }
 
     public static function getTotalUploadedAttachmentsDiskUsage(\aportela\DatabaseWrapper\DB $db): int
@@ -66,7 +66,7 @@ class Stats
                 new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
             ]
         );
-        return (intval($result[0]->total));
+        return (intval($result[0]->total ?? 0));
     }
 
     /**
@@ -82,7 +82,7 @@ class Stats
             $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":from_timestamp", $fromTimestamp);
             $whereCondition = " AND DOCUMENT_HISTORY.ctime >= :from_timestamp ";
         }
-        
+
         $results = $db->query(
             sprintf(
                 "

@@ -6,9 +6,7 @@ namespace HomeDocs\Middleware;
 
 class APIExceptionCatcher
 {
-    public function __construct(protected \Psr\Log\LoggerInterface $logger)
-    {
-    }
+    public function __construct(protected \Psr\Log\LoggerInterface $logger) {}
 
     /**
      * @param array<mixed> $payload
@@ -17,7 +15,13 @@ class APIExceptionCatcher
     {
         $this->logger->debug(sprintf("Exception caught (%s) - Message: %s", $exception::class, $exception->getMessage()));
         $response = new \Slim\Psr7\Response();
-        $response->getBody()->write(json_encode($payload));
+        $json = json_encode($payload);
+        if (is_string($json)) {
+            $response->getBody()->write($json);
+        } else {
+            $this->logger->error("Error serializing payload", $payload);
+            $response->getBody()->write("{}");
+        }
         return $response->withStatus($statusCode);
     }
 
@@ -25,7 +29,7 @@ class APIExceptionCatcher
     {
         $this->logger->error(sprintf("Unhandled exception caught (%s) - Message: %s", $throwable::class, $throwable->getMessage()));
         $this->logger->debug($throwable->getTraceAsString());
-        
+
         $response = new \Slim\Psr7\Response();
         $exception = [
             'type' => $throwable::class,
@@ -42,12 +46,17 @@ class APIExceptionCatcher
                 'line' => $parent->getLine()
             ];
         }
-        
+
         $payload = json_encode([
             'exception' => $exception,
             'status' => 500
         ]);
-        $response->getBody()->write($payload);
+        if (is_string($payload)) {
+            $response->getBody()->write($payload);
+        } else {
+            $this->logger->error("Error serializing payload", [$exception]);
+            $response->getBody()->write("{}");
+        }
         return $response->withStatus(500);
     }
 
