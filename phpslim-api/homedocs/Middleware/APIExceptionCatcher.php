@@ -33,7 +33,7 @@ class APIExceptionCatcher
             'line' => $e->getLine()
         ];
         $parent = $e->getPrevious();
-        if ($parent) {
+        if ($parent instanceof \Throwable) {
             $exception['parent'] = [
                 'type' => $parent::class,
                 'message' => $parent->getMessage(),

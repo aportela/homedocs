@@ -29,7 +29,7 @@ return function (App $app): void {
                         'initialState' => $initialState
                     ]
                 );
-                if (json_last_error() != JSON_ERROR_NONE) {
+                if (json_last_error() !== JSON_ERROR_NONE) {
                     throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                 }
                 $response->getBody()->write($payload);
@@ -56,7 +56,7 @@ return function (App $app): void {
                                     'initialState' => $initialState
                                 ]
                             );
-                            if (json_last_error() != JSON_ERROR_NONE) {
+                            if (json_last_error() !== JSON_ERROR_NONE) {
                                 throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                             }
                             $response->getBody()->write($payload);
@@ -81,7 +81,7 @@ return function (App $app): void {
                             'initialState' => $initialState
                         ]
                     );
-                    if (json_last_error() != JSON_ERROR_NONE) {
+                    if (json_last_error() !== JSON_ERROR_NONE) {
                         throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
                     $response->getBody()->write($payload);
@@ -95,7 +95,7 @@ return function (App $app): void {
                             'initialState' => $initialState
                         ]
                     );
-                    if (json_last_error() != JSON_ERROR_NONE) {
+                    if (json_last_error() !== JSON_ERROR_NONE) {
                         throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
                     $response->getBody()->write($payload);
@@ -115,7 +115,7 @@ return function (App $app): void {
                             'data' => $user
                         ]
                     );
-                    if (json_last_error() != JSON_ERROR_NONE) {
+                    if (json_last_error() !== JSON_ERROR_NONE) {
                         throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
                     $response->getBody()->write($payload);
@@ -147,7 +147,7 @@ return function (App $app): void {
                             'data' => $user
                         ]
                     );
-                    if (json_last_error() != JSON_ERROR_NONE) {
+                    if (json_last_error() !== JSON_ERROR_NONE) {
                         throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
                     $response->getBody()->write($payload);
@@ -169,7 +169,7 @@ return function (App $app): void {
                             )
                         ]
                     );
-                    if (json_last_error() != JSON_ERROR_NONE) {
+                    if (json_last_error() !== JSON_ERROR_NONE) {
                         throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
                     $response->getBody()->write($payload);
@@ -203,7 +203,7 @@ return function (App $app): void {
                             )
                         ]
                     );
-                    if (json_last_error() != JSON_ERROR_NONE) {
+                    if (json_last_error() !== JSON_ERROR_NONE) {
                         throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
                     $response->getBody()->write($payload);
@@ -223,7 +223,7 @@ return function (App $app): void {
                             'document' => $document
                         ]
                     );
-                    if (json_last_error() != JSON_ERROR_NONE) {
+                    if (json_last_error() !== JSON_ERROR_NONE) {
                         throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
                     $response->getBody()->write($payload);
@@ -241,7 +241,7 @@ return function (App $app): void {
                             'notes' => $document->notes
                         ]
                     );
-                    if (json_last_error() != JSON_ERROR_NONE) {
+                    if (json_last_error() !== JSON_ERROR_NONE) {
                         throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
                     $response->getBody()->write($payload);
@@ -259,7 +259,7 @@ return function (App $app): void {
                             'attachments' => $document->attachments
                         ]
                     );
-                    if (json_last_error() != JSON_ERROR_NONE) {
+                    if (json_last_error() !== JSON_ERROR_NONE) {
                         throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
                     $response->getBody()->write($payload);
@@ -322,7 +322,7 @@ return function (App $app): void {
                             'document' => $document
                         ]
                     );
-                    if (json_last_error() != JSON_ERROR_NONE) {
+                    if (json_last_error() !== JSON_ERROR_NONE) {
                         throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
                     $response->getBody()->write($payload);
@@ -390,7 +390,7 @@ return function (App $app): void {
                             'document' => $document
                         ]
                     );
-                    if (json_last_error() != JSON_ERROR_NONE) {
+                    if (json_last_error() !== JSON_ERROR_NONE) {
                         throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
                     $response->getBody()->write($payload);
@@ -418,7 +418,7 @@ return function (App $app): void {
                             'initialState' => $initialState
                         ]
                     );
-                    if (json_last_error() != JSON_ERROR_NONE) {
+                    if (json_last_error() !== JSON_ERROR_NONE) {
                         throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
                     $response->getBody()->write($payload);
@@ -500,7 +500,7 @@ return function (App $app): void {
                                     ]
                                 ]
                             );
-                            if (json_last_error() != JSON_ERROR_NONE) {
+                            if (json_last_error() !== JSON_ERROR_NONE) {
                                 throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                             }
                             $response->getBody()->write($payload);
@@ -526,7 +526,7 @@ return function (App $app): void {
                                 'initialState' => $initialState,
                             ]
                         );
-                        if (json_last_error() != JSON_ERROR_NONE) {
+                        if (json_last_error() !== JSON_ERROR_NONE) {
                             throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                         }
                         $response->getBody()->write($payload);
@@ -542,7 +542,7 @@ return function (App $app): void {
                         'tags' => \HomeDocs\Tag::getCloud($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class))
                     ]
                 );
-                if (json_last_error() != JSON_ERROR_NONE) {
+                if (json_last_error() !== JSON_ERROR_NONE) {
                     throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                 }
                 $response->getBody()->write($payload);
@@ -556,7 +556,7 @@ return function (App $app): void {
                         'tags' => \HomeDocs\Tag::search($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class))
                     ]
                 );
-                if (json_last_error() != JSON_ERROR_NONE) {
+                if (json_last_error() !== JSON_ERROR_NONE) {
                     throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                 }
                 $response->getBody()->write($payload);
@@ -571,7 +571,7 @@ return function (App $app): void {
                             'count' => \HomeDocs\Stats::getTotalPublishedDocuments($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class))
                         ]
                     );
-                    if (json_last_error() != JSON_ERROR_NONE) {
+                    if (json_last_error() !== JSON_ERROR_NONE) {
                         throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
                     $response->getBody()->write($payload);
@@ -585,7 +585,7 @@ return function (App $app): void {
                             'count' => \HomeDocs\Stats::getTotalUploadedAttachments($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class))
                         ]
                     );
-                    if (json_last_error() != JSON_ERROR_NONE) {
+                    if (json_last_error() !== JSON_ERROR_NONE) {
                         throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
                     $response->getBody()->write($payload);
@@ -599,7 +599,7 @@ return function (App $app): void {
                             'size' => \HomeDocs\Stats::getTotalUploadedAttachmentsDiskUsage($app->getContainer()->get(\aportela\DatabaseWrapper\DB::class))
                         ]
                     );
-                    if (json_last_error() != JSON_ERROR_NONE) {
+                    if (json_last_error() !== JSON_ERROR_NONE) {
                         throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
                     $response->getBody()->write($payload);
@@ -617,7 +617,7 @@ return function (App $app): void {
                             )
                         ]
                     );
-                    if (json_last_error() != JSON_ERROR_NONE) {
+                    if (json_last_error() !== JSON_ERROR_NONE) {
                         throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg());
                     }
                     $response->getBody()->write($payload);

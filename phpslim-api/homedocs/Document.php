@@ -108,9 +108,9 @@ class Document
 
     private function validate(): void
     {
-        if (!empty($this->id) && mb_strlen($this->id) == \HomeDocs\Constants::UUID_V4_LENGTH) {
-            if (!empty($this->title) && mb_strlen($this->title) <= \HomeDocs\Constants::MAX_DOCUMENT_TITLE_LENGTH) {
-                if ((!empty($this->description) && mb_strlen($this->description) <= \HomeDocs\Constants::MAX_DOCUMENT_DESCRIPTION_LENGTH) || empty($this->description)) {
+        if (!in_array($this->id, [null, '', '0'], true) && mb_strlen($this->id) === \HomeDocs\Constants::UUID_V4_LENGTH) {
+            if (!in_array($this->title, [null, '', '0'], true) && mb_strlen($this->title) <= \HomeDocs\Constants::MAX_DOCUMENT_TITLE_LENGTH) {
+                if ((!in_array($this->description, [null, '', '0'], true) && mb_strlen($this->description) <= \HomeDocs\Constants::MAX_DOCUMENT_DESCRIPTION_LENGTH) || in_array($this->description, [null, '', '0'], true)) {
                     foreach ($this->tags as $tag) {
                         if (empty($tag)) {
                             throw new \HomeDocs\Exception\InvalidParamsException("tags");
@@ -119,7 +119,7 @@ class Document
                         }
                     }
                     foreach ($this->notes as $note) {
-                        if (! empty($note->id) && mb_strlen((string) $note->id) == \HomeDocs\Constants::UUID_V4_LENGTH) {
+                        if (! empty($note->id) && mb_strlen((string) $note->id) === \HomeDocs\Constants::UUID_V4_LENGTH) {
                             if (! (!empty($note->body) && mb_strlen((string) $note->body) <= \HomeDocs\Constants::MAX_DOCUMENT_NOTE_BODY_LENGTH)) {
                                 throw new \HomeDocs\Exception\InvalidParamsException("noteBody");
                             }
@@ -145,87 +145,82 @@ class Document
             (new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower((string) $this->id))),
             (new \aportela\DatabaseWrapper\Param\StringParam(":title", $this->title)),
         ];
-        if (!empty($this->description)) {
+        if (!in_array($this->description, [null, '', '0'], true)) {
             $params[] = (new \aportela\DatabaseWrapper\Param\StringParam(":description", $this->description));
         } else {
             $params[] = (new \aportela\DatabaseWrapper\Param\NullParam(":description"));
         }
-        if ($dbh->execute(
-            "
+        if ($dbh->execute("
                 INSERT INTO DOCUMENT
                     (id, title, description)
                 VALUES
                     (:id, :title, :description)
-            ",
-            $params
-        )) {
-            if ($dbh->execute(
-                "
+            ", $params) && $dbh->execute(
+            "
                 INSERT INTO DOCUMENT_HISTORY
                     (document_id, ctime, operation_type, cuid)
                 VALUES
                     (:document_id, :ctime, :operation_type, :cuid)
             ",
-                [
-                    new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
-                    new \aportela\DatabaseWrapper\Param\IntegerParam(":ctime", intval(microtime(true) * 1000)),
-                    new \aportela\DatabaseWrapper\Param\IntegerParam(":operation_type", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
-                    new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId())
-                ]
-            )) {
-                foreach ($this->tags as $tag) {
-                    if (!empty($tag)) {
-                        $dbh->execute(
-                            "
+            [
+                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
+                new \aportela\DatabaseWrapper\Param\IntegerParam(":ctime", intval(microtime(true) * 1000)),
+                new \aportela\DatabaseWrapper\Param\IntegerParam(":operation_type", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
+                new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId())
+            ]
+        )) {
+            foreach ($this->tags as $tag) {
+                if (!empty($tag)) {
+                    $dbh->execute(
+                        "
                                 INSERT INTO DOCUMENT_TAG
                                     (document_id, tag)
                                 VALUES
                                     (:document_id, :tag)
                             ",
-                            [
-                                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
-                                new \aportela\DatabaseWrapper\Param\StringParam(":tag", mb_strtolower($tag))
-                            ]
-                        );
-                    } else {
-                        throw new \HomeDocs\Exception\InvalidParamsException("tag");
-                    }
+                        [
+                            new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
+                            new \aportela\DatabaseWrapper\Param\StringParam(":tag", mb_strtolower($tag))
+                        ]
+                    );
+                } else {
+                    throw new \HomeDocs\Exception\InvalidParamsException("tag");
                 }
-                foreach ($this->attachments as $attachment) {
-                    if (!empty($attachment->id)) {
-                        $dbh->execute(
-                            "
+            }
+            foreach ($this->attachments as $attachment) {
+                if (!empty($attachment->id)) {
+                    $dbh->execute(
+                        "
                                 INSERT INTO DOCUMENT_ATTACHMENT
                                     (document_id, attachment_id)
                                 VALUES
                                     (:document_id, :attachment_id)
                             ",
-                            [
-                                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
-                                new \aportela\DatabaseWrapper\Param\StringParam(":attachment_id", mb_strtolower((string) $attachment->id))
-                            ]
-                        );
-                    } else {
-                        throw new \HomeDocs\Exception\InvalidParamsException("attachment_id");
-                    }
+                        [
+                            new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
+                            new \aportela\DatabaseWrapper\Param\StringParam(":attachment_id", mb_strtolower((string) $attachment->id))
+                        ]
+                    );
+                } else {
+                    throw new \HomeDocs\Exception\InvalidParamsException("attachment_id");
                 }
-                foreach ($this->notes as $note) {
-                    $dbh->execute(
-                        "
+            }
+            foreach ($this->notes as $note) {
+                $dbh->execute(
+                    "
                             INSERT INTO DOCUMENT_NOTE
                                 (note_id, document_id, ctime, cuid, body)
                             VALUES
                                 (:note_id, :document_id, :ctime, :cuid, :note_body)
                         ",
-                        [
-                            new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower((string) $note->id)),
-                            new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
-                            new \aportela\DatabaseWrapper\Param\IntegerParam(":ctime", intval(microtime(true) * 1000)),
-                            new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId()),
-                            new \aportela\DatabaseWrapper\Param\StringParam(":note_body", $note->body),
-                        ]
-                    );
-                }
+                    [
+                        new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower((string) $note->id)),
+                        new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
+                        new \aportela\DatabaseWrapper\Param\IntegerParam(":ctime", intval(microtime(true) * 1000)),
+                        new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId()),
+                        new \aportela\DatabaseWrapper\Param\StringParam(":note_body", $note->body),
+                    ]
+                );
             }
         }
     }
@@ -237,67 +232,88 @@ class Document
             new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower((string) $this->id)),
             new \aportela\DatabaseWrapper\Param\StringParam(":title", $this->title)
         ];
-        if (!empty($this->description)) {
+        if (!in_array($this->description, [null, '', '0'], true)) {
             $params[] = new \aportela\DatabaseWrapper\Param\StringParam(":description", $this->description);
         } else {
             $params[] = new \aportela\DatabaseWrapper\Param\NullParam(":description");
         }
-        if ($dbh->execute(
-            "
+        if ($dbh->execute("
                 UPDATE DOCUMENT SET
                     title = :title,
                     description = :description
                 WHERE
                     id = :id
-            ",
-            $params
-        )) {
-            if ($dbh->execute(
-                "
+            ", $params) && $dbh->execute(
+            "
                     INSERT INTO DOCUMENT_HISTORY
                         (document_id, ctime, operation_type, cuid)
                     VALUES
                         (:document_id, :ctime, :operation_type, :cuid)
                 ",
-                [
-                    new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
-                    new \aportela\DatabaseWrapper\Param\IntegerParam(":ctime", intval(microtime(true) * 1000)),
-                    new \aportela\DatabaseWrapper\Param\IntegerParam(":operation_type", \HomeDocs\DocumentHistoryOperation::OPERATION_UPDATE_DOCUMENT),
-                    new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId())
-                ]
-            )) {
-                $dbh->execute(
-                    "
+            [
+                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
+                new \aportela\DatabaseWrapper\Param\IntegerParam(":ctime", intval(microtime(true) * 1000)),
+                new \aportela\DatabaseWrapper\Param\IntegerParam(":operation_type", \HomeDocs\DocumentHistoryOperation::OPERATION_UPDATE_DOCUMENT),
+                new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId())
+            ]
+        )) {
+            $dbh->execute(
+                "
                         DELETE FROM DOCUMENT_TAG
                         WHERE
                             document_id = :document_id
                     ",
-                    [
-                        new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
-                    ]
-                );
-                foreach ($this->tags as $tag) {
-                    if (!empty($tag)) {
-                        $dbh->execute(
-                            "
+                [
+                    new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
+                ]
+            );
+            foreach ($this->tags as $tag) {
+                if (!empty($tag)) {
+                    $dbh->execute(
+                        "
                                 INSERT INTO DOCUMENT_TAG
                                     (document_id, tag)
                                 VALUES
                                     (:document_id, :tag)
                             ",
-                            [
-                                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
-                                new \aportela\DatabaseWrapper\Param\StringParam(":tag", mb_strtolower($tag))
-                            ]
-                        );
-                    } else {
-                        throw new \HomeDocs\Exception\InvalidParamsException("tag");
+                        [
+                            new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
+                            new \aportela\DatabaseWrapper\Param\StringParam(":tag", mb_strtolower($tag))
+                        ]
+                    );
+                } else {
+                    throw new \HomeDocs\Exception\InvalidParamsException("tag");
+                }
+            }
+            $originalAttachments = $this->getAttachments($dbh);
+            foreach ($originalAttachments as $originalAttachment) {
+                $notFound = true;
+                foreach ($this->attachments as $attachment) {
+                    if ($attachment->id == $originalAttachment->id) {
+                        $notFound = false;
                     }
                 }
-                $originalAttachments = $this->getAttachments($dbh);
-                foreach ($originalAttachments as $originalAttachment) {
+                if ($notFound) {
+                    $dbh->execute(
+                        "
+                                DELETE FROM DOCUMENT_ATTACHMENT
+                                WHERE
+                                    document_id = :document_id
+                                AND
+                                    attachment_id = :attachment_id
+                            ",
+                        [
+                            new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
+                            new \aportela\DatabaseWrapper\Param\StringParam(":attachment_id", mb_strtolower((string) $originalAttachment->id))
+                        ]
+                    );
+                    $originalAttachment->remove($dbh);
+                }
+            }
+            foreach ($this->attachments as $attachment) {
+                if (!empty($attachment->id)) {
                     $notFound = true;
-                    foreach ($this->attachments as $attachment) {
+                    foreach ($originalAttachments as $originalAttachment) {
                         if ($attachment->id == $originalAttachment->id) {
                             $notFound = false;
                         }
@@ -305,81 +321,56 @@ class Document
                     if ($notFound) {
                         $dbh->execute(
                             "
-                                DELETE FROM DOCUMENT_ATTACHMENT
-                                WHERE
-                                    document_id = :document_id
-                                AND
-                                    attachment_id = :attachment_id
-                            ",
-                            [
-                                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
-                                new \aportela\DatabaseWrapper\Param\StringParam(":attachment_id", mb_strtolower((string) $originalAttachment->id))
-                            ]
-                        );
-                        $originalAttachment->remove($dbh);
-                    }
-                }
-                foreach ($this->attachments as $attachment) {
-                    if (!empty($attachment->id)) {
-                        $notFound = true;
-                        foreach ($originalAttachments as $originalAttachment) {
-                            if ($attachment->id == $originalAttachment->id) {
-                                $notFound = false;
-                            }
-                        }
-                        if ($notFound) {
-                            $dbh->execute(
-                                "
                                     INSERT INTO DOCUMENT_ATTACHMENT
                                         (document_id, attachment_id)
                                     VALUES
                                         (:document_id, :attachment_id)
                                 ",
-                                [
-                                    new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
-                                    new \aportela\DatabaseWrapper\Param\StringParam(":attachment_id", mb_strtolower((string) $attachment->id))
-                                ]
-                            );
-                        }
-                    } else {
-                        throw new \HomeDocs\Exception\InvalidParamsException("attachmentId");
+                            [
+                                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
+                                new \aportela\DatabaseWrapper\Param\StringParam(":attachment_id", mb_strtolower((string) $attachment->id))
+                            ]
+                        );
+                    }
+                } else {
+                    throw new \HomeDocs\Exception\InvalidParamsException("attachmentId");
+                }
+            }
+            $originalNotes = $this->getNotes($dbh);
+            foreach ($originalNotes as $originalNote) {
+                $notFound = true;
+                foreach ($this->notes as $note) {
+                    if ($note->id == $originalNote->id) {
+                        $notFound = false;
                     }
                 }
-                $originalNotes = $this->getNotes($dbh);
-                foreach ($originalNotes as $originalNote) {
-                    $notFound = true;
-                    foreach ($this->notes as $note) {
-                        if ($note->id == $originalNote->id) {
-                            $notFound = false;
-                        }
-                    }
-                    if ($notFound) {
-                        $dbh->execute(
-                            "
+                if ($notFound) {
+                    $dbh->execute(
+                        "
                                 DELETE FROM DOCUMENT_NOTE
                                 WHERE
                                     document_id = :document_id
                                 AND
                                     note_id = :note_id
                             ",
-                            [
-                                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
-                                new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower((string) $originalNote->id))
-                            ]
-                        );
-                    }
+                        [
+                            new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
+                            new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower((string) $originalNote->id))
+                        ]
+                    );
                 }
-                foreach ($this->notes as $note) {
-                    if (empty($note->id)) {
-                        $note->id = \HomeDocs\Utils::uuidv4();
-                    }
-                    $notFound = true;
-                    foreach ($originalNotes as $originalNote) {
-                        if ($note->id == $originalNote->id) {
-                            $notFound = false;
-                            if ($note->body !== $originalNote->body) {
-                                $dbh->execute(
-                                    "
+            }
+            foreach ($this->notes as $note) {
+                if (empty($note->id)) {
+                    $note->id = \HomeDocs\Utils::uuidv4();
+                }
+                $notFound = true;
+                foreach ($originalNotes as $originalNote) {
+                    if ($note->id == $originalNote->id) {
+                        $notFound = false;
+                        if ($note->body !== $originalNote->body) {
+                            $dbh->execute(
+                                "
                                     UPDATE DOCUMENT_NOTE SET
                                         body = :note_body
                                     WHERE
@@ -389,36 +380,35 @@ class Document
                                     AND
                                         cuid = :cuid
                                     ",
-                                    [
-                                        new \aportela\DatabaseWrapper\Param\StringParam(":note_body", $note->body),
-                                        new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower((string) $note->id)),
-                                        new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
-                                        new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId())
-                                    ]
-                                );
-                                break;
-                            } else {
-                                break;
-                            }
+                                [
+                                    new \aportela\DatabaseWrapper\Param\StringParam(":note_body", $note->body),
+                                    new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower((string) $note->id)),
+                                    new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
+                                    new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId())
+                                ]
+                            );
+                            break;
+                        } else {
+                            break;
                         }
                     }
-                    if ($notFound) {
-                        $dbh->execute(
-                            "
+                }
+                if ($notFound) {
+                    $dbh->execute(
+                        "
                                 INSERT INTO DOCUMENT_NOTE
                                     (note_id, document_id, ctime, cuid, body)
                                 VALUES
                                     (:note_id, :document_id, :ctime, :cuid, :note_body)
                             ",
-                            [
-                                new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower((string) $note->id)),
-                                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
-                                new \aportela\DatabaseWrapper\Param\IntegerParam(":ctime", intval(microtime(true) * 1000)),
-                                new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId()),
-                                new \aportela\DatabaseWrapper\Param\StringParam(":note_body", $note->body)
-                            ]
-                        );
-                    }
+                        [
+                            new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower((string) $note->id)),
+                            new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
+                            new \aportela\DatabaseWrapper\Param\IntegerParam(":ctime", intval(microtime(true) * 1000)),
+                            new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId()),
+                            new \aportela\DatabaseWrapper\Param\StringParam(":note_body", $note->body)
+                        ]
+                    );
                 }
             }
         }
@@ -426,7 +416,7 @@ class Document
 
     public function delete(\aportela\DatabaseWrapper\DB $dbh): void
     {
-        if (!empty($this->id) && mb_strlen($this->id) == \HomeDocs\Constants::UUID_V4_LENGTH) {
+        if (!in_array($this->id, [null, '', '0'], true) && mb_strlen($this->id) === \HomeDocs\Constants::UUID_V4_LENGTH) {
             $params = [
                 new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
             ];
@@ -481,7 +471,7 @@ class Document
 
     public function get(\aportela\DatabaseWrapper\DB $dbh): void
     {
-        if (!empty($this->id) && mb_strlen($this->id) == \HomeDocs\Constants::UUID_V4_LENGTH) {
+        if (!in_array($this->id, [null, '', '0'], true) && mb_strlen($this->id) === \HomeDocs\Constants::UUID_V4_LENGTH) {
             $data = $dbh->query(
                 "
                     SELECT
@@ -506,7 +496,7 @@ class Document
                     new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id))
                 ]
             );
-            if (count($data) == 1) {
+            if (count($data) === 1) {
                 if ($data[0]->createdByUserId == \HomeDocs\UserSession::getUserId()) {
                     $this->title = $data[0]->title;
                     $this->description = $data[0]->description;
@@ -564,7 +554,7 @@ class Document
             new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id))
         ];
         $queryConditions = [];
-        if (! empty($search)) {
+        if (!in_array($search, [null, '', '0'], true)) {
             // explode into words, remove duplicated & empty elements
             $words = array_filter(array_unique(explode(" ", trim(mb_strtolower($search)))));
             $totalWords = count($words);
@@ -592,13 +582,13 @@ class Document
                     ATTACHMENT.ctime DESC,
                     ATTACHMENT.name
             ",
-                ! empty($search) ?
+                in_array($search, [null, '', '0'], true) ?
+                    ""
+                    :
                     "
                     AND (
                         " .  implode(" AND ", $queryConditions) . "
                     )"
-                    :
-                    ""
             ),
             $params
         );
@@ -625,7 +615,7 @@ class Document
             new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id))
         ];
         $queryConditions = [];
-        if (! empty($search)) {
+        if (!in_array($search, [null, '', '0'], true)) {
             // explode into words, remove duplicated & empty elements
             $words = array_filter(array_unique(explode(" ", trim(mb_strtolower($search)))));
             $totalWords = count($words);
@@ -651,13 +641,13 @@ class Document
                     ORDER BY
                         DOCUMENT_NOTE.ctime DESC
                 ",
-                ! empty($search) ?
+                in_array($search, [null, '', '0'], true) ?
+                    ""
+                    :
                     "
                     AND (
                         " .  implode(" AND ", $queryConditions) . "
                     )"
-                    :
-                    ""
             ),
             $params
         );
@@ -733,7 +723,7 @@ class Document
                     $item->matchedFragments = [];
                     if (isset($filter["title"]) && !empty($filter["title"])) {
                         $fragment = \HomeDocs\Utils::getStringFragment($item->title, $filter["title"], 64, true);
-                        if (! empty($fragment)) {
+                        if (!in_array($fragment, [null, '', '0'], true)) {
                             $item->matchedFragments[] = [
                                 "matchedOn" => "title",
                                 "fragment" => $fragment
@@ -742,7 +732,7 @@ class Document
                     }
                     if (isset($filter["description"]) && !empty($filter["description"])) {
                         $fragment = \HomeDocs\Utils::getStringFragment($item->description, $filter["description"], 64, true);
-                        if (! empty($fragment)) {
+                        if (!in_array($fragment, [null, '', '0'], true)) {
                             $item->matchedFragments[] = [
                                 "matchedOn" => "description",
                                 "fragment" => $fragment
@@ -754,7 +744,7 @@ class Document
                         $notes = new \HomeDocs\Document($item->id)->getNotes($dbh, $filter["notesBody"]);
                         foreach ($notes as $note) {
                             $fragment = \HomeDocs\Utils::getStringFragment($note->body, $filter["notesBody"], 64, true);
-                            if (! empty($fragment)) {
+                            if (!in_array($fragment, [null, '', '0'], true)) {
                                 $item->matchedFragments[] = [
                                     "matchedOn" => "note body",
                                     "fragment" => $fragment
@@ -767,7 +757,7 @@ class Document
                         $attachments = new \HomeDocs\Document($item->id)->getAttachments($dbh, $filter["attachmentsFilename"]);
                         foreach ($attachments as $attachment) {
                             $fragment = \HomeDocs\Utils::getStringFragment($attachment->name, $filter["attachmentsFilename"], 64, true);
-                            if (! empty($fragment)) {
+                            if (!in_array($fragment, [null, '', '0'], true)) {
                                 $item->matchedFragments[] = [
                                     "matchedOn" => "attachment filename",
                                     "fragment" => $fragment

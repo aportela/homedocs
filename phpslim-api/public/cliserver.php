@@ -18,4 +18,4 @@ $_SERVER['SCRIPT_NAME'] = '/index.php';
 // if needed, fix also 'PATH_INFO' and 'PHP_SELF' variables here...
 
 // require the entry point
-require 'index.php';
+require __DIR__ . '/index.php';

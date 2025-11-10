@@ -97,7 +97,7 @@ class Stats
                     ORDER BY
                         activity_date
                 ",
-                count($params) == 2 ? $whereCondition : null
+                count($params) === 2 ? $whereCondition : null
             ),
             $params
         );

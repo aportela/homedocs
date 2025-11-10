@@ -50,15 +50,13 @@ class JWT
             }
         } else {
             $response = $handler->handle($request);
-            if (empty($clientHeaderJWT)) {
-                if (\HomeDocs\UserSession::isLogged()) {
-                    $payload = [
-                        "userId" => $_SESSION["userId"] ?? null,
-                        "email" => $_SESSION["email"] ?? null
-                    ];
-                    $jwt = new \HomeDocs\JWT($this->logger, $this->passphrase);
-                    $clientHeaderJWT = $jwt->encode($payload);
-                }
+            if (empty($clientHeaderJWT) && \HomeDocs\UserSession::isLogged()) {
+                $payload = [
+                    "userId" => $_SESSION["userId"] ?? null,
+                    "email" => $_SESSION["email"] ?? null
+                ];
+                $jwt = new \HomeDocs\JWT($this->logger, $this->passphrase);
+                $clientHeaderJWT = $jwt->encode($payload);
             }
             if ($clientHeaderJWT && \HomeDocs\UserSession::isLogged()) {
                 return $response->withHeader("HOMEDOCS-JWT", $clientHeaderJWT);

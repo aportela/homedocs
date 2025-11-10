@@ -10,14 +10,14 @@ class Attachment
 
     public function __construct(?string $rootStoragePath = null, public ?string $id = null, public ?string $name = null, public ?int $size = null, public ?string $hash = null, public ?int $createdOnTimestamp = null)
     {
-        if (! empty($rootStoragePath) && ! empty($this->id)) {
+        if (!in_array($rootStoragePath, [null, '', '0'], true) && !in_array($this->id, [null, '', '0'], true)) {
             $this->localStoragePath = $this->getAttachmentStoragePath($rootStoragePath);
         }
     }
 
     private function getAttachmentStoragePath(string $rootStoragePath): string
     {
-        if (!empty($this->id) && mb_strlen($this->id) == 36) {
+        if (!in_array($this->id, [null, '', '0'], true) && mb_strlen($this->id) === 36) {
             return (sprintf(
                 "%s%s%s%s%s%s%s",
                 $rootStoragePath,
@@ -41,7 +41,7 @@ class Attachment
 
     public function get(\aportela\DatabaseWrapper\DB $dbh): void
     {
-        if (!empty($this->id) && mb_strlen($this->id) == 36) {
+        if (!in_array($this->id, [null, '', '0'], true) && mb_strlen($this->id) === 36) {
             $data = $dbh->query(
                 "
                     SELECT
@@ -54,7 +54,7 @@ class Attachment
                     new \aportela\DatabaseWrapper\Param\StringParam(":id", $this->id)
                 ]
             );
-            if (count($data) == 1) {
+            if (count($data) === 1) {
                 if ($data[0]->uploadedByUserId == \HomeDocs\UserSession::getUserId()) {
                     $this->name = $data[0]->name;
                     $this->size = intval($data[0]->size);

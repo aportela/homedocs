@@ -22,13 +22,13 @@ class User
      */
     private function validateAndPrepareParams(): array
     {
-        if (empty($this->id) || mb_strlen($this->id) !== 36) {
+        if (in_array($this->id, [null, '', '0'], true) || mb_strlen($this->id) !== 36) {
             throw new \HomeDocs\Exception\InvalidParamsException("id");
         }
-        if (empty($this->email) || mb_strlen($this->email) > 255 || !filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
+        if (in_array($this->email, [null, '', '0'], true) || mb_strlen($this->email) > 255 || !filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
             throw new \HomeDocs\Exception\InvalidParamsException("email");
         }
-        if (empty($this->password)) {
+        if (in_array($this->password, [null, '', '0'], true)) {
             throw new \HomeDocs\Exception\InvalidParamsException("password");
         }
 
@@ -68,7 +68,7 @@ class User
             ",
             $params
         );
-        if (ini_get("session.use_cookies") && PHP_SAPI != 'cli') {
+        if (ini_get("session.use_cookies") && PHP_SAPI !== 'cli') {
             \HomeDocs\UserSession::set(\HomeDocs\UserSession::getUserId(), $this->email);
         }
     }
@@ -76,7 +76,7 @@ class User
     public function get(\aportela\DatabaseWrapper\DB $dbh): void
     {
         $results = null;
-        if (!empty($this->id) && mb_strlen($this->id) == 36) {
+        if (!in_array($this->id, [null, '', '0'], true) && mb_strlen($this->id) === 36) {
             $results = $dbh->query(
                 "
                     SELECT
@@ -88,7 +88,7 @@ class User
                     new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id))
                 ]
             );
-        } elseif (!empty($this->email) && filter_var($this->email, FILTER_VALIDATE_EMAIL) && mb_strlen($this->email) <= 255) {
+        } elseif (!in_array($this->email, [null, '', '0'], true) && filter_var($this->email, FILTER_VALIDATE_EMAIL) && mb_strlen($this->email) <= 255) {
             $results = $dbh->query(
                 "
                     SELECT
@@ -103,7 +103,7 @@ class User
         } else {
             throw new \HomeDocs\Exception\InvalidParamsException("id,email");
         }
-        if (count($results) == 1) {
+        if (count($results) === 1) {
             $this->id = $results[0]->id;
             $this->email = $results[0]->email;
             $this->passwordHash = $results[0]->passwordHash;
@@ -125,7 +125,7 @@ class User
     public static function isEmailUsed(\aportela\DatabaseWrapper\DB $dbh, string $email): bool
     {
         $results = null;
-        if (!empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL) && mb_strlen($email) <= 255) {
+        if ($email !== '' && $email !== '0' && filter_var($email, FILTER_VALIDATE_EMAIL) && mb_strlen($email) <= 255) {
             $results = $dbh->query(
                 "
                     SELECT
@@ -140,12 +140,12 @@ class User
         } else {
             throw new \HomeDocs\Exception\InvalidParamsException("id,email");
         }
-        return (count($results) == 1);
+        return (count($results) === 1);
     }
 
     public function login(\aportela\DatabaseWrapper\DB $dbh): bool
     {
-        if (!empty($this->password)) {
+        if (!in_array($this->password, [null, '', '0'], true)) {
             $this->get($dbh);
             if (password_verify((string) $this->password, (string) $this->passwordHash)) {
                 \HomeDocs\UserSession::set($this->id, $this->email);
