@@ -44,6 +44,7 @@ class JWT
             } else {
                 throw new \HomeDocs\Exception\InvalidParamsException("jwt");
             }
+            
             $response = $requestHandler->handle($serverRequest);
             return $response->withHeader("HOMEDOCS-JWT", $clientHeaderJWT);
         } else {

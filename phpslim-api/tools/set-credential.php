@@ -35,12 +35,13 @@ $cmdLine = new \HomeDocs\CmdLine("", ["email:", "password:"]);
 if ($cmdLine->hasParam("email") && $cmdLine->hasParam("password")) {
     $email = $cmdLine->getParamValue("email");
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        echo " error! - invalid email param: {$email}" . PHP_EOL;
+        echo ' error! - invalid email param: ' . $email . PHP_EOL;
         $logger->error("Invalid email param", [$email]);
         exit(1);
     } else {
         echo " success!" . PHP_EOL;
     }
+    
     echo "[?] Setting account credentials...";
     $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
     $found = false;
@@ -63,6 +64,7 @@ if ($cmdLine->hasParam("email") && $cmdLine->hasParam("password")) {
         $u->add($dbh);
         echo " success!" . PHP_EOL;
     }
+    
     exit(0);
 } else {
     echo " error! - No required params found: --email <email> --password <secret>" . PHP_EOL;

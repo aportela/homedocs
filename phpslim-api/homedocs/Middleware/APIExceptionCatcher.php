@@ -22,6 +22,7 @@ class APIExceptionCatcher
             $this->logger->error("Error serializing payload", $payload);
             $response->getBody()->write("{}");
         }
+        
         return $response->withStatus($statusCode);
     }
 
@@ -57,6 +58,7 @@ class APIExceptionCatcher
             $this->logger->error("Error serializing payload", [$exception]);
             $response->getBody()->write("{}");
         }
+        
         return $response->withStatus(500);
     }
 

@@ -49,7 +49,7 @@ if (!$db->isSchemaInstalled()) {
 $currentDBVersion = $db->getCurrentSchemaVersion();
 $lastDBVersionAvailable = $db->getUpgradeSchemaVersion();
 if ($currentDBVersion != $lastDBVersionAvailable) {
-    echo "[?] Database upgrade required (current: {$currentDBVersion} => available: {$lastDBVersionAvailable})...";
+    echo sprintf('[?] Database upgrade required (current: %s => available: %s)...', $currentDBVersion, $lastDBVersionAvailable);
     $currentVersion = $db->upgradeSchema(false);
     if ($currentVersion !== -1) {
         echo " success!" . PHP_EOL;
@@ -59,7 +59,8 @@ if ($currentDBVersion != $lastDBVersionAvailable) {
         exit(1);
     }
 } else {
-    echo "[!] Database already on last version ({$lastDBVersionAvailable})" . PHP_EOL;
+    echo sprintf('[!] Database already on last version (%s)', $lastDBVersionAvailable) . PHP_EOL;
     $logger->notice("Database already on last version", [$lastDBVersionAvailable]);
 }
+
 exit(0);

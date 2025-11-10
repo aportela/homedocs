@@ -1,22 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace HomeDocs;
 
 class Installer
 {
-    private \Psr\Log\LoggerInterface $logger;
     /**
      * @var array<string,mixed>
      */
     private array $settings = [];
 
-    public function __construct(\Psr\Log\LoggerInterface $logger, \Psr\Container\ContainerInterface $container)
+    public function __construct(private readonly \Psr\Log\LoggerInterface $logger, \Psr\Container\ContainerInterface $container)
     {
-        $this->logger = $logger;
         $this->settings = $container->get("settings");
     }
-
-    public function __destruct() {}
 
     /**
      * @return array<string>
@@ -29,7 +27,7 @@ class Installer
     public function checkRequiredPHPExtensions(): bool
     {
         $missingExtensions = $this->getMissingPHPExtensions();
-        if (count($missingExtensions) > 0) {
+        if ($missingExtensions !== []) {
             $this->logger->critical("Error: missing php extension/s: ", $missingExtensions);
             return (false);
         } else {

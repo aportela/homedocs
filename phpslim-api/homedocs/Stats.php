@@ -23,7 +23,7 @@ class Stats
                 new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
             ]
         );
-        return (count($results) == 1 && property_exists($results[0], "total") && is_numeric($results[0]->total) ? intval($results[0]->total) : 0);
+        return (count($results) === 1 && property_exists($results[0], "total") && is_numeric($results[0]->total) ? intval($results[0]->total) : 0);
     }
 
     public static function getTotalUploadedAttachments(\aportela\DatabaseWrapper\DB $db): int
@@ -44,7 +44,7 @@ class Stats
                 new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
             ]
         );
-        return (count($results) == 1 && property_exists($results[0], "total") && is_numeric($results[0]->total) ? intval($results[0]->total) : 0);
+        return (count($results) === 1 && property_exists($results[0], "total") && is_numeric($results[0]->total) ? intval($results[0]->total) : 0);
     }
 
     public static function getTotalUploadedAttachmentsDiskUsage(\aportela\DatabaseWrapper\DB $db): int
@@ -66,7 +66,7 @@ class Stats
                 new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
             ]
         );
-        return (count($results) == 1 && property_exists($results[0], "total") && is_numeric($results[0]->total) ? intval($results[0]->total) : 0);
+        return (count($results) === 1 && property_exists($results[0], "total") && is_numeric($results[0]->total) ? intval($results[0]->total) : 0);
     }
 
     /**

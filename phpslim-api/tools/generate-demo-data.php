@@ -36,12 +36,13 @@ $cmdLine = new \HomeDocs\CmdLine("", ["count:", "email:", "password:"]);
 if ($cmdLine->hasParam("count") && $cmdLine->hasParam("email") && $cmdLine->hasParam("password")) {
     $email = $cmdLine->getParamValue("email");
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        echo " error! - invalid email param: {$email}" . PHP_EOL;
+        echo ' error! - invalid email param: ' . $email . PHP_EOL;
         $logger->error("Invalid email param", [$email]);
         exit(1);
     } else {
         echo " success!" . PHP_EOL;
     }
+    
     $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
     $u = new \HomeDocs\User("", $cmdLine->getParamValue("email"), $cmdLine->getParamValue("password"));
     $found = false;

@@ -69,10 +69,8 @@ class User
             ",
             $params
         );
-        if (ini_get("session.use_cookies") && PHP_SAPI !== 'cli') {
-            if (is_string($this->email)) {
-                \HomeDocs\UserSession::set(\HomeDocs\UserSession::getUserId(), $this->email);
-            }
+        if (ini_get("session.use_cookies") && PHP_SAPI !== 'cli' && is_string($this->email)) {
+            \HomeDocs\UserSession::set(\HomeDocs\UserSession::getUserId(), $this->email);
         }
     }
 
@@ -156,6 +154,7 @@ class User
                 if (is_string($this->id) && is_string($this->email)) {
                     \HomeDocs\UserSession::set($this->id, $this->email);
                 }
+                
                 return (true);
             } else {
                 throw new \HomeDocs\Exception\UnauthorizedException("password");
