@@ -62,7 +62,7 @@ composer install
 Execute the SQLite database creation/update script.
 
 ```Shell
-php phpslim-api/tools/install.php
+php phpslim-api/tools/setup.php
 ```
 
 Check proper permissions: The web server process must have read and write permissions for files, and read, write, and execute permissions for directories.
@@ -99,7 +99,7 @@ https://www.slimframework.com/docs/v4/start/web-servers.html
 The storage data is retained/shared from previous versions (1.x & 2.x), but the database structure has changed. You will need to install a clean database and run a small SQLite script from the command line:
 
 ```Shell
-php phpslim-api/tools/install.php
+php phpslim-api/tools/setup.php
 cd phpslim-api/data
 sqlite3 ./homedocs3.sqlite3 < ../tools/migrate-from-v2.sql
 ```
@@ -118,7 +118,7 @@ cat ../tools/migrate-from-v1.sql | sqlite3 ./homedocs2.sqlite3
 Once migrated, run the update script to apply the SQL version changes:
 
 ```Shell
-php phpslim-api/tools/update.php
+php phpslim-api/tools/setup.php
 ```
 
 ## Backup data
