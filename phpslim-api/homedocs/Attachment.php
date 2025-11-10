@@ -55,11 +55,11 @@ class Attachment
                 ]
             );
             if (count($data) === 1) {
-                if ($data[0]->uploadedByUserId == \HomeDocs\UserSession::getUserId()) {
-                    $this->name = $data[0]->name;
-                    $this->size = intval($data[0]->size);
-                    $this->hash = $data[0]->hash;
-                    $this->createdOnTimestamp = intval($data[0]->createdOnTimestamp);
+                if (($data[0]->uploadedByUserId ?? null) == \HomeDocs\UserSession::getUserId()) {
+                    $this->name = $data[0]->name ?? null;
+                    $this->size = intval($data[0]->size ?? 0);
+                    $this->hash = $data[0]->hash ?? null;
+                    $this->createdOnTimestamp = intval($data[0]->createdOnTimestamp ?? 0);
                 } else {
                     throw new \HomeDocs\Exception\AccessDeniedException("id");
                 }
@@ -83,7 +83,7 @@ class Attachment
             if (!file_exists($path['dirname'])) {
                 mkdir($path['dirname'], 0777, true);
             }
-            
+
             $uploadedFile->moveTo($this->localStoragePath);
             $this->hash = sha1_file($this->localStoragePath);
         } else {

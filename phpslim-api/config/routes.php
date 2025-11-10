@@ -48,6 +48,9 @@ return function (App $app): void {
                     $settings = $app->getContainer()->get('settings');
                     if ($settings['common']['allowSignUp']) {
                         $params = $request->getParsedBody();
+                        if (! is_array($params)) {
+                            throw new \HomeDocs\Exception\InvalidParamsException();
+                        }
                         $dbh = $app->getContainer()->get(\aportela\DatabaseWrapper\DB::class);
                         if (\HomeDocs\User::isEmailUsed($dbh, $params["email"] ?? "")) {
                             throw new \HomeDocs\Exception\AlreadyExistsException("email");
@@ -77,6 +80,9 @@ return function (App $app): void {
 
                 $routeCollectorProxy->post('/login', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $params = $request->getParsedBody();
+                    if (! is_array($params)) {
+                        throw new \HomeDocs\Exception\InvalidParamsException();
+                    }
                     $dbh = $app->getContainer()->get(\aportela\DatabaseWrapper\DB::class);
                     $user = new \HomeDocs\User(
                         "",
@@ -136,6 +142,9 @@ return function (App $app): void {
 
                 $routeCollectorProxy->put('/profile', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $params = $request->getParsedBody();
+                    if (! is_array($params)) {
+                        throw new \HomeDocs\Exception\InvalidParamsException();
+                    }
                     $dbh = $app->getContainer()->get(\aportela\DatabaseWrapper\DB::class);
                     $user = new \HomeDocs\User(\HomeDocs\UserSession::getUserId());
                     $user->get($dbh);
@@ -174,6 +183,9 @@ return function (App $app): void {
                 $routeCollectorProxy->post('/recent_documents', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $settings = $app->getContainer()->get('settings');
                     $params = $request->getParsedBody();
+                    if (! is_array($params)) {
+                        throw new \HomeDocs\Exception\InvalidParamsException();
+                    }
                     $payload = json_encode(
                         [
                             'initialState' => $initialState,
@@ -194,6 +206,9 @@ return function (App $app): void {
                 $routeCollectorProxy->post('/document', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $settings = $app->getContainer()->get('settings');
                     $params = $request->getParsedBody();
+                    if (! is_array($params)) {
+                        throw new \HomeDocs\Exception\InvalidParamsException();
+                    }
                     $payload = json_encode(
                         [
                             'initialState' => $initialState,
@@ -290,6 +305,9 @@ return function (App $app): void {
 
                 $routeCollectorProxy->post('/{id}', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $params = $request->getParsedBody();
+                    if (! is_array($params)) {
+                        throw new \HomeDocs\Exception\InvalidParamsException();
+                    }
                     $documentAttachments = $params["attachments"] ?? [];
                     $rootStoragePath = $app->getContainer()->get('settings')['paths']['storage'];
                     $attachments = [];
@@ -359,6 +377,9 @@ return function (App $app): void {
 
                 $routeCollectorProxy->put('/{id}', function (Request $request, Response $response, array $args) use ($app, $initialState) {
                     $params = $request->getParsedBody();
+                    if (! is_array($params)) {
+                        throw new \HomeDocs\Exception\InvalidParamsException();
+                    }
                     $dbh = $app->getContainer()->get(\aportela\DatabaseWrapper\DB::class);
                     $document = new \HomeDocs\Document(
                         $args['id']

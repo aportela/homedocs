@@ -103,7 +103,7 @@ class Stats
             $params
         );
         return (array_map(
-            fn(object $item): array => ["date" => $item->activity_date, "count" => intval($item->total)],
+            fn(object $item): array => ["date" => $item->activity_date ?? null, "count" => intval($item->total ?? 0)],
             $results
         ));
     }

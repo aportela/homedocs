@@ -14,9 +14,7 @@ class Document
      * @param array<mixed> $notes
      * @param array<mixed> $history
      */
-    public function __construct(public ?string $id = null, public ?string $title = null, public ?string $description = null, public ?int $createdOnTimestamp = null, public ?int $lastUpdateTimestamp = null, public ?array $tags = [], public ?array $attachments = [], public ?array $notes = [], public ?array $history = [])
-    {
-    }
+    public function __construct(public ?string $id = null, public ?string $title = null, public ?string $description = null, public ?int $createdOnTimestamp = null, public ?int $lastUpdateTimestamp = null, public ?array $tags = [], public ?array $attachments = [], public ?array $notes = [], public ?array $history = []) {}
 
     public function setRootStoragePath(string $rootStoragePath): void
     {
@@ -96,10 +94,18 @@ class Document
         );
         return (array_map(
             function (object $item): object {
-                $item->lastUpdateTimestamp = intval($item->lastUpdateTimestamp);
-                $item->attachmentCount = intval($item->attachmentCount);
-                $item->noteCount = intval($item->noteCount);
-                $item->tags = $item->tags ? explode(",", $item->tags) : [];
+                if (property_exists($item, "lastUpdateTimestamp")) {
+                    $item->lastUpdateTimestamp = intval($item->lastUpdateTimestamp);
+                }
+                if (property_exists($item, "attachmentCount")) {
+                    $item->attachmentCount = intval($item->attachmentCount);
+                }
+                if (property_exists($item, "noteCount")) {
+                    $item->noteCount = intval($item->noteCount);
+                }
+                if (property_exists($item, "tags")) {
+                    $item->tags = $item->tags ? explode(",", $item->tags) : [];
+                }
                 return ($item);
             },
             $results
@@ -118,7 +124,7 @@ class Document
                             throw new \HomeDocs\Exception\InvalidParamsException("tags");
                         }
                     }
-                    
+
                     foreach ($this->notes as $note) {
                         if (! empty($note->id) && mb_strlen((string) $note->id) === \HomeDocs\Constants::UUID_V4_LENGTH) {
                             if (! (!empty($note->body) && mb_strlen((string) $note->body) <= \HomeDocs\Constants::MAX_DOCUMENT_NOTE_BODY_LENGTH)) {
@@ -151,7 +157,7 @@ class Document
         } else {
             $params[] = (new \aportela\DatabaseWrapper\Param\NullParam(":description"));
         }
-        
+
         if ($db->execute("
                 INSERT INTO DOCUMENT
                     (id, title, description)
@@ -241,7 +247,7 @@ class Document
         } else {
             $params[] = new \aportela\DatabaseWrapper\Param\NullParam(":description");
         }
-        
+
         if ($db->execute("
                 UPDATE DOCUMENT SET
                     title = :title,
@@ -299,7 +305,7 @@ class Document
                         $notFound = false;
                     }
                 }
-                
+
                 if ($notFound) {
                     $db->execute(
                         "
@@ -326,7 +332,7 @@ class Document
                             $notFound = false;
                         }
                     }
-                    
+
                     if ($notFound) {
                         $db->execute(
                             "
@@ -354,7 +360,7 @@ class Document
                         $notFound = false;
                     }
                 }
-                
+
                 if ($notFound) {
                     $db->execute(
                         "
@@ -376,7 +382,7 @@ class Document
                 if (empty($note->id)) {
                     $note->id = \HomeDocs\Utils::uuidv4();
                 }
-                
+
                 $notFound = true;
                 foreach ($originalNotes as $originalNote) {
                     if ($note->id == $originalNote->id) {
@@ -406,7 +412,7 @@ class Document
                         }
                     }
                 }
-                
+
                 if ($notFound) {
                     $db->execute(
                         "
@@ -454,7 +460,7 @@ class Document
             foreach ($originalAttachments as $originalAttachment) {
                 $originalAttachment->remove($db);
             }
-            
+
             $db->execute(
                 "
                     DELETE FROM DOCUMENT_NOTE
@@ -512,11 +518,11 @@ class Document
                 ]
             );
             if (count($data) === 1) {
-                if ($data[0]->createdByUserId == \HomeDocs\UserSession::getUserId()) {
-                    $this->title = $data[0]->title;
-                    $this->description = $data[0]->description;
-                    $this->createdOnTimestamp = intval($data[0]->createdOnTimestamp);
-                    $this->lastUpdateTimestamp = intval($data[0]->lastUpdateTimestamp);
+                if (($data[0]->createdByUserId ?? null) == \HomeDocs\UserSession::getUserId()) {
+                    $this->title = $data[0]->title ?? null;
+                    $this->description = $data[0]->description ?? null;
+                    $this->createdOnTimestamp = intval($data[0]->createdOnTimestamp ?? 0);
+                    $this->lastUpdateTimestamp = intval($data[0]->lastUpdateTimestamp ?? 0);
                     $this->tags = $this->getTags($db);
                     $this->attachments = $this->getAttachments($db);
                     $this->notes = $this->getNotes($db);
@@ -554,9 +560,11 @@ class Document
             ]
         );
         foreach ($data as $item) {
-            $tags[] = $item->tag;
+            if (property_exists($item, "tag")) {
+                $tags[] = $item->tag;
+            }
         }
-        
+
         return ($tags);
     }
 
@@ -583,7 +591,7 @@ class Document
                 }
             }
         }
-        
+
         $data = $db->query(
             sprintf(
                 "
@@ -612,14 +620,14 @@ class Document
         foreach ($data as $item) {
             $attachments[] = new \HomeDocs\Attachment(
                 $this->rootStoragePath ?? null,
-                $item->id,
-                $item->name,
-                intval($item->size),
-                $item->hash,
-                intval($item->createdOnTimestamp)
+                $item->id ?? null,
+                $item->name ?? null,
+                intval($item->size ?? 0),
+                $item->hash ?? null,
+                intval($item->createdOnTimestamp ?? 0)
             );
         }
-        
+
         return ($attachments);
     }
 
@@ -671,12 +679,12 @@ class Document
         );
         foreach ($data as $item) {
             $notes[] = new \HomeDocs\Note(
-                $item->noteId,
-                intval($item->createdOnTimestamp),
-                $item->body
+                $item->noteId ?? null,
+                intval($item->createdOnTimestamp ?? 0),
+                $item->body ?? null
             );
         }
-        
+
         return ($notes);
     }
 
@@ -702,11 +710,11 @@ class Document
         );
         foreach ($data as $item) {
             $operations[] = new \HomeDocs\DocumentHistoryOperation(
-                intval($item->operationTimestamp),
-                $item->operationType,
+                intval($item->operationTimestamp ?? 0),
+                $item->operationType ?? null,
             );
         }
-        
+
         return ($operations);
     }
 
@@ -750,7 +758,7 @@ class Document
                             ];
                         }
                     }
-                    
+
                     if (isset($filter["description"]) && !empty($filter["description"])) {
                         $fragment = \HomeDocs\Utils::getStringFragment($item->description, $filter["description"], 64, true);
                         if (!in_array($fragment, [null, '', '0'], true)) {
@@ -760,7 +768,7 @@ class Document
                             ];
                         }
                     }
-                    
+
                     if (isset($filter["notesBody"]) && !empty($filter["notesBody"])) {
                         // TODO: this NEEDS to be rewritten with more efficient method
                         $notes = new \HomeDocs\Document($item->id)->getNotes($db, $filter["notesBody"]);
@@ -774,7 +782,7 @@ class Document
                             }
                         }
                     }
-                    
+
                     if (isset($filter["attachmentsFilename"]) && !empty($filter["attachmentsFilename"])) {
                         // TODO: this NEEDS to be rewritten with more efficient method
                         $attachments = new \HomeDocs\Document($item->id)->getAttachments($db, $filter["attachmentsFilename"]);
@@ -788,7 +796,7 @@ class Document
                             }
                         }
                     }
-                    
+
                     return ($item);
                 },
                 $data->items
@@ -822,7 +830,7 @@ class Document
                 }
             }
         }
-        
+
         if (isset($filter["description"]) && !empty($filter["description"])) {
             // explode into words, remove duplicated & empty elements
             $words = array_filter(array_unique(explode(" ", trim(mb_strtolower((string) $filter["description"])))));
@@ -836,7 +844,7 @@ class Document
                 }
             }
         }
-        
+
         if (isset($filter["notesBody"]) && !empty($filter["notesBody"])) {
             // explode into words, remove duplicated & empty elements
             $words = array_filter(array_unique(explode(" ", trim(mb_strtolower((string) $filter["notesBody"])))));
@@ -849,7 +857,7 @@ class Document
                     $notesConditions[] = sprintf(" DOCUMENT_NOTE.body LIKE %s ", $paramName);
                     --$totalWords;
                 }
-                
+
                 $queryConditions[] = sprintf("
                     EXISTS (
                         SELECT
@@ -863,7 +871,7 @@ class Document
                 ", implode(" AND ", $notesConditions));
             }
         }
-        
+
         if (isset($filter["attachmentsFilename"]) && !empty($filter["attachmentsFilename"])) {
             // explode into words, remove duplicated & empty elements
             $words = array_filter(array_unique(explode(" ", trim(mb_strtolower((string) $filter["attachmentsFilename"])))));
@@ -876,7 +884,7 @@ class Document
                     $notesConditions[] = sprintf(" ATTACHMENT.name LIKE %s ", $paramName);
                     --$totalWords;
                 }
-                
+
                 $queryConditions[] = sprintf("
                     EXISTS (
                         SELECT
@@ -891,27 +899,27 @@ class Document
                 ", implode(" AND ", $notesConditions));
             }
         }
-        
+
         if (isset($filter["fromCreationTimestampCondition"]) && $filter["fromCreationTimestampCondition"] > 0) {
             $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":fromCreationTimestamp", $filter["fromCreationTimestampCondition"]);
             $queryConditions[] = " DOCUMENT_HISTORY_CREATION_DATE.ctime >= :fromCreationTimestamp ";
         }
-        
+
         if (isset($filter["toCreationTimestampCondition"]) && $filter["toCreationTimestampCondition"] > 0) {
             $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":toCreationTimestamp", $filter["toCreationTimestampCondition"]);
             $queryConditions[] = " DOCUMENT_HISTORY_CREATION_DATE.ctime <= :toCreationTimestamp ";
         }
-        
+
         if (isset($filter["fromLastUpdateTimestampCondition"]) && $filter["fromLastUpdateTimestampCondition"] > 0) {
             $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":fromLastUpdateTimestamp", $filter["fromLastUpdateTimestampCondition"]);
             $queryConditions[] = " COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.ctime, DOCUMENT_HISTORY_CREATION_DATE.ctime) >= :fromLastUpdateTimestamp ";
         }
-        
+
         if (isset($filter["toLastUpdateTimestampCondition"]) && $filter["toLastUpdateTimestampCondition"] > 0) {
             $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":toLastUpdateTimestamp", $filter["toLastUpdateTimestampCondition"]);
             $queryConditions[] = " COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.ctime, DOCUMENT_HISTORY_CREATION_DATE.ctime) <= :toLastUpdateTimestamp ";
         }
-        
+
         if (isset($filter["fromUpdatedOnTimestampCondition"]) && $filter["fromUpdatedOnTimestampCondition"] > 0  && isset($filter["toUpdatedOnTimestampCondition"]) && $filter["toUpdatedOnTimestampCondition"] > 0) {
 
             $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":fromUpdatedOnTimestamp", $filter["fromUpdatedOnTimestampCondition"]);
@@ -957,7 +965,7 @@ class Document
                 )
             ";
         }
-        
+
         if (isset($filter["tags"]) && is_array($filter["tags"]) && $filter["tags"] !== []) {
             foreach ($filter["tags"] as $i => $tag) {
                 $paramName = sprintf(":TAG_%03d", $i + 1);
@@ -978,7 +986,7 @@ class Document
                 );
             }
         }
-        
+
         $whereCondition = $queryConditions !== [] ? " WHERE " .  implode(" AND ", $queryConditions) : "";
         $browser->addDBQueryParams($params);
         $query = $browser->buildQuery(
