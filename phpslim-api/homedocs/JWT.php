@@ -18,7 +18,7 @@ class JWT
 
     public function encode(mixed $payload): string
     {
-        $jwt = null;
+        $jwt = "";
         $this->logger->notice("JWT encoding", [$payload]);
         try {
             $jwt = \Firebase\JWT\JWT::encode(
@@ -38,7 +38,7 @@ class JWT
 
     public function decode(string $jwt): \stdClass
     {
-        $data = null;
+        $data = new \stdClass();
         try {
             $this->logger->notice("JWT decoding", [$jwt]);
             $data = \Firebase\JWT\JWT::decode($jwt, new \Firebase\JWT\Key($this->passphrase, self::ALGORITHM));
