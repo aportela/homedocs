@@ -332,12 +332,12 @@ return function (App $app): void {
                     }
 
                     $document = new \HomeDocs\Document(
-                        $args['id'] ?? "",
-                        $params["title"] ?? null,
-                        $params["description"] ?? null,
+                        is_string($args['id']) ? $args['id'] : null,
+                        is_string($params["title"]) ? $params["title"] : null,
+                        is_string($params["description"]) ? $params["description"] : null,
                         null,
                         null,
-                        $params["tags"] ?? [],
+                        is_array($params["tags"]) ? $params["tags"] : [],
                         $attachments,
                         $notes,
                     );
