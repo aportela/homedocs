@@ -77,4 +77,13 @@ class Settings
             throw new \RuntimeException("Settings key (paths->storage) not found");
         }
     }
+
+    public function getErrorBooleanKey(string $key): bool
+    {
+        if (is_array($this->settings['error']) && is_bool($this->settings['error'][$key])) {
+            return ($this->settings['error'][$key]);
+        } else {
+            throw new \RuntimeException("Settings key (error->{$key}) not found");
+        }
+    }
 }

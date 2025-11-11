@@ -17,16 +17,13 @@ return [
 
     ErrorMiddleware::class => function (ContainerInterface $container): \Slim\Middleware\ErrorMiddleware {
         $app = $container->get(App::class);
-        /**
-         * @var array<string, bool>
-         */
-        $settings = $container->get('settings')['error'];
+        $settings = new \HomeDocs\Settings();
         return new ErrorMiddleware(
             $app->getCallableResolver(),
             $app->getResponseFactory(),
-            (bool)$settings['display_error_details'],
-            (bool)$settings['log_errors'],
-            (bool)$settings['log_error_details']
+            $settings->getErrorBooleanKey('display_error_details'),
+            $settings->getErrorBooleanKey('log_errors'),
+            $settings->getErrorBooleanKey('log_error_details')
         );
     },
 
