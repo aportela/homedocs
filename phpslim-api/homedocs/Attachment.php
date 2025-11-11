@@ -8,26 +8,18 @@ class Attachment
 {
     private string $localStoragePath;
 
-    public function __construct(?string $rootStoragePath = null, public ?string $id = null, public ?string $name = null, public ?int $size = null, public ?string $hash = null, public ?int $createdOnTimestamp = null)
-    {
-        if (!in_array($rootStoragePath, [null, '', '0'], true) && !in_array($this->id, [null, '', '0'], true)) {
-            $this->localStoragePath = $this->getAttachmentStoragePath($rootStoragePath);
-        }
-    }
-
-    private function getAttachmentStoragePath(string $rootStoragePath): string
+    public function __construct(public string $id, public ?string $name = null, public ?int $size = null, public ?string $hash = null, public ?int $createdOnTimestamp = null)
     {
         if (!in_array($this->id, [null, '', '0'], true) && mb_strlen($this->id) === 36) {
-            return (sprintf(
+            $this->localStoragePath = sprintf(
                 "%s%s%s%s%s%s%s",
-                $rootStoragePath,
+                new \HomeDocs\Settings()->getStoragePath(),
                 DIRECTORY_SEPARATOR,
                 substr($this->id, 0, 1),
                 DIRECTORY_SEPARATOR,
                 substr($this->id, 1, 1),
                 DIRECTORY_SEPARATOR,
                 $this->id
-            )
             );
         } else {
             throw new \HomeDocs\Exception\InvalidParamsException("id");
@@ -41,33 +33,29 @@ class Attachment
 
     public function get(\aportela\DatabaseWrapper\DB $db): void
     {
-        if (!in_array($this->id, [null, '', '0'], true) && mb_strlen($this->id) === 36) {
-            $data = $db->query(
-                "
+        $data = $db->query(
+            "
                     SELECT
                         name, size, sha1_hash AS hash, ctime AS createdOnTimestamp, cuid AS uploadedByUserId
                     FROM ATTACHMENT
                     WHERE
                         id = :id
                 ",
-                [
-                    new \aportela\DatabaseWrapper\Param\StringParam(":id", $this->id)
-                ]
-            );
-            if (count($data) === 1) {
-                if (($data[0]->uploadedByUserId ?? null) == \HomeDocs\UserSession::getUserId()) {
-                    $this->name = $data[0]->name ?? null;
-                    $this->size = intval($data[0]->size ?? 0);
-                    $this->hash = $data[0]->hash ?? null;
-                    $this->createdOnTimestamp = intval($data[0]->createdOnTimestamp ?? 0);
-                } else {
-                    throw new \HomeDocs\Exception\AccessDeniedException("id");
-                }
+            [
+                new \aportela\DatabaseWrapper\Param\StringParam(":id", $this->id)
+            ]
+        );
+        if (count($data) === 1) {
+            if (($data[0]->uploadedByUserId ?? null) == \HomeDocs\UserSession::getUserId()) {
+                $this->name = $data[0]->name ?? null;
+                $this->size = intval($data[0]->size ?? 0);
+                $this->hash = $data[0]->hash ?? null;
+                $this->createdOnTimestamp = intval($data[0]->createdOnTimestamp ?? 0);
             } else {
-                throw new \HomeDocs\Exception\NotFoundException("id");
+                throw new \HomeDocs\Exception\AccessDeniedException("id");
             }
         } else {
-            throw new \HomeDocs\Exception\InvalidParamsException("id");
+            throw new \HomeDocs\Exception\NotFoundException("id");
         }
     }
 
@@ -87,7 +75,7 @@ class Attachment
             $uploadedFile->moveTo($this->localStoragePath);
             $shaHash = sha1_file($this->localStoragePath);
             if (is_string($shaHash)) {
-                $this->hash =  $shaHash;
+                $this->hash = $shaHash;
             } else {
                 throw new \HomeDocs\Exception\UploadException("Error: sha1 hash failed");
             }
@@ -127,7 +115,6 @@ class Attachment
         }
     }
 
-
     private function removeStorage(): bool
     {
         if (file_exists(($this->localStoragePath))) {
@@ -137,8 +124,6 @@ class Attachment
             return (false);
         }
     }
-
-
 
     private function removeMetadata(\aportela\DatabaseWrapper\DB $db): void
     {

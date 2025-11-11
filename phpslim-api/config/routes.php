@@ -247,8 +247,7 @@ return function (App $app): void {
 
                 $routeCollectorProxy->get('/{id}', function (Request $request, Response $response, array $args) use ($dbh, $initialState, $settings) {
                     $document = new \HomeDocs\Document();
-                    $document->id = $args['id'];
-                    $document->setRootStoragePath($settings->getStoragePath());
+                    $document->id = $args['id'] ?? "";
                     $document->get($dbh);
 
                     $payload = \HomeDocs\Utils::getJSONPayload(
@@ -263,8 +262,7 @@ return function (App $app): void {
 
                 $routeCollectorProxy->get('/{id}/notes', function (Request $request, Response $response, array $args) use ($dbh, $initialState, $settings) {
                     $document = new \HomeDocs\Document();
-                    $document->id = $args['id'];
-                    $document->setRootStoragePath($settings->getStoragePath());
+                    $document->id = $args['id'] ?? "";
                     $document->get($dbh);
 
                     $payload = \HomeDocs\Utils::getJSONPayload(
@@ -279,8 +277,7 @@ return function (App $app): void {
 
                 $routeCollectorProxy->get('/{id}/attachments', function (Request $request, Response $response, array $args) use ($dbh, $initialState, $settings) {
                     $document = new \HomeDocs\Document();
-                    $document->id = $args['id'];
-                    $document->setRootStoragePath($settings->getStoragePath());
+                    $document->id = $args['id'] ?? "";
                     $document->get($dbh);
 
                     $payload = \HomeDocs\Utils::getJSONPayload(
@@ -300,12 +297,10 @@ return function (App $app): void {
                     }
 
                     $documentAttachments = $params["attachments"] ?? [];
-                    $rootStoragePath = $settings->getStoragePath();
                     $attachments = [];
                     if (is_array($documentAttachments) && $documentAttachments !== []) {
                         foreach ($documentAttachments as $documentAttachment) {
                             $attachments[] = new \HomeDocs\Attachment(
-                                $rootStoragePath,
                                 $documentAttachment["id"],
                                 $documentAttachment["name"],
                                 $documentAttachment["size"],
@@ -328,16 +323,15 @@ return function (App $app): void {
 
                     $rootStoragePath = $settings->getStoragePath();
                     $document = new \HomeDocs\Document(
-                        $args['id'],
-                        $params["title"] ?? "",
-                        $params["description"] ?? "",
+                        $args['id'] ?? "",
+                        $params["title"] ?? null,
+                        $params["description"] ?? null,
                         null,
                         null,
                         $params["tags"] ?? [],
                         $attachments,
                         $notes,
                     );
-                    $document->setRootStoragePath($rootStoragePath);
 
                     $dbh->beginTransaction();
                     try {
@@ -368,11 +362,9 @@ return function (App $app): void {
                     }
 
                     $document = new \HomeDocs\Document(
-                        $args['id']
+                        $args['id'] ?? ""
                     );
                     // test existence && check permissions
-                    $rootStoragePath = $settings->getStoragePath();
-                    $document->setRootStoragePath($rootStoragePath);
                     $document->get($dbh);
 
                     $documentAttachments = $params["attachments"] ?? [];
@@ -380,7 +372,6 @@ return function (App $app): void {
                     if (is_array($documentAttachments) && $documentAttachments !== []) {
                         foreach ($documentAttachments as $documentAttachment) {
                             $attachments[] = new \HomeDocs\Attachment(
-                                $rootStoragePath,
                                 $documentAttachment["id"],
                                 $documentAttachment["name"],
                                 $documentAttachment["size"],
@@ -402,16 +393,15 @@ return function (App $app): void {
                     }
 
                     $document = new \HomeDocs\Document(
-                        $args['id'],
-                        $params["title"] ?? "",
-                        $params["description"] ?? "",
+                        $args['id'] ?? "",
+                        $params["title"] ?? null,
+                        $params["description"] ?? null,
                         null,
                         null,
                         $params["tags"] ?? [],
                         $attachments,
                         $notes
                     );
-                    $document->setRootStoragePath($rootStoragePath);
                     try {
                         $dbh->beginTransaction();
                         $document->update($dbh);
@@ -439,9 +429,8 @@ return function (App $app): void {
 
                 $routeCollectorProxy->delete('/{id}', function (Request $request, Response $response, array $args) use ($dbh, $initialState, $settings) {
                     $document = new \HomeDocs\Document(
-                        $args['id']
+                        $args['id'] ?? ""
                     );
-                    $document->setRootStoragePath($settings->getStoragePath());
 
                     // test existence && check permissions
                     $document->get($dbh);
@@ -470,10 +459,9 @@ return function (App $app): void {
                     throw new \RuntimeException("Failed to create database handler from container");
                 }
 
-                $routeCollectorProxy->get('/{id}[/{inline}]', function (Request $request, Response $response, array $args) use ($dbh, $settings): \Psr\Http\Message\MessageInterface {
+                $routeCollectorProxy->get('/{id}[/{inline}]', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $attachment = new \HomeDocs\Attachment(
-                        $settings->getStoragePath(),
-                        $args['id']
+                        $args['id'] ?? ""
                     );
                     $attachment->get($dbh);
 
@@ -531,7 +519,7 @@ return function (App $app): void {
                     }
                 });
 
-                $routeCollectorProxy->post('[/{id}]', function (Request $request, Response $response, array $args) use ($dbh, $initialState, $settings) {
+                $routeCollectorProxy->post('[/{id}]', function (Request $request, Response $response, array $args) use ($dbh, $initialState) {
                     $uploadedFiles = $request->getUploadedFiles();
                     $file = $uploadedFiles['file'] ?? null;
                     if ($file) {
@@ -539,7 +527,6 @@ return function (App $app): void {
                             throw new \HomeDocs\Exception\UploadException("Content too large", 413);
                         } else {
                             $attachment = new \HomeDocs\Attachment(
-                                $settings->getStoragePath(),
                                 $args['id'] ?? \HomeDocs\Utils::uuidv4(),
                                 $uploadedFiles["file"]->getClientFilename(),
                                 $uploadedFiles["file"]->getSize()
@@ -565,10 +552,9 @@ return function (App $app): void {
                     }
                 });
 
-                $routeCollectorProxy->delete('/{id}', function (Request $request, Response $response, array $args) use ($dbh, $initialState, $settings) {
+                $routeCollectorProxy->delete('/{id}', function (Request $request, Response $response, array $args) use ($dbh, $initialState) {
                     $attachment = new \HomeDocs\Attachment(
-                        $settings->getStoragePath(),
-                        $args['id']
+                        $args['id'] ?? ""
                     );
                     if ($attachment->isLinkedToDocument($dbh)) {
                         throw new \HomeDocs\Exception\AccessDeniedException();
