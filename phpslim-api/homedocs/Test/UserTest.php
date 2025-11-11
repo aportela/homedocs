@@ -10,12 +10,7 @@ final class UserTest extends \HomeDocs\Test\BaseTest
 {
     private function isSignUpAllowed(): bool
     {
-        $allowed = is_array(self::$settings['common']) ? self::$settings['common']['allowSignUp'] : false;
-        if (is_bool($allowed)) {
-            return ($allowed);
-        } else {
-            return (false);
-        }
+        return (self::$settings->allowSignUp());
     }
 
     public function testAddWithoutId(): void

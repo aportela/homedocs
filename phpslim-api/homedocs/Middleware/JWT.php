@@ -15,7 +15,7 @@ class JWT
     public function __construct(\Psr\Container\ContainerInterface $container)
     {
         $this->logger = $container->get(\HomeDocs\Logger\HTTPRequestLogger::class);
-        $this->passphrase = $container->get('settings')['jwt']['passphrase'];
+        $this->passphrase = new \HomeDocs\Settings()->getJWTPassphrase();
         $this->dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
     }
 

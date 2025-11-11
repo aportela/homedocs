@@ -15,10 +15,7 @@ abstract class BaseTest extends \PHPUnit\Framework\TestCase
 
     public static \Psr\Container\ContainerInterface $container;
 
-    /**
-     * @var array<string,mixed>
-     */
-    public static array $settings;
+    protected static \HomeDocs\Settings $settings;
 
     public static \aportela\DatabaseWrapper\DB $dbh;
 
@@ -43,7 +40,7 @@ abstract class BaseTest extends \PHPUnit\Framework\TestCase
         // Build PHP-DI Container instance
         self::$container = $containerBuilder->build();
 
-        self::$settings = self::$container->get('settings');
+        self::$settings = new \HomeDocs\Settings();
 
         // Create App instance
         self::$app = self::$container->get(\Slim\App::class);

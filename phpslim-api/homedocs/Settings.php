@@ -42,4 +42,22 @@ class Settings
             throw new \RuntimeException("Settings key (common->allowSignUp) not found");
         }
     }
+
+    public function getJWTPassphrase(): string
+    {
+        if (is_array($this->settings['jwt']) && is_string($this->settings['jwt']['passphrase'])) {
+            return ($this->settings['jwt']['passphrase']);
+        } else {
+            throw new \RuntimeException("Settings key (jwt->passphrase) not found");
+        }
+    }
+
+    public function getStoragePath(): string
+    {
+        if (is_array($this->settings['paths']) && is_string($this->settings['paths']['storage'])) {
+            return ($this->settings['paths']['storage']);
+        } else {
+            throw new \RuntimeException("Settings key (paths->storage) not found");
+        }
+    }
 }
