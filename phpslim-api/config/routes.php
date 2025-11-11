@@ -239,7 +239,7 @@ return function (App $app): void {
                 });
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $routeCollectorProxy->group('/document', function (RouteCollectorProxy $routeCollectorProxy) use ($container, $initialState, $settings): void {
+            $routeCollectorProxy->group('/document', function (RouteCollectorProxy $routeCollectorProxy) use ($container, $initialState): void {
                 $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
                 if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
                     throw new \RuntimeException("Failed to create database handler from container");
@@ -290,7 +290,7 @@ return function (App $app): void {
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
-                $routeCollectorProxy->post('/{id}', function (Request $request, Response $response, array $args) use ($dbh, $initialState, $settings) {
+                $routeCollectorProxy->post('/{id}', function (Request $request, Response $response, array $args) use ($dbh, $initialState) {
                     $params = $request->getParsedBody();
                     if (! is_array($params)) {
                         throw new \HomeDocs\Exception\InvalidParamsException();
@@ -300,11 +300,14 @@ return function (App $app): void {
                     $attachments = [];
                     if (is_array($documentAttachments) && $documentAttachments !== []) {
                         foreach ($documentAttachments as $documentAttachment) {
+                            if (! is_array($documentAttachment)) {
+                                throw new \HomeDocs\Exception\InvalidParamsException("attachments");
+                            }
                             $attachments[] = new \HomeDocs\Attachment(
-                                $documentAttachment["id"],
-                                $documentAttachment["name"],
-                                $documentAttachment["size"],
-                                $documentAttachment["hash"] ?? ""
+                                is_string($documentAttachment["id"]) ? $documentAttachment["id"] : "",
+                                is_string($documentAttachment["name"]) ? $documentAttachment["name"] : null,
+                                is_int($documentAttachment["size"]) ? $documentAttachment["size"] : null,
+                                is_string($documentAttachment["hash"]) ? $documentAttachment["hash"] : null
                             );
                         }
                     }
@@ -313,15 +316,17 @@ return function (App $app): void {
                     $notes = [];
                     if (is_array($documentNotes) && $documentNotes !== []) {
                         foreach ($documentNotes as $documentNote) {
+                            if (! is_array($documentNote)) {
+                                throw new \HomeDocs\Exception\InvalidParamsException("notes");
+                            }
                             $notes[] = new \HomeDocs\Note(
-                                $documentNote["id"],
-                                $documentNote["createdOnTimestamp"],
-                                $documentNote["body"]
+                                is_string($documentNote["id"]) ? $documentNote["id"] : null,
+                                is_int($documentNote["createdOnTimestamp"]) ?  $documentNote["createdOnTimestamp"] : null,
+                                is_string($documentNote["body"]) ? $documentNote["body"] : null
                             );
                         }
                     }
 
-                    $rootStoragePath = $settings->getStoragePath();
                     $document = new \HomeDocs\Document(
                         $args['id'] ?? "",
                         $params["title"] ?? null,
@@ -370,11 +375,14 @@ return function (App $app): void {
                     $attachments = [];
                     if (is_array($documentAttachments) && $documentAttachments !== []) {
                         foreach ($documentAttachments as $documentAttachment) {
+                            if (! is_array($documentAttachment)) {
+                                throw new \HomeDocs\Exception\InvalidParamsException("attachments");
+                            }
                             $attachments[] = new \HomeDocs\Attachment(
-                                $documentAttachment["id"],
-                                $documentAttachment["name"],
-                                $documentAttachment["size"],
-                                $documentAttachment["hash"] ?? ""
+                                is_string($documentAttachment["id"]) ? $documentAttachment["id"] : "",
+                                is_string($documentAttachment["name"]) ? $documentAttachment["name"] : null,
+                                is_int($documentAttachment["size"]) ? $documentAttachment["size"] : null,
+                                is_string($documentAttachment["hash"]) ? $documentAttachment["hash"] : null
                             );
                         }
                     }
@@ -383,10 +391,13 @@ return function (App $app): void {
                     $notes = [];
                     if (is_array($documentNotes) && $documentNotes !== []) {
                         foreach ($documentNotes as $documentNote) {
+                            if (! is_array($documentNote)) {
+                                throw new \HomeDocs\Exception\InvalidParamsException("notes");
+                            }
                             $notes[] = new \HomeDocs\Note(
-                                $documentNote["id"],
-                                $documentNote["createdOnTimestamp"],
-                                $documentNote["body"]
+                                is_string($documentNote["id"]) ? $documentNote["id"] : null,
+                                is_int($documentNote["createdOnTimestamp"]) ? $documentNote["createdOnTimestamp"] : null,
+                                is_string($documentNote["body"]) ? $documentNote["body"] : null
                             );
                         }
                     }
