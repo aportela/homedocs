@@ -147,6 +147,10 @@ return function (App $app): void {
                         throw new \HomeDocs\Exception\InvalidParamsException();
                     }
 
+                    if (! is_string($params["email"])) {
+                        throw new \HomeDocs\Exception\InvalidParamsException("email");
+                    }
+
                     $user = new \HomeDocs\User(\HomeDocs\UserSession::getUserId());
                     $user->get($dbh);
                     if ($params["email"] != \HomeDocs\UserSession::getEmail()) {
@@ -159,7 +163,7 @@ return function (App $app): void {
                         }
                     }
 
-                    $user->email = is_string($params["email"]) ? $params["email"] : "";
+                    $user->email = $params["email"];
                     $user->password = is_string($params["password"]) ? $params["password"] : "";
                     $user->update($dbh);
                     unset($user->password);

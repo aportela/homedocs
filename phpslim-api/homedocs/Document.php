@@ -557,7 +557,7 @@ class Document
             ]
         );
         foreach ($data as $item) {
-            if (property_exists($item, "tag")) {
+            if (property_exists($item, "tag") && is_string($item->tag)) {
                 $tags[] = $item->tag;
             }
         }
@@ -737,7 +737,7 @@ class Document
             default => new \aportela\DatabaseBrowserWrapper\SortItem("createdOnTimestamp", $sortOrder, true),
         };
         // after launch search we need to make some changes foreach result
-        $afterBrowse = function ($data) use ($filter, $db): void {
+        $afterBrowse = function (object $data) use ($filter, $db): void {
             array_map(
                 function (object $item) use ($filter, $db) {
                     if (property_exists($item, "createdOnTimestamp") && is_numeric($item->createdOnTimestamp)) {
@@ -753,7 +753,7 @@ class Document
                         $item->noteCount = intval($item->noteCount);
                     }
                     $item->matchedFragments = [];
-                    if (isset($filter["title"]) && is_string($filter["title"]) && !empty($filter["title"]) && property_exists($item, "title")) {
+                    if (isset($filter["title"]) && is_string($filter["title"]) && !empty($filter["title"]) && property_exists($item, "title") && is_string($item->title)) {
                         $fragment = \HomeDocs\Utils::getStringFragment($item->title, $filter["title"], 64, true);
                         if (!in_array($fragment, [null, '', '0'], true)) {
                             $item->matchedFragments[] = [
@@ -763,7 +763,7 @@ class Document
                         }
                     }
 
-                    if (isset($filter["description"]) && is_string($filter["description"]) && !empty($filter["description"]) && property_exists($item, "description")) {
+                    if (isset($filter["description"]) && is_string($filter["description"]) && !empty($filter["description"]) && property_exists($item, "description") && is_string($item->description)) {
                         $fragment = \HomeDocs\Utils::getStringFragment($item->description, $filter["description"], 64, true);
                         if (!in_array($fragment, [null, '', '0'], true)) {
                             $item->matchedFragments[] = [
@@ -775,9 +775,9 @@ class Document
 
                     if (isset($filter["notesBody"]) && is_string($filter["notesBody"]) && !empty($filter["notesBody"]) && property_exists($item, "id")) {
                         // TODO: this NEEDS to be rewritten with more efficient method
-                        $notes = new \HomeDocs\Document($item->id)->getNotes($db, $filter["notesBody"]);
+                        $notes = new \HomeDocs\Document(is_string($item->id) ? $item->id : null)->getNotes($db, $filter["notesBody"]);
                         foreach ($notes as $note) {
-                            $fragment = \HomeDocs\Utils::getStringFragment($note->body ?? "", $filter["notesBody"], 64, true);
+                            $fragment = \HomeDocs\Utils::getStringFragment(is_string($note->body) ? $note->body : "", $filter["notesBody"], 64, true);
                             if (!in_array($fragment, [null, '', '0'], true)) {
                                 $item->matchedFragments[] = [
                                     "matchedOn" => "note body",
@@ -789,9 +789,9 @@ class Document
 
                     if (isset($filter["attachmentsFilename"]) && is_string($filter["attachmentsFilename"]) && !empty($filter["attachmentsFilename"]) && property_exists($item, "id")) {
                         // TODO: this NEEDS to be rewritten with more efficient method
-                        $attachments = new \HomeDocs\Document($item->id)->getAttachments($db, $filter["attachmentsFilename"]);
+                        $attachments = new \HomeDocs\Document(is_string($item->id) ? $item->id : null)->getAttachments($db, $filter["attachmentsFilename"]);
                         foreach ($attachments as $attachment) {
-                            $fragment = \HomeDocs\Utils::getStringFragment($attachment->name ?? "", $filter["attachmentsFilename"], 64, true);
+                            $fragment = \HomeDocs\Utils::getStringFragment(is_string($attachment->name) ? $attachment->name : "", $filter["attachmentsFilename"], 64, true);
                             if (!in_array($fragment, [null, '', '0'], true)) {
                                 $item->matchedFragments[] = [
                                     "matchedOn" => "attachment filename",
@@ -803,7 +803,7 @@ class Document
 
                     return ($item);
                 },
-                $data->items
+                property_exists($data, "items") && is_array($data->items) ? $data->items : []
             );
         };
         $browser = new \aportela\DatabaseBrowserWrapper\Browser(
@@ -835,9 +835,9 @@ class Document
             }
         }
 
-        if (isset($filter["description"]) && !empty($filter["description"])) {
+        if (isset($filter["description"]) && is_string($filter["description"]) && !empty($filter["description"])) {
             // explode into words, remove duplicated & empty elements
-            $words = array_filter(array_unique(explode(" ", trim(mb_strtolower((string) $filter["description"])))));
+            $words = array_filter(array_unique(explode(" ", trim(mb_strtolower($filter["description"])))));
             $totalWords = count($words);
             if ($totalWords > 0) {
                 foreach ($words as $word) {
@@ -849,9 +849,9 @@ class Document
             }
         }
 
-        if (isset($filter["notesBody"]) && !empty($filter["notesBody"])) {
+        if (isset($filter["notesBody"]) && is_string($filter["notesBody"])  && !empty($filter["notesBody"])) {
             // explode into words, remove duplicated & empty elements
-            $words = array_filter(array_unique(explode(" ", trim(mb_strtolower((string) $filter["notesBody"])))));
+            $words = array_filter(array_unique(explode(" ", trim(mb_strtolower($filter["notesBody"])))));
             $totalWords = count($words);
             if ($totalWords > 0) {
                 $notesConditions = [];
@@ -876,9 +876,9 @@ class Document
             }
         }
 
-        if (isset($filter["attachmentsFilename"]) && !empty($filter["attachmentsFilename"])) {
+        if (isset($filter["attachmentsFilename"]) && is_string($filter["attachmentsFilename"]) && !empty($filter["attachmentsFilename"])) {
             // explode into words, remove duplicated & empty elements
-            $words = array_filter(array_unique(explode(" ", trim(mb_strtolower((string) $filter["attachmentsFilename"])))));
+            $words = array_filter(array_unique(explode(" ", trim(mb_strtolower($filter["attachmentsFilename"])))));
             $totalWords = count($words);
             if ($totalWords > 0) {
                 $notesConditions = [];
