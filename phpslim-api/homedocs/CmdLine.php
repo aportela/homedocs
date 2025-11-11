@@ -34,14 +34,26 @@ class CmdLine
      */
     public function hasParam(string $param): bool
     {
-        return (array_key_exists($param, (array) $this->options));
+        return is_array($this->options) && array_key_exists($param, $this->options);
     }
 
     /**
      * Get commandline parameter value
      */
-    public function getParamValue(string $param): string|null
+    public function getParamValue(string $param): ?string
     {
-        return ($this->options[$param] ?? null);
+        if (!is_array($this->options)) {
+            return null;
+        }
+
+        if (!array_key_exists($param, $this->options)) {
+            return null;
+        }
+
+        if (! is_array($this->options[$param])) {
+            return strval($this->options[$param]);
+        } else {
+            return (null);
+        }
     }
 }
