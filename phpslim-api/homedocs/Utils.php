@@ -135,7 +135,7 @@ class Utils
             }
         }
 
-        return $max_size;
+        return is_numeric($max_size) ? intval($max_size) : 0;
     }
 
     /**

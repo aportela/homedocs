@@ -13,7 +13,8 @@ class Installer
 
     public function __construct(private readonly \Psr\Log\LoggerInterface $logger, \Psr\Container\ContainerInterface $container)
     {
-        $this->settings = $container->get("settings");
+        $settings = $container->get("settings");
+        $this->settings = is_array($settings) ? $settings : [];
     }
 
     /**
