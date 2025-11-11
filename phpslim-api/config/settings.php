@@ -2,20 +2,9 @@
 
 // Settings
 $settings = [
-    'environment' => 'production' // (development|production)
+    'environment' => 'production', // (development|production)
+    'defaultTimezone' => 'Europe/Madrid'
 ];
-
-// Should be set to 0 (E_NONE) in production
-/** @phpstan-ignore-next-line */
-error_reporting($settings['environment'] === 'development' ? E_ALL : 0);
-
-
-// Should be set to '0' in production
-/** @phpstan-ignore-next-line */
-ini_set('display_errors', $settings['environment'] === 'development' ? '1' : '0');
-
-// Timezone
-date_default_timezone_set('Europe/Madrid');
 
 // Path settings
 $settings['paths']['root'] = dirname(__DIR__);

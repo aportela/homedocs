@@ -20,6 +20,14 @@ class Settings
         $settingsPath =  dirname(__DIR__) . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'settings.php';
         if (file_exists($settingsPath)) {
             $this->settings = require $settingsPath;
+            if ($this->getEnvironment() === 'development') {
+                error_reporting(E_ALL);
+                ini_set('display_errors', '1');
+            } else {
+                error_reporting(0);
+                ini_set('display_errors', '0');
+            }
+            date_default_timezone_set($this->getDefaultTimezone());
         } else {
             throw new \RuntimeException("Settings file not found: " . $settingsPath);
         }
@@ -31,6 +39,15 @@ class Settings
             return ($this->settings['environment']);
         } else {
             throw new \RuntimeException("Settings key (environment) not found");
+        }
+    }
+
+    protected function getDefaultTimezone(): string
+    {
+        if (is_string($this->settings['defaultTimezone'])) {
+            return ($this->settings['defaultTimezone']);
+        } else {
+            throw new \RuntimeException("Settings key (defaultTimezone) not found");
         }
     }
 
