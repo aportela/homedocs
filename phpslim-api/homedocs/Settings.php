@@ -32,4 +32,13 @@ class Settings
             throw new \Exception("Invalid settings file: " . __FUNCTION__);
         }
     }
+
+    public function getDefaultResultsPage(): int
+    {
+        if (is_array($this->settings["common"]) && is_numeric($this->settings["common"]["defaultResultsPage"])) {
+            return (intval($this->settings["common"]["defaultResultsPage"]));
+        } else {
+            return (32);
+        }
+    }
 }
