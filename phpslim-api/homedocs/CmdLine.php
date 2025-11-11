@@ -7,9 +7,9 @@ namespace HomeDocs;
 class CmdLine
 {
     /**
-     * @var array<string,string>
+     * @var array<string, list<mixed>|false>
      */
-    private array|bool $options = [];
+    private array|false $options = [];
 
     /**
      * commandline constructor
@@ -21,6 +21,9 @@ class CmdLine
     public function __construct(string $short, array $long)
     {
         $this->options = getopt($short, $long);
+        if (! is_array($this->options)) {
+            throw new \RuntimeException("Failed to get commandline options");
+        }
     }
 
     /**
@@ -31,17 +34,14 @@ class CmdLine
      */
     public function hasParam(string $param): bool
     {
-        return (array_key_exists($param, $this->options));
+        return (array_key_exists($param, (array) $this->options));
     }
 
     /**
      * Get commandline parameter value
-     *
-     * @param string $key the parameter name to obtain the key
-     *
      */
-    public function getParamValue(string $key): string|null
+    public function getParamValue(string $param): string|null
     {
-        return ($this->options[$key] ?? null);
+        return ($this->options[$param] ?? null);
     }
 }
