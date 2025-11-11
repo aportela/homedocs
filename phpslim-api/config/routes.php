@@ -245,7 +245,7 @@ return function (App $app): void {
                     throw new \RuntimeException("Failed to create database handler from container");
                 }
 
-                $routeCollectorProxy->get('/{id}', function (Request $request, Response $response, array $args) use ($dbh, $initialState, $settings) {
+                $routeCollectorProxy->get('/{id}', function (Request $request, Response $response, array $args) use ($dbh, $initialState) {
                     $document = new \HomeDocs\Document();
                     $document->id = $args['id'] ?? "";
                     $document->get($dbh);
@@ -260,7 +260,7 @@ return function (App $app): void {
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
-                $routeCollectorProxy->get('/{id}/notes', function (Request $request, Response $response, array $args) use ($dbh, $initialState, $settings) {
+                $routeCollectorProxy->get('/{id}/notes', function (Request $request, Response $response, array $args) use ($dbh, $initialState) {
                     $document = new \HomeDocs\Document();
                     $document->id = $args['id'] ?? "";
                     $document->get($dbh);
@@ -275,7 +275,7 @@ return function (App $app): void {
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
-                $routeCollectorProxy->get('/{id}/attachments', function (Request $request, Response $response, array $args) use ($dbh, $initialState, $settings) {
+                $routeCollectorProxy->get('/{id}/attachments', function (Request $request, Response $response, array $args) use ($dbh, $initialState) {
                     $document = new \HomeDocs\Document();
                     $document->id = $args['id'] ?? "";
                     $document->get($dbh);
@@ -342,7 +342,6 @@ return function (App $app): void {
                         throw $dBException;
                     }
 
-                    $document->setRootStoragePath($rootStoragePath);
                     $document->get($dbh);
 
                     $payload = \HomeDocs\Utils::getJSONPayload(
@@ -355,7 +354,7 @@ return function (App $app): void {
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
-                $routeCollectorProxy->put('/{id}', function (Request $request, Response $response, array $args) use ($container, $dbh, $initialState, $settings) {
+                $routeCollectorProxy->put('/{id}', function (Request $request, Response $response, array $args) use ($container, $dbh, $initialState) {
                     $params = $request->getParsedBody();
                     if (! is_array($params)) {
                         throw new \HomeDocs\Exception\InvalidParamsException();
@@ -427,7 +426,7 @@ return function (App $app): void {
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
-                $routeCollectorProxy->delete('/{id}', function (Request $request, Response $response, array $args) use ($dbh, $initialState, $settings) {
+                $routeCollectorProxy->delete('/{id}', function (Request $request, Response $response, array $args) use ($dbh, $initialState) {
                     $document = new \HomeDocs\Document(
                         $args['id'] ?? ""
                     );
@@ -453,7 +452,7 @@ return function (App $app): void {
                 });
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $routeCollectorProxy->group('/attachment', function (RouteCollectorProxy $routeCollectorProxy) use ($container, $initialState, $settings): void {
+            $routeCollectorProxy->group('/attachment', function (RouteCollectorProxy $routeCollectorProxy) use ($container, $initialState): void {
                 $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
                 if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
                     throw new \RuntimeException("Failed to create database handler from container");
