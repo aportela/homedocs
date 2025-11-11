@@ -15,6 +15,10 @@ $container = $containerBuilder->build();
 echo "[-] HomeDocs installer" . PHP_EOL;
 
 $logger = $container->get(\HomeDocs\Logger\InstallerLogger::class);
+if (! $logger instanceof \HomeDocs\Logger\InstallerLogger) {
+    echo "[E] Error getting logger from container" . PHP_EOL;
+    exit(1);
+}
 
 $settings = $container->get('settings');
 
@@ -31,6 +35,11 @@ if ($installer->checkRequiredPHPExtensions()) {
 }
 
 $db = $container->get(\aportela\DatabaseWrapper\DB::class);
+if (! $db instanceof \aportela\DatabaseWrapper\DB) {
+    echo "[E] Error getting database handler from container" . PHP_EOL;
+    $logger->error("Error getting database handler from container");
+    exit(1);
+}
 
 if (!$db->isSchemaInstalled()) {
     echo "[?] Creating database base schema...";
@@ -48,7 +57,7 @@ if (!$db->isSchemaInstalled()) {
 
 $currentDBVersion = $db->getCurrentSchemaVersion();
 $lastDBVersionAvailable = $db->getUpgradeSchemaVersion();
-if ($currentDBVersion != $lastDBVersionAvailable) {
+if ($currentDBVersion !== $lastDBVersionAvailable) {
     echo sprintf('[?] Database upgrade required (current: %s => available: %s)...', $currentDBVersion, $lastDBVersionAvailable);
     $currentVersion = $db->upgradeSchema(false);
     if ($currentVersion !== -1) {

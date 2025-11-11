@@ -15,6 +15,10 @@ $container = $containerBuilder->build();
 echo "[-] HomeDocs account manager" . PHP_EOL;
 
 $logger = $container->get(\HomeDocs\Logger\InstallerLogger::class);
+if (! $logger instanceof \HomeDocs\Logger\InstallerLogger) {
+    echo "[E] Error getting logger from container" . PHP_EOL;
+    exit(1);
+}
 
 $settings = $container->get('settings');
 
@@ -41,9 +45,15 @@ if ($cmdLine->hasParam("email") && $cmdLine->hasParam("password")) {
     } else {
         echo " success!" . PHP_EOL;
     }
-    
+
     echo "[?] Setting account credentials...";
     $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
+    if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
+        echo ' error! - can not get database handler from container' . PHP_EOL;
+        $logger->error("Error getting database handler from container");
+        exit(1);
+    }
+    
     $found = false;
     $u = new \HomeDocs\User("", $cmdLine->getParamValue("email"), $cmdLine->getParamValue("password"));
     try {
@@ -53,18 +63,16 @@ if ($cmdLine->hasParam("email") && $cmdLine->hasParam("password")) {
     }
 
     if ($found) {
-        //$c["logger"]->debug("Account exists -> update credentials");
         echo " user found, updating password...";
         $u->update($dbh);
         echo " success!" . PHP_EOL;
     } else {
-        //$c["logger"]->debug("Account not found -> adding credentials");
         echo " user not found, creating account...";
         $u->id = \HomeDocs\Utils::uuidv4();
         $u->add($dbh);
         echo " success!" . PHP_EOL;
     }
-    
+
     exit(0);
 } else {
     echo " error! - No required params found: --email <email> --password <secret>" . PHP_EOL;
