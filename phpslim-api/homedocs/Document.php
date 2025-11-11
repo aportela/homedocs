@@ -405,7 +405,7 @@ class Document
                                     ",
                                 [
                                     new \aportela\DatabaseWrapper\Param\StringParam(":note_body", $note->body),
-                                    new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower((string) $note->id)),
+                                    new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower($note->id)),
                                     new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
                                     new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId())
                                 ]

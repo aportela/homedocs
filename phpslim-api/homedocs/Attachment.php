@@ -79,7 +79,7 @@ class Attachment
     private function saveStorage(\Psr\Http\Message\UploadedFileInterface $uploadedFile): void
     {
         if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
-            $path = pathinfo((string) $this->localStoragePath);
+            $path = pathinfo($this->localStoragePath);
             if (isset($path['dirname']) && !file_exists($path['dirname'])) {
                 mkdir($path['dirname'], 0777, true);
             }
@@ -168,7 +168,7 @@ class Attachment
                 new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower((string) $this->id))
             ]
         );
-        return (property_exists($result[0], "total") && is_numeric($result[0]->total) ? intval($result[0]->total) > 0 : false);
+        return (property_exists($result[0], "total") && is_numeric($result[0]->total) && intval($result[0]->total) > 0);
     }
 
     public function remove(\aportela\DatabaseWrapper\DB $db): void
