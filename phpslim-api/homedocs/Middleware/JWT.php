@@ -14,9 +14,17 @@ class JWT
 
     public function __construct(\Psr\Container\ContainerInterface $container)
     {
-        $this->logger = $container->get(\HomeDocs\Logger\DefaultLogger::class);
+        $logger = $container->get(\HomeDocs\Logger\DefaultLogger::class);
+        if (! $logger instanceof \HomeDocs\Logger\DefaultLogger) {
+            throw new \RuntimeException("Failed to get logger (DefaultLogger) from container");
+        }
+        $this->logger = $logger;
         $this->passphrase = new \HomeDocs\Settings()->getJWTPassphrase();
-        $this->dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
+        $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
+        if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
+            throw new \RuntimeException("Failed to create database handler from container");
+        }
+        $this->dbh = $dbh;
     }
 
     /**
