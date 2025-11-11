@@ -20,7 +20,7 @@ if (! $logger instanceof \HomeDocs\Logger\InstallerLogger) {
     exit(1);
 }
 
-$installer = new \HomeDocs\Installer($logger, $container);
+$installer = new \HomeDocs\Installer($logger);
 
 echo "[?] Checking php required extensions...";
 if ($installer->checkRequiredPHPExtensions()) {

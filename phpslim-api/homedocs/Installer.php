@@ -6,15 +6,11 @@ namespace HomeDocs;
 
 class Installer
 {
-    /**
-     * @var array<string,mixed>
-     */
-    private array $settings = [];
+    private \HomeDocs\Settings $settings;
 
-    public function __construct(private readonly \Psr\Log\LoggerInterface $logger, \Psr\Container\ContainerInterface $container)
+    public function __construct(private readonly \Psr\Log\LoggerInterface $logger)
     {
-        $settings = $container->get("settings");
-        $this->settings = is_array($settings) ? $settings : [];
+        $this->settings = new \HomeDocs\Settings();
     }
 
     /**
