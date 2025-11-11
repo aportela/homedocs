@@ -18,12 +18,14 @@ class JWT
         if (! $logger instanceof \HomeDocs\Logger\DefaultLogger) {
             throw new \RuntimeException("Failed to get logger (DefaultLogger) from container");
         }
+        
         $this->logger = $logger;
         $this->passphrase = new \HomeDocs\Settings()->getJWTPassphrase();
         $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
         if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
             throw new \RuntimeException("Failed to create database handler from container");
         }
+        
         $this->dbh = $dbh;
     }
 
