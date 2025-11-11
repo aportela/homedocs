@@ -4,13 +4,8 @@ declare(strict_types=1);
 
 namespace HomeDocs;
 
-use stdClass;
-
 class Utils
 {
-    /**
-     * @param array<string,mixed> $data
-     */
     public static function getJSONPayload(array $data): string
     {
         $json = json_encode($data);
@@ -25,9 +20,6 @@ class Utils
         return ($json);
     }
 
-    /**
-     * @return array<mixed>
-     */
     public static function getInitialState(\HomeDocs\Settings $settings): object
     {
         return ((object)
