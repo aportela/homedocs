@@ -37,6 +37,9 @@ return [
             $dbSettings->getDatabaseUpgradeSchemaPath()
         );
         $logger = $container->get(\HomeDocs\Logger\DBLogger::class);
+        if (! $logger instanceof \HomeDocs\Logger\DBLogger) {
+            throw new \RuntimeException("Failed to get logger (DBLogger) from container");
+        }
         // main object
         $db = new \aportela\DatabaseWrapper\DB(
             $adapter,
@@ -101,5 +104,11 @@ return [
         return (new \HomeDocs\Logger\InstallerLogger($logger));
     },
 
-    \HomeDocs\Middleware\APIExceptionCatcher::class => fn(ContainerInterface $container): \HomeDocs\Middleware\APIExceptionCatcher => new \HomeDocs\Middleware\APIExceptionCatcher($container->get(\HomeDocs\Logger\HTTPRequestLogger::class))
+    \HomeDocs\Middleware\APIExceptionCatcher::class => function (ContainerInterface $container) {
+        $logger = $container->get(\HomeDocs\Logger\HTTPRequestLogger::class);
+        if (! $logger instanceof \HomeDocs\Logger\HTTPRequestLogger) {
+            throw new \RuntimeException("Failed to get logger (HTTPRequestLogger) from container");
+        }
+        return (new \HomeDocs\Middleware\APIExceptionCatcher($logger));
+    }
 ];
