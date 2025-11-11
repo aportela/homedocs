@@ -21,13 +21,13 @@ return [
         'logs' => $logPath
     ],
     'db' => [
-        'driver' => 'sqlite',
-        'host' => '',
-        'username' => '',
+        //'driver' => 'sqlite',
+        //'host' => '',
+        //'username' => '',
         'database' => $currentPath . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'homedocs3.sqlite3',
-        'password' => '',
-        'charset' => 'utf8mb4',
-        'collation' => 'utf8mb4_unicode_ci',
+        //'password' => '',
+        //'charset' => 'utf8mb4',
+        //'collation' => 'utf8mb4_unicode_ci',
         // PDO driver options
         'options' => [
             // Turn off persistent connections

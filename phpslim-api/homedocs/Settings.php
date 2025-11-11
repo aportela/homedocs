@@ -113,4 +113,35 @@ class Settings
             throw new \RuntimeException("Settings key (db) not found");
         }
     }
+
+    public function getDatabasePath(): string
+    {
+        if (is_array($this->settings['db']) && is_string($this->settings['db']['database'])) {
+            return ($this->settings['db']['database']);
+        } else {
+            throw new \RuntimeException("Settings key (db->database) not found");
+        }
+    }
+
+    /**
+     * @return array<int, bool|int>
+     */
+    public function getDatabasePDOOptions(): array
+    {
+        if (is_array($this->settings['db']) && is_array($this->settings['db']['options'])) {
+            return ($this->settings['db']['options']);
+        } else {
+            throw new \RuntimeException("Settings key (db->options) not found");
+        }
+    }
+
+
+    public function getDatabaseUpgradeSchemaPath(): string
+    {
+        if (is_array($this->settings['db']) && is_string($this->settings['db']['upgradeSchemaPath'])) {
+            return ($this->settings['db']['upgradeSchemaPath']);
+        } else {
+            throw new \RuntimeException("Settings key (db->upgradeSchemaPath) not found");
+        }
+    }
 }
