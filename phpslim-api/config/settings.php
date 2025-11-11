@@ -89,7 +89,7 @@ $settings['db'] = [
 ];
 
 $settings['common'] = [
-    'defaultResultsPage' => 64,
+    'defaultResultsPage' => 32,
     'allowSignUp' => true
 ];
 
