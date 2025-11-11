@@ -753,7 +753,7 @@ class Document
                         $item->noteCount = intval($item->noteCount);
                     }
                     $item->matchedFragments = [];
-                    if (isset($filter["title"]) && !empty($filter["title"])) {
+                    if (isset($filter["title"]) && is_string($filter["title"]) && !empty($filter["title"]) && property_exists($item, "title")) {
                         $fragment = \HomeDocs\Utils::getStringFragment($item->title, $filter["title"], 64, true);
                         if (!in_array($fragment, [null, '', '0'], true)) {
                             $item->matchedFragments[] = [
@@ -763,7 +763,7 @@ class Document
                         }
                     }
 
-                    if (isset($filter["description"]) && !empty($filter["description"])) {
+                    if (isset($filter["description"]) && is_string($filter["description"]) && !empty($filter["description"]) && property_exists($item, "description")) {
                         $fragment = \HomeDocs\Utils::getStringFragment($item->description, $filter["description"], 64, true);
                         if (!in_array($fragment, [null, '', '0'], true)) {
                             $item->matchedFragments[] = [
@@ -773,11 +773,11 @@ class Document
                         }
                     }
 
-                    if (isset($filter["notesBody"]) && !empty($filter["notesBody"])) {
+                    if (isset($filter["notesBody"]) && is_string($filter["notesBody"]) && !empty($filter["notesBody"]) && property_exists($item, "id")) {
                         // TODO: this NEEDS to be rewritten with more efficient method
                         $notes = new \HomeDocs\Document($item->id)->getNotes($db, $filter["notesBody"]);
                         foreach ($notes as $note) {
-                            $fragment = \HomeDocs\Utils::getStringFragment($note->body, $filter["notesBody"], 64, true);
+                            $fragment = \HomeDocs\Utils::getStringFragment($note->body ?? "", $filter["notesBody"], 64, true);
                             if (!in_array($fragment, [null, '', '0'], true)) {
                                 $item->matchedFragments[] = [
                                     "matchedOn" => "note body",
@@ -787,11 +787,11 @@ class Document
                         }
                     }
 
-                    if (isset($filter["attachmentsFilename"]) && !empty($filter["attachmentsFilename"])) {
+                    if (isset($filter["attachmentsFilename"]) && is_string($filter["attachmentsFilename"]) && !empty($filter["attachmentsFilename"]) && property_exists($item, "id")) {
                         // TODO: this NEEDS to be rewritten with more efficient method
                         $attachments = new \HomeDocs\Document($item->id)->getAttachments($db, $filter["attachmentsFilename"]);
                         foreach ($attachments as $attachment) {
-                            $fragment = \HomeDocs\Utils::getStringFragment($attachment->name, $filter["attachmentsFilename"], 64, true);
+                            $fragment = \HomeDocs\Utils::getStringFragment($attachment->name ?? "", $filter["attachmentsFilename"], 64, true);
                             if (!in_array($fragment, [null, '', '0'], true)) {
                                 $item->matchedFragments[] = [
                                     "matchedOn" => "attachment filename",
@@ -821,7 +821,7 @@ class Document
             new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_update", \HomeDocs\DocumentHistoryOperation::OPERATION_UPDATE_DOCUMENT),
             new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
         ];
-        if (isset($filter["title"]) && !empty($filter["title"])) {
+        if (isset($filter["title"]) && is_string($filter["title"]) && !empty($filter["title"])) {
             // explode into words, remove duplicated & empty elements
             $words = array_filter(array_unique(explode(" ", trim(mb_strtolower((string) $filter["title"])))));
             $totalWords = count($words);
