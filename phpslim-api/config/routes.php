@@ -330,6 +330,10 @@ return function (App $app): void {
                             );
                         }
                     }
+                    /**
+                     * @var array<string>
+                     */
+                    $tags = is_array($params["tags"]) ? $params["tags"] : [];
 
                     $document = new \HomeDocs\Document(
                         is_string($args['id']) ? $args['id'] : null,
@@ -337,7 +341,7 @@ return function (App $app): void {
                         is_string($params["description"]) ? $params["description"] : null,
                         null,
                         null,
-                        is_array($params["tags"]) ? $params["tags"] : [],
+                        $tags,
                         $attachments,
                         $notes,
                     );
@@ -406,13 +410,18 @@ return function (App $app): void {
                         }
                     }
 
+                    /**
+                     * @var array<string>
+                     */
+                    $tags = is_array($params["tags"]) ? $params["tags"] : [];
+
                     $document = new \HomeDocs\Document(
                         is_string($args['id']) ? $args['id'] : null,
                         is_string($params["title"]) ? $params["title"] : null,
                         is_string($params["description"]) ? $params["description"] : null,
                         null,
                         null,
-                        is_array($params["tags"]) ? $params["tags"] : [],
+                        $tags,
                         $attachments,
                         $notes
                     );
@@ -443,7 +452,7 @@ return function (App $app): void {
 
                 $routeCollectorProxy->delete('/{id}', function (Request $request, Response $response, array $args) use ($dbh, $initialState) {
                     $document = new \HomeDocs\Document(
-                        $args['id'] ?? ""
+                        is_string($args['id']) ? $args['id'] : ""
                     );
 
                     // test existence && check permissions
@@ -475,7 +484,7 @@ return function (App $app): void {
 
                 $routeCollectorProxy->get('/{id}[/{inline}]', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $attachment = new \HomeDocs\Attachment(
-                        $args['id'] ?? ""
+                        is_string($args['id']) ? $args['id'] : ""
                     );
                     $attachment->get($dbh);
 
@@ -529,23 +538,23 @@ return function (App $app): void {
                                 ->withHeader('Accept-Ranges', 'bytes');
                         }
                     } else {
-                        throw new \HomeDocs\Exception\NotFoundException($args['id'] ?? "");
+                        throw new \HomeDocs\Exception\NotFoundException(is_string($args['id']) ? $args['id'] : "");
                     }
                 });
 
                 $routeCollectorProxy->post('[/{id}]', function (Request $request, Response $response, array $args) use ($dbh, $initialState) {
                     $uploadedFiles = $request->getUploadedFiles();
                     $file = $uploadedFiles['file'] ?? null;
-                    if ($file) {
+                    if ($file instanceof \Psr\Http\Message\UploadedFileInterface) {
                         if ($file->getError() === UPLOAD_ERR_INI_SIZE) {
                             throw new \HomeDocs\Exception\UploadException("Content too large", 413);
                         } else {
                             $attachment = new \HomeDocs\Attachment(
-                                $args['id'] ?? \HomeDocs\Utils::uuidv4(),
-                                $uploadedFiles["file"]->getClientFilename(),
-                                $uploadedFiles["file"]->getSize()
+                                isset($args['id']) && is_string($args['id']) ? $args['id'] : \HomeDocs\Utils::uuidv4(),
+                                $file->getClientFilename(),
+                                $file->getSize()
                             );
-                            $attachment->add($dbh, $uploadedFiles["file"]);
+                            $attachment->add($dbh, $file);
                             $payload = \HomeDocs\Utils::getJSONPayload(
                                 [
                                     'initialState' => $initialState,
@@ -568,7 +577,7 @@ return function (App $app): void {
 
                 $routeCollectorProxy->delete('/{id}', function (Request $request, Response $response, array $args) use ($dbh, $initialState) {
                     $attachment = new \HomeDocs\Attachment(
-                        $args['id'] ?? ""
+                        is_string($args['id']) ? $args['id'] : ""
                     );
                     if ($attachment->isLinkedToDocument($dbh)) {
                         throw new \HomeDocs\Exception\AccessDeniedException();
