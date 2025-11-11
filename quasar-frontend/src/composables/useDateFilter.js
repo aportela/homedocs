@@ -135,38 +135,38 @@ export function useDateFilter() {
     const onRecalcTimestamps = () => {
       // generate API timestamps (real filters)
       if (dateFilter.formattedDate.fixed) {
-        dateFilter.timestamps.from = date.formatDate(
+        dateFilter.timestamps.from = Number(date.formatDate(
           date.adjustDate(
             date.extractDate(dateFilter.formattedDate.fixed, dateMask),
             { hour: 0, minute: 0, second: 0, millisecond: 0 },
           ),
           "x", // timestamp in ms
-        );
-        dateFilter.timestamps.to = date.formatDate(
+        ));
+        dateFilter.timestamps.to = Number(date.formatDate(
           date.adjustDate(
             date.extractDate(dateFilter.formattedDate.fixed, dateMask),
             { hour: 23, minute: 59, second: 59, millisecond: 999 },
           ),
           "x", // timestamp in ms
-        );
+        ));
       } else {
         if (dateFilter.formattedDate.from) {
-          dateFilter.timestamps.from = date.formatDate(
+          dateFilter.timestamps.from = Number(date.formatDate(
             date.adjustDate(
               date.extractDate(dateFilter.formattedDate.from, "YYYY/MM/DD"),
               { hour: 0, minute: 0, second: 0, millisecond: 0 },
             ),
             "x", // timestamp in ms
-          );
+          ));
         }
         if (dateFilter.formattedDate.to) {
-          dateFilter.timestamps.to = date.formatDate(
+          dateFilter.timestamps.to = Number(date.formatDate(
             date.adjustDate(
               date.extractDate(dateFilter.formattedDate.to, "YYYY/MM/DD"),
               { hour: 23, minute: 59, second: 59, millisecond: 999 },
             ),
             "x", // timestamp in ms
-          );
+          ));
         }
       }
     };
