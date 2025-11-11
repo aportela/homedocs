@@ -78,7 +78,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.loading" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                      }}</q-badge>
+                    }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
@@ -420,8 +420,27 @@ const onUploadsStart = (e) => {
 
 // q-uploader component event => file was uploaded
 const onFileUploaded = (e) => {
-  bus.emit("refreshUploadingDialog.fileUploaded", { transfers: e.files.map((file) => { return { name: file.name, size: file.size } }) });
-  document.addAttachment((JSON.parse(e.xhr.response).data).id, e.files[0].name, e.files[0].size);
+  let jsonResponse = null;
+  try {
+    jsonResponse = JSON.parse(e.xhr.response);
+  } catch (e) { }
+  if (jsonResponse != null) {
+    document.addAttachment((jsonResponse.data).id, e.files[0].name, e.files[0].size);
+    bus.emit("refreshUploadingDialog.fileUploaded", { transfers: e.files.map((file) => { return { name: file.name, size: file.size } }) });
+  } else {
+    const transfers =
+      e.files.map((file) => {
+        return ({
+          name: file.name,
+          size: file.size,
+          error: {
+            status: 500,
+            statusText: "Invalid JSON response"
+          }
+        });
+      });
+    bus.emit("refreshUploadingDialog.fileUploadRejected", { transfers: transfers });
+  }
 }
 
 // q-uploader component event => file upload is rejected
