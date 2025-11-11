@@ -46,7 +46,7 @@ return function (App $app): void {
         function (RouteCollectorProxy $routeCollectorProxy) use ($app): void {
             $container = $app->getContainer();
             if ($container == null) {
-                throw new \Exception("Error getting container");
+                throw new \RuntimeException("Error getting container");
             }
 
             $initialState = \HomeDocs\Utils::getInitialState($container);
@@ -72,7 +72,7 @@ return function (App $app): void {
 
                         $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
                         if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
-                            throw new \Exception("Failed to create database handler from container");
+                            throw new \RuntimeException("Failed to create database handler from container");
                         }
 
                         if (\HomeDocs\User::isEmailUsed($dbh, is_string($params["email"]) ? $params["email"] : "")) {
@@ -105,7 +105,7 @@ return function (App $app): void {
 
                     $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
                     if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
-                        throw new \Exception("Failed to create database handler from container");
+                        throw new \RuntimeException("Failed to create database handler from container");
                     }
 
                     $user = new \HomeDocs\User(
@@ -139,7 +139,7 @@ return function (App $app): void {
             $routeCollectorProxy->group('/user', function (RouteCollectorProxy $routeCollectorProxy) use ($container, $initialState): void {
                 $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
                 if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
-                    throw new \Exception("Failed to create database handler from container");
+                    throw new \RuntimeException("Failed to create database handler from container");
                 }
 
                 $routeCollectorProxy->get('/profile', function (Request $request, Response $response, array $args) use ($dbh, $initialState) {
@@ -194,7 +194,7 @@ return function (App $app): void {
             $routeCollectorProxy->group('/search', function (RouteCollectorProxy $routeCollectorProxy) use ($container, $initialState): void {
                 $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
                 if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
-                    throw new \Exception("Failed to create database handler from container");
+                    throw new \RuntimeException("Failed to create database handler from container");
                 }
                 $settings = $container->get('settings');
                 $defaultResultsPage = $settings["common"]["defaultResultsPage"];
@@ -256,7 +256,7 @@ return function (App $app): void {
             $routeCollectorProxy->group('/document', function (RouteCollectorProxy $routeCollectorProxy) use ($container, $initialState): void {
                 $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
                 if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
-                    throw new \Exception("Failed to create database handler from container");
+                    throw new \RuntimeException("Failed to create database handler from container");
                 }
 
                 $routeCollectorProxy->get('/{id}', function (Request $request, Response $response, array $args) use ($container, $dbh, $initialState) {
@@ -437,7 +437,7 @@ return function (App $app): void {
 
                     $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
                     if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
-                        throw new \Exception("Failed to create database handler from container");
+                        throw new \RuntimeException("Failed to create database handler from container");
                     }
 
                     $document->get($dbh);
@@ -481,7 +481,7 @@ return function (App $app): void {
             $routeCollectorProxy->group('/attachment', function (RouteCollectorProxy $routeCollectorProxy) use ($container, $initialState): void {
                 $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
                 if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
-                    throw new \Exception("Failed to create database handler from container");
+                    throw new \RuntimeException("Failed to create database handler from container");
                 }
 
                 $routeCollectorProxy->get('/{id}[/{inline}]', function (Request $request, Response $response, array $args) use ($container, $dbh): \Psr\Http\Message\MessageInterface {
@@ -496,7 +496,7 @@ return function (App $app): void {
                         $partialContent = false;
                         $attachmentSize = filesize($localStoragePath);
                         if (! is_int($attachmentSize)) {
-                            throw new \Exception("Error getting attachment size");
+                            throw new \RuntimeException("Error getting attachment size");
                         }
 
                         $offset = 0;
@@ -514,13 +514,13 @@ return function (App $app): void {
 
                         $f = fopen($localStoragePath, 'r');
                         if (! is_resource($f)) {
-                            throw new \Exception("Error opening local storage path");
+                            throw new \RuntimeException("Error opening local storage path");
                         }
 
                         fseek($f, $offset);
                         $data = fread($f, max(1, $length));
                         if (! is_string($data)) {
-                            throw new \Exception("Error reading attachment data");
+                            throw new \RuntimeException("Error reading attachment data");
                         }
 
                         fclose($f);
@@ -602,7 +602,7 @@ return function (App $app): void {
             $routeCollectorProxy->get('/tag-cloud', function (Request $request, Response $response, array $args) use ($container, $initialState) {
                 $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
                 if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
-                    throw new \Exception("Failed to create database handler from container");
+                    throw new \RuntimeException("Failed to create database handler from container");
                 }
 
                 $payload = getJSONPayload(
@@ -618,7 +618,7 @@ return function (App $app): void {
             $routeCollectorProxy->get('/tags', function (Request $request, Response $response, array $args) use ($container, $initialState) {
                 $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
                 if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
-                    throw new \Exception("Failed to create database handler from container");
+                    throw new \RuntimeException("Failed to create database handler from container");
                 }
 
                 $payload = getJSONPayload(
@@ -634,7 +634,7 @@ return function (App $app): void {
             $routeCollectorProxy->group('/stats', function (RouteCollectorProxy $routeCollectorProxy) use ($container, $initialState): void {
                 $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
                 if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
-                    throw new \Exception("Failed to create database handler from container");
+                    throw new \RuntimeException("Failed to create database handler from container");
                 }
 
                 $routeCollectorProxy->get('/total-published-documents', function (Request $request, Response $response, array $args) use ($initialState, $dbh) {

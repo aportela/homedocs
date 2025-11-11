@@ -17,7 +17,7 @@ class Settings
         if (is_array($settings)) {
             $this->settings = $settings;
         } else {
-            throw new \Exception("Failed to get settings from container");
+            throw new \RuntimeException("Failed to get settings from container");
         }
     }
 
@@ -29,7 +29,7 @@ class Settings
         if (is_array($this->settings["phpRequiredExtensions"])) {
             return ($this->settings["phpRequiredExtensions"]);
         } else {
-            throw new \Exception("Invalid settings file: " . __FUNCTION__);
+            throw new \RuntimeException("Invalid settings key: " . __FUNCTION__);
         }
     }
 
@@ -38,7 +38,7 @@ class Settings
         if (is_array($this->settings["common"]) && is_numeric($this->settings["common"]["defaultResultsPage"])) {
             return (intval($this->settings["common"]["defaultResultsPage"]));
         } else {
-            return (32);
+            throw new \RuntimeException("Invalid settings key: " . __FUNCTION__);
         }
     }
 }
