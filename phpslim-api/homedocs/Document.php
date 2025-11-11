@@ -715,7 +715,7 @@ class Document
         foreach ($data as $item) {
             $operations[] = new \HomeDocs\DocumentHistoryOperation(
                 property_exists($item, "operationTimestamp") && is_numeric($item->operationTimestamp) ? intval($item->operationTimestamp) : 0,
-                property_exists($item, "operationType") && is_numeric($item->operationType) ? $item->operationType : null,
+                property_exists($item, "operationType") && is_numeric($item->operationType) ? intval($item->operationType) : null,
             );
         }
 

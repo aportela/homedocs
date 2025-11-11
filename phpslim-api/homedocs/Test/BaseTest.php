@@ -8,6 +8,9 @@ require_once dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SE
 
 abstract class BaseTest extends \PHPUnit\Framework\TestCase
 {
+    /**
+     * @var \Slim\App<\Psr\Container\ContainerInterface>|null
+     */
     public static ?\Slim\App $app;
 
     public static \Psr\Container\ContainerInterface $container;

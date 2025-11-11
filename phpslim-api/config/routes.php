@@ -17,11 +17,11 @@ return function (App $app): void {
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg(), json_last_error());
         }
-        
+
         if (! is_string($json)) {
             throw new \HomeDocs\Exception\JSONSerializerException("Error serializing payload");
         }
-        
+
         return ($json);
     }
 
@@ -48,7 +48,7 @@ return function (App $app): void {
             if ($container == null) {
                 throw new \Exception("Error getting container");
             }
-            
+
             $initialState = \HomeDocs\Utils::getInitialState($container);
 
             $routeCollectorProxy->get('/initial_state', function (Request $request, Response $response, array $args) use ($initialState) {
@@ -69,7 +69,7 @@ return function (App $app): void {
                         if (! is_array($params)) {
                             throw new \HomeDocs\Exception\InvalidParamsException();
                         }
-                        
+
                         $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
                         if (\HomeDocs\User::isEmailUsed($dbh, is_string($params["email"]) ? $params["email"] : "")) {
                             throw new \HomeDocs\Exception\AlreadyExistsException("email");
@@ -98,7 +98,7 @@ return function (App $app): void {
                     if (! is_array($params)) {
                         throw new \HomeDocs\Exception\InvalidParamsException();
                     }
-                    
+
                     $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
                     $user = new \HomeDocs\User(
                         "",
@@ -149,7 +149,7 @@ return function (App $app): void {
                     if (! is_array($params)) {
                         throw new \HomeDocs\Exception\InvalidParamsException();
                     }
-                    
+
                     $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
                     $user = new \HomeDocs\User(\HomeDocs\UserSession::getUserId());
                     $user->get($dbh);
@@ -187,7 +187,7 @@ return function (App $app): void {
                     if (! is_array($params)) {
                         throw new \HomeDocs\Exception\InvalidParamsException();
                     }
-                    
+
                     $payload = getJSONPayload(
                         [
                             'initialState' => $initialState,
@@ -207,7 +207,7 @@ return function (App $app): void {
                     if (! is_array($params)) {
                         throw new \HomeDocs\Exception\InvalidParamsException();
                     }
-                    
+
                     $payload = getJSONPayload(
                         [
                             'initialState' => $initialState,
@@ -291,7 +291,7 @@ return function (App $app): void {
                     if (! is_array($params)) {
                         throw new \HomeDocs\Exception\InvalidParamsException();
                     }
-                    
+
                     $documentAttachments = $params["attachments"] ?? [];
                     $rootStoragePath = $container->get('settings')['paths']['storage'];
                     $attachments = [];
@@ -360,7 +360,7 @@ return function (App $app): void {
                     if (! is_array($params)) {
                         throw new \HomeDocs\Exception\InvalidParamsException();
                     }
-                    
+
                     $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
                     $document = new \HomeDocs\Document(
                         $args['id']
@@ -470,7 +470,7 @@ return function (App $app): void {
                         if (! is_int($attachmentSize)) {
                             throw new \Exception("Error getting attachment size");
                         }
-                        
+
                         $offset = 0;
                         $length = $attachmentSize;
                         if (isset($_SERVER['HTTP_RANGE'])) {
@@ -488,13 +488,13 @@ return function (App $app): void {
                         if (! is_resource($f)) {
                             throw new \Exception("Error opening local storage path");
                         }
-                        
+
                         fseek($f, $offset);
-                        $data = fread($f, $length);
+                        $data = fread($f, max(1, $length));
                         if (! is_string($data)) {
                             throw new \Exception("Error reading attachment data");
                         }
-                        
+
                         fclose($f);
                         $response->getBody()->write($data);
                         if ($partialContent) {

@@ -6,7 +6,7 @@ namespace HomeDocs;
 
 class Attachment
 {
-    private ?string $localStoragePath;
+    private string $localStoragePath;
 
     public function __construct(?string $rootStoragePath = null, public ?string $id = null, public ?string $name = null, public ?int $size = null, public ?string $hash = null, public ?int $createdOnTimestamp = null)
     {
@@ -80,12 +80,17 @@ class Attachment
     {
         if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
             $path = pathinfo((string) $this->localStoragePath);
-            if (!file_exists($path['dirname'])) {
+            if (isset($path['dirname']) && !file_exists($path['dirname'])) {
                 mkdir($path['dirname'], 0777, true);
             }
 
             $uploadedFile->moveTo($this->localStoragePath);
-            $this->hash = sha1_file($this->localStoragePath);
+            $shaHash = sha1_file($this->localStoragePath);
+            if (is_string($shaHash)) {
+                $this->hash =  $shaHash;
+            } else {
+                throw new \HomeDocs\Exception\UploadException("Error: sha1 hash failed");
+            }
         } else {
             throw new \HomeDocs\Exception\UploadException("Error: " . $uploadedFile->getError());
         }
@@ -163,7 +168,7 @@ class Attachment
                 new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower((string) $this->id))
             ]
         );
-        return (intval($result[0]->total) > 0);
+        return (property_exists($result[0], "total") && is_numeric($result[0]->total) ? intval($result[0]->total) > 0 : false);
     }
 
     public function remove(\aportela\DatabaseWrapper\DB $db): void
