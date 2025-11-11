@@ -217,24 +217,24 @@ return function (App $app): void {
                                 $dbh,
                                 new \aportela\DatabaseBrowserWrapper\Pager(
                                     true,
-                                    intval($params["currentPage"] ?? 1),
-                                    intval($params["resultsPage"] ?? \HomeDocs\Settings::DEFAULT_RESULTS_PAGE)
+                                    is_int($params["currentPage"]) ? $params["currentPage"] : 1,
+                                    is_int($params["resultsPage"]) ? $params["resultsPage"] : \HomeDocs\Settings::DEFAULT_RESULTS_PAGE
                                 ),
                                 [
                                     "title" => $params["title"] ?? null,
                                     "description" => $params["description"] ?? null,
                                     "notesBody" => $params["notesBody"] ?? null,
                                     "attachmentsFilename" => $params["attachmentsFilename"] ?? null,
-                                    "fromCreationTimestampCondition" => intval($params["fromCreationTimestampCondition"] ?? 0),
-                                    "toCreationTimestampCondition" => intval($params["toCreationTimestampCondition"] ?? 0),
-                                    "fromLastUpdateTimestampCondition" => intval($params["fromLastUpdateTimestampCondition"] ?? 0),
-                                    "toLastUpdateTimestampCondition" => intval($params["toLastUpdateTimestampCondition"] ?? 0),
-                                    "fromUpdatedOnTimestampCondition" => intval($params["fromUpdatedOnTimestampCondition"] ?? 0),
-                                    "toUpdatedOnTimestampCondition" => intval($params["toUpdatedOnTimestampCondition"] ?? 0),
-                                    "tags" => $params["tags"] ?? [],
+                                    "fromCreationTimestampCondition" => is_int($params["fromCreationTimestampCondition"]) ? $params["fromCreationTimestampCondition"] : 0,
+                                    "toCreationTimestampCondition" => is_int($params["toCreationTimestampCondition"]) ? $params["toCreationTimestampCondition"] : 0,
+                                    "fromLastUpdateTimestampCondition" => is_int($params["fromLastUpdateTimestampCondition"]) ? $params["fromLastUpdateTimestampCondition"] : 0,
+                                    "toLastUpdateTimestampCondition" => is_int($params["toLastUpdateTimestampCondition"]) ? $params["toLastUpdateTimestampCondition"] : 0,
+                                    "fromUpdatedOnTimestampCondition" => is_int($params["fromUpdatedOnTimestampCondition"]) ? $params["fromUpdatedOnTimestampCondition"] : 0,
+                                    "toUpdatedOnTimestampCondition" => is_int($params["toUpdatedOnTimestampCondition"]) ? $params["toUpdatedOnTimestampCondition"] : 0,
+                                    "tags" => is_array($params["tags"]) ? $params["tags"] : [],
                                 ],
-                                $params["sortBy"] ?? null,
-                                $params["sortOrder"] == "ASC" ? \aportela\DatabaseBrowserWrapper\Order::ASC : \aportela\DatabaseBrowserWrapper\Order::DESC
+                                is_string($params["sortBy"]) ? $params["sortBy"] : "",
+                                is_string($params["sortOrder"]) && $params["sortOrder"] == "ASC" ? \aportela\DatabaseBrowserWrapper\Order::ASC : \aportela\DatabaseBrowserWrapper\Order::DESC
                             )
                         ]
                     );
@@ -251,7 +251,7 @@ return function (App $app): void {
 
                 $routeCollectorProxy->get('/{id}', function (Request $request, Response $response, array $args) use ($dbh, $initialState) {
                     $document = new \HomeDocs\Document();
-                    $document->id = $args['id'] ?? "";
+                    $document->id = is_string($args['id']) ? $args['id'] : null;
                     $document->get($dbh);
 
                     $payload = \HomeDocs\Utils::getJSONPayload(
@@ -266,7 +266,7 @@ return function (App $app): void {
 
                 $routeCollectorProxy->get('/{id}/notes', function (Request $request, Response $response, array $args) use ($dbh, $initialState) {
                     $document = new \HomeDocs\Document();
-                    $document->id = $args['id'] ?? "";
+                    $document->id = is_string($args['id']) ? $args['id'] : null;
                     $document->get($dbh);
 
                     $payload = \HomeDocs\Utils::getJSONPayload(
@@ -281,7 +281,7 @@ return function (App $app): void {
 
                 $routeCollectorProxy->get('/{id}/attachments', function (Request $request, Response $response, array $args) use ($dbh, $initialState) {
                     $document = new \HomeDocs\Document();
-                    $document->id = $args['id'] ?? "";
+                    $document->id = is_string($args['id']) ? $args['id'] : null;
                     $document->get($dbh);
 
                     $payload = \HomeDocs\Utils::getJSONPayload(
