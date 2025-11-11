@@ -27,6 +27,7 @@ class Settings
                 error_reporting(0);
                 ini_set('display_errors', '0');
             }
+
             date_default_timezone_set($this->getDefaultTimezone());
         } else {
             throw new \RuntimeException("Settings file not found: " . $settingsPath);
@@ -83,7 +84,7 @@ class Settings
         if (is_array($this->settings['error']) && is_bool($this->settings['error'][$key])) {
             return ($this->settings['error'][$key]);
         } else {
-            throw new \RuntimeException("Settings key (error->{$key}) not found");
+            throw new \RuntimeException(sprintf('Settings key (error->%s) not found', $key));
         }
     }
 
@@ -101,7 +102,7 @@ class Settings
         if (is_array($this->settings['logger']) && is_array($this->settings['logger']['channels']) && is_array($this->settings['logger']['channels'][$channel]) && is_string($this->settings['logger']['channels'][$channel][$property])) {
             return ($this->settings['logger']['channels'][$channel][$property]);
         } else {
-            throw new \RuntimeException("Settings key (logger->channels->{$channel}->{$property}) not found");
+            throw new \RuntimeException(sprintf('Settings key (logger->channels->%s->%s) not found', $channel, $property));
         }
     }
 

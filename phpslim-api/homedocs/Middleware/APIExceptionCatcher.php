@@ -75,10 +75,11 @@ class APIExceptionCatcher
         try {
             $this->logger->debug($serverRequest->getMethod() . " " . $serverRequest->getUri()->getPath());
             $contentType = $serverRequest->getHeaderLine('Content-Type');
-            if (strpos($contentType, 'application/json') !== false) {
+            if (str_contains($contentType, 'application/json')) {
                 $data = json_decode($serverRequest->getBody()->getContents(), true);
                 $this->logger->debug("JSON", [$data]);
             }
+
             return $requestHandler->handle($serverRequest);
         } catch (\HomeDocs\Exception\InvalidParamsException $e) {
             return $this->handleException($e, 400, ['invalidOrMissingParams' => explode(",", $e->getMessage())]);

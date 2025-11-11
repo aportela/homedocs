@@ -95,7 +95,7 @@ class Attachment
                     (:id, :sha1_hash, :name, :size, :cuid, :ctime)
             ",
             [
-                new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower((string) $this->id)),
+                new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id)),
                 new \aportela\DatabaseWrapper\Param\StringParam(":sha1_hash", $this->hash),
                 new \aportela\DatabaseWrapper\Param\StringParam(":name", $this->name),
                 new \aportela\DatabaseWrapper\Param\IntegerParam(":size", $this->size),
@@ -134,7 +134,7 @@ class Attachment
                     id = :id
             ",
             [
-                new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower((string) $this->id))
+                new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id))
             ]
         );
     }
@@ -150,7 +150,7 @@ class Attachment
                     attachment_id = :id
             ",
             [
-                new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower((string) $this->id))
+                new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id))
             ]
         );
         return (property_exists($result[0], "total") && is_numeric($result[0]->total) && intval($result[0]->total) > 0);

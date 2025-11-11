@@ -20,6 +20,7 @@ return [
         if (! $app instanceof \Slim\App) {
             throw new \RuntimeException("Failed to get Application (App) from container");
         }
+        
         $settings = new \HomeDocs\Settings();
         return new ErrorMiddleware(
             $app->getCallableResolver(),
@@ -43,6 +44,7 @@ return [
         if (! $logger instanceof \HomeDocs\Logger\DBLogger) {
             throw new \RuntimeException("Failed to get logger (DBLogger) from container");
         }
+        
         // main object
         $db = new \aportela\DatabaseWrapper\DB(
             $adapter,
@@ -107,11 +109,12 @@ return [
         return (new \HomeDocs\Logger\InstallerLogger($logger));
     },
 
-    \HomeDocs\Middleware\APIExceptionCatcher::class => function (ContainerInterface $container) {
+    \HomeDocs\Middleware\APIExceptionCatcher::class => function (ContainerInterface $container): \HomeDocs\Middleware\APIExceptionCatcher {
         $logger = $container->get(\HomeDocs\Logger\HTTPRequestLogger::class);
         if (! $logger instanceof \HomeDocs\Logger\HTTPRequestLogger) {
             throw new \RuntimeException("Failed to get logger (HTTPRequestLogger) from container");
         }
+        
         return (new \HomeDocs\Middleware\APIExceptionCatcher($logger));
     }
 ];
