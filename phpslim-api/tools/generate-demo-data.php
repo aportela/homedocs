@@ -6,7 +6,7 @@ require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPAR
 
 $containerBuilder = new ContainerBuilder();
 
-// Set up settings
+// Set up container
 $containerBuilder->addDefinitions(__DIR__ . '../../config/container.php');
 
 // Build PHP-DI Container instance
@@ -19,8 +19,6 @@ if (! $logger instanceof \HomeDocs\Logger\InstallerLogger) {
     echo "[E] Error getting logger from container" . PHP_EOL;
     exit(1);
 }
-
-$settings = $container->get('settings');
 
 $installer = new \HomeDocs\Installer($logger, $container);
 
