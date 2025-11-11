@@ -89,7 +89,7 @@ class Settings
 
     public function getLoggerDefaultLevel(): \Monolog\Level
     {
-        if (is_array($this->settings['logger'])) {
+        if (is_array($this->settings['logger']) && $this->settings['logger']['defaultLevel'] instanceof \Monolog\Level) {
             return ($this->settings['logger']['defaultLevel']);
         } else {
             throw new \RuntimeException("Settings key (logger->defaultLevel) not found");

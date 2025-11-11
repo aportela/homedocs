@@ -43,9 +43,17 @@ abstract class BaseTest extends \PHPUnit\Framework\TestCase
         self::$settings = new \HomeDocs\Settings();
 
         // Create App instance
-        self::$app = self::$container->get(\Slim\App::class);
+        $app = self::$container->get(\Slim\App::class);
+        if (! $app instanceof \Slim\App) {
+            throw new \RuntimeException("Failed to create App from container");
+        }
+        self::$app = $app;
 
-        self::$dbh = self::$container->get(\aportela\DatabaseWrapper\DB::class);
+        $dbh = self::$container->get(\aportela\DatabaseWrapper\DB::class);
+        if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
+            throw new \RuntimeException("Failed to create database handler from container");
+        }
+        self::$dbh = $dbh;
     }
 
     /**
