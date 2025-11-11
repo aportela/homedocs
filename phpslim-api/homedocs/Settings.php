@@ -19,6 +19,7 @@ class Settings
     {
         $settingsPath =  dirname(__DIR__) . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'settings.php';
         if (file_exists($settingsPath)) {
+            /** @phpstan-ignore-next-line */
             $this->settings = require $settingsPath;
             if ($this->getEnvironment() === 'development') {
                 error_reporting(E_ALL);
@@ -130,7 +131,11 @@ class Settings
     public function getDatabasePDOOptions(): array
     {
         if (is_array($this->settings['db']) && is_array($this->settings['db']['options'])) {
-            return ($this->settings['db']['options']);
+            /**
+             * @var array<int, bool|int>
+             */
+            $options = $this->settings['db']['options'];
+            return ($options);
         } else {
             throw new \RuntimeException("Settings key (db->options) not found");
         }
