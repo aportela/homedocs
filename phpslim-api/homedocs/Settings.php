@@ -7,6 +7,9 @@ namespace HomeDocs;
 class Settings
 {
     public const array PHP_REQUIRED_EXTENSIONS = ['pdo_sqlite', 'mbstring'];
+
+    public const int DEFAULT_RESULTS_PAGE = 32;
+
     /**
      * @var array<string,mixed>
      */
@@ -19,15 +22,6 @@ class Settings
             $this->settings = require $settingsPath;
         } else {
             throw new \RuntimeException("Settings file not found: " . $settingsPath);
-        }
-    }
-
-    public function getDefaultResultsPage(): int
-    {
-        if (is_array($this->settings["common"]) && is_numeric($this->settings["common"]["defaultResultsPage"])) {
-            return (intval($this->settings["common"]["defaultResultsPage"]));
-        } else {
-            throw new \RuntimeException("Invalid settings key: common->defaultResultsPage");
         }
     }
 }

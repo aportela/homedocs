@@ -89,8 +89,6 @@ $settings['db'] = [
 ];
 
 $settings['common'] = [
-    // TODO: remove ???
-    'defaultResultsPage' => 32,
     'allowSignUp' => true
 ];
 

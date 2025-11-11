@@ -8,22 +8,6 @@ use Slim\Routing\RouteCollectorProxy;
 
 // TODO: CheckAuth & JWT middlewares (combine ?)
 return function (App $app): void {
-    /**
-     * @param array<string,mixed> $data
-     */
-    function getJSONPayload(array $data): string
-    {
-        $json = json_encode($data);
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg(), json_last_error());
-        }
-
-        if (! is_string($json)) {
-            throw new \HomeDocs\Exception\JSONSerializerException("Error serializing payload");
-        }
-
-        return ($json);
-    }
 
     $app->get('/', function (Request $request, Response $response, array $args): \Psr\Http\Message\MessageInterface|\Psr\Http\Message\ResponseInterface {
         $filePath = dirname(__DIR__) . '/public/index.html';
@@ -52,7 +36,7 @@ return function (App $app): void {
             $initialState = \HomeDocs\Utils::getInitialState($container);
 
             $routeCollectorProxy->get('/initial_state', function (Request $request, Response $response, array $args) use ($initialState) {
-                $payload = getJSONPayload(
+                $payload = \HomeDocs\Utils::getJSONPayload(
                     [
                         'initialState' => $initialState
                     ]
@@ -84,7 +68,7 @@ return function (App $app): void {
                                 is_string($params["password"]) ? $params["password"] : ""
                             );
                             $user->add($dbh);
-                            $payload = getJSONPayload(
+                            $payload = \HomeDocs\Utils::getJSONPayload(
                                 [
                                     'initialState' => $initialState
                                 ]
@@ -115,7 +99,7 @@ return function (App $app): void {
                     );
                     $user->login($dbh);
 
-                    $payload = getJSONPayload(
+                    $payload = \HomeDocs\Utils::getJSONPayload(
                         [
                             'initialState' => $initialState
                         ]
@@ -126,7 +110,7 @@ return function (App $app): void {
 
                 $routeCollectorProxy->post('/logout', function (Request $request, Response $response, array $args) use ($initialState) {
                     \HomeDocs\User::logout();
-                    $payload = getJSONPayload(
+                    $payload = \HomeDocs\Utils::getJSONPayload(
                         [
                             'initialState' => $initialState
                         ]
@@ -147,7 +131,7 @@ return function (App $app): void {
                     $user->get($dbh);
                     unset($user->password);
                     unset($user->passwordHash);
-                    $payload = getJSONPayload(
+                    $payload = \HomeDocs\Utils::getJSONPayload(
                         [
                             'initialState' => $initialState,
                             'data' => $user
@@ -180,7 +164,7 @@ return function (App $app): void {
                     $user->update($dbh);
                     unset($user->password);
                     unset($user->passwordHash);
-                    $payload = getJSONPayload(
+                    $payload = \HomeDocs\Utils::getJSONPayload(
                         [
                             'initialState' => $initialState,
                             'data' => $user
@@ -196,21 +180,19 @@ return function (App $app): void {
                 if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
                     throw new \RuntimeException("Failed to create database handler from container");
                 }
-                $settings = $container->get('settings');
-                $defaultResultsPage = $settings["common"]["defaultResultsPage"];
 
                 // TODO: is this required ? can be recplaced only with /search/document with custom params
-                $routeCollectorProxy->post('/recent_documents', function (Request $request, Response $response, array $args) use ($dbh, $defaultResultsPage, $initialState) {
+                $routeCollectorProxy->post('/recent_documents', function (Request $request, Response $response, array $args) use ($dbh, $initialState) {
                     $params = $request->getParsedBody();
                     if (! is_array($params)) {
                         throw new \HomeDocs\Exception\InvalidParamsException();
                     }
-                    $payload = getJSONPayload(
+                    $payload = \HomeDocs\Utils::getJSONPayload(
                         [
                             'initialState' => $initialState,
                             'recentDocuments' => \HomeDocs\Document::searchRecent(
                                 $dbh,
-                                is_int($params["count"]) ? $params["count"] : $defaultResultsPage
+                                is_int($params["count"]) ? $params["count"] : \HomeDocs\Settings::DEFAULT_RESULTS_PAGE
                             )
                         ]
                     );
@@ -218,13 +200,13 @@ return function (App $app): void {
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
 
-                $routeCollectorProxy->post('/document', function (Request $request, Response $response, array $args) use ($dbh, $defaultResultsPage, $initialState) {
+                $routeCollectorProxy->post('/document', function (Request $request, Response $response, array $args) use ($dbh, $initialState) {
                     $params = $request->getParsedBody();
                     if (! is_array($params)) {
                         throw new \HomeDocs\Exception\InvalidParamsException();
                     }
 
-                    $payload = getJSONPayload(
+                    $payload = \HomeDocs\Utils::getJSONPayload(
                         [
                             'initialState' => $initialState,
                             'results' => \HomeDocs\Document::search(
@@ -232,7 +214,7 @@ return function (App $app): void {
                                 new \aportela\DatabaseBrowserWrapper\Pager(
                                     true,
                                     intval($params["currentPage"] ?? 1),
-                                    intval($params["resultsPage"] ?? $defaultResultsPage)
+                                    intval($params["resultsPage"] ?? \HomeDocs\Settings::DEFAULT_RESULTS_PAGE)
                                 ),
                                 [
                                     "title" => $params["title"] ?? null,
@@ -269,7 +251,7 @@ return function (App $app): void {
                     $document->setRootStoragePath($container->get('settings')['paths']['storage']);
                     $document->get($dbh);
 
-                    $payload = getJSONPayload(
+                    $payload = \HomeDocs\Utils::getJSONPayload(
                         [
                             'initialState' => $initialState,
                             'document' => $document
@@ -285,7 +267,7 @@ return function (App $app): void {
                     $document->setRootStoragePath($container->get('settings')['paths']['storage']);
                     $document->get($dbh);
 
-                    $payload = getJSONPayload(
+                    $payload = \HomeDocs\Utils::getJSONPayload(
                         [
                             'initialState' => $initialState,
                             'notes' => $document->notes
@@ -301,7 +283,7 @@ return function (App $app): void {
                     $document->setRootStoragePath($container->get('settings')['paths']['storage']);
                     $document->get($dbh);
 
-                    $payload = getJSONPayload(
+                    $payload = \HomeDocs\Utils::getJSONPayload(
                         [
                             'initialState' => $initialState,
                             'attachments' => $document->attachments
@@ -369,7 +351,7 @@ return function (App $app): void {
                     $document->setRootStoragePath($rootStoragePath);
                     $document->get($dbh);
 
-                    $payload = getJSONPayload(
+                    $payload = \HomeDocs\Utils::getJSONPayload(
                         [
                             'initialState' => $initialState,
                             'document' => $document
@@ -445,7 +427,7 @@ return function (App $app): void {
                     }
 
                     $document->get($dbh);
-                    $payload = getJSONPayload(
+                    $payload = \HomeDocs\Utils::getJSONPayload(
                         [
                             'initialState' => $initialState,
                             'document' => $document
@@ -472,7 +454,7 @@ return function (App $app): void {
                         throw $dBException;
                     }
 
-                    $payload = getJSONPayload(
+                    $payload = \HomeDocs\Utils::getJSONPayload(
                         [
                             'initialState' => $initialState
                         ]
@@ -563,7 +545,7 @@ return function (App $app): void {
                                 $uploadedFiles["file"]->getSize()
                             );
                             $attachment->add($dbh, $uploadedFiles["file"]);
-                            $payload = getJSONPayload(
+                            $payload = \HomeDocs\Utils::getJSONPayload(
                                 [
                                     'initialState' => $initialState,
                                     'data' => [
@@ -592,7 +574,7 @@ return function (App $app): void {
                         throw new \HomeDocs\Exception\AccessDeniedException();
                     } else {
                         $attachment->remove($dbh);
-                        $payload = getJSONPayload(
+                        $payload = \HomeDocs\Utils::getJSONPayload(
                             [
                                 'initialState' => $initialState,
                             ]
@@ -609,7 +591,7 @@ return function (App $app): void {
                     throw new \RuntimeException("Failed to create database handler from container");
                 }
 
-                $payload = getJSONPayload(
+                $payload = \HomeDocs\Utils::getJSONPayload(
                     [
                         'initialState' => $initialState,
                         'tags' => \HomeDocs\Tag::getCloud($dbh)
@@ -625,7 +607,7 @@ return function (App $app): void {
                     throw new \RuntimeException("Failed to create database handler from container");
                 }
 
-                $payload = getJSONPayload(
+                $payload = \HomeDocs\Utils::getJSONPayload(
                     [
                         'initialState' => $initialState,
                         'tags' => \HomeDocs\Tag::search($dbh)
@@ -642,7 +624,7 @@ return function (App $app): void {
                 }
 
                 $routeCollectorProxy->get('/total-published-documents', function (Request $request, Response $response, array $args) use ($initialState, $dbh) {
-                    $payload = getJSONPayload(
+                    $payload = \HomeDocs\Utils::getJSONPayload(
                         [
                             'initialState' => $initialState,
                             'count' => \HomeDocs\Stats::getTotalPublishedDocuments($dbh)
@@ -653,7 +635,7 @@ return function (App $app): void {
                 });
 
                 $routeCollectorProxy->get('/total-uploaded-attachments', function (Request $request, Response $response, array $args) use ($initialState, $dbh) {
-                    $payload = getJSONPayload(
+                    $payload = \HomeDocs\Utils::getJSONPayload(
                         [
                             'initialState' => $initialState,
                             'count' => \HomeDocs\Stats::getTotalUploadedAttachments($dbh)
@@ -664,7 +646,7 @@ return function (App $app): void {
                 });
 
                 $routeCollectorProxy->get('/total-uploaded-attachments-disk-usage', function (Request $request, Response $response, array $args) use ($initialState, $dbh) {
-                    $payload = getJSONPayload(
+                    $payload = \HomeDocs\Utils::getJSONPayload(
                         [
                             'initialState' => $initialState,
                             'size' => \HomeDocs\Stats::getTotalUploadedAttachmentsDiskUsage($dbh)
@@ -676,7 +658,7 @@ return function (App $app): void {
 
                 $routeCollectorProxy->get('/heatmap-activity-data', function (Request $request, Response $response, array $args) use ($initialState, $dbh) {
                     $queryParams = $request->getQueryParams();
-                    $payload = getJSONPayload(
+                    $payload = \HomeDocs\Utils::getJSONPayload(
                         [
                             'initialState' => $initialState,
                             'heatmap' => \HomeDocs\Stats::getActivityHeatMapData(

@@ -7,6 +7,23 @@ namespace HomeDocs;
 class Utils
 {
     /**
+     * @param array<string,mixed> $data
+     */
+    public static function getJSONPayload(array $data): string
+    {
+        $json = json_encode($data);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new \HomeDocs\Exception\JSONSerializerException(json_last_error_msg(), json_last_error());
+        }
+
+        if (! is_string($json)) {
+            throw new \HomeDocs\Exception\JSONSerializerException("Error serializing payload");
+        }
+
+        return ($json);
+    }
+
+    /**
      * @return array<mixed>
      */
     public static function getInitialState(\Psr\Container\ContainerInterface $container): array
@@ -18,7 +35,6 @@ class Utils
         return (
             [
                 'allowSignUp' => is_array($settings['common']) ? $settings['common']['allowSignUp'] : false,
-                'defaultResultsPage' => is_array($settings['common']) ? $settings['common']['defaultResultsPage'] : 32,
                 'environment' => $settings['environment'],
                 'maxUploadFileSize' => self::getMaxUploadFileSize(),
                 'session' => [
