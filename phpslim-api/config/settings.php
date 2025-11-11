@@ -6,10 +6,13 @@ $settings = [
 ];
 
 // Should be set to 0 (E_NONE) in production
-error_reporting($settings['environment'] == 'development' ? E_ALL : 0);
+/** @phpstan-ignore-next-line */
+error_reporting($settings['environment'] === 'development' ? E_ALL : 0);
+
 
 // Should be set to '0' in production
-ini_set('display_errors', $settings['environment'] == 'development' ? '1' : '0');
+/** @phpstan-ignore-next-line */
+ini_set('display_errors', $settings['environment'] === 'development' ? '1' : '0');
 
 // Timezone
 date_default_timezone_set('Europe/Madrid');
@@ -26,7 +29,8 @@ $settings['paths']['logs'] = $settings['paths']['root'] . DIRECTORY_SEPARATOR . 
 $settings['error'] = [
 
     // Should be set to false in production
-    'display_error_details' => $settings['environment'] == 'development',
+    /** @phpstan-ignore-next-line */
+    'display_error_details' => $settings['environment'] === 'development',
 
     // Parameter is passed to the default ErrorHandler
     // View in rendered output by enabling the 'displayErrorDetails' setting.
@@ -38,7 +42,8 @@ $settings['error'] = [
 ];
 
 $settings['logger'] = [
-    'defaultLevel' => $settings['environment'] == 'development' ? \Monolog\Level::Debug : \Monolog\Level::Error,
+    /** @phpstan-ignore-next-line */
+    'defaultLevel' => $settings['environment'] === 'development' ? \Monolog\Level::Debug : \Monolog\Level::Error,
     'channels' => [
         'default'  => [
             'path' => isset($_ENV['docker']) ? 'php://stdout' : $settings['paths']['logs'] . DIRECTORY_SEPARATOR . 'default.log',
@@ -84,7 +89,8 @@ $settings['db'] = [
 ];
 
 $settings['common'] = [
-    'defaultResultsPage' => 64,
+    // TODO: remove ???
+    'defaultResultsPage' => 32,
     'allowSignUp' => true
 ];
 

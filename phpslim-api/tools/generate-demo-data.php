@@ -15,6 +15,10 @@ $container = $containerBuilder->build();
 echo "[-] HomeDocs random data generator " . PHP_EOL;
 
 $logger = $container->get(\HomeDocs\Logger\InstallerLogger::class);
+if (! $logger instanceof \HomeDocs\Logger\InstallerLogger) {
+    echo "[E] Error getting logger from container" . PHP_EOL;
+    exit(1);
+}
 
 $settings = $container->get('settings');
 
@@ -42,8 +46,14 @@ if ($cmdLine->hasParam("count") && $cmdLine->hasParam("email") && $cmdLine->hasP
     } else {
         echo " success!" . PHP_EOL;
     }
-    
+
     $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
+    if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
+        echo "[E] Error getting database handler from container" . PHP_EOL;
+        $logger->error("Error getting database handler from container");
+        exit(1);
+    }
+
     $u = new \HomeDocs\User("", $cmdLine->getParamValue("email"), $cmdLine->getParamValue("password"));
     $found = false;
     try {

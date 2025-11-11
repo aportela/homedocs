@@ -405,7 +405,7 @@ class Document
                                     ",
                                 [
                                     new \aportela\DatabaseWrapper\Param\StringParam(":note_body", $note->body),
-                                    new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower((string) $note->id)),
+                                    new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower($note->id)),
                                     new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
                                     new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId())
                                 ]
@@ -715,7 +715,7 @@ class Document
         foreach ($data as $item) {
             $operations[] = new \HomeDocs\DocumentHistoryOperation(
                 property_exists($item, "operationTimestamp") && is_numeric($item->operationTimestamp) ? intval($item->operationTimestamp) : 0,
-                property_exists($item, "operationType") && is_int($item->operationType) ? $item->operationType : null,
+                property_exists($item, "operationType") && is_numeric($item->operationType) ? intval($item->operationType) : null,
             );
         }
 

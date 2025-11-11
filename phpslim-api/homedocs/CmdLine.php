@@ -40,7 +40,7 @@ class CmdLine
      * @param string $key the parameter name to obtain the key
      *
      */
-    public function getParamValue(string $key): string
+    public function getParamValue(string $key): string|null
     {
         return ($this->options[$key] ?? null);
     }
