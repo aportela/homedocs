@@ -42,7 +42,7 @@ return function (App $app): void {
                     ]
                 );
                 $response->getBody()->write($payload);
-                return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
             });
 
             $routeCollectorProxy->group('/auth', function (RouteCollectorProxy $routeCollectorProxy) use ($container, $initialState): void {
@@ -74,7 +74,7 @@ return function (App $app): void {
                                 ]
                             );
                             $response->getBody()->write($payload);
-                            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                            return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                         }
                     } else {
                         throw new \HomeDocs\Exception\AccessDeniedException("");
@@ -105,7 +105,7 @@ return function (App $app): void {
                         ]
                     );
                     $response->getBody()->write($payload);
-                    return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                    return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
                 $routeCollectorProxy->post('/logout', function (Request $request, Response $response, array $args) use ($initialState) {
@@ -116,7 +116,7 @@ return function (App $app): void {
                         ]
                     );
                     $response->getBody()->write($payload);
-                    return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                    return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
             });
 
@@ -138,7 +138,7 @@ return function (App $app): void {
                         ]
                     );
                     $response->getBody()->write($payload);
-                    return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                    return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
                 $routeCollectorProxy->put('/profile', function (Request $request, Response $response, array $args) use ($dbh, $initialState) {
@@ -171,7 +171,7 @@ return function (App $app): void {
                         ]
                     );
                     $response->getBody()->write($payload);
-                    return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                    return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
@@ -197,7 +197,7 @@ return function (App $app): void {
                         ]
                     );
                     $response->getBody()->write($payload);
-                    return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                    return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
                 $routeCollectorProxy->post('/document', function (Request $request, Response $response, array $args) use ($dbh, $initialState) {
@@ -235,7 +235,7 @@ return function (App $app): void {
                         ]
                     );
                     $response->getBody()->write($payload);
-                    return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                    return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
@@ -258,7 +258,7 @@ return function (App $app): void {
                         ]
                     );
                     $response->getBody()->write($payload);
-                    return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                    return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
                 $routeCollectorProxy->get('/{id}/notes', function (Request $request, Response $response, array $args) use ($container, $dbh, $initialState) {
@@ -274,7 +274,7 @@ return function (App $app): void {
                         ]
                     );
                     $response->getBody()->write($payload);
-                    return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                    return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
                 $routeCollectorProxy->get('/{id}/attachments', function (Request $request, Response $response, array $args) use ($container, $dbh, $initialState) {
@@ -290,7 +290,7 @@ return function (App $app): void {
                         ]
                     );
                     $response->getBody()->write($payload);
-                    return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                    return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
                 $routeCollectorProxy->post('/{id}', function (Request $request, Response $response, array $args) use ($container, $dbh, $initialState) {
@@ -358,7 +358,7 @@ return function (App $app): void {
                         ]
                     );
                     $response->getBody()->write($payload);
-                    return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                    return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
                 $routeCollectorProxy->put('/{id}', function (Request $request, Response $response, array $args) use ($container, $dbh, $initialState) {
@@ -434,7 +434,7 @@ return function (App $app): void {
                         ]
                     );
                     $response->getBody()->write($payload);
-                    return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                    return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
                 $routeCollectorProxy->delete('/{id}', function (Request $request, Response $response, array $args) use ($container, $dbh, $initialState) {
@@ -460,7 +460,7 @@ return function (App $app): void {
                         ]
                     );
                     $response->getBody()->write($payload);
-                    return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                    return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
@@ -558,7 +558,7 @@ return function (App $app): void {
                                 ]
                             );
                             $response->getBody()->write($payload);
-                            return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                            return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                         }
                     } else {
                         throw new \HomeDocs\Exception\InvalidParamsException("file");
@@ -580,7 +580,7 @@ return function (App $app): void {
                             ]
                         );
                         $response->getBody()->write($payload);
-                        return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                        return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                     }
                 });
             })->add(\HomeDocs\Middleware\CheckAuth::class);
@@ -598,7 +598,7 @@ return function (App $app): void {
                     ]
                 );
                 $response->getBody()->write($payload);
-                return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
             $routeCollectorProxy->get('/tags', function (Request $request, Response $response, array $args) use ($container, $initialState) {
@@ -614,7 +614,7 @@ return function (App $app): void {
                     ]
                 );
                 $response->getBody()->write($payload);
-                return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
             $routeCollectorProxy->group('/stats', function (RouteCollectorProxy $routeCollectorProxy) use ($container, $initialState): void {
@@ -631,7 +631,7 @@ return function (App $app): void {
                         ]
                     );
                     $response->getBody()->write($payload);
-                    return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                    return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
                 $routeCollectorProxy->get('/total-uploaded-attachments', function (Request $request, Response $response, array $args) use ($initialState, $dbh) {
@@ -642,7 +642,7 @@ return function (App $app): void {
                         ]
                     );
                     $response->getBody()->write($payload);
-                    return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                    return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
                 $routeCollectorProxy->get('/total-uploaded-attachments-disk-usage', function (Request $request, Response $response, array $args) use ($initialState, $dbh) {
@@ -653,7 +653,7 @@ return function (App $app): void {
                         ]
                     );
                     $response->getBody()->write($payload);
-                    return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                    return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
                 $routeCollectorProxy->get('/heatmap-activity-data', function (Request $request, Response $response, array $args) use ($initialState, $dbh) {
@@ -668,7 +668,7 @@ return function (App $app): void {
                         ]
                     );
                     $response->getBody()->write($payload);
-                    return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
+                    return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
             })->add(\HomeDocs\Middleware\CheckAuth::class);
         }
