@@ -34,7 +34,7 @@ abstract class BaseTest extends \PHPUnit\Framework\TestCase
     {
         $containerBuilder = new \DI\ContainerBuilder();
 
-        // Set up settings
+        // Set up container definitions
         $containerBuilder->addDefinitions(dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'container.php');
 
         // Build PHP-DI Container instance
@@ -42,7 +42,6 @@ abstract class BaseTest extends \PHPUnit\Framework\TestCase
 
         self::$settings = new \HomeDocs\Settings();
 
-        // Create App instance
         $app = self::$container->get(\Slim\App::class);
         if (! $app instanceof \Slim\App) {
             throw new \RuntimeException("Failed to create App from container");
