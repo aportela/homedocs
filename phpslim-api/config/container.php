@@ -45,11 +45,12 @@ return [
     },
 
     \HomeDocs\Logger\HTTPRequestLogger::class => function (ContainerInterface $container): \HomeDocs\Logger\HTTPRequestLogger {
-        $settings = $container->get('settings')['logger'];
-        $logger = new \Monolog\Logger($settings['channels']['http']['name']);
+        $settings = new \HomeDocs\Settings();
+
+        $logger = new \Monolog\Logger($settings->getLoggerChannelProperty("http", "name"));
         $logger->pushProcessor(new \Monolog\Processor\UidProcessor());
 
-        $handler = new \Monolog\Handler\RotatingFileHandler($settings['channels']['http']['path'], 0, $settings['defaultLevel']);
+        $handler = new \Monolog\Handler\RotatingFileHandler($settings->getLoggerChannelProperty("http", "path"), 0, $settings->getLoggerDefaultLevel());
         $handler->setFilenameFormat('{date}/{filename}', \Monolog\Handler\RotatingFileHandler::FILE_PER_DAY);
         //$formatter = new \Monolog\Formatter\LineFormatter(null, null, true, true);
         //$handler->setFormatter($formatter);
@@ -58,11 +59,12 @@ return [
     },
 
     \HomeDocs\Logger\DefaultLogger::class => function (ContainerInterface $container): \HomeDocs\Logger\DefaultLogger {
-        $settings = $container->get('settings')['logger'];
-        $logger = new \Monolog\Logger($settings['channels']['default']['name']);
+        $settings = new \HomeDocs\Settings();
+
+        $logger = new \Monolog\Logger($settings->getLoggerChannelProperty("default", "name"));
         $logger->pushProcessor(new \Monolog\Processor\UidProcessor());
 
-        $handler = new \Monolog\Handler\RotatingFileHandler($settings['channels']['default']['path'], 0, $settings['defaultLevel']);
+        $handler = new \Monolog\Handler\RotatingFileHandler($settings->getLoggerChannelProperty("default", "path"), 0, $settings->getLoggerDefaultLevel());
         $handler->setFilenameFormat('{date}/{filename}', \Monolog\Handler\RotatingFileHandler::FILE_PER_DAY);
         //$formatter = new \Monolog\Formatter\LineFormatter(null, null, true, true);
         //$handler->setFormatter($formatter);
@@ -71,11 +73,12 @@ return [
     },
 
     \HomeDocs\Logger\DBLogger::class => function (ContainerInterface $container): \HomeDocs\Logger\DBLogger {
-        $settings = $container->get('settings')['logger'];
-        $logger = new \Monolog\Logger($settings['channels']['database']['name']);
+        $settings = new \HomeDocs\Settings();
+
+        $logger = new \Monolog\Logger($settings->getLoggerChannelProperty("database", "name"));
         $logger->pushProcessor(new \Monolog\Processor\UidProcessor());
 
-        $handler = new \Monolog\Handler\RotatingFileHandler($settings['channels']['database']['path'], 0, $settings['defaultLevel']);
+        $handler = new \Monolog\Handler\RotatingFileHandler($settings->getLoggerChannelProperty("database", "path"), 0, $settings->getLoggerDefaultLevel());
         $handler->setFilenameFormat('{date}/{filename}', \Monolog\Handler\RotatingFileHandler::FILE_PER_DAY);
         //$formatter = new \Monolog\Formatter\LineFormatter(null, null, true, true);
         //$handler->setFormatter($formatter);
@@ -84,11 +87,12 @@ return [
     },
 
     \HomeDocs\Logger\InstallerLogger::class => function (ContainerInterface $container): \HomeDocs\Logger\InstallerLogger {
-        $settings = $container->get('settings')['logger'];
-        $logger = new \Monolog\Logger($settings['channels']['installer']['name']);
+        $settings = new \HomeDocs\Settings();
+
+        $logger = new \Monolog\Logger($settings->getLoggerChannelProperty("installer", "name"));
         $logger->pushProcessor(new \Monolog\Processor\UidProcessor());
 
-        $handler = new \Monolog\Handler\RotatingFileHandler($settings['channels']['installer']['path'], 0, $settings['defaultLevel']);
+        $handler = new \Monolog\Handler\RotatingFileHandler($settings->getLoggerChannelProperty("installer", "path"), 0, $settings->getLoggerDefaultLevel());
         $handler->setFilenameFormat('{date}/{filename}', \Monolog\Handler\RotatingFileHandler::FILE_PER_DAY);
         //$formatter = new \Monolog\Formatter\LineFormatter(null, null, true, true);
         //$handler->setFormatter($formatter);

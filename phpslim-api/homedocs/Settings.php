@@ -86,4 +86,22 @@ class Settings
             throw new \RuntimeException("Settings key (error->{$key}) not found");
         }
     }
+
+    public function getLoggerDefaultLevel(): \Monolog\Level
+    {
+        if (is_array($this->settings['logger'])) {
+            return ($this->settings['logger']['defaultLevel']);
+        } else {
+            throw new \RuntimeException("Settings key (logger->defaultLevel) not found");
+        }
+    }
+
+    public function getLoggerChannelProperty(string $channel, string $property): string
+    {
+        if (is_array($this->settings['logger']) && is_array($this->settings['logger']['channels']) && is_array($this->settings['logger']['channels'][$channel]) && is_string($this->settings['logger']['channels'][$channel][$property])) {
+            return ($this->settings['logger']['channels'][$channel][$property]);
+        } else {
+            throw new \RuntimeException("Settings key (logger->channels->{$channel}->{$property}) not found");
+        }
+    }
 }
