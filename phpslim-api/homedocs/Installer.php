@@ -6,11 +6,10 @@ namespace HomeDocs;
 
 class Installer
 {
-    private \HomeDocs\Settings $settings;
-
     public function __construct(private readonly \Psr\Log\LoggerInterface $logger)
     {
-        $this->settings = new \HomeDocs\Settings();
+        // this is required for some constructor operations (error_reporting/ini_set/date_default_timezone_set)
+        new \HomeDocs\Settings();
     }
 
     /**
