@@ -17,6 +17,9 @@ return [
 
     ErrorMiddleware::class => function (ContainerInterface $container): \Slim\Middleware\ErrorMiddleware {
         $app = $container->get(App::class);
+        if (! $app instanceof \Slim\App) {
+            throw new \RuntimeException("Failed to get Application (App) from container");
+        }
         $settings = new \HomeDocs\Settings();
         return new ErrorMiddleware(
             $app->getCallableResolver(),
