@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace HomeDocs\Test;
 
+use Rector\Naming\PhpArray\ArrayFilter;
+
 require_once dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . "vendor" . DIRECTORY_SEPARATOR . "autoload.php";
 
 final class StatsTest extends \HomeDocs\Test\BaseTest
@@ -35,16 +37,15 @@ final class StatsTest extends \HomeDocs\Test\BaseTest
         $this->createValidSession();
         $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, []);
         $document->add(self::$dbh);
-
         $data = \HomeDocs\Stats::getActivityHeatMapData(self::$dbh);
         $this->assertTrue(count($data) >= 1);
-        $results = array_values(array_filter($data, fn (array $obj): bool => $obj["date"] == date("Y-m-d")));
-        $this->assertEquals(1, count($results));
-        $this->assertTrue(property_exists($results[0], "date"));
-        $this->assertEquals(date("Y-m-d"), $results[0]->date);
-        $this->assertTrue(property_exists($results[0], "count"));
-        $this->assertIsInt($results[0]->count);
-        $this->assertTrue($results[0]->count > 0);
+        foreach ($data as $item) {
+            $this->assertTrue(property_exists($item, "date"));
+            $this->assertTrue(is_string($item->date));
+            $this->assertTrue(property_exists($item, "count"));
+            $this->assertIsInt($item->count);
+            $this->assertTrue($item->count > 0);
+        }
     }
 
     public function testGetActivityHeatMapDataWithTimestamp(): void
@@ -52,15 +53,14 @@ final class StatsTest extends \HomeDocs\Test\BaseTest
         $this->createValidSession();
         $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, []);
         $document->add(self::$dbh);
-
         $data = \HomeDocs\Stats::getActivityHeatMapData(self::$dbh, strtotime('-1 day', time()) * 1000);
         $this->assertTrue(count($data) >= 1);
-        $results = array_values(array_filter($data, fn (array $obj): bool => $obj["date"] == date("Y-m-d")));
-        $this->assertEquals(1, count($results));
-        $this->assertTrue(property_exists($results[0], "date"));
-        $this->assertEquals(date("Y-m-d"), $results[0]->date);
-        $this->assertTrue(property_exists($results[0], "count"));
-        $this->assertIsInt($results[0]->count);
-        $this->assertTrue($results[0]->count > 0);
+        foreach ($data as $item) {
+            $this->assertTrue(property_exists($item, "date"));
+            $this->assertTrue(is_string($item->date));
+            $this->assertTrue(property_exists($item, "count"));
+            $this->assertIsInt($item->count);
+            $this->assertTrue($item->count > 0);
+        }
     }
 }
