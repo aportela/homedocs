@@ -104,4 +104,13 @@ class Settings
             throw new \RuntimeException("Settings key (logger->channels->{$channel}->{$property}) not found");
         }
     }
+
+    public function getDatabaseConfiguration(): object
+    {
+        if (is_array($this->settings['db'])) {
+            return ((object) $this->settings['db']);
+        } else {
+            throw new \RuntimeException("Settings key (db) not found");
+        }
+    }
 }

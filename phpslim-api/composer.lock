@@ -4,24 +4,24 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "91d558fdda79fef66e2160cec88c425b",
+    "content-hash": "a1ae673cb42ce724a06d7d890c915ccd",
     "packages": [
         {
             "name": "aportela/db-browser-wrapper",
-            "version": "1.2.0",
+            "version": "1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aportela/db-browser-wrapper.git",
-                "reference": "c7e4ab2770bafdf61dddcdbfe29a28a9731a2fdc"
+                "reference": "04115e42d2878b36ec5f798b81da5aec697d8d40"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aportela/db-browser-wrapper/zipball/c7e4ab2770bafdf61dddcdbfe29a28a9731a2fdc",
-                "reference": "c7e4ab2770bafdf61dddcdbfe29a28a9731a2fdc",
+                "url": "https://api.github.com/repos/aportela/db-browser-wrapper/zipball/04115e42d2878b36ec5f798b81da5aec697d8d40",
+                "reference": "04115e42d2878b36ec5f798b81da5aec697d8d40",
                 "shasum": ""
             },
             "require": {
-                "aportela/db-wrapper": "^2.2",
+                "aportela/db-wrapper": "^3.0",
                 "php": ">=8.4",
                 "psr/log": "^3.0"
             },
@@ -51,22 +51,22 @@
             "homepage": "https://github.com/aportela/db-browser-wrapper",
             "support": {
                 "issues": "https://github.com/aportela/db-browser-wrapper/issues",
-                "source": "https://github.com/aportela/db-browser-wrapper/tree/1.2.0"
+                "source": "https://github.com/aportela/db-browser-wrapper/tree/1.3.0"
             },
-            "time": "2025-11-10T00:42:58+00:00"
+            "time": "2025-11-11T20:50:58+00:00"
         },
         {
             "name": "aportela/db-wrapper",
-            "version": "2.2.0",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aportela/db-wrapper.git",
-                "reference": "76f225f9f92bbf6b43c0608a34ec414462b5d676"
+                "reference": "e0321f70690e990332e77e4305624dfdd22d32c1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aportela/db-wrapper/zipball/76f225f9f92bbf6b43c0608a34ec414462b5d676",
-                "reference": "76f225f9f92bbf6b43c0608a34ec414462b5d676",
+                "url": "https://api.github.com/repos/aportela/db-wrapper/zipball/e0321f70690e990332e77e4305624dfdd22d32c1",
+                "reference": "e0321f70690e990332e77e4305624dfdd22d32c1",
                 "shasum": ""
             },
             "require": {
@@ -99,9 +99,9 @@
             "homepage": "https://github.com/aportela/db-wrapper",
             "support": {
                 "issues": "https://github.com/aportela/db-wrapper/issues",
-                "source": "https://github.com/aportela/db-wrapper/tree/2.2.0"
+                "source": "https://github.com/aportela/db-wrapper/tree/3.0.0"
             },
-            "time": "2025-11-10T00:23:19+00:00"
+            "time": "2025-11-11T20:46:08+00:00"
         },
         {
             "name": "fig/http-message-util",
@@ -1864,11 +1864,11 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.1.31",
+            "version": "2.1.32",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/ead89849d879fe203ce9292c6ef5e7e76f867b96",
-                "reference": "ead89849d879fe203ce9292c6ef5e7e76f867b96",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/e126cad1e30a99b137b8ed75a85a676450ebb227",
+                "reference": "e126cad1e30a99b137b8ed75a85a676450ebb227",
                 "shasum": ""
             },
             "require": {
@@ -1913,7 +1913,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-10-10T14:14:11+00:00"
+            "time": "2025-11-11T15:18:17+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",

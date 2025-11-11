@@ -6,7 +6,9 @@ namespace HomeDocs\Middleware;
 
 class APIExceptionCatcher
 {
-    public function __construct(protected \Psr\Log\LoggerInterface $logger) {}
+    public function __construct(protected \Psr\Log\LoggerInterface $logger)
+    {
+    }
 
     /**
      * @param array<mixed> $payload

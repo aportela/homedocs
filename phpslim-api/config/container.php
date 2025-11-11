@@ -28,12 +28,14 @@ return [
     },
 
     \aportela\DatabaseWrapper\DB::class => function (ContainerInterface $container): \aportela\DatabaseWrapper\DB {
-        $settings = $container->get('settings')['db'];
+        //$settings = $container->get('settings')['db'];
+        $dbSettings = new \HomeDocs\Settings()->getDatabaseConfiguration();
         $adapter = new \aportela\DatabaseWrapper\Adapter\PDOSQLiteAdapter(
-            $settings["database"],
+            $dbSettings->database,
+            is_array($dbSettings->options) ? $dbSettings->options : [],
+            \aportela\DatabaseWrapper\Adapter\PDOSQLiteAdapter::FLAGS_PRAGMA_JOURNAL_WAL | \aportela\DatabaseWrapper\Adapter\PDOSQLiteAdapter::FLAGS_PRAGMA_FOREIGN_KEYS_ON,
             // READ upgrade SQL schema file definition on next block of this README.md
-            $settings["upgradeSchemaPath"],
-            \aportela\DatabaseWrapper\Adapter\PDOSQLiteAdapter::FLAGS_PRAGMA_JOURNAL_WAL | \aportela\DatabaseWrapper\Adapter\PDOSQLiteAdapter::FLAGS_PRAGMA_FOREIGN_KEYS_ON
+            $dbSettings->upgradeSchemaPath,
         );
         $logger = $container->get(\HomeDocs\Logger\DBLogger::class);
         // main object
