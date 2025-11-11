@@ -74,7 +74,7 @@ return function (App $app): void {
                         if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
                             throw new \Exception("Failed to create database handler from container");
                         }
-                        
+
                         if (\HomeDocs\User::isEmailUsed($dbh, is_string($params["email"]) ? $params["email"] : "")) {
                             throw new \HomeDocs\Exception\AlreadyExistsException("email");
                         } else {
@@ -107,7 +107,7 @@ return function (App $app): void {
                     if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
                         throw new \Exception("Failed to create database handler from container");
                     }
-                    
+
                     $user = new \HomeDocs\User(
                         "",
                         is_string($params["email"]) ? $params["email"] : "",
@@ -196,21 +196,21 @@ return function (App $app): void {
                 if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
                     throw new \Exception("Failed to create database handler from container");
                 }
+                $settings = $container->get('settings');
+                $defaultResultsPage = $settings["common"]["defaultResultsPage"];
 
                 // TODO: is this required ? can be recplaced only with /search/document with custom params
-                $routeCollectorProxy->post('/recent_documents', function (Request $request, Response $response, array $args) use ($container, $dbh, $initialState) {
-                    $settings = $container->get('settings');
+                $routeCollectorProxy->post('/recent_documents', function (Request $request, Response $response, array $args) use ($dbh, $defaultResultsPage, $initialState) {
                     $params = $request->getParsedBody();
                     if (! is_array($params)) {
                         throw new \HomeDocs\Exception\InvalidParamsException();
                     }
-
                     $payload = getJSONPayload(
                         [
                             'initialState' => $initialState,
                             'recentDocuments' => \HomeDocs\Document::searchRecent(
                                 $dbh,
-                                is_int($params["count"]) ? $params["count"] : $settings["common"]["defaultResultsPage"]
+                                is_int($params["count"]) ? $params["count"] : $defaultResultsPage
                             )
                         ]
                     );
@@ -218,8 +218,7 @@ return function (App $app): void {
                     return $response->withHeader('Content-Type', 'application/json')->withStatus(200);
                 });
 
-                $routeCollectorProxy->post('/document', function (Request $request, Response $response, array $args) use ($container, $dbh, $initialState) {
-                    $settings = $container->get('settings');
+                $routeCollectorProxy->post('/document', function (Request $request, Response $response, array $args) use ($dbh, $defaultResultsPage, $initialState) {
                     $params = $request->getParsedBody();
                     if (! is_array($params)) {
                         throw new \HomeDocs\Exception\InvalidParamsException();
@@ -230,7 +229,7 @@ return function (App $app): void {
                             'initialState' => $initialState,
                             'results' => \HomeDocs\Document::search(
                                 $dbh,
-                                new \aportela\DatabaseBrowserWrapper\Pager(true, intval($params["currentPage"] ?? 1), intval($params["resultsPage"] ?? $settings["common"]["defaultResultsPage"])),
+                                new \aportela\DatabaseBrowserWrapper\Pager(true, intval($params["currentPage"] ?? 1), intval($params["resultsPage"] ?? $defaultResultsPage),
                                 [
                                     "title" => $params["title"] ?? null,
                                     "description" => $params["description"] ?? null,
@@ -440,7 +439,7 @@ return function (App $app): void {
                     if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
                         throw new \Exception("Failed to create database handler from container");
                     }
-                    
+
                     $document->get($dbh);
                     $payload = getJSONPayload(
                         [
@@ -605,7 +604,7 @@ return function (App $app): void {
                 if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
                     throw new \Exception("Failed to create database handler from container");
                 }
-                
+
                 $payload = getJSONPayload(
                     [
                         'initialState' => $initialState,
@@ -621,7 +620,7 @@ return function (App $app): void {
                 if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
                     throw new \Exception("Failed to create database handler from container");
                 }
-                
+
                 $payload = getJSONPayload(
                     [
                         'initialState' => $initialState,
