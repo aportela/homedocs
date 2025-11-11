@@ -6,6 +6,9 @@ namespace HomeDocs;
 
 class Utils
 {
+    /**
+     * @param array<string, mixed> $data
+     */
     public static function getJSONPayload(array $data): string
     {
         $json = json_encode($data);
