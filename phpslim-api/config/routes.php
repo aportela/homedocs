@@ -501,14 +501,14 @@ return function (App $app): void {
                         if ($partialContent) {
                             // output the right headers for partial content
                             return $response->withStatus(206)
-                                ->withHeader('Content-Type', \HomeDocs\Utils::getMimeType($attachment->name))
+                                ->withHeader('Content-Type', \HomeDocs\Utils::getMimeType($attachment->name ?? ""))
                                 ->withHeader('Content-Disposition', (isset($args['inline']) ? 'inline' : 'attachment') . '; filename="' . basename((string) $attachment->name) . '"')
                                 ->withHeader('Content-Length', (string) $length)
                                 ->withHeader('Content-Range', 'bytes ' . $offset . '-' . ($offset + $length - 1) . '/' . $attachmentSize)
                                 ->withHeader('Accept-Ranges', 'bytes');
                         } else {
                             return $response->withStatus(200)
-                                ->withHeader('Content-Type', \HomeDocs\Utils::getMimeType($attachment->name))
+                                ->withHeader('Content-Type', \HomeDocs\Utils::getMimeType($attachment->name ?? ""))
                                 ->withHeader('Content-Disposition', (isset($args['inline']) ? 'inline' : 'attachment') . '; filename="' . basename((string) $attachment->name) . '"')
                                 ->withHeader('Content-Length', (string) $attachmentSize)
                                 ->withHeader('Accept-Ranges', 'bytes');
