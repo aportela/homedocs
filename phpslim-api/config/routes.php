@@ -229,7 +229,11 @@ return function (App $app): void {
                             'initialState' => $initialState,
                             'results' => \HomeDocs\Document::search(
                                 $dbh,
-                                new \aportela\DatabaseBrowserWrapper\Pager(true, intval($params["currentPage"] ?? 1), intval($params["resultsPage"] ?? $defaultResultsPage),
+                                new \aportela\DatabaseBrowserWrapper\Pager(
+                                    true,
+                                    intval($params["currentPage"] ?? 1),
+                                    intval($params["resultsPage"] ?? $defaultResultsPage)
+                                ),
                                 [
                                     "title" => $params["title"] ?? null,
                                     "description" => $params["description"] ?? null,
