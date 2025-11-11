@@ -22,7 +22,7 @@ class Installer
      */
     public function getMissingPHPExtensions(): array
     {
-        return (array_diff($this->settings["phpRequiredExtensions"], get_loaded_extensions()));
+        return (array_diff(\HomeDocs\Settings::PHP_REQUIRED_EXTENSIONS, get_loaded_extensions()));
     }
 
     public function checkRequiredPHPExtensions(): bool

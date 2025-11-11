@@ -6,6 +6,7 @@ namespace HomeDocs;
 
 class Settings
 {
+    public const array PHP_REQUIRED_EXTENSIONS = ['pdo_sqlite', 'mbstring'];
     /**
      * @var array<string,mixed>
      */
@@ -21,24 +22,12 @@ class Settings
         }
     }
 
-    /**
-     * @return array<string>
-     */
-    public function getPHPRequiredExtensions(): array
-    {
-        if (is_array($this->settings["phpRequiredExtensions"])) {
-            return ($this->settings["phpRequiredExtensions"]);
-        } else {
-            throw new \RuntimeException("Invalid settings key: " . __FUNCTION__);
-        }
-    }
-
     public function getDefaultResultsPage(): int
     {
         if (is_array($this->settings["common"]) && is_numeric($this->settings["common"]["defaultResultsPage"])) {
             return (intval($this->settings["common"]["defaultResultsPage"]));
         } else {
-            throw new \RuntimeException("Invalid settings key: " . __FUNCTION__);
+            throw new \RuntimeException("Invalid settings key: common->defaultResultsPage");
         }
     }
 }
