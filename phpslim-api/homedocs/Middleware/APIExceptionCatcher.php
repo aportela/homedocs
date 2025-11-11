@@ -6,9 +6,7 @@ namespace HomeDocs\Middleware;
 
 class APIExceptionCatcher
 {
-    public function __construct(protected \Psr\Log\LoggerInterface $logger)
-    {
-    }
+    public function __construct(protected \Psr\Log\LoggerInterface $logger) {}
 
     /**
      * @param array<mixed> $payload
@@ -74,7 +72,11 @@ class APIExceptionCatcher
     {
         try {
             $this->logger->debug($serverRequest->getMethod() . " " . $serverRequest->getUri()->getPath());
-            $this->logger->debug($serverRequest->getBody());
+            $contentType = $serverRequest->getHeaderLine('Content-Type');
+            if (strpos($contentType, 'application/json') !== false) {
+                $data = json_decode($serverRequest->getBody()->getContents(), true);
+                $this->logger->debug("JSON", [$data]);
+            }
             return $requestHandler->handle($serverRequest);
         } catch (\HomeDocs\Exception\InvalidParamsException $e) {
             return $this->handleException($e, 400, ['invalidOrMissingParams' => explode(",", $e->getMessage())]);
