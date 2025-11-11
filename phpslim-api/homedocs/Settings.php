@@ -24,4 +24,22 @@ class Settings
             throw new \RuntimeException("Settings file not found: " . $settingsPath);
         }
     }
+
+    public function getEnvironment(): string
+    {
+        if (is_string($this->settings['environment'])) {
+            return ($this->settings['environment']);
+        } else {
+            throw new \RuntimeException("Settings key (environment) not found");
+        }
+    }
+
+    public function allowSignUp(): bool
+    {
+        if (is_array($this->settings['common']) && is_bool($this->settings['common']['allowSignUp'])) {
+            return ($this->settings['common']['allowSignUp']);
+        } else {
+            throw new \RuntimeException("Settings key (common->allowSignUp) not found");
+        }
+    }
 }

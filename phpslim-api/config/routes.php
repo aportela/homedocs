@@ -33,7 +33,8 @@ return function (App $app): void {
                 throw new \RuntimeException("Error getting container");
             }
 
-            $initialState = \HomeDocs\Utils::getInitialState($container);
+            $settings = new \HomeDocs\Settings();
+            $initialState = \HomeDocs\Utils::getInitialState($settings);
 
             $routeCollectorProxy->get('/initial_state', function (Request $request, Response $response, array $args) use ($initialState) {
                 $payload = \HomeDocs\Utils::getJSONPayload(

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace HomeDocs;
 
+use stdClass;
+
 class Utils
 {
     /**
@@ -26,23 +28,19 @@ class Utils
     /**
      * @return array<mixed>
      */
-    public static function getInitialState(\Psr\Container\ContainerInterface $container): array
+    public static function getInitialState(\HomeDocs\Settings $settings): object
     {
-        /**
-         * @var array<string,mixed>
-         */
-        $settings = $container->get('settings');
-        return (
-            [
-                'allowSignUp' => is_array($settings['common']) ? $settings['common']['allowSignUp'] : false,
-                'environment' => $settings['environment'],
-                'maxUploadFileSize' => self::getMaxUploadFileSize(),
-                'session' => [
-                    'logged' => \HomeDocs\UserSession::isLogged(),
-                    'id' => \HomeDocs\UserSession::getUserId(),
-                    'email' => \HomeDocs\UserSession::getEmail()
-                ]
+        return ((object)
+        [
+            'allowSignUp' => $settings->allowSignUp(),
+            'environment' => $settings->getEnvironment(),
+            'maxUploadFileSize' => self::getMaxUploadFileSize(),
+            'session' => [
+                'logged' => \HomeDocs\UserSession::isLogged(),
+                'id' => \HomeDocs\UserSession::getUserId(),
+                'email' => \HomeDocs\UserSession::getEmail()
             ]
+        ]
         );
     }
 
