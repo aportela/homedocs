@@ -11,13 +11,13 @@ class Settings
      */
     private array $settings = [];
 
-    public function __construct(private readonly \Psr\Log\LoggerInterface $logger, \Psr\Container\ContainerInterface $container)
+    public function __construct()
     {
-        $settings = $container->get("settings");
-        if (is_array($settings)) {
-            $this->settings = $settings;
+        $settingsPath =  dirname(__DIR__) . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'settings.php';
+        if (file_exists($settingsPath)) {
+            $this->settings = require $settingsPath;
         } else {
-            throw new \RuntimeException("Failed to get settings from container");
+            throw new \RuntimeException("Settings file not found: " . $settingsPath);
         }
     }
 
