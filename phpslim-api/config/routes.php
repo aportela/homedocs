@@ -46,10 +46,9 @@ return function (App $app): void {
                 return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
             });
 
-            $routeCollectorProxy->group('/auth', function (RouteCollectorProxy $routeCollectorProxy) use ($container, $initialState): void {
-                $routeCollectorProxy->post('/register', function (Request $request, Response $response, array $args) use ($container, $initialState) {
-                    $settings = $container->get('settings');
-                    if (is_array($settings) && is_array($settings['common']) && $settings['common']['allowSignUp']) {
+            $routeCollectorProxy->group('/auth', function (RouteCollectorProxy $routeCollectorProxy) use ($container, $initialState, $settings): void {
+                $routeCollectorProxy->post('/register', function (Request $request, Response $response, array $args) use ($container, $initialState, $settings) {
+                    if ($settings->allowSignUp()) {
                         $params = $request->getParsedBody();
                         if (! is_array($params)) {
                             throw new \HomeDocs\Exception\InvalidParamsException();
@@ -240,16 +239,16 @@ return function (App $app): void {
                 });
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $routeCollectorProxy->group('/document', function (RouteCollectorProxy $routeCollectorProxy) use ($container, $initialState): void {
+            $routeCollectorProxy->group('/document', function (RouteCollectorProxy $routeCollectorProxy) use ($container, $initialState, $settings): void {
                 $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
                 if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
                     throw new \RuntimeException("Failed to create database handler from container");
                 }
 
-                $routeCollectorProxy->get('/{id}', function (Request $request, Response $response, array $args) use ($container, $dbh, $initialState) {
+                $routeCollectorProxy->get('/{id}', function (Request $request, Response $response, array $args) use ($dbh, $initialState, $settings) {
                     $document = new \HomeDocs\Document();
                     $document->id = $args['id'];
-                    $document->setRootStoragePath($container->get('settings')['paths']['storage']);
+                    $document->setRootStoragePath($settings->getStoragePath());
                     $document->get($dbh);
 
                     $payload = \HomeDocs\Utils::getJSONPayload(
@@ -262,10 +261,10 @@ return function (App $app): void {
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
-                $routeCollectorProxy->get('/{id}/notes', function (Request $request, Response $response, array $args) use ($container, $dbh, $initialState) {
+                $routeCollectorProxy->get('/{id}/notes', function (Request $request, Response $response, array $args) use ($dbh, $initialState, $settings) {
                     $document = new \HomeDocs\Document();
                     $document->id = $args['id'];
-                    $document->setRootStoragePath($container->get('settings')['paths']['storage']);
+                    $document->setRootStoragePath($settings->getStoragePath());
                     $document->get($dbh);
 
                     $payload = \HomeDocs\Utils::getJSONPayload(
@@ -278,10 +277,10 @@ return function (App $app): void {
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
-                $routeCollectorProxy->get('/{id}/attachments', function (Request $request, Response $response, array $args) use ($container, $dbh, $initialState) {
+                $routeCollectorProxy->get('/{id}/attachments', function (Request $request, Response $response, array $args) use ($dbh, $initialState, $settings) {
                     $document = new \HomeDocs\Document();
                     $document->id = $args['id'];
-                    $document->setRootStoragePath($container->get('settings')['paths']['storage']);
+                    $document->setRootStoragePath($settings->getStoragePath());
                     $document->get($dbh);
 
                     $payload = \HomeDocs\Utils::getJSONPayload(
@@ -294,14 +293,14 @@ return function (App $app): void {
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
-                $routeCollectorProxy->post('/{id}', function (Request $request, Response $response, array $args) use ($container, $dbh, $initialState) {
+                $routeCollectorProxy->post('/{id}', function (Request $request, Response $response, array $args) use ($dbh, $initialState, $settings) {
                     $params = $request->getParsedBody();
                     if (! is_array($params)) {
                         throw new \HomeDocs\Exception\InvalidParamsException();
                     }
 
                     $documentAttachments = $params["attachments"] ?? [];
-                    $rootStoragePath = $container->get('settings')['paths']['storage'];
+                    $rootStoragePath = $settings->getStoragePath();
                     $attachments = [];
                     if (is_array($documentAttachments) && $documentAttachments !== []) {
                         foreach ($documentAttachments as $documentAttachment) {
@@ -327,7 +326,7 @@ return function (App $app): void {
                         }
                     }
 
-                    $rootStoragePath = $container->get('settings')['paths']['storage'];
+                    $rootStoragePath = $settings->getStoragePath();
                     $document = new \HomeDocs\Document(
                         $args['id'],
                         $params["title"] ?? "",
@@ -362,7 +361,7 @@ return function (App $app): void {
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
-                $routeCollectorProxy->put('/{id}', function (Request $request, Response $response, array $args) use ($container, $dbh, $initialState) {
+                $routeCollectorProxy->put('/{id}', function (Request $request, Response $response, array $args) use ($container, $dbh, $initialState, $settings) {
                     $params = $request->getParsedBody();
                     if (! is_array($params)) {
                         throw new \HomeDocs\Exception\InvalidParamsException();
@@ -372,7 +371,7 @@ return function (App $app): void {
                         $args['id']
                     );
                     // test existence && check permissions
-                    $rootStoragePath = $container->get('settings')['paths']['storage'];
+                    $rootStoragePath = $settings->getStoragePath();
                     $document->setRootStoragePath($rootStoragePath);
                     $document->get($dbh);
 
@@ -438,11 +437,11 @@ return function (App $app): void {
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
-                $routeCollectorProxy->delete('/{id}', function (Request $request, Response $response, array $args) use ($container, $dbh, $initialState) {
+                $routeCollectorProxy->delete('/{id}', function (Request $request, Response $response, array $args) use ($dbh, $initialState, $settings) {
                     $document = new \HomeDocs\Document(
                         $args['id']
                     );
-                    $document->setRootStoragePath($container->get('settings')['paths']['storage']);
+                    $document->setRootStoragePath($settings->getStoragePath());
 
                     // test existence && check permissions
                     $document->get($dbh);
@@ -465,15 +464,15 @@ return function (App $app): void {
                 });
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $routeCollectorProxy->group('/attachment', function (RouteCollectorProxy $routeCollectorProxy) use ($container, $initialState): void {
+            $routeCollectorProxy->group('/attachment', function (RouteCollectorProxy $routeCollectorProxy) use ($container, $initialState, $settings): void {
                 $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
                 if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
                     throw new \RuntimeException("Failed to create database handler from container");
                 }
 
-                $routeCollectorProxy->get('/{id}[/{inline}]', function (Request $request, Response $response, array $args) use ($container, $dbh): \Psr\Http\Message\MessageInterface {
+                $routeCollectorProxy->get('/{id}[/{inline}]', function (Request $request, Response $response, array $args) use ($dbh, $settings): \Psr\Http\Message\MessageInterface {
                     $attachment = new \HomeDocs\Attachment(
-                        $container->get('settings')['paths']['storage'],
+                        $settings->getStoragePath(),
                         $args['id']
                     );
                     $attachment->get($dbh);
@@ -532,7 +531,7 @@ return function (App $app): void {
                     }
                 });
 
-                $routeCollectorProxy->post('[/{id}]', function (Request $request, Response $response, array $args) use ($container, $dbh, $initialState) {
+                $routeCollectorProxy->post('[/{id}]', function (Request $request, Response $response, array $args) use ($dbh, $initialState, $settings) {
                     $uploadedFiles = $request->getUploadedFiles();
                     $file = $uploadedFiles['file'] ?? null;
                     if ($file) {
@@ -540,7 +539,7 @@ return function (App $app): void {
                             throw new \HomeDocs\Exception\UploadException("Content too large", 413);
                         } else {
                             $attachment = new \HomeDocs\Attachment(
-                                $container->get('settings')['paths']['storage'],
+                                $settings->getStoragePath(),
                                 $args['id'] ?? \HomeDocs\Utils::uuidv4(),
                                 $uploadedFiles["file"]->getClientFilename(),
                                 $uploadedFiles["file"]->getSize()
@@ -566,9 +565,9 @@ return function (App $app): void {
                     }
                 });
 
-                $routeCollectorProxy->delete('/{id}', function (Request $request, Response $response, array $args) use ($container, $dbh, $initialState) {
+                $routeCollectorProxy->delete('/{id}', function (Request $request, Response $response, array $args) use ($dbh, $initialState, $settings) {
                     $attachment = new \HomeDocs\Attachment(
-                        $container->get('settings')['paths']['storage'],
+                        $settings->getStoragePath(),
                         $args['id']
                     );
                     if ($attachment->isLinkedToDocument($dbh)) {
