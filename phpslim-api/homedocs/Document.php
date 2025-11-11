@@ -12,7 +12,9 @@ class Document
      * @param array<\HomeDocs\Note> $notes
      * @param array<\HomeDocs\DocumentHistoryOperation> $history
      */
-    public function __construct(public ?string $id = null, public ?string $title = null, public ?string $description = null, public ?int $createdOnTimestamp = null, public ?int $lastUpdateTimestamp = null, public array $tags = [], public array $attachments = [], public array $notes = [], public array $history = []) {}
+    public function __construct(public ?string $id = null, public ?string $title = null, public ?string $description = null, public ?int $createdOnTimestamp = null, public ?int $lastUpdateTimestamp = null, public array $tags = [], public array $attachments = [], public array $notes = [], public array $history = [])
+    {
+    }
 
     /**
      * @return array<mixed>
@@ -619,7 +621,7 @@ class Document
                 property_exists($item, "id") && is_string($item->id) ? $item->id : "",
                 property_exists($item, "name") && is_string($item->name) ? $item->name : null,
                 property_exists($item, "size") && is_numeric($item->size) ? intval($item->size) : 0,
-                property_exists($item, "hash") && is_string($item->hash) ?  $item->hash : null,
+                property_exists($item, "hash") && is_string($item->hash) ? $item->hash : null,
                 property_exists($item, "createdOnTimestamp") && is_numeric($item->createdOnTimestamp) ? intval($item->createdOnTimestamp) : 0
             );
         }

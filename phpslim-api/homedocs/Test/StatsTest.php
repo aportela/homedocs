@@ -38,7 +38,7 @@ final class StatsTest extends \HomeDocs\Test\BaseTest
 
         $data = \HomeDocs\Stats::getActivityHeatMapData(self::$dbh);
         $this->assertTrue(count($data) >= 1);
-        $results = array_values(array_filter($data, fn(array $obj): bool => $obj["date"] == date("Y-m-d")));
+        $results = array_values(array_filter($data, fn (array $obj): bool => $obj["date"] == date("Y-m-d")));
         $this->assertEquals(1, count($results));
         $this->assertTrue(property_exists($results[0], "date"));
         $this->assertEquals(date("Y-m-d"), $results[0]->date);
@@ -55,7 +55,7 @@ final class StatsTest extends \HomeDocs\Test\BaseTest
 
         $data = \HomeDocs\Stats::getActivityHeatMapData(self::$dbh, strtotime('-1 day', time()) * 1000);
         $this->assertTrue(count($data) >= 1);
-        $results = array_values(array_filter($data, fn(array $obj): bool => $obj["date"] == date("Y-m-d")));
+        $results = array_values(array_filter($data, fn (array $obj): bool => $obj["date"] == date("Y-m-d")));
         $this->assertEquals(1, count($results));
         $this->assertTrue(property_exists($results[0], "date"));
         $this->assertEquals(date("Y-m-d"), $results[0]->date);
