@@ -31,11 +31,11 @@ return [
         //$settings = $container->get('settings')['db'];
         $dbSettings = new \HomeDocs\Settings()->getDatabaseConfiguration();
         $adapter = new \aportela\DatabaseWrapper\Adapter\PDOSQLiteAdapter(
-            $dbSettings->database,
+            property_exists($dbSettings, "database") ? $dbSettings->database : "",
             is_array($dbSettings->options) ? $dbSettings->options : [],
             \aportela\DatabaseWrapper\Adapter\PDOSQLiteAdapter::FLAGS_PRAGMA_JOURNAL_WAL | \aportela\DatabaseWrapper\Adapter\PDOSQLiteAdapter::FLAGS_PRAGMA_FOREIGN_KEYS_ON,
             // READ upgrade SQL schema file definition on next block of this README.md
-            $dbSettings->upgradeSchemaPath,
+            property_exists($dbSettings, "upgradeSchemaPath") ? $dbSettings->upgradeSchemaPath : "",
         );
         $logger = $container->get(\HomeDocs\Logger\DBLogger::class);
         // main object
