@@ -10,7 +10,9 @@ if (PHP_SAPI !== 'cli-server') {
     die('this is only for the php development server');
 }
 
-if (is_file($_SERVER['DOCUMENT_ROOT'] . '/' . $_SERVER['SCRIPT_NAME'])) {
+$file = (is_string($_SERVER['DOCUMENT_ROOT']) && is_string($_SERVER['SCRIPT_NAME'])) ? $_SERVER['DOCUMENT_ROOT'] . '/' . $_SERVER['SCRIPT_NAME'] : null;
+
+if ($file !== null && is_file($file)) {
     // probably a static file...
     return false;
 }
