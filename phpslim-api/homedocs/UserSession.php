@@ -32,16 +32,16 @@ class UserSession
 
     public static function isLogged(): bool
     {
-        return isset($_SESSION["userId"]) && !empty($_SESSION["userId"]);
+        return isset($_SESSION["userId"]) && is_string($_SESSION["userId"]) && !empty($_SESSION["userId"]);
     }
 
     public static function getUserId(): string
     {
-        return is_string($_SESSION["userId"]) ? $_SESSION["userId"] : '';
+        return isset($_SESSION["userId"]) && is_string($_SESSION["userId"]) ? $_SESSION["userId"] : '';
     }
 
     public static function getEmail(): string
     {
-        return is_string($_SESSION["email"]) ? $_SESSION["email"] : '';
+        return isset($_SESSION["email"]) && is_string($_SESSION["email"]) ? $_SESSION["email"] : '';
     }
 }
