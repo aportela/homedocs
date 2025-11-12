@@ -725,8 +725,8 @@ class Document
             "description" => "DOCUMENT.description",
             "createdOnTimestamp" => "DOCUMENT_HISTORY_CREATION_DATE.ctime",
             "lastUpdateTimestamp" => "COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.ctime, DOCUMENT_HISTORY_CREATION_DATE.ctime)",
-            "attachmentCount" => "TMP_ATTACHMENT_COUNT.attachmentCount",
-            "noteCount" => "TMP_NOTE_COUNT.noteCount",
+            "attachmentCount" => "COALESCE(TMP_ATTACHMENT_COUNT.attachmentCount, 0)",
+            "noteCount" => "COALESCE(TMP_NOTE_COUNT.noteCount, 0)",
         ];
         $fieldCountDefinition = [
             "total" => "COUNT (DOCUMENT.id)"
