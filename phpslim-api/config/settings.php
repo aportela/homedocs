@@ -1,10 +1,11 @@
 <?php
 
-$currentPath = dirname(__DIR__);
-
 $environment = 'development'; // (development|production)
 
-$logPath = $currentPath . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'logs';
+$basePath = dirname(__DIR__);
+$dataPath = $basePath . DIRECTORY_SEPARATOR . 'data';
+$logPath = $dataPath . DIRECTORY_SEPARATOR . 'logs';
+
 
 return [
     'environment' => $environment,
@@ -17,14 +18,14 @@ return [
         'passphrase' => '/@q]/?pc`c&bq,P/MCp{5#E~-Nr2]NXQ$pvSKiz$tLQd]K)>eIOOk!&6rKVO7J~'
     ],
     'paths' => [
-        'storage' => $currentPath . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'storage',
+        'storage' => $dataPath . DIRECTORY_SEPARATOR . 'storage',
         'logs' => $logPath
     ],
     'db' => [
         //'driver' => 'sqlite',
         //'host' => '',
         //'username' => '',
-        'database' => $currentPath . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'homedocs3.sqlite3',
+        'database' => $dataPath . DIRECTORY_SEPARATOR . 'homedocs3.sqlite3',
         //'password' => '',
         //'charset' => 'utf8mb4',
         //'collation' => 'utf8mb4_unicode_ci',
@@ -39,7 +40,7 @@ return [
             // Set default fetch mode to array
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
         ],
-        'upgradeSchemaPath' => $currentPath . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'db-schema.php'
+        'upgradeSchemaPath' => $basePath . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'db-schema.php'
     ],
     // Error Handling Middleware settings
     'error' => [
