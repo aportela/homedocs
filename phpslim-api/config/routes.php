@@ -145,13 +145,13 @@ return function (\Slim\App $app): void {
                         throw new \HomeDocs\Exception\InvalidParamsException();
                     }
 
-                    if (! is_string($params["email"])) {
+                    if (! (array_key_exists("email", $params) && is_string($params["email"]))) {
                         throw new \HomeDocs\Exception\InvalidParamsException("email");
                     }
 
                     $user = new \HomeDocs\User(\HomeDocs\UserSession::getUserId());
                     $user->get($dbh);
-                    if (array_key_exists("email", $params) && $params["email"] != \HomeDocs\UserSession::getEmail()) {
+                    if ($params["email"] != \HomeDocs\UserSession::getEmail()) {
                         $tmpUser = new \HomeDocs\User(
                             "",
                             $params["email"]
