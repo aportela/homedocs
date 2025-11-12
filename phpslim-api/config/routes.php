@@ -151,7 +151,7 @@ return function (\Slim\App $app): void {
 
                     $user = new \HomeDocs\User(\HomeDocs\UserSession::getUserId());
                     $user->get($dbh);
-                    if ($params["email"] != \HomeDocs\UserSession::getEmail()) {
+                    if ($params["email"] !== \HomeDocs\UserSession::getEmail()) {
                         $tmpUser = new \HomeDocs\User(
                             "",
                             $params["email"]
