@@ -27,7 +27,7 @@ return function (\Slim\App $app): void {
         '/api3',
         function (RouteCollectorProxy $routeCollectorProxy) use ($app): void {
             $container = $app->getContainer();
-            if ($container == null) {
+            if ($container === null) {
                 throw new \RuntimeException("Error getting container");
             }
 
@@ -233,7 +233,7 @@ return function (\Slim\App $app): void {
                                     "tags" => is_array($params["tags"]) ? $params["tags"] : [],
                                 ],
                                 array_key_exists("sortBy", $params) && is_string($params["sortBy"]) ? $params["sortBy"] : "",
-                                array_key_exists("sortOrder", $params) && is_string($params["sortOrder"]) && $params["sortOrder"] == "ASC" ? \aportela\DatabaseBrowserWrapper\Order::ASC : \aportela\DatabaseBrowserWrapper\Order::DESC
+                                array_key_exists("sortOrder", $params) && is_string($params["sortOrder"]) && $params["sortOrder"] === "ASC" ? \aportela\DatabaseBrowserWrapper\Order::ASC : \aportela\DatabaseBrowserWrapper\Order::DESC
                             )
                         ]
                     );
