@@ -12,9 +12,7 @@ class Document
      * @param array<\HomeDocs\Note> $notes
      * @param array<\HomeDocs\DocumentHistoryOperation> $history
      */
-    public function __construct(public ?string $id = null, public ?string $title = null, public ?string $description = null, public ?int $createdOnTimestamp = null, public ?int $lastUpdateTimestamp = null, public array $tags = [], public array $attachments = [], public array $notes = [], public array $history = [])
-    {
-    }
+    public function __construct(public ?string $id = null, public ?string $title = null, public ?string $description = null, public ?int $createdOnTimestamp = null, public ?int $lastUpdateTimestamp = null, public array $tags = [], public array $attachments = [], public array $notes = [], public array $history = []) {}
 
     /**
      * @return array<mixed>
@@ -739,9 +737,13 @@ class Document
             default => new \aportela\DatabaseBrowserWrapper\SortItem("createdOnTimestamp", $sortOrder, true),
         };
         // after launch search we need to make some changes foreach result
-        $afterBrowse = function (object $data) use ($filter, $db): void {
+        $afterBrowse = function (\aportela\DatabaseBrowserWrapper\BrowserResults $data) use ($filter, $db): void {
             array_map(
-                function (object $item) use ($filter, $db) {
+                function ($item) use ($filter, $db) {
+                    // fix warnings on matchedFragments property
+                    if (! $item instanceof \stdClass) {
+                        throw new \RuntimeException("Invalid");
+                    }
                     if (property_exists($item, "createdOnTimestamp") && is_numeric($item->createdOnTimestamp)) {
                         $item->createdOnTimestamp =  intval($item->createdOnTimestamp);
                     }
@@ -805,7 +807,7 @@ class Document
 
                     return ($item);
                 },
-                property_exists($data, "items") && is_array($data->items) ? $data->items : []
+                $data->items
             );
         };
         $browser = new \aportela\DatabaseBrowserWrapper\Browser(
