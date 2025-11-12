@@ -1,13 +1,11 @@
 <?php
 
-use Psr\Container\ContainerInterface;
-use Slim\App;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Routing\RouteCollectorProxy;
 
 // TODO: CheckAuth & JWT middlewares (combine ?)
-return function (App $app): void {
+return function (\Slim\App $app): void {
 
     $app->get('/', function (Request $request, Response $response, array $args): \Psr\Http\Message\MessageInterface|\Psr\Http\Message\ResponseInterface {
         $filePath = dirname(__DIR__) . '/public/index.html';
@@ -59,13 +57,13 @@ return function (App $app): void {
                             throw new \RuntimeException("Failed to create database handler from container");
                         }
 
-                        if (\HomeDocs\User::isEmailUsed($dbh, is_string($params["email"]) ? $params["email"] : "")) {
+                        if (\HomeDocs\User::isEmailUsed($dbh, array_key_exists("email", $params) && is_string($params["email"]) ? $params["email"] : "")) {
                             throw new \HomeDocs\Exception\AlreadyExistsException("email");
                         } else {
                             $user = new \HomeDocs\User(
-                                is_string($params["id"]) ? $params["id"] : "",
-                                is_string($params["email"]) ? $params["email"] : "",
-                                is_string($params["password"]) ? $params["password"] : ""
+                                array_key_exists("id", $params) && is_string($params["id"]) ? $params["id"] : "",
+                                array_key_exists("email", $params) && is_string($params["email"]) ? $params["email"] : "",
+                                array_key_exists("password", $params) && is_string($params["password"]) ? $params["password"] : ""
                             );
                             $user->add($dbh);
                             $payload = \HomeDocs\Utils::getJSONPayload(
@@ -94,8 +92,8 @@ return function (App $app): void {
 
                     $user = new \HomeDocs\User(
                         "",
-                        is_string($params["email"]) ? $params["email"] : "",
-                        is_string($params["password"]) ? $params["password"] : ""
+                        array_key_exists("email", $params) && is_string($params["email"]) ? $params["email"] : "",
+                        array_key_exists("password", $params) && is_string($params["password"]) ? $params["password"] : ""
                     );
                     $user->login($dbh);
 
@@ -153,7 +151,7 @@ return function (App $app): void {
 
                     $user = new \HomeDocs\User(\HomeDocs\UserSession::getUserId());
                     $user->get($dbh);
-                    if ($params["email"] != \HomeDocs\UserSession::getEmail()) {
+                    if (array_key_exists("email", $params) && $params["email"] != \HomeDocs\UserSession::getEmail()) {
                         $tmpUser = new \HomeDocs\User(
                             "",
                             $params["email"]
@@ -164,7 +162,7 @@ return function (App $app): void {
                     }
 
                     $user->email = $params["email"];
-                    $user->password = is_string($params["password"]) ? $params["password"] : "";
+                    $user->password = array_key_exists("password", $params) && is_string($params["password"]) ? $params["password"] : "";
                     $user->update($dbh);
                     unset($user->password);
                     unset($user->passwordHash);
@@ -191,7 +189,7 @@ return function (App $app): void {
                     if (! is_array($params)) {
                         throw new \HomeDocs\Exception\InvalidParamsException();
                     }
-                    
+
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
                             'initialState' => $initialState,
@@ -234,8 +232,8 @@ return function (App $app): void {
                                     "toUpdatedOnTimestampCondition" => is_int($params["toUpdatedOnTimestampCondition"]) ? $params["toUpdatedOnTimestampCondition"] : 0,
                                     "tags" => is_array($params["tags"]) ? $params["tags"] : [],
                                 ],
-                                is_string($params["sortBy"]) ? $params["sortBy"] : "",
-                                is_string($params["sortOrder"]) && $params["sortOrder"] == "ASC" ? \aportela\DatabaseBrowserWrapper\Order::ASC : \aportela\DatabaseBrowserWrapper\Order::DESC
+                                array_key_exists("sortBy", $params) && is_string($params["sortBy"]) ? $params["sortBy"] : "",
+                                array_key_exists("sortOrder", $params) && is_string($params["sortOrder"]) && $params["sortOrder"] == "ASC" ? \aportela\DatabaseBrowserWrapper\Order::ASC : \aportela\DatabaseBrowserWrapper\Order::DESC
                             )
                         ]
                     );
@@ -252,7 +250,7 @@ return function (App $app): void {
 
                 $routeCollectorProxy->get('/{id}', function (Request $request, Response $response, array $args) use ($dbh, $initialState): \Psr\Http\Message\MessageInterface {
                     $document = new \HomeDocs\Document();
-                    $document->id = is_string($args['id']) ? $args['id'] : null;
+                    $document->id = array_key_exists("id", $args) && is_string($args['id']) ? $args['id'] : null;
                     $document->get($dbh);
 
                     $payload = \HomeDocs\Utils::getJSONPayload(
@@ -267,7 +265,7 @@ return function (App $app): void {
 
                 $routeCollectorProxy->get('/{id}/notes', function (Request $request, Response $response, array $args) use ($dbh, $initialState): \Psr\Http\Message\MessageInterface {
                     $document = new \HomeDocs\Document();
-                    $document->id = is_string($args['id']) ? $args['id'] : null;
+                    $document->id = array_key_exists("id", $args) && is_string($args['id']) ? $args['id'] : null;
                     $document->get($dbh);
 
                     $payload = \HomeDocs\Utils::getJSONPayload(
@@ -282,7 +280,7 @@ return function (App $app): void {
 
                 $routeCollectorProxy->get('/{id}/attachments', function (Request $request, Response $response, array $args) use ($dbh, $initialState): \Psr\Http\Message\MessageInterface {
                     $document = new \HomeDocs\Document();
-                    $document->id = is_string($args['id']) ? $args['id'] : null;
+                    $document->id = array_key_exists("id", $args) && is_string($args['id']) ? $args['id'] : null;
                     $document->get($dbh);
 
                     $payload = \HomeDocs\Utils::getJSONPayload(
@@ -308,7 +306,7 @@ return function (App $app): void {
                             if (! is_array($documentAttachment)) {
                                 throw new \HomeDocs\Exception\InvalidParamsException("attachments");
                             }
-                            
+
                             $attachments[] = new \HomeDocs\Attachment(
                                 is_string($documentAttachment["id"]) ? $documentAttachment["id"] : "",
                                 is_string($documentAttachment["name"]) ? $documentAttachment["name"] : null,
@@ -325,7 +323,7 @@ return function (App $app): void {
                             if (! is_array($documentNote)) {
                                 throw new \HomeDocs\Exception\InvalidParamsException("notes");
                             }
-                            
+
                             $notes[] = new \HomeDocs\Note(
                                 is_string($documentNote["id"]) ? $documentNote["id"] : null,
                                 is_int($documentNote["createdOnTimestamp"]) ?  $documentNote["createdOnTimestamp"] : null,
@@ -333,16 +331,16 @@ return function (App $app): void {
                             );
                         }
                     }
-                    
+
                     /**
                      * @var array<string>
                      */
                     $tags = is_array($params["tags"]) ? $params["tags"] : [];
 
                     $document = new \HomeDocs\Document(
-                        is_string($args['id']) ? $args['id'] : null,
-                        is_string($params["title"]) ? $params["title"] : null,
-                        is_string($params["description"]) ? $params["description"] : null,
+                        array_key_exists("id", $args) && is_string($args['id']) ? $args['id'] : null,
+                        array_key_exists("title", $params) && is_string($params["title"]) ? $params["title"] : null,
+                        array_key_exists("description", $params) && is_string($params["description"]) ? $params["description"] : null,
                         null,
                         null,
                         $tags,
@@ -378,7 +376,7 @@ return function (App $app): void {
                     }
 
                     $document = new \HomeDocs\Document(
-                        is_string($args['id']) ? $args['id'] : null
+                        array_key_exists("id", $args) && is_string($args['id']) ? $args['id'] : null
                     );
                     // test existence && check permissions
                     $document->get($dbh);
@@ -390,7 +388,7 @@ return function (App $app): void {
                             if (! is_array($documentAttachment)) {
                                 throw new \HomeDocs\Exception\InvalidParamsException("attachments");
                             }
-                            
+
                             $attachments[] = new \HomeDocs\Attachment(
                                 is_string($documentAttachment["id"]) ? $documentAttachment["id"] : "",
                                 is_string($documentAttachment["name"]) ? $documentAttachment["name"] : null,
@@ -407,7 +405,7 @@ return function (App $app): void {
                             if (! is_array($documentNote)) {
                                 throw new \HomeDocs\Exception\InvalidParamsException("notes");
                             }
-                            
+
                             $notes[] = new \HomeDocs\Note(
                                 is_string($documentNote["id"]) ? $documentNote["id"] : null,
                                 is_int($documentNote["createdOnTimestamp"]) ? $documentNote["createdOnTimestamp"] : null,
@@ -422,9 +420,9 @@ return function (App $app): void {
                     $tags = is_array($params["tags"]) ? $params["tags"] : [];
 
                     $document = new \HomeDocs\Document(
-                        is_string($args['id']) ? $args['id'] : null,
-                        is_string($params["title"]) ? $params["title"] : null,
-                        is_string($params["description"]) ? $params["description"] : null,
+                        array_key_exists("id", $args) && is_string($args['id']) ? $args['id'] : null,
+                        array_key_exists("title", $params) && is_string($params["title"]) ? $params["title"] : null,
+                        array_key_exists("description", $params) && is_string($params["description"]) ? $params["description"] : null,
                         null,
                         null,
                         $tags,
@@ -458,7 +456,7 @@ return function (App $app): void {
 
                 $routeCollectorProxy->delete('/{id}', function (Request $request, Response $response, array $args) use ($dbh, $initialState): \Psr\Http\Message\MessageInterface {
                     $document = new \HomeDocs\Document(
-                        is_string($args['id']) ? $args['id'] : ""
+                        array_key_exists("id", $args) && is_string($args['id']) ? $args['id'] : ""
                     );
 
                     // test existence && check permissions
@@ -490,7 +488,7 @@ return function (App $app): void {
 
                 $routeCollectorProxy->get('/{id}[/{inline}]', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $attachment = new \HomeDocs\Attachment(
-                        is_string($args['id']) ? $args['id'] : ""
+                        array_key_exists("id", $args) && is_string($args['id']) ? $args['id'] : ""
                     );
                     $attachment->get($dbh);
 
@@ -544,7 +542,7 @@ return function (App $app): void {
                                 ->withHeader('Accept-Ranges', 'bytes');
                         }
                     } else {
-                        throw new \HomeDocs\Exception\NotFoundException(is_string($args['id']) ? $args['id'] : "");
+                        throw new \HomeDocs\Exception\NotFoundException(array_key_exists("id", $args) && is_string($args['id']) ? $args['id'] : "");
                     }
                 });
 
@@ -556,7 +554,7 @@ return function (App $app): void {
                             throw new \HomeDocs\Exception\UploadException("Content too large", 413);
                         } else {
                             $attachment = new \HomeDocs\Attachment(
-                                isset($args['id']) && is_string($args['id']) ? $args['id'] : \HomeDocs\Utils::uuidv4(),
+                                array_key_exists("id", $args) && is_string($args['id']) ? $args['id'] : \HomeDocs\Utils::uuidv4(),
                                 $file->getClientFilename(),
                                 $file->getSize()
                             );
@@ -583,7 +581,7 @@ return function (App $app): void {
 
                 $routeCollectorProxy->delete('/{id}', function (Request $request, Response $response, array $args) use ($dbh, $initialState): \Psr\Http\Message\MessageInterface {
                     $attachment = new \HomeDocs\Attachment(
-                        is_string($args['id']) ? $args['id'] : ""
+                        array_key_exists("id", $args) && is_string($args['id']) ? $args['id'] : ""
                     );
                     if ($attachment->isLinkedToDocument($dbh)) {
                         throw new \HomeDocs\Exception\AccessDeniedException();
