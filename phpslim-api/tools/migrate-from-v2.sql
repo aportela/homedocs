@@ -2,7 +2,7 @@ ATTACH DATABASE "homedocs2.sqlite3" AS homedocs2;
 
 
 INSERT INTO USER
-    (id, email, password_hash, created_on_timestamp, last_update_timestamp)
+    (id, email, password_hash, ctime, mtime)
 
 SELECT
     homedocs2.USER.id, homedocs2.USER.email, password_hash, COALESCE(MIN_OPERATION.created_on_timestamp, 0), COALESCE(MAX_OPERATION.last_update_timestamp, 0)
@@ -42,7 +42,7 @@ FROM homedocs2.DOCUMENT_TAG;
 
 
 INSERT INTO ATTACHMENT
-    (id, sha1_hash, name, size, created_by_user_id, created_on_timestamp)
+    (id, sha1_hash, name, size, cuid, ctime)
 
 SELECT
     homedocs2.FILE.id, homedocs2.FILE.sha1_hash, homedocs2.FILE.name, homedocs2.FILE.size, homedocs2.FILE.uploaded_by_user_id, homedocs2.FILE.uploaded_on_timestamp * 1000
@@ -61,7 +61,7 @@ FROM homedocs2.DOCUMENT_FILE;
 
 
 INSERT INTO DOCUMENT_HISTORY
-    (document_id, created_on_timestamp, operation_type, created_by_user_id)
+    (document_id, ctime, operation_type, cuid)
 
 SELECT
     homedocs2.DOCUMENT.id, homedocs2.DOCUMENT.created_on_timestamp * 1000, 1, homedocs2.DOCUMENT.created_by_user_id
