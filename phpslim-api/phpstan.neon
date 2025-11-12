@@ -3,4 +3,5 @@ parameters:
 	paths:
 		- config
 		- homedocs
+		- public
 		- tools
