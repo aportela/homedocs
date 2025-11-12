@@ -32,7 +32,7 @@ class UserSession
 
     public static function isLogged(): bool
     {
-        return isset($_SESSION["userId"]) && is_string($_SESSION["userId"]) && !empty($_SESSION["userId"]);
+        return isset($_SESSION["userId"]) && is_string($_SESSION["userId"]) && (isset($_SESSION["userId"]) && ($_SESSION["userId"] !== '' && $_SESSION["userId"] !== '0'));
     }
 
     public static function getUserId(): string
