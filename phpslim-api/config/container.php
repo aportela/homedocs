@@ -8,8 +8,6 @@ use Slim\Middleware\ErrorMiddleware;
 require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 
 return [
-    'settings' => fn() => require __DIR__ . DIRECTORY_SEPARATOR . 'settings.php',
-
     App::class => function (ContainerInterface $container): \Slim\App {
         AppFactory::setContainer($container);
         return AppFactory::create();
@@ -20,7 +18,7 @@ return [
         if (! $app instanceof \Slim\App) {
             throw new \RuntimeException("Failed to get Application (App) from container");
         }
-        
+
         $settings = new \HomeDocs\Settings();
         return new ErrorMiddleware(
             $app->getCallableResolver(),
@@ -44,7 +42,7 @@ return [
         if (! $logger instanceof \HomeDocs\Logger\DBLogger) {
             throw new \RuntimeException("Failed to get logger (DBLogger) from container");
         }
-        
+
         // main object
         $db = new \aportela\DatabaseWrapper\DB(
             $adapter,
@@ -114,7 +112,7 @@ return [
         if (! $logger instanceof \HomeDocs\Logger\HTTPRequestLogger) {
             throw new \RuntimeException("Failed to get logger (HTTPRequestLogger) from container");
         }
-        
+
         return (new \HomeDocs\Middleware\APIExceptionCatcher($logger));
     }
 ];
