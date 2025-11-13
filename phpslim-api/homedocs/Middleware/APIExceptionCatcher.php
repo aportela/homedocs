@@ -6,16 +6,14 @@ namespace HomeDocs\Middleware;
 
 class APIExceptionCatcher
 {
-    public function __construct(protected \Psr\Log\LoggerInterface $logger)
-    {
-    }
+    public function __construct(protected \Psr\Log\LoggerInterface $logger) {}
 
     /**
      * @param array<mixed> $payload
      */
     private function handleException(\Exception $exception, int $statusCode, array $payload): \Psr\Http\Message\ResponseInterface
     {
-        $this->logger->debug(sprintf("Exception caught (%s) - Message: %s", $exception::class, $exception->getMessage()));
+        $this->logger->error(sprintf("Exception caught (%s) - Message: %s", $exception::class, $exception->getMessage()));
         $response = new \Slim\Psr7\Response();
         $json = json_encode($payload);
         if (is_string($json)) {
