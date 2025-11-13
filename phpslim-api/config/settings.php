@@ -1,6 +1,6 @@
 <?php
 
-$environment = 'development'; // (development|production)
+$environment = 'production'; // (development|production)
 
 $basePath = dirname(__DIR__);
 $dataPath = $basePath . DIRECTORY_SEPARATOR . 'data';
