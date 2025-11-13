@@ -12,7 +12,7 @@ $containerBuilder->addDefinitions(__DIR__ . '../../config/container.php');
 // Build PHP-DI Container instance
 $container = $containerBuilder->build();
 
-echo "[-] HomeDocs installer" . PHP_EOL;
+echo "[-] HomeDocs setup" . PHP_EOL;
 
 $logger = $container->get(\HomeDocs\Logger\InstallerLogger::class);
 if (! $logger instanceof \HomeDocs\Logger\InstallerLogger) {
