@@ -7,7 +7,7 @@
     <q-card flat class="bg-transparent">
       <form @submit.prevent.stop="onSubmitForm" autocorrect="off" autocapitalize="off" autocomplete="off"
         spellcheck="false">
-        <q-btn-group class="q-ma-sm" spread>
+        <q-btn-group class="q-ma-sm" spread v-if="state.exists">
           <q-btn type="submit" icon="save" size="md" color="primary" :title="t('Save')" :label="t('Save')" no-caps
             @click="onSubmitForm" :disable="state.loading || state.saving || state.uploading || !document.title"
             :loading="state.saving">
@@ -33,7 +33,7 @@
           <q-tab name="details" icon="list_alt" :label="t('Document details')"
             class="cursor-default full-width"></q-tab>
         </q-tabs>
-        <q-card-section class="row q-pa-none">
+        <q-card-section class="row q-pa-none" v-if="state.exists">
           <div class="col-12 col-lg-6 col-xl-6 q-px-sm flex"
             v-show="isScreenGreaterThanMD || smallScreensTopTab == 'metadata'">
             <q-card class="q-ma-xs q-mt-sm full-width">
@@ -78,7 +78,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.loading" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                    }}</q-badge>
+                      }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
@@ -110,7 +110,7 @@
             :api-error="state.apiError" :text="state.errorMessage">
           </CustomErrorBanner>
         </q-card-section>
-        <q-btn-group class="q-ma-sm" spread>
+        <q-btn-group class="q-ma-sm" spread v-if="state.exists">
           <q-btn type="submit" icon="save" size="md" color="primary" :title="t('Save')" :label="t('Save')" no-caps
             @click="onSubmitForm" :disable="state.loading || state.saving || state.uploading || !document.title"
             :loading="state.saving">
@@ -205,6 +205,7 @@ const state = reactive({
   apiError: null,
   saveSuccess: false,
   savingError: false,
+  exists: true,
 });
 
 const showDeleteDocumentConfirmationDialog = ref(false);
@@ -232,6 +233,7 @@ const onRefresh = () => {
     state.apiError = null;
     state.saveSuccess = false;
     state.savingError = false;
+    state.exists = true;
     smallScreensTopTab.value = "metadata";
     api.document
       .get(document.id)
@@ -249,6 +251,11 @@ const onRefresh = () => {
               state.apiError = errorResponse.customAPIErrorDetails;
               state.errorMessage = "Auth session expired, requesting new...";
               bus.emit("reAuthRequired", { emitter: "DocumentPage.onRefresh" });
+              break;
+            case 404:
+              state.apiError = errorResponse.customAPIErrorDetails;
+              state.errorMessage = "Document not found";
+              state.exists = false;
               break;
             default:
               // TODO: on this error (example 404 not found) do not use error validation fields on title (required, red border, this field is required)
