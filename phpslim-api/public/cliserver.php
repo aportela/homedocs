@@ -7,14 +7,14 @@
 // public/cliserver.php (router script)
 
 if (PHP_SAPI !== 'cli-server') {
-    die('this is only for the php development server');
+  die('this is only for the php development server');
 }
 
 $file = (is_string($_SERVER['DOCUMENT_ROOT']) && is_string($_SERVER['SCRIPT_NAME'])) ? $_SERVER['DOCUMENT_ROOT'] . '/' . $_SERVER['SCRIPT_NAME'] : null;
 
 if ($file !== null && is_file($file)) {
-    // probably a static file...
-    return false;
+  // probably a static file...
+  return false;
 }
 
 $_SERVER['SCRIPT_NAME'] = '/index.php';
