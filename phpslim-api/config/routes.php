@@ -27,7 +27,7 @@ return function (\Slim\App $app): void {
         '/api3',
         function (RouteCollectorProxy $routeCollectorProxy) use ($app): void {
             $container = $app->getContainer();
-            if ($container === null) {
+            if (!$container instanceof \Psr\Container\ContainerInterface) {
                 throw new \RuntimeException("Error getting container");
             }
 
