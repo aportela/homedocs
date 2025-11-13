@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace HomeDocs;
 
-class Installer
+class Setup
 {
     public function __construct(private readonly \Psr\Log\LoggerInterface $logger)
     {
