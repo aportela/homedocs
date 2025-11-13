@@ -107,15 +107,6 @@ class Settings
         }
     }
 
-    public function getDatabaseConfiguration(): object
-    {
-        if (is_array($this->settings['db'])) {
-            return ((object) $this->settings['db']);
-        } else {
-            throw new \RuntimeException("Settings key (db) not found");
-        }
-    }
-
     public function getDatabasePath(): string
     {
         if (is_array($this->settings['db']) && is_string($this->settings['db']['database'])) {
