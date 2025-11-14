@@ -20,4 +20,5 @@ return RectorConfig::configure()
         privatization: true,
         typeDeclarations: true,
         rectorPreset: true,
-    );
+    )
+    ->withComposerBased(phpunit: true);
