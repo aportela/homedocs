@@ -5,6 +5,8 @@ use Slim\App;
 
 require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 
+\HomeDocs\UserSession::start();
+
 $containerBuilder = new ContainerBuilder();
 
 // Set up settings
