@@ -37,7 +37,7 @@ final class StatsTest extends \HomeDocs\Test\BaseTest
         $this->createValidSession();
         $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, []);
         $document->add(self::$dbh);
-        
+
         $data = \HomeDocs\Stats::getActivityHeatMapData(self::$dbh);
         $this->assertTrue(count($data) >= 1);
         foreach ($data as $item) {
@@ -54,7 +54,7 @@ final class StatsTest extends \HomeDocs\Test\BaseTest
         $this->createValidSession();
         $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, []);
         $document->add(self::$dbh);
-        
+
         $data = \HomeDocs\Stats::getActivityHeatMapData(self::$dbh, strtotime('-1 day', time()) * 1000);
         $this->assertTrue(count($data) >= 1);
         foreach ($data as $item) {

@@ -12,7 +12,9 @@ class Document
      * @param array<\HomeDocs\Note> $notes
      * @param array<\HomeDocs\DocumentHistoryOperation> $history
      */
-    public function __construct(public ?string $id = null, public ?string $title = null, public ?string $description = null, public ?int $createdOnTimestamp = null, public ?int $lastUpdateTimestamp = null, public array $tags = [], public array $attachments = [], public array $notes = [], public array $history = []) {}
+    public function __construct(public ?string $id = null, public ?string $title = null, public ?string $description = null, public ?int $createdOnTimestamp = null, public ?int $lastUpdateTimestamp = null, public array $tags = [], public array $attachments = [], public array $notes = [], public array $history = [])
+    {
+    }
 
     /**
      * @return array<mixed>
