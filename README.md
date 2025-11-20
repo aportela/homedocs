@@ -157,7 +157,7 @@ composer install
 Start the local PHP (backend/API) server, listening on http://127.0.0.1:8081:
 
 ```Shell
-composer start
+composer serve
 ```
 
 ### Frontend (quasar)
