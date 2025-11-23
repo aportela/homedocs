@@ -1,7 +1,6 @@
 import { boot } from "quasar/wrappers";
-
-import { useDarkMode } from "src/composables/useDarkMode";
+import { useDarkModeStore } from "src/stores/darkMode";
 
 export default boot(() => {
-  useDarkMode();
+  useDarkModeStore();
 });
