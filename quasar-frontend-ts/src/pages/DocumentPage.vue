@@ -16,7 +16,7 @@ const currentRoute = useRoute();
 
 const documentId = ref(currentRoute.name == "document" ? currentRoute.params?.id || null : null);
 
-router.beforeEach(async (to, from) => {
+router.beforeEach((to) => {
   if (to.name == "newDocument") {
     documentId.value = null;
   } else if (to.name == "document" && to.params.id) {

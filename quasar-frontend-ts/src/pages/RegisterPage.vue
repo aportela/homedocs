@@ -9,7 +9,6 @@
 <script setup lang="ts">
 import { default as RegisterForm } from "src/components/Forms/RegisterForm.vue";
 
-const onSuccessRegister = (apiResponseData) => {
-};
+const onSuccessRegister = () => { };
 
 </script>
