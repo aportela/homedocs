@@ -41,7 +41,7 @@ export function useLocalStorage() {
   const authJWT = createStorageEntry<string | null>("authJWT", null);
   const email = createStorageEntry<string | null>("email", null);
   const darkMode = createStorageEntry<boolean>("darkMode", false);
-  const locale = createStorageEntry<string>("locale", "en");
+  const locale = createStorageEntry<string>("locale", "en-US");
 
   const alwaysOpenUploadDialog = createStorageEntry<boolean>(
     "alwaysOpenUploadDialog",
