@@ -13,7 +13,7 @@
   </q-input>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref, computed, useAttrs, onMounted, nextTick } from "vue";
 import { useI18n } from "vue-i18n";

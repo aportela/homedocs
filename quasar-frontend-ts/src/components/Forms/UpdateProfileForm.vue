@@ -34,7 +34,7 @@
   </BaseWidget>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, reactive, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 

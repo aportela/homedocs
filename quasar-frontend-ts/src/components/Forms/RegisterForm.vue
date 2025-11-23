@@ -60,7 +60,7 @@
   </form>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref, reactive, nextTick, computed } from "vue";
 import { uid } from "quasar";

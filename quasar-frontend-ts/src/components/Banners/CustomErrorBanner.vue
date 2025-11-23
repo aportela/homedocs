@@ -6,7 +6,7 @@
   </CustomBanner>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
 

@@ -61,7 +61,7 @@
   </form>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref, reactive, nextTick, computed } from "vue";
 import { useI18n } from "vue-i18n";

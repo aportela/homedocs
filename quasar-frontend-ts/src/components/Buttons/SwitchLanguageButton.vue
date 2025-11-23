@@ -14,7 +14,7 @@
   </q-btn>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { computed, watch, useAttrs, ref } from "vue";
 import { usei18n } from "src/composables/usei18n";
 import { useLocalStorage } from "src/composables/useLocalStorage";

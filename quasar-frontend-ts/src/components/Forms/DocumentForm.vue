@@ -137,7 +137,7 @@
     @close="showDeleteDocumentConfirmationDialog = false"></DeleteDocumentConfirmationDialog>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref, reactive, nextTick, computed, watch, onMounted, onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router";

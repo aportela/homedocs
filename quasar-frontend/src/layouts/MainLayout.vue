@@ -13,7 +13,7 @@
         <q-btn type="button" no-caps no-wrap align="left" outline :label="searchButtonLabel" icon="search"
           class="full-width no-caps theme-default-q-btn" @click.prevent="dialogs.fastSearch.visible = true">
           <DesktopToolTip anchor="bottom middle" self="top middle">{{ t("Click to open fast search")
-            }}</DesktopToolTip>
+          }}</DesktopToolTip>
         </q-btn>
         <!--
         <FastSearchSelector dense class="full-width"></FastSearchSelector>
@@ -49,7 +49,7 @@
   </q-layout>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, reactive, watch, computed, onMounted, onBeforeUnmount } from "vue";
 import { useQuasar, LocalStorage, uid } from "quasar";
 import { useI18n } from "vue-i18n";

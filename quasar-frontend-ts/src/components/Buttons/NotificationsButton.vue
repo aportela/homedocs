@@ -23,7 +23,7 @@
   </q-btn>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { useAttrs, ref, onMounted, nextTick, computed } from "vue";
 
