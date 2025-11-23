@@ -2,23 +2,23 @@ import { defineStore } from "pinia";
 
 import { useLocalStorage } from "src/composables/useLocalStorage";
 
-const { authJWT } = useLocalStorage();
+const { authJWT: localStorageJWT } = useLocalStorage();
 
 export const useSessionStore = defineStore("session", {
   state: () => ({
-    _authJWT: authJWT.get() ?? null,
+    currentJWT: localStorageJWT.get() ?? null,
   }),
   getters: {
-    isLogged: (state) => state._authJWT !== null,
-    jwt: (state) => state._authJWT,
+    isLogged: (state) => state.currentJWT !== null,
+    jwt: (state) => state.currentJWT,
   },
   actions: {
     setJWT(jwt = null) {
-      this._authJWT = jwt;
-      if (this._authJWT !== null) {
-        authJWT.set(this._authJWT);
+      this.currentJWT = jwt;
+      if (this.currentJWT !== null) {
+        localStorageJWT.set(this.currentJWT);
       } else {
-        authJWT.remove();
+        localStorageJWT.remove();
       }
     },
   },
