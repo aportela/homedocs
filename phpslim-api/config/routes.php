@@ -44,8 +44,8 @@ return function (\Slim\App $app): void {
                 return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
             });
 
-            $routeCollectorProxy->group('/auth', function (RouteCollectorProxy $routeCollectorProxy) use ($container, $serverEnvironment, $settings): void {
-                $routeCollectorProxy->post('/register', function (Request $request, Response $response, array $args) use ($container, $serverEnvironment, $settings): \Psr\Http\Message\MessageInterface {
+            $routeCollectorProxy->group('/auth', function (RouteCollectorProxy $routeCollectorProxy) use ($container,  $settings): void {
+                $routeCollectorProxy->post('/register', function (Request $request, Response $response, array $args) use ($container,  $settings): \Psr\Http\Message\MessageInterface {
                     if ($settings->allowSignUp()) {
                         $params = $request->getParsedBody();
                         if (! is_array($params)) {
@@ -67,9 +67,7 @@ return function (\Slim\App $app): void {
                             );
                             $user->add($dbh);
                             $payload = \HomeDocs\Utils::getJSONPayload(
-                                [
-                                    'serverEnvironment' => $serverEnvironment
-                                ]
+                                []
                             );
                             $response->getBody()->write($payload);
                             return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
@@ -79,7 +77,7 @@ return function (\Slim\App $app): void {
                     }
                 });
 
-                $routeCollectorProxy->post('/login', function (Request $request, Response $response, array $args) use ($container, $serverEnvironment): \Psr\Http\Message\MessageInterface {
+                $routeCollectorProxy->post('/login', function (Request $request, Response $response, array $args) use ($container): \Psr\Http\Message\MessageInterface {
                     $params = $request->getParsedBody();
                     if (! is_array($params)) {
                         throw new \HomeDocs\Exception\InvalidParamsException();
@@ -98,40 +96,35 @@ return function (\Slim\App $app): void {
                     $user->login($dbh);
 
                     $payload = \HomeDocs\Utils::getJSONPayload(
-                        [
-                            'serverEnvironment' => $serverEnvironment
-                        ]
+                        []
                     );
                     $response->getBody()->write($payload);
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
-                $routeCollectorProxy->post('/logout', function (Request $request, Response $response, array $args) use ($serverEnvironment): \Psr\Http\Message\MessageInterface {
+                $routeCollectorProxy->post('/logout', function (Request $request, Response $response, array $args): \Psr\Http\Message\MessageInterface {
                     \HomeDocs\User::logout();
                     $payload = \HomeDocs\Utils::getJSONPayload(
-                        [
-                            'serverEnvironment' => $serverEnvironment
-                        ]
+                        []
                     );
                     $response->getBody()->write($payload);
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
             });
 
-            $routeCollectorProxy->group('/user', function (RouteCollectorProxy $routeCollectorProxy) use ($container, $serverEnvironment): void {
+            $routeCollectorProxy->group('/user', function (RouteCollectorProxy $routeCollectorProxy) use ($container): void {
                 $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
                 if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
                     throw new \RuntimeException("Failed to create database handler from container");
                 }
 
-                $routeCollectorProxy->get('/profile', function (Request $request, Response $response, array $args) use ($dbh, $serverEnvironment): \Psr\Http\Message\MessageInterface {
+                $routeCollectorProxy->get('/profile', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $user = new \HomeDocs\User(\HomeDocs\UserSession::getUserId());
                     $user->get($dbh);
                     unset($user->password);
                     unset($user->passwordHash);
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'serverEnvironment' => $serverEnvironment,
                             'data' => $user
                         ]
                     );
@@ -139,7 +132,7 @@ return function (\Slim\App $app): void {
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
-                $routeCollectorProxy->put('/profile', function (Request $request, Response $response, array $args) use ($dbh, $serverEnvironment): \Psr\Http\Message\MessageInterface {
+                $routeCollectorProxy->put('/profile', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $params = $request->getParsedBody();
                     if (! is_array($params)) {
                         throw new \HomeDocs\Exception\InvalidParamsException();
@@ -168,7 +161,6 @@ return function (\Slim\App $app): void {
                     unset($user->passwordHash);
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'serverEnvironment' => $serverEnvironment,
                             'data' => $user
                         ]
                     );
@@ -177,14 +169,14 @@ return function (\Slim\App $app): void {
                 });
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $routeCollectorProxy->group('/search', function (RouteCollectorProxy $routeCollectorProxy) use ($container, $serverEnvironment): void {
+            $routeCollectorProxy->group('/search', function (RouteCollectorProxy $routeCollectorProxy) use ($container): void {
                 $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
                 if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
                     throw new \RuntimeException("Failed to create database handler from container");
                 }
 
                 // TODO: is this required ? can be recplaced only with /search/document with custom params
-                $routeCollectorProxy->post('/recent_documents', function (Request $request, Response $response, array $args) use ($dbh, $serverEnvironment): \Psr\Http\Message\MessageInterface {
+                $routeCollectorProxy->post('/recent_documents', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $params = $request->getParsedBody();
                     if (! is_array($params)) {
                         throw new \HomeDocs\Exception\InvalidParamsException();
@@ -192,7 +184,6 @@ return function (\Slim\App $app): void {
 
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'serverEnvironment' => $serverEnvironment,
                             'recentDocuments' => \HomeDocs\Document::searchRecent(
                                 $dbh,
                                 is_int($params["count"]) ? $params["count"] : \HomeDocs\Settings::DEFAULT_RESULTS_PAGE
@@ -203,7 +194,7 @@ return function (\Slim\App $app): void {
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
-                $routeCollectorProxy->post('/document', function (Request $request, Response $response, array $args) use ($dbh, $serverEnvironment): \Psr\Http\Message\MessageInterface {
+                $routeCollectorProxy->post('/document', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $params = $request->getParsedBody();
                     if (! is_array($params)) {
                         throw new \HomeDocs\Exception\InvalidParamsException();
@@ -211,7 +202,6 @@ return function (\Slim\App $app): void {
 
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'serverEnvironment' => $serverEnvironment,
                             'results' => \HomeDocs\Document::search(
                                 $dbh,
                                 new \aportela\DatabaseBrowserWrapper\Pager(
@@ -242,20 +232,19 @@ return function (\Slim\App $app): void {
                 });
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $routeCollectorProxy->group('/document', function (RouteCollectorProxy $routeCollectorProxy) use ($container, $serverEnvironment): void {
+            $routeCollectorProxy->group('/document', function (RouteCollectorProxy $routeCollectorProxy) use ($container): void {
                 $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
                 if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
                     throw new \RuntimeException("Failed to create database handler from container");
                 }
 
-                $routeCollectorProxy->get('/{id}', function (Request $request, Response $response, array $args) use ($dbh, $serverEnvironment): \Psr\Http\Message\MessageInterface {
+                $routeCollectorProxy->get('/{id}', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $document = new \HomeDocs\Document();
                     $document->id = array_key_exists("id", $args) && is_string($args['id']) ? $args['id'] : null;
                     $document->get($dbh);
 
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'serverEnvironment' => $serverEnvironment,
                             'document' => $document
                         ]
                     );
@@ -263,14 +252,13 @@ return function (\Slim\App $app): void {
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
-                $routeCollectorProxy->get('/{id}/notes', function (Request $request, Response $response, array $args) use ($dbh, $serverEnvironment): \Psr\Http\Message\MessageInterface {
+                $routeCollectorProxy->get('/{id}/notes', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $document = new \HomeDocs\Document();
                     $document->id = array_key_exists("id", $args) && is_string($args['id']) ? $args['id'] : null;
                     $document->get($dbh);
 
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'serverEnvironment' => $serverEnvironment,
                             'notes' => $document->notes
                         ]
                     );
@@ -278,14 +266,13 @@ return function (\Slim\App $app): void {
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
-                $routeCollectorProxy->get('/{id}/attachments', function (Request $request, Response $response, array $args) use ($dbh, $serverEnvironment): \Psr\Http\Message\MessageInterface {
+                $routeCollectorProxy->get('/{id}/attachments', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $document = new \HomeDocs\Document();
                     $document->id = array_key_exists("id", $args) && is_string($args['id']) ? $args['id'] : null;
                     $document->get($dbh);
 
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'serverEnvironment' => $serverEnvironment,
                             'attachments' => $document->attachments
                         ]
                     );
@@ -293,7 +280,7 @@ return function (\Slim\App $app): void {
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
-                $routeCollectorProxy->post('/{id}', function (Request $request, Response $response, array $args) use ($dbh, $serverEnvironment): \Psr\Http\Message\MessageInterface {
+                $routeCollectorProxy->post('/{id}', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $params = $request->getParsedBody();
                     if (! is_array($params)) {
                         throw new \HomeDocs\Exception\InvalidParamsException();
@@ -361,7 +348,6 @@ return function (\Slim\App $app): void {
 
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'serverEnvironment' => $serverEnvironment,
                             'document' => $document
                         ]
                     );
@@ -369,7 +355,7 @@ return function (\Slim\App $app): void {
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
-                $routeCollectorProxy->put('/{id}', function (Request $request, Response $response, array $args) use ($container, $dbh, $serverEnvironment): \Psr\Http\Message\MessageInterface {
+                $routeCollectorProxy->put('/{id}', function (Request $request, Response $response, array $args) use ($container, $dbh): \Psr\Http\Message\MessageInterface {
                     $params = $request->getParsedBody();
                     if (! is_array($params)) {
                         throw new \HomeDocs\Exception\InvalidParamsException();
@@ -446,7 +432,6 @@ return function (\Slim\App $app): void {
                     $document->get($dbh);
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'serverEnvironment' => $serverEnvironment,
                             'document' => $document
                         ]
                     );
@@ -454,7 +439,7 @@ return function (\Slim\App $app): void {
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
-                $routeCollectorProxy->delete('/{id}', function (Request $request, Response $response, array $args) use ($dbh, $serverEnvironment): \Psr\Http\Message\MessageInterface {
+                $routeCollectorProxy->delete('/{id}', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $document = new \HomeDocs\Document(
                         array_key_exists("id", $args) && is_string($args['id']) ? $args['id'] : ""
                     );
@@ -471,16 +456,14 @@ return function (\Slim\App $app): void {
                     }
 
                     $payload = \HomeDocs\Utils::getJSONPayload(
-                        [
-                            'serverEnvironment' => $serverEnvironment
-                        ]
+                        []
                     );
                     $response->getBody()->write($payload);
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $routeCollectorProxy->group('/attachment', function (RouteCollectorProxy $routeCollectorProxy) use ($container, $serverEnvironment): void {
+            $routeCollectorProxy->group('/attachment', function (RouteCollectorProxy $routeCollectorProxy) use ($container): void {
                 $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
                 if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
                     throw new \RuntimeException("Failed to create database handler from container");
@@ -546,7 +529,7 @@ return function (\Slim\App $app): void {
                     }
                 });
 
-                $routeCollectorProxy->post('[/{id}]', function (Request $request, Response $response, array $args) use ($dbh, $serverEnvironment): \Psr\Http\Message\MessageInterface {
+                $routeCollectorProxy->post('[/{id}]', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $uploadedFiles = $request->getUploadedFiles();
                     $file = $uploadedFiles['file'] ?? null;
                     if ($file instanceof \Psr\Http\Message\UploadedFileInterface) {
@@ -561,7 +544,6 @@ return function (\Slim\App $app): void {
                             $attachment->add($dbh, $file);
                             $payload = \HomeDocs\Utils::getJSONPayload(
                                 [
-                                    'serverEnvironment' => $serverEnvironment,
                                     'data' => [
                                         "id" => $attachment->id,
                                         "name" => $attachment->name,
@@ -579,7 +561,7 @@ return function (\Slim\App $app): void {
                     }
                 });
 
-                $routeCollectorProxy->delete('/{id}', function (Request $request, Response $response, array $args) use ($dbh, $serverEnvironment): \Psr\Http\Message\MessageInterface {
+                $routeCollectorProxy->delete('/{id}', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $attachment = new \HomeDocs\Attachment(
                         array_key_exists("id", $args) && is_string($args['id']) ? $args['id'] : ""
                     );
@@ -588,9 +570,7 @@ return function (\Slim\App $app): void {
                     } else {
                         $attachment->remove($dbh);
                         $payload = \HomeDocs\Utils::getJSONPayload(
-                            [
-                                'serverEnvironment' => $serverEnvironment,
-                            ]
+                            []
                         );
                         $response->getBody()->write($payload);
                         return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
@@ -598,7 +578,7 @@ return function (\Slim\App $app): void {
                 });
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $routeCollectorProxy->get('/tag-cloud', function (Request $request, Response $response, array $args) use ($container, $serverEnvironment): \Psr\Http\Message\MessageInterface {
+            $routeCollectorProxy->get('/tag-cloud', function (Request $request, Response $response, array $args) use ($container): \Psr\Http\Message\MessageInterface {
                 $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
                 if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
                     throw new \RuntimeException("Failed to create database handler from container");
@@ -606,7 +586,6 @@ return function (\Slim\App $app): void {
 
                 $payload = \HomeDocs\Utils::getJSONPayload(
                     [
-                        'serverEnvironment' => $serverEnvironment,
                         'tags' => \HomeDocs\Tag::getCloud($dbh)
                     ]
                 );
@@ -614,7 +593,7 @@ return function (\Slim\App $app): void {
                 return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $routeCollectorProxy->get('/tags', function (Request $request, Response $response, array $args) use ($container, $serverEnvironment): \Psr\Http\Message\MessageInterface {
+            $routeCollectorProxy->get('/tags', function (Request $request, Response $response, array $args) use ($container): \Psr\Http\Message\MessageInterface {
                 $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
                 if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
                     throw new \RuntimeException("Failed to create database handler from container");
@@ -622,7 +601,6 @@ return function (\Slim\App $app): void {
 
                 $payload = \HomeDocs\Utils::getJSONPayload(
                     [
-                        'serverEnvironment' => $serverEnvironment,
                         'tags' => \HomeDocs\Tag::search($dbh)
                     ]
                 );
@@ -630,16 +608,15 @@ return function (\Slim\App $app): void {
                 return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
-            $routeCollectorProxy->group('/stats', function (RouteCollectorProxy $routeCollectorProxy) use ($container, $serverEnvironment): void {
+            $routeCollectorProxy->group('/stats', function (RouteCollectorProxy $routeCollectorProxy) use ($container): void {
                 $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
                 if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
                     throw new \RuntimeException("Failed to create database handler from container");
                 }
 
-                $routeCollectorProxy->get('/total-published-documents', function (Request $request, Response $response, array $args) use ($serverEnvironment, $dbh): \Psr\Http\Message\MessageInterface {
+                $routeCollectorProxy->get('/total-published-documents', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'serverEnvironment' => $serverEnvironment,
                             'count' => \HomeDocs\Stats::getTotalPublishedDocuments($dbh)
                         ]
                     );
@@ -647,10 +624,9 @@ return function (\Slim\App $app): void {
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
-                $routeCollectorProxy->get('/total-uploaded-attachments', function (Request $request, Response $response, array $args) use ($serverEnvironment, $dbh): \Psr\Http\Message\MessageInterface {
+                $routeCollectorProxy->get('/total-uploaded-attachments', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'serverEnvironment' => $serverEnvironment,
                             'count' => \HomeDocs\Stats::getTotalUploadedAttachments($dbh)
                         ]
                     );
@@ -658,10 +634,9 @@ return function (\Slim\App $app): void {
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
-                $routeCollectorProxy->get('/total-uploaded-attachments-disk-usage', function (Request $request, Response $response, array $args) use ($serverEnvironment, $dbh): \Psr\Http\Message\MessageInterface {
+                $routeCollectorProxy->get('/total-uploaded-attachments-disk-usage', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'serverEnvironment' => $serverEnvironment,
                             'size' => \HomeDocs\Stats::getTotalUploadedAttachmentsDiskUsage($dbh)
                         ]
                     );
@@ -669,11 +644,10 @@ return function (\Slim\App $app): void {
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
-                $routeCollectorProxy->get('/heatmap-activity-data', function (Request $request, Response $response, array $args) use ($serverEnvironment, $dbh): \Psr\Http\Message\MessageInterface {
+                $routeCollectorProxy->get('/heatmap-activity-data', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $queryParams = $request->getQueryParams();
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'serverEnvironment' => $serverEnvironment,
                             'heatmap' => \HomeDocs\Stats::getActivityHeatMapData(
                                 $dbh,
                                 is_int($queryParams["fromTimestamp"]) ? $queryParams["fromTimestamp"] : 0
