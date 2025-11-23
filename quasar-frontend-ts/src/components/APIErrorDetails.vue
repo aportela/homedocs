@@ -44,8 +44,9 @@ const props = defineProps({
 
 const tabModel = ref("request");
 
-const formattedBodyParams = ref(null);
-const formattedResponse = ref(null);
+const formattedBodyParams = ref<string | null>(null);
+const formattedResponse = ref<string | null>(null);
+
 
 if (props.apiError.request.params.data) {
   try {
