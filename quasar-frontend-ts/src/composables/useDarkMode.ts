@@ -1,11 +1,9 @@
 import { Dark } from "quasar";
 import { useLocalStorage } from "src/composables/useLocalStorage";
 
-const { darkMode } = useLocalStorage();
+const { darkMode: localStorageDarkMode } = useLocalStorage();
 
-export type DarkModeSetting = boolean | "auto" | null;
-
-const savedMode = darkMode.get() as DarkModeSetting;
+const savedMode = localStorageDarkMode.get();
 
 if (savedMode === true) {
   Dark.set(true);
@@ -21,7 +19,7 @@ export function useDarkMode() {
 
   const toggleDarkMode = (): void => {
     Dark.toggle();
-    darkMode.set(Dark.isActive);
+    localStorageDarkMode.set(Dark.isActive);
   };
 
   return { isDarkModeActive, toggleDarkMode };
