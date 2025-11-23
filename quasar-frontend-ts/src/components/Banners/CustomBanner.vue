@@ -14,31 +14,20 @@
 </template>
 
 <script setup lang="ts">
-
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 
-const props = defineProps({
-  text: {
-    type: String,
-    required: true,
-  },
-  success: {
-    type: Boolean,
-    required: false,
-    default: false
-  },
-  error: {
-    type: Boolean,
-    required: false,
-    default: false
-  },
-  warning: {
-    type: Boolean,
-    required: false,
-    default: false
-  }
-});
+interface CustomBannerProps {
+  text: string,
+  success?: boolean,
+  error?: boolean,
+  warning?: boolean
+};
 
+withDefaults(defineProps<CustomBannerProps>(), {
+  success: false,
+  error: false,
+  warning: false,
+});
 </script>
