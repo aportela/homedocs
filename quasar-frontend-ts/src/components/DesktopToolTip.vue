@@ -5,7 +5,6 @@
 </template>
 
 <script setup lang="ts">
-
 import { computed } from "vue";
 import { useQuasar } from "quasar";
 
@@ -15,33 +14,26 @@ const $q = useQuasar()
 
 const isDesktop = computed(() => $q.platform.is.desktop);
 
-const { showToolTips } = useLocalStorage();
+const { showToolTips: localStorageShowToolTips } = useLocalStorage();
 
-const visibleToolTips = showToolTips.get();
+const visibleToolTips = localStorageShowToolTips.get();
 
-const props = defineProps({
-  delay: {
-    type: Number,
-    required: false,
-    default: 0,
-    validator(value) {
-      if (value < 0) {
-        console.warn('Invalid (negative) delay value');
-        return false
-      }
-      return true
-    },
-  },
-  anchor: {
-    type: String,
-    required: false,
-    default: 'top middle',
-  },
-  self: {
-    type: String,
-    required: false,
-    default: 'bottom middle',
-  },
-})
+type TooltipAnchor =
+  | 'top left' | 'top middle' | 'top right' | 'top start' | 'top end'
+  | 'center left' | 'center middle' | 'center right' | 'center start' | 'center end'
+  | 'bottom left' | 'bottom middle' | 'bottom right' | 'bottom start' | 'bottom end';
 
+type TooltipSelf = TooltipAnchor;
+
+interface TooltipProps {
+  delay?: number;
+  anchor?: TooltipAnchor;
+  self?: TooltipSelf;
+};
+
+withDefaults(defineProps<TooltipProps>(), {
+  delay: 0,
+  anchor: 'top middle',
+  self: 'bottom middle',
+});
 </script>
