@@ -3,10 +3,12 @@ export interface APIErrorDetails {
   url: string;
   httpCode: number | string;
   httpStatus: string;
+  contentType: string;
   request?: {
     params?: {
       query?: any | null;
       data?: any | null;
     };
   };
+  response?: string;
 }
