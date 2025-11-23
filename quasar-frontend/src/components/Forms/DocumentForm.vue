@@ -159,7 +159,6 @@ import { default as InteractiveTextFieldCustomInput } from "src/components/Forms
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue"
 import { default as DeleteDocumentConfirmationDialog } from "src/components/Dialogs/DeleteDocumentConfirmationDialog.vue"
-import serverEnvironment from "src/boot/serverEnvironment";
 
 const { t } = useI18n();
 const router = useRouter();
