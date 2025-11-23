@@ -4,8 +4,8 @@ import { useSessionStore } from "src/stores/session";
 
 const session = useSessionStore();
 
-export default boot(({ app, router, store }) => {
-  router.beforeEach((to, from, next) => {
+export default boot(({ router }) => {
+  router.beforeEach((to, _from, next) => {
     if (!to.matched.length) {
       next({ name: "notFound" });
       return;
