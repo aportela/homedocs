@@ -13,18 +13,15 @@ import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 import { default as APIErrorDetails } from "src/components/APIErrorDetails.vue";
 
+import type { APIErrorDetails as APIErrorDetailsInterface } from "src/types/api-error-details";
+
 const serverEnvironment = useServerEnvironmentStore();
 
-const props = defineProps({
-  text: {
-    type: String,
-    required: true
-  },
-  apiError: {
-    type: Object,
-    required: false,
-    default: null
-  }
-});
+interface Props {
+  text: string;
+  apiError?: APIErrorDetailsInterface | null;
+}
+
+defineProps<Props>();
 
 </script>
