@@ -20,8 +20,7 @@
 </template>
 
 <script setup lang="ts">
-
-// TODO: remove if not used
+// TODO: remove component if not used
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -29,20 +28,14 @@ const { t } = useI18n();
 
 const emit = defineEmits(['confirm']);
 
-const props = defineProps({
-  disable: {
-    type: Boolean,
-    required: false,
-    default: false,
-  },
-  icon: {
-    type: String,
-    required: false,
-  },
-  label: {
-    type: String,
-    required: false,
-  },
+interface ConfirmationButtonProps {
+  disable?: boolean;
+  icon?: string;
+  label?: string;
+};
+
+withDefaults(defineProps<ConfirmationButtonProps>(), {
+  disable: false
 });
 
 const showProxy = ref(false);
