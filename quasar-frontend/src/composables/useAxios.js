@@ -56,6 +56,11 @@ axiosInstance.interceptors.response.use(
           statusText: "undefined",
         };
       }
+      if (error.response?.status === 401) {
+        if (sessionStore.jwt) {
+          sessionStore.setJWT(null);
+        }
+      }
       error.isAPIError = true;
       error.customAPIErrorDetails = {
         method: error.config?.method || "N/A",
