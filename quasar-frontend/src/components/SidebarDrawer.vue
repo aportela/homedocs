@@ -59,9 +59,6 @@ const router = useRouter();
 const { api } = useAPI();
 
 const session = useSessionStore();
-if (!session.isLoaded) {
-  session.load();
-}
 
 const mini = computed(() => props.mini);
 
@@ -86,14 +83,14 @@ function logout() {
   api.auth
     .logout()
     .then((successResponse) => {
-      session.logout();
+      session.setJWT(null);
       router.push({
         name: "login",
       });
     })
     .catch((error) => {
       console.error(errorResponse);
-      session.logout();
+      session.setJWT(null);
       router.push({
         name: "login",
       });
