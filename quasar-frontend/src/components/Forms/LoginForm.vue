@@ -8,10 +8,10 @@
       <slot name="slogan">
         <h4 class="q-mt-sm q-mb-md text-h4 text-weight-bolder">{{
           t(!!savedEmail ? "Glad to see you again!" : "Welcome aboard!")
-          }}</h4>
+        }}</h4>
         <div class="text-color-secondary">{{
           t(!!savedEmail ? "Let's get back to organizing." : "Let's start organizing.")
-          }}
+        }}
         </div>
       </slot>
     </q-card-section>
@@ -77,7 +77,6 @@ import { default as GitHubButton } from "src/components/Buttons/GitHubButton.vue
 import { GITHUB_PROJECT_URL } from "src/constants"
 import { default as PasswordFieldCustomInput } from "src/components/Forms/Fields/PasswordFieldCustomInput.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
-import serverEnvironment from "src/boot/serverEnvironment";
 
 const props = defineProps({
   showExtraBottom: {

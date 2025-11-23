@@ -77,7 +77,6 @@ import { GITHUB_PROJECT_URL } from "src/constants"
 import { default as PasswordFieldCustomInput } from "src/components/Forms/Fields/PasswordFieldCustomInput.vue";
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
-import serverEnvironment from "src/boot/serverEnvironment";
 
 const emit = defineEmits(['success']);
 
