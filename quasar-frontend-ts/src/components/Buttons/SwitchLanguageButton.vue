@@ -45,7 +45,7 @@ const availableLocales = [
   { shortLabel: "GL", label: "Galego", value: "gl-GL" },
 ];
 
-const selectedLocale = ref(availableLocales[0]);
+const selectedLocale = ref(availableLocales[0]!);
 
 watch(
   () => i18n.global.locale.value,
