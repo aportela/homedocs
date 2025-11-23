@@ -246,4 +246,6 @@ export default {
   "Show tooltips": "Show tooltips",
   "Date format": "Date format",
   "Datetime format": "Datetime format",
+  "Auth session expired, requesting new...": "Auth session expired, requesting new...",
+  "Oooops": "Oooops",
 };
