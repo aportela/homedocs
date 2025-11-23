@@ -6,9 +6,7 @@ namespace HomeDocs\Middleware;
 
 class APIExceptionCatcher
 {
-    public function __construct(protected \Psr\Log\LoggerInterface $logger)
-    {
-    }
+    public function __construct(protected \Psr\Log\LoggerInterface $logger) {}
 
     /**
      * @param array<mixed> $payload
@@ -21,11 +19,11 @@ class APIExceptionCatcher
         if (is_string($json)) {
             $response->getBody()->write($json);
         } else {
-            $this->logger->error("Error serializing payload", $payload);
+            $this->logger->error("Error serializing payload", [$payload, json_last_error(), json_last_error_msg()]);
             $response->getBody()->write("{}");
         }
 
-        return $response->withStatus($statusCode);
+        return $response->withStatus($statusCode)->withHeader('Content-Type', 'application/json');
     }
 
     private function handleGenericException(\Throwable $throwable): \Psr\Http\Message\ResponseInterface
@@ -57,11 +55,11 @@ class APIExceptionCatcher
         if (is_string($payload)) {
             $response->getBody()->write($payload);
         } else {
-            $this->logger->error("Error serializing payload", [$exception]);
+            $this->logger->error("Error serializing payload", [$exception, $payload, json_last_error(), json_last_error_msg()]);
             $response->getBody()->write("{}");
         }
 
-        return $response->withStatus(500);
+        return $response->withStatus(500)->withHeader('Content-Type', 'application/json');
     }
 
     /**
