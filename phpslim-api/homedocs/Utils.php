@@ -23,18 +23,13 @@ class Utils
         return ($json);
     }
 
-    public static function getInitialState(\HomeDocs\Settings $settings): object
+    public static function GetServerEnvironment(\HomeDocs\Settings $settings): object
     {
         return ((object)
         [
             'allowSignUp' => $settings->allowSignUp(),
             'environment' => $settings->getEnvironment(),
             'maxUploadFileSize' => self::getMaxUploadFileSize(),
-            'session' => [
-                'logged' => \HomeDocs\UserSession::isLogged(),
-                'id' => \HomeDocs\UserSession::getUserId(),
-                'email' => \HomeDocs\UserSession::getEmail()
-            ]
         ]
         );
     }
