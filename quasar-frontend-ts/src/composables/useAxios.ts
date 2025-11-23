@@ -83,7 +83,7 @@ axiosInstance.interceptors.response.use(
 
 export function useAxios() {
 
-  const bgDownload = async (url, fileName = "fileName") => {
+  const bgDownload = async (url: string, fileName: string = "fileName") => {
     try {
       const startTime = Date.now();
       const response = await axiosInstance.get(url, {
