@@ -29,7 +29,7 @@
                     ?
                     t("Transfer rejected max filesize", {
                       maxUploadFileSize:
-                        format.humanStorageSize(initialState.maxUploadFileSize)
+                        format.humanStorageSize(serverEnvironment.maxUploadFileSize)
                     })
                     :
                     t(transfer.errorMessage)
@@ -63,7 +63,7 @@ import { useI18n } from "vue-i18n";
 
 import { useFormatDates } from "src/composables/useFormatDates"
 import { useLocalStorage } from "src/composables/useLocalStorage"
-import { useInitialStateStore } from "src/stores/initialState";
+import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
 
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue"
 
@@ -71,7 +71,7 @@ const { t } = useI18n();
 
 const { fullDateTimeHuman } = useFormatDates();
 const { alwaysOpenUploadDialog, dateTimeFormat } = useLocalStorage();
-const initialState = useInitialStateStore();
+const serverEnvironment = useServerEnvironmentStore();
 
 const emit = defineEmits(['update:modelValue', 'close']);
 

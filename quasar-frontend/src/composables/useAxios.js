@@ -1,11 +1,11 @@
 import axios from "axios";
 import { useSessionStore } from "src/stores/session";
-import { useInitialStateStore } from "src/stores/initialState";
+import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
 
 export function useAxios() {
   const session = useSessionStore();
 
-  const initialStateStore = useInitialStateStore();
+  const serverEnvironment = useServerEnvironmentStore();
 
   axios.interceptors.request.use(
     (config) => {
@@ -30,7 +30,11 @@ export function useAxios() {
         }
       }
       if (response.data.initialState) {
-        initialStateStore.set(response.data.initialState);
+        serverEnvironment.set(
+          response.data?.serverEnvironment?.allowSignUp,
+          response.data?.serverEnvironment?.environment,
+          response.data?.serverEnvironment?.maxUploadFileSize,
+        );
       }
       return response;
     },

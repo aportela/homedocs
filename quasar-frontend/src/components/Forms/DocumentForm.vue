@@ -78,7 +78,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.loading" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                      }}</q-badge>
+                    }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
@@ -148,7 +148,7 @@ import { useBus } from "src/composables/useBus";
 import { useAPI } from "src/composables/useAPI";
 import { useFormUtils } from "src/composables/useFormUtils"
 import { useDocument } from "src/composables/useDocument"
-import { useInitialStateStore } from "src/stores/initialState";
+import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
 
 import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
 import { default as DocumentMetadataTopForm } from "src/components/Forms/DocumentMetadataTopForm.vue"
@@ -159,13 +159,14 @@ import { default as InteractiveTextFieldCustomInput } from "src/components/Forms
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue"
 import { default as DeleteDocumentConfirmationDialog } from "src/components/Dialogs/DeleteDocumentConfirmationDialog.vue"
+import serverEnvironment from "src/boot/serverEnvironment";
 
 const { t } = useI18n();
 const router = useRouter();
 const { screen } = useQuasar();
 const { bus } = useBus();
 const { api } = useAPI();
-const initialState = useInitialStateStore();
+const serverEnvironment = useServerEnvironmentStore();
 const { requiredFieldRules, fieldIsRequiredLabel } = useFormUtils();
 
 const props = defineProps({
@@ -191,7 +192,7 @@ const isNewDocument = computed(() => !props.documentId);
 
 const document = useDocument().getNewDocument();
 
-const maxUploadFileSize = computed(() => initialState.maxUploadFileSize);
+const maxUploadFileSize = computed(() => serverEnvironment.maxFileSize);
 const uploaderRef = ref(null);
 const documentTitleFieldRef = ref(null);
 

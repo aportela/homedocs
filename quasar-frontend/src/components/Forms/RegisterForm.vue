@@ -68,7 +68,7 @@ import { useI18n } from "vue-i18n";
 
 import { useAPI } from "src/composables/useAPI";
 import { useFormUtils } from "src/composables/useFormUtils";
-import { useInitialStateStore } from "src/stores/initialState";
+import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
 
 import { default as DarkModeButton } from "src/components/Buttons/DarkModeButton.vue"
 import { default as SwitchLanguageButton } from "src/components/Buttons/SwitchLanguageButton.vue"
@@ -77,6 +77,7 @@ import { GITHUB_PROJECT_URL } from "src/constants"
 import { default as PasswordFieldCustomInput } from "src/components/Forms/Fields/PasswordFieldCustomInput.vue";
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
+import serverEnvironment from "src/boot/serverEnvironment";
 
 const emit = defineEmits(['success']);
 
@@ -86,9 +87,9 @@ const { api } = useAPI();
 
 const formUtils = useFormUtils();
 
-const initialState = useInitialStateStore();
+const serverEnvironment = useServerEnvironmentStore();
 
-const signUpDenied = computed(() => initialState.isSignUpAllowed === false);
+const signUpDenied = computed(() => serverEnvironment.isSignUpAllowed === false);
 
 const state = reactive({
   loading: false,

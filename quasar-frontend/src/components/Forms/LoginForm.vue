@@ -8,10 +8,10 @@
       <slot name="slogan">
         <h4 class="q-mt-sm q-mb-md text-h4 text-weight-bolder">{{
           t(!!savedEmail ? "Glad to see you again!" : "Welcome aboard!")
-        }}</h4>
+          }}</h4>
         <div class="text-color-secondary">{{
           t(!!savedEmail ? "Let's get back to organizing." : "Let's start organizing.")
-        }}
+          }}
         </div>
       </slot>
     </q-card-section>
@@ -68,7 +68,7 @@ import { useI18n } from "vue-i18n";
 
 import { useAPI } from "src/composables/useAPI";
 import { useFormUtils } from "src/composables/useFormUtils";
-import { useInitialStateStore } from "src/stores/initialState";
+import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
 import { useLocalStorage } from "src/composables/useLocalStorage";
 
 import { default as DarkModeButton } from "src/components/Buttons/DarkModeButton.vue"
@@ -77,6 +77,7 @@ import { default as GitHubButton } from "src/components/Buttons/GitHubButton.vue
 import { GITHUB_PROJECT_URL } from "src/constants"
 import { default as PasswordFieldCustomInput } from "src/components/Forms/Fields/PasswordFieldCustomInput.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
+import serverEnvironment from "src/boot/serverEnvironment";
 
 const props = defineProps({
   showExtraBottom: {
@@ -94,11 +95,11 @@ const { api } = useAPI();
 
 const formUtils = useFormUtils();
 
-const initialState = useInitialStateStore();
+const serverEnvironment = useServerEnvironmentStore();
 
 const { email } = useLocalStorage();
 
-const signUpAllowed = computed(() => initialState.isSignUpAllowed === true);
+const signUpAllowed = computed(() => serverEnvironment.signUpAllowed === true);
 
 const state = reactive({
   loading: false,
