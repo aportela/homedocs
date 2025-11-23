@@ -2,80 +2,85 @@ import axios from "axios";
 import { useSessionStore } from "src/stores/session";
 import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
 
-export function useAxios() {
-  const session = useSessionStore();
+const sessionStore = useSessionStore();
 
-  const serverEnvironment = useServerEnvironmentStore();
+const serverEnvironment = useServerEnvironmentStore();
 
-  axios.interceptors.request.use(
-    (config) => {
-      if (session.getJWT) {
-        config.headers["HOMEDOCS-JWT"] = session.getJWT;
-        config.withCredentials = true;
-      }
-      return config;
-    },
-    (error) => {
-      return Promise.reject(error);
-    },
-  );
+const axiosInstance = axios.create({
+  //baseURL: 'api3',
+});
 
-  axios.interceptors.response.use(
-    (response) => {
-      // warning: axios lowercase received header names
-      const apiResponseJWT = response.headers["homedocs-jwt"] || null;
-      if (apiResponseJWT) {
-        if (apiResponseJWT && apiResponseJWT != session.getJWT) {
-          session.setJWT(apiResponseJWT);
-        }
+axiosInstance.interceptors.request.use(
+  (config) => {
+    if (sessionStore.jwt) {
+      config.headers["HOMEDOCS-JWT"] = sessionStore.jwt;
+      config.withCredentials = true;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  },
+);
+
+axiosInstance.interceptors.response.use(
+  (response) => {
+    // warning: axios received header names in lowercase
+    const apiResponseJWT = response.headers["homedocs-jwt"] || null;
+    if (apiResponseJWT) {
+      if (apiResponseJWT !== sessionStore.jwt) {
+        sessionStore.setJWT(apiResponseJWT);
       }
-      if (response.data.serverEnvironment) {
-        serverEnvironment.set(
-          response.data?.serverEnvironment?.allowSignUp,
-          response.data?.serverEnvironment?.environment,
-          response.data?.serverEnvironment?.maxUploadFileSize,
-        );
-      }
-      return response;
-    },
-    (error) => {
-      if (!error) {
-        return Promise.reject({
-          response: {
-            status: 0,
-            statusText: "undefined",
-          },
-        });
-      } else {
-        if (!error.response) {
-          error.response = {
-            status: 0,
-            statusText: "undefined",
-          };
-        }
-        error.isAPIError = true;
-        error.customAPIErrorDetails = {
-          method: error.config?.method || "N/A",
-          url: error.request?.responseURL || "N/A",
-          httpCode: error.response?.status || "N/A",
-          httpStatus: error.response?.statusText || "Unknown error",
-          request: {
-            params: {
-              query: error.config.params || null,
-              data: error.config.data || null,
-            },
-          },
-          response: error.response.data,
+    }
+    if (response.data.serverEnvironment) {
+      serverEnvironment.set(
+        response.data?.serverEnvironment?.allowSignUp,
+        response.data?.serverEnvironment?.environment,
+        response.data?.serverEnvironment?.maxUploadFileSize,
+      );
+    }
+    return response;
+  },
+  (error) => {
+    if (!error) {
+      return Promise.reject({
+        response: {
+          status: 0,
+          statusText: "undefined",
+        },
+      });
+    } else {
+      if (!error.response) {
+        error.response = {
+          status: 0,
+          statusText: "undefined",
         };
-        return Promise.reject(error);
       }
-    },
-  );
+      error.isAPIError = true;
+      error.customAPIErrorDetails = {
+        method: error.config?.method || "N/A",
+        url: error.request?.responseURL || "N/A",
+        httpCode: error.response?.status || "N/A",
+        httpStatus: error.response?.statusText || "Unknown error",
+        request: {
+          params: {
+            query: error.config.params || null,
+            data: error.config.data || null,
+          },
+        },
+        response: error.response.data,
+      };
+      return Promise.reject(error);
+    }
+  },
+);
+
+export function useAxios() {
 
   const bgDownload = async (url, fileName = "fileName") => {
     try {
       const startTime = Date.now();
-      const response = await axios.get(url, {
+      const response = await axiosInstance.get(url, {
         responseType: "blob",
       });
       const blob = new Blob([response.data]);
@@ -100,5 +105,5 @@ export function useAxios() {
     }
   };
 
-  return { axios, bgDownload };
+  return { axiosInstance, bgDownload };
 }
