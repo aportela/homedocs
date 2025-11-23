@@ -57,7 +57,6 @@ export default {
   "Access denied": "Acceso denegado",
   "Document title": "Título del documento",
   "Document description": "Descripción del documento",
-  Attachments: "Archivos",
   "Add new file (Drag & Drop supported)":
     "Añadir nuevo archivo (puede arrastrar y soltar)",
   "API Error: error loading document": "Error de API: error cargando documento",
@@ -100,7 +99,6 @@ export default {
   "To date": "Hasta una fecha",
   "Between dates": "Entre fechas",
   Tags: "Etiquetas",
-  Title: "Título",
   Date: "Fecha",
   Attachments: "Adjuntos",
   Notes: "Notas",
