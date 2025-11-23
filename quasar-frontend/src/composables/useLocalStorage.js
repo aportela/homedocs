@@ -29,15 +29,15 @@ export function useLocalStorage() {
     }
   };
 
-  const jwt = {
+  const authJWT = {
     get() {
-      return get("jwt");
+      return get("authJWT");
     },
     set(value) {
-      set("jwt", value);
+      set("authJWT", value);
     },
     remove() {
-      remove("jwt");
+      remove("authJWT");
     },
   };
 
@@ -138,7 +138,7 @@ export function useLocalStorage() {
   };
 
   return {
-    jwt,
+    authJWT,
     email,
     darkMode,
     locale,
