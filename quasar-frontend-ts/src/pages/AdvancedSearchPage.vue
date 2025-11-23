@@ -111,7 +111,7 @@
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <DesktopToolTip>{{ t('Toggle sort by this column', { field: t(column.title) })
-                }}</DesktopToolTip>
+                  }}</DesktopToolTip>
               </th>
             </tr>
           </thead>
@@ -128,7 +128,7 @@
                       <q-item-label caption>{{ t("Creation date") }}: {{ document.creationDate }} ({{
                         document.creationDateTimeAgo }})</q-item-label>
                       <q-item-label caption v-if="document.lastUpdate">{{ t("Last update") }}: {{ document.lastUpdate
-                      }} ({{ document.lastUpdateTimeAgo }})</q-item-label>
+                        }} ({{ document.lastUpdateTimeAgo }})</q-item-label>
                     </q-item-section>
                     <q-item-section side top>
                       <ViewDocumentDetailsButton size="md" square class="min-width-9em"
@@ -176,7 +176,6 @@
 </template>
 
 <script setup lang="ts">
-
 import { ref, reactive, computed, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
@@ -476,7 +475,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   bus.off("reAuthSucess");
 });
-
 </script>
 
 <style lang="css" scoped>

@@ -11,18 +11,17 @@
     </div>
     <div class="row q-col-gutter-sm">
       <div class="col-lg-4 col-xl-4 col-12 flex">
-        <ProfileStorageSettingsWidget class="q-mb-sm"></ProfileStorageSettingsWidget>
-        <UpdateProfileForm></UpdateProfileForm>
+        <ProfileStorageSettingsWidget class="q-mb-sm" />
+        <UpdateProfileForm />
       </div>
       <div class="col-lg-8 col-xl-8 col-12 flex">
-        <SystemStatsWidget></SystemStatsWidget>
+        <SystemStatsWidget />
       </div>
     </div>
   </q-page>
 </template>
 
 <script setup lang="ts">
-
 import { useI18n } from "vue-i18n";
 
 import { default as UpdateProfileForm } from "src/components/Forms/UpdateProfileForm.vue";
@@ -30,7 +29,6 @@ import { default as ProfileStorageSettingsWidget } from "src/components/Widgets/
 import { default as SystemStatsWidget } from "src/components/Widgets/SystemStatsWidget.vue";
 
 const { t } = useI18n();
-
 </script>
 
 <style lang="css" scoped>

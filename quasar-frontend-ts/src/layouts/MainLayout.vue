@@ -53,7 +53,6 @@ import { useI18n } from "vue-i18n";
 
 import { useFormatDates } from "src/composables/useFormatDates"
 import { useLocalStorage } from "src/composables/useLocalStorage"
-import { useSessionStore } from "src/stores/session";
 import { useBus } from "src/composables/useBus";
 
 import { default as SidebarDrawer } from "src/components/SidebarDrawer.vue"
@@ -73,8 +72,6 @@ import { default as UploadingDialog } from "src/components/Dialogs/UploadingDial
 const $q = useQuasar();
 
 const { t } = useI18n();
-
-const session = useSessionStore();
 
 const { bus } = useBus();
 const { currentTimestamp } = useFormatDates();
@@ -142,7 +139,7 @@ const miniSidebarCurrentMode = ref(miniSidebarCurrentModeSavedMode != null ? min
 
 const currentScreenSize = computed(() => $q.screen.name);
 
-watch(currentScreenSize, (newValue) => {
+watch(currentScreenSize, () => {
   if (!lockminiSidebarCurrentModeMode.value) {
     miniSidebarCurrentMode.value = $q.screen.lt.lg;
   }
@@ -150,7 +147,7 @@ watch(currentScreenSize, (newValue) => {
 
 const searchButtonLabel = computed(() => $q.screen.gt.xs ? t('Search on HomeDocs...') : '');
 
-const onToggleminiSidebarCurrentMode = (value) => {
+const onToggleminiSidebarCurrentMode = () => {
   miniSidebarCurrentMode.value = !miniSidebarCurrentMode.value;
   lockminiSidebarCurrentModeMode.value = true;
   if (saveMiniSidebarMode) {

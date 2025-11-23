@@ -1,11 +1,10 @@
 <template>
   <q-page>
-    <DocumentForm :document-id="documentId"></DocumentForm>
+    <DocumentForm :document-id="documentId" />
   </q-page>
 </template>
 
 <script setup lang="ts">
-
 import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
@@ -25,5 +24,4 @@ router.beforeEach((to) => {
     // TODO: error
   }
 });
-
 </script>

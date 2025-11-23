@@ -1,8 +1,7 @@
 <template>
   <q-page>
     <q-card class="q-pa-xl" flat>
-      <LoginForm @success="onSuccessLogin">
-      </LoginForm>
+      <LoginForm @success="onSuccessLogin" />
     </q-card>
   </q-page>
 </template>
