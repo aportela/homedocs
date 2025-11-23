@@ -7,7 +7,7 @@ const basePath = "api3";
 export function useAPI() {
   const api = {
     common: {
-      initialState: () => axios.get(basePath + "/initial_state"),
+      getServerEnvironment: () => axios.get(basePath + "/server_environment"),
     },
     auth: {
       login: function (email, password) {
@@ -99,7 +99,8 @@ export function useAPI() {
       remove: (id) => axios.delete(basePath + "/document/" + id),
       get: (id) => axios.get(basePath + "/document/" + id),
       getNotes: (id) => axios.get(basePath + "/document/" + id + "/notes"),
-      getAttachments: (id) => axios.get(basePath + "/document/" + id + "/attachments"),
+      getAttachments: (id) =>
+        axios.get(basePath + "/document/" + id + "/attachments"),
       addAttachment: function (id, file) {
         let formData = new FormData();
         formData.append("file", file);
@@ -112,8 +113,10 @@ export function useAPI() {
       search: () => axios.get(basePath + "/tags"),
     },
     stats: {
-      documentCount: () => axios.get(basePath + "/stats/total-published-documents"),
-      attachmentCount: () => axios.get(basePath + "/stats/total-uploaded-attachments"),
+      documentCount: () =>
+        axios.get(basePath + "/stats/total-published-documents"),
+      attachmentCount: () =>
+        axios.get(basePath + "/stats/total-uploaded-attachments"),
       attachmentDiskSize: () =>
         axios.get(basePath + "/stats/total-uploaded-attachments-disk-usage"),
       getActivityHeatMapData: (fromTimestamp) =>
