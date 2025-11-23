@@ -10,11 +10,6 @@ export default boot(({ app, router, store }) => {
       next({ name: "notFound" });
       return;
     }
-
-    if (!session.isLoaded) {
-      session.load();
-    }
-
     if (session.isLogged) {
       if (to.name === "login" || to.name === "register") {
         next({ name: "index" });
