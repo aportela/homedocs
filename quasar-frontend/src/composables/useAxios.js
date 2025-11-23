@@ -1,4 +1,5 @@
 import axios from "axios";
+import { SERVER_API_BASE_PATH } from "src/constants";
 import { useSessionStore } from "src/stores/session";
 import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
 
@@ -7,7 +8,7 @@ const sessionStore = useSessionStore();
 const serverEnvironment = useServerEnvironmentStore();
 
 const axiosInstance = axios.create({
-  //baseURL: 'api3',
+  baseURL: SERVER_API_BASE_PATH,
 });
 
 axiosInstance.interceptors.request.use(
