@@ -22,7 +22,7 @@ declare module 'vue-i18n' {
 /* eslint-enable @typescript-eslint/no-empty-object-type */
 
 
-const { locale } = useLocalStorage();
+const { locale: localStorageLocale } = useLocalStorage();
 
 const availableLocales = Object.keys(messages);
 
@@ -36,14 +36,13 @@ const browserLocale = Lang.getLocale() ?? "en";
 const key = browserLocale.substring(0, 2) as keyof typeof localeMappings;
 const normalizedBrowsedLocale = localeMappings[key] || browserLocale;
 
-const savedLocale = locale.get();
+const savedLocale = localStorageLocale.get();
 
 let currentLocale = savedLocale || normalizedBrowsedLocale;
 
 currentLocale = availableLocales.includes(currentLocale)
   ? currentLocale
   : "en-US";
-
 
 const i18n = createI18n<{ message: MessageSchema }, MessageLanguages>({
   locale: currentLocale,
