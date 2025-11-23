@@ -7,11 +7,11 @@ export const useServerEnvironmentStore = defineStore("serverEnvironment", {
     maxUploadFileSize: 0,
   }),
   getters: {
-    isSignUpAllowed: (state) => state.initialState.allowSignUp,
+    isSignUpAllowed: (state) => state.allowSignUp,
     isCurrentEnvironmentDevelopment: (state) =>
-      state.initialState.environment == "development",
+      state.environment == "development",
     currentEnvironmentMaxUploadFileSize: (state) =>
-      state.initialState.maxUploadFileSize,
+      state.maxUploadFileSize,
   },
   actions: {
     set(
