@@ -84,31 +84,27 @@ axiosInstance.interceptors.response.use(
 export function useAxios() {
 
   const bgDownload = async (url: string, fileName: string = "fileName") => {
-    try {
-      const startTime = Date.now();
-      const response = await axiosInstance.get(url, {
-        responseType: "blob",
-      });
-      const blob = new Blob([response.data]);
-      const tmpLink = document.createElement("a");
-      const urlBlob = URL.createObjectURL(blob);
-      tmpLink.href = urlBlob;
-      tmpLink.download = fileName;
-      document.body.appendChild(tmpLink);
-      tmpLink.click();
-      document.body.removeChild(tmpLink);
-      URL.revokeObjectURL(urlBlob);
-      const endTime = Date.now();
-      return {
-        fileName: fileName,
-        url: url,
-        mimeType: blob.type,
-        length: blob.size,
-        msTime: endTime - startTime,
-      };
-    } catch (error) {
-      throw error;
-    }
+    const startTime = Date.now();
+    const response = await axiosInstance.get(url, {
+      responseType: "blob",
+    });
+    const blob = new Blob([response.data]);
+    const tmpLink = document.createElement("a");
+    const urlBlob = URL.createObjectURL(blob);
+    tmpLink.href = urlBlob;
+    tmpLink.download = fileName;
+    document.body.appendChild(tmpLink);
+    tmpLink.click();
+    document.body.removeChild(tmpLink);
+    URL.revokeObjectURL(urlBlob);
+    const endTime = Date.now();
+    return {
+      fileName: fileName,
+      url: url,
+      mimeType: blob.type,
+      length: blob.size,
+      msTime: endTime - startTime,
+    };
   };
 
   return { axiosInstance, bgDownload };
