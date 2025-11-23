@@ -44,7 +44,7 @@ module.exports = configure(function (ctx) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-webpack/boot-files
-    boot: ["serverEnvironment", "router", "i18n", "dark"],
+    boot: ["axios", "serverEnvironment", "router", "i18n", "dark"],
 
     // https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js#Property%3A-css
     css: ["app.scss"],
