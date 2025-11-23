@@ -42,7 +42,7 @@
       </CustomErrorBanner>
     </q-card-section>
     <div v-if="showExtraBottom">
-      <q-card-section class="text-center q-pt-none" v-if="signUpAllowed">
+      <q-card-section class="text-center q-pt-none" v-if="serverEnvironment.isSignUpAllowed">
         <div>
           {{ t("Don't have an account yet ?") }}
           <router-link :to="{ name: 'register' }" class="main-app-text-link-hover">{{ t("Click here to sign up") }}
@@ -63,7 +63,7 @@
 
 <script setup lang="ts">
 
-import { ref, reactive, nextTick, computed } from "vue";
+import { ref, reactive, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { useAPI } from "src/composables/useAPI";
@@ -97,8 +97,6 @@ const formUtils = useFormUtils();
 const serverEnvironment = useServerEnvironmentStore();
 
 const { email } = useLocalStorage();
-
-const signUpAllowed = computed(() => serverEnvironment.signUpAllowed === true);
 
 const state = reactive({
   loading: false,
