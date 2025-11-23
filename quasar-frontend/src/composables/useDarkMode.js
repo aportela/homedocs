@@ -4,17 +4,16 @@ import { useLocalStorage } from "src/composables/useLocalStorage";
 
 const { darkMode } = useLocalStorage();
 
+const savedMode = darkMode.get();
+if (savedMode === true) {
+  Dark.set(true);
+} else if (savedMode === false) {
+  Dark.set(false);
+} else {
+  Dark.set("auto");
+}
+
 export function useDarkMode() {
-  const initDarkMode = () => {
-    const savedMode = darkMode.get();
-    if (savedMode === true) {
-      Dark.set(true);
-    } else if (savedMode === false) {
-      Dark.set(false);
-    } else {
-      Dark.set("auto");
-    }
-  };
 
   const isDarkModeActive = () => Dark.isActive;
 
@@ -23,5 +22,5 @@ export function useDarkMode() {
     darkMode.set(Dark.isActive);
   };
 
-  return { initDarkMode, isDarkModeActive, toggleDarkMode };
+  return { isDarkModeActive, toggleDarkMode };
 }
