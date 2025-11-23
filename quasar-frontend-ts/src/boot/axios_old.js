@@ -1,6 +1,6 @@
-import { boot } from "quasar/wrappers";
+import { boot } from 'quasar/wrappers';
 
-import { useAxios } from "src/composables/useAxios";
+import { useAxios } from 'src/composables/useAxios';
 
 // "async" is optional;
 // more info on params: https://v2.quasar.dev/quasar-cli/boot-files
