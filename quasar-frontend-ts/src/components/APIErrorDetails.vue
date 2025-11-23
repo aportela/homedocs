@@ -3,8 +3,7 @@
     <dl>
       <dt v-if="apiError.method">Method: <strong>{{ apiError.method }}</strong></dt>
       <dt v-if="apiError.url">URL: <strong>{{ apiError.url }}</strong></dt>
-      <dt v-if="apiError.httpCode">HTTP code: <strong>{{ apiError.httpCode }} <span v-if="apiError.httpStatus">({{
-        apiError.httpStatus }})</span></strong></dt>
+      <dt v-if="apiError.httpCode">HTTP code: <strong>{{ apiError.httpCode }} ({{ apiError.httpStatus }})</strong></dt>
       <div v-if="hasRequestParams || hasResponseData">
         <q-separator class="q-my-md"></q-separator>
         <q-tabs align="left" v-model="tabModel">
@@ -13,9 +12,9 @@
         </q-tabs>
         <q-tab-panels v-model="tabModel">
           <q-tab-panel name="request" class="q-tab-panel-fixed-height">
-            <pre class="text-bold" v-if="apiError.request.params.query">{{ apiError.request.params.query }}</pre>
+            <pre class="text-bold" v-if="apiError?.request?.params?.query">{{ apiError.request.params.query }}</pre>
             <pre class="text-bold" v-if="formattedBodyParams">{{ formattedBodyParams }}</pre>
-            <pre class="text-bold" v-else-if="apiError.request.params.data">{{ apiError.request.params.data }}</pre>
+            <pre class="text-bold" v-else-if="apiError?.request?.params?.data">{{ apiError.request.params.data }}</pre>
           </q-tab-panel>
           <q-tab-panel name="response" class="q-tab-panel-fixed-height">
             <pre v-if="formattedResponse" class="formatted-json">{{ formattedResponse }}</pre>
@@ -29,26 +28,24 @@
 </template>
 
 <script setup lang="ts">
-
 import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
+import type { APIErrorDetails } from "src/types/api-error-details";
 
 const { t } = useI18n();
 
-const props = defineProps({
-  apiError: {
-    type: Object,
-    required: true
-  }
-});
+interface APIErrorDetailsProps {
+  apiError: APIErrorDetails
+};
+
+const props = defineProps<APIErrorDetailsProps>();
 
 const tabModel = ref("request");
 
 const formattedBodyParams = ref<string | null>(null);
 const formattedResponse = ref<string | null>(null);
 
-
-if (props.apiError.request.params.data) {
+if (props.apiError?.request?.params?.data) {
   try {
     formattedBodyParams.value = JSON.stringify(JSON.parse(props.apiError.request.params.data), null, 4);
   } catch (e) {
@@ -56,14 +53,15 @@ if (props.apiError.request.params.data) {
   }
 }
 
-if (props.apiError.response) {
-  if (typeof props.apiError.response === "string") {
+if (props.apiError?.response) {
+  if (props.apiError.contentType === "application/json" && typeof props.apiError.response === "string") {
     try {
       formattedResponse.value = JSON.stringify(JSON.parse(props.apiError.response), null, 4);
     } catch (e) {
       console.error("JSON.stringify error", e);
     }
   } else if (typeof props.apiError.response === "object") {
+    // TODO: remove ???
     try {
       formattedResponse.value = JSON.stringify(props.apiError.response, null, 4);
     } catch (e) {
@@ -72,9 +70,8 @@ if (props.apiError.response) {
   }
 }
 
-const hasRequestParams = computed(() => props.apiError.request.params.query || formattedBodyParams.value || props.apiError.request.params.data);
+const hasRequestParams = computed(() => props.apiError?.request?.params?.query || formattedBodyParams.value || props.apiError?.request?.params?.data);
 const hasResponseData = computed(() => formattedResponse.value || props.apiError.response);
-
 </script>
 
 <style lang="css" scoped>
