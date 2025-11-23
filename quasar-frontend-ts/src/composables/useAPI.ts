@@ -8,7 +8,7 @@ export function useAPI() {
       getServerEnvironment: () => axiosInstance.get("/server_environment"),
     },
     auth: {
-      login: function (email, password) {
+      login: function (email: string, password: string) {
         const params = {
           email: email,
           password: password,
@@ -16,7 +16,7 @@ export function useAPI() {
         return axiosInstance.post("/auth/login", params);
       },
       logout: () => axiosInstance.post("/auth/logout"),
-      register: function (id, email, password) {
+      register: function (id: string, email: string, password: string) {
         const params = {
           id: id,
           email: email,
@@ -27,7 +27,7 @@ export function useAPI() {
     },
     user: {
       getProfile: () => axiosInstance.get("/user/profile"),
-      updateProfile: function (email, password) {
+      updateProfile: function (email: string, password: string) {
         const params = {
           email: email,
           password: password,
@@ -36,13 +36,13 @@ export function useAPI() {
       },
     },
     document: {
-      searchRecent: function (count) {
+      searchRecent: function (count: number) {
         const params = {
           count: count,
         };
         return axiosInstance.post("/search/recent_documents", params);
       },
-      search: function (currentPage, resultsPage, filter, sortBy, sortOrder) {
+      search: function (currentPage: number, resultsPage: number, filter, sortBy, sortOrder) {
         const params = {
           title: filter.text?.title || null,
           description: filter.text?.description || null,
@@ -94,17 +94,17 @@ export function useAPI() {
         }
         return axiosInstance.put("/document/" + document.id, params);
       },
-      remove: (id) => axiosInstance.delete("/document/" + id),
-      get: (id) => axiosInstance.get("/document/" + id),
-      getNotes: (id) => axiosInstance.get("/document/" + id + "/notes"),
-      getAttachments: (id) =>
+      remove: (id: string) => axiosInstance.delete("/document/" + id),
+      get: (id: string) => axiosInstance.get("/document/" + id),
+      getNotes: (id: string) => axiosInstance.get("/document/" + id + "/notes"),
+      getAttachments: (id: string) =>
         axiosInstance.get("/document/" + id + "/attachments"),
-      addAttachment: function (id, file) {
+      addAttachment: function (id: string, file) {
         let formData = new FormData();
         formData.append("file", file);
         return axiosInstance.post("/attachment/" + id, formData);
       },
-      removeFile: (id) => axiosInstance.delete("/attachment/" + id),
+      removeFile: (id: string) => axiosInstance.delete("/attachment/" + id),
     },
     tag: {
       getCloud: () => axiosInstance.get("/tag-cloud"),
@@ -117,7 +117,7 @@ export function useAPI() {
         axiosInstance.get("/stats/total-uploaded-attachments"),
       attachmentDiskSize: () =>
         axiosInstance.get("/stats/total-uploaded-attachments-disk-usage"),
-      getActivityHeatMapData: (fromTimestamp) =>
+      getActivityHeatMapData: (fromTimestamp: number) =>
         axiosInstance.get("/stats/heatmap-activity-data", {
           params: { fromTimestamp: fromTimestamp || null },
         }),
