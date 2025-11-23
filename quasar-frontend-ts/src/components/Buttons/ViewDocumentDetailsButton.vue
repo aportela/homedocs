@@ -31,7 +31,7 @@ const props = defineProps({
     type: Number,
     required: false,
     default: 0,
-    validator(value) {
+    validator(value: number) {
       return (value >= 0);
     }
   },
@@ -41,7 +41,7 @@ const props = defineProps({
   }
 });
 
-const onClick = (e) => {
+const onClick = (e: any) => {
   emit("click", e);
 }
 

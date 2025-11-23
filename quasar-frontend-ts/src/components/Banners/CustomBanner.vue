@@ -22,7 +22,7 @@ const { t } = useI18n();
 const props = defineProps({
   text: {
     type: String,
-    required: false,
+    required: true,
   },
   success: {
     type: Boolean,

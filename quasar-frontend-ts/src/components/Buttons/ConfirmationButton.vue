@@ -1,12 +1,11 @@
 <template>
-
   <q-btn @click.prevent.stop square :disable="disable" :icon="icon" :label="label">
     <q-popup-proxy v-model="showProxy">
       <q-banner>
         <template v-slot:avatar>
           <q-icon name="warning" color="primary" />
         </template>
-        Are you sure ?.
+        {{ t('Are you sure ?') }}
         <template v-slot:action>
           <q-btn-group spread class="full-width no-shadow">
             <q-btn label="yes" icon="check" class="bg-blue text-white full-width full-width" no-caps
@@ -22,7 +21,11 @@
 
 <script setup lang="ts">
 
+// TODO: remove if not used
 import { ref } from "vue";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const emit = defineEmits(['confirm']);
 
