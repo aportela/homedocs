@@ -20,7 +20,7 @@ axiosInstance.interceptors.request.use(
     return config;
   },
   (error) => {
-    return Promise.reject(error);
+    throw error;
   },
 );
 
@@ -44,12 +44,7 @@ axiosInstance.interceptors.response.use(
   },
   (error) => {
     if (!error) {
-      return Promise.reject({
-        response: {
-          status: 0,
-          statusText: "undefined",
-        },
-      });
+      throw new Error("Unknown API error");
     } else {
       if (!error.response) {
         error.response = {
@@ -76,7 +71,7 @@ axiosInstance.interceptors.response.use(
         },
         response: error.response.data,
       };
-      return Promise.reject(error);
+      throw error;
     }
   },
 );
