@@ -4,7 +4,7 @@ import { useI18n } from "vue-i18n";
 export function useFormatDates() {
   const { t } = useI18n();
 
-  const timeAgo = (timestamp) => {
+  const timeAgo = (timestamp: number): string => {
     const now = Date.now();
     const diff = now - new Date(timestamp).getTime();
 
@@ -32,32 +32,32 @@ export function useFormatDates() {
     }
   };
 
-  const currentTimeAgo = () => {
+  const currentTimeAgo = (): string => {
     return t("timeAgo.now");
   };
 
-  const timestamp = (dateObj) => {
+  const timestamp = (dateObj: Date): number => {
     return Number(date.formatDate(dateObj, "x"));
   };
 
-  const currentTimestamp = () => {
+  const currentTimestamp = (): number => {
     return Number(timestamp(new Date()));
   };
 
-  const dateHuman = (timestamp, format = "YYYY/MM/DD") => {
+  const dateHuman = (timestamp: number, format: string = "YYYY/MM/DD"): string => {
     return date.formatDate(timestamp, format);
   };
 
-  const currentDateHuman = () => {
-    return dateHuman(new Date());
+  const currentDateHuman = (format: string = "YYYY/MM/DD") => {
+    return dateHuman(currentTimestamp(), format);
   };
 
-  const fullDateTimeHuman = (timestamp, format = "YYYY/MM/DD HH:mm:ss") => {
+  const fullDateTimeHuman = (timestamp: number, format: string = "YYYY/MM/DD HH:mm:ss"): string => {
     return date.formatDate(timestamp, format);
   };
 
-  const currentFullDateTimeHuman = () => {
-    return fullDateTimeHuman(new Date());
+  const currentFullDateTimeHuman = (format: string = "YYYY/MM/DD HH:mm:ss") => {
+    return fullDateTimeHuman(currentTimestamp(), format);
   };
 
   return {
