@@ -22,28 +22,16 @@ import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 
 const { t } = useI18n();
 
-const props = defineProps({
-  tag: {
-    type: String,
-    required: true,
-  },
-  icon: {
-    type: String,
-    required: false
-  },
-  caption: {
-    type: String,
-    required: false
-  },
-  toolTip: {
-    type: Boolean,
-    required: false,
-    default: true
-  },
-  qChipClass: {
-    type: String,
-    required: false
-  }
+interface BrowseByTagButtonProps {
+  tag: string;
+  icon?: string;
+  caption?: string;
+  toolTip?: boolean;
+  qChipClass?: string;
+};
+
+withDefaults(defineProps<BrowseByTagButtonProps>(), {
+  toolTip: true
 });
 
 </script>
