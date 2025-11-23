@@ -3,8 +3,8 @@ import { useBus } from "src/composables/useBus";
 import { useFormatDates } from "src/composables/useFormatDates";
 import { useLocalStorage } from "./useLocalStorage";
 
-const { bus } = new useBus();
-const { currentTimestamp, fullDateTimeHuman } = new useFormatDates();
+const { bus } = useBus();
+const { currentTimestamp, fullDateTimeHuman } = useFormatDates();
 const { dateTimeFormat } = useLocalStorage();
 
 export function useNotifications() {
