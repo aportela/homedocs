@@ -1,13 +1,13 @@
 import { useAxios } from "src/composables/useAxios";
 
-const { axios } = useAxios();
+const { axiosInstance } = useAxios();
 
 const basePath = "api3";
 
 export function useAPI() {
   const api = {
     common: {
-      getServerEnvironment: () => axios.get(basePath + "/server_environment"),
+      getServerEnvironment: () => axiosInstance.get(basePath + "/server_environment"),
     },
     auth: {
       login: function (email, password) {
@@ -15,26 +15,26 @@ export function useAPI() {
           email: email,
           password: password,
         };
-        return axios.post(basePath + "/auth/login", params);
+        return axiosInstance.post(basePath + "/auth/login", params);
       },
-      logout: () => axios.post(basePath + "/auth/logout"),
+      logout: () => axiosInstance.post(basePath + "/auth/logout"),
       register: function (id, email, password) {
         const params = {
           id: id,
           email: email,
           password: password,
         };
-        return axios.post(basePath + "/auth/register", params);
+        return axiosInstance.post(basePath + "/auth/register", params);
       },
     },
     user: {
-      getProfile: () => axios.get(basePath + "/user/profile"),
+      getProfile: () => axiosInstance.get(basePath + "/user/profile"),
       updateProfile: function (email, password) {
         const params = {
           email: email,
           password: password,
         };
-        return axios.put(basePath + "/user/profile", params);
+        return axiosInstance.put(basePath + "/user/profile", params);
       },
     },
     document: {
@@ -42,7 +42,7 @@ export function useAPI() {
         const params = {
           count: count,
         };
-        return axios.post(basePath + "/search/recent_documents", params);
+        return axiosInstance.post(basePath + "/search/recent_documents", params);
       },
       search: function (currentPage, resultsPage, filter, sortBy, sortOrder) {
         const params = {
@@ -68,7 +68,7 @@ export function useAPI() {
         params.resultsPage = resultsPage;
         params.sortBy = sortBy;
         params.sortOrder = sortOrder;
-        return axios.post(basePath + "/search/document", params);
+        return axiosInstance.post(basePath + "/search/document", params);
       },
       add: function (document) {
         const params = {
@@ -81,7 +81,7 @@ export function useAPI() {
         if (document.description) {
           params.description = document.description;
         }
-        return axios.post(basePath + "/document/" + document.id, params);
+        return axiosInstance.post(basePath + "/document/" + document.id, params);
       },
       update: function (document) {
         const params = {
@@ -94,33 +94,33 @@ export function useAPI() {
         if (document.description) {
           params.description = document.description;
         }
-        return axios.put(basePath + "/document/" + document.id, params);
+        return axiosInstance.put(basePath + "/document/" + document.id, params);
       },
-      remove: (id) => axios.delete(basePath + "/document/" + id),
-      get: (id) => axios.get(basePath + "/document/" + id),
-      getNotes: (id) => axios.get(basePath + "/document/" + id + "/notes"),
+      remove: (id) => axiosInstance.delete(basePath + "/document/" + id),
+      get: (id) => axiosInstance.get(basePath + "/document/" + id),
+      getNotes: (id) => axiosInstance.get(basePath + "/document/" + id + "/notes"),
       getAttachments: (id) =>
-        axios.get(basePath + "/document/" + id + "/attachments"),
+        axiosInstance.get(basePath + "/document/" + id + "/attachments"),
       addAttachment: function (id, file) {
         let formData = new FormData();
         formData.append("file", file);
-        return axios.post(basePath + "/attachment/" + id, formData);
+        return axiosInstance.post(basePath + "/attachment/" + id, formData);
       },
-      removeFile: (id) => axios.delete(basePath + "/attachment/" + id),
+      removeFile: (id) => axiosInstance.delete(basePath + "/attachment/" + id),
     },
     tag: {
-      getCloud: () => axios.get(basePath + "/tag-cloud"),
-      search: () => axios.get(basePath + "/tags"),
+      getCloud: () => axiosInstance.get(basePath + "/tag-cloud"),
+      search: () => axiosInstance.get(basePath + "/tags"),
     },
     stats: {
       documentCount: () =>
-        axios.get(basePath + "/stats/total-published-documents"),
+        axiosInstance.get(basePath + "/stats/total-published-documents"),
       attachmentCount: () =>
-        axios.get(basePath + "/stats/total-uploaded-attachments"),
+        axiosInstance.get(basePath + "/stats/total-uploaded-attachments"),
       attachmentDiskSize: () =>
-        axios.get(basePath + "/stats/total-uploaded-attachments-disk-usage"),
+        axiosInstance.get(basePath + "/stats/total-uploaded-attachments-disk-usage"),
       getActivityHeatMapData: (fromTimestamp) =>
-        axios.get(basePath + "/stats/heatmap-activity-data", {
+        axiosInstance.get(basePath + "/stats/heatmap-activity-data", {
           params: { fromTimestamp: fromTimestamp || null },
         }),
     },
