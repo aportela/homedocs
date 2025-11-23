@@ -7,10 +7,6 @@ export function useAxios() {
 
   const initialStateStore = useInitialStateStore();
 
-  if (!session.isLoaded) {
-    session.load();
-  }
-
   axios.interceptors.request.use(
     (config) => {
       if (session.getJWT) {
@@ -30,7 +26,7 @@ export function useAxios() {
       const apiResponseJWT = response.headers["homedocs-jwt"] || null;
       if (apiResponseJWT) {
         if (apiResponseJWT && apiResponseJWT != session.getJWT) {
-          session.login(apiResponseJWT);
+          session.setJWT(apiResponseJWT);
         }
       }
       if (response.data.initialState) {
