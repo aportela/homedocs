@@ -6,37 +6,20 @@ const { jwt } = useLocalStorage();
 
 export const useSessionStore = defineStore("session", {
   state: () => ({
-    loaded: false,
-    jwt: null,
+    currentJWT: jwt.get() ?? null,
   }),
-
   getters: {
-    isLoaded: (state) => state.loaded,
-    isLogged: (state) => state.jwt != null,
-    getJWT: (state) => state.jwt,
+    isLogged: (state) => state.currentJWT !== null,
+    getJWT: (state) => state.currentJWT,
   },
   actions: {
-    load() {
-      const savedJWT = jwt.get();
-      if (savedJWT) {
-        this.jwt = savedJWT;
-      }
-      this.loaded = true;
-    },
-    save(newJWT) {
-      if (newJWT !== null) {
-        jwt.set(newJWT);
+    setJWT(newJWT = null) {
+      this.currentJWT = newJWT;
+      if (this.currentJWT !== null) {
+        jwt.set(this.currentJWT);
       } else {
         jwt.remove();
       }
-    },
-    login(newJWT) {
-      this.jwt = newJWT;
-      this.save(newJWT);
-    },
-    logout() {
-      this.jwt = null;
-      this.save(null);
     },
   },
 });
