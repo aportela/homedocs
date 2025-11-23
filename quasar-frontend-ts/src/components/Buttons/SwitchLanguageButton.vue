@@ -26,16 +26,15 @@ const { t } = useI18n();
 
 const { i18n } = usei18n();
 
-const { locale } = useLocalStorage();
+const { locale: localStorageLocale } = useLocalStorage();
 
 const attrs = useAttrs();
 
-const props = defineProps({
-  shortLabels: {
-    type: Boolean,
-    required: false,
-    default: false
-  }
+interface SwitchLanguageButtonProps {
+  shortLabels?: boolean
+};
+withDefaults(defineProps<SwitchLanguageButtonProps>(), {
+  shortLabels: false
 });
 
 const tooltip = computed(() => t("Switch language"));
@@ -51,15 +50,15 @@ const selectedLocale = ref(availableLocales[0]);
 watch(
   () => i18n.global.locale.value,
   (newLocale) => {
-    locale.set(newLocale);
     selectedLocale.value = availableLocales.find((locale) => locale.value === newLocale) || availableLocales[0];
+    localStorageLocale.set(newLocale);
   },
   { immediate: true }
 );
 
 function onSelectLocale(newLocale) {
   i18n.global.locale.value = newLocale.value;
-  locale.set(newLocale.value);
+  localStorageLocale.set(newLocale.value);
 }
 
 </script>
