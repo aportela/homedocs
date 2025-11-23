@@ -88,7 +88,7 @@ function logout() {
         name: "login",
       });
     })
-    .catch((error) => {
+    .catch((errorResponse) => {
       console.error(errorResponse);
       session.setJWT(null);
       router.push({
