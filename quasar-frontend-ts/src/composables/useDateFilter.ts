@@ -200,7 +200,7 @@ export function useDateFilter() {
     // we translate again the label assigned to the model
     watch(
       () => dateFilterTypeOptions.value[0].label,
-      (value) => {
+      () => {
         dateFilter.filterType.label = t(dateFilter.filterType.labelKey);
       },
     );

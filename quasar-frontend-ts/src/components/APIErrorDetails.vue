@@ -31,6 +31,9 @@
 <script setup lang="ts">
 
 import { ref, computed } from "vue";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const props = defineProps({
   apiError: {
@@ -48,7 +51,7 @@ if (props.apiError.request.params.data) {
   try {
     formattedBodyParams.value = JSON.stringify(JSON.parse(props.apiError.request.params.data), null, 4);
   } catch (e) {
-    // invalid JSON ?
+    console.error("JSON.stringify error", e);
   }
 }
 
@@ -57,13 +60,13 @@ if (props.apiError.response) {
     try {
       formattedResponse.value = JSON.stringify(JSON.parse(props.apiError.response), null, 4);
     } catch (e) {
-      // invalid JSON ?
+      console.error("JSON.stringify error", e);
     }
   } else if (typeof props.apiError.response === "object") {
     try {
       formattedResponse.value = JSON.stringify(props.apiError.response, null, 4);
     } catch (e) {
-      // serialize error ?
+      console.error("JSON.stringify error", e);
     }
   }
 }

@@ -4,7 +4,7 @@ const bus = new EventBus();
 
 export function useBus() {
 
-  const onShowDocumentFiles = (documentId, documentTitle) => {
+  const onShowDocumentFiles = (documentId: string, documentTitle: string) => {
     bus.emit("showDocumentFilesPreviewDialog", {
       document: {
         id: documentId,
@@ -13,7 +13,7 @@ export function useBus() {
     });
   }
 
-  const onShowDocumentNotes = (documentId, documentTitle) => {
+  const onShowDocumentNotes = (documentId: string, documentTitle: string) => {
     bus.emit("showDocumentNotesPreviewDialog", {
       document: {
         id: documentId,

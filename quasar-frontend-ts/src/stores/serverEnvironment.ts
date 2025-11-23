@@ -15,16 +15,14 @@ export const useServerEnvironmentStore = defineStore("serverEnvironment", {
   },
   actions: {
     set(
-      allowSignUp = false,
-      environment = "production",
-      maxUploadFileSize = 0,
+      allowSignUp: boolean = false,
+      environment: string = "production",
+      maxUploadFileSize: number = 0,
     ) {
       this.allowSignUp = !!allowSignUp;
       this.environment =
         environment === "development" ? "development" : "production";
-      this.maxUploadFileSize = !isNaN(maxUploadFileSize)
-        ? maxUploadFileSize
-        : 0;
+      this.maxUploadFileSize = maxUploadFileSize > 0 ? maxUploadFileSize : 0;
     },
   },
 });
