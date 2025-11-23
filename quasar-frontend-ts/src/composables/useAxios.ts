@@ -63,6 +63,7 @@ axiosInstance.interceptors.response.use(
         url: error.request?.responseURL || "N/A",
         httpCode: error.response?.status || "N/A",
         httpStatus: error.response?.statusText || "Unknown error",
+        contentType: error.response.headers["content-type"],
         request: {
           params: {
             query: error.config.params || null,
