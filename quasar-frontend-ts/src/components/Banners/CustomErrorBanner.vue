@@ -7,7 +7,6 @@
 </template>
 
 <script setup lang="ts">
-
 import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
 
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
@@ -17,11 +16,10 @@ import type { APIErrorDetails as APIErrorDetailsInterface } from "src/types/api-
 
 const serverEnvironment = useServerEnvironmentStore();
 
-interface Props {
-  text: string;
+interface CustomErrorBannerProps {
+  text: string,
   apiError?: APIErrorDetailsInterface | null;
-}
+};
 
-defineProps<Props>();
-
+defineProps<CustomErrorBannerProps>();
 </script>
