@@ -29,7 +29,7 @@ export function useAxios() {
           session.setJWT(apiResponseJWT);
         }
       }
-      if (response.data.initialState) {
+      if (response.data.serverEnvironment) {
         serverEnvironment.set(
           response.data?.serverEnvironment?.allowSignUp,
           response.data?.serverEnvironment?.environment,
