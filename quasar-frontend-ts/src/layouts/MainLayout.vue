@@ -13,7 +13,7 @@
         <q-btn type="button" no-caps no-wrap align="left" outline :label="searchButtonLabel" icon="search"
           class="full-width no-caps theme-default-q-btn" @click.prevent="dialogs.fastSearch.visible = true">
           <DesktopToolTip anchor="bottom middle" self="top middle">{{ t("Click to open fast search")
-            }}</DesktopToolTip>
+          }}</DesktopToolTip>
         </q-btn>
         <!--
         <FastSearchSelector dense class="full-width"></FastSearchSelector>
@@ -54,6 +54,7 @@ import { useI18n } from "vue-i18n";
 import { useFormatDates } from "src/composables/useFormatDates"
 import { useLocalStorage } from "src/composables/useLocalStorage"
 import { useBus } from "src/composables/useBus";
+import type { Document } from "src/types/document";
 
 import { default as SidebarDrawer } from "src/components/SidebarDrawer.vue"
 import { default as SearchDialog } from "src/components/Dialogs/SearchDialog.vue"
@@ -68,6 +69,7 @@ import { default as FilePreviewDialog } from "src/components/Dialogs/FilePreview
 import { default as DocumentFilesPreviewDialog } from "src/components/Dialogs/DocumentFilesPreviewDialog.vue"
 import { default as DocumentNotesPreviewDialog } from "src/components/Dialogs/DocumentNotesPreviewDialog.vue";
 import { default as UploadingDialog } from "src/components/Dialogs/UploadingDialog.vue";
+
 
 const $q = useQuasar();
 
@@ -114,7 +116,7 @@ const dialogs = reactive({
   }
 });
 
-const reAuthEmitters = reactive([]);
+const reAuthEmitters = reactive<Array<string>>([]);
 
 const onSuccessReauth = () => {
   dialogs.reauth.visible = false;
@@ -155,15 +157,20 @@ const onToggleminiSidebarCurrentMode = () => {
   }
 }
 
+interface BusMsg {
+  emitter: string;
+  document?: Document | null
+};
+
 onMounted(() => {
-  bus.on("reAuthRequired", (msg) => {
+  bus.on("reAuthRequired", (msg: BusMsg) => {
     if (msg.emitter) {
       reAuthEmitters.push(msg.emitter);
     }
     dialogs.reauth.visible = true;
   });
 
-  bus.on("showDocumentFilePreviewDialog", (msg) => {
+  bus.on("showDocumentFilePreviewDialog", (msg: BusMsg) => {
     dialogs.filePreview.document.id = msg?.document?.id;
     dialogs.filePreview.document.title = msg?.document?.title;
     dialogs.filePreview.document.attachments = msg?.document?.attachments || [];
@@ -171,13 +178,13 @@ onMounted(() => {
     dialogs.filePreview.visible = true;
   });
 
-  bus.on("showDocumentFilesPreviewDialog", (msg) => {
+  bus.on("showDocumentFilesPreviewDialog", (msg: BusMsg) => {
     dialogs.documentFilesPreview.document.id = msg?.document?.id;
     dialogs.documentFilesPreview.document.title = msg?.document?.title;
     dialogs.documentFilesPreview.visible = true;
   });
 
-  bus.on("showDocumentNotesPreviewDialog", (msg) => {
+  bus.on("showDocumentNotesPreviewDialog", (msg: BusMsg) => {
     dialogs.documentNotesPreview.document.id = msg?.document?.id;
     dialogs.documentNotesPreview.document.title = msg?.document?.title;
     dialogs.documentNotesPreview.visible = true;
