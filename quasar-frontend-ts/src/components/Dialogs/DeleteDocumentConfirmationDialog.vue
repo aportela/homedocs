@@ -8,19 +8,19 @@
         <p>
           {{ t("You are about to delete the current document. Are you sure? (this action cannot be undone).") }}
         </p>
-        <custom-banner class="q-mt-lg" v-if="state.deleted" success
+        <custom-banner class="q-mt-lg" v-if="deleted" success
           text="The document has been deleted. Upon closing this dialog, you will be redirected to the home screen."></custom-banner>
-        <CustomErrorBanner v-else-if="state.loadingError" :text="state.errorMessage" :api-error="state.apiError"
-          class="q-mt-lg">
+        <CustomErrorBanner v-else-if="state.ajaxErrors && state.ajaxErrorMessage" :text="state.ajaxErrorMessage"
+          :api-error="state.ajaxAPIErrorDetails" class="q-mt-lg">
         </CustomErrorBanner>
       </div>
     </template>
     <template v-slot:actions>
-      <q-btn class="action-secondary" @click.stop="onClose" icon="close" :label="t('Cancel')" :disable="state.loading"
-        v-if="!state.deleted" />
-      <q-btn color="primary" @click.stop="onDelete" icon="done" :label="t('Ok')" :disable="state.loading"
-        v-if="!state.deleted" />
-      <q-btn color="primary" @click.stop="onClose" icon="done" :label="t('Close')" v-if="state.deleted" />
+      <q-btn class="action-secondary" @click.stop="onClose" icon="close" :label="t('Cancel')"
+        :disable="state.ajaxRunning" v-if="!deleted" />
+      <q-btn color="primary" @click.stop="onDelete" icon="done" :label="t('Ok')" :disable="state.ajaxRunning"
+        v-if="!deleted" />
+      <q-btn color="primary" @click.stop="onClose" icon="done" :label="t('Close')" v-if="deleted" />
     </template>
   </BaseDialog>
 </template>
@@ -33,7 +33,8 @@ import { useI18n } from "vue-i18n";
 import { useBus } from "src/composables/useBus";
 import { useAPI } from "src/composables/useAPI";
 
-import type { APIErrorDetails as APIErrorDetailsInterface } from "src/types/api-error-details";
+import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
+
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue"
@@ -55,63 +56,49 @@ const props = defineProps<DeleteDocumentConfirmationDialogProps>();
 
 const visible = ref(true);
 
-interface State {
-  loading: boolean;
-  loadingError: boolean;
-  errorMessage: string;
-  apiError: APIErrorDetailsInterface | null;
-  deleted: boolean;
-};
+const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-const state: State = reactive({
-  loading: false,
-  loadingError: false,
-  errorMessage: "",
-  apiError: null,
-  deleted: false
-});
+const deleted = ref(false);
 
 const onDelete = () => {
-  state.loading = true;
-  state.loadingError = false;
-  state.errorMessage = "";
-  state.apiError = null;
+  Object.assign(state, defaultAjaxState);
+  state.ajaxRunning = true;
   api.document.
     remove(props.documentId)
     .then(() => {
-      state.loading = false;
-      state.deleted = true;
+      state.ajaxRunning = false;
+      deleted.value = true;
     })
     .catch((errorResponse) => {
-      state.loadingError = true;
+      state.ajaxErrors = true;
       if (errorResponse.isAPIError) {
-        state.apiError = errorResponse.customAPIErrorDetails;
+        state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
         switch (errorResponse.response.status) {
           case 401:
-            state.errorMessage = "Auth session expired, requesting new...";
+            state.ajaxErrorMessage = "Auth session expired, requesting new...";
             bus.emit("reAuthRequired", { emitter: "DeleteDocumentConfirmationDialog.onDelete" });
             break;
           case 403: // access denied
-            state.errorMessage = "Error removing (non existent) document"; // TODO
+            state.ajaxErrorMessage = "Error removing (non existent) document"; // TODO
             break;
           case 404: // document not found
-            state.errorMessage = "Error removing document: access denied"; // TODO
+            state.ajaxErrorMessage = "Error removing document: access denied"; // TODO
             break;
           default:
-            state.errorMessage = "API Error: fatal error";
+            state.ajaxErrorMessage = "API Error: fatal error";
             break;
         }
       } else {
-        state.errorMessage = `Uncaught exception: ${errorResponse}`;
+        state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
         console.error(errorResponse);
       }
-      state.loading = false;
+      state.ajaxRunning = false;
     });
 }
 
 const onClose = () => {
   visible.value = false;
-  if (!state.deleted) {
+  if (!deleted.value) {
     emit('close');
   } else {
     router.push({
@@ -133,5 +120,4 @@ onMounted(() => {
 onBeforeUnmount(() => {
   bus.off("reAuthSucess");
 });
-
 </script>
