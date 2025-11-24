@@ -156,7 +156,7 @@ const searchOnOptions = computed(() => [
 
 const searchOn = ref(searchOnOptions.value[0]);
 
-watch(() => searchOn.value, val => {
+watch(() => searchOn.value, () => {
   nextTick()
     .then(() => {
       searchTextField.value?.focus();
