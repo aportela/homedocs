@@ -79,13 +79,13 @@
 </template>
 
 <script setup lang="ts">
-
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { useBus } from "src/composables/useBus";
 import { useAPI } from "src/composables/useAPI";
 import { useFormatDates } from "src/composables/useFormatDates"
+import type { APIErrorDetails as APIErrorDetailsInterface } from "src/types/api-error-details";
 
 import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
@@ -98,24 +98,43 @@ const { timeAgo } = useFormatDates();
 const { api } = useAPI();
 const { bus, onShowDocumentFiles, onShowDocumentNotes } = useBus();
 
-const props = defineProps({
-  expanded: {
-    type: Boolean,
-    required: false,
-    default: true
-  }
+interface RecentDocumentsWidgetProps {
+  expanded?: boolean
+};
+
+const props = withDefaults(defineProps<RecentDocumentsWidgetProps>(), {
+  expanded: true
 });
 
 const isExpanded = ref(props.expanded);
 
-const state = reactive({
+interface State {
+  loading: boolean,
+  loadingError: boolean,
+  errorMessage: string | null,
+  apiError: APIErrorDetailsInterface | null
+};
+
+const state: State = reactive({
   loading: false,
   loadingError: false,
   errorMessage: null,
   apiError: null
 });
 
-const recentDocuments = reactive([]);
+interface RecentDocument {
+  id: string;
+  title: string;
+  description: string | null;
+  noteCount: number;
+  attachmentCount: number;
+  tags: string[];
+  lastUpdateTimestamp: number;
+  lastUpdateTimeAgo: string;
+};
+
+const recentDocuments = reactive<Array<RecentDocument>>([]);
+
 const hasRecentDocuments = computed(() => recentDocuments.length > 0);
 
 const onRefresh = () => {
@@ -127,7 +146,7 @@ const onRefresh = () => {
     api.document.searchRecent(16)
       .then((successResponse) => {
         recentDocuments.length = 0;
-        recentDocuments.push(...successResponse.data.recentDocuments.map((document) => {
+        recentDocuments.push(...successResponse.data.recentDocuments.map((document: RecentDocument) => {
           document.lastUpdateTimeAgo = timeAgo(document.lastUpdateTimestamp);
           return document;
         }));
@@ -168,5 +187,4 @@ onMounted(() => {
 onBeforeUnmount(() => {
   bus.off("reAuthSucess");
 });
-
 </script>
