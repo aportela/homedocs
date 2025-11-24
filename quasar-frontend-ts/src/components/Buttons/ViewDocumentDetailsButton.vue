@@ -17,7 +17,7 @@ const { t } = useI18n();
 
 const emit = defineEmits(['click'])
 
-const props = defineProps({
+defineProps({
   disable: {
     type: Boolean,
     required: false,
