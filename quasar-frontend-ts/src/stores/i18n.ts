@@ -4,12 +4,16 @@ import { autodetectLocale, getMatchedLocale } from 'src/composables/usei18n';
 
 const { locale: localStorageLocale } = useLocalStorage();
 
+interface State {
+  locale: string;
+};
+
 export const useI18nStore = defineStore('i18nStore', {
-  state: () => ({
+  state: (): State => ({
     locale: autodetectLocale()
   }),
   getters: {
-    currentLocale: (state) => state.locale,
+    currentLocale(state): string { return state.locale; },
   },
   actions: {
     setLocale(locale: string): boolean {
