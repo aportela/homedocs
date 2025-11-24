@@ -37,60 +37,33 @@
 </template>
 
 <script setup lang="ts">
-
 import { computed } from "vue";
-
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
-
 const emit = defineEmits(['update:modelValue', 'show', 'close', 'confirm', 'cancel']);
 
-const props = defineProps({
-  modelValue: {
-    type: Boolean,
-    required: true
-  },
-  showHeaderCloseButton: {
-    type: Boolean,
-    required: false,
-    default: true
-  },
-  width: {
-    type: String,
-    required: false,
-    default: ""
-  },
-  minWidth: {
-    type: String,
-    required: false,
-    default: ""
-  },
-  maxWidth: {
-    type: String,
-    required: false,
-    default: ""
-  },
-  confirmationDialog: {
-    type: Boolean,
-    required: false,
-    default: false
-  },
-  disable: {
-    type: Boolean,
-    required: false,
-    default: false
-  },
-  persistent: {
-    type: Boolean,
-    required: false,
-    default: false
-  },
-  hideFooter: {
-    type: Boolean,
-    required: false,
-    default: false
-  }
+interface BaseDialogProps {
+  modelValue: boolean,
+  showHeaderCloseButton?: boolean,
+  width?: string,
+  minWidth?: string,
+  maxWidth?: string,
+  confirmationDialog?: boolean,
+  disable?: boolean,
+  persistent?: boolean,
+  hideFooter?: boolean,
+};
+
+const props = withDefaults(defineProps<BaseDialogProps>(), {
+  showHeaderCloseButton: true,
+  width: "",
+  minWidth: "",
+  maxWidth: "",
+  confirmationDialog: false,
+  disable: false,
+  persistent: false,
+  hideFooter: false,
 });
 
 const visible = computed({
@@ -120,5 +93,4 @@ const onCancel = () => {
   visible.value = false;
   emit('cancel');
 }
-
 </script>
