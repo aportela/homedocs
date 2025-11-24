@@ -13,7 +13,9 @@ export const useI18nStore = defineStore('i18nStore', {
     locale: autodetectLocale()
   }),
   getters: {
-    currentLocale(state): string { return state.locale; },
+    currentLocale(state): string {
+      return state.locale;
+    },
   },
   actions: {
     setLocale(locale: string): boolean {
