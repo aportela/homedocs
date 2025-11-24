@@ -301,6 +301,8 @@ const onKeyDown = (event) => {
           params: {
             id: searchResults[currentSearchResultSelectedIndex.value].id
           }
+        }).catch((e) => {
+          console.error(e);
         });
       }
     }
