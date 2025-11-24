@@ -75,7 +75,6 @@ import { useAxios } from "src/composables/useAxios";
 import { useAPI } from "src/composables/useAPI";
 import type { APIErrorDetails as APIErrorDetailsInterface } from "src/types/api-error-details";
 
-
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
@@ -172,7 +171,7 @@ const onRefresh = (documentId: string) => {
       .getAttachments(documentId)
       .then((successResponse) => {
         attachments.length = 0;
-        attachments.push(...successResponse.data.attachments.map((attachment) => {
+        attachments.push(...successResponse.data.attachments.map((attachment: Attachment) => {
           attachment.createdOn = date.formatDate(attachment.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
           attachment.humanSize = format.humanStorageSize(attachment.size);
           attachment.url = "api3/attachment/" + attachment.id;
