@@ -4,8 +4,8 @@
       {{ t('Search on HomeDocs...') }}
     </template>
     <template v-slot:header-right>
-      <q-chip size="md" square class="gt-sm theme-default-q-chip shadow-1" v-if="!state.loading && !state.loadingError"
-        v-show="totalResults > 0">
+      <q-chip size="md" square class="gt-sm theme-default-q-chip shadow-1"
+        v-if="!state.ajaxRunning && !state.ajaxErrors" v-show="totalResults > 0">
         <q-avatar class="theme-default-q-avatar">{{ totalResults }}</q-avatar>
         {{ t("Results count",
           {
@@ -19,7 +19,7 @@
         <div class="col-auto">
           <q-select v-model="searchOn" :options="searchOnOptions"
             :display-value="`${searchOn ? t(searchOn.label) : ''}`" dense options-dense outlined style="min-width: 8em;"
-            :label="t('Search on')" @update:model-value="onSearch(text)" :disable="state.loading">
+            :label="t('Search on')" @update:model-value="onSearch(text)" :disable="state.ajaxRunning">
             <template v-slot:option="scope">
               <q-item v-bind="scope.itemProps">
                 <q-item-section>
@@ -41,8 +41,9 @@
         </div>
       </div>
       <q-separator />
-      <div v-if="state.loadingError">
-        <CustomErrorBanner :text="state.errorMessage || 'Error loading data'" :api-error="state.apiError">
+      <div v-if="state.ajaxErrors">
+        <CustomErrorBanner :text="state.ajaxErrorMessage || 'Error loading data'"
+          :api-error="state.ajaxAPIErrorDetails">
         </CustomErrorBanner>
       </div>
       <q-virtual-scroll v-else component="q-list" :items="searchResults" @virtual-scroll="onVirtualScroll"
@@ -66,11 +67,11 @@
                 <q-item-label caption>{{ item.lastUpdate }}
                 </q-item-label>
                 <ViewDocumentDetailsButton size="md" square class="min-width-9em" :count="item.attachmentCount"
-                  :label="'Total attachments count'" :tool-tip="'View document attachments'" :disable="state.loading"
-                  @click.stop.prevent="onShowDocumentFiles(item.id, item.label)">
+                  :label="'Total attachments count'" :tool-tip="'View document attachments'"
+                  :disable="state.ajaxRunning" @click.stop.prevent="onShowDocumentFiles(item.id, item.label)">
                 </ViewDocumentDetailsButton>
                 <ViewDocumentDetailsButton size="md" square class="min-width-9em" :count="item.noteCount"
-                  :label="'Total notes'" :tool-tip="'View document notes'" :disable="state.loading"
+                  :label="'Total notes'" :tool-tip="'View document notes'" :disable="state.ajaxRunning"
                   @click.stop.prevent="onShowDocumentNotes(item.id, item.label)">
                 </ViewDocumentDetailsButton>
               </q-item-section>
@@ -93,7 +94,6 @@
 </template>
 
 <script setup lang="ts">
-
 import { ref, reactive, computed, watch, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
@@ -102,7 +102,8 @@ import { useBus } from "src/composables/useBus";
 import { useAPI } from "src/composables/useAPI";
 import { useFormatDates } from "src/composables/useFormatDates"
 import { useLocalStorage } from "src/composables/useLocalStorage"
-import type { APIErrorDetails as APIErrorDetailsInterface } from "src/types/api-error-details";
+import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
+import { type QuasarVirtualScrollEventDetails as QuasarVirtualScrollEventDetailsInterface } from "src/types/quasar-virtual-scroll-event-details";
 
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue"
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
@@ -140,19 +141,7 @@ const visible = computed({
   }
 });
 
-interface State {
-  loading: boolean,
-  loadingError: boolean,
-  errorMessage: string | null,
-  apiError: APIErrorDetailsInterface | null
-};
-
-const state: State = reactive({
-  loading: false,
-  loadingError: false,
-  errorMessage: null,
-  apiError: null
-});
+const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
 const searchOnOptions = computed(() => [
   { label: 'Title', value: 'title' },
@@ -206,10 +195,8 @@ const onSearch = (val: string) => {
   totalResults.value = 0;
   if (val && val.trim().length > 0) {
     currentSearchResultSelectedIndex.value = -1;
-    state.loading = true;
-    state.loadingError = false;
-    state.errorMessage = null;
-    state.apiError = null;
+    Object.assign(state, defaultAjaxState);
+    state.ajaxRunning = true;
     const params = {
       text: {
         title: searchOn.value.value == "title" ? val.trim() : null,
@@ -243,43 +230,36 @@ const onSearch = (val: string) => {
               matchedOnFragment: document.matchedOnFragment
             });
         }));
-        state.loading = false;
         showNoSearchResults.value = successResponse.data.results.documents.length <= 0; // REQUIRED ?
       })
       .catch((errorResponse) => {
-        state.loadingError = true;
+        state.ajaxErrors = true;
         if (errorResponse.isAPIError) {
+          state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
           switch (errorResponse.response.status) {
             case 401:
-              state.apiError = errorResponse.customAPIErrorDetails;
-              state.errorMessage = "Auth session expired, requesting new...";
+              state.ajaxErrorMessage = "Auth session expired, requesting new...";
               bus.emit("reAuthRequired", { emitter: "SearchDialog.onSearch" });
               break;
             default:
-              state.apiError = errorResponse.customAPIErrorDetails;
-              state.errorMessage = "API Error: fatal error";
+              state.ajaxErrorMessage = "API Error: fatal error";
               break;
           }
         } else {
-          state.errorMessage = `Uncaught exception: ${errorResponse}`;
+          state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
           console.error(errorResponse);
         }
-        state.loading = false;
+
+      }).finally(() => {
+        state.ajaxRunning = false;
       });
   } else {
     searchResults.length = 0;
   }
 };
 
-interface VirtualScrollDetails {
-  index: number;
-  from: number;
-  to: number;
-  direction: string;
-  //ref: any;
-}
 
-const onVirtualScroll = (details: VirtualScrollDetails) => {
+const onVirtualScroll = (details: QuasarVirtualScrollEventDetailsInterface) => {
   virtualListIndex.value = details.index;
 };
 
@@ -289,7 +269,7 @@ const scrollToItem = (index: number) => {
   }
 };
 
-const onKeyDown = (event: Event) => {
+const onKeyDown = (event: KeyboardEvent) => {
   if (event.key === "ArrowUp") {
     if (searchResults.length > 0) {
       if (currentSearchResultSelectedIndex.value > 0) {
@@ -359,7 +339,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   bus.off("reAuthSucess");
 });
-
 </script>
 
 <style lang="css" scoped>
@@ -385,6 +364,5 @@ onBeforeUnmount(() => {
   .is-current .q-item__label {
     color: var(--color-zinc-950) !important;
   }
-
 }
 </style>
