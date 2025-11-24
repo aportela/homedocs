@@ -85,17 +85,12 @@ const { bus } = useBus();
 const { bgDownload } = useAxios();
 const { api } = useAPI();
 
-const props = defineProps({
-  documentId: {
-    type: String,
-    required: true,
-  },
-  documentTitle: {
-    type: String,
-    required: false,
-    default: ""
-  }
-});
+interface DocumentFilesPreviewDialogProps {
+  documentId: string;
+  documentTitle?: string;
+};
+
+const props = defineProps<DocumentFilesPreviewDialogProps>();
 
 const emit = defineEmits(['close']);
 
@@ -111,18 +106,24 @@ const state = reactive({
 const attachments = reactive([]);
 const hasAttachments = computed(() => attachments?.length > 0);
 
-const onFilePreview = (index) => {
+const onFilePreview = (index: number) => {
   bus.emit("showDocumentFilePreviewDialog", { document: { id: props.documentId, title: props.documentTitle, attachments: attachments }, currentIndex: index });
 };
 
-const downloadBanner = reactive({
+interface DownloadBanner {
+  visible: boolean;
+  success: boolean,
+  error: boolean,
+  text: string | null
+};
+const downloadBanner: DownloadBanner = reactive({
   visible: false,
   success: false,
   error: false,
   text: null
 });
 
-const onDownload = (url, fileName) => {
+const onDownload = (url: string, fileName: string) => {
   downloadBanner.visible = false;
   downloadBanner.success = false;
   downloadBanner.error = false;
@@ -133,56 +134,51 @@ const onDownload = (url, fileName) => {
       downloadBanner.text = t("FileDownloadedMessage", { filename: successResponse.fileName, length: format.humanStorageSize(successResponse.length) });
       downloadBanner.visible = true;
     })
-    .catch((errorResponse) => {
+    .catch(() => {
       downloadBanner.error = true;
       downloadBanner.text = t("FileDownloadeErrorMessage", { filename: fileName });
       downloadBanner.visible = true;
     });
 }
 
-const onRefresh = (documentId) => {
-  if (documentId) {
-    if (!state.loading) {
-      state.loading = true;
-      state.loadingError = false;
-      state.errorMessage = null;
-      state.apiError = null;
-      api.document
-        .getAttachments(documentId)
-        .then((successResponse) => {
-          attachments.length = 0;
-          attachments.push(...successResponse.data.attachments.map((attachment) => {
-            attachment.createdOn = date.formatDate(attachment.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
-            attachment.humanSize = format.humanStorageSize(attachment.size);
-            attachment.url = "api3/attachment/" + attachment.id;
-            return (attachment);
-          }));
-          state.loading = false;
-        })
-        .catch((errorResponse) => {
-          state.loadingError = true;
-          if (errorResponse.isAPIError) {
-            switch (errorResponse.response.status) {
-              case 401:
-                state.apiError = errorResponse.customAPIErrorDetails;
-                state.errorMessage = "Auth session expired, requesting new...";
-                bus.emit("reAuthRequired", { emitter: "DocumentFilesPreviewDialog" });
-                break;
-              default:
-                state.apiError = errorResponse.customAPIErrorDetails;
-                state.errorMessage = "API Error: fatal error";
-                break;
-            }
-          } else {
-            state.errorMessage = `Uncaught exception: ${errorResponse}`;
-            console.error(errorResponse);
+const onRefresh = (documentId: string) => {
+  if (!state.loading) {
+    state.loading = true;
+    state.loadingError = false;
+    state.errorMessage = null;
+    state.apiError = null;
+    api.document
+      .getAttachments(documentId)
+      .then((successResponse) => {
+        attachments.length = 0;
+        attachments.push(...successResponse.data.attachments.map((attachment) => {
+          attachment.createdOn = date.formatDate(attachment.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
+          attachment.humanSize = format.humanStorageSize(attachment.size);
+          attachment.url = "api3/attachment/" + attachment.id;
+          return (attachment);
+        }));
+        state.loading = false;
+      })
+      .catch((errorResponse) => {
+        state.loadingError = true;
+        if (errorResponse.isAPIError) {
+          switch (errorResponse.response.status) {
+            case 401:
+              state.apiError = errorResponse.customAPIErrorDetails;
+              state.errorMessage = "Auth session expired, requesting new...";
+              bus.emit("reAuthRequired", { emitter: "DocumentFilesPreviewDialog" });
+              break;
+            default:
+              state.apiError = errorResponse.customAPIErrorDetails;
+              state.errorMessage = "API Error: fatal error";
+              break;
           }
-          state.loading = false;
-        });
-    }
-  } else {
-    // TODO
-    state.loadingError = true;
+        } else {
+          state.errorMessage = `Uncaught exception: ${errorResponse}`;
+          console.error(errorResponse);
+        }
+        state.loading = false;
+      });
   }
 };
 
@@ -191,10 +187,10 @@ const onClose = () => {
 };
 
 onMounted(() => {
-  onRefresh(props.documentId || null);
+  onRefresh(props.documentId);
   bus.on("reAuthSucess", (msg) => {
     if (msg.to?.includes("DocumentFilesPreviewDialog")) {
-      onRefresh(props.documentId || null);
+      onRefresh(props.documentId);
     }
   });
 });

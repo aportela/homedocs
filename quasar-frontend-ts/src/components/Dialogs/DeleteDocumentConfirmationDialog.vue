@@ -47,12 +47,11 @@ const { api } = useAPI();
 
 const router = useRouter();
 
-const props = defineProps({
-  documentId: {
-    type: String,
-    required: true,
-  }
-});
+interface DeleteDocumentConfirmationDialogProps {
+  documentId: string;
+};
+
+const props = defineProps<DeleteDocumentConfirmationDialogProps>();
 
 const visible = ref(true);
 
