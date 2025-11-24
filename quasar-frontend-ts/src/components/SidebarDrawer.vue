@@ -43,12 +43,12 @@ import { useI18n } from "vue-i18n";
 import { useAPI } from "src/composables/useAPI";
 import { useSessionStore } from "src/stores/session";
 
-const props = defineProps({
-  mini: {
-    type: Boolean,
-    required: false,
-    default: false
-  }
+interface SidebarDrawerProps {
+  mini: boolean
+};
+
+const props = withDefaults(defineProps<SidebarDrawerProps>(), {
+  mini: false
 });
 
 const attrs = useAttrs();
@@ -82,7 +82,7 @@ function onDrawerClick(e) {
 function logout() {
   api.auth
     .logout()
-    .then((successResponse) => {
+    .then(() => {
       session.setJWT(null);
       router.push({
         name: "login",
