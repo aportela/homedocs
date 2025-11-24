@@ -154,17 +154,17 @@ function onRefresh() {
   }
 }
 
-function onAddTag(tag) {
+function onAddTag(_tag: string) {
   selectRef.value?.hidePopup()
   selectRef.value?.reset();
   selectRef.value?.updateInputValue("");
 }
 
-function removeTagAtIndex(index) {
+function removeTagAtIndex(index: number) {
   tags.value?.splice(index, 1);
 }
 
-async function focus() {
+function focus() {
   nextTick()
     .then(() => {
       selectRef.value?.focus()
