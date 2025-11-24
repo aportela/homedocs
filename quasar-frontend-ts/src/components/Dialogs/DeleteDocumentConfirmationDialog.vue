@@ -71,7 +71,6 @@ const state: State = reactive({
   deleted: false
 });
 
-
 const onDelete = () => {
   state.loading = true;
   state.loadingError = false;
