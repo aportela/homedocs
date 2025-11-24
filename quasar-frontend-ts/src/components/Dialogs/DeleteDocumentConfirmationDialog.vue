@@ -109,14 +109,18 @@ const onDelete = () => {
     });
 }
 
-const onClose = () => {
+const onClose = async () => {
   visible.value = false;
   if (!state.deleted) {
     emit('close');
   } else {
-    router.push({
-      name: "index",
-    });
+    try {
+      await router.push({
+        name: "index",
+      });
+    } catch (e) {
+      console.error(e);
+    }
   }
 }
 
