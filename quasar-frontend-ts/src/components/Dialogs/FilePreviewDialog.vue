@@ -16,7 +16,7 @@
         {{ t("Total attachments count", { count: attachmentsCount }) }}
       </q-chip>
     </template>
-    <template v-slot:body>
+    <template v-slot:body v-if="currentAttachment">
       <div>
         <p class="text-center text-bold q-my-md">{{ currentAttachment.name }} ({{ currentAttachment.humanSize }})</p>
         <q-pagination class="flex flex-center q-my-md" v-if="attachmentsCount > 1" v-model="currentAttachmentIndex"
@@ -53,7 +53,7 @@
         </div>
       </div>
     </template>
-    <template v-slot:actions-prepend>
+    <template v-slot:actions-prepend v-if="currentAttachment">
       <CustomBanner v-if="downloadBanner.visible" :success="downloadBanner.success" :error="downloadBanner.error">
         <template v-slot:text>{{ downloadBanner.text }}</template>
       </CustomBanner>
@@ -71,7 +71,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from "vue";
+import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAxios } from "src/composables/useAxios";
 import { useFileUtils } from "src/composables/useFileUtils";
@@ -87,20 +87,33 @@ const { bgDownload } = useAxios();
 const { allowPreview, isImage, isAudio, isPDF } = useFileUtils();
 const previewLoadingError = ref(false);
 
-const props = defineProps({
-  // TODO: do not pass complete document
-  document: {
-    type: Object,
-    required: true
-  },
-  currentIndex: {
-    type: Number,
-    required: false,
-    default: 0,
-    validator(value) {
-      return (value >= 0);
-    }
-  }
+// TODO share common model on /types/
+interface Attachment {
+  id: string;
+  name: string;
+  size: number;
+  hash: string;
+  humanSize: string;
+  createdOnTimestamp: number;
+  createdOn: string;
+  url: string;
+};
+
+// TODO share common model on /types/
+interface Document {
+  id: string;
+  title: string;
+  description: string | null;
+  attachments: Attachment[];
+};
+
+interface FilePreviewDialogProps {
+  document: Document;
+  currentIndex?: number;
+};
+
+const props = withDefaults(defineProps<FilePreviewDialogProps>(), {
+  currentIndex: 0
 });
 
 const visible = ref(true);
@@ -109,13 +122,30 @@ const hasAttachments = computed(() => props.document?.attachments?.length > 0);
 const attachmentsCount = computed(() => hasAttachments.value ? props.document?.attachments?.length : 0);
 
 const currentAttachmentIndex = ref(props.currentIndex + 1 || 1);
-const currentAttachment = computed(() => props.document.attachments?.length > 0 ? props.document.attachments[currentAttachmentIndex.value - 1] : {})
+
+const currentAttachment = computed(() => props.document.attachments?.length > 0 ? props.document.attachments[currentAttachmentIndex.value - 1] : {
+  id: '',
+  name: '',
+  size: 0,
+  hash: '',
+  humanSize: '',
+  createdOnTimestamp: 0,
+  createdOn: '',
+  url: '',
+});
 
 const onClose = () => {
   emit('close');
 };
 
-const downloadBanner = reactive({
+interface DownloadBanner {
+  visible: boolean;
+  success: boolean;
+  error: boolean;
+  text: string | null;
+};
+
+const downloadBanner = <DownloadBanner>({
   visible: false,
   success: false,
   error: false,
@@ -138,7 +168,7 @@ const onImageLoadError = () => {
   downloadBanner.visible = true;
 };
 
-const onDownload = (url, fileName) => {
+const onDownload = (url: string, fileName: string) => {
   downloadBanner.visible = false;
   downloadBanner.success = false;
   downloadBanner.error = false;
@@ -149,13 +179,12 @@ const onDownload = (url, fileName) => {
       downloadBanner.text = t("FileDownloadedMessage", { filename: successResponse.fileName, length: successResponse.length });
       downloadBanner.visible = true;
     })
-    .catch((errorResponse) => {
+    .catch(() => {
       downloadBanner.error = true;
       downloadBanner.text = t("FileDownloadeErrorMessage", { filename: fileName });
       downloadBanner.visible = true;
     });
 }
-
 </script>
 
 <style>
