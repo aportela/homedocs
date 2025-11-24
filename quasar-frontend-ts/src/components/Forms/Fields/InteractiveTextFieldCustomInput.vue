@@ -114,9 +114,12 @@ const showTopHoverIcons = ref(!isDesktop.value);
 const collapsedView = ref(true);
 
 const focus = () => {
-  nextTick(() => {
-    qInputRef.value?.focus();
-  });
+  nextTick()
+    .then(() => {
+      qInputRef.value?.focus();
+    }).catch((e) => {
+      console.error(e);
+    });
 }
 
 const onMouseEnter = () => {

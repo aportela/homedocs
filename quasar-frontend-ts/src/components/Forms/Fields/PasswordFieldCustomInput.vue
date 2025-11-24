@@ -84,9 +84,12 @@ const visibilityIcon = computed(() => visiblePassword.value ? "visibility_off" :
 const tooltipLabel = computed(() => visiblePassword.value ? "Hide password" : "Show password");
 
 const focus = () => {
-  nextTick(() => {
-    qInputPasswordRef.value?.focus();
-  });
+  nextTick()
+    .then(() => {
+      qInputPasswordRef.value?.focus();
+    }).catch((e) => {
+      console.error(e);
+    });
 }
 
 const resetValidation = () => {

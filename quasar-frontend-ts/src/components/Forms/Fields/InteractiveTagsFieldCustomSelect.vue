@@ -165,8 +165,12 @@ function removeTagAtIndex(index) {
 }
 
 async function focus() {
-  await nextTick()
-  selectRef.value?.focus()
+  nextTick()
+    .then(() => {
+      selectRef.value?.focus()
+    }).catch((e) => {
+      console.error(e);
+    });
 }
 
 defineExpose({

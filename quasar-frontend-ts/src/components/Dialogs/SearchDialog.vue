@@ -157,9 +157,12 @@ const searchOnOptions = computed(() => [
 const searchOn = ref(searchOnOptions.value[0]);
 
 watch(() => searchOn.value, val => {
-  nextTick(() => {
-    searchTextField.value?.focus();
-  });
+  nextTick()
+    .then(() => {
+      searchTextField.value?.focus();
+    }).catch((e) => {
+      console.error(e);
+    });
 });
 
 const virtualListRef = ref(null);
@@ -310,9 +313,12 @@ const onShow = () => {
   // this is required here because this dialog v-model is controller from MainLayout.vue
   // DOES NOT WORK with onMounted/onBeforeUnmount. WE ONLY WANT CAPTURE KEY EVENTS WHEN DIALOG IS VISIBLE
   window.addEventListener('keydown', onKeyDown);
-  nextTick(() => {
-    searchTextField.value?.focus();
-  });
+  nextTick()
+    .then(() => {
+      searchTextField.value?.focus();
+    }).catch((e) => {
+      console.error(e);
+    });
 }
 
 const onClose = () => {

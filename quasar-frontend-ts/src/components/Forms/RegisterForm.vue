@@ -164,9 +164,12 @@ const onSubmitForm = () => {
             ) {
               state.loadingError = true;
               state.errorMessage = "API Error: missing email param";
-              nextTick(() => {
-                emailRef.value?.focus();
-              });
+              nextTick()
+                .then(() => {
+                  emailRef.value?.focus();
+                }).catch((e) => {
+                  console.error(e);
+                });
             } else if (
               errorResponse.response.data.invalidOrMissingParams.find(function (e) {
                 return e === "password";
@@ -174,23 +177,32 @@ const onSubmitForm = () => {
             ) {
               state.loadingError = true;
               state.errorMessage = "API Error: missing password param";
-              nextTick(() => {
-                passwordRef.value?.focus();
-              });
+              nextTick()
+                .then(() => {
+                  passwordRef.value?.focus();
+                }).catch((e) => {
+                  console.error(e);
+                });
             } else {
               state.loadingError = true;
               state.errorMessage = "API Error: invalid/missing param";
-              nextTick(() => {
-                emailRef.value?.focus();
-              });
+              nextTick()
+                .then(() => {
+                  emailRef.value?.focus();
+                }).catch((e) => {
+                  console.error(e);
+                });
             }
             break;
           case 409:
             validator.email.hasErrors = true;
             validator.email.message = "Email already used";
-            nextTick(() => {
-              emailRef.value?.focus();
-            });
+            nextTick()
+              .then(() => {
+                emailRef.value?.focus();
+              }).catch((e) => {
+                console.error(e);
+              });
             break;
           default:
             state.loadingError = true;

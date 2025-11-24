@@ -109,9 +109,12 @@ const onGetProfile = () => {
       profile.email = successResponse.data.data.email;
       state.loading = false;
       if (props.autoFocus) {
-        nextTick(() => {
-          passwordRef.value?.focus();
-        });
+        nextTick()
+          .then(() => {
+            passwordRef.value?.focus();
+          }).catch((e) => {
+            console.error(e);
+          });
       }
     })
     .catch((errorResponse) => {
@@ -135,9 +138,12 @@ const onGetProfile = () => {
       }
       state.loading = false;
       if (props.autoFocus) {
-        nextTick(() => {
-          passwordRef.value?.focus();
-        });
+        nextTick()
+          .then(() => {
+            passwordRef.value?.focus();
+          }).catch((e) => {
+            console.error(e);
+          });
       }
     });
 }
@@ -149,13 +155,16 @@ const onValidateForm = () => {
   if (!emailRef.value?.hasError && !passwordRef.value?.hasError) {
     onSubmitForm();
   } else {
-    nextTick(() => {
-      if (emailRef.value?.hasError) {
-        emailRef.value?.focus();
-      } else if (passwordRef.value?.hasError) {
-        passwordRef.value?.focus();
-      }
-    });
+    nextTick()
+      .then(() => {
+        if (emailRef.value?.hasError) {
+          emailRef.value?.focus();
+        } else if (passwordRef.value?.hasError) {
+          passwordRef.value?.focus();
+        }
+      }).catch((e) => {
+        console.error(e);
+      });
   }
 }
 
@@ -172,9 +181,12 @@ const onSubmitForm = () => {
       profile.email = successResponse.data.data.email;
       profile.password = null;
       state.loading = false;
-      nextTick(() => {
-        emailRef.value?.focus();
-      });
+      nextTick()
+        .then(() => {
+          emailRef.value?.focus();
+        }).catch((e) => {
+          console.error(e);
+        });
     })
     .catch((errorResponse) => {
       state.loadingError = true;
@@ -190,9 +202,12 @@ const onSubmitForm = () => {
             validator.email.hasErrors = true;
             validator.email.message = "Email already used";
             state.errorMessage = "Error updating profile";
-            nextTick(() => {
-              emailRef.value?.focus();
-            });
+            nextTick()
+              .then(() => {
+                emailRef.value?.focus();
+              }).catch((e) => {
+                console.error(e);
+              });
             break;
           default:
             state.apiError = errorResponse.customAPIErrorDetails;

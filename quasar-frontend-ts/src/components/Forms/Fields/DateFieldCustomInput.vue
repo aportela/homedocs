@@ -140,52 +140,58 @@ watch(dateFilter.value, val => {
   focus();
   emit('update:modelValue', val);
   if (props.autoOpenPopUps) {
-    nextTick(() => {
-      switch (val.filterType.value) {
-        case 7: // fixed date
-          if (!val.formattedDate.fixed) {
-            qInputFixedDatePopupProfyRef.value.show();
-          }
-          break;
-        case 8: // from date
-          if (!val.formattedDate.from) {
-            qInputFromDatePopupProfyRef.value.show();
-          }
-          break;
-        case 9: // to date
-          if (!val.formattedDate.to) {
-            qInputToDatePopupProfyRef.value.show();
-          }
-          break;
-        case 10: // between dates
-          if (!val.formattedDate.from) {
-            qInputFromDatePopupProfyRef.value.show();
-          }
-          break;
-      }
-    });
+    nextTick()
+      .then(() => {
+        switch (val.filterType.value) {
+          case 7: // fixed date
+            if (!val.formattedDate.fixed) {
+              qInputFixedDatePopupProfyRef.value.show();
+            }
+            break;
+          case 8: // from date
+            if (!val.formattedDate.from) {
+              qInputFromDatePopupProfyRef.value.show();
+            }
+            break;
+          case 9: // to date
+            if (!val.formattedDate.to) {
+              qInputToDatePopupProfyRef.value.show();
+            }
+            break;
+          case 10: // between dates
+            if (!val.formattedDate.from) {
+              qInputFromDatePopupProfyRef.value.show();
+            }
+            break;
+        }
+      }).catch((e) => {
+        console.error(e);
+      });
   }
 });
 
 // TODO: focus based on dateFilter.state.denyChanges
 const focus = () => {
   if (!dateFilter.value.state.denyChanges) {
-    nextTick(() => {
-      switch (dateFilter.value.filterType.value) {
-        case 7: // fixed date
-          qInputFixedDateRef.value?.focus();
-          break;
-        case 8: // from date
-          qInputFromDateRef.value?.focus();
-          break;
-        case 9: // to date
-          qInputToDateRef.value?.focus();
-          break;
-        case 10: // between dates
-          qInputFromDateRef.value?.focus();
-          break;
-      }
-    });
+    nextTick()
+      .then(() => {
+        switch (dateFilter.value.filterType.value) {
+          case 7: // fixed date
+            qInputFixedDateRef.value?.focus();
+            break;
+          case 8: // from date
+            qInputFromDateRef.value?.focus();
+            break;
+          case 9: // to date
+            qInputToDateRef.value?.focus();
+            break;
+          case 10: // between dates
+            qInputFromDateRef.value?.focus();
+            break;
+        }
+      }).catch((e) => {
+        console.error(e);
+      });
   }
 };
 

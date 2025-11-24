@@ -461,9 +461,12 @@ onMounted(() => {
     }
   }
   if (route.meta.autoLaunchSearch) {
-    nextTick(() => {
-      onSubmitForm(true);
-    });
+    nextTick()
+      .then(() => {
+        onSubmitForm(true);
+      }).catch((e) => {
+        console.error(e);
+      });
   }
   bus.on("reAuthSucess", (msg) => {
     if (msg.to?.includes("AdvancedSearchPage.onSubmitForm")) {

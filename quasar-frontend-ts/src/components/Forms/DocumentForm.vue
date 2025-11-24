@@ -182,7 +182,12 @@ watch(() => props.documentId, val => {
   } else {
     document.reset();
     documentTitleFieldRef.value?.unsetReadOnly();
-    nextTick(() => documentTitleFieldRef.value?.focus());
+    nextTick()
+      .then(() => {
+        documentTitleFieldRef.value?.focus()
+      }).catch((e) => {
+        console.error(e);
+      });
   }
 });
 
@@ -240,7 +245,12 @@ const onRefresh = () => {
       .then((successResponse) => {
         document.setFromAPIJSON(successResponse.data.document);
         state.loading = false;
-        nextTick(() => documentTitleFieldRef.value?.focus());
+        nextTick()
+          .then(() => {
+            documentTitleFieldRef.value?.focus()
+          }).catch((e) => {
+            console.error(e);
+          });
       })
       .catch((errorResponse) => {
         state.loadingError = true;
@@ -292,9 +302,12 @@ const onSubmitForm = () => {
           state.saving = false;
           state.saveSuccess = true;
           if (smallScreensTopTab.value == "metadata") {
-            nextTick(() => {
-              documentTitleFieldRef.value?.focus();
-            });
+            nextTick()
+              .then(() => {
+                documentTitleFieldRef.value?.focus();
+              }).catch((e) => {
+                console.error(e);
+              });
           }
         } else {
           // TODO
@@ -316,7 +329,12 @@ const onSubmitForm = () => {
               ) {
                 state.errorMessage = t("API Error: missing document title param");
                 smallScreensTopTab.value = "metadata";
-                nextTick(() => documentTitleFieldRef.value?.focus());
+                nextTick()
+                  .then(() => {
+                    documentTitleFieldRef.value?.focus()
+                  }).catch((e) => {
+                    console.error(e);
+                  });
               } else if (
                 errorResponse.response.data.invalidOrMissingParams.find(function (e) {
                   return e === "noteBody";
@@ -351,7 +369,7 @@ const onSubmitForm = () => {
     }
     api.document
       .add(document)
-      .then((successResponse) => {
+      .then(() => {
         state.loading = false;
         state.saving = false;
         router.push({
@@ -376,7 +394,12 @@ const onSubmitForm = () => {
               ) {
                 state.errorMessage = t("API Error: missing document title param");
                 smallScreensTopTab.value = "metadata";
-                nextTick(() => documentTitleFieldRef.value?.focus());
+                nextTick()
+                  .then(() => {
+                    documentTitleFieldRef.value?.focus()
+                  }).catch((e) => {
+                    console.error(e);
+                  });
               } else if (
                 errorResponse.response.data.invalidOrMissingParams.find(function (e) {
                   return e === "noteBody";
@@ -416,9 +439,12 @@ const onShowDeleteDocumentConfirmationDialog = () => {
 
 const onShowAttachmentsPicker = () => {
   rightDetailsTab.value = 'attachments';
-  nextTick(() => {
-    uploaderRef.value.pickFiles();
-  });
+  nextTick()
+    .then(() => {
+      uploaderRef.value.pickFiles();
+    }).catch((e) => {
+      console.error(e);
+    });
 }
 
 // q-uploader component event => file upload starts
