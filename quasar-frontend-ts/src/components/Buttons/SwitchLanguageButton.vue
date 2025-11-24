@@ -4,7 +4,7 @@
     <DesktopToolTip>{{ tooltip }}</DesktopToolTip>
     <q-menu fit anchor="top left" self="bottom left">
       <q-item dense clickable v-close-popup v-for="availableLanguage in availableLocales" :key="availableLanguage.value"
-        @click="onSelectLocale(availableLanguage)">
+        @click="onSelectLocale(availableLanguage.value)">
         <q-item-section>{{ availableLanguage.label }}</q-item-section>
         <q-item-section avatar v-if="availableLanguage.value === selectedLocale.value">
           <q-icon name="check" />
@@ -16,9 +16,9 @@
 
 <script setup lang="ts">
 import { computed, watch, useAttrs, ref } from "vue";
-import { usei18n } from "src/composables/usei18n";
-import { useLocalStorage } from "src/composables/useLocalStorage";
 import { useI18n } from "vue-i18n";
+import { useLocalStorage } from "src/composables/useLocalStorage";
+import { usei18n } from "src/composables/usei18n";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 
@@ -56,9 +56,11 @@ watch(
   { immediate: true }
 );
 
-function onSelectLocale(newLocale) {
-  i18n.global.locale.value = newLocale.value;
-  localStorageLocale.set(newLocale.value);
+type Locale = "en-US" | "es-ES" | "gl-GL";
+
+function onSelectLocale(newLocale: Locale) {
+  i18n.global.locale.value = newLocale;
+  localStorageLocale.set(newLocale);
 }
 
 </script>
