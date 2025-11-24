@@ -2,9 +2,9 @@
   <BaseDialog v-model="visible" @close="onClose" width="1280px" max-width="80vw">
     <template v-slot:header-left>
       <div v-if="documentTitle">{{ t("Document title")
-        }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
+      }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
           documentTitle
-          }}</router-link>
+        }}</router-link>
       </div>
       <div v-else>{{ t("Document attachments") }}</div>
     </template>
@@ -77,7 +77,7 @@ import { useAxios } from "src/composables/useAxios";
 import { useAPI } from "src/composables/useAPI";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 import { type Attachment as AttachmentInterface } from "src/types/attachment";
-import { type CustomBanner as CustomErrorBannerInterface, defaultCustomBanner } from "src/types/custom-banner";
+import { type CustomBanner as CustomBannerInterface, defaultCustomBanner } from "src/types/custom-banner";
 
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
@@ -110,7 +110,7 @@ const onFilePreview = (index: number) => {
   bus.emit("showDocumentFilePreviewDialog", { document: { id: props.documentId, title: props.documentTitle, attachments: attachments }, currentIndex: index });
 };
 
-const downloadBanner: CustomErrorBannerInterface = reactive({ ...defaultCustomBanner });
+const downloadBanner: CustomBannerInterface = reactive({ ...defaultCustomBanner });
 
 const onDownload = (url: string, fileName: string) => {
   Object.assign(downloadBanner, defaultCustomBanner);
