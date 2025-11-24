@@ -145,8 +145,8 @@ const onRefresh = (documentId: string) => {
       })
       .catch((errorResponse) => {
         state.ajaxErrors = true;
-        state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
         if (errorResponse.isAPIError) {
+          state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
           switch (errorResponse.response.status) {
             case 401:
               state.ajaxErrorMessage = "Auth session expired, requesting new...";
