@@ -78,7 +78,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.loading" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                      }}</q-badge>
+                    }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
@@ -448,7 +448,7 @@ const onShowAttachmentsPicker = () => {
 }
 
 // q-uploader component event => file upload starts
-const onUploadsStart = (e) => {
+const onUploadsStart = () => {
   state.uploading = true;
   bus.emit("showUploadingDialog", { transfers: uploaderRef.value?.files.map((file) => { return { name: file.name, size: file.size } }) });
 }
@@ -458,7 +458,7 @@ const onFileUploaded = (e) => {
   let jsonResponse = null;
   try {
     jsonResponse = JSON.parse(e.xhr.response);
-  } catch (e) { }
+  } catch (e) { console.error(e); }
   if (jsonResponse != null) {
     document.addAttachment((jsonResponse.data).id, e.files[0].name, e.files[0].size);
     bus.emit("refreshUploadingDialog.fileUploaded", { transfers: e.files.map((file) => { return { name: file.name, size: file.size } }) });
