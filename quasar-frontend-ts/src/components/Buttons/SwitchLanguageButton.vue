@@ -19,9 +19,10 @@ import { computed, useAttrs, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { useI18nStore } from "src/stores/i18n";
-import { availableSystemLocales } from "src/composables/usei18n";
+import { availableSystemLocales, autodetectLocale } from "src/composables/usei18n";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
+import i18n from "src/i18n";
 
 const { t } = useI18n();
 
@@ -48,7 +49,9 @@ const localeMappings = [
 
 const availableLocales = localeMappings.filter((l) => availableSystemLocales.includes(l.value));
 
-const selectedLocale = ref(availableLocales[0]!);
+const index = availableLocales.findIndex((l) => l.value === i18NStore.currentLocale);
+
+const selectedLocale = ref(availableLocales[index >= 0 ? index : 0]!);
 
 function onSelectLocale(newLocale: string) {
   if (i18NStore.setLocale(newLocale)) {
