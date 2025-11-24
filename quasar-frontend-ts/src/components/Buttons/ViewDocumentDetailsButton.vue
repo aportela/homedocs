@@ -8,7 +8,6 @@
 </template>
 
 <script setup lang="ts">
-
 import { useI18n } from "vue-i18n";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
@@ -17,32 +16,18 @@ const { t } = useI18n();
 
 const emit = defineEmits(['click'])
 
-defineProps({
-  disable: {
-    type: Boolean,
-    required: false,
-    default: false
-  },
-  label: {
-    type: String,
-    required: true
-  },
-  count: {
-    type: Number,
-    required: false,
-    default: 0,
-    validator(value: number) {
-      return (value >= 0);
-    }
-  },
-  toolTip: {
-    type: String,
-    required: false,
-  }
+interface ViewDocumentDetailsButtonProps {
+  disable?: boolean;
+  label: string;
+  count: number;
+  toolTip?: string | null;
+};
+
+withDefaults(defineProps<ViewDocumentDetailsButtonProps>(), {
+  disable: false
 });
 
 const onClick = (e: Event) => {
   emit("click", e);
 }
-
 </script>
