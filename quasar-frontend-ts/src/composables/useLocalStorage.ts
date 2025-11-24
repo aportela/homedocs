@@ -1,5 +1,5 @@
 import { LocalStorage } from "quasar";
-import { LOCAL_STORAGE_NAMESPACE, DEFAULT_LOCALE } from "src/constants";
+import { LOCAL_STORAGE_NAMESPACE } from "src/constants";
 
 export type StorageValue = string | number | boolean | null | object;
 
@@ -41,7 +41,7 @@ export function useLocalStorage() {
   const authJWT = createStorageEntry<string | null>("authJWT", null);
   const email = createStorageEntry<string | null>("email", null);
   const darkMode = createStorageEntry<boolean>("darkMode", false);
-  const locale = createStorageEntry<string>("locale", DEFAULT_LOCALE);
+  const locale = createStorageEntry<string | null>("locale", null);
 
   const alwaysOpenUploadDialog = createStorageEntry<boolean>(
     "alwaysOpenUploadDialog",
