@@ -65,6 +65,7 @@ const state: State = reactive({
 });
 
 const tags = reactive<Array<string>>([]);
+
 const hasTags = computed(() => tags.length > 0);
 
 const onRefresh = () => {
