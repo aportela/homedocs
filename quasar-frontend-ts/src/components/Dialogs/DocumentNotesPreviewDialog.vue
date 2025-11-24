@@ -2,23 +2,25 @@
   <BaseDialog v-model="visible" @close="onClose" width="1280px" max-width="80vw">
     <template v-slot:header-left>
       <div v-if="documentTitle">{{ t("Document title")
-      }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
+        }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
           documentTitle
-        }}</router-link>
+          }}</router-link>
       </div>
       <div v-else>{{ t("Document notes") }}</div>
     </template>
     <template v-slot:header-right>
-      <q-chip size="md" square class="gt-sm theme-default-q-chip shadow-1" v-if="!state.loading && !state.loadingError">
+      <q-chip size="md" square class="gt-sm theme-default-q-chip shadow-1"
+        v-if="!state.ajaxRunning && !state.ajaxErrors">
         <q-avatar class="theme-default-q-avatar">{{ notes.length }}</q-avatar>
         {{ t("Total notes", { count: notes.length }) }}
       </q-chip>
     </template>
     <template v-slot:body>
       <div class="q-pt-none scroll notes-scrolled-container">
-        <div v-if="state.loading"></div>
-        <div v-else-if="state.loadingError">
-          <CustomErrorBanner :text="state.errorMessage || 'Error loading data'" :api-error="state.apiError">
+        <div v-if="state.ajaxRunning"></div>
+        <div v-else-if="state.ajaxErrors">
+          <CustomErrorBanner :text="state.ajaxErrorMessage || 'Error loading data'"
+            :api-error="state.ajaxAPIErrorDetails">
           </CustomErrorBanner>
         </div>
         <div v-else-if="!hasNotes">
@@ -51,8 +53,8 @@ import { date } from "quasar";
 import { useBus } from "src/composables/useBus";
 import { useFormatDates } from "src/composables/useFormatDates"
 import { useAPI } from "src/composables/useAPI";
-import type { APIErrorDetails as APIErrorDetailsInterface } from "src/types/api-error-details";
-
+import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
+import { type Note as NoteInterface } from "src/types/note";
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
@@ -77,68 +79,46 @@ const emit = defineEmits(['close']);
 
 const visible = ref(true);
 
-interface State {
-  loading: boolean,
-  loadingError: boolean,
-  errorMessage: string | null,
-  apiError: APIErrorDetailsInterface | null
-};
+const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-const state: State = reactive({
-  loading: false,
-  loadingError: false,
-  errorMessage: null,
-  apiError: null
-});
-
-interface Note {
-  id: string;
-  body: string;
-  createdOnTimestamp: number;
-  createdOn: string;
-  expanded: boolean;
-};
-
-const notes = reactive<Array<Note>>([]);
+const notes = reactive<Array<NoteInterface>>([]);
 
 const hasNotes = computed(() => notes?.length > 0);
 
 const onRefresh = (documentId: string) => {
-  if (!state.loading) {
-    state.loading = true;
-    state.loadingError = false;
-    state.errorMessage = null;
-    state.apiError = null;
+  if (!state.ajaxRunning) {
+    Object.assign(state, defaultAjaxState);
+    state.ajaxRunning = true;
     api.document
       .getNotes(documentId)
       .then((successResponse) => {
         notes.length = 0;
-        notes.push(...successResponse.data.notes.map((note: Note) => {
+        notes.push(...successResponse.data.notes.map((note: NoteInterface) => {
           note.createdOn = date.formatDate(note.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
           note.expanded = false;
           return (note);
         }));
-        state.loading = false;
       })
       .catch((errorResponse) => {
-        state.loadingError = true;
+        state.ajaxErrors = true;
         if (errorResponse.isAPIError) {
+          state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
           switch (errorResponse.response.status) {
             case 401:
-              state.apiError = errorResponse.customAPIErrorDetails;
-              state.errorMessage = "Auth session expired, requesting new...";
+              state.ajaxErrorMessage = "Auth session expired, requesting new...";
               bus.emit("reAuthRequired", { emitter: "DocumentNotesPreviewDialog" });
               break;
             default:
-              state.apiError = errorResponse.customAPIErrorDetails;
-              state.errorMessage = "API Error: fatal error";
+              state.ajaxErrorMessage = "API Error: fatal error";
               break;
           }
         } else {
-          state.errorMessage = `Uncaught exception: ${errorResponse}`;
+          state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
           console.error(errorResponse);
         }
-        state.loading = false;
+      })
+      .finally(() => {
+        state.ajaxRunning = false;
       });
   }
 };
@@ -159,7 +139,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   bus.off("reAuthSucess");
 });
-
 </script>
 
 <style lang="css" scoped>
