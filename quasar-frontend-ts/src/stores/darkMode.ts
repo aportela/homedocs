@@ -23,15 +23,15 @@ export const useDarkModeStore = defineStore('darkModeStore', {
     active: Dark.isActive
   }),
   getters: {
-    isActive: (state) => state.active
+    isActive(state): boolean { return state.active },
   },
   actions: {
-    set(active: boolean) {
+    set(active: boolean): void {
       this.active = active;
       Dark.set(this.active);
       localStorageDarkMode.set(this.active);
     },
-    toggle() {
+    toggle(): void {
       this.set(!this.active);
     }
   }
