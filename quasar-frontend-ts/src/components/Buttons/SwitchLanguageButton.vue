@@ -18,13 +18,10 @@
 import { computed, watch, useAttrs, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useLocalStorage } from "src/composables/useLocalStorage";
-import { usei18n } from "src/composables/usei18n";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 
-const { t } = useI18n();
-
-const { i18n } = usei18n();
+const { t, locale: currentLocale } = useI18n();
 
 const { locale: localStorageLocale } = useLocalStorage();
 
@@ -48,7 +45,7 @@ const availableLocales = [
 const selectedLocale = ref(availableLocales[0]!);
 
 watch(
-  () => i18n.global.locale.value,
+  () => currentLocale.value,
   (newLocale) => {
     selectedLocale.value = availableLocales.find(l => l.value === newLocale) ?? availableLocales[0]!;
     localStorageLocale.set(newLocale);
@@ -59,7 +56,7 @@ watch(
 type Locale = "en-US" | "es-ES" | "gl-GL";
 
 function onSelectLocale(newLocale: Locale) {
-  i18n.global.locale.value = newLocale;
+  currentLocale.value = newLocale;
   localStorageLocale.set(newLocale);
 }
 
