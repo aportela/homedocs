@@ -13,7 +13,11 @@ import { default as LoginForm } from "src/components/Forms/LoginForm.vue";
 const router = useRouter();
 
 const onSuccessLogin = () => {
-  router.push({ name: "index" });
+  router.push(
+    { name: "index" }
+  ).catch((e) => {
+    console.error(e);
+  });;
 };
 
 </script>
