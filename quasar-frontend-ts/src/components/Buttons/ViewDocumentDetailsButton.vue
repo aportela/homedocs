@@ -41,7 +41,7 @@ defineProps({
   }
 });
 
-const onClick = (e: MouseEvent) => {
+const onClick = (e: Event) => {
   emit("click", e);
 }
 
