@@ -108,12 +108,11 @@ import { default as CustomErrorBanner } from "src/components/Banners/CustomError
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 import { default as ViewDocumentDetailsButton } from "src/components/Buttons/ViewDocumentDetailsButton.vue";
 
-const props = defineProps({
-  modelValue: {
-    type: Boolean,
-    required: true
-  }
-});
+interface SearchDialogProps {
+  modelValue: boolean;
+};
+
+const props = defineProps<SearchDialogProps>();
 
 const router = useRouter();
 const currentRoute = useRoute();
@@ -173,7 +172,7 @@ const resultsPage = ref(searchDialogResultsPage.get());
 
 const resultsPageOptions = [1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 64, 128];
 
-const onChangeResultsPage = (value) => {
+const onChangeResultsPage = (value: number) => {
   searchDialogResultsPage.set(value);
   onSearch(text.value);
 };
@@ -185,16 +184,16 @@ const virtualListIndex = ref(0);
 
 const showNoSearchResults = ref(false);
 
-const searchTextField = ref(null);
+const searchTextField = ref<HTMLInputElement | null>(null);
 
-const boldStringMatch = (str, matchWord) => {
+const boldStringMatch = (str: string, matchWord: string) => {
   return str.replace(
     new RegExp(matchWord, "gi"),
     (match) => `<strong>${match}</strong>`
   );
 };
 
-const onSearch = (val) => {
+const onSearch = (val: string) => {
   showNoSearchResults.value = false;
   totalResults.value = 0;
   if (val && val.trim().length > 0) {
@@ -264,17 +263,25 @@ const onSearch = (val) => {
   }
 };
 
-const onVirtualScroll = (index) => {
-  virtualListIndex.value = index
+interface VirtualScrollDetails {
+  index: number;
+  from: number;
+  to: number;
+  direction: string;
+  //ref: any;
+}
+
+const onVirtualScroll = (details: VirtualScrollDetails) => {
+  virtualListIndex.value = details.index;
 };
 
-const scrollToItem = (index) => {
+const scrollToItem = (index: number) => {
   if (virtualListRef.value) {
     virtualListRef.value.scrollTo(index, "start-force");
   }
 };
 
-const onKeyDown = (event) => {
+const onKeyDown = (event: Event) => {
   if (event.key === "ArrowUp") {
     if (searchResults.length > 0) {
       if (currentSearchResultSelectedIndex.value > 0) {
