@@ -102,6 +102,7 @@ import { useBus } from "src/composables/useBus";
 import { useAPI } from "src/composables/useAPI";
 import { useFormatDates } from "src/composables/useFormatDates"
 import { useLocalStorage } from "src/composables/useLocalStorage"
+import type { APIErrorDetails as APIErrorDetailsInterface } from "src/types/api-error-details";
 
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue"
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
@@ -139,7 +140,14 @@ const visible = computed({
   }
 });
 
-const state = reactive({
+interface State {
+  loading: boolean,
+  loadingError: boolean,
+  errorMessage: string | null,
+  apiError: APIErrorDetailsInterface | null
+};
+
+const state: State = reactive({
   loading: false,
   loadingError: false,
   errorMessage: null,
