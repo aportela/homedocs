@@ -66,7 +66,6 @@ const onDelete = () => {
   api.document.
     remove(props.documentId)
     .then(() => {
-      state.ajaxRunning = false;
       deleted.value = true;
     })
     .catch((errorResponse) => {
@@ -92,6 +91,7 @@ const onDelete = () => {
         state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
         console.error(errorResponse);
       }
+    }).finally(() => {
       state.ajaxRunning = false;
     });
 }
