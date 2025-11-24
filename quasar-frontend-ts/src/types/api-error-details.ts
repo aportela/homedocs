@@ -1,14 +1,14 @@
 export interface APIErrorDetails {
   method: string;
   url: string;
-  httpCode: number | string;
+  httpCode: number;
   httpStatus: string;
   contentType: string;
-  request?: {
-    params?: {
-      query?: any | null;
-      data?: any | null;
+  request: {
+    params: {
+      query: string | null;
+      data: string | null;
     };
   };
-  response?: string;
+  response: string | null;
 }

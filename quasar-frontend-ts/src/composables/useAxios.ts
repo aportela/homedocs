@@ -70,7 +70,7 @@ axiosInstance.interceptors.response.use(
             data: error.config.data || null,
           },
         },
-        response: error.response.data,
+        response: error.response.data || null,
       };
       throw error;
     }
