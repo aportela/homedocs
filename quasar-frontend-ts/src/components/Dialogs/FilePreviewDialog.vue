@@ -71,12 +71,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, reactive, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAxios } from "src/composables/useAxios";
 import { useFileUtils } from "src/composables/useFileUtils";
-import type { Attachment } from "src/types/attachment";
-import type { Document } from "src/types/document";
+import { type Document } from "src/types/document";
+import { type CustomBanner as CustomBannerInterface, defaultCustomBanner } from "src/types/custom-banner";
 
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
@@ -120,25 +120,11 @@ const onClose = () => {
   emit('close');
 };
 
-interface DownloadBanner {
-  visible: boolean;
-  success: boolean;
-  error: boolean;
-  text: string | null;
-};
 
-const downloadBanner = <DownloadBanner>({
-  visible: false,
-  success: false,
-  error: false,
-  text: null
-});
+const downloadBanner: CustomBannerInterface = reactive({ ...defaultCustomBanner });
 
 const onPaginationChange = () => {
-  downloadBanner.visible = false;
-  downloadBanner.success = false;
-  downloadBanner.error = false;
-  downloadBanner.text = null;
+  Object.assign(downloadBanner, defaultCustomBanner);
   previewLoadingError.value = false
 };
 
@@ -151,19 +137,16 @@ const onImageLoadError = () => {
 };
 
 const onDownload = (url: string, fileName: string) => {
-  downloadBanner.visible = false;
-  downloadBanner.success = false;
-  downloadBanner.error = false;
-  downloadBanner.text = null;
+  Object.assign(downloadBanner, defaultCustomBanner);
   bgDownload(url, fileName)
     .then((successResponse) => {
       downloadBanner.success = true;
       downloadBanner.text = t("FileDownloadedMessage", { filename: successResponse.fileName, length: successResponse.length });
-      downloadBanner.visible = true;
     })
     .catch(() => {
       downloadBanner.error = true;
       downloadBanner.text = t("FileDownloadeErrorMessage", { filename: fileName });
+    }).finally(() => {
       downloadBanner.visible = true;
     });
 }
