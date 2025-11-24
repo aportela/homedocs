@@ -14,8 +14,12 @@ if (savedMode === true) {
   Dark.set("auto");
 }
 
+interface State {
+  active: boolean;
+};
+
 export const useDarkModeStore = defineStore('darkModeStore', {
-  state: () => ({
+  state: (): State => ({
     active: Dark.isActive
   }),
   getters: {
