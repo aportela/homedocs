@@ -180,17 +180,17 @@ const onRemoveAttachmentAtIndex = (index) => {
   }
 };
 
-const onPreviewAttachment = (index) => {
+const onPreviewAttachment = (index: number) => {
   emit("previewAttachmentAtIndex", index);
 };
 
-const onDownload = (url, fileName) => {
+const onDownload = (url: string, fileName: string) => {
   bgDownload(url, fileName)
-    .then((successResponse) => {
-      // TODO
+    .then(() => {
+      /* TODO */
     })
-    .catch((errorResponse) => {
-      // TODO
+    .catch(() => {
+      /* TODO */
     });
 }
 
