@@ -25,11 +25,11 @@
 </template>
 
 <script setup lang="ts">
-
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBus } from "src/composables/useBus";
 import { useAPI } from "src/composables/useAPI";
+import type { APIErrorDetails as APIErrorDetailsInterface } from "src/types/api-error-details";
 
 import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
@@ -40,24 +40,31 @@ const { t } = useI18n();
 const { api } = useAPI();
 const { bus } = useBus();
 
-const props = defineProps({
-  expanded: {
-    type: Boolean,
-    required: false,
-    default: true
-  }
+interface TagCloudWidgetProps {
+  expanded?: boolean
+};
+
+const props = withDefaults(defineProps<TagCloudWidgetProps>(), {
+  expanded: true
 });
 
 const isExpanded = ref(props.expanded);
 
-const state = reactive({
+interface State {
+  loading: boolean,
+  loadingError: boolean,
+  errorMessage: string | null,
+  apiError: APIErrorDetailsInterface | null
+};
+
+const state: State = reactive({
   loading: false,
   loadingError: false,
   errorMessage: null,
   apiError: null
 });
 
-const tags = reactive([]);
+const tags = reactive<Array<string>>([]);
 const hasTags = computed(() => tags.length > 0);
 
 const onRefresh = () => {
@@ -107,7 +114,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   bus.off("reAuthSucess");
 });
-
 </script>
 
 <style lang="css">
