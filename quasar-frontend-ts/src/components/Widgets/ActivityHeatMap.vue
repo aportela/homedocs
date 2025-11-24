@@ -22,8 +22,8 @@ import { date } from "quasar";
 import { useAPI } from "src/composables/useAPI";
 import { useBus } from "src/composables/useBus";
 import { useDarkModeStore } from "src/stores/darkMode";
-
 import { useI18nStore } from "src/stores/i18n";
+import type { APIErrorDetails as APIErrorDetailsInterface } from "src/types/api-error-details";
 
 import CalHeatmap from "cal-heatmap";
 import "cal-heatmap/cal-heatmap.css";
@@ -49,7 +49,14 @@ withDefaults(defineProps<ActivityHeatMapProps>(), {
   showNavigationButtons: true
 });
 
-const state = reactive({
+interface State {
+  loading: boolean,
+  loadingError: boolean,
+  errorMessage: string | null,
+  apiError: APIErrorDetailsInterface | null
+};
+
+const state: State = reactive({
   loading: false,
   loadingError: false,
   errorMessage: null,
@@ -66,7 +73,7 @@ const calDefaultOptions = {
 };
 
 // last 2 years
-let fromDate = (new Date(new Date().setFullYear(new Date().getFullYear() - 2)));
+const fromDate = (new Date(new Date().setFullYear(new Date().getFullYear() - 2)));
 fromDate.setDate(1);
 fromDate.setHours(0, 0, 0, 0);
 
@@ -144,7 +151,7 @@ cal.on('resize', (newW, newH, oldW, oldH) => {
 });
 */
 
-cal.on('click', (event, timestamp, value) => {
+cal.on('click', (event: Event, timestamp: number, value: number) => {
   if (value > 0) {
     router.push({
       name: "advancedSearchByFixedUpdatedOn",
