@@ -78,7 +78,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.loading" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                    }}</q-badge>
+                      }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
@@ -357,6 +357,8 @@ const onSubmitForm = () => {
         router.push({
           name: "document",
           params: { id: document.id }
+        }).catch((e) => {
+          console.error(e);
         });
       })
       .catch((errorResponse) => {

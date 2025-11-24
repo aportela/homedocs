@@ -154,9 +154,10 @@ cal.on('click', (event, timestamp, value) => {
       params: {
         fixedUpdatedOn: new Date(timestamp).toISOString().split('T')[0]
       }
+    }).catch((e) => {
+      console.error(e);
     });
-  }
-});
+  });
 
 cal.on('minDateReached', () => {
   leftButtonDisabled.value = true;

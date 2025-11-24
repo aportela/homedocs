@@ -86,6 +86,8 @@ function logout() {
       session.setJWT(null);
       router.push({
         name: "login",
+      }).catch((e) => {
+        console.error(e);
       });
     })
     .catch((errorResponse) => {
@@ -93,6 +95,8 @@ function logout() {
       session.setJWT(null);
       router.push({
         name: "login",
+      }).catch((e) => {
+        console.error(e);
       });
     });
 }
