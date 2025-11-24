@@ -19,13 +19,14 @@ import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 
 interface CustomBannerProps {
-  text: string,
+  text?: string,
   success?: boolean,
   error?: boolean,
   warning?: boolean
 };
 
 withDefaults(defineProps<CustomBannerProps>(), {
+  text: "",
   success: false,
   error: false,
   warning: false,

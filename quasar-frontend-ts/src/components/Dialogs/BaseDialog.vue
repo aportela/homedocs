@@ -46,9 +46,9 @@ const emit = defineEmits(['update:modelValue', 'show', 'close', 'confirm', 'canc
 interface BaseDialogProps {
   modelValue: boolean,
   showHeaderCloseButton?: boolean,
-  width: string | null,
-  minWidth: string | null,
-  maxWidth: string | null,
+  width?: string | null,
+  minWidth?: string | null,
+  maxWidth?: string | null,
   confirmationDialog?: boolean,
   disable?: boolean,
   persistent?: boolean,
