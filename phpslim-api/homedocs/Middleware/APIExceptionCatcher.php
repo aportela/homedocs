@@ -49,6 +49,7 @@ class APIExceptionCatcher
         }
 
         $payload = json_encode([
+            'APIError' => true,
             'exception' => $exception,
             'status' => 500
         ]);
@@ -80,17 +81,17 @@ class APIExceptionCatcher
 
             return $requestHandler->handle($serverRequest);
         } catch (\HomeDocs\Exception\InvalidParamsException $e) {
-            return $this->handleException($e, 400, ['invalidOrMissingParams' => explode(",", $e->getMessage())]);
+            return $this->handleException($e, 400, ['APIError' => true, 'invalidOrMissingParams' => explode(",", $e->getMessage())]);
         } catch (\HomeDocs\Exception\AlreadyExistsException $e) {
-            return $this->handleException($e, 409, ['invalidOrMissingParams' => explode(",", $e->getMessage())]);
+            return $this->handleException($e, 409, ['APIError' => true, 'invalidOrMissingParams' => explode(",", $e->getMessage())]);
         } catch (\HomeDocs\Exception\UnauthorizedException $e) {
-            return $this->handleException($e, 401, []);
+            return $this->handleException($e, 401, ['APIError' => true,]);
         } catch (\HomeDocs\Exception\AccessDeniedException $e) {
-            return $this->handleException($e, 403, []);
+            return $this->handleException($e, 403, ['APIError' => true,]);
         } catch (\HomeDocs\Exception\UploadException $e) {
-            return $this->handleException($e, $e->getCode(), []);
+            return $this->handleException($e, $e->getCode(), ['APIError' => true,]);
         } catch (\HomeDocs\Exception\NotFoundException $e) {
-            return $this->handleException($e, 404, ['keyNotFound' => $e->getMessage()]);
+            return $this->handleException($e, 404, ['APIError' => true, 'keyNotFound' => $e->getMessage()]);
         } catch (\Throwable $e) {
             return $this->handleGenericException($e);
         }
