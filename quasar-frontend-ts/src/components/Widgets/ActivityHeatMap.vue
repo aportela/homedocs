@@ -19,10 +19,11 @@ import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { date } from "quasar";
 
-import { usei18n } from "src/composables/usei18n";
 import { useAPI } from "src/composables/useAPI";
 import { useBus } from "src/composables/useBus";
-import { useDarkMode } from 'src/composables/useDarkMode';
+import { useDarkModeStore } from "src/stores/darkMode";
+
+import { useI18nStore } from "src/stores/i18n";
 
 import CalHeatmap from "cal-heatmap";
 import "cal-heatmap/cal-heatmap.css";
@@ -32,22 +33,20 @@ import CalendarLabel from "cal-heatmap/plugins/CalendarLabel";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
 
 const router = useRouter();
-
 const { t } = useI18n();
-
-const { isDarkModeActive } = useDarkMode();
-const { i18n } = usei18n();
+const darkModeStore = useDarkModeStore();
 const { api } = useAPI();
 const { bus } = useBus();
+const i18NStore = useI18nStore();
 
 const emit = defineEmits(['loading', 'loaded', 'error']);
 
-const props = defineProps({
-  showNavigationButtons: {
-    type: Boolean,
-    required: false,
-    default: true
-  }
+interface ActivityHeatMapProps {
+  showNavigationButtons?: boolean
+};
+
+withDefaults(defineProps<ActivityHeatMapProps>(), {
+  showNavigationButtons: true
 });
 
 const state = reactive({
@@ -60,7 +59,7 @@ const state = reactive({
 const leftButtonDisabled = ref(false);
 const rightButtonDisabled = ref(false);
 
-const currentLocale = computed(() => i18n.global.locale.value.substring(0, 2));
+const currentLocale = computed(() => i18NStore.currentLocale.substring(0, 2));
 
 const calDefaultOptions = {
   itemSelector: '#cal-heatmap',
@@ -68,7 +67,8 @@ const calDefaultOptions = {
 
 // last 2 years
 let fromDate = (new Date(new Date().setFullYear(new Date().getFullYear() - 2)));
-fromDate.setDate(1); fromDate.setHours(0, 0, 0, 0);
+fromDate.setDate(1);
+fromDate.setHours(0, 0, 0, 0);
 
 const calOptions = ref({
   date: {
@@ -92,7 +92,7 @@ const calOptions = ref({
     label: { text: 'MMM', textAlign: 'start', position: 'top' },
   },
   subDomain: { type: 'ghDay', radius: 2, width: 11, height: 11, gutter: 4 },
-  theme: isDarkModeActive() ? "dark" : "light"
+  theme: darkModeStore.isActive ? "dark" : "light"
 });
 
 const calDefaultPlugins = [
@@ -117,14 +117,11 @@ const calDefaultPlugins = [
   ],
 ];
 
-
-
 let cal = new CalHeatmap(calDefaultOptions);
 
 // UGLY-HACK
 // official dynamic cal-heatmap theme toggle is not supported (https://cal-heatmap.com/docs/options/theme)
-watch(() => isDarkModeActive(), val => {
-  console.log(val);
+watch(() => darkModeStore.isActive, () => {
   cal.destroy();
   cal = new CalHeatmap(calDefaultOptions);
   onCalRefresh();
@@ -132,7 +129,7 @@ watch(() => isDarkModeActive(), val => {
 
 // UGLY-HACK
 // day/month labels not updated on i18n changes
-watch(() => currentLocale.value, val => {
+watch(() => currentLocale.value, () => {
   cal.destroy();
   cal = new CalHeatmap(calDefaultOptions);
   onCalRefresh();
@@ -157,7 +154,8 @@ cal.on('click', (event, timestamp, value) => {
     }).catch((e) => {
       console.error(e);
     });
-  });
+  }
+});
 
 cal.on('minDateReached', () => {
   leftButtonDisabled.value = true;
@@ -175,7 +173,7 @@ cal.on('maxDateNotReached', () => {
   rightButtonDisabled.value = false;
 });
 
-const onCalRefresh = (data, scaleDomain) => {
+const onCalRefresh = (data?, scaleDomain?) => {
   if (data) {
     calOptions.value.data = data;
   }
@@ -183,7 +181,7 @@ const onCalRefresh = (data, scaleDomain) => {
     calOptions.value.scale.color.domain = scaleDomain;
   }
   calOptions.value.date.locale = currentLocale.value;
-  calOptions.value.theme = isDarkModeActive() ? "dark" : "light";
+  calOptions.value.theme = darkModeStore.isActive ? "dark" : "light";
   cal.paint(
     calOptions.value,
     calDefaultPlugins
@@ -209,7 +207,7 @@ const onRefresh = () => {
       const counts = successResponse.data.heatmap.map(d => d.count);
       //const min = Math.min(...counts);
       //const max = Math.max(...counts);
-      let scaleDomain = [...new Set(counts)];
+      const scaleDomain = [...new Set(counts)];
       scaleDomain.unshift(0);
       scaleDomain.sort(function (a, b) { return a - b; });
       onCalRefresh({
