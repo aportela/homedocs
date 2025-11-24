@@ -57,7 +57,7 @@ axiosInstance.interceptors.response.use(
           sessionStore.setJWT(null);
         }
       }
-      error.isAPIError = true;
+      error.isAPIError = error.response.headers["content-type"] == 'application/json' && error.response.data.APIError === true;
       error.customAPIErrorDetails = {
         method: error.config?.method || "N/A",
         url: error.request?.responseURL || "N/A",
