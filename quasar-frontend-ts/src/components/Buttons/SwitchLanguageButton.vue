@@ -50,7 +50,7 @@ const selectedLocale = ref(availableLocales[0]!);
 watch(
   () => i18n.global.locale.value,
   (newLocale) => {
-    selectedLocale.value = availableLocales.find((locale) => locale.value === newLocale) || availableLocales[0];
+    selectedLocale.value = availableLocales.find(l => l.value === newLocale) ?? availableLocales[0]!;
     localStorageLocale.set(newLocale);
   },
   { immediate: true }
