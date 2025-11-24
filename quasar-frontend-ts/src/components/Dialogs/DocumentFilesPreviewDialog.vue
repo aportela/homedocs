@@ -9,16 +9,18 @@
       <div v-else>{{ t("Document attachments") }}</div>
     </template>
     <template v-slot:header-right>
-      <q-chip size="md" square class="gt-sm theme-default-q-chip shadow-1" v-if="!state.loading && !state.loadingError">
+      <q-chip size="md" square class="gt-sm theme-default-q-chip shadow-1"
+        v-if="!state.ajaxRunning && !state.ajaxErrors">
         <q-avatar class="theme-default-q-avatar">{{ attachments.length }}</q-avatar>
         {{ t("Total attachments count", { count: attachments.length }) }}
       </q-chip>
     </template>
     <template v-slot:body>
       <div class="q-pt-none scroll attachments-scrolled-container">
-        <div v-if="state.loading"></div>
-        <div v-else-if="state.loadingError">
-          <CustomErrorBanner :text="state.errorMessage || 'Error loading data'" :api-error="state.apiError">
+        <div v-if="state.ajaxRunning"></div>
+        <div v-else-if="state.ajaxErrors">
+          <CustomErrorBanner :text="state.ajaxErrorMessage || 'Error loading data'"
+            :api-error="state.ajaxAPIErrorDetails">
           </CustomErrorBanner>
         </div>
         <div v-else-if="!hasAttachments">
@@ -41,12 +43,12 @@
                       }})</q-item-label>
                   </div>
                   <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col-xs-12">
-                    <q-btn align="left" size="md" color="primary" class="q-mt-sm full-width" :disable="state.loading"
-                      icon="save" :label="t('Download')" no-caps
+                    <q-btn align="left" size="md" color="primary" class="q-mt-sm full-width"
+                      :disable="state.ajaxRunning" icon="save" :label="t('Download')" no-caps
                       @click.stop.prevent="onDownload(attachment.url, attachment.name)" :href="attachment.url" />
                     <q-btn align="left" size="md" color="primary" class="q-mt-sm full-width"
-                      v-if="allowPreview(attachment.name)" :disable="state.loading" icon="preview" :label="t('Preview')"
-                      no-caps @click.stop.prevent="onFilePreview(index)" />
+                      v-if="allowPreview(attachment.name)" :disable="state.ajaxRunning" icon="preview"
+                      :label="t('Preview')" no-caps @click.stop.prevent="onFilePreview(index)" />
                   </div>
                 </div>
               </q-item-section>
@@ -73,8 +75,9 @@ import { useFormatDates } from "src/composables/useFormatDates"
 import { useFileUtils } from "src/composables/useFileUtils"
 import { useAxios } from "src/composables/useAxios";
 import { useAPI } from "src/composables/useAPI";
-import type { APIErrorDetails as APIErrorDetailsInterface } from "src/types/api-error-details";
-import type { Attachment } from "src/types/attachment";
+import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
+import { type Attachment as AttachmentInterface } from "src/types/attachment";
+import { type CustomBanner as CustomErrorBannerInterface, defaultCustomBanner } from "src/types/custom-banner";
 
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
@@ -98,46 +101,19 @@ const emit = defineEmits(['close']);
 
 const visible = ref(true);
 
-interface State {
-  loading: boolean,
-  loadingError: boolean,
-  errorMessage: string | null,
-  apiError: APIErrorDetailsInterface | null
-};
+const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-const state: State = reactive({
-  loading: false,
-  loadingError: false,
-  errorMessage: null,
-  apiError: null
-});
-
-const attachments = reactive<Array<Attachment>>([]);
-
+const attachments = reactive<Array<AttachmentInterface>>([]);
 const hasAttachments = computed(() => attachments?.length > 0);
 
 const onFilePreview = (index: number) => {
   bus.emit("showDocumentFilePreviewDialog", { document: { id: props.documentId, title: props.documentTitle, attachments: attachments }, currentIndex: index });
 };
 
-interface DownloadBanner {
-  visible: boolean;
-  success: boolean,
-  error: boolean,
-  text: string | null
-};
-const downloadBanner: DownloadBanner = reactive({
-  visible: false,
-  success: false,
-  error: false,
-  text: null
-});
+const downloadBanner: CustomErrorBannerInterface = reactive({ ...defaultCustomBanner });
 
 const onDownload = (url: string, fileName: string) => {
-  downloadBanner.visible = false;
-  downloadBanner.success = false;
-  downloadBanner.error = false;
-  downloadBanner.text = null;
+  Object.assign(downloadBanner, defaultCustomBanner);
   bgDownload(url, fileName)
     .then((successResponse) => {
       downloadBanner.success = true;
@@ -152,43 +128,39 @@ const onDownload = (url: string, fileName: string) => {
 }
 
 const onRefresh = (documentId: string) => {
-  if (!state.loading) {
-    state.loading = true;
-    state.loadingError = false;
-    state.errorMessage = null;
-    state.apiError = null;
+  if (!state.ajaxRunning) {
+    Object.assign(state, defaultAjaxState);
+    state.ajaxRunning = true;
     api.document
       .getAttachments(documentId)
       .then((successResponse) => {
         attachments.length = 0;
-        attachments.push(...successResponse.data.attachments.map((attachment: Attachment) => {
+        attachments.push(...successResponse.data.attachments.map((attachment: AttachmentInterface) => {
           attachment.createdOn = date.formatDate(attachment.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
           attachment.humanSize = format.humanStorageSize(attachment.size);
           attachment.url = "api3/attachment/" + attachment.id;
-          console.log(attachment);
           return (attachment);
         }));
-        state.loading = false;
+        state.ajaxRunning = false;
       })
       .catch((errorResponse) => {
-        state.loadingError = true;
+        state.ajaxErrors = true;
+        state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
         if (errorResponse.isAPIError) {
           switch (errorResponse.response.status) {
             case 401:
-              state.apiError = errorResponse.customAPIErrorDetails;
-              state.errorMessage = "Auth session expired, requesting new...";
+              state.ajaxErrorMessage = "Auth session expired, requesting new...";
               bus.emit("reAuthRequired", { emitter: "DocumentFilesPreviewDialog" });
               break;
             default:
-              state.apiError = errorResponse.customAPIErrorDetails;
-              state.errorMessage = "API Error: fatal error";
+              state.ajaxErrorMessage = "API Error: fatal error";
               break;
           }
         } else {
-          state.errorMessage = `Uncaught exception: ${errorResponse}`;
+          state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
           console.error(errorResponse);
         }
-        state.loading = false;
+        state.ajaxRunning = false;
       });
   }
 };
@@ -209,7 +181,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   bus.off("reAuthSucess");
 });
-
 </script>
 
 <style lang="css" scoped>
