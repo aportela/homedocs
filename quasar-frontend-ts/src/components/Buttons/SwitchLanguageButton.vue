@@ -15,15 +15,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch, useAttrs, ref } from "vue";
+import { computed, useAttrs, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useLocalStorage } from "src/composables/useLocalStorage";
+
+import { useI18nStore } from "src/stores/i18n";
+import { availableSystemLocales } from "src/composables/usei18n";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 
-const { t, locale: currentLocale } = useI18n();
+const { t } = useI18n();
 
-const { locale: localStorageLocale } = useLocalStorage();
+const { locale: i18nInstanceCurrentLocale } = useI18n();
+
+const i18NStore = useI18nStore();
 
 const attrs = useAttrs();
 
@@ -36,28 +40,22 @@ withDefaults(defineProps<SwitchLanguageButtonProps>(), {
 
 const tooltip = computed(() => t("Switch language"));
 
-const availableLocales = [
+const localeMappings = [
   { shortLabel: "EN", label: "English", value: "en-US" },
   { shortLabel: "ES", label: "Español", value: "es-ES" },
   { shortLabel: "GL", label: "Galego", value: "gl-GL" },
 ];
 
+const availableLocales = localeMappings.filter((l) => availableSystemLocales.includes(l.value));
+
 const selectedLocale = ref(availableLocales[0]!);
 
-watch(
-  () => currentLocale.value,
-  (newLocale) => {
+function onSelectLocale(newLocale: string) {
+  if (i18NStore.setLocale(newLocale)) {
+    i18nInstanceCurrentLocale.value = i18NStore.currentLocale;
     selectedLocale.value = availableLocales.find(l => l.value === newLocale) ?? availableLocales[0]!;
-    localStorageLocale.set(newLocale);
-  },
-  { immediate: true }
-);
-
-type Locale = "en-US" | "es-ES" | "gl-GL";
-
-function onSelectLocale(newLocale: Locale) {
-  currentLocale.value = newLocale;
-  localStorageLocale.set(newLocale);
+  } else {
+    console.error("Invalid locale", newLocale)
+  }
 }
-
 </script>
