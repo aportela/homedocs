@@ -75,6 +75,8 @@ import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAxios } from "src/composables/useAxios";
 import { useFileUtils } from "src/composables/useFileUtils";
+import type { Attachment } from "src/types/attachment";
+import type { Document } from "src/types/document";
 
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
@@ -86,26 +88,6 @@ const emit = defineEmits(['close']);
 const { bgDownload } = useAxios();
 const { allowPreview, isImage, isAudio, isPDF } = useFileUtils();
 const previewLoadingError = ref(false);
-
-// TODO share common model on /types/
-interface Attachment {
-  id: string;
-  name: string;
-  size: number;
-  hash: string;
-  humanSize: string;
-  createdOnTimestamp: number;
-  createdOn: string;
-  url: string;
-};
-
-// TODO share common model on /types/
-interface Document {
-  id: string;
-  title: string;
-  description: string | null;
-  attachments: Attachment[];
-};
 
 interface FilePreviewDialogProps {
   document: Document;

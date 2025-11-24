@@ -2,9 +2,9 @@
   <BaseDialog v-model="visible" @close="onClose" width="1280px" max-width="80vw">
     <template v-slot:header-left>
       <div v-if="documentTitle">{{ t("Document title")
-        }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
+      }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
           documentTitle
-          }}</router-link>
+        }}</router-link>
       </div>
       <div v-else>{{ t("Document attachments") }}</div>
     </template>
@@ -74,6 +74,7 @@ import { useFileUtils } from "src/composables/useFileUtils"
 import { useAxios } from "src/composables/useAxios";
 import { useAPI } from "src/composables/useAPI";
 import type { APIErrorDetails as APIErrorDetailsInterface } from "src/types/api-error-details";
+import type { Attachment } from "src/types/attachment";
 
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
@@ -110,17 +111,6 @@ const state: State = reactive({
   errorMessage: null,
   apiError: null
 });
-
-interface Attachment {
-  id: string;
-  name: string;
-  size: number;
-  hash: string;
-  humanSize: string;
-  createdOnTimestamp: number;
-  createdOn: string;
-  url: string;
-};
 
 const attachments = reactive<Array<Attachment>>([]);
 
