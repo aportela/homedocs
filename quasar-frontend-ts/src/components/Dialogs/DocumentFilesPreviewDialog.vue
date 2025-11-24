@@ -2,9 +2,9 @@
   <BaseDialog v-model="visible" @close="onClose" width="1280px" max-width="80vw">
     <template v-slot:header-left>
       <div v-if="documentTitle">{{ t("Document title")
-      }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
+        }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
           documentTitle
-        }}</router-link>
+          }}</router-link>
       </div>
       <div v-else>{{ t("Document attachments") }}</div>
     </template>
@@ -118,11 +118,11 @@ const onDownload = (url: string, fileName: string) => {
     .then((successResponse) => {
       downloadBanner.success = true;
       downloadBanner.text = t("FileDownloadedMessage", { filename: successResponse.fileName, length: format.humanStorageSize(successResponse.length) });
-      downloadBanner.visible = true;
     })
     .catch(() => {
       downloadBanner.error = true;
       downloadBanner.text = t("FileDownloadeErrorMessage", { filename: fileName });
+    }).finally(() => {
       downloadBanner.visible = true;
     });
 }
@@ -141,7 +141,6 @@ const onRefresh = (documentId: string) => {
           attachment.url = "api3/attachment/" + attachment.id;
           return (attachment);
         }));
-        state.ajaxRunning = false;
       })
       .catch((errorResponse) => {
         state.ajaxErrors = true;
@@ -160,6 +159,7 @@ const onRefresh = (documentId: string) => {
           state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
           console.error(errorResponse);
         }
+      }).finally(() => {
         state.ajaxRunning = false;
       });
   }
