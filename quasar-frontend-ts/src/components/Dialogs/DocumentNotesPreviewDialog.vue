@@ -51,6 +51,7 @@ import { date } from "quasar";
 import { useBus } from "src/composables/useBus";
 import { useFormatDates } from "src/composables/useFormatDates"
 import { useAPI } from "src/composables/useAPI";
+import type { APIErrorDetails as APIErrorDetailsInterface } from "src/types/api-error-details";
 
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
@@ -62,83 +63,83 @@ const { timeAgo } = useFormatDates();
 const { api } = useAPI();
 const { bus } = useBus();
 
-const props = defineProps({
-  documentId: {
-    type: String,
-    required: true,
-  },
-  documentTitle: {
-    type: String,
-    required: false,
-    default: ""
-  },
-  maxLines: {
-    type: Number,
-    required: false,
-    default: 2,
-    validator(value) {
-      return (value > 0);
-    }
-  }
+interface DocumentFilesPreviewDialogProps {
+  documentId: string;
+  documentTitle?: string;
+  maxLines?: number;
+};
+
+const props = withDefaults(defineProps<DocumentFilesPreviewDialogProps>(), {
+  maxLines: 2
 });
 
 const emit = defineEmits(['close']);
 
 const visible = ref(true);
 
-const state = reactive({
+interface State {
+  loading: boolean,
+  loadingError: boolean,
+  errorMessage: string | null,
+  apiError: APIErrorDetailsInterface | null
+};
+
+const state: State = reactive({
   loading: false,
   loadingError: false,
   errorMessage: null,
   apiError: null
 });
 
-const notes = reactive([]);
+interface Note {
+  id: string;
+  body: string;
+  createdOnTimestamp: number;
+  createdOn: string;
+  expanded: boolean;
+};
+
+const notes = reactive<Array<Note>>([]);
 
 const hasNotes = computed(() => notes?.length > 0);
 
-const onRefresh = (documentId) => {
-  if (documentId) {
-    if (!state.loading) {
-      state.loading = true;
-      state.loadingError = false;
-      state.errorMessage = null;
-      state.apiError = null;
-      api.document
-        .getNotes(documentId)
-        .then((successResponse) => {
-          notes.length = 0;
-          notes.push(...successResponse.data.notes.map((note) => {
-            note.createdOn = date.formatDate(note.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
-            note.expanded = false;
-            return (note);
-          }));
-          state.loading = false;
-        })
-        .catch((errorResponse) => {
-          state.loadingError = true;
-          if (errorResponse.isAPIError) {
-            switch (errorResponse.response.status) {
-              case 401:
-                state.apiError = errorResponse.customAPIErrorDetails;
-                state.errorMessage = "Auth session expired, requesting new...";
-                bus.emit("reAuthRequired", { emitter: "DocumentNotesPreviewDialog" });
-                break;
-              default:
-                state.apiError = errorResponse.customAPIErrorDetails;
-                state.errorMessage = "API Error: fatal error";
-                break;
-            }
-          } else {
-            state.errorMessage = `Uncaught exception: ${errorResponse}`;
-            console.error(errorResponse);
+const onRefresh = (documentId: string) => {
+  if (!state.loading) {
+    state.loading = true;
+    state.loadingError = false;
+    state.errorMessage = null;
+    state.apiError = null;
+    api.document
+      .getNotes(documentId)
+      .then((successResponse) => {
+        notes.length = 0;
+        notes.push(...successResponse.data.notes.map((note: Note) => {
+          note.createdOn = date.formatDate(note.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
+          note.expanded = false;
+          return (note);
+        }));
+        state.loading = false;
+      })
+      .catch((errorResponse) => {
+        state.loadingError = true;
+        if (errorResponse.isAPIError) {
+          switch (errorResponse.response.status) {
+            case 401:
+              state.apiError = errorResponse.customAPIErrorDetails;
+              state.errorMessage = "Auth session expired, requesting new...";
+              bus.emit("reAuthRequired", { emitter: "DocumentNotesPreviewDialog" });
+              break;
+            default:
+              state.apiError = errorResponse.customAPIErrorDetails;
+              state.errorMessage = "API Error: fatal error";
+              break;
           }
-          state.loading = false;
-        });
-    }
-  } else {
-    // TODO
-    state.loadingError = true;
+        } else {
+          state.errorMessage = `Uncaught exception: ${errorResponse}`;
+          console.error(errorResponse);
+        }
+        state.loading = false;
+      });
   }
 };
 
@@ -147,10 +148,10 @@ const onClose = () => {
 };
 
 onMounted(() => {
-  onRefresh(props.documentId || null);
+  onRefresh(props.documentId);
   bus.on("reAuthSucess", (msg) => {
     if (msg.to?.includes("DocumentNotesPreviewDialog")) {
-      onRefresh(props.documentId || null);
+      onRefresh(props.documentId);
     }
   });
 });
