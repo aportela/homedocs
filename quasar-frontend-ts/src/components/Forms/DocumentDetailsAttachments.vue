@@ -72,6 +72,7 @@ import { useAPI } from "src/composables/useAPI";
 import { useBus } from "src/composables/useBus";
 import { useFileUtils } from "src/composables/useFileUtils"
 import { useDocument } from "src/composables/useDocument"
+import type { APIErrorDetails as APIErrorDetailsInterface } from "src/types/api-error-details";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
@@ -104,7 +105,14 @@ const props = defineProps({
   }
 });
 
-const state = reactive({
+interface State {
+  loading: boolean,
+  loadingError: boolean,
+  errorMessage: string | null,
+  apiError: APIErrorDetailsInterface | null
+};
+
+const state: State = reactive({
   loading: false,
   loadingError: false,
   errorMessage: null,
@@ -128,7 +136,7 @@ const hasAttachments = computed(() => attachments.value?.length > 0);
 
 const searchText = ref(null);
 
-const onSearchTextChanged = (text) => {
+const onSearchTextChanged = (text: string | null) => {
   if (text) {
     const regex = new RegExp(escapeRegExp(text), "i");
     hiddenIds.value = attachments.value?.filter(attachment => !attachment.name?.match(regex)).map(attachment => attachment.id);
@@ -142,7 +150,7 @@ const onAddAttachment = () => {
   emit("addAttachment");
 };
 
-const onRemoveAttachmentAtIndex = (index) => {
+const onRemoveAttachmentAtIndex = (index: number) => {
   // orphaned elements are uploaded to server, but not associated (until document saved)
   // so we must remove them
   if (attachments.value[index].orphaned) {
