@@ -33,6 +33,7 @@ import { useI18n } from "vue-i18n";
 import { useBus } from "src/composables/useBus";
 import { useAPI } from "src/composables/useAPI";
 
+import type { APIErrorDetails as APIErrorDetailsInterface } from "src/types/api-error-details";
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue"
@@ -55,10 +56,18 @@ const props = defineProps({
 
 const visible = ref(true);
 
-const state = reactive({
+interface State {
+  loading: boolean;
+  loadingError: boolean;
+  errorMessage: string;
+  apiError: APIErrorDetailsInterface | null;
+  deleted: boolean;
+};
+
+const state: State = reactive({
   loading: false,
   loadingError: false,
-  errorMessage: null,
+  errorMessage: "",
   apiError: null,
   deleted: false
 });
@@ -67,11 +76,11 @@ const state = reactive({
 const onDelete = () => {
   state.loading = true;
   state.loadingError = false;
-  state.errorMessage = null;
+  state.errorMessage = "";
   state.apiError = null;
   api.document.
     remove(props.documentId)
-    .then((successResponse) => {
+    .then(() => {
       state.loading = false;
       state.deleted = true;
     })
