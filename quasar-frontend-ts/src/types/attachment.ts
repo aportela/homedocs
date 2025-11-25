@@ -7,5 +7,4 @@ export interface Attachment {
   createdOnTimestamp: number;
   createdOn: string;
   createdOnTimeAgo: string;
-  url: string;
 };
