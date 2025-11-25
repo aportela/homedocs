@@ -16,13 +16,13 @@
       </q-item-section>
     </q-item>
     <q-separator class="q-my-md" />
-    <CustomErrorBanner v-if="state.loadingError && state.errorMessage" :text="state.errorMessage"
-      :api-error="state.apiError" class="q-mt-lg">
+    <CustomErrorBanner v-if="state.ajaxErrors && state.ajaxErrorMessage" :text="state.ajaxErrorMessage"
+      :api-error="state.ajaxAPIErrorDetails" class="q-mt-lg">
     </CustomErrorBanner>
     <div v-if="hasAttachments" class="q-list-attachments-container scroll">
       <div v-for="attachment, attachmentIndex in attachments" :key="attachment.id">
         <q-item class="q-pa-xs bg-transparent" v-show="!hiddenIds.includes(attachment.id)" clickable
-          :href="attachment.url" @click.stop.prevent="onDownload(attachment.url, attachment.name)">
+          :href="attachment.url" @click.stop.prevent="onDownload(attachment.id, attachment.name)">
           <q-item-section class="q-mx-sm">
             <q-item-label>
               {{ t("Filename: ") }} {{ attachment.name }}
@@ -31,7 +31,7 @@
               {{ t("Size: ") }}{{ format.humanStorageSize(attachment.size) }}
             </q-item-label>
             <q-item-label caption>
-              {{ t("Uploaded on: ") }}{{ attachment.creationDate }} ({{ attachment.creationDateTimeAgo }})
+              {{ t("Uploaded on: ") }}{{ attachment.createdOn }} ({{ attachment.createdOnTimeAgo }})
             </q-item-label>
           </q-item-section>
           <q-item-section side middle class="q-mr-sm q-item-section-attachment-actions">
@@ -72,7 +72,9 @@ import { useAPI } from "src/composables/useAPI";
 import { useBus } from "src/composables/useBus";
 import { useFileUtils } from "src/composables/useFileUtils"
 import { useDocument } from "src/composables/useDocument"
-import type { APIErrorDetails as APIErrorDetailsInterface } from "src/types/api-error-details";
+import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
+import { type Attachment as AttachmentInterface } from "src/types/attachment";
+import { getURL as getAttachmentURL } from "src/composables/useAttachments";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
@@ -89,37 +91,18 @@ const { escapeRegExp } = useDocument();
 
 const emit = defineEmits(['update:modelValue', 'addAttachment', 'previewAttachmentAtIndex',]);
 
-const props = defineProps({
-  modelValue: {
-    type: Array,
-    required: false,
-    default: () => [],
-    validator(value) {
-      return Array.isArray(value);
-    }
-  },
-  disable: {
-    type: Boolean,
-    required: false,
-    default: false
-  }
-});
-
-interface State {
-  loading: boolean,
-  loadingError: boolean,
-  errorMessage: string | null,
-  apiError: APIErrorDetailsInterface | null
+interface DocumentDetailsAttachmentsProps {
+  modelValue: AttachmentInterface[];
+  disable: boolean;
 };
 
-const state: State = reactive({
-  loading: false,
-  loadingError: false,
-  errorMessage: null,
-  apiError: null
+const props = withDefaults(defineProps<DocumentDetailsAttachmentsProps>(), {
+  disable: false
 });
 
-const isDisabled = computed(() => props.disable || state.loading);
+const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
+
+const isDisabled = computed(() => props.disable || state.ajaxRunning);
 
 const attachments = computed({
   get() {
@@ -130,19 +113,18 @@ const attachments = computed({
   }
 });
 
-const hiddenIds = ref([]);
+const hiddenIds = reactive<Array<string>>([]);
 
 const hasAttachments = computed(() => attachments.value?.length > 0);
 
 const searchText = ref(null);
 
-const onSearchTextChanged = (text: string | null) => {
-  if (text) {
+const onSearchTextChanged = (text: string | number | null) => {
+  hiddenIds.length = 0;
+  if (text && attachments.value) {
     const regex = new RegExp(escapeRegExp(text), "i");
-    hiddenIds.value = attachments.value?.filter(attachment => !attachment.name?.match(regex)).map(attachment => attachment.id);
+    hiddenIds.push(...attachments.value.filter(attachment => !attachment.name?.match(regex)).map(attachment => attachment.id));
     // TODO: map new fragment with bold ?
-  } else {
-    hiddenIds.value = [];
   }
 };
 
@@ -192,8 +174,8 @@ const onPreviewAttachment = (index: number) => {
   emit("previewAttachmentAtIndex", index);
 };
 
-const onDownload = (url: string, fileName: string) => {
-  bgDownload(url, fileName)
+const onDownload = (attachmentId: string, fileName: string) => {
+  bgDownload(getAttachmentURL(attachmentId), fileName)
     .then(() => {
       /* TODO */
     })
