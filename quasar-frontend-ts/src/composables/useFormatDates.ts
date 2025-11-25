@@ -1,13 +1,12 @@
 import { date } from "quasar";
 import { useI18n } from "vue-i18n";
 
-const getT = () => {
-  const { t } = useI18n();
-  return t;
+interface timeAgoReturn {
+  label: string;
+  count: number | null;
 };
 
-const timeAgo = (timestamp: number): string => {
-  const t = getT();
+const timeAgo = (timestamp: number): timeAgoReturn => {
   const now = Date.now();
   const diff = now - new Date(timestamp).getTime();
 
@@ -19,25 +18,24 @@ const timeAgo = (timestamp: number): string => {
   const years = Math.floor(days / 365); // WARNING: NOT EXACT (365 days / year)
 
   if (years > 0) {
-    return t("timeAgo.year", { count: years });
+    return { label: "timeAgo.year", count: years };
   } else if (months > 0) {
-    return t("timeAgo.month", { count: months });
+    return { label: "timeAgo.month", count: months };
   } else if (days > 0) {
-    return t("timeAgo.day", { count: days });
+    return { label: "timeAgo.day", count: days };
   } else if (hours > 0) {
-    return t("timeAgo.hour", { count: hours });
+    return { label: "timeAgo.hour", count: hours };
   } else if (minutes > 0) {
-    return t("timeAgo.minute", { count: minutes });
+    return { label: "timeAgo.minute", count: minutes };
   } else if (seconds > 0) {
-    return t("timeAgo.second", { count: seconds });
+    return { label: "timeAgo.second", count: seconds };
   } else {
-    return t("timeAgo.now");
+    return { label: "timeAgo.now", count: null };
   }
 };
 
 const currentTimeAgo = (): string => {
-  const t = getT();
-  return t("timeAgo.now");
+  return "timeAgo.now";
 };
 
 const timestamp = (dateObj: Date): number => {
