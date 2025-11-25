@@ -52,6 +52,7 @@ import { useI18n } from "vue-i18n";
 
 import { useFormUtils } from "src/composables/useFormUtils"
 import { useDocument } from "src/composables/useDocument"
+import { type Note as NoteInterface } from "src/types/note";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 import { default as InteractiveTextFieldCustomInput } from "src/components/Forms/Fields/InteractiveTextFieldCustomInput.vue"
@@ -64,20 +65,13 @@ const { escapeRegExp, getNewNote } = useDocument();
 
 const emit = defineEmits(['update:modelValue']);
 
-const props = defineProps({
-  modelValue: {
-    type: Array,
-    required: false,
-    default: () => [],
-    validator(value) {
-      return Array.isArray(value);
-    }
-  },
-  disable: {
-    type: Boolean,
-    required: false,
-    default: false,
-  }
+interface DocumentDetailsNotesProps {
+  modelValue: NoteInterface[];
+  disable: boolean;
+};
+
+const props = withDefaults(defineProps<DocumentDetailsNotesProps>(), {
+  disable: false
 });
 
 const notes = computed({
@@ -89,19 +83,18 @@ const notes = computed({
   }
 });
 
-const hiddenIds = ref([]);
+const hiddenIds = reactive<Array<string>>([]);
 
 const hasNotes = computed(() => notes.value?.length > 0);
 
 const searchText = ref(null);
 
-const onSearchTextChanged = (text) => {
-  if (text) {
+const onSearchTextChanged = (text: string | number | null) => {
+  hiddenIds.length = 0;
+  if (text && notes.value) {
     const regex = new RegExp(escapeRegExp(text), "i");
-    hiddenIds.value = notes.value?.filter(note => !note.body?.match(regex)).map(note => note.id);
+    hiddenIds.push(...notes.value.filter(note => !note.body?.match(regex)).map(note => note.id));
     // TODO: map new fragment with bold ?
-  } else {
-    hiddenIds.value = [];
   }
 };
 
@@ -109,10 +102,9 @@ const onAddNote = () => {
   notes.value = [getNewNote(), ...notes.value];
 };
 
-const onRemoveNoteAtIndex = (index) => {
+const onRemoveNoteAtIndex = (index: number) => {
   notes.value = notes.value.filter((_, i) => i !== index);
 };
-
 </script>
 
 <style lang="css" scoped>
