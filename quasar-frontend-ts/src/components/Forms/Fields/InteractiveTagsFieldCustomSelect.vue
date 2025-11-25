@@ -37,15 +37,13 @@
 import { ref, reactive, computed, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 
-import { useBus } from "src/composables/useBus";
+import { bus } from "src/composables/useBus";
 import { api } from "src/composables/useAPI";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 import { default as BrowseByTagButton } from "src/components/Buttons/BrowseByTagButton.vue";
 
 const { t } = useI18n();
-
-const { bus } = useBus();
 
 const props = defineProps({
   startModeEditable: {

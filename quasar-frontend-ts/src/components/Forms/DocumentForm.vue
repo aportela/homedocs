@@ -78,7 +78,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.loading" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                      }}</q-badge>
+                    }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
@@ -146,7 +146,7 @@ import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { uid, useQuasar } from "quasar";
 
-import { useBus } from "src/composables/useBus";
+import { bus } from "src/composables/useBus";
 import { api } from "src/composables/useAPI";
 import { useFormUtils } from "src/composables/useFormUtils"
 import { useDocument } from "src/composables/useDocument"
@@ -165,7 +165,6 @@ import { default as DeleteDocumentConfirmationDialog } from "src/components/Dial
 const { t } = useI18n();
 const router = useRouter();
 const { screen } = useQuasar();
-const { bus } = useBus();
 const serverEnvironment = useServerEnvironmentStore();
 const { requiredFieldRules, fieldIsRequiredLabel } = useFormUtils();
 

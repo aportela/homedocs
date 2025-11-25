@@ -40,7 +40,7 @@ import { ref, reactive, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import { QInput } from "quasar";
 
-import { useBus } from "src/composables/useBus";
+import { bus } from "src/composables/useBus";
 import { api } from "src/composables/useAPI";
 import { useFormUtils } from "src/composables/useFormUtils";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
@@ -53,7 +53,6 @@ import { default as CustomErrorBanner } from "src/components/Banners/CustomError
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 
 const { t } = useI18n();
-const { bus } = useBus();
 const formUtils = useFormUtils();
 
 interface UpdateProfileFormProps {

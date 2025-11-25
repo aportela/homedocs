@@ -99,7 +99,7 @@ import { QInput, QVirtualScroll } from "quasar";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 
-import { useBus } from "src/composables/useBus";
+import { bus, onShowDocumentFiles, onShowDocumentNotes } from "src/composables/useBus";
 import { api } from "src/composables/useAPI";
 import { useFormatDates } from "src/composables/useFormatDates"
 import { useLocalStorage } from "src/composables/useLocalStorage"
@@ -127,7 +127,6 @@ const { t } = useI18n();
 
 const { fullDateTimeHuman } = useFormatDates();
 
-const { bus, onShowDocumentFiles, onShowDocumentNotes } = useBus();
 const { searchDialogResultsPage, dateTimeFormat } = useLocalStorage();
 
 const emit = defineEmits(['update:modelValue', 'close']);

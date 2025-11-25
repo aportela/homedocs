@@ -37,7 +37,7 @@ import { reactive, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import { format } from "quasar";
 
-import { useBus } from "src/composables/useBus";
+import { bus } from "src/composables/useBus";
 import { api } from "src/composables/useAPI";
 
 import ActivityHeatMap from "src/components/Widgets/ActivityHeatMap.vue";
@@ -45,7 +45,6 @@ import { default as BaseWidget } from "src/components/Widgets/BaseWidget.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
 
 const { t } = useI18n();
-const { bus } = useBus();
 
 const heatmapStats = reactive({
   loading: false,

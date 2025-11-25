@@ -14,36 +14,34 @@ export interface BusEvents {
 
 const bus = new EventBus();
 
-export function useBus() {
-  const onShowDocumentFiles = (
-    documentId: string,
-    documentTitle: string
-  ): void => {
-    bus.emit(
-      "showDocumentFilesPreviewDialog",
-      {
-        document: {
-          id: documentId,
-          title: documentTitle,
-        },
-      } as DocumentPayload
-    );
-  };
+const onShowDocumentFiles = (
+  documentId: string,
+  documentTitle: string
+): void => {
+  bus.emit(
+    "showDocumentFilesPreviewDialog",
+    {
+      document: {
+        id: documentId,
+        title: documentTitle,
+      },
+    } as DocumentPayload
+  );
+};
 
-  const onShowDocumentNotes = (
-    documentId: string | number,
-    documentTitle: string
-  ): void => {
-    bus.emit(
-      "showDocumentNotesPreviewDialog",
-      {
-        document: {
-          id: documentId,
-          title: documentTitle,
-        },
-      } as DocumentPayload
-    );
-  };
+const onShowDocumentNotes = (
+  documentId: string | number,
+  documentTitle: string
+): void => {
+  bus.emit(
+    "showDocumentNotesPreviewDialog",
+    {
+      document: {
+        id: documentId,
+        title: documentTitle,
+      },
+    } as DocumentPayload
+  );
+};
 
-  return { bus, onShowDocumentFiles, onShowDocumentNotes };
-}
+export { bus, onShowDocumentFiles, onShowDocumentNotes };

@@ -50,7 +50,7 @@
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import { date } from "quasar";
-import { useBus } from "src/composables/useBus";
+import { bus } from "src/composables/useBus";
 import { useFormatDates } from "src/composables/useFormatDates"
 import { api } from "src/composables/useAPI";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
@@ -62,7 +62,6 @@ import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue
 
 const { t } = useI18n();
 const { timeAgo } = useFormatDates();
-const { bus } = useBus();
 
 interface DocumentFilesPreviewDialogProps {
   documentId: string;

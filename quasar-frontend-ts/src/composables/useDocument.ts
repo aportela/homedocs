@@ -1,7 +1,7 @@
 import { reactive } from "vue";
 import { uid, format } from "quasar";
 
-import { useBus } from "src/composables/useBus";
+import { bus } from "src/composables/useBus";
 import { useFormatDates } from "src/composables/useFormatDates";
 import { useLocalStorage } from "./useLocalStorage";
 
@@ -11,8 +11,6 @@ import { type Note as NoteInterface } from "src/types/note";
 import { type HistoryOperation as HistoryOperationInterface } from "src/types/history-operation";
 
 export function useDocument() {
-  const { bus } = useBus();
-
   const {
     fullDateTimeHuman,
     timeAgo,

@@ -82,7 +82,7 @@
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 
-import { useBus } from "src/composables/useBus";
+import { bus, onShowDocumentFiles, onShowDocumentNotes } from "src/composables/useBus";
 import { api } from "src/composables/useAPI";
 import { useFormatDates } from "src/composables/useFormatDates"
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
@@ -95,7 +95,6 @@ import { default as ViewDocumentDetailsButton } from "src/components/Buttons/Vie
 
 const { t } = useI18n();
 const { timeAgo } = useFormatDates();
-const { bus, onShowDocumentFiles, onShowDocumentNotes } = useBus();
 
 interface RecentDocumentsWidgetProps {
   expanded?: boolean

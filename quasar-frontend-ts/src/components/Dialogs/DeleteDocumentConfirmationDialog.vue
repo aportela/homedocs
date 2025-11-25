@@ -30,7 +30,7 @@ import { ref, reactive, onMounted, onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 
-import { useBus } from "src/composables/useBus";
+import { bus } from "src/composables/useBus";
 import { api } from "src/composables/useAPI";
 
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
@@ -42,8 +42,6 @@ import { default as CustomErrorBanner } from "src/components/Banners/CustomError
 const { t } = useI18n();
 
 const emit = defineEmits(['close']);
-
-const { bus } = useBus();
 
 const router = useRouter();
 

@@ -68,7 +68,7 @@ import { useI18n } from "vue-i18n";
 import { format } from "quasar";
 
 import { bgDownload } from "src/composables/useAxios";
-import { useBus } from "src/composables/useBus";
+import { bus } from "src/composables/useBus";
 import { allowPreview } from "src/composables/useFileUtils"
 import { useDocument } from "src/composables/useDocument"
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
@@ -80,8 +80,6 @@ import { default as CustomErrorBanner } from "src/components/Banners/CustomError
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
 
 const { t } = useI18n();
-
-const { bus } = useBus();
 
 const { escapeRegExp } = useDocument();
 

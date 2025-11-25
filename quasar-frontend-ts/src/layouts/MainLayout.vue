@@ -13,7 +13,7 @@
         <q-btn type="button" no-caps no-wrap align="left" outline :label="searchButtonLabel" icon="search"
           class="full-width no-caps theme-default-q-btn" @click.prevent="dialogs.fastSearch.visible = true">
           <DesktopToolTip anchor="bottom middle" self="top middle">{{ t("Click to open fast search")
-          }}</DesktopToolTip>
+            }}</DesktopToolTip>
         </q-btn>
         <!--
         <FastSearchSelector dense class="full-width"></FastSearchSelector>
@@ -53,7 +53,7 @@ import { useI18n } from "vue-i18n";
 
 import { useFormatDates } from "src/composables/useFormatDates"
 import { useLocalStorage } from "src/composables/useLocalStorage"
-import { useBus } from "src/composables/useBus";
+import { bus } from "src/composables/useBus";
 import type { Document } from "src/types/document";
 
 import { default as SidebarDrawer } from "src/components/SidebarDrawer.vue"
@@ -75,7 +75,6 @@ const $q = useQuasar();
 
 const { t } = useI18n();
 
-const { bus } = useBus();
 const { currentTimestamp } = useFormatDates();
 
 const { alwaysOpenUploadDialog } = useLocalStorage();
