@@ -2,9 +2,9 @@
   <BaseDialog v-model="visible" @close="onClose" width="1280px" max-width="80vw">
     <template v-slot:header-left>
       <div v-if="documentTitle">{{ t("Document title")
-        }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
+      }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
           documentTitle
-          }}</router-link>
+        }}</router-link>
       </div>
       <div v-else>{{ t("Document attachments") }}</div>
     </template>
@@ -140,6 +140,7 @@ const onRefresh = (documentId: string) => {
           attachment.createdOn = date.formatDate(attachment.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
           attachment.createdOnTimeAgo = timeAgo(attachment.createdOnTimestamp);
           attachment.humanSize = format.humanStorageSize(attachment.size);
+          attachment.orphaned = false;
           return (attachment);
         }));
       })
