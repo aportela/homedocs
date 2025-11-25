@@ -26,21 +26,25 @@
       </div>
       <div class="q-pt-none">
         <q-img v-if="isImage(currentAttachment.name)" v-show="!previewLoadingError"
-          :src="currentAttachment.url + '/inline'" loading="lazy" spinner-color="white" @error="onImageLoadError"
-          alt="image preview" fit="scale-down" class="q-img-max-height q-my-md" img-class="q-mx-auto" />
+          :src="getAttachmentInlineURL(currentAttachment.id, true)" loading="lazy" spinner-color="white"
+          @error="onImageLoadError" alt="image preview" fit="scale-down" class="q-img-max-height q-my-md"
+          img-class="q-mx-auto" />
         <div v-else-if="isAudio(currentAttachment.name)">
           <p class="text-center q-my-md">
             <q-icon name="audio_file" size="128px"></q-icon>
           </p>
           <audio controls class="q-mt-md full-width">
-            <source :src="currentAttachment.url + '/inline'" type="audio/mpeg" />
+            <source :src="getAttachmentInlineURL(currentAttachment.id, true)" type="audio/mpeg" />
             {{ t("Your browser does not support the audio element") }}
           </audio>
         </div>
+        <!-- TODO-->
+        <!--
         <div v-else-if="isPDF(currentAttachment.name)" class="q-pdf-min-height">
-          <q-pdfviewer :src="currentAttachment.url + ('/inline')" type="html5"
+          <q-pdfviewer :src="getAttachmentInlineURL(currentAttachment.id, true)" type="html5"
             inner-content-class="q-pdfviewer-min-height" />
         </div>
+        -->
         <div v-else>
           <p class="text-center q-my-md">
             <q-icon name="hide_source" size="128px"></q-icon>
@@ -63,8 +67,8 @@
         </template>
       </CustomBanner>
       <q-space />
-      <q-btn color="primary" no-caps :href="currentAttachment.url" :label="t('Download')" icon="download"
-        @click.stop.prevent.stop="onDownload(currentAttachment.url + '/inline', currentAttachment.name)"
+      <q-btn color="primary" no-caps :href="getAttachmentURL(currentAttachment.id, true)" :label="t('Download')"
+        icon="download" @click.stop.prevent.stop="onDownload(currentAttachment.id, currentAttachment.name)"
         aria-label="Download file" />
     </template>
   </BaseDialog>
@@ -75,6 +79,7 @@ import { ref, reactive, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAxios } from "src/composables/useAxios";
 import { useFileUtils } from "src/composables/useFileUtils";
+import { getURL as getAttachmentURL, getInlineURL as getAttachmentInlineURL } from "src/composables/useAttachments";
 import { type Document } from "src/types/document";
 import { type CustomBanner as CustomBannerInterface, defaultCustomBanner } from "src/types/custom-banner";
 
@@ -120,7 +125,6 @@ const onClose = () => {
   emit('close');
 };
 
-
 const downloadBanner: CustomBannerInterface = reactive({ ...defaultCustomBanner });
 
 const onPaginationChange = () => {
@@ -136,9 +140,9 @@ const onImageLoadError = () => {
   downloadBanner.visible = true;
 };
 
-const onDownload = (url: string, fileName: string) => {
+const onDownload = (attachmentId: string, fileName: string) => {
   Object.assign(downloadBanner, defaultCustomBanner);
-  bgDownload(url, fileName)
+  bgDownload(getAttachmentURL(attachmentId), fileName)
     .then((successResponse) => {
       downloadBanner.success = true;
       downloadBanner.text = t("FileDownloadedMessage", { filename: successResponse.fileName, length: successResponse.length });
