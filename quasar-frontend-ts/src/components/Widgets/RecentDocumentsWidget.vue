@@ -1,6 +1,6 @@
 <template>
   <CustomExpansionWidget title="Most recent activity" icon="work_history" icon-tool-tip="Click to refresh data"
-    :on-header-icon-click="onRefresh" :loading="state.loading" :error="state.loadingError" :expanded="isExpanded"
+    :on-header-icon-click="onRefresh" :loading="state.ajaxRunning" :error="state.ajaxErrors" :expanded="isExpanded"
     @expand="isExpanded = true" @collapse="isExpanded = false">
     <template v-slot:header-extra>
       <q-chip square size="sm" color="grey-7" text-color="white">{{ t("Total document count", {
@@ -9,7 +9,7 @@
       }) }}</q-chip>
     </template>
     <template v-slot:content>
-      <q-list v-if="state.loading">
+      <q-list v-if="state.ajaxRunning">
         <div v-for="i in 4" :key="i" class="border-bottom-except-last-item">
           <q-item class="transparent-background text-color-primary q-pa-sm">
             <q-item-section top avatar class="gt-xs q-mt-lg">
@@ -38,8 +38,8 @@
           </q-item>
         </div>
       </q-list>
-      <CustomErrorBanner v-else-if="state.loadingError" :text="state.errorMessage || 'Error loading data'"
-        :api-error="state.apiError">
+      <CustomErrorBanner v-else-if="state.ajaxErrors" :text="state.ajaxErrorMessage || 'Error loading data'"
+        :api-error="state.ajaxAPIErrorDetails">
       </CustomErrorBanner>
       <q-list v-else-if="hasRecentDocuments">
         <div v-for="recentDocument in recentDocuments" :key="recentDocument.id" class="border-bottom-except-last-item">
@@ -62,11 +62,11 @@
             <q-item-section side top>
               <q-item-label caption>{{ recentDocument.lastUpdateTimeAgo }}</q-item-label>
               <ViewDocumentDetailsButton size="md" square class="min-width-9em" :count="recentDocument.attachmentCount"
-                :label="'Total attachments count'" :tool-tip="'View document attachments'" :disable="state.loading"
+                :label="'Total attachments count'" :tool-tip="'View document attachments'" :disable="state.ajaxRunning"
                 @click.stop.prevent="onShowDocumentFiles(recentDocument.id, recentDocument.title)">
               </ViewDocumentDetailsButton>
               <ViewDocumentDetailsButton size="md" square class="min-width-9em" :count="recentDocument.noteCount"
-                :label="'Total notes'" :tool-tip="'View document notes'" :disable="state.loading"
+                :label="'Total notes'" :tool-tip="'View document notes'" :disable="state.ajaxRunning"
                 @click.stop.prevent="onShowDocumentNotes(recentDocument.id, recentDocument.title)">
               </ViewDocumentDetailsButton>
             </q-item-section>
@@ -85,7 +85,7 @@ import { useI18n } from "vue-i18n";
 import { useBus } from "src/composables/useBus";
 import { useAPI } from "src/composables/useAPI";
 import { useFormatDates } from "src/composables/useFormatDates"
-import type { APIErrorDetails as APIErrorDetailsInterface } from "src/types/api-error-details";
+import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 
 import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
@@ -108,19 +108,8 @@ const props = withDefaults(defineProps<RecentDocumentsWidgetProps>(), {
 
 const isExpanded = ref(props.expanded);
 
-interface State {
-  loading: boolean,
-  loadingError: boolean,
-  errorMessage: string | null,
-  apiError: APIErrorDetailsInterface | null
-};
+const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-const state: State = reactive({
-  loading: false,
-  loadingError: false,
-  errorMessage: null,
-  apiError: null
-});
 
 interface RecentDocument {
   id: string;
@@ -138,11 +127,9 @@ const recentDocuments = reactive<Array<RecentDocument>>([]);
 const hasRecentDocuments = computed(() => recentDocuments.length > 0);
 
 const onRefresh = () => {
-  if (!state.loading) {
-    state.loading = true;
-    state.loadingError = false;
-    state.errorMessage = null;
-    state.apiError = null;
+  if (!state.ajaxRunning) {
+    Object.assign(state, defaultAjaxState);
+    state.ajaxRunning = true;
     api.document.searchRecent(16)
       .then((successResponse) => {
         recentDocuments.length = 0;
@@ -150,27 +137,26 @@ const onRefresh = () => {
           document.lastUpdateTimeAgo = timeAgo(document.lastUpdateTimestamp);
           return document;
         }));
-        state.loading = false;
       })
       .catch((errorResponse) => {
-        state.loadingError = true;
+        state.ajaxErrors = true;
         if (errorResponse.isAPIError) {
+          state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
           switch (errorResponse.response.status) {
             case 401:
-              state.apiError = errorResponse.customAPIErrorDetails;
-              state.errorMessage = "Auth session expired, requesting new...";
+              state.ajaxErrorMessage = "Auth session expired, requesting new...";
               bus.emit("reAuthRequired", { emitter: "RecentDocumentsWidget" });
               break;
             default:
-              state.apiError = errorResponse.customAPIErrorDetails;
-              state.errorMessage = "API Error: fatal error";
+              state.ajaxErrorMessage = "API Error: fatal error";
               break;
           }
         } else {
-          state.errorMessage = `Uncaught exception: ${errorResponse}`;
+          state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
           console.error(errorResponse);
         }
-        state.loading = false;
+      }).finally(() => {
+        state.ajaxRunning = false;
       });
   }
 };
