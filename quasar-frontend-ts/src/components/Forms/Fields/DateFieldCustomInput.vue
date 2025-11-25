@@ -67,26 +67,14 @@
 <script setup lang="ts">
 
 import { ref, watch, computed, onMounted, nextTick } from "vue";
-
 import { useI18n } from "vue-i18n";
+import { QInput, QPopupProxy } from 'quasar';
 
 import { useDateFilter } from "src/composables/useDateFilter"
 
 const { t } = useI18n();
 
 const emit = defineEmits(['update:modelValue'])
-
-const onFromDateSelected = () => {
-  qInputFromDatePopupProfyRef.value?.hide();
-}
-
-const onToDateSelected = () => {
-  qInputToDatePopupProfyRef.value?.hide();
-}
-
-const onFixedDateSelected = () => {
-  qInputFixedDatePopupProfyRef.value?.hide();
-}
 
 const props = defineProps({
   modelValue: {
@@ -121,13 +109,13 @@ const props = defineProps({
   }
 });
 
-const qInputFromDateRef = ref(null);
-const qInputToDateRef = ref(null);
-const qInputFixedDateRef = ref(null);
+const qInputFromDateRef = ref<QInput | null>(null);
+const qInputToDateRef = ref<QInput | null>(null);
+const qInputFixedDateRef = ref<QInput | null>(null);
 
-const qInputFromDatePopupProfyRef = ref(null);
-const qInputToDatePopupProfyRef = ref(null);
-const qInputFixedDatePopupProfyRef = ref(null);
+const qInputFromDatePopupProfyRef = ref<QPopupProxy | null>(null);
+const qInputToDatePopupProfyRef = ref<QPopupProxy | null>(null);
+const qInputFixedDatePopupProfyRef = ref<QPopupProxy | null>(null);
 
 const dateFilter = ref(props.modelValue || {});
 
@@ -145,22 +133,22 @@ watch(dateFilter.value, val => {
         switch (val.filterType.value) {
           case 7: // fixed date
             if (!val.formattedDate.fixed) {
-              qInputFixedDatePopupProfyRef.value.show();
+              qInputFixedDatePopupProfyRef.value?.show();
             }
             break;
           case 8: // from date
             if (!val.formattedDate.from) {
-              qInputFromDatePopupProfyRef.value.show();
+              qInputFromDatePopupProfyRef.value?.show();
             }
             break;
           case 9: // to date
             if (!val.formattedDate.to) {
-              qInputToDatePopupProfyRef.value.show();
+              qInputToDatePopupProfyRef.value?.show();
             }
             break;
           case 10: // between dates
             if (!val.formattedDate.from) {
-              qInputFromDatePopupProfyRef.value.show();
+              qInputFromDatePopupProfyRef.value?.show();
             }
             break;
         }
@@ -169,6 +157,18 @@ watch(dateFilter.value, val => {
       });
   }
 });
+
+const onFromDateSelected = () => {
+  qInputFromDatePopupProfyRef.value?.hide();
+}
+
+const onToDateSelected = () => {
+  qInputToDatePopupProfyRef.value?.hide();
+}
+
+const onFixedDateSelected = () => {
+  qInputFixedDatePopupProfyRef.value?.hide();
+}
 
 // TODO: focus based on dateFilter.state.denyChanges
 const focus = () => {
@@ -204,5 +204,4 @@ onMounted(() => {
     focus();
   }
 });
-
 </script>
