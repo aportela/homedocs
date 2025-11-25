@@ -48,8 +48,8 @@ const historyOperations = computed({
   get() {
     return props.modelValue;
   },
-  set(value) {
-    emit('update:modelValue', value);
+  set() {
+    /* */
   }
 });
 
