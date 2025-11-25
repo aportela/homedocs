@@ -3,8 +3,6 @@ import { default as messages } from "src/i18n";
 import { useLocalStorage } from "./useLocalStorage";
 import { DEFAULT_LOCALE } from 'src/constants';
 
-const { locale: localStorageLocale } = useLocalStorage();
-
 const availableSystemLocales: string[] = Object.keys(messages);
 
 const getMatchedLocale = (locale: string): string | null => {
@@ -21,6 +19,7 @@ const getMatchedLocale = (locale: string): string | null => {
 };
 
 const autodetectLocale = (): string => {
+  const { locale: localStorageLocale } = useLocalStorage();
   return getMatchedLocale(localStorageLocale.get() || Lang.getLocale() || "") ?? DEFAULT_LOCALE;
 };
 
