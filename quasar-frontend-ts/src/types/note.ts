@@ -5,4 +5,5 @@ export interface Note {
   createdOn: string;
   createdOnTimeAgo: string;
   expanded: boolean;
+  startOnEditMode: boolean;
 };
