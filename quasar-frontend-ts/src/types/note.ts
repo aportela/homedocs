@@ -1,6 +1,6 @@
 export interface Note {
   id: string;
-  body: string;
+  body: string | null;
   createdOnTimestamp: number;
   createdOn: string;
   createdOnTimeAgo: string;
