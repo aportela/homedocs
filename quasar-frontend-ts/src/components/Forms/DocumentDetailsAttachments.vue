@@ -129,6 +129,7 @@ const onSearchTextChanged = (text: string | number | null) => {
 };
 
 const onAddAttachment = () => {
+  // TODO: check existence on parent
   emit("addAttachment");
 };
 
@@ -136,34 +137,32 @@ const onRemoveAttachmentAtIndex = (index: number) => {
   // orphaned elements are uploaded to server, but not associated (until document saved)
   // so we must remove them
   if (attachments.value[index].orphaned) {
-    state.loading = true;
-    state.loadingError = false;
-    state.errorMessage = null;
-    state.apiError = null;
+    Object.assign(state, defaultAjaxState);
+    state.ajaxRunning = true;
     api.document.
       removeFile(attachments.value[index].id)
-      .then((successResponse) => {
-        state.loading = false;
+      .then(() => {
         attachments.value = attachments.value.filter((_, i) => i !== index);
       })
       .catch((errorResponse) => {
-        state.loadingError = true;
+        state.ajaxErrors = true;
         if (errorResponse.isAPIError) {
-          state.apiError = errorResponse.customAPIErrorDetails;
+          state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
           switch (errorResponse.response.status) {
             case 401:
-              state.errorMessage = "Auth session expired, requesting new...";
+              state.ajaxErrorMessage = "Auth session expired, requesting new...";
               bus.emit("reAuthRequired", { emitter: "DocumentDetailsAttachments.onRemoveAttachmentAtIndex" });
               break;
             default:
-              state.errorMessage = "API Error: fatal error";
+              state.ajaxErrorMessage = "API Error: fatal error";
               break;
           }
         } else {
-          state.errorMessage = `Uncaught exception: ${errorResponse}`;
+          state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
           console.error(errorResponse);
         }
-        state.loading = false;
+      }).finally(() => {
+        state.ajaxRunning = false;
       });
   } else {
     attachments.value = attachments.value.filter((_, i) => i !== index);
@@ -196,7 +195,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   bus.off("reAuthSucess");
 });
-
 </script>
 
 <style lang="css" scoped>
