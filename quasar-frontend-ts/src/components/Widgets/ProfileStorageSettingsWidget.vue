@@ -5,10 +5,10 @@
           @update:modelValue="saveDateFormat" /></p>
       <p class="q-my-md"><q-input dense outlined clearable v-model.trim="dateTimeFormatModel"
           :label="t('Datetime format')" @update:modelValue="saveDateTimeFormat" /></p>
-      <p class="q-my-none"><q-toggle v-model="visibilityCheck" checked-icon="check" color="green"
+      <p class="q-my-none"><q-toggle v-model="visibilityCheckModel" checked-icon="check" color="green"
           :label="t('Always show uploading dialog after adding files')" unchecked-icon="clear" class="q-mr-md"
           @update:modelValue="saveVisibilityCheck" /></p>
-      <p class="q-my-none"><q-toggle v-model="toolTipsCheck" checked-icon="check" color="green"
+      <p class="q-my-none"><q-toggle v-model="toolTipsCheckModel" checked-icon="check" color="green"
           :label="t('Show tooltips')" unchecked-icon="clear" class="q-mr-md" @update:modelValue="saveToolTipsCheck" />
       </p>
     </template>
@@ -25,38 +25,37 @@ import { default as BaseWidget } from "src/components/Widgets/BaseWidget.vue";
 
 const { t } = useI18n();
 
-const { alwaysOpenUploadDialog, showToolTips, dateFormat, dateTimeFormat } = useLocalStorage();
+const { alwaysOpenUploadDialog: localStorageAlwaysOpenUploadDialog, showToolTips: localStorageShowToolTips, dateFormat: localStorageDateFormat, dateTimeFormat: localStorageDateTimeFormat } = useLocalStorage();
 
-const dateFormatModel = ref(dateFormat.get());
+const dateFormatModel = ref<string>(localStorageDateFormat.get());
 
-const saveDateFormat = (val) => {
+const saveDateFormat = (val: string) => {
   if (val && val.length > 0) {
-    dateFormat.set(val);
+    localStorageDateFormat.set(val);
   } else {
-    dateFormat.remove();
+    localStorageDateFormat.remove();
   }
 };
 
-const dateTimeFormatModel = ref(dateTimeFormat.get());
+const dateTimeFormatModel = ref<string>(localStorageDateTimeFormat.get());
 
-const saveDateTimeFormat = (val) => {
+const saveDateTimeFormat = (val: string) => {
   if (val && val.length > 0) {
-    dateTimeFormat.set(val);
+    localStorageDateTimeFormat.set(val);
   } else {
-    dateTimeFormat.remove();
+    localStorageDateTimeFormat.remove();
   }
 };
 
-const visibilityCheck = ref(alwaysOpenUploadDialog.get());
+const visibilityCheckModel = ref<boolean>(localStorageAlwaysOpenUploadDialog.get());
 
-const saveVisibilityCheck = (val) => {
-  alwaysOpenUploadDialog.set(val);
+const saveVisibilityCheck = (val: boolean) => {
+  localStorageAlwaysOpenUploadDialog.set(val);
 };
 
-const toolTipsCheck = ref(showToolTips.get());
+const toolTipsCheckModel = ref<boolean>(localStorageShowToolTips.get());
 
-const saveToolTipsCheck = (val) => {
-  showToolTips.set(val);
+const saveToolTipsCheck = (val: boolean) => {
+  localStorageShowToolTips.set(val);
 };
-
 </script>
