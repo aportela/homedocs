@@ -7,8 +7,8 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="historyOperation in historyOperations" :key="historyOperation.historyOperationTimestamp">
-        <td>{{ historyOperation.creationDate }} ({{ historyOperation.creationDateTimeAgo }})</td>
+      <tr v-for="historyOperation in historyOperations" :key="historyOperation.createdOnTimestamp">
+        <td>{{ historyOperation.createdOn }} ({{ historyOperation.createdOnTimeAgo }})</td>
         <td><q-icon size="md" :name="historyOperation.icon" class="q-mr-sm"></q-icon>{{
           t(historyOperation.label) }}
         </td>
@@ -23,25 +23,18 @@
 
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-
+import { type HistoryOperation as HistoryOperationInterface } from "src/types/history-operation";
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
 
 const { t } = useI18n();
 
-const props = defineProps({
-  modelValue: {
-    type: Array,
-    required: false,
-    default: () => [],
-    validator(value) {
-      return Array.isArray(value);
-    }
-  },
-  disable: {
-    type: Boolean,
-    required: false,
-    default: false
-  }
+interface DocumentDetailsHistoryProps {
+  modelValue: HistoryOperationInterface[];
+  disable: boolean;
+};
+
+const props = withDefaults(defineProps<DocumentDetailsHistoryProps>(), {
+  disable: false
 });
 
 const historyOperations = computed({
