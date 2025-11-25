@@ -129,18 +129,17 @@ const onSearchTextChanged = (text: string | number | null) => {
 };
 
 const onAddAttachment = () => {
-  // TODO: check existence on parent
   emit("addAttachment");
 };
 
 const onRemoveAttachmentAtIndex = (index: number) => {
   // orphaned elements are uploaded to server, but not associated (until document saved)
   // so we must remove them
-  if (attachments.value[index].orphaned) {
+  if (attachments.value && attachments.value[index]!.orphaned) {
     Object.assign(state, defaultAjaxState);
     state.ajaxRunning = true;
     api.document.
-      removeFile(attachments.value[index].id)
+      removeFile(attachments.value[index]!.id)
       .then(() => {
         attachments.value = attachments.value.filter((_, i) => i !== index);
       })
