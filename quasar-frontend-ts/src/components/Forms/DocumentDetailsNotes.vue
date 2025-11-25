@@ -21,7 +21,7 @@
         v-show="!hiddenIds.includes(note.id)">
         <q-item-section>
           <InteractiveTextFieldCustomInput v-model.trim="note.body" dense outlined type="textarea" maxlength="4096"
-            autogrow name="description" :label="`${note.creationDate} (${note.creationDateTimeAgo})`"
+            autogrow name="description" :label="`${note.createdOn} (${note.createdOnTimeAgo})`"
             :start-mode-editable="!!note.startOnEditMode" :disable="disable" clearable :max-lines="6"
             :rules="requiredFieldRules" :error="!note.body" :error-message="fieldIsRequiredLabel"
             :autofocus="note.startOnEditMode" :placeholder="t('type note body')">
@@ -61,9 +61,9 @@ import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue
 const { t } = useI18n();
 
 const { requiredFieldRules, fieldIsRequiredLabel } = useFormUtils();
-const { escapeRegExp, getNewNote } = useDocument();
+const { escapeRegExp } = useDocument();
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'addNote', 'removeNoteAtIndex']);
 
 interface DocumentDetailsNotesProps {
   modelValue: NoteInterface[];
@@ -99,11 +99,11 @@ const onSearchTextChanged = (text: string | number | null) => {
 };
 
 const onAddNote = () => {
-  notes.value = [getNewNote(), ...notes.value];
+  emit("addNote");
 };
 
 const onRemoveNoteAtIndex = (index: number) => {
-  notes.value = notes.value.filter((_, i) => i !== index);
+  emit("removeNoteAtIndex", index);
 };
 </script>
 
