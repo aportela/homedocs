@@ -43,6 +43,8 @@ import { useBus } from "src/composables/useBus";
 import { useAPI } from "src/composables/useAPI";
 import { useFormUtils } from "src/composables/useFormUtils";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
+import { type AuthValidator as AuthValidatorInterface, defaultAuthValidator } from "src/types/auth-validator";
+import { type AuthFields as AuthFieldsInterface } from "src/types/auth-fields";
 
 import { default as BaseWidget } from "src/components/Widgets/BaseWidget.vue";
 import { default as PasswordFieldCustomInput } from "src/components/Forms/Fields/PasswordFieldCustomInput.vue";
@@ -64,33 +66,9 @@ const props = withDefaults(defineProps<UpdateProfileFormProps>(), {
 
 const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-interface ValidatorField {
-  hasErrors: boolean;
-  message: string | null;
-};
+const validator = reactive<AuthValidatorInterface>({ ...defaultAuthValidator });
 
-interface Validator {
-  email: ValidatorField;
-  password: ValidatorField;
-};
-
-const validator = reactive<Validator>({
-  email: {
-    hasErrors: false,
-    message: null
-  },
-  password: {
-    hasErrors: false,
-    message: null
-  }
-});
-
-interface Profile {
-  email: string | null;
-  password: string | null;
-};
-
-const profile = reactive<Profile>(
+const profile = reactive<AuthFieldsInterface>(
   {
     email: null,
     password: null

@@ -8,10 +8,10 @@
       <slot name="slogan">
         <h4 class="q-mt-sm q-mb-md text-h4 text-weight-bolder">{{
           t(!!savedEmail ? "Glad to see you again!" : "Welcome aboard!")
-          }}</h4>
+        }}</h4>
         <div class="text-color-secondary">{{
           t(!!savedEmail ? "Let's get back to organizing." : "Let's start organizing.")
-          }}
+        }}
         </div>
       </slot>
     </q-card-section>
@@ -73,7 +73,8 @@ import { useFormUtils } from "src/composables/useFormUtils";
 import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
 import { useLocalStorage } from "src/composables/useLocalStorage";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
-
+import { type AuthValidator as AuthValidatorInterface, defaultAuthValidator } from "src/types/auth-validator";
+import { type AuthFields as AuthFieldsInterface } from "src/types/auth-fields";
 import { default as DarkModeButton } from "src/components/Buttons/DarkModeButton.vue"
 import { default as SwitchLanguageButton } from "src/components/Buttons/SwitchLanguageButton.vue"
 import { default as GitHubButton } from "src/components/Buttons/GitHubButton.vue"
@@ -103,35 +104,11 @@ const { email: localStorageEmail } = useLocalStorage();
 
 const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-interface ValidatorField {
-  hasErrors: boolean;
-  message: string | null;
-};
-
-interface Validator {
-  email: ValidatorField;
-  password: ValidatorField;
-};
-
-const validator = reactive<Validator>({
-  email: {
-    hasErrors: false,
-    message: null
-  },
-  password: {
-    hasErrors: false,
-    message: null
-  }
-});
+const validator = reactive<AuthValidatorInterface>({ ...defaultAuthValidator });
 
 const savedEmail = localStorageEmail.get();
 
-interface Profile {
-  email: string | null;
-  password: string | null;
-};
-
-const profile = reactive<Profile>(
+const profile = reactive<AuthFieldsInterface>(
   {
     email: savedEmail,
     password: null

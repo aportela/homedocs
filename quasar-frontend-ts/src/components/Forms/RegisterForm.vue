@@ -71,6 +71,8 @@ import { useAPI } from "src/composables/useAPI";
 import { useFormUtils } from "src/composables/useFormUtils";
 import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
+import { type AuthValidator as AuthValidatorInterface, defaultAuthValidator } from "src/types/auth-validator";
+import { type AuthFields as AuthFieldsInterface } from "src/types/auth-fields";
 
 import { default as DarkModeButton } from "src/components/Buttons/DarkModeButton.vue"
 import { default as SwitchLanguageButton } from "src/components/Buttons/SwitchLanguageButton.vue"
@@ -94,33 +96,9 @@ const signUpDenied = computed(() => serverEnvironment.isSignUpAllowed === false)
 
 const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-interface ValidatorField {
-  hasErrors: boolean;
-  message: string | null;
-};
+const validator = reactive<AuthValidatorInterface>({ ...defaultAuthValidator });
 
-interface Validator {
-  email: ValidatorField;
-  password: ValidatorField;
-};
-
-const validator = reactive<Validator>({
-  email: {
-    hasErrors: false,
-    message: null
-  },
-  password: {
-    hasErrors: false,
-    message: null
-  }
-});
-
-interface Profile {
-  email: string | null;
-  password: string | null;
-};
-
-const profile = reactive<Profile>(
+const profile = reactive<AuthFieldsInterface>(
   {
     email: null,
     password: null
