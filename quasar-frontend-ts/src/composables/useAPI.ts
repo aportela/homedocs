@@ -1,6 +1,4 @@
-import { useAxios } from "src/composables/useAxios";
-
-const { axiosInstance } = useAxios();
+import { axiosInstance } from "src/composables/useAxios";
 
 const api = {
   common: {

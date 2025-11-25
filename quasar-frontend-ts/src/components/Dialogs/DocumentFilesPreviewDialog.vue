@@ -2,9 +2,9 @@
   <BaseDialog v-model="visible" @close="onClose" width="1280px" max-width="80vw">
     <template v-slot:header-left>
       <div v-if="documentTitle">{{ t("Document title")
-        }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
+      }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
           documentTitle
-          }}</router-link>
+        }}</router-link>
       </div>
       <div v-else>{{ t("Document attachments") }}</div>
     </template>
@@ -73,7 +73,7 @@ import { date, format } from "quasar";
 import { useBus } from "src/composables/useBus";
 import { useFormatDates } from "src/composables/useFormatDates"
 import { allowPreview } from "src/composables/useFileUtils"
-import { useAxios } from "src/composables/useAxios";
+import { bgDownload } from "src/composables/useAxios";
 import { api } from "src/composables/useAPI";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 import { type Attachment as AttachmentInterface } from "src/types/attachment";
@@ -87,7 +87,6 @@ import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue
 const { t } = useI18n();
 const { timeAgo } = useFormatDates();
 const { bus } = useBus();
-const { bgDownload } = useAxios();
 
 interface DocumentFilesPreviewDialogProps {
   documentId: string;

@@ -77,7 +77,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { useAxios } from "src/composables/useAxios";
+import { bgDownload } from "src/composables/useAxios";
 import { allowPreview, isImage, isAudio, isPDF } from "src/composables/useFileUtils";
 import { getURL as getAttachmentURL, getInlineURL as getAttachmentInlineURL } from "src/composables/useAttachments";
 import { type Document } from "src/types/document";
@@ -90,7 +90,6 @@ const { t } = useI18n();
 
 const emit = defineEmits(['close']);
 
-const { bgDownload } = useAxios();
 const previewLoadingError = ref(false);
 
 interface FilePreviewDialogProps {
