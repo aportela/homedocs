@@ -110,7 +110,6 @@ const isExpanded = ref(props.expanded);
 
 const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-
 interface RecentDocument {
   id: string;
   title: string;
