@@ -5,7 +5,8 @@ import { useBus } from "src/composables/useBus";
 import { useFormatDates } from "src/composables/useFormatDates";
 import { useLocalStorage } from "./useLocalStorage";
 
-import { type Attachment } from "src/types/attachment";
+import { type Attachment as AttachmentInterface } from "src/types/attachment";
+import { type Note as NoteInterface } from "src/types/note";
 
 export function useDocument() {
   const { bus } = useBus();
@@ -24,13 +25,13 @@ export function useDocument() {
     return string.replace(/[.*+?^=!:${}()|\[\]\/\\]/g, "\\$&");
   };
 
-  const getNewNote = () => {
-    const note = reactive({
+  const getNewNote = (): NoteInterface => {
+    const note = reactive<NoteInterface>({
       id: uid(),
-      body: null,
+      body: "",
       createdOnTimestamp: currentTimestamp(),
-      creationDate: currentFullDateTimeHuman(),
-      creationDateTimeAgo: currentTimeAgo(),
+      createdOn: currentFullDateTimeHuman(),
+      createdOnTimeAgo: currentTimeAgo(),
       expanded: false,
       startOnEditMode: true, // new notes start with view mode = "edit" (for allowing input body text)
     });
@@ -125,7 +126,7 @@ export function useDocument() {
         doc.attachments.length = 0;
         if (Array.isArray(data.attachments)) {
           doc.attachments.push(
-            ...JSON.parse(JSON.stringify(data.attachments)).map((file: Attachment) => {
+            ...JSON.parse(JSON.stringify(data.attachments)).map((file: AttachmentInterface) => {
               file.createdOn = fullDateTimeHuman(file.createdOnTimestamp, dateTimeFormat.get());
               file.createdOnTimeAgo = timeAgo(file.createdOnTimestamp);
               file.humanSize = format.humanStorageSize(file.size);
@@ -140,8 +141,8 @@ export function useDocument() {
         if (Array.isArray(data.notes)) {
           doc.notes.push(
             ...JSON.parse(JSON.stringify(data.notes)).map((note) => {
-              note.creationDate = fullDateTimeHuman(note.createdOnTimestamp, dateTimeFormat.get());
-              note.creationDateTimeAgo = timeAgo(note.createdOnTimestamp);
+              note.createdOn = fullDateTimeHuman(note.createdOnTimestamp, dateTimeFormat.get());
+              note.createdOnTimeAgo = timeAgo(note.createdOnTimestamp);
               note.expanded = false;
               note.startOnEditMode = false; // this is only required when adding new note
               return note;
@@ -197,11 +198,11 @@ export function useDocument() {
         );
       },
 
-      removeAttachmentAtIdx(index) {
+      removeAttachmentAtIdx(index: number) {
         doc.attachments?.splice(index, 1);
       },
 
-      previewAttachment(index) {
+      previewAttachment(index: number) {
         if (index >= 0 && index < doc.attachments?.length) {
           bus.emit("showDocumentFilePreviewDialog", {
             document: {
@@ -218,7 +219,7 @@ export function useDocument() {
         doc.notes.unshift(getNewNote());
       },
 
-      removeNoteAtIdx(index) {
+      removeNoteAtIdx(index: number) {
         doc.notes?.splice(index, 1);
       },
     });
