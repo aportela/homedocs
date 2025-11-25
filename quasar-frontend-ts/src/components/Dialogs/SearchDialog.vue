@@ -270,26 +270,26 @@ const scrollToItem = (index: number) => {
   }
 };
 
-const onKeyDown = (event: KeyboardEvent) => {
-  if (event.key === "ArrowUp") {
+const onKeyDown = (evt: KeyboardEvent) => {
+  if (evt.key === "ArrowUp") {
     if (searchResults.length > 0) {
       if (currentSearchResultSelectedIndex.value > 0) {
         currentSearchResultSelectedIndex.value--;
         scrollToItem(currentSearchResultSelectedIndex.value);
-        event.preventDefault();
-        event.stopPropagation();
+        evt.preventDefault();
+        evt.stopPropagation();
       }
     }
-  } else if (event.key === "ArrowDown") {
+  } else if (evt.key === "ArrowDown") {
     if (searchResults.length > 0) {
       if (currentSearchResultSelectedIndex.value < searchResults.length - 1) {
         currentSearchResultSelectedIndex.value++;
         scrollToItem(currentSearchResultSelectedIndex.value);
-        event.preventDefault();
-        event.stopPropagation();
+        evt.preventDefault();
+        evt.stopPropagation();
       }
     }
-  } else if (event.key === "Enter") {
+  } else if (evt.key === "Enter") {
     if (searchResults.length > 0) {
       if (currentSearchResultSelectedIndex.value >= 0 && currentSearchResultSelectedIndex.value < searchResults.length) {
         router.push({
