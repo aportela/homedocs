@@ -89,7 +89,7 @@ const { bus } = useBus();
 const { allowPreview } = useFileUtils();
 const { escapeRegExp } = useDocument();
 
-const emit = defineEmits(['update:modelValue', 'addAttachment', 'previewAttachmentAtIndex',]);
+const emit = defineEmits(['update:modelValue', 'addAttachment', 'previewAttachmentAtIndex', 'removeAttachmentAtIndex']);
 
 interface DocumentDetailsAttachmentsProps {
   modelValue: AttachmentInterface[];
@@ -133,39 +133,7 @@ const onAddAttachment = () => {
 };
 
 const onRemoveAttachmentAtIndex = (index: number) => {
-  // orphaned elements are uploaded to server, but not associated (until document saved)
-  // so we must remove them
-  if (attachments.value && attachments.value[index]!.orphaned) {
-    Object.assign(state, defaultAjaxState);
-    state.ajaxRunning = true;
-    api.document.
-      removeFile(attachments.value[index]!.id)
-      .then(() => {
-        attachments.value = attachments.value.filter((_, i) => i !== index);
-      })
-      .catch((errorResponse) => {
-        state.ajaxErrors = true;
-        if (errorResponse.isAPIError) {
-          state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
-          switch (errorResponse.response.status) {
-            case 401:
-              state.ajaxErrorMessage = "Auth session expired, requesting new...";
-              bus.emit("reAuthRequired", { emitter: "DocumentDetailsAttachments.onRemoveAttachmentAtIndex" });
-              break;
-            default:
-              state.ajaxErrorMessage = "API Error: fatal error";
-              break;
-          }
-        } else {
-          state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
-          console.error(errorResponse);
-        }
-      }).finally(() => {
-        state.ajaxRunning = false;
-      });
-  } else {
-    attachments.value = attachments.value.filter((_, i) => i !== index);
-  }
+  emit("removeAttachmentAtIndex", index);
 };
 
 const onPreviewAttachment = (index: number) => {
