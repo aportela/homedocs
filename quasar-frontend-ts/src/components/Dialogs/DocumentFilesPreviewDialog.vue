@@ -2,9 +2,9 @@
   <BaseDialog v-model="visible" @close="onClose" width="1280px" max-width="80vw">
     <template v-slot:header-left>
       <div v-if="documentTitle">{{ t("Document title")
-      }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
+        }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
           documentTitle
-        }}</router-link>
+          }}</router-link>
       </div>
       <div v-else>{{ t("Document attachments") }}</div>
     </template>
@@ -39,8 +39,7 @@
                       <span class="text-weight-bold">{{ t("Size") }}:</span> {{ attachment.humanSize }}</q-item-label>
                     <q-item-label>
                       <span class="text-weight-bold">{{ t('Uploaded on') }}:</span> {{ attachment.createdOn }} ({{
-                        timeAgo(attachment.createdOnTimestamp)
-                      }})</q-item-label>
+                        attachment.createdOnTimeAgo }})</q-item-label>
                   </div>
                   <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col-xs-12">
                     <q-btn align="left" size="md" color="primary" class="q-mt-sm full-width"
@@ -137,6 +136,7 @@ const onRefresh = (documentId: string) => {
         attachments.length = 0;
         attachments.push(...successResponse.data.attachments.map((attachment: AttachmentInterface) => {
           attachment.createdOn = date.formatDate(attachment.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
+          attachment.createdOnTimeAgo = timeAgo(attachment.createdOnTimestamp);
           attachment.humanSize = format.humanStorageSize(attachment.size);
           attachment.url = "api3/attachment/" + attachment.id;
           return (attachment);
