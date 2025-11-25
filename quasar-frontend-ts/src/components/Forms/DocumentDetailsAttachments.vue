@@ -69,7 +69,7 @@ import { format } from "quasar";
 
 import { useAxios } from "src/composables/useAxios";
 import { useBus } from "src/composables/useBus";
-import { useFileUtils } from "src/composables/useFileUtils"
+import { allowPreview } from "src/composables/useFileUtils"
 import { useDocument } from "src/composables/useDocument"
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 import { type Attachment as AttachmentInterface } from "src/types/attachment";
@@ -84,7 +84,6 @@ const { t } = useI18n();
 const { bgDownload } = useAxios();
 const { bus } = useBus();
 
-const { allowPreview } = useFileUtils();
 const { escapeRegExp } = useDocument();
 
 const emit = defineEmits(['update:modelValue', 'addAttachment', 'previewAttachmentAtIndex', 'removeAttachmentAtIndex']);

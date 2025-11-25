@@ -1,19 +1,17 @@
-export function useFileUtils() {
-  const allowPreview = (filename: string) => {
-    return !!filename?.match(/.(jpg|jpeg|png|gif|mp3|pdf)$/i);
-  };
+const allowPreview = (filename: string) => {
+  return !!filename?.match(/.(jpg|jpeg|png|gif|mp3|pdf)$/i);
+};
 
-  const isImage = (filename: string) => {
-    if (filename) return !!filename?.match(/.(jpg|jpeg|png|gif)$/i);
-  };
+const isImage = (filename: string) => {
+  if (filename) return !!filename?.match(/.(jpg|jpeg|png|gif)$/i);
+};
 
-  const isAudio = (filename: string) => {
-    return !!filename?.match(/.(mp3)$/i);
-  };
+const isAudio = (filename: string) => {
+  return !!filename?.match(/.(mp3)$/i);
+};
 
-  const isPDF = (filename: string) => {
-    return !!filename?.match(/.(pdf)$/i);
-  };
+const isPDF = (filename: string) => {
+  return !!filename?.match(/.(pdf)$/i);
+};
 
-  return { allowPreview, isImage, isAudio, isPDF };
-}
+export { allowPreview, isImage, isAudio, isPDF };

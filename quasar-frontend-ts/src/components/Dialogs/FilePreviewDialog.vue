@@ -78,7 +78,7 @@
 import { ref, reactive, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useAxios } from "src/composables/useAxios";
-import { useFileUtils } from "src/composables/useFileUtils";
+import { allowPreview, isImage, isAudio, isPDF } from "src/composables/useFileUtils";
 import { getURL as getAttachmentURL, getInlineURL as getAttachmentInlineURL } from "src/composables/useAttachments";
 import { type Document } from "src/types/document";
 import { type CustomBanner as CustomBannerInterface, defaultCustomBanner } from "src/types/custom-banner";
@@ -91,7 +91,6 @@ const { t } = useI18n();
 const emit = defineEmits(['close']);
 
 const { bgDownload } = useAxios();
-const { allowPreview, isImage, isAudio, isPDF } = useFileUtils();
 const previewLoadingError = ref(false);
 
 interface FilePreviewDialogProps {
