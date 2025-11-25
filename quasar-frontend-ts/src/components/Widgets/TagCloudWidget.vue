@@ -28,7 +28,7 @@
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import { useBus } from "src/composables/useBus";
-import { useAPI } from "src/composables/useAPI";
+import { api } from "src/composables/useAPI";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 
 import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
@@ -37,7 +37,6 @@ import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue
 import { default as BrowseByTagButton } from "src/components/Buttons/BrowseByTagButton.vue";
 
 const { t } = useI18n();
-const { api } = useAPI();
 const { bus } = useBus();
 
 interface TagCloudWidgetProps {

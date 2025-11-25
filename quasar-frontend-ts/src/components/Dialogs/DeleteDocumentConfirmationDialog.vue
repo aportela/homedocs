@@ -31,7 +31,7 @@ import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 
 import { useBus } from "src/composables/useBus";
-import { useAPI } from "src/composables/useAPI";
+import { api } from "src/composables/useAPI";
 
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 
@@ -44,7 +44,6 @@ const { t } = useI18n();
 const emit = defineEmits(['close']);
 
 const { bus } = useBus();
-const { api } = useAPI();
 
 const router = useRouter();
 

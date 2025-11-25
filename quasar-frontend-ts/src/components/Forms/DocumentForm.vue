@@ -147,7 +147,7 @@ import { useI18n } from "vue-i18n";
 import { uid, useQuasar } from "quasar";
 
 import { useBus } from "src/composables/useBus";
-import { useAPI } from "src/composables/useAPI";
+import { api } from "src/composables/useAPI";
 import { useFormUtils } from "src/composables/useFormUtils"
 import { useDocument } from "src/composables/useDocument"
 import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
@@ -166,7 +166,6 @@ const { t } = useI18n();
 const router = useRouter();
 const { screen } = useQuasar();
 const { bus } = useBus();
-const { api } = useAPI();
 const serverEnvironment = useServerEnvironmentStore();
 const { requiredFieldRules, fieldIsRequiredLabel } = useFormUtils();
 

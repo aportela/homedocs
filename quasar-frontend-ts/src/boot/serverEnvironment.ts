@@ -1,8 +1,6 @@
 import { boot } from "quasar/wrappers";
 
-import { useAPI } from "src/composables/useAPI";
-
-const { api } = useAPI();
+import { api } from "src/composables/useAPI";
 
 export default boot(async () => {
   try {

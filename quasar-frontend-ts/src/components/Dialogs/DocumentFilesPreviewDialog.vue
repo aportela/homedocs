@@ -74,7 +74,7 @@ import { useBus } from "src/composables/useBus";
 import { useFormatDates } from "src/composables/useFormatDates"
 import { useFileUtils } from "src/composables/useFileUtils"
 import { useAxios } from "src/composables/useAxios";
-import { useAPI } from "src/composables/useAPI";
+import { api } from "src/composables/useAPI";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 import { type Attachment as AttachmentInterface } from "src/types/attachment";
 import { type CustomBanner as CustomBannerInterface, defaultCustomBanner } from "src/types/custom-banner";
@@ -89,7 +89,6 @@ const { timeAgo } = useFormatDates();
 const { allowPreview } = useFileUtils();
 const { bus } = useBus();
 const { bgDownload } = useAxios();
-const { api } = useAPI();
 
 interface DocumentFilesPreviewDialogProps {
   documentId: string;

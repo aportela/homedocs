@@ -67,7 +67,7 @@ import { uid } from "quasar";
 import { useI18n } from "vue-i18n";
 import { QInput } from "quasar";
 
-import { useAPI } from "src/composables/useAPI";
+import { api } from "src/composables/useAPI";
 import { useFormUtils } from "src/composables/useFormUtils";
 import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
@@ -85,8 +85,6 @@ import { default as CustomErrorBanner } from "src/components/Banners/CustomError
 const emit = defineEmits(['success']);
 
 const { t } = useI18n();
-
-const { api } = useAPI();
 
 const formUtils = useFormUtils();
 

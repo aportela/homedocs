@@ -100,7 +100,7 @@ import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 
 import { useBus } from "src/composables/useBus";
-import { useAPI } from "src/composables/useAPI";
+import { api } from "src/composables/useAPI";
 import { useFormatDates } from "src/composables/useFormatDates"
 import { useLocalStorage } from "src/composables/useLocalStorage"
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
@@ -125,7 +125,6 @@ const currentDocumentId = ref(currentRoute.name == "document" ? currentRoute.par
 
 const { t } = useI18n();
 
-const { api } = useAPI();
 const { fullDateTimeHuman } = useFormatDates();
 
 const { bus, onShowDocumentFiles, onShowDocumentNotes } = useBus();

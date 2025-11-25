@@ -68,7 +68,7 @@ import { ref, reactive, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import { QInput } from "quasar";
 
-import { useAPI } from "src/composables/useAPI";
+import { api } from "src/composables/useAPI";
 import { useFormUtils } from "src/composables/useFormUtils";
 import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
 import { useLocalStorage } from "src/composables/useLocalStorage";
@@ -93,8 +93,6 @@ withDefaults(defineProps<LoginFormProps>(), {
 const emit = defineEmits(['success']);
 
 const { t } = useI18n();
-
-const { api } = useAPI();
 
 const formUtils = useFormUtils();
 

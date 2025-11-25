@@ -181,7 +181,7 @@ import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 
 import { useBus } from "src/composables/useBus";
-import { useAPI } from "src/composables/useAPI";
+import { api } from "src/composables/useAPI";
 import { useAdvancedSearchData } from "src/stores/advancedSearchData"
 import { useDateFilter } from "src/composables/useDateFilter"
 import { useFormatDates } from "src/composables/useFormatDates"
@@ -200,7 +200,6 @@ const { t } = useI18n();
 
 const route = useRoute();
 
-const { api } = useAPI();
 const { bus, onShowDocumentFiles, onShowDocumentNotes } = useBus();
 
 const { fullDateTimeHuman, timeAgo } = useFormatDates();

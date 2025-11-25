@@ -19,7 +19,7 @@ import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { date } from "quasar";
 
-import { useAPI } from "src/composables/useAPI";
+import { api } from "src/composables/useAPI";
 import { useBus } from "src/composables/useBus";
 import { useDarkModeStore } from "src/stores/darkMode";
 import { useI18nStore } from "src/stores/i18n";
@@ -35,7 +35,6 @@ import { default as CustomErrorBanner } from "src/components/Banners/CustomError
 const router = useRouter();
 const { t } = useI18n();
 const darkModeStore = useDarkModeStore();
-const { api } = useAPI();
 const { bus } = useBus();
 const i18NStore = useI18nStore();
 
