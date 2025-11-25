@@ -6,5 +6,6 @@ export interface Attachment {
   humanSize: string;
   createdOnTimestamp: number;
   createdOn: string;
+  createdOnTimeAgo: string;
   url: string;
 };
