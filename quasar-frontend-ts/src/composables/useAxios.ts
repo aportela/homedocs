@@ -14,6 +14,7 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     if (sessionStore.jwt) {
+      // TODO: cange to Authorization Bearer
       config.headers["HOMEDOCS-JWT"] = sessionStore.jwt;
       config.withCredentials = true;
     }
