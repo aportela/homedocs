@@ -8,10 +8,10 @@
       <slot name="slogan">
         <h4 class="q-mt-sm q-mb-md text-h4 text-weight-bolder">{{
           t(!!savedEmail ? "Glad to see you again!" : "Welcome aboard!")
-        }}</h4>
+          }}</h4>
         <div class="text-color-secondary">{{
           t(!!savedEmail ? "Let's get back to organizing." : "Let's start organizing.")
-        }}
+          }}
         </div>
       </slot>
     </q-card-section>
@@ -155,7 +155,11 @@ const onValidateForm = async () => {
   try {
     await emailRef.value?.validate();
     await passwordRef.value?.validate();
-    if (!(emailRef.value?.hasError || passwordRef.value?.hasError)) {
+    if (emailRef.value?.hasError) {
+      emailRef.value?.focus();
+    } else if (passwordRef.value?.hasError) {
+      passwordRef.value?.focus();
+    } else {
       onSubmitForm();
     }
   } catch (error) {

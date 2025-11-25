@@ -146,7 +146,11 @@ const onValidateForm = async () => {
   try {
     await emailRef.value?.validate();
     await passwordRef.value?.validate();
-    if (!(emailRef.value?.hasError || passwordRef.value?.hasError)) {
+    if (emailRef.value?.hasError) {
+      emailRef.value?.focus();
+    } else if (passwordRef.value?.hasError) {
+      passwordRef.value?.focus();
+    } else {
       onSubmitForm();
     }
   } catch (error) {
