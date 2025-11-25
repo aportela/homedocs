@@ -4,7 +4,7 @@
       <form @submit.prevent.stop="onValidateForm" autocorrect="off" autocapitalize="off" autocomplete="off"
         spellcheck="false">
         <q-input class="q-my-md" dense outlined v-model="profile.email" type="email" name="email" :label="t('Email')"
-          :disable="state.loading" :error="validator.email.hasErrors"
+          :disable="state.ajaxRunning" :error="validator.email.hasErrors"
           :error-message="validator.email.message ? t(validator.email.message) : ''"
           :rules="formUtils.requiredFieldRules" lazy-rules ref="emailRef">
           <template v-slot:prepend>
@@ -13,11 +13,12 @@
         </q-input>
         <PasswordFieldCustomInput class="q-my-md" dense outlined v-model="profile.password" name="password"
           :label="t('New password')" :error="validator.password.hasErrors"
-          :error-message="validator.password.message ? t(validator.password.message) : ''" :disable="state.loading"
+          :error-message="validator.password.message ? t(validator.password.message) : ''" :disable="state.ajaxRunning"
           :rules="formUtils.requiredFieldRules" lazy-rules ref="passwordRef">
         </PasswordFieldCustomInput>
         <q-btn color="primary" size="md" :label="$t('Update profile')" no-caps class="full-width q-my-xs"
-          icon=" account_circle" :disable="state.loading || !profile.password" :loading="state.loading" type="submit">
+          icon=" account_circle" :disable="state.ajaxRunning || !profile.password" :loading="state.ajaxRunning"
+          type="submit">
           <template v-slot:loading>
             <q-spinner-hourglass class="on-left" />
             {{ t('Update profile') }}
@@ -26,8 +27,8 @@
         <CustomBanner v-if="profileUpdatedSuccessfully" text="Profile has been successfully updated" success
           class="q-mt-lg">
         </CustomBanner>
-        <CustomErrorBanner v-else-if="state.loadingError" :text="state.errorMessage || 'Error loading data'"
-          :api-error="state.apiError" class="q-mt-lg">
+        <CustomErrorBanner v-else-if="state.ajaxErrors && state.ajaxErrorMessage" :text="state.ajaxErrorMessage"
+          :api-error="state.ajaxAPIErrorDetails" class="q-mt-lg">
         </CustomErrorBanner>
       </form>
     </template>
