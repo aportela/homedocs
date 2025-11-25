@@ -44,7 +44,8 @@
                   <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col-xs-12">
                     <q-btn align="left" size="md" color="primary" class="q-mt-sm full-width"
                       :disable="state.ajaxRunning" icon="save" :label="t('Download')" no-caps
-                      @click.stop.prevent="onDownload(attachment.id, attachment.name)" :href="attachment.url" />
+                      @click.stop.prevent="onDownload(attachment.id, attachment.name)"
+                      :href="getAttachmentURL(attachment.id, true)" />
                     <q-btn align="left" size="md" color="primary" class="q-mt-sm full-width"
                       v-if="allowPreview(attachment.name)" :disable="state.ajaxRunning" icon="preview"
                       :label="t('Preview')" no-caps @click.stop.prevent="onFilePreview(index)" />
