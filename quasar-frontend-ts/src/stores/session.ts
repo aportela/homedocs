@@ -1,8 +1,6 @@
 import { defineStore } from "pinia";
 
-import { useLocalStorage } from "src/composables/useLocalStorage";
-
-const { authJWT: localStorageJWT } = useLocalStorage();
+import { authJWT as localStorageJWT } from "src/composables/useLocalStorage";
 
 interface State {
   currentJWT: string | null;

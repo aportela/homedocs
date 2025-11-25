@@ -102,7 +102,7 @@ import { useRoute, useRouter } from "vue-router";
 import { bus, onShowDocumentFiles, onShowDocumentNotes } from "src/composables/useBus";
 import { api } from "src/composables/useAPI";
 import { useFormatDates } from "src/composables/useFormatDates"
-import { useLocalStorage } from "src/composables/useLocalStorage"
+import { searchDialogResultsPage as localStorageSearchDialogResultsPage, dateTimeFormat as localStorageDateTimeFormat } from "src/composables/useLocalStorage"
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 import { type QuasarVirtualScrollEventDetails as QuasarVirtualScrollEventDetailsInterface } from "src/types/quasar-virtual-scroll-event-details";
 
@@ -126,8 +126,6 @@ const currentDocumentId = ref(currentRoute.name == "document" ? currentRoute.par
 const { t } = useI18n();
 
 const { fullDateTimeHuman } = useFormatDates();
-
-const { searchDialogResultsPage, dateTimeFormat } = useLocalStorage();
 
 const emit = defineEmits(['update:modelValue', 'close']);
 
@@ -164,12 +162,12 @@ const virtualListRef = ref<QVirtualScroll | null>(null);
 
 const totalResults = ref(0);
 
-const resultsPage = ref(searchDialogResultsPage.get());
+const resultsPage = ref(localStorageSearchDialogResultsPage.get());
 
 const resultsPageOptions = [1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 64, 128];
 
 const onChangeResultsPage = (value: number) => {
-  searchDialogResultsPage.set(value);
+  localStorageSearchDialogResultsPage.set(value);
   onSearch(text.value);
 };
 
@@ -222,8 +220,8 @@ const onSearch = (val: string) => {
             {
               id: document.id,
               label: document.title,
-              createdOn: fullDateTimeHuman(document.createdOnTimestamp, dateTimeFormat.get()),
-              lastUpdate: fullDateTimeHuman(document.lastUpdateTimestamp, dateTimeFormat.get()),
+              createdOn: fullDateTimeHuman(document.createdOnTimestamp, localStorageDateTimeFormat.get()),
+              lastUpdate: fullDateTimeHuman(document.lastUpdateTimestamp, localStorageDateTimeFormat.get()),
               attachmentCount: document.attachmentCount,
               noteCount: document.noteCount,
               matchedOnFragment: document.matchedOnFragment
@@ -305,7 +303,7 @@ const onKeyDown = (evt: KeyboardEvent) => {
 
 const onShow = () => {
   totalResults.value = 0;
-  resultsPage.value = searchDialogResultsPage.get();
+  resultsPage.value = localStorageSearchDialogResultsPage.get();
   // this is required here because this dialog v-model is controller from MainLayout.vue
   // DOES NOT WORK with onMounted/onBeforeUnmount. WE ONLY WANT CAPTURE KEY EVENTS WHEN DIALOG IS VISIBLE
   window.addEventListener('keydown', onKeyDown);

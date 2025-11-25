@@ -185,7 +185,7 @@ import { api } from "src/composables/useAPI";
 import { useAdvancedSearchData } from "src/stores/advancedSearchData"
 import { useDateFilter } from "src/composables/useDateFilter"
 import { useFormatDates } from "src/composables/useFormatDates"
-import { useLocalStorage } from "src/composables/useLocalStorage";
+import { dateTimeFormat as localStorageDateTimeFormat } from "src/composables/useLocalStorage";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
@@ -201,8 +201,6 @@ const { t } = useI18n();
 const route = useRoute();
 
 const { fullDateTimeHuman, timeAgo } = useFormatDates();
-
-const { dateTimeFormat } = useLocalStorage();
 
 const columns = [
   { field: 'title', title: 'Title', defaultClass: "gt-lg" },
@@ -348,9 +346,9 @@ const onSubmitForm = (resetPager) => {
         pager.totalResults = successResponse.data.results.pagination.totalResults;
         pager.totalPages = successResponse.data.results.pagination.totalPages;
         results.push(...successResponse.data.results.documents.map((document) => {
-          document.creationDate = fullDateTimeHuman(document.createdOnTimestamp, dateTimeFormat.get());
+          document.creationDate = fullDateTimeHuman(document.createdOnTimestamp, localStorageDateTimeFormat.get());
           document.creationDateTimeAgo = timeAgo(document.createdOnTimestamp);
-          document.lastUpdate = fullDateTimeHuman(document.lastUpdateTimestamp, dateTimeFormat.get());
+          document.lastUpdate = fullDateTimeHuman(document.lastUpdateTimestamp, localStorageDateTimeFormat.get());
           document.lastUpdateTimeAgo = timeAgo(document.lastUpdateTimestamp);
           return (document);
         }));

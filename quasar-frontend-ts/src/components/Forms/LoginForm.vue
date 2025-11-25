@@ -71,7 +71,7 @@ import { QInput } from "quasar";
 import { api } from "src/composables/useAPI";
 import { useFormUtils } from "src/composables/useFormUtils";
 import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
-import { useLocalStorage } from "src/composables/useLocalStorage";
+import { email as localStorageEmail } from "src/composables/useLocalStorage";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 import { type AuthValidator as AuthValidatorInterface, defaultAuthValidator } from "src/types/auth-validator";
 import { type AuthFields as AuthFieldsInterface } from "src/types/auth-fields";
@@ -97,8 +97,6 @@ const { t } = useI18n();
 const formUtils = useFormUtils();
 
 const serverEnvironment = useServerEnvironmentStore();
-
-const { email: localStorageEmail } = useLocalStorage();
 
 const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 

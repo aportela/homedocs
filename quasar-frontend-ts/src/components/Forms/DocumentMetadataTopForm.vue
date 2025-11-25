@@ -29,7 +29,7 @@ import { useI18n } from "vue-i18n";
 import { useQuasar } from "quasar";
 
 import { useFormatDates } from "src/composables/useFormatDates";
-import { useLocalStorage } from "src/composables/useLocalStorage";
+import { dateTimeFormat as localStorageDateTimeFormat } from "src/composables/useLocalStorage";
 
 interface DocumentMetadataTopFormProps {
   createdOnTimestamp?: number;
@@ -44,7 +44,6 @@ const { t } = useI18n();
 const { screen } = useQuasar();
 
 const { fullDateTimeHuman, timeAgo } = useFormatDates();
-const { dateTimeFormat: localStorageDateTimeFormat } = useLocalStorage();
 
 const isScreenGreaterThanXS = computed(() => screen.gt.xs);
 

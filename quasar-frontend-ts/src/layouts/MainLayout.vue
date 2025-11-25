@@ -52,7 +52,7 @@ import { useQuasar, LocalStorage, uid } from "quasar";
 import { useI18n } from "vue-i18n";
 
 import { useFormatDates } from "src/composables/useFormatDates"
-import { useLocalStorage } from "src/composables/useLocalStorage"
+import { alwaysOpenUploadDialog as localStorageAlwaysOpenUploadDialog } from "src/composables/useLocalStorage"
 import { bus } from "src/composables/useBus";
 import type { Document } from "src/types/document";
 
@@ -76,8 +76,6 @@ const $q = useQuasar();
 const { t } = useI18n();
 
 const { currentTimestamp } = useFormatDates();
-
-const { alwaysOpenUploadDialog } = useLocalStorage();
 
 const dialogs = reactive({
   reauth: {
@@ -205,7 +203,7 @@ onMounted(() => {
         processed: false,
       })
     }) || []);
-    dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0 && alwaysOpenUploadDialog.get();
+    dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0 && localStorageAlwaysOpenUploadDialog.get();
   });
 
   bus.on("refreshUploadingDialog.fileUploaded", (msg) => {
@@ -225,7 +223,7 @@ onMounted(() => {
     } else {
       console.error("Missing previous transfers");
     }
-    dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0 && alwaysOpenUploadDialog.get();
+    dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0 && localStorageAlwaysOpenUploadDialog.get();
   });
 
   bus.on("refreshUploadingDialog.fileUploadRejected", (msg) => {

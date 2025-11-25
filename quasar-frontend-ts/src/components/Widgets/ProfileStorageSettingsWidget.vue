@@ -19,13 +19,11 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 
-import { useLocalStorage } from "src/composables/useLocalStorage";
+import { alwaysOpenUploadDialog as localStorageAlwaysOpenUploadDialog, showToolTips as localStorageShowToolTips, dateFormat as localStorageDateFormat, dateTimeFormat as localStorageDateTimeFormat } from "src/composables/useLocalStorage";
 
 import { default as BaseWidget } from "src/components/Widgets/BaseWidget.vue";
 
 const { t } = useI18n();
-
-const { alwaysOpenUploadDialog: localStorageAlwaysOpenUploadDialog, showToolTips: localStorageShowToolTips, dateFormat: localStorageDateFormat, dateTimeFormat: localStorageDateTimeFormat } = useLocalStorage();
 
 const dateFormatModel = ref<string>(localStorageDateFormat.get());
 

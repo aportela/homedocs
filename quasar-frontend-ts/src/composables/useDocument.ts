@@ -3,7 +3,7 @@ import { uid, format } from "quasar";
 
 import { bus } from "src/composables/useBus";
 import { useFormatDates } from "src/composables/useFormatDates";
-import { useLocalStorage } from "./useLocalStorage";
+import { dateTimeFormat as localStorageDateTimeFormat } from "./useLocalStorage";
 
 import { type Document as DocumentInterface } from "src/types/document";
 import { type Attachment as AttachmentInterface } from "src/types/attachment";
@@ -18,8 +18,6 @@ export function useDocument() {
     currentFullDateTimeHuman,
     currentTimeAgo,
   } = useFormatDates();
-
-  const { dateTimeFormat } = useLocalStorage();
 
   const escapeRegExp = (string) => {
     return string.replace(/[.*+?^=!:${}()|\[\]\/\\]/g, "\\$&");
@@ -100,7 +98,7 @@ export function useDocument() {
 
         if (data.createdOnTimestamp) {
           doc.createdOn.timestamp = data.createdOnTimestamp;
-          doc.createdOn.dateTime = fullDateTimeHuman(data.createdOnTimestamp, dateTimeFormat.get());
+          doc.createdOn.dateTime = fullDateTimeHuman(data.createdOnTimestamp, localStorageDateTimeFormat.get());
           doc.createdOn.timeAgo = timeAgo(data.createdOnTimestamp);
         } else {
           doc.createdOn.timestamp = null;
@@ -110,7 +108,7 @@ export function useDocument() {
 
         if (data.lastUpdateTimestamp) {
           doc.lastUpdate.timestamp = data.lastUpdateTimestamp;
-          doc.lastUpdate.dateTime = fullDateTimeHuman(data.lastUpdateTimestamp, dateTimeFormat.get());
+          doc.lastUpdate.dateTime = fullDateTimeHuman(data.lastUpdateTimestamp, localStorageDateTimeFormat.get());
           doc.lastUpdate.timeAgo = timeAgo(data.lastUpdateTimestamp);
         } else {
           doc.lastUpdate.timestamp = null;
@@ -127,7 +125,7 @@ export function useDocument() {
         if (Array.isArray(data.attachments)) {
           doc.attachments.push(
             ...JSON.parse(JSON.stringify(data.attachments)).map((file: AttachmentInterface) => {
-              file.createdOn = fullDateTimeHuman(file.createdOnTimestamp, dateTimeFormat.get());
+              file.createdOn = fullDateTimeHuman(file.createdOnTimestamp, localStorageDateTimeFormat.get());
               file.createdOnTimeAgo = timeAgo(file.createdOnTimestamp);
               file.humanSize = format.humanStorageSize(file.size);
               file.url = "api3/attachment/" + file.id;
@@ -141,7 +139,7 @@ export function useDocument() {
         if (Array.isArray(data.notes)) {
           doc.notes.push(
             ...JSON.parse(JSON.stringify(data.notes)).map((note: NoteInterface) => {
-              note.createdOn = fullDateTimeHuman(note.createdOnTimestamp, dateTimeFormat.get());
+              note.createdOn = fullDateTimeHuman(note.createdOnTimestamp, localStorageDateTimeFormat.get());
               note.createdOnTimeAgo = timeAgo(note.createdOnTimestamp);
               note.expanded = false;
               note.startOnEditMode = false; // this is only required when adding new note
@@ -155,7 +153,7 @@ export function useDocument() {
           doc.historyOperations.push(
             ...JSON.parse(JSON.stringify(data.history)).map((operation: HistoryOperationInterface) => {
               operation.createdOn = fullDateTimeHuman(
-                operation.operationTimestamp, dateTimeFormat.get()
+                operation.operationTimestamp, localStorageDateTimeFormat.get()
               );
               operation.createdOnTimeAgo = timeAgo(
                 operation.operationTimestamp,

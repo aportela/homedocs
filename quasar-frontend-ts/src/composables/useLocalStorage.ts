@@ -37,43 +37,41 @@ function createStorageEntry<T extends StorageValue>(
   };
 }
 
-export function useLocalStorage() {
-  const authJWT = createStorageEntry<string | null>("authJWT", null);
-  const email = createStorageEntry<string | null>("email", null);
-  const darkMode = createStorageEntry<boolean>("darkMode", false);
-  const locale = createStorageEntry<string | null>("locale", null);
+const authJWT = createStorageEntry<string | null>("authJWT", null);
+const email = createStorageEntry<string | null>("email", null);
+const darkMode = createStorageEntry<boolean>("darkMode", false);
+const locale = createStorageEntry<string | null>("locale", null);
 
-  const alwaysOpenUploadDialog = createStorageEntry<boolean>(
-    "alwaysOpenUploadDialog",
-    true
-  );
+const alwaysOpenUploadDialog = createStorageEntry<boolean>(
+  "alwaysOpenUploadDialog",
+  true
+);
 
-  const showToolTips = createStorageEntry<boolean>("showToolTips", false);
+const showToolTips = createStorageEntry<boolean>("showToolTips", false);
 
-  const searchDialogResultsPage = createStorageEntry<number>(
-    "searchDialogResultsPage",
-    8
-  );
+const searchDialogResultsPage = createStorageEntry<number>(
+  "searchDialogResultsPage",
+  8
+);
 
-  const dateFormat = createStorageEntry<string>(
-    "dateFormat",
-    "YYYY/MM/DD"
-  );
+const dateFormat = createStorageEntry<string>(
+  "dateFormat",
+  "YYYY/MM/DD"
+);
 
-  const dateTimeFormat = createStorageEntry<string>(
-    "dateTimeFormat",
-    "YYYY/MM/DD HH:mm:ss"
-  );
+const dateTimeFormat = createStorageEntry<string>(
+  "dateTimeFormat",
+  "YYYY/MM/DD HH:mm:ss"
+);
 
-  return {
-    authJWT,
-    email,
-    darkMode,
-    locale,
-    alwaysOpenUploadDialog,
-    showToolTips,
-    searchDialogResultsPage,
-    dateFormat,
-    dateTimeFormat,
-  };
-}
+export {
+  authJWT,
+  email,
+  darkMode,
+  locale,
+  alwaysOpenUploadDialog,
+  showToolTips,
+  searchDialogResultsPage,
+  dateFormat,
+  dateTimeFormat,
+};

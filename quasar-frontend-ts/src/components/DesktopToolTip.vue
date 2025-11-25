@@ -8,13 +8,11 @@
 import { computed } from "vue";
 import { useQuasar } from "quasar";
 
-import { useLocalStorage } from "src/composables/useLocalStorage";
+import { showToolTips as localStorageShowToolTips } from "src/composables/useLocalStorage";
 
 const $q = useQuasar()
 
 const isDesktop = computed(() => $q.platform.is.desktop);
-
-const { showToolTips: localStorageShowToolTips } = useLocalStorage();
 
 const visibleToolTips = localStorageShowToolTips.get();
 
