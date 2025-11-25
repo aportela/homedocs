@@ -220,9 +220,9 @@ const leftMetadataTab = ref("metadata");
 const rightDetailsTab = ref("attachments");
 
 // handle drag&drop files into q-uploader component
-const handleDrop = (event) => {
-  event.preventDefault();
-  const files = event.dataTransfer.files;
+const handleDrop = (evt: DragEvent) => {
+  evt.preventDefault();
+  const files = evt.dataTransfer.files;
   if (files.length) {
     uploaderRef.value?.addFiles(files);
   };
