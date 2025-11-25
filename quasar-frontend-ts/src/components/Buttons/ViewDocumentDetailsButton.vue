@@ -27,7 +27,7 @@ withDefaults(defineProps<ViewDocumentDetailsButtonProps>(), {
   disable: false
 });
 
-const onClick = (e: Event) => {
-  emit("click", e);
+const onClick = (evt: Event) => {
+  emit("click", evt);
 }
 </script>
