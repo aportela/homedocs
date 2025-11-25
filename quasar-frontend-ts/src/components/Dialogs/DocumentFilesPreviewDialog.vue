@@ -2,9 +2,9 @@
   <BaseDialog v-model="visible" @close="onClose" width="1280px" max-width="80vw">
     <template v-slot:header-left>
       <div v-if="documentTitle">{{ t("Document title")
-        }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
+      }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
           documentTitle
-          }}</router-link>
+        }}</router-link>
       </div>
       <div v-else>{{ t("Document attachments") }}</div>
     </template>
@@ -44,7 +44,7 @@
                   <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col-xs-12">
                     <q-btn align="left" size="md" color="primary" class="q-mt-sm full-width"
                       :disable="state.ajaxRunning" icon="save" :label="t('Download')" no-caps
-                      @click.stop.prevent="onDownload(attachment.url, attachment.name)" :href="attachment.url" />
+                      @click.stop.prevent="onDownload(attachment.id, attachment.name)" :href="attachment.url" />
                     <q-btn align="left" size="md" color="primary" class="q-mt-sm full-width"
                       v-if="allowPreview(attachment.name)" :disable="state.ajaxRunning" icon="preview"
                       :label="t('Preview')" no-caps @click.stop.prevent="onFilePreview(index)" />
@@ -77,6 +77,7 @@ import { useAPI } from "src/composables/useAPI";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 import { type Attachment as AttachmentInterface } from "src/types/attachment";
 import { type CustomBanner as CustomBannerInterface, defaultCustomBanner } from "src/types/custom-banner";
+import { getURL as getAttachmentURL } from "src/composables/useAttachments";
 
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
@@ -111,9 +112,9 @@ const onFilePreview = (index: number) => {
 
 const downloadBanner: CustomBannerInterface = reactive({ ...defaultCustomBanner });
 
-const onDownload = (url: string, fileName: string) => {
+const onDownload = (attachmentId: string, fileName: string) => {
   Object.assign(downloadBanner, defaultCustomBanner);
-  bgDownload(url, fileName)
+  bgDownload(getAttachmentURL(attachmentId), fileName)
     .then((successResponse) => {
       downloadBanner.success = true;
       downloadBanner.text = t("FileDownloadedMessage", { filename: successResponse.fileName, length: format.humanStorageSize(successResponse.length) });
@@ -138,7 +139,6 @@ const onRefresh = (documentId: string) => {
           attachment.createdOn = date.formatDate(attachment.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
           attachment.createdOnTimeAgo = timeAgo(attachment.createdOnTimestamp);
           attachment.humanSize = format.humanStorageSize(attachment.size);
-          attachment.url = "api3/attachment/" + attachment.id;
           return (attachment);
         }));
       })
