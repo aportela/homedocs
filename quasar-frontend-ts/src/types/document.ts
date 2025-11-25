@@ -1,8 +1,12 @@
-import type { Attachment } from "./attachment";
+import type { Attachment as AttachmentInterface } from "./attachment";
+import type { Note as NoteInterface } from "./note";
+import type { HistoryOperation as HistoryOperationInterface } from "./history-operation";
 
 export interface Document {
-  id: string;
-  title: string;
+  id: string | null;
+  title: string | null;
   description: string | null;
-  attachments: Attachment[];
+  attachments: AttachmentInterface[];
+  notes: NoteInterface[];
+  historyOperations: HistoryOperationInterface[];
 };
