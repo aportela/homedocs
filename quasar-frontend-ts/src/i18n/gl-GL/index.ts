@@ -255,4 +255,5 @@ export default {
   "Datetime format": "Formato de data e hora",
   "Auth session expired, requesting new...": "A sesión a expirou, vaise solicitar unha nova...",
   "Oooops": "¡Ups!",
+  "Error": "Error",
 };
