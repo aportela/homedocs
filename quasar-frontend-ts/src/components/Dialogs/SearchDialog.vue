@@ -151,7 +151,7 @@ const searchOnOptions = computed(() => [
   { label: 'Attachment names', value: 'attachmentsFilename' },
 ]);
 
-const searchOn = ref(searchOnOptions.value[0]);
+const searchOn = ref(searchOnOptions.value[0]!);
 
 watch(() => searchOn.value, () => {
   nextTick()
