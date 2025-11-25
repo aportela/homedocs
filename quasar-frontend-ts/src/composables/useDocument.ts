@@ -156,10 +156,10 @@ export function useDocument() {
         if (Array.isArray(data.history)) {
           doc.historyOperations.push(
             ...JSON.parse(JSON.stringify(data.history)).map((operation: HistoryOperationInterface) => {
-              operation.creationDate = fullDateTimeHuman(
+              operation.createdOn = fullDateTimeHuman(
                 operation.operationTimestamp, dateTimeFormat.get()
               );
-              operation.creationDateTimeAgo = timeAgo(
+              operation.createdOnTimeAgo = timeAgo(
                 operation.operationTimestamp,
               );
               switch (operation.operationType) {
