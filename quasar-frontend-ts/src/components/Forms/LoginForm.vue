@@ -8,10 +8,10 @@
       <slot name="slogan">
         <h4 class="q-mt-sm q-mb-md text-h4 text-weight-bolder">{{
           t(!!savedEmail ? "Glad to see you again!" : "Welcome aboard!")
-          }}</h4>
+        }}</h4>
         <div class="text-color-secondary">{{
           t(!!savedEmail ? "Let's get back to organizing." : "Let's start organizing.")
-          }}
+        }}
         </div>
       </slot>
     </q-card-section>
@@ -180,7 +180,7 @@ const onSubmitForm = () => {
           switch (errorResponse.response.status) {
             case 400:
               if (
-                errorResponse.response.data.invalidOrMissingParams.find(function (e) {
+                errorResponse.response.data.invalidOrMissingParams.find(function (e: string) {
                   return e === "email";
                 })
               ) {
