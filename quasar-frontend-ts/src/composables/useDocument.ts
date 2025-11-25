@@ -5,6 +5,8 @@ import { useBus } from "src/composables/useBus";
 import { useFormatDates } from "src/composables/useFormatDates";
 import { useLocalStorage } from "./useLocalStorage";
 
+import { type Attachment } from "src/types/attachment";
+
 export function useDocument() {
   const { bus } = useBus();
 
@@ -123,9 +125,9 @@ export function useDocument() {
         doc.attachments.length = 0;
         if (Array.isArray(data.attachments)) {
           doc.attachments.push(
-            ...JSON.parse(JSON.stringify(data.attachments)).map((file) => {
-              file.creationDate = fullDateTimeHuman(file.createdOnTimestamp, dateTimeFormat.get());
-              file.creationDateTimeAgo = timeAgo(file.createdOnTimestamp);
+            ...JSON.parse(JSON.stringify(data.attachments)).map((file: Attachment) => {
+              file.createdOn = fullDateTimeHuman(file.createdOnTimestamp, dateTimeFormat.get());
+              file.createdOnTimeAgo = timeAgo(file.createdOnTimestamp);
               file.humanSize = format.humanStorageSize(file.size);
               file.url = "api3/attachment/" + file.id;
               file.orphaned = false;
@@ -183,8 +185,8 @@ export function useDocument() {
           reactive({
             id: fileId,
             createdOnTimestamp: currentTimestamp(),
-            creationDate: currentFullDateTimeHuman(),
-            creationDateTimeAgo: currentTimeAgo(),
+            createdOn: currentFullDateTimeHuman(),
+            createdOnTimeAgo: currentTimeAgo(),
             name: name,
             size: size || 0,
             hash: null,
