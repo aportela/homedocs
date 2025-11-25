@@ -78,7 +78,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.loading" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                    }}</q-badge>
+                      }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
@@ -87,11 +87,13 @@
                   <q-tab-panel name="attachments" class="q-pa-none">
                     <DocumentDetailsAttachments v-model="document.attachments" :disable="state.loading || state.saving"
                       @add-attachment="onShowAttachmentsPicker"
-                      @preview-attachment-at-index="(index) => document.previewAttachment(index)">
+                      @preview-attachment-at-index="(index: number) => document.previewAttachment(index)"
+                      @remove-attachment-at-index="(index: number) => onRemoveAttachmentAtIndex(index)">
                     </DocumentDetailsAttachments>
                   </q-tab-panel>
                   <q-tab-panel name="notes" class="q-pa-none">
-                    <DocumentDetailsNotes v-model="document.notes" :disable="state.loading || state.saving">
+                    <DocumentDetailsNotes v-model="document.notes" :disable="state.loading || state.saving"
+                      @add-note="onAddNote" @remove-note-at-index="(index: number) => onRemoveNoteAtIndex(index)">
                     </DocumentDetailsNotes>
                   </q-tab-panel>
                   <q-tab-panel name="history" class="q-pa-none" v-if="document.id">
@@ -168,6 +170,7 @@ const { api } = useAPI();
 const serverEnvironment = useServerEnvironmentStore();
 const { requiredFieldRules, fieldIsRequiredLabel } = useFormUtils();
 
+
 const props = defineProps({
   documentId: {
     type: String,
@@ -194,7 +197,8 @@ watch(() => props.documentId, val => {
 const isScreenGreaterThanMD = computed(() => screen.gt.md);
 const isNewDocument = computed(() => !props.documentId);
 
-const document = useDocument().getNewDocument();
+const { getNewDocument } = useDocument();
+const document = getNewDocument();
 
 const maxUploadFileSize = computed(() => serverEnvironment.maxFileSize);
 const uploaderRef = ref(null);
@@ -446,6 +450,53 @@ const onShowAttachmentsPicker = () => {
       console.error(e);
     });
 }
+
+const onRemoveAttachmentAtIndex = (index: number) => {
+  console.log("TODO", index);
+  // orphaned elements are uploaded to server, but not associated (until document saved)
+  // so we must remove them
+  /*
+  if (document.attachments.[index]!.orphaned) {
+    Object.assign(state, defaultAjaxState);
+    state.ajaxRunning = true;
+    api.document.
+      removeFile(document.attachments.value[index]!.id)
+      .then(() => {
+        attachments.value = attachments.value.filter((_, i) => i !== index);
+      })
+      .catch((errorResponse) => {
+        state.ajaxErrors = true;
+        if (errorResponse.isAPIError) {
+          state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
+          switch (errorResponse.response.status) {
+            case 401:
+              state.ajaxErrorMessage = "Auth session expired, requesting new...";
+              bus.emit("reAuthRequired", { emitter: "DocumentDetailsAttachments.onRemoveAttachmentAtIndex" });
+              break;
+            default:
+              state.ajaxErrorMessage = "API Error: fatal error";
+              break;
+          }
+        } else {
+          state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
+          console.error(errorResponse);
+        }
+      }).finally(() => {
+        state.ajaxRunning = false;
+      });
+  } else {
+    document.attachments.value = attachments.value.filter((_, i) => i !== index);
+  }
+  */
+};
+
+const onAddNote = () => {
+  document.addNote();
+};
+
+const onRemoveNoteAtIndex = (index: number) => {
+  document.removeNoteAtIdx(index);
+};
 
 // q-uploader component event => file upload starts
 const onUploadsStart = () => {
