@@ -31,47 +31,37 @@ import { useQuasar } from "quasar";
 import { useFormatDates } from "src/composables/useFormatDates";
 import { useLocalStorage } from "src/composables/useLocalStorage";
 
-const props = defineProps({
-  createdOnTimestamp: {
-    type: Number,
-    required: false,
-    default: 0,
-    validator(value) {
-      return (value > 0);
-    }
-  },
-  lastUpdateTimestamp: {
-    type: Number,
-    required: false,
-    default: 0,
-    validator(value) {
-      return (value > 0);
-    }
-  }
+interface DocumentMetadataTopFormProps {
+  createdOnTimestamp?: number;
+  lastUpdateTimestamp?: number;
+};
+const props = withDefaults(defineProps<DocumentMetadataTopFormProps>(), {
+  createdOnTimestamp: 0,
+  lastUpdateTimestamp: 0,
 });
 
 const { t } = useI18n();
 const { screen } = useQuasar();
 
 const { fullDateTimeHuman, timeAgo } = useFormatDates();
-const { dateTimeFormat } = useLocalStorage();
+const { dateTimeFormat: localStorageDateTimeFormat } = useLocalStorage();
 
 const isScreenGreaterThanXS = computed(() => screen.gt.xs);
 
-const creationDateTime = ref(props.createdOnTimestamp ? fullDateTimeHuman(props.createdOnTimestamp, dateTimeFormat.get()) : null);
-const lastUpdate = ref(props.lastUpdateTimestamp ? fullDateTimeHuman(props.lastUpdateTimestamp, dateTimeFormat.get()) : null);
+const creationDateTime = ref<string | null>(props.createdOnTimestamp > 0 ? fullDateTimeHuman(props.createdOnTimestamp, localStorageDateTimeFormat.get()) : null);
+const lastUpdate = ref<string | null>(props.lastUpdateTimestamp > 0 ? fullDateTimeHuman(props.lastUpdateTimestamp, localStorageDateTimeFormat.get()) : null);
 
-const creationTimeAgo = ref(props.createdOnTimestamp ? timeAgo(props.createdOnTimestamp) : null);
-const lastUpdateTimeAgo = ref(props.lastUpdateTimestamp ? timeAgo(props.lastUpdateTimestamp) : null);
+const creationTimeAgo = ref<string | null>(props.createdOnTimestamp > 0 ? timeAgo(props.createdOnTimestamp) : null);
+const lastUpdateTimeAgo = ref<string | null>(props.lastUpdateTimestamp > 0 ? timeAgo(props.lastUpdateTimestamp) : null);
 
-watch(() => props.createdOnTimestamp, val => {
-  creationDateTime.value = val ? fullDateTimeHuman(val, dateTimeFormat.get()) : null;
-  creationTimeAgo.value = val ? timeAgo(val) : null;
+watch(() => props.createdOnTimestamp, (val: number) => {
+  creationDateTime.value = val > 0 ? fullDateTimeHuman(val, localStorageDateTimeFormat.get()) : null;
+  creationTimeAgo.value = val > 0 ? timeAgo(val) : null;
 });
 
-watch(() => props.lastUpdateTimestamp, val => {
-  lastUpdate.value = val ? fullDateTimeHuman(val, dateTimeFormat.get()) : null;
-  lastUpdateTimeAgo.value = val ? timeAgo(val) : null;
+watch(() => props.lastUpdateTimestamp, (val: number) => {
+  lastUpdate.value = val > 0 ? fullDateTimeHuman(val, localStorageDateTimeFormat.get()) : null;
+  lastUpdateTimeAgo.value = val > 0 ? timeAgo(val) : null;
 });
 
 </script>
