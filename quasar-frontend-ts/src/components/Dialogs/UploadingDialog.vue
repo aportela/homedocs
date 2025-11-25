@@ -20,8 +20,8 @@
               :class="{ 'bg-green-5': transfer.done, 'bg-red-4': transfer.error, 'bg-light-blue': transfer.uploading }">
               <td class="text-left">{{ transfer.filename }}</td>
               <td class="text-right">{{ format.humanStorageSize(transfer.filesize) }}</td>
-              <td class="text-right">{{ fullDateTimeHuman(transfer.start, dateTimeFormat.get()) }}</td>
-              <td class="text-right">{{ fullDateTimeHuman(transfer.end, dateTimeFormat.get()) }}</td>
+              <td class="text-right">{{ fullDateTimeHuman(transfer.start, localStorageDateTimeFormat.get()) }}</td>
+              <td class="text-right">{{ fullDateTimeHuman(transfer.end, localStorageDateTimeFormat.get()) }}</td>
               <td class="text-center">
                 <q-chip square v-if="transfer.error" class="full-width bg-red-9 text-white">
                   <q-avatar icon="cancel" class="q-ma-xs" />
@@ -70,7 +70,7 @@ import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue"
 const { t } = useI18n();
 
 const { fullDateTimeHuman } = useFormatDates();
-const { alwaysOpenUploadDialog, dateTimeFormat } = useLocalStorage();
+const { alwaysOpenUploadDialog: localStorageAlwaysOpenUploadDialog, dateTimeFormat: localStorageDateTimeFormat } = useLocalStorage();
 const serverEnvironment = useServerEnvironmentStore();
 
 const emit = defineEmits(['update:modelValue', 'close']);
@@ -97,7 +97,7 @@ const visible = computed({
   set(value) {
     if (value) {
       // before showing dialog always set q-toggle value
-      const toggleValue = alwaysOpenUploadDialog.get();
+      const toggleValue = localStorageAlwaysOpenUploadDialog.get();
       if (toggleValue !== visibilityCheck.value) {
         visibilityCheck.value = toggleValue; // only if there are changes
       }
@@ -106,16 +106,16 @@ const visible = computed({
   }
 });
 
-const visibilityCheck = ref(alwaysOpenUploadDialog.get());
+const visibilityCheck = ref(localStorageAlwaysOpenUploadDialog.get());
 
 watch(() => visible.value, val => {
   if (val) {
-    visibilityCheck.value = alwaysOpenUploadDialog.get();
+    visibilityCheck.value = localStorageAlwaysOpenUploadDialog.get();
   }
 });
 
-const saveVisibilityCheck = (val) => {
-  alwaysOpenUploadDialog.set(val);
+const saveVisibilityCheck = (val: boolean) => {
+  localStorageAlwaysOpenUploadDialog.set(val);
 };
 
 const visibilityCheckLabel = computed(() => visibilityCheck.value ? "Always display this progress window when uploading files" : "Only display this progress window when uploading failed");
