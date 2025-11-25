@@ -30,7 +30,7 @@
           <div v-for="note in notes" :key="note.id"
             class="q-pa-sm relative-position white-space-pre-line border-bottom-except-last-item">
             <div class="note-date-label">
-              {{ note.createdOn }} ({{ timeAgo(note.createdOnTimestamp) }})</div>
+              {{ note.createdOn }} ({{ note.createdOnTimeAgo }})</div>
             <q-icon :name="note.expanded ? 'unfold_less' : 'expand'" size="sm"
               class="absolute-top-right text-grey cursor-pointer q-mr-sm q-mt-sm" color="blue"
               @click.stop="note.expanded = !note.expanded">
@@ -94,7 +94,9 @@ const onRefresh = (documentId: string) => {
       .then((successResponse) => {
         notes.length = 0;
         notes.push(...successResponse.data.notes.map((note: NoteInterface) => {
+          // TODO: use local storage datetime format ?
           note.createdOn = date.formatDate(note.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
+          note.createdOnTimeAgo = timeAgo(note.createdOnTimestamp);
           note.expanded = false;
           return (note);
         }));
