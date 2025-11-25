@@ -5,7 +5,7 @@
     </template>
     <template v-slot:body>
       <div class="q-p-none q-markup-table-container scroll">
-        <q-markup-table v-if="transfers?.length > 0">
+        <q-markup-table v-if="hasTransfers">
           <thead>
             <tr>
               <th class="text-left">{{ t("Name") }}</th>
@@ -21,7 +21,10 @@
               <td class="text-left">{{ transfer.filename }}</td>
               <td class="text-right">{{ format.humanStorageSize(transfer.filesize) }}</td>
               <td class="text-right">{{ fullDateTimeHuman(transfer.start, localStorageDateTimeFormat.get()) }}</td>
-              <td class="text-right">{{ fullDateTimeHuman(transfer.end, localStorageDateTimeFormat.get()) }}</td>
+              <td class="text-right">
+                <span v-if="transfer.end && transfer.end > 0">{{ fullDateTimeHuman(transfer.end,
+                  localStorageDateTimeFormat.get()) }}</span>
+              </td>
               <td class="text-center">
                 <q-chip square v-if="transfer.error" class="full-width bg-red-9 text-white">
                   <q-avatar icon="cancel" class="q-ma-xs" />
@@ -32,7 +35,7 @@
                         format.humanStorageSize(serverEnvironment.maxUploadFileSize)
                     })
                     :
-                    t(transfer.errorMessage)
+                    t(transfer.errorMessage || 'Error')
                   }}
                 </q-chip>
                 <q-chip square v-else-if="transfer.done" class="full-width bg-green-9 text-white">
@@ -65,6 +68,7 @@ import { useFormatDates } from "src/composables/useFormatDates"
 import { useLocalStorage } from "src/composables/useLocalStorage"
 import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
 
+import { type UploadTransfer as UploadTransferInterface } from "src/types/upload-transfer";
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue"
 
 const { t } = useI18n();
@@ -75,20 +79,14 @@ const serverEnvironment = useServerEnvironmentStore();
 
 const emit = defineEmits(['update:modelValue', 'close']);
 
-const props = defineProps({
-  modelValue: {
-    type: Boolean,
-    required: true
-  },
-  transfers: {
-    type: Array,
-    required: false,
-    default: () => [],
-    validator(value) {
-      return Array.isArray(value);
-    }
-  }
-});
+interface UploadingDialogProps {
+  modelValue: boolean;
+  transfers: UploadTransferInterface[]
+};
+
+const props = defineProps<UploadingDialogProps>();
+
+const hasTransfers = computed(() => props.transfers?.length > 0);
 
 const visible = computed({
   get() {
@@ -106,9 +104,9 @@ const visible = computed({
   }
 });
 
-const visibilityCheck = ref(localStorageAlwaysOpenUploadDialog.get());
+const visibilityCheck = ref<boolean>(localStorageAlwaysOpenUploadDialog.get());
 
-watch(() => visible.value, val => {
+watch(() => visible.value, (val: boolean) => {
   if (val) {
     visibilityCheck.value = localStorageAlwaysOpenUploadDialog.get();
   }
