@@ -5,8 +5,10 @@ import { useBus } from "src/composables/useBus";
 import { useFormatDates } from "src/composables/useFormatDates";
 import { useLocalStorage } from "./useLocalStorage";
 
+import { type Document as DocumentInterface } from "src/types/document";
 import { type Attachment as AttachmentInterface } from "src/types/attachment";
 import { type Note as NoteInterface } from "src/types/note";
+import { type HistoryOperation as HistoryOperationInterface } from "src/types/history-operation";
 
 export function useDocument() {
   const { bus } = useBus();
@@ -28,7 +30,7 @@ export function useDocument() {
   const getNewNote = (): NoteInterface => {
     const note = reactive<NoteInterface>({
       id: uid(),
-      body: "",
+      body: null,
       createdOnTimestamp: currentTimestamp(),
       createdOn: currentFullDateTimeHuman(),
       createdOnTimeAgo: currentTimeAgo(),
@@ -38,8 +40,8 @@ export function useDocument() {
     return note;
   };
 
-  const getNewDocument = () => {
-    const doc = reactive({
+  const getNewDocument = (): DocumentInterface => {
+    const doc = reactive<DocumentInterface>({
       id: null,
       title: null,
       description: null,
@@ -140,7 +142,7 @@ export function useDocument() {
         doc.notes.length = 0;
         if (Array.isArray(data.notes)) {
           doc.notes.push(
-            ...JSON.parse(JSON.stringify(data.notes)).map((note) => {
+            ...JSON.parse(JSON.stringify(data.notes)).map((note: NoteInterface) => {
               note.createdOn = fullDateTimeHuman(note.createdOnTimestamp, dateTimeFormat.get());
               note.createdOnTimeAgo = timeAgo(note.createdOnTimestamp);
               note.expanded = false;
@@ -153,7 +155,7 @@ export function useDocument() {
         doc.historyOperations.length = 0;
         if (Array.isArray(data.history)) {
           doc.historyOperations.push(
-            ...JSON.parse(JSON.stringify(data.history)).map((operation) => {
+            ...JSON.parse(JSON.stringify(data.history)).map((operation: HistoryOperationInterface) => {
               operation.creationDate = fullDateTimeHuman(
                 operation.operationTimestamp, dateTimeFormat.get()
               );
