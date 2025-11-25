@@ -95,6 +95,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, watch, onMounted, onBeforeUnmount, nextTick } from "vue";
+import { QInput, QVirtualScroll } from "quasar";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 
@@ -161,7 +162,7 @@ watch(() => searchOn.value, () => {
     });
 });
 
-const virtualListRef = ref(null);
+const virtualListRef = ref<QVirtualScroll | null>(null);
 
 const totalResults = ref(0);
 
@@ -181,7 +182,7 @@ const virtualListIndex = ref(0);
 
 const showNoSearchResults = ref(false);
 
-const searchTextField = ref<HTMLInputElement | null>(null);
+const searchTextField = ref<QInput | null>(null);
 
 const boldStringMatch = (str: string, matchWord: string) => {
   return str.replace(
