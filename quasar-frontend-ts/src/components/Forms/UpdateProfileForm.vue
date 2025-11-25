@@ -37,10 +37,12 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
+import { QInput } from "quasar";
 
 import { useBus } from "src/composables/useBus";
 import { useAPI } from "src/composables/useAPI";
 import { useFormUtils } from "src/composables/useFormUtils";
+import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 
 import { default as BaseWidget } from "src/components/Widgets/BaseWidget.vue";
 import { default as PasswordFieldCustomInput } from "src/components/Forms/Fields/PasswordFieldCustomInput.vue";
@@ -52,32 +54,27 @@ const { api } = useAPI();
 const { bus } = useBus();
 const formUtils = useFormUtils();
 
-const props = defineProps({
-  autoFocus: {
-    type: Boolean,
-    required: false,
-    default: false
-  }
+interface UpdateProfileFormProps {
+  autoFocus?: boolean;
+};
+
+const props = withDefaults(defineProps<UpdateProfileFormProps>(), {
+  autoFocus: false
 });
 
-const state = reactive({
-  loading: false,
-  loadingError: false,
-  errorMessage: null,
-  apiError: null
-});
+const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-const profile = reactive({
-  email: null,
-  password: null
-});
+interface ValidatorField {
+  hasErrors: boolean;
+  message: string | null;
+};
 
-const emailRef = ref(null);
-const passwordRef = ref(null);
+interface Validator {
+  email: ValidatorField;
+  password: ValidatorField;
+};
 
-const profileUpdatedSuccessfully = ref(false);
-
-const validator = reactive({
+const validator = reactive<Validator>({
   email: {
     hasErrors: false,
     message: null
@@ -87,6 +84,23 @@ const validator = reactive({
     message: null
   }
 });
+
+interface Profile {
+  email: string | null;
+  password: string | null;
+};
+
+const profile = reactive<Profile>(
+  {
+    email: null,
+    password: null
+  }
+);
+
+const emailRef = ref<QInput | null>(null);
+const passwordRef = ref<QInput | null>(null);
+
+const profileUpdatedSuccessfully = ref<boolean>(false);
 
 const onResetForm = () => {
   validator.email.hasErrors = false;
@@ -98,16 +112,13 @@ const onResetForm = () => {
 }
 
 const onGetProfile = () => {
-  state.loading = true;
-  state.loadingError = false;
-  state.errorMessage = null;
-  state.apiError = null;
   profile.email = null;
   profile.password = null;
+  Object.assign(state, defaultAjaxState);
+  state.ajaxRunning = true;
   api.user.getProfile()
     .then((successResponse) => {
       profile.email = successResponse.data.data.email;
-      state.loading = false;
       if (props.autoFocus) {
         nextTick()
           .then(() => {
@@ -118,25 +129,25 @@ const onGetProfile = () => {
       }
     })
     .catch((errorResponse) => {
-      state.loadingError = true;
+      state.ajaxErrors = true;
       if (errorResponse.isAPIError) {
+        state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
         switch (errorResponse.response.status) {
           // TODO: invalid fields check
           case 401:
-            state.apiError = errorResponse.customAPIErrorDetails;
-            state.errorMessage = "Auth session expired, requesting new...";
+            state.ajaxErrorMessage = "Auth session expired, requesting new...";
             bus.emit("reAuthRequired", { emitter: "UpdateProfileForm.onGetProfile" });
             break;
           default:
-            state.apiError = errorResponse.customAPIErrorDetails;
-            state.errorMessage = "API Error: fatal error";
+            state.ajaxErrorMessage = "API Error: fatal error";
             break;
         }
       } else {
-        state.errorMessage = `Uncaught exception: ${errorResponse}`;
+        state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
         console.error(errorResponse);
       }
-      state.loading = false;
+    }).finally(() => {
+      state.ajaxRunning = false;
       if (props.autoFocus) {
         nextTick()
           .then(() => {
@@ -148,78 +159,77 @@ const onGetProfile = () => {
     });
 }
 
-const onValidateForm = () => {
+const onValidateForm = async () => {
   onResetForm();
-  emailRef.value?.validate();
-  passwordRef.value?.validate();
-  if (!emailRef.value?.hasError && !passwordRef.value?.hasError) {
-    onSubmitForm();
-  } else {
-    nextTick()
-      .then(() => {
-        if (emailRef.value?.hasError) {
-          emailRef.value?.focus();
-        } else if (passwordRef.value?.hasError) {
-          passwordRef.value?.focus();
-        }
-      }).catch((e) => {
-        console.error(e);
-      });
+  try {
+    await emailRef.value?.validate();
+    await passwordRef.value?.validate();
+    if (emailRef.value?.hasError) {
+      emailRef.value?.focus();
+    } else if (passwordRef.value?.hasError) {
+      passwordRef.value?.focus();
+    } else {
+      onSubmitForm();
+    }
+  } catch (error) {
+    console.error('Validation error', error);
   }
-}
+};
 
 const onSubmitForm = () => {
-  state.loading = true;
-  state.loadingError = false;
-  state.errorMessage = null;
-  state.apiError = null;
-  profileUpdatedSuccessfully.value = false;
-  api.user
-    .updateProfile(profile.email, profile.password)
-    .then((successResponse) => {
-      profileUpdatedSuccessfully.value = true;
-      profile.email = successResponse.data.data.email;
-      profile.password = null;
-      state.loading = false;
-      nextTick()
-        .then(() => {
-          emailRef.value?.focus();
-        }).catch((e) => {
-          console.error(e);
-        });
-    })
-    .catch((errorResponse) => {
-      state.loadingError = true;
-      if (errorResponse.isAPIError) {
-        switch (errorResponse.response.status) {
-          // TODO: invalid fields check
-          case 401:
-            state.apiError = errorResponse.customAPIErrorDetails;
-            state.errorMessage = "Auth session expired, requesting new...";
-            bus.emit("reAuthRequired", { emitter: "UpdateProfileForm.onSubmitForm" });
-            break;
-          case 409: // email already exists
-            validator.email.hasErrors = true;
-            validator.email.message = "Email already used";
-            state.errorMessage = "Error updating profile";
-            nextTick()
-              .then(() => {
-                emailRef.value?.focus();
-              }).catch((e) => {
-                console.error(e);
-              });
-            break;
-          default:
-            state.apiError = errorResponse.customAPIErrorDetails;
-            state.errorMessage = "API Error: fatal error";
-            break;
+  if (profile.email && profile.password) {
+    profileUpdatedSuccessfully.value = false;
+    Object.assign(state, defaultAjaxState);
+    state.ajaxRunning = true;
+    api.user
+      .updateProfile(profile.email, profile.password)
+      .then((successResponse) => {
+        profileUpdatedSuccessfully.value = true;
+        profile.email = successResponse.data.data.email;
+        profile.password = null;
+        nextTick()
+          .then(() => {
+            emailRef.value?.focus();
+          }).catch((e) => {
+            console.error(e);
+          });
+      })
+      .catch((errorResponse) => {
+        state.ajaxErrors = true;
+        if (errorResponse.isAPIError) {
+          state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
+          switch (errorResponse.response.status) {
+            // TODO: invalid fields check
+            case 401:
+              state.ajaxErrorMessage = "Auth session expired, requesting new...";
+              bus.emit("reAuthRequired", { emitter: "UpdateProfileForm.onSubmitForm" });
+              break;
+            case 409: // email already exists
+              validator.email.hasErrors = true;
+              validator.email.message = "Email already used";
+              state.ajaxErrorMessage = "Error updating profile";
+              nextTick()
+                .then(() => {
+                  emailRef.value?.focus();
+                }).catch((e) => {
+                  console.error(e);
+                });
+              break;
+            default:
+              state.ajaxErrorMessage = "API Error: fatal error";
+              break;
+          }
+        } else {
+          state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
+          console.error(errorResponse);
         }
-      } else {
-        state.errorMessage = `Uncaught exception: ${errorResponse}`;
-        console.error(errorResponse);
-      }
-      state.loading = false;
-    });
+      }).finally(() => {
+        state.ajaxRunning = false;
+      });
+  } else {
+    // TODO
+    console.error("Missing email|password values");
+  }
 }
 
 onMounted(() => {
@@ -237,5 +247,4 @@ onMounted(() => {
 onBeforeUnmount(() => {
   bus.off("reAuthSucess");
 });
-
 </script>
