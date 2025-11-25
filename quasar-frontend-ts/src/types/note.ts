@@ -3,5 +3,6 @@ export interface Note {
   body: string;
   createdOnTimestamp: number;
   createdOn: string;
+  createdOnTimeAgo: string;
   expanded: boolean;
 };
