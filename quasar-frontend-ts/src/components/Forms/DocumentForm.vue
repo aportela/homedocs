@@ -78,7 +78,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.loading" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                      }}</q-badge>
+                    }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
@@ -149,7 +149,7 @@ import { useFormUtils } from "src/composables/useFormUtils"
 import { DocumentClass } from "src/types/document";
 import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
 
-import { type GetDocumentResponse as GetDocumentResponseInterface } from "./api-responses";
+import { type GetDocumentResponse as GetDocumentResponseInterface } from "src/types/api-responses";
 
 import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
 import { default as DocumentMetadataTopForm } from "src/components/Forms/DocumentMetadataTopForm.vue"
