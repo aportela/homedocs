@@ -51,11 +51,11 @@ interface DeleteDocumentConfirmationDialogProps {
 
 const props = defineProps<DeleteDocumentConfirmationDialogProps>();
 
-const visible = ref(true);
+const visible = ref<boolean>(true);
 
 const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-const deleted = ref(false);
+const deleted = ref<boolean>(false);
 
 const onDelete = () => {
   Object.assign(state, defaultAjaxState);
