@@ -15,7 +15,7 @@
         <UpdateProfileForm />
       </div>
       <div class="col-lg-8 col-xl-8 col-12 flex">
-        <SystemStatsWidget />
+        <SystemStatsContainerWidget />
       </div>
     </div>
   </q-page>
@@ -26,7 +26,7 @@ import { useI18n } from "vue-i18n";
 
 import { default as UpdateProfileForm } from "src/components/Forms/UpdateProfileForm.vue";
 import { default as ProfileStorageSettingsWidget } from "src/components/Widgets/ProfileStorageSettingsWidget.vue";
-import { default as SystemStatsWidget } from "src/components/Widgets/SystemStatsWidget.vue";
+import { default as SystemStatsContainerWidget } from "src/components/Widgets/SystemStatsContainerWidget.vue";
 
 const { t } = useI18n();
 </script>
