@@ -38,8 +38,9 @@
                     <q-item-label>
                       <span class="text-weight-bold">{{ t("Size") }}:</span> {{ attachment.humanSize }}</q-item-label>
                     <q-item-label>
-                      <span class="text-weight-bold">{{ t('Uploaded on') }}:</span> {{ attachment.createdOn }} ({{
-                        attachment.createdOnTimeAgo }})</q-item-label>
+                      <span class="text-weight-bold">{{ t('Uploaded on') }}:</span> {{ attachment.createdAt.dateTime }}
+                      ({{
+                        attachment.createdAt.timeAgo }})</q-item-label>
                   </div>
                   <div class="col-xl-2 col-lg-2 col-md-3 col-sm-12 col-xs-12">
                     <q-btn align="left" size="md" color="primary" class="q-mt-sm full-width"
@@ -68,16 +69,17 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
+import { format } from "quasar";
 import { useI18n } from "vue-i18n";
-import { date, format } from "quasar";
 import { bus } from "src/composables/useBus";
-import { timeAgo } from "src/composables/useFormatDates"
 import { allowPreview } from "src/composables/useFileUtils"
 import { bgDownload } from "src/composables/useAxios";
 import { api } from "src/composables/useAPI";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 import { type Attachment as AttachmentInterface } from "src/types/attachment";
+import { DateTimeClass } from "src/types/date-time";
 import { type CustomBanner as CustomBannerInterface, defaultCustomBanner } from "src/types/custom-banner";
+import { type DocumentAttachmentsResponse as DocumentAttachmentsResponseInterface, type DocumentAttachmentResponseItem as DocumentAttachmentResponseItemInterface } from "src/types/api-responses";
 import { getURL as getAttachmentURL } from "src/composables/useAttachments";
 
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
@@ -129,17 +131,20 @@ const onRefresh = (documentId: string) => {
     state.ajaxRunning = true;
     api.document
       .getAttachments(documentId)
-      .then((successResponse) => {
+      .then((successResponse: DocumentAttachmentsResponseInterface) => {
         attachments.length = 0;
-        attachments.push(...successResponse.data.attachments.map((attachment: AttachmentInterface) => {
-          // TODO: use local storage datetime format ?
-          attachment.createdOn = date.formatDate(attachment.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
-          const returnedTimeAgo = timeAgo(attachment.createdOnTimestamp);
-          attachment.createdOnTimeAgo = t(returnedTimeAgo.label, returnedTimeAgo.count != null ? { count: returnedTimeAgo.count } : {});
-          attachment.humanSize = attachment.size ? format.humanStorageSize(attachment.size) : null;
-          attachment.orphaned = false;
-          return (attachment);
-        }));
+        attachments.push(...successResponse.data.attachments.map((attachment: DocumentAttachmentResponseItemInterface) =>
+        ({
+          id: attachment.id,
+          name: attachment.name,
+          size: attachment.size,
+          hash: attachment.hash,
+          humanSize: attachment.size ? format.humanStorageSize(attachment.size) : null,
+          createdAt: new DateTimeClass(t, attachment.createdOnTimestamp),
+          orphaned: false
+        })
+        )
+        );
       })
       .catch((errorResponse) => {
         state.ajaxErrors = true;
