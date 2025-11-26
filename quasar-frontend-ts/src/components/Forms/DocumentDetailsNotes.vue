@@ -26,8 +26,8 @@
             :rules="requiredFieldRules" :error="!note.body" :error-message="fieldIsRequiredLabel"
             :autofocus="note.startOnEditMode" :placeholder="t('type note body')">
             <template v-slot:top-icon-append="{ showTopHoverIcons }">
-              <q-icon name="delete" size="sm" class="q-ml-sm q-mr-sm" clickable v-show="showTopHoverIcons"
-                @click.stop.prevent="onRemoveNoteAtIndex(noteIndex)">
+              <q-icon name="delete" size="sm" class="q-ml-sm q-mr-sm icon-hover" clickable v-show="showTopHoverIcons"
+                :title="t('Remove note')" @click.stop.prevent="onRemoveNoteAtIndex(noteIndex)">
                 <DesktopToolTip>{{ t("Click to remove note") }}</DesktopToolTip>
               </q-icon>
             </template>
