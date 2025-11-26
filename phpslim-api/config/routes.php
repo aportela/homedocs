@@ -125,7 +125,7 @@ return function (\Slim\App $app): void {
                     unset($user->passwordHash);
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'data' => $user
+                            'user' => $user
                         ]
                     );
                     $response->getBody()->write($payload);
@@ -161,7 +161,7 @@ return function (\Slim\App $app): void {
                     unset($user->passwordHash);
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'data' => $user
+                            'user' => $user
                         ]
                     );
                     $response->getBody()->write($payload);
