@@ -13,7 +13,7 @@
         <q-btn type="button" no-caps no-wrap align="left" outline :label="searchButtonLabel" icon="search"
           class="full-width no-caps theme-default-q-btn" @click.prevent="dialogs.fastSearch.visible = true">
           <DesktopToolTip anchor="bottom middle" self="top middle">{{ t("Click to open fast search")
-            }}</DesktopToolTip>
+          }}</DesktopToolTip>
         </q-btn>
         <!--
         <FastSearchSelector dense class="full-width"></FastSearchSelector>
@@ -51,7 +51,7 @@ import { ref, reactive, watch, computed, onMounted, onBeforeUnmount } from "vue"
 import { useQuasar, LocalStorage, uid } from "quasar";
 import { useI18n } from "vue-i18n";
 
-import { useFormatDates } from "src/composables/useFormatDates"
+import { currentTimestamp } from "src/composables/useFormatDates"
 import { alwaysOpenUploadDialog as localStorageAlwaysOpenUploadDialog } from "src/composables/useLocalStorage"
 import { bus } from "src/composables/useBus";
 import type { Document } from "src/types/document";
@@ -74,8 +74,6 @@ import { default as UploadingDialog } from "src/components/Dialogs/UploadingDial
 const $q = useQuasar();
 
 const { t } = useI18n();
-
-const { currentTimestamp } = useFormatDates();
 
 const dialogs = reactive({
   reauth: {

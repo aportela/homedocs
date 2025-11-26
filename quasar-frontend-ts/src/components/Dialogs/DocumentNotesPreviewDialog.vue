@@ -2,9 +2,9 @@
   <BaseDialog v-model="visible" @close="onClose" width="1280px" max-width="80vw">
     <template v-slot:header-left>
       <div v-if="documentTitle">{{ t("Document title")
-      }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
+        }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
           documentTitle
-        }}</router-link>
+          }}</router-link>
       </div>
       <div v-else>{{ t("Document notes") }}</div>
     </template>
@@ -51,7 +51,7 @@ import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import { date } from "quasar";
 import { bus } from "src/composables/useBus";
-import { useFormatDates } from "src/composables/useFormatDates"
+import { timeAgo } from "src/composables/useFormatDates"
 import { api } from "src/composables/useAPI";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 import { type Note as NoteInterface } from "src/types/note";
@@ -61,7 +61,6 @@ import { default as CustomErrorBanner } from "src/components/Banners/CustomError
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 
 const { t } = useI18n();
-const { timeAgo } = useFormatDates();
 
 interface DocumentFilesPreviewDialogProps {
   documentId: string;
@@ -94,7 +93,8 @@ const onRefresh = (documentId: string) => {
         notes.push(...successResponse.data.notes.map((note: NoteInterface) => {
           // TODO: use local storage datetime format ?
           note.createdOn = date.formatDate(note.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
-          note.createdOnTimeAgo = timeAgo(note.createdOnTimestamp);
+          const returnedTimeAgo = timeAgo(note.createdOnTimestamp);
+          note.createdOnTimeAgo = t(returnedTimeAgo.label, returnedTimeAgo.count != null ? { count: returnedTimeAgo.count } : {});
           note.expanded = false;
           return (note);
         }));

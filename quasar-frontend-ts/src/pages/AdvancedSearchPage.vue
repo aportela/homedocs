@@ -111,7 +111,7 @@
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <DesktopToolTip>{{ t('Toggle sort by this column', { field: t(column.title) })
-                }}</DesktopToolTip>
+                  }}</DesktopToolTip>
               </th>
             </tr>
           </thead>
@@ -128,7 +128,7 @@
                       <q-item-label caption>{{ t("Creation date") }}: {{ document.creationDate }} ({{
                         document.creationDateTimeAgo }})</q-item-label>
                       <q-item-label caption v-if="document.lastUpdate">{{ t("Last update") }}: {{ document.lastUpdate
-                      }} ({{ document.lastUpdateTimeAgo }})</q-item-label>
+                        }} ({{ document.lastUpdateTimeAgo }})</q-item-label>
                     </q-item-section>
                     <q-item-section side top>
                       <ViewDocumentDetailsButton size="md" square class="min-width-9em"
@@ -184,7 +184,7 @@ import { bus, onShowDocumentFiles, onShowDocumentNotes } from "src/composables/u
 import { api } from "src/composables/useAPI";
 import { useAdvancedSearchData } from "src/stores/advancedSearchData"
 import { useDateFilter } from "src/composables/useDateFilter"
-import { useFormatDates } from "src/composables/useFormatDates"
+import { fullDateTimeHuman, timeAgo } from "src/composables/useFormatDates"
 import { dateTimeFormat as localStorageDateTimeFormat } from "src/composables/useLocalStorage";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
@@ -199,8 +199,6 @@ import { default as ViewDocumentDetailsButton } from "src/components/Buttons/Vie
 const { t } = useI18n();
 
 const route = useRoute();
-
-const { fullDateTimeHuman, timeAgo } = useFormatDates();
 
 const columns = [
   { field: 'title', title: 'Title', defaultClass: "gt-lg" },
@@ -347,9 +345,11 @@ const onSubmitForm = (resetPager) => {
         pager.totalPages = successResponse.data.results.pagination.totalPages;
         results.push(...successResponse.data.results.documents.map((document) => {
           document.creationDate = fullDateTimeHuman(document.createdOnTimestamp, localStorageDateTimeFormat.get());
-          document.creationDateTimeAgo = timeAgo(document.createdOnTimestamp);
+          const returnedTimeAgo1 = timeAgo(document.createdOnTimestamp);
+          document.creationDateTimeAgo = t(returnedTimeAgo1.label, returnedTimeAgo1.count != null ? { count: returnedTimeAgo1.count } : {});
           document.lastUpdate = fullDateTimeHuman(document.lastUpdateTimestamp, localStorageDateTimeFormat.get());
-          document.lastUpdateTimeAgo = timeAgo(document.lastUpdateTimestamp);
+          const returnedTimeAgo2 = timeAgo(document.lastUpdateTimestamp);
+          document.lastUpdateTimeAgo = t(returnedTimeAgo2.label, returnedTimeAgo2.count != null ? { count: returnedTimeAgo2.count } : {});
           return (document);
         }));
         state.searchLaunched = true;

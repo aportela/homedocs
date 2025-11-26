@@ -101,7 +101,7 @@ import { useRoute, useRouter } from "vue-router";
 
 import { bus, onShowDocumentFiles, onShowDocumentNotes } from "src/composables/useBus";
 import { api } from "src/composables/useAPI";
-import { useFormatDates } from "src/composables/useFormatDates"
+import { fullDateTimeHuman } from "src/composables/useFormatDates"
 import { searchDialogResultsPage as localStorageSearchDialogResultsPage, dateTimeFormat as localStorageDateTimeFormat } from "src/composables/useLocalStorage"
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 import { type QuasarVirtualScrollEventDetails as QuasarVirtualScrollEventDetailsInterface } from "src/types/quasar-virtual-scroll-event-details";
@@ -124,8 +124,6 @@ const currentRoute = useRoute();
 const currentDocumentId = ref(currentRoute.name == "document" ? currentRoute.params?.id || null : null);
 
 const { t } = useI18n();
-
-const { fullDateTimeHuman } = useFormatDates();
 
 const emit = defineEmits(['update:modelValue', 'close']);
 

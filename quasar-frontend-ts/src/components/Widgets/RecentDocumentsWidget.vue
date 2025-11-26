@@ -84,7 +84,7 @@ import { useI18n } from "vue-i18n";
 
 import { bus, onShowDocumentFiles, onShowDocumentNotes } from "src/composables/useBus";
 import { api } from "src/composables/useAPI";
-import { useFormatDates } from "src/composables/useFormatDates"
+import { timeAgo } from "src/composables/useFormatDates"
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 
 import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
@@ -94,7 +94,6 @@ import { default as BrowseByTagButton } from "src/components/Buttons/BrowseByTag
 import { default as ViewDocumentDetailsButton } from "src/components/Buttons/ViewDocumentDetailsButton.vue";
 
 const { t } = useI18n();
-const { timeAgo } = useFormatDates();
 
 interface RecentDocumentsWidgetProps {
   expanded?: boolean
@@ -131,7 +130,8 @@ const onRefresh = () => {
       .then((successResponse) => {
         recentDocuments.length = 0;
         recentDocuments.push(...successResponse.data.recentDocuments.map((document: RecentDocument) => {
-          document.lastUpdateTimeAgo = timeAgo(document.lastUpdateTimestamp);
+          const returnedTimeAgo = timeAgo(document.lastUpdateTimestamp);
+          document.lastUpdateTimeAgo = t(returnedTimeAgo.label, returnedTimeAgo.count != null ? { count: returnedTimeAgo.count } : {});
           return document;
         }));
       })

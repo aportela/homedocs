@@ -64,7 +64,7 @@ import { ref, watch, computed } from "vue";
 import { format } from "quasar";
 import { useI18n } from "vue-i18n";
 
-import { useFormatDates } from "src/composables/useFormatDates"
+import { fullDateTimeHuman } from "src/composables/useFormatDates"
 import { alwaysOpenUploadDialog as localStorageAlwaysOpenUploadDialog, dateTimeFormat as localStorageDateTimeFormat } from "src/composables/useLocalStorage"
 import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
 
@@ -73,7 +73,6 @@ import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue"
 
 const { t } = useI18n();
 
-const { fullDateTimeHuman } = useFormatDates();
 const serverEnvironment = useServerEnvironmentStore();
 
 const emit = defineEmits(['update:modelValue', 'close']);

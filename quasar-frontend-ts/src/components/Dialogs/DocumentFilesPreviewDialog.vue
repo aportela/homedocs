@@ -71,7 +71,7 @@ import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import { date, format } from "quasar";
 import { bus } from "src/composables/useBus";
-import { useFormatDates } from "src/composables/useFormatDates"
+import { timeAgo } from "src/composables/useFormatDates"
 import { allowPreview } from "src/composables/useFileUtils"
 import { bgDownload } from "src/composables/useAxios";
 import { api } from "src/composables/useAPI";
@@ -85,7 +85,6 @@ import { default as CustomErrorBanner } from "src/components/Banners/CustomError
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 
 const { t } = useI18n();
-const { timeAgo } = useFormatDates();
 
 interface DocumentFilesPreviewDialogProps {
   documentId: string;
@@ -135,7 +134,8 @@ const onRefresh = (documentId: string) => {
         attachments.push(...successResponse.data.attachments.map((attachment: AttachmentInterface) => {
           // TODO: use local storage datetime format ?
           attachment.createdOn = date.formatDate(attachment.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
-          attachment.createdOnTimeAgo = timeAgo(attachment.createdOnTimestamp);
+          const returnedTimeAgo = timeAgo(attachment.createdOnTimestamp);
+          attachment.createdOnTimeAgo = t(returnedTimeAgo.label, returnedTimeAgo.count != null ? { count: returnedTimeAgo.count } : {});
           attachment.humanSize = attachment.size ? format.humanStorageSize(attachment.size) : null;
           attachment.orphaned = false;
           return (attachment);
