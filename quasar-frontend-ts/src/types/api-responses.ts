@@ -1,6 +1,6 @@
 import { type AxiosResponse } from "axios";
-
 import { type HistoryOperationType } from "./history-operation";
+import { type SearchDocumentItemMatchedFragment as SearchDocumentItemMatchedFragmentInterface } from "./search-document-item";
 
 interface DefaultAxiosResponse {
   data: AxiosResponse<any, any, {}>;
@@ -77,7 +77,6 @@ interface DocumentNoteResponse extends Omit<DefaultAxiosResponse, 'data'> {
   }
 };
 
-
 interface DocumentHistoryOperationResponseItem {
   createdAtTimestamp: number;
   operationType: HistoryOperationType;
@@ -88,6 +87,34 @@ interface DocumentHistoryOperationResponse extends Omit<DefaultAxiosResponse, 'd
     historyOperations: DocumentHistoryOperationResponseItem[];
   }
 };
+
+interface PaginationResponse {
+  currentPage: number;
+  resultsPage: number;
+  totalResults: number;
+  totalPages: number;
+}
+
+interface SearchDocumentResponseItem {
+  id: string;
+  createdAtTimestamp: number;
+  updatedAtTimestamp: number | null;
+  title: string;
+  description: string | null;
+  tags: string[];
+  attachmentCount: number;
+  noteCount: number;
+  matchedFragments: SearchDocumentItemMatchedFragmentInterface[];
+};
+
+interface SearchDocumentResponse extends Omit<DefaultAxiosResponse, 'data'> {
+  data: {
+    results: {
+      pagination: PaginationResponse,
+      documents: SearchDocumentResponseItem[];
+    }
+  }
+}
 
 export {
   type DefaultAxiosResponse,
@@ -104,4 +131,7 @@ export {
   type DocumentNoteResponse,
   type DocumentHistoryOperationResponseItem,
   type DocumentHistoryOperationResponse,
+  type PaginationResponse,
+  type SearchDocumentResponseItem,
+  type SearchDocumentResponse,
 };
