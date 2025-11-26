@@ -27,8 +27,8 @@ const { t } = useI18n();
 
 const dateFormatModel = ref<string>(localStorageDateFormat.get());
 
-const saveDateFormat = (val: string) => {
-  if (val && val.length > 0) {
+const saveDateFormat = (val: string | number | null) => {
+  if (typeof val === 'string' && val.length > 0) {
     localStorageDateFormat.set(val);
   } else {
     localStorageDateFormat.remove();
@@ -37,8 +37,8 @@ const saveDateFormat = (val: string) => {
 
 const dateTimeFormatModel = ref<string>(localStorageDateTimeFormat.get());
 
-const saveDateTimeFormat = (val: string) => {
-  if (val && val.length > 0) {
+const saveDateTimeFormat = (val: string | number | null) => {
+  if (typeof val === 'string' && val.length > 0) {
     localStorageDateTimeFormat.set(val);
   } else {
     localStorageDateTimeFormat.remove();
