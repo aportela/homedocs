@@ -44,8 +44,8 @@
                 </q-tabs>
               </q-card-section>
               <q-card-section class="q-pa-md">
-                <DocumentMetadataTopForm v-if="!isNewDocument" :created-on-timestamp="document.createdOn.timestamp"
-                  :last-update-timestamp="document.lastUpdate.timestamp"></DocumentMetadataTopForm>
+                <DocumentMetadataTopForm v-if="!isNewDocument" :created-at="document.createdAt"
+                  :updated-at="document.updatedAt" />
                 <InteractiveTextFieldCustomInput ref="documentTitleFieldRef" dense class="q-mb-md" maxlength="128"
                   outlined v-model.trim="document.title" type="textarea" autogrow name="title"
                   :label="t('Document title')" :disable="state.loading || state.saving" :autofocus="true" clearable
@@ -78,7 +78,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.loading" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                    }}</q-badge>
+                      }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
@@ -149,7 +149,7 @@ import { uid, useQuasar } from "quasar";
 import { bus } from "src/composables/useBus";
 import { api } from "src/composables/useAPI";
 import { useFormUtils } from "src/composables/useFormUtils"
-import { useDocument } from "src/composables/useDocument"
+import { DocumentClass } from "src/types/document";
 import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
 
 import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
@@ -195,10 +195,11 @@ watch(() => props.documentId, val => {
 const isScreenGreaterThanMD = computed(() => screen.gt.md);
 const isNewDocument = computed(() => !props.documentId);
 
-const { getNewDocument } = useDocument();
-const document = getNewDocument();
+const document = reactive<DocumentClass>(
+  new DocumentClass()
+);
 
-const maxUploadFileSize = computed(() => serverEnvironment.maxFileSize);
+const maxUploadFileSize = computed(() => serverEnvironment.maxUploadFileSize);
 const uploaderRef = ref(null);
 const documentTitleFieldRef = ref(null);
 
@@ -245,7 +246,7 @@ const onRefresh = () => {
     api.document
       .get(document.id)
       .then((successResponse) => {
-        document.setFromAPIJSON(successResponse.data.document);
+        document.setFromAPIJSON(t, successResponse.data.document);
         state.loading = false;
         nextTick()
           .then(() => {
@@ -299,7 +300,7 @@ const onSubmitForm = () => {
       .update(document)
       .then((successResponse) => {
         if (successResponse.data.document) {
-          document.setFromAPIJSON(successResponse.data.document);
+          document.setFromAPIJSON(t, successResponse.data.document);
           state.loading = false;
           state.saving = false;
           state.saveSuccess = true;
