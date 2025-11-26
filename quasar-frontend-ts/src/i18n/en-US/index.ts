@@ -19,7 +19,6 @@ export default {
     "Sign up now and take control.",
   "The first step to a more organized you starts here!":
     "The first step to a more organized you starts here!",
-
   /* project name & slogans */
 
   /* hints for some action buttons */
@@ -33,6 +32,22 @@ export default {
     "Switch to dark mode",
   /* hints for some action buttons */
 
+  /* common labels */
+  "Loading...":
+    "Loading...",
+  /* common labels */
+
+  /* common validations */
+  "Field is required":
+    "Field is required",
+  /* common validations */
+
+  /* common error messages */
+  "Error loading data":
+    "Error loading data",
+  /* common error messages */
+
+  /* auth & profile labels / buttons */
   "Sign in":
     "Sign in",
   "Email":
@@ -45,14 +60,13 @@ export default {
     "Show password",
   "Hide password":
     "Hide password",
-  "Loading...":
-    "Loading...",
   "Don't have an account yet ?":
     "Don't have an account yet ?",
   "Click here to sign up":
     "Click here to sign up",
-  "Field is required":
-    "Field is required",
+  /* auth & profile labels / buttons */
+
+  /* auth & profile messages */
   "Email not registered":
     "Email not registered",
   "Invalid password":
@@ -73,18 +87,40 @@ export default {
     "API Error: missing email param",
   "API Error: missing password param":
     "API Error: missing password param",
+  /* auth & profile messages */
+
+
+  /* api errors */
   "API Error: invalid/missing param":
     "API Error: invalid/missing param",
   "API Error: fatal error":
     "API Error: fatal error",
   "API Error: fatal error details":
     "HTTP {status} ({statusText})",
+  "API Error: error removing file":
+    "API Error: error removing file",
+  "API Error: error deleting document":
+    "API Error: error deleting document",
+
+  /* api errors */
+
+  /* recent documents widget labels / messages */
   "Recent documents":
     "Recent documents",
   "You haven't created any documents yet":
     "You haven't created any documents yet",
-  "Error loading data":
-    "Error loading data",
+  /* recent documents widget labels / messages */
+
+  /* tag cloud widget labels / messages */
+  "Tag cloud":
+    "Tag cloud",
+  "You haven't created any tags yet":
+    "You haven't created any tags yet",
+
+
+  /* tag cloud widget labels / messages */
+
+  /* common document fields / labels */
   "Title":
     "Title",
   "title":
@@ -93,18 +129,12 @@ export default {
     "Description",
   "description":
     "description",
-  "Tag cloud":
-    "Tag cloud",
+  /* common document fields / labels */
+
   "Browse by tag: ":
     "Browse by tag: {tag}",
-  "You haven't created any tags yet":
-    "You haven't created any tags yet",
   "Uploaded on":
     "Uploaded on",
-  "API Error: error removing file":
-    "API Error: error removing file",
-  "API Error: error deleting document":
-    "API Error: error deleting document",
   "Document not found":
     "Document not found",
   "Access denied":
@@ -462,4 +492,5 @@ export default {
     "Oooops",
   "Error":
     "Error",
+
 };
