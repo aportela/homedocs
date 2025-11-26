@@ -11,6 +11,6 @@ interface APIErrorDetails {
     };
   };
   response: string | null;
-}
+};
 
 export { type APIErrorDetails };

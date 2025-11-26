@@ -22,6 +22,6 @@ class NoteClass implements Note {
     this.expanded = expanded;
     this.startOnEditMode = startOnEditMode;
   }
-}
+};
 
 export { type Note, NoteClass };

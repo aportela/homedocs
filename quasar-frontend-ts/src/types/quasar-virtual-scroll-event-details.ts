@@ -4,6 +4,6 @@ interface QuasarVirtualScrollEventDetails {
   to: number;
   direction: string;
   //ref: any;
-}
+};
 
 export { type QuasarVirtualScrollEventDetails };

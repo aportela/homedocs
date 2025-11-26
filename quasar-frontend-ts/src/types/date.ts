@@ -27,6 +27,6 @@ class DateClass implements Date {
       this.timeAgo = null;
     }
   }
-}
+};
 
 export { type Date, DateClass };

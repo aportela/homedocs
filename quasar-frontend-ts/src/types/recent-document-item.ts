@@ -28,6 +28,6 @@ class RecentDocumentItemClass implements RecentDocumentItem {
     this.attachmentCount = attachmentCount;
     this.noteCount = noteCount;
   }
-}
+};
 
 export { type RecentDocumentItem, RecentDocumentItemClass };
