@@ -2,7 +2,7 @@ import { reactive } from "vue";
 import { uid, format } from "quasar";
 import { type DateTime as DateTimeInterface, DateTimeClass } from "src/types/date-time";
 import type { Attachment as AttachmentInterface } from "./attachment";
-import { NoteClass } from "./note";
+import { type Note as NoteInterface, NoteClass } from "./note";
 import type { HistoryOperation as HistoryOperationInterface } from "./history-operation";
 import {
   fullDateTimeHuman,
@@ -36,7 +36,7 @@ export class DocumentClass implements Document {
   description: string | null;
   tags: string[];
   attachments: AttachmentInterface[];
-  notes: NoteClass[];
+  notes: NoteInterface[];
   historyOperations: HistoryOperationInterface[];
 
   constructor(
@@ -47,7 +47,7 @@ export class DocumentClass implements Document {
     description: string | null = null,
     tags: string[] = [],
     attachments: AttachmentInterface[] = [],
-    notes: NoteClass[] = [],
+    notes: NoteInterface[] = [],
     historyOperations: HistoryOperationInterface[] = []
   ) {
     this.id = id;
