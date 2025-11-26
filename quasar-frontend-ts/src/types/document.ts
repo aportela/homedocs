@@ -1,12 +1,233 @@
+import { reactive } from "vue";
+import { uid, format } from "quasar";
+import { type DateTime as DateTimeInterface, DateTimeClass } from "src/types/date-time";
 import type { Attachment as AttachmentInterface } from "./attachment";
 import type { Note as NoteInterface } from "./note";
 import type { HistoryOperation as HistoryOperationInterface } from "./history-operation";
+import {
+  fullDateTimeHuman,
+  timeAgo,
+  currentTimestamp,
+  currentFullDateTimeHuman,
+  currentTimeAgo
+} from "src/composables/useFormatDates";
+import { bus } from "src/composables/useBus";
+import { dateTimeFormat as localStorageDateTimeFormat } from "src/composables/useLocalStorage";
 
 export interface Document {
   id: string | null;
+  createdAt: DateTimeInterface | null;
+  updatedAt: DateTimeInterface | null;
   title: string | null;
   description: string | null;
+  tags: string[];
   attachments: AttachmentInterface[];
   notes: NoteInterface[];
   historyOperations: HistoryOperationInterface[];
+};
+
+type Ti18NFunction = (key: string, values?: Record<string, string | number | boolean>) => string;
+
+export class DocumentClass implements Document {
+  id: string | null;
+  createdAt: DateTimeInterface | null;
+  updatedAt: DateTimeInterface | null;
+  title: string | null;
+  description: string | null;
+  tags: string[];
+  attachments: AttachmentInterface[];
+  notes: NoteInterface[];
+  historyOperations: HistoryOperationInterface[];
+
+  constructor(
+    id: string | null = null,
+    createdAt: DateTimeInterface | null = null,
+    updatedAt: DateTimeInterface | null = null,
+    title: string | null = null,
+    description: string | null = null,
+    tags: string[] = [],
+    attachments: AttachmentInterface[] = [],
+    notes: NoteInterface[] = [],
+    historyOperations: HistoryOperationInterface[] = []
+  ) {
+    this.id = id;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
+    this.title = title;
+    this.description = description;
+    this.tags = tags;
+    this.attachments = attachments;
+    this.notes = notes;
+    this.historyOperations = historyOperations;
+  }
+
+  hasTags = (): boolean => {
+    return this.tags.length > 0;
+  };
+
+  hasAttachments = (): boolean => {
+    return this.attachments.length > 0;
+  };
+
+  hasNotes = (): boolean => {
+    return this.notes.length > 0;
+  };
+
+  hasHistoryOperations = (): boolean => {
+    return this.historyOperations.length > 0;
+  };
+
+  reset = (): void => {
+    this.id = null;
+    this.createdAt = null;
+    this.updatedAt = null;
+    this.title = null;
+    this.description = null;
+    this.tags.length = 0;
+    this.attachments.length = 0;
+    this.notes.length = 0;
+    this.historyOperations.length = 0;
+  };
+
+  addAttachment = (t: Ti18NFunction, id: string, name: string, size: number): void => {
+    const fileId = id || uid();
+    this.attachments.unshift(
+      reactive<AttachmentInterface>({
+        id: fileId,
+        name: name,
+        size: size || 0,
+        hash: null,
+        createdOnTimestamp: currentTimestamp(),
+        createdOn: currentFullDateTimeHuman(),
+        createdOnTimeAgo: t(currentTimeAgo()),
+        humanSize: size > 0 ? format.humanStorageSize(size) : null,
+        orphaned: true, // this property is used for checking if file was uploaded but not associated to document (while not saving document)
+      }),
+    );
+  };
+
+  removeAttachmentAtIdx = (index: number): boolean => {
+    if (index >= 0 && index < this.attachments.length) {
+      this.attachments.splice(index, 1);
+      return true;
+    } else {
+      console.error("Invalid attachment index", index);
+      return false;
+    }
+  };
+
+  previewAttachment = (index: number): boolean => {
+    if (index >= 0 && index < this.attachments.length) {
+      bus.emit("showDocumentFilePreviewDialog", {
+        document: {
+          id: this.id,
+          title: this.title,
+          attachments: this.attachments,
+        },
+        currentIndex: index,
+      });
+      return true;
+    } else {
+      console.error("Invalid attachment index", index);
+      return false;
+    }
+  };
+
+  addNote = (t: Ti18NFunction): void => {
+    const note = reactive<NoteInterface>({
+      id: uid(),
+      body: null,
+      createdOnTimestamp: currentTimestamp(),
+      createdOn: currentFullDateTimeHuman(),
+      createdOnTimeAgo: t(currentTimeAgo()),
+      expanded: false,
+      startOnEditMode: true, // new notes start with view mode = "edit" (for allowing input body text)
+    });
+    this.notes.unshift(note);
+  };
+
+  removeNoteAtIdx = (index: number): boolean => {
+    if (index >= 0 && index < this.notes.length) {
+      this.notes.splice(index, 1);
+      return true;
+    } else {
+      console.error("Invalid note index", index);
+      return false;
+    }
+  };
+
+  setFromAPIJSON(t: Ti18NFunction, data: any) {
+    this.id = data.id;
+    this.title = data.title;
+    this.description = data.description;
+
+    if (data.createdOnTimestamp) {
+      this.createdAt = new DateTimeClass(t, data.createdOnTimestamp);
+    }
+
+    if (data.lastUpdateTimestamp) {
+      this.updatedAt = new DateTimeClass(t, data.lastUpdateTimestamp);
+    }
+
+    this.tags.length = 0;
+    if (Array.isArray(data.tags) && data.tags.length > 0) {
+      this.tags.push(...data.tags);
+    }
+
+    this.attachments.length = 0;
+    if (Array.isArray(data.attachments) && data.attachments.length > 0) {
+      this.attachments.push(
+        ...JSON.parse(JSON.stringify(data.attachments)).map((file: AttachmentInterface) => {
+          file.createdOn = fullDateTimeHuman(file.createdOnTimestamp, localStorageDateTimeFormat.get());
+          file.createdOnTimeAgo = timeAgo(file.createdOnTimestamp);
+          file.humanSize = file.size ? format.humanStorageSize(file.size) : null;
+          file.orphaned = false;
+          return file;
+        }),
+      );
+    }
+
+    this.notes.length = 0;
+    if (Array.isArray(data.notes) && data.notes.length > 0) {
+      this.notes.push(
+        ...JSON.parse(JSON.stringify(data.notes)).map((note: NoteInterface) => {
+          note.createdOn = fullDateTimeHuman(note.createdOnTimestamp, localStorageDateTimeFormat.get());
+          note.createdOnTimeAgo = timeAgo(note.createdOnTimestamp);
+          note.expanded = false;
+          note.startOnEditMode = false; // this is only required when adding new note
+          return note;
+        }),
+      );
+    }
+
+    this.historyOperations.length = 0;
+    if (Array.isArray(data.history) && data.history.length > 0) {
+      this.historyOperations.push(
+        ...JSON.parse(JSON.stringify(data.history)).map((operation: HistoryOperationInterface) => {
+          operation.createdOn = fullDateTimeHuman(
+            operation.createdOnTimestamp, localStorageDateTimeFormat.get()
+          );
+          operation.createdOnTimeAgo = timeAgo(
+            operation.createdOnTimestamp,
+          );
+          switch (operation.operationType) {
+            case 1:
+              operation.label = "Document created";
+              operation.icon = "post_add";
+              break;
+            case 2:
+              operation.label = "Document updated";
+              operation.icon = "edit_note";
+              break;
+            default:
+              operation.label = "Unknown operation";
+              operation.icon = "error";
+              break;
+          }
+          return operation;
+        }),
+      );
+    }
+  };
+
 };
