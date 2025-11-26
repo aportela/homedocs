@@ -2,9 +2,9 @@
   <BaseDialog v-model="visible" @close="onClose" width="1280px" max-width="80vw">
     <template v-slot:header-left>
       <div v-if="documentTitle">{{ t("Document title")
-      }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
+        }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
           documentTitle
-        }}</router-link>
+          }}</router-link>
       </div>
       <div v-else>{{ t("Document attachments") }}</div>
     </template>
@@ -76,7 +76,7 @@ import { allowPreview } from "src/composables/useFileUtils"
 import { bgDownload } from "src/composables/useAxios";
 import { api } from "src/composables/useAPI";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
-import { type Attachment as AttachmentInterface } from "src/types/attachment";
+import { type Attachment as AttachmentInterface, AttachmentClass } from "src/types/attachment";
 import { DateTimeClass } from "src/types/date-time";
 import { type CustomBanner as CustomBannerInterface, defaultCustomBanner } from "src/types/custom-banner";
 import { type DocumentAttachmentsResponse as DocumentAttachmentsResponseInterface, type DocumentAttachmentResponseItem as DocumentAttachmentResponseItemInterface } from "src/types/api-responses";
@@ -134,17 +134,15 @@ const onRefresh = (documentId: string) => {
       .then((successResponse: DocumentAttachmentsResponseInterface) => {
         attachments.length = 0;
         attachments.push(...successResponse.data.attachments.map((attachment: DocumentAttachmentResponseItemInterface) =>
-        ({
-          id: attachment.id,
-          name: attachment.name,
-          size: attachment.size,
-          hash: attachment.hash,
-          humanSize: attachment.size ? format.humanStorageSize(attachment.size) : null,
-          createdAt: new DateTimeClass(t, attachment.createdOnTimestamp),
-          orphaned: false
-        })
-        )
-        );
+          new AttachmentClass(
+            attachment.id,
+            attachment.name,
+            attachment.hash,
+            attachment.size,
+            new DateTimeClass(t, attachment.createdAtTimestamp),
+            false
+          )
+        ));
       })
       .catch((errorResponse) => {
         state.ajaxErrors = true;
