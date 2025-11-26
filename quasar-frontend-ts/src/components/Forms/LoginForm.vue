@@ -8,10 +8,10 @@
       <slot name="slogan">
         <h4 class="q-mt-sm q-mb-md text-h4 text-weight-bolder">{{
           t(!!savedEmail ? "Glad to see you again!" : "Welcome aboard!")
-        }}</h4>
+          }}</h4>
         <div class="text-color-secondary">{{
           t(!!savedEmail ? "Let's get back to organizing." : "Let's start organizing.")
-        }}
+          }}
         </div>
       </slot>
     </q-card-section>
@@ -75,6 +75,7 @@ import { email as localStorageEmail } from "src/composables/useLocalStorage";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 import { type AuthValidator as AuthValidatorInterface, defaultAuthValidator } from "src/types/auth-validator";
 import { type AuthFields as AuthFieldsInterface } from "src/types/auth-fields";
+import { type LoginResponse } from "src/types/api-responses";
 import { default as DarkModeButton } from "src/components/Buttons/DarkModeButton.vue"
 import { default as SwitchLanguageButton } from "src/components/Buttons/SwitchLanguageButton.vue"
 import { default as GitHubButton } from "src/components/Buttons/GitHubButton.vue"
@@ -146,9 +147,10 @@ const onSubmitForm = () => {
     state.ajaxRunning = true;
     api.auth
       .login(profile.email, profile.password)
-      .then((successResponse) => {
+      .then((LoginResponse) => {
         localStorageEmail.set(profile.email);
-        emit("success", successResponse.data);
+        console.log(LoginResponse.data);
+        emit("success", LoginResponse.data);
       })
       .catch((errorResponse) => {
         state.ajaxErrors = true;
