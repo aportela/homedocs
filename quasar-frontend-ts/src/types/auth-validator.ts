@@ -1,11 +1,11 @@
 import { type ValidatorField as ValidatorFieldInterface } from "src/types/validator-field";
 
-export interface AuthValidator {
+interface AuthValidator {
   email: ValidatorFieldInterface;
   password: ValidatorFieldInterface;
 };
 
-export const defaultAuthValidator: AuthValidator = {
+const defaultAuthValidator: AuthValidator = {
   email: {
     hasErrors: false,
     message: null
@@ -15,3 +15,5 @@ export const defaultAuthValidator: AuthValidator = {
     message: null
   }
 };
+
+export { type AuthValidator, defaultAuthValidator };

@@ -1,4 +1,4 @@
-export interface APIErrorDetails {
+interface APIErrorDetails {
   method: string;
   url: string;
   httpCode: number;
@@ -12,3 +12,5 @@ export interface APIErrorDetails {
   };
   response: string | null;
 }
+
+export { type APIErrorDetails };

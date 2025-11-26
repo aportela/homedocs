@@ -1,5 +1,6 @@
 import { reactive } from "vue";
 import { uid, format } from "quasar";
+import { type Ti18NFunction } from "./i18n";
 import { type DateTime as DateTimeInterface, DateTimeClass } from "src/types/date-time";
 import type { Attachment as AttachmentInterface } from "./attachment";
 import { type Note as NoteInterface, NoteClass } from "./note";
@@ -14,7 +15,7 @@ import {
 import { bus } from "src/composables/useBus";
 import { dateTimeFormat as localStorageDateTimeFormat } from "src/composables/useLocalStorage";
 
-export interface Document {
+interface Document {
   id: string | null;
   createdAt: DateTimeInterface | null;
   updatedAt: DateTimeInterface | null;
@@ -22,13 +23,11 @@ export interface Document {
   description: string | null;
   tags: string[];
   attachments: AttachmentInterface[];
-  notes: NoteClass[];
+  notes: NoteInterface[];
   historyOperations: HistoryOperationInterface[];
 };
 
-type Ti18NFunction = (key: string, values?: Record<string, string | number | boolean>) => string;
-
-export class DocumentClass implements Document {
+class DocumentClass implements Document {
   id: string | null;
   createdAt: DateTimeInterface | null;
   updatedAt: DateTimeInterface | null;
@@ -233,3 +232,5 @@ export class DocumentClass implements Document {
   };
 
 };
+
+export { type Document, DocumentClass };

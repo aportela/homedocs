@@ -1,4 +1,4 @@
-export interface UploadTransfer {
+interface UploadTransfer {
   id: string;
   filename: string;
   filesize: number;
@@ -11,3 +11,5 @@ export interface UploadTransfer {
   errorMessage: string | null,
   processed: boolean,
 };
+
+export { type UploadTransfer };

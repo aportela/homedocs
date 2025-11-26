@@ -1,16 +1,16 @@
 import { dateFormat as localStorageDateFormat } from "src/composables/useLocalStorage";
 import { dateHuman, timeAgo } from "src/composables/useFormatDates";
+import { type Ti18NFunction } from "./i18n";
 
-export interface Date {
+interface Date {
   timestamp: number | null,
   // TODO: refactor to formattedDate
   date: string | null,
   timeAgo: string | null,
 };
 
-type Ti18NFunction = (key: string, values?: Record<string, string | number | boolean>) => string;
 
-export class DateClass implements Date {
+class DateClass implements Date {
   timestamp: number | null;
   date: string | null;
   timeAgo: string | null;
@@ -28,3 +28,5 @@ export class DateClass implements Date {
     }
   }
 }
+
+export { type Date, DateClass };

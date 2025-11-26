@@ -1,4 +1,4 @@
-export interface HistoryOperation {
+interface HistoryOperation {
   operationType: number;
   label: string;
   icon: string;
@@ -6,3 +6,5 @@ export interface HistoryOperation {
   createdOn: string;
   createdOnTimeAgo: string;
 };
+
+export { type HistoryOperation };

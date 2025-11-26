@@ -1,14 +1,13 @@
 import { type Date as DateInterface } from "./date";
 import { dateFormat as localStorageDateFormat, dateTimeFormat as localStorageDateTimeFormat } from "src/composables/useLocalStorage";
 import { dateHuman, fullDateTimeHuman, timeAgo } from "src/composables/useFormatDates";
+import { type Ti18NFunction } from "./i18n";
 
-export interface DateTime extends DateInterface {
+interface DateTime extends DateInterface {
   dateTime: string | null,
 };
 
-type Ti18NFunction = (key: string, values?: Record<string, string | number | boolean>) => string;
-
-export class DateTimeClass implements DateTime {
+class DateTimeClass implements DateTime {
   timestamp: number | null;
   // TODO: refactor to formattedDate
   date: string | null;
@@ -31,3 +30,5 @@ export class DateTimeClass implements DateTime {
     }
   }
 }
+
+export { type DateTime, DateTimeClass }

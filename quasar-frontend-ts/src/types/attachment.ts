@@ -1,4 +1,4 @@
-export interface Attachment {
+interface Attachment {
   id: string;
   name: string;
   size: number | null;
@@ -9,3 +9,5 @@ export interface Attachment {
   createdOnTimeAgo: string;
   orphaned: boolean;
 };
+
+export { type Attachment };

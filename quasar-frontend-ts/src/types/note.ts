@@ -1,6 +1,6 @@
 import { type DateTime as DateTimeInterface } from "src/types/date-time";
 
-export interface Note {
+interface Note {
   id: string;
   body: string | null;
   createdAt: DateTimeInterface;
@@ -8,7 +8,7 @@ export interface Note {
   startOnEditMode: boolean;
 };
 
-export class NoteClass implements Note {
+class NoteClass implements Note {
   id: string;
   body: string | null;
   createdAt: DateTimeInterface;
@@ -23,3 +23,5 @@ export class NoteClass implements Note {
     this.startOnEditMode = startOnEditMode;
   }
 }
+
+export { type Note, NoteClass };
