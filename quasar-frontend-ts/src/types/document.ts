@@ -5,8 +5,7 @@ import { type DateTime as DateTimeInterface, DateTimeClass } from "src/types/dat
 import { type Attachment as AttachmentInterface, AttachmentClass } from "./attachment";
 import { type Note as NoteInterface, NoteClass } from "./note";
 import { type HistoryOperation as HistoryOperationInterface, HistoryOperationClass } from "./history-operation";
-import { type DocumentHistoryOperationResponseItem as DocumentHistoryOperationResponseItemInterface } from "./api-responses";
-import { type GetDocumentResponse as GetDocumentResponseInterface } from "./api-responses";
+import { type DocumentHistoryOperationResponseItem as DocumentHistoryOperationResponseItemInterface, type GetDocumentResponse as GetDocumentResponseInterface } from "./api-responses";
 import { currentTimestamp } from "src/composables/useFormatDates";
 import { bus } from "src/composables/useBus";
 
