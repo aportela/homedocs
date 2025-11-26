@@ -2,7 +2,7 @@ import { reactive } from "vue";
 import { uid, format } from "quasar";
 import { type DateTime as DateTimeInterface, DateTimeClass } from "src/types/date-time";
 import type { Attachment as AttachmentInterface } from "./attachment";
-import type { Note as NoteInterface } from "./note";
+import { NoteClass } from "./note";
 import type { HistoryOperation as HistoryOperationInterface } from "./history-operation";
 import {
   fullDateTimeHuman,
@@ -22,7 +22,7 @@ export interface Document {
   description: string | null;
   tags: string[];
   attachments: AttachmentInterface[];
-  notes: NoteInterface[];
+  notes: NoteClass[];
   historyOperations: HistoryOperationInterface[];
 };
 
@@ -36,7 +36,7 @@ export class DocumentClass implements Document {
   description: string | null;
   tags: string[];
   attachments: AttachmentInterface[];
-  notes: NoteInterface[];
+  notes: NoteClass[];
   historyOperations: HistoryOperationInterface[];
 
   constructor(
@@ -47,7 +47,7 @@ export class DocumentClass implements Document {
     description: string | null = null,
     tags: string[] = [],
     attachments: AttachmentInterface[] = [],
-    notes: NoteInterface[] = [],
+    notes: NoteClass[] = [],
     historyOperations: HistoryOperationInterface[] = []
   ) {
     this.id = id;
@@ -134,16 +134,16 @@ export class DocumentClass implements Document {
   };
 
   addNote = (t: Ti18NFunction): void => {
-    const note = reactive<NoteInterface>({
-      id: uid(),
-      body: null,
-      createdOnTimestamp: currentTimestamp(),
-      createdOn: currentFullDateTimeHuman(),
-      createdOnTimeAgo: t(currentTimeAgo()),
-      expanded: false,
-      startOnEditMode: true, // new notes start with view mode = "edit" (for allowing input body text)
-    });
-    this.notes.unshift(note);
+    this.notes.unshift(
+      reactive<NoteClass>(
+        new NoteClass(
+          uid(),
+          null,
+          new DateTimeClass(t, currentTimestamp()),
+          false,
+          true, // new notes start with view mode = "edit" (for allowing input body text)
+        ))
+    );
   };
 
   removeNoteAtIdx = (index: number): boolean => {
@@ -190,12 +190,14 @@ export class DocumentClass implements Document {
     this.notes.length = 0;
     if (Array.isArray(data.notes) && data.notes.length > 0) {
       this.notes.push(
-        ...JSON.parse(JSON.stringify(data.notes)).map((note: NoteInterface) => {
-          note.createdOn = fullDateTimeHuman(note.createdOnTimestamp, localStorageDateTimeFormat.get());
-          note.createdOnTimeAgo = timeAgo(note.createdOnTimestamp);
-          note.expanded = false;
-          note.startOnEditMode = false; // this is only required when adding new note
-          return note;
+        ...data.notes.map((note) => {
+          return new NoteClass(
+            note.id,
+            note.body,
+            new DateTimeClass(t, note.createdOnTimestamp),
+            false,
+            false,
+          );
         }),
       );
     }

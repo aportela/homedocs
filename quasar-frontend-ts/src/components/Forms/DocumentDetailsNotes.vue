@@ -21,7 +21,7 @@
         v-show="!hiddenIds.includes(note.id)">
         <q-item-section>
           <InteractiveTextFieldCustomInput v-model.trim="note.body" dense outlined type="textarea" maxlength="4096"
-            autogrow name="description" :label="`${note.createdOn} (${note.createdOnTimeAgo})`"
+            autogrow name="description" :label="`${note.createdAt.dateTime} (${note.createdAt.timeAgo})`"
             :start-mode-editable="!!note.startOnEditMode" :disable="disable" clearable :max-lines="6"
             :rules="requiredFieldRules" :error="!note.body" :error-message="fieldIsRequiredLabel"
             :autofocus="note.startOnEditMode" :placeholder="t('type note body')">
@@ -52,7 +52,7 @@ import { useI18n } from "vue-i18n";
 
 import { useFormUtils } from "src/composables/useFormUtils"
 import { useDocument } from "src/composables/useDocument"
-import { type Note as NoteInterface } from "src/types/note";
+import { type NoteClass } from "src/types/note";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 import { default as InteractiveTextFieldCustomInput } from "src/components/Forms/Fields/InteractiveTextFieldCustomInput.vue"
@@ -66,7 +66,7 @@ const { escapeRegExp } = useDocument();
 const emit = defineEmits(['update:modelValue', 'addNote', 'removeNoteAtIndex']);
 
 interface DocumentDetailsNotesProps {
-  modelValue: NoteInterface[];
+  modelValue: NoteClass[];
   disable: boolean;
 };
 

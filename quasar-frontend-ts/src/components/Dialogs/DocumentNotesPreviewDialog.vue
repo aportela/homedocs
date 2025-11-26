@@ -2,9 +2,9 @@
   <BaseDialog v-model="visible" @close="onClose" width="1280px" max-width="80vw">
     <template v-slot:header-left>
       <div v-if="documentTitle">{{ t("Document title")
-        }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
+      }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
           documentTitle
-          }}</router-link>
+        }}</router-link>
       </div>
       <div v-else>{{ t("Document notes") }}</div>
     </template>
@@ -30,7 +30,7 @@
           <div v-for="note in notes" :key="note.id"
             class="q-pa-sm relative-position white-space-pre-line border-bottom-except-last-item">
             <div class="note-date-label">
-              {{ note.createdOn }} ({{ note.createdOnTimeAgo }})</div>
+              {{ note.createdAt.dateTime }} ({{ note.createdAt.timeAgo }})</div>
             <q-icon :name="note.expanded ? 'unfold_less' : 'expand'" size="sm"
               class="absolute-top-right text-grey cursor-pointer q-mr-sm q-mt-sm" color="blue"
               @click.stop="note.expanded = !note.expanded">
@@ -49,12 +49,11 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
-import { date } from "quasar";
 import { bus } from "src/composables/useBus";
-import { timeAgo } from "src/composables/useFormatDates"
 import { api } from "src/composables/useAPI";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
-import { type Note as NoteInterface } from "src/types/note";
+import { NoteClass } from "src/types/note";
+import { DateTimeClass } from "src/types/date-time";
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
@@ -78,7 +77,7 @@ const visible = ref(true);
 
 const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-const notes = reactive<Array<NoteInterface>>([]);
+const notes = reactive<Array<NoteClass>>([]);
 
 const hasNotes = computed(() => notes?.length > 0);
 
@@ -90,13 +89,14 @@ const onRefresh = (documentId: string) => {
       .getNotes(documentId)
       .then((successResponse) => {
         notes.length = 0;
-        notes.push(...successResponse.data.notes.map((note: NoteInterface) => {
-          // TODO: use local storage datetime format ?
-          note.createdOn = date.formatDate(note.createdOnTimestamp, 'YYYY-MM-DD HH:mm:ss');
-          const returnedTimeAgo = timeAgo(note.createdOnTimestamp);
-          note.createdOnTimeAgo = t(returnedTimeAgo.label, returnedTimeAgo.count != null ? { count: returnedTimeAgo.count } : {});
-          note.expanded = false;
-          return (note);
+        notes.push(...successResponse.data.notes.map((note) => {
+          return new NoteClass(
+            note.id,
+            note.body,
+            new DateTimeClass(t, note.createdOnTimestamp),
+            false,
+            false
+          );
         }));
       })
       .catch((errorResponse) => {

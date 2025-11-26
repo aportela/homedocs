@@ -78,7 +78,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.loading" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                      }}</q-badge>
+                    }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
@@ -490,7 +490,7 @@ const onRemoveAttachmentAtIndex = (index: number) => {
 };
 
 const onAddNote = () => {
-  document.addNote();
+  document.addNote(t);
 };
 
 const onRemoveNoteAtIndex = (index: number) => {
