@@ -12,9 +12,7 @@ class Document
      * @param array<\HomeDocs\Note> $notes
      * @param array<\HomeDocs\DocumentHistoryOperation> $history
      */
-    public function __construct(public ?string $id = null, public ?string $title = null, public ?string $description = null, public ?int $createdOnTimestamp = null, public ?int $lastUpdateTimestamp = null, public array $tags = [], public array $attachments = [], public array $notes = [], public array $history = [])
-    {
-    }
+    public function __construct(public ?string $id = null, public ?string $title = null, public ?string $description = null, public ?int $createdOnTimestamp = null, public ?int $lastUpdateTimestamp = null, public array $tags = [], public array $attachments = [], public array $notes = [], public array $history = []) {}
 
     /**
      * @return array<mixed>
@@ -66,7 +64,7 @@ class Document
                         DOCUMENT.id,
                         DOCUMENT.title,
                         DOCUMENT.description,
-                        CAST(DOCUMENTS_LAST_HISTORY_OPERATION.max_ctime AS INT) AS lastUpdateTimestamp,
+                        CAST(DOCUMENTS_LAST_HISTORY_OPERATION.max_ctime AS INT) AS updatedAtTimestamp,
                         COALESCE(DOCUMENTS_ATTACHMENTS.attachmentCount, 0) AS attachmentCount,
                         COALESCE(DOCUMENTS_NOTES.noteCount, 0) AS noteCount,
                         DOCUMENTS_TAGS.tags
@@ -89,8 +87,8 @@ class Document
         );
         return (array_map(
             function (object $item): object {
-                if (property_exists($item, "lastUpdateTimestamp") && is_numeric($item->lastUpdateTimestamp)) {
-                    $item->lastUpdateTimestamp = intval($item->lastUpdateTimestamp);
+                if (property_exists($item, "updatedAtTimestamp") && is_numeric($item->updatedAtTimestamp)) {
+                    $item->updatedAtTimestamp = intval($item->updatedAtTimestamp);
                 }
 
                 if (property_exists($item, "attachmentCount") && is_numeric($item->attachmentCount)) {
