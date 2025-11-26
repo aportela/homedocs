@@ -86,7 +86,7 @@ import { bus, onShowDocumentFiles, onShowDocumentNotes } from "src/composables/u
 import { api } from "src/composables/useAPI";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 import { type RecentDocumentsResponse, type RecentDocumentResponseItem } from "src/types/api-responses";
-import { type RecentDocumentItem } from "src/types/recent-document-item";
+import { type RecentDocumentItem, RecentDocumentItemClass } from "src/types/recent-document-item";
 import { DateTimeClass } from "src/types/date-time";
 
 import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
@@ -122,15 +122,15 @@ const onRefresh = () => {
       .then((successResponse: RecentDocumentsResponse) => {
         recentDocuments.length = 0;
         recentDocuments.push(...successResponse.data.documents.map((document: RecentDocumentResponseItem) =>
-        ({
-          id: document.id,
-          updatedAt: new DateTimeClass(t, document.updatedAtTimestamp),
-          title: document.title,
-          description: document.description,
-          tags: document.tags,
-          attachmentCount: document.attachmentCount,
-          noteCount: document.noteCount,
-        })
+          new RecentDocumentItemClass(
+            document.id,
+            new DateTimeClass(t, document.updatedAtTimestamp),
+            document.title,
+            document.description,
+            document.tags,
+            document.attachmentCount,
+            document.noteCount,
+          )
         ));
       })
       .catch((errorResponse) => {
