@@ -7,8 +7,8 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="historyOperation in historyOperations" :key="historyOperation.createdOnTimestamp">
-        <td>{{ historyOperation.createdOn }} ({{ historyOperation.createdOnTimeAgo }})</td>
+      <tr v-for="historyOperation in historyOperations" :key="historyOperation.id">
+        <td>{{ historyOperation.createdAt.dateTime }} ({{ historyOperation.createdAt.timeAgo }})</td>
         <td><q-icon size="md" :name="historyOperation.icon" class="q-mr-sm"></q-icon>{{
           t(historyOperation.label) }}
         </td>
@@ -36,6 +36,7 @@ interface DocumentDetailsHistoryProps {
 const props = withDefaults(defineProps<DocumentDetailsHistoryProps>(), {
   disable: false
 });
+
 
 const historyOperations = computed({
   get() {
