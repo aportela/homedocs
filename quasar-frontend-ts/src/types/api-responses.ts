@@ -63,6 +63,18 @@ interface DocumentAttachmentsResponse extends Omit<DefaultAxiosResponse, 'data'>
   }
 };
 
+interface DocumentNoteResponseItem {
+  id: string;
+  body: string;
+  createdAtTimestamp: number;
+};
+
+interface DocumentNoteResponse extends Omit<DefaultAxiosResponse, 'data'> {
+  data: {
+    notes: DocumentNoteResponseItem[];
+  }
+};
+
 export {
   type DefaultAxiosResponse,
   type LoginResponse,
@@ -74,4 +86,6 @@ export {
   type RecentDocumentsResponse,
   type DocumentAttachmentResponseItem,
   type DocumentAttachmentsResponse,
+  type DocumentNoteResponseItem,
+  type DocumentNoteResponse,
 };
