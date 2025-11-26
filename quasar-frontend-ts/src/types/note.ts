@@ -1,9 +1,25 @@
+import { type DateTime as DateTimeInterface } from "src/types/date-time";
+
 export interface Note {
   id: string;
   body: string | null;
-  createdOnTimestamp: number;
-  createdOn: string;
-  createdOnTimeAgo: string;
+  createdAt: DateTimeInterface;
   expanded: boolean;
   startOnEditMode: boolean;
 };
+
+export class NoteClass implements Note {
+  id: string;
+  body: string | null;
+  createdAt: DateTimeInterface;
+  expanded: boolean;
+  startOnEditMode: boolean;
+
+  constructor(id: string, body: string | null, createdAt: DateTimeInterface, expanded: boolean, startOnEditMode: boolean) {
+    this.id = id;
+    this.body = body;
+    this.createdAt = createdAt;
+    this.expanded = expanded;
+    this.startOnEditMode = startOnEditMode;
+  }
+}
