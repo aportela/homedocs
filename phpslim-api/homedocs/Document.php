@@ -655,7 +655,7 @@ class Document
             sprintf(
                 "
                     SELECT
-                        DOCUMENT_NOTE.note_id AS noteId, DOCUMENT_NOTE.ctime AS createdOnTimestamp, DOCUMENT_NOTE.body
+                        DOCUMENT_NOTE.note_id AS noteId, DOCUMENT_NOTE.ctime AS createdAtTimestamp, DOCUMENT_NOTE.body
                     FROM DOCUMENT_NOTE
                     WHERE
                         DOCUMENT_NOTE.document_id = :document_id
@@ -676,7 +676,7 @@ class Document
         foreach ($data as $item) {
             $notes[] = new \HomeDocs\Note(
                 property_exists($item, "noteId") && is_string($item->noteId) ? $item->noteId : null,
-                property_exists($item, "createdOnTimestamp") && is_numeric($item->createdOnTimestamp) ? intval($item->createdOnTimestamp) : 0,
+                property_exists($item, "createdAtTimestamp") && is_numeric($item->createdAtTimestamp) ? intval($item->createdAtTimestamp) : 0,
                 property_exists($item, "body") && is_string($item->body) ? $item->body : null
             );
         }
