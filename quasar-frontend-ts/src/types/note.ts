@@ -2,7 +2,7 @@ import { type DateTime as DateTimeInterface } from "src/types/date-time";
 
 interface Note {
   id: string;
-  body: string | null;
+  body: string;
   createdAt: DateTimeInterface;
   expanded: boolean;
   startOnEditMode: boolean;
@@ -10,12 +10,12 @@ interface Note {
 
 class NoteClass implements Note {
   id: string;
-  body: string | null;
+  body: string;
   createdAt: DateTimeInterface;
   expanded: boolean;
   startOnEditMode: boolean;
 
-  constructor(id: string, body: string | null, createdAt: DateTimeInterface, expanded: boolean, startOnEditMode: boolean) {
+  constructor(id: string, body: string, createdAt: DateTimeInterface, expanded: boolean, startOnEditMode: boolean) {
     this.id = id;
     this.body = body;
     this.createdAt = createdAt;

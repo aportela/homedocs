@@ -135,7 +135,7 @@ class DocumentClass implements Document {
       reactive<NoteClass>(
         new NoteClass(
           uid(),
-          null,
+          "",
           new DateTimeClass(t, currentTimestamp()),
           false,
           true, // new notes start with view mode = "edit" (for allowing input body text)
