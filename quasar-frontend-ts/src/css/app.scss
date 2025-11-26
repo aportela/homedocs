@@ -80,7 +80,6 @@ body {
   background: $default-light-primary-bg-color !important;
   color: $default-light-primary-text-color !important;
 
-
   .action-primary {
     background: $default-action-light-primary-bg-color;
     color: $default-action-light-primary-color;
@@ -232,6 +231,10 @@ body {
 
   .border-bottom-except-last-item:not(:last-child) {
     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+  .icon-hover:hover {
+    color: #222;
   }
 }
 
@@ -393,5 +396,9 @@ body {
 
   .border-bottom-except-last-item:not(:last-child) {
     border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .icon-hover:hover {
+    color: #fff;
   }
 }
