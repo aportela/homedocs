@@ -109,7 +109,6 @@ const isExpanded = ref(props.expanded);
 
 const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-
 const recentDocuments = reactive<Array<RecentDocumentItem>>([]);
 
 const hasRecentDocuments = computed(() => recentDocuments.length > 0);
