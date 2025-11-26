@@ -36,7 +36,7 @@ class Attachment
         $data = $db->query(
             "
                     SELECT
-                        name, size, sha1_hash AS hash, ctime AS createdOnTimestamp, cuid AS uploadedByUserId
+                        name, size, sha1_hash AS hash, ctime AS createdAtTimestamp, cuid AS uploadedByUserId
                     FROM ATTACHMENT
                     WHERE
                         id = :id
@@ -50,7 +50,7 @@ class Attachment
                 $this->name = property_exists($data[0], "name") && is_string($data[0]->name) ? $data[0]->name : null;
                 $this->size = property_exists($data[0], "size") && is_numeric($data[0]->size) ? intval($data[0]->size) : 0;
                 $this->hash = property_exists($data[0], "hash") && is_string($data[0]->hash) ? $data[0]->hash : null;
-                $this->createdOnTimestamp = property_exists($data[0], "createdOnTimestamp") && is_numeric($data[0]->createdOnTimestamp) ? intval($data[0]->createdOnTimestamp) : 0;
+                $this->createdAtTimestamp = property_exists($data[0], "createdAtTimestamp") && is_numeric($data[0]->createdAtTimestamp) ? intval($data[0]->createdAtTimestamp) : 0;
             } else {
                 throw new \HomeDocs\Exception\AccessDeniedException("id");
             }
@@ -86,7 +86,7 @@ class Attachment
 
     private function saveMetadata(\aportela\DatabaseWrapper\DB $db): void
     {
-        $this->createdOnTimestamp = intval(microtime(true) * 1000);
+        $this->createdAtTimestamp = intval(microtime(true) * 1000);
         $db->execute(
             "
                 INSERT INTO ATTACHMENT
@@ -100,7 +100,7 @@ class Attachment
                 new \aportela\DatabaseWrapper\Param\StringParam(":name", $this->name),
                 new \aportela\DatabaseWrapper\Param\IntegerParam(":size", $this->size),
                 new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId()),
-                new \aportela\DatabaseWrapper\Param\IntegerParam(":ctime", $this->createdOnTimestamp)
+                new \aportela\DatabaseWrapper\Param\IntegerParam(":ctime", $this->createdAtTimestamp)
             ]
         );
     }

@@ -549,7 +549,7 @@ return function (\Slim\App $app): void {
                                         "name" => $attachment->name,
                                         "size" => $attachment->size,
                                         "hash" => $attachment->hash,
-                                        "createdOnTimestamp" => $attachment->createdOnTimestamp
+                                        "createdAtTimestamp" => $attachment->createdAtTimestamp
                                     ]
                                 ]
                             );

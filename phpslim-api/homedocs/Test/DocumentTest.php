@@ -152,7 +152,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
 
     public function testSearchWithPager(): void
     {
-        $results = \HomeDocs\Document::search(self::$dbh, new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16), [], "createdOnTimestamp", \aportela\DatabaseBrowserWrapper\Order::ASC);
+        $results = \HomeDocs\Document::search(self::$dbh, new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16), [], "createdAtTimestamp", \aportela\DatabaseBrowserWrapper\Order::ASC);
         $this->assertIsObject($results->pagination);
         $this->assertIsArray($results->documents);
         $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->documents));
@@ -160,7 +160,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
 
     public function testSearchWithPagerAndTitleFilter(): void
     {
-        $results = \HomeDocs\Document::search(self::$dbh, new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16), ["title" => "condition"], "createdOnTimestamp", \aportela\DatabaseBrowserWrapper\Order::DESC);
+        $results = \HomeDocs\Document::search(self::$dbh, new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16), ["title" => "condition"], "createdAtTimestamp", \aportela\DatabaseBrowserWrapper\Order::DESC);
         $this->assertIsObject($results->pagination);
         $this->assertIsArray($results->documents);
         $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->documents));
@@ -168,7 +168,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
 
     public function testSearchWithPagerAndDescriptionFilter(): void
     {
-        $results = \HomeDocs\Document::search(self::$dbh, new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16), ["description" => "condition"], "createdOnTimestamp", \aportela\DatabaseBrowserWrapper\Order::ASC);
+        $results = \HomeDocs\Document::search(self::$dbh, new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16), ["description" => "condition"], "createdAtTimestamp", \aportela\DatabaseBrowserWrapper\Order::ASC);
         $this->assertIsObject($results->pagination);
         $this->assertIsArray($results->documents);
         $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->documents));
@@ -176,7 +176,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
 
     public function testSearchWithPagerAndTagsFilter(): void
     {
-        $results = \HomeDocs\Document::search(self::$dbh, new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16), ["tags" => ["tag1", "tag2"]], "createdOnTimestamp", \aportela\DatabaseBrowserWrapper\Order::DESC);
+        $results = \HomeDocs\Document::search(self::$dbh, new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16), ["tags" => ["tag1", "tag2"]], "createdAtTimestamp", \aportela\DatabaseBrowserWrapper\Order::DESC);
         $this->assertIsObject($results->pagination);
         $this->assertIsArray($results->documents);
         $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->documents));
@@ -184,7 +184,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
 
     public function testSearchWithPagerAndNotesBodyFilter(): void
     {
-        $results = \HomeDocs\Document::search(self::$dbh, new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16), ["notesBody" => "condition"], "createdOnTimestamp", \aportela\DatabaseBrowserWrapper\Order::ASC);
+        $results = \HomeDocs\Document::search(self::$dbh, new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16), ["notesBody" => "condition"], "createdAtTimestamp", \aportela\DatabaseBrowserWrapper\Order::ASC);
         $this->assertIsObject($results->pagination);
         $this->assertIsArray($results->documents);
         $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->documents));
@@ -192,7 +192,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
 
     public function testSearchWithPagerAndAttachmentsFilenameFilter(): void
     {
-        $results = \HomeDocs\Document::search(self::$dbh, new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16), ["attachmentsFilename" => "condition"], "createdOnTimestamp", \aportela\DatabaseBrowserWrapper\Order::DESC);
+        $results = \HomeDocs\Document::search(self::$dbh, new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16), ["attachmentsFilename" => "condition"], "createdAtTimestamp", \aportela\DatabaseBrowserWrapper\Order::DESC);
         $this->assertIsObject($results->pagination);
         $this->assertIsArray($results->documents);
         $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->documents));
@@ -200,7 +200,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
 
     public function testSearchWithPagerAndFromCreationTimestampFilter(): void
     {
-        $results = \HomeDocs\Document::search(self::$dbh, new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16), ["fromCreationTimestampCondition" => 1690236000], "createdOnTimestamp", \aportela\DatabaseBrowserWrapper\Order::ASC);
+        $results = \HomeDocs\Document::search(self::$dbh, new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16), ["fromCreationTimestampCondition" => 1690236000], "createdAtTimestamp", \aportela\DatabaseBrowserWrapper\Order::ASC);
         $this->assertIsObject($results->pagination);
         $this->assertIsArray($results->documents);
         $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->documents));
@@ -208,7 +208,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
 
     public function testSearchWithPagerAndToCreationTimestampFilter(): void
     {
-        $results = \HomeDocs\Document::search(self::$dbh, new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16), ["toCreationTimestampCondition" => 1690408799], "createdOnTimestamp", \aportela\DatabaseBrowserWrapper\Order::DESC);
+        $results = \HomeDocs\Document::search(self::$dbh, new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16), ["toCreationTimestampCondition" => 1690408799], "createdAtTimestamp", \aportela\DatabaseBrowserWrapper\Order::DESC);
         $this->assertIsObject($results->pagination);
         $this->assertIsArray($results->documents);
         $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->documents));
