@@ -4,7 +4,8 @@ import { type Ti18NFunction } from "./i18n";
 import { type DateTime as DateTimeInterface, DateTimeClass } from "src/types/date-time";
 import type { Attachment as AttachmentInterface } from "./attachment";
 import { type Note as NoteInterface, NoteClass } from "./note";
-import type { HistoryOperation as HistoryOperationInterface } from "./history-operation";
+import { type HistoryOperation as HistoryOperationInterface, HistoryOperationClass } from "./history-operation";
+import { type DocumentHistoryOperationResponseItem as DocumentHistoryOperationResponseItemInterface } from "./api-responses";
 import {
   fullDateTimeHuman,
   timeAgo,
@@ -189,44 +190,27 @@ class DocumentClass implements Document {
     this.notes.length = 0;
     if (Array.isArray(data.notes) && data.notes.length > 0) {
       this.notes.push(
-        ...data.notes.map((note) => {
-          return new NoteClass(
+        ...data.notes.map((note) =>
+          new NoteClass(
             note.id,
             note.body,
             new DateTimeClass(t, note.createdOnTimestamp),
             false,
             false,
-          );
-        }),
+          )
+        ),
       );
     }
 
     this.historyOperations.length = 0;
-    if (Array.isArray(data.history) && data.history.length > 0) {
+    if (Array.isArray(data.historyOperations) && data.historyOperations.length > 0) {
       this.historyOperations.push(
-        ...JSON.parse(JSON.stringify(data.history)).map((operation: HistoryOperationInterface) => {
-          operation.createdOn = fullDateTimeHuman(
-            operation.createdOnTimestamp, localStorageDateTimeFormat.get()
-          );
-          operation.createdOnTimeAgo = timeAgo(
-            operation.createdOnTimestamp,
-          );
-          switch (operation.operationType) {
-            case 1:
-              operation.label = "Document created";
-              operation.icon = "post_add";
-              break;
-            case 2:
-              operation.label = "Document updated";
-              operation.icon = "edit_note";
-              break;
-            default:
-              operation.label = "Unknown operation";
-              operation.icon = "error";
-              break;
-          }
-          return operation;
-        }),
+        ...data.historyOperations.map((operation: DocumentHistoryOperationResponseItemInterface) =>
+          new HistoryOperationClass(
+            new DateTimeClass(t, operation.createdAtTimestamp),
+            operation.operationType
+          )
+        ),
       );
     }
   };
