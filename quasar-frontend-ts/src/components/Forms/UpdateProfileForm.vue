@@ -46,6 +46,7 @@ import { useFormUtils } from "src/composables/useFormUtils";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 import { type AuthValidator as AuthValidatorInterface, defaultAuthValidator } from "src/types/auth-validator";
 import { type AuthFields as AuthFieldsInterface } from "src/types/auth-fields";
+import { type GetProfileResponse, type SetProfileResponse } from "src/types/api-responses";
 
 import { default as BaseWidget } from "src/components/Widgets/BaseWidget.vue";
 import { default as PasswordFieldCustomInput } from "src/components/Forms/Fields/PasswordFieldCustomInput.vue";
@@ -94,8 +95,8 @@ const onGetProfile = () => {
   Object.assign(state, defaultAjaxState);
   state.ajaxRunning = true;
   api.user.getProfile()
-    .then((successResponse) => {
-      profile.email = successResponse.data.data.email;
+    .then((successResponse: GetProfileResponse) => {
+      profile.email = successResponse.data.user.email;
       if (props.autoFocus) {
         nextTick()
           .then(() => {
@@ -159,7 +160,7 @@ const onSubmitForm = () => {
     Object.assign(state, defaultAjaxState);
     state.ajaxRunning = true;
     api.user
-      .updateProfile(profile.email, profile.password)
+      .setProfile(profile.email, profile.password)
       .then((successResponse) => {
         profileUpdatedSuccessfully.value = true;
         profile.email = successResponse.data.data.email;
