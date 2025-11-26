@@ -2,9 +2,9 @@
   <BaseDialog v-model="visible" @close="onClose" width="1280px" max-width="80vw">
     <template v-slot:header-left>
       <div v-if="documentTitle">{{ t("Document title")
-      }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
+        }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
           documentTitle
-        }}</router-link>
+          }}</router-link>
       </div>
       <div v-else>{{ t("Document notes") }}</div>
     </template>
@@ -52,7 +52,8 @@ import { useI18n } from "vue-i18n";
 import { bus } from "src/composables/useBus";
 import { api } from "src/composables/useAPI";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
-import { NoteClass } from "src/types/note";
+import { Note as NoteInterface, NoteClass } from "src/types/note";
+import { DocumentNoteResponse as DocumentNoteResponseInterface, DocumentNoteResponseItem as DocumentNoteResponseItemInterface } from "src/types/api-responses";
 import { DateTimeClass } from "src/types/date-time";
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
@@ -77,7 +78,7 @@ const visible = ref(true);
 
 const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-const notes = reactive<Array<NoteClass>>([]);
+const notes = reactive<Array<NoteInterface>>([]);
 
 const hasNotes = computed(() => notes?.length > 0);
 
@@ -87,13 +88,13 @@ const onRefresh = (documentId: string) => {
     state.ajaxRunning = true;
     api.document
       .getNotes(documentId)
-      .then((successResponse) => {
+      .then((successResponse: DocumentNoteResponseInterface) => {
         notes.length = 0;
-        notes.push(...successResponse.data.notes.map((note) => {
+        notes.push(...successResponse.data.notes.map((note: DocumentNoteResponseItemInterface) => {
           return new NoteClass(
             note.id,
             note.body,
-            new DateTimeClass(t, note.createdOnTimestamp),
+            new DateTimeClass(t, note.createdAtTimestamp),
             false,
             false
           );
