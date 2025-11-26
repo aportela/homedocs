@@ -12,7 +12,7 @@ class Document
      * @param array<\HomeDocs\Note> $notes
      * @param array<\HomeDocs\DocumentHistoryOperation> $history
      */
-    public function __construct(public ?string $id = null, public ?string $title = null, public ?string $description = null, public ?int $createdOnTimestamp = null, public ?int $lastUpdateTimestamp = null, public array $tags = [], public array $attachments = [], public array $notes = [], public array $history = []) {}
+    public function __construct(public ?string $id = null, public ?string $title = null, public ?string $description = null, public ?int $createdOnTimestamp = null, public ?int $lastUpdateTimestamp = null, public array $tags = [], public array $attachments = [], public array $notes = [], public array $historyOperations = []) {}
 
     /**
      * @return array<mixed>
@@ -523,7 +523,7 @@ class Document
                     $this->tags = $this->getTags($db);
                     $this->attachments = $this->getAttachments($db);
                     $this->notes = $this->getNotes($db);
-                    $this->history = $this->getHistory($db);
+                    $this->historyOperations = $this->getHistory($db);
                 } else {
                     throw new \HomeDocs\Exception\AccessDeniedException("id");
                 }
@@ -689,11 +689,11 @@ class Document
      */
     private function getHistory(\aportela\DatabaseWrapper\DB $db): array
     {
-        $operations = [];
+        $historyOperations = [];
         $data = $db->query(
             "
                 SELECT
-                    DOCUMENT_HISTORY.ctime AS operationTimestamp, DOCUMENT_HISTORY.operation_type AS operationType
+                    DOCUMENT_HISTORY.ctime AS createdAtTimestamp, DOCUMENT_HISTORY.operation_type AS operationType
                 FROM DOCUMENT_HISTORY
                 WHERE
                     DOCUMENT_HISTORY.document_id = :document_id
@@ -705,13 +705,13 @@ class Document
             ]
         );
         foreach ($data as $item) {
-            $operations[] = new \HomeDocs\DocumentHistoryOperation(
-                property_exists($item, "operationTimestamp") && is_numeric($item->operationTimestamp) ? intval($item->operationTimestamp) : 0,
-                property_exists($item, "operationType") && is_numeric($item->operationType) ? intval($item->operationType) : null,
+            $historyOperations[] = new \HomeDocs\DocumentHistoryOperation(
+                property_exists($item, "createdAtTimestamp") && is_numeric($item->createdAtTimestamp) ? intval($item->createdAtTimestamp) : 0,
+                property_exists($item, "operationType") && is_numeric($item->operationType) ? intval($item->operationType) : 0,
             );
         }
 
-        return ($operations);
+        return ($historyOperations);
     }
 
     /**
