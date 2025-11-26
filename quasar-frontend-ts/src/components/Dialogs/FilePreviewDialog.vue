@@ -103,12 +103,12 @@ const props = withDefaults(defineProps<FilePreviewDialogProps>(), {
   currentIndex: 0
 });
 
-const visible = ref(true);
+const visible = ref<boolean>(true);
 
 const hasAttachments = computed(() => props.document?.attachments?.length > 0);
 const attachmentsCount = computed(() => hasAttachments.value ? props.document?.attachments?.length : 0);
 
-const currentAttachmentIndex = ref(props.currentIndex + 1 || 1);
+const currentAttachmentIndex = ref<number>(props.currentIndex + 1 || 1);
 
 const currentAttachment = computed(() => props.document.attachments.length > 0 && currentAttachmentIndex.value <= props.document.attachments.length ? props.document.attachments[currentAttachmentIndex.value - 1] : <AttachmentInterface>{
   id: '',

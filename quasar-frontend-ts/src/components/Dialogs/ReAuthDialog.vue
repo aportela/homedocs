@@ -26,7 +26,7 @@ const { t } = useI18n();
 
 const emit = defineEmits(['close', 'success']);
 
-const visible = ref(true);
+const visible = ref<boolean>(true);
 
 const onClose = () => {
   emit('close');

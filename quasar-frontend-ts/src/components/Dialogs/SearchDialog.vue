@@ -182,7 +182,6 @@ const showNoSearchResults = ref<boolean>(false);
 
 const searchTextField = ref<QInput | null>(null);
 
-
 const onSearch = (val: string) => {
   showNoSearchResults.value = false;
   totalResults.value = 0;
