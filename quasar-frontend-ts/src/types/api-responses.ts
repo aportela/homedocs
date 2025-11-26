@@ -1,6 +1,7 @@
 import { type AxiosResponse } from "axios";
 import { type HistoryOperationType } from "./history-operation";
 import { type SearchDocumentItemMatchedFragment as SearchDocumentItemMatchedFragmentInterface } from "./search-document-item";
+import { Attachment } from "./attachment";
 
 interface DefaultAxiosResponse {
   data: AxiosResponse<any, any, {}>;
@@ -134,6 +135,22 @@ interface GetDiskUsageStatsResponse extends Omit<DefaultAxiosResponse, 'data'> {
   }
 };
 
+interface GetDocumentResponse extends Omit<DefaultAxiosResponse, 'data'> {
+  data: {
+    document: {
+      id: string;
+      title: string;
+      description: string | null;
+      createdAtTimestamp: number;
+      updatedAtTimestamp: number | null;
+      tags: string[];
+      attachments: DocumentAttachmentResponseItem[];
+      notes: DocumentNoteResponseItem[];
+      historyOperations: DocumentHistoryOperationResponseItem[];
+    }
+  }
+};
+
 export {
   type DefaultAxiosResponse,
   type LoginResponse,
@@ -155,4 +172,5 @@ export {
   type GetTotalDocumentsStatsResponse,
   type GetTotalAttachmentsStatsResponse,
   type GetDiskUsageStatsResponse,
+  type GetDocumentResponse,
 };
