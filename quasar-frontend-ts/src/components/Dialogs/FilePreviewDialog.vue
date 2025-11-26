@@ -85,6 +85,8 @@ import { type CustomBanner as CustomBannerInterface, defaultCustomBanner } from 
 
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
+import { type Attachment as AttachmentInterface } from "src/types/attachment";
+import { DateTimeClass } from "src/types/date-time";
 
 const { t } = useI18n();
 
@@ -108,15 +110,14 @@ const attachmentsCount = computed(() => hasAttachments.value ? props.document?.a
 
 const currentAttachmentIndex = ref(props.currentIndex + 1 || 1);
 
-const currentAttachment = computed(() => props.document.attachments?.length > 0 ? props.document.attachments[currentAttachmentIndex.value - 1] : {
+const currentAttachment = computed(() => props.document.attachments.length > 0 && currentAttachmentIndex.value <= props.document.attachments.length ? props.document.attachments[currentAttachmentIndex.value - 1] : <AttachmentInterface>{
   id: '',
   name: '',
   size: 0,
   hash: '',
   humanSize: '',
-  createdOnTimestamp: 0,
-  createdOn: '',
-  url: '',
+  createdAt: new DateTimeClass(t, null),
+  orphaned: true,
 });
 
 const onClose = () => {
