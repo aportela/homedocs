@@ -73,6 +73,7 @@ import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 import { type AuthValidator as AuthValidatorInterface, defaultAuthValidator } from "src/types/auth-validator";
 import { type AuthFields as AuthFieldsInterface } from "src/types/auth-fields";
+import { type RegisterResponse } from "src/types/api-responses";
 
 import { default as DarkModeButton } from "src/components/Buttons/DarkModeButton.vue"
 import { default as SwitchLanguageButton } from "src/components/Buttons/SwitchLanguageButton.vue"
@@ -141,7 +142,7 @@ const onSubmitForm = () => {
     state.ajaxRunning = true;
     api.auth
       .register(uid(), profile.email, profile.password)
-      .then((successResponse) => {
+      .then((successResponse: RegisterResponse) => {
         userCreatedSuccessfully.value = true;
         emit("success", successResponse.data);
       })

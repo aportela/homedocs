@@ -7,4 +7,7 @@ interface DefaultAxiosResponse {
 interface LoginResponse extends DefaultAxiosResponse {
 };
 
-export { type DefaultAxiosResponse, type LoginResponse };
+interface RegisterResponse extends DefaultAxiosResponse {
+};
+
+export { type DefaultAxiosResponse, type LoginResponse, type RegisterResponse };
