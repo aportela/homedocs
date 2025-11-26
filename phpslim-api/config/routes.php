@@ -184,7 +184,7 @@ return function (\Slim\App $app): void {
 
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'recentDocuments' => \HomeDocs\Document::searchRecent(
+                            'documents' => \HomeDocs\Document::searchRecent(
                                 $dbh,
                                 is_int($params["count"]) ? $params["count"] : \HomeDocs\Settings::DEFAULT_RESULTS_PAGE
                             )
