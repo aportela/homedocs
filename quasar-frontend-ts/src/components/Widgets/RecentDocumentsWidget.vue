@@ -60,7 +60,7 @@
               </q-item-label>
             </q-item-section>
             <q-item-section side top>
-              <q-item-label caption>{{ recentDocument.lastUpdateTimeAgo }}</q-item-label>
+              <q-item-label caption>{{ recentDocument.updatedAt?.timeAgo }}</q-item-label>
               <ViewDocumentDetailsButton size="md" square class="min-width-9em" :count="recentDocument.attachmentCount"
                 :label="'Total attachments count'" :tool-tip="'View document attachments'" :disable="state.ajaxRunning"
                 @click.stop.prevent="onShowDocumentFiles(recentDocument.id, recentDocument.title)">
@@ -84,8 +84,10 @@ import { useI18n } from "vue-i18n";
 
 import { bus, onShowDocumentFiles, onShowDocumentNotes } from "src/composables/useBus";
 import { api } from "src/composables/useAPI";
-import { timeAgo } from "src/composables/useFormatDates"
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
+import { type RecentDocumentsResponse, type RecentDocumentResponseItem } from "src/types/api-responses";
+import { type RecentDocumentItem } from "src/types/recent-document-item";
+import { DateTimeClass } from "src/types/date-time";
 
 import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
@@ -107,18 +109,8 @@ const isExpanded = ref(props.expanded);
 
 const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-interface RecentDocument {
-  id: string;
-  title: string;
-  description: string | null;
-  noteCount: number;
-  attachmentCount: number;
-  tags: string[];
-  lastUpdateTimestamp: number;
-  lastUpdateTimeAgo: string;
-};
 
-const recentDocuments = reactive<Array<RecentDocument>>([]);
+const recentDocuments = reactive<Array<RecentDocumentItem>>([]);
 
 const hasRecentDocuments = computed(() => recentDocuments.length > 0);
 
@@ -127,13 +119,19 @@ const onRefresh = () => {
     Object.assign(state, defaultAjaxState);
     state.ajaxRunning = true;
     api.document.searchRecent(16)
-      .then((successResponse) => {
+      .then((successResponse: RecentDocumentsResponse) => {
         recentDocuments.length = 0;
-        recentDocuments.push(...successResponse.data.recentDocuments.map((document: RecentDocument) => {
-          const returnedTimeAgo = timeAgo(document.lastUpdateTimestamp);
-          document.lastUpdateTimeAgo = t(returnedTimeAgo.label, returnedTimeAgo.count != null ? { count: returnedTimeAgo.count } : {});
-          return document;
-        }));
+        recentDocuments.push(...successResponse.data.documents.map((document: RecentDocumentResponseItem) =>
+        ({
+          id: document.id,
+          updatedAt: new DateTimeClass(t, document.updatedAtTimestamp),
+          title: document.title,
+          description: document.description,
+          tags: document.tags,
+          attachmentCount: document.attachmentCount,
+          noteCount: document.noteCount,
+        })
+        ));
       })
       .catch((errorResponse) => {
         state.ajaxErrors = true;

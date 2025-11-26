@@ -30,6 +30,7 @@ import { useI18n } from "vue-i18n";
 import { bus } from "src/composables/useBus";
 import { api } from "src/composables/useAPI";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
+import { type TagCloudResponse } from "src/types/api-responses";
 
 import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
@@ -59,7 +60,7 @@ const onRefresh = () => {
     Object.assign(state, defaultAjaxState);
     state.ajaxRunning = true;
     api.tag.getCloud()
-      .then((successResponse) => {
+      .then((successResponse: TagCloudResponse) => {
         tags.length = 0;
         tags.push(...successResponse.data.tags);
       })
