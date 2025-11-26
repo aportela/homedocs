@@ -6,15 +6,9 @@ import { type Attachment as AttachmentInterface, AttachmentClass } from "./attac
 import { type Note as NoteInterface, NoteClass } from "./note";
 import { type HistoryOperation as HistoryOperationInterface, HistoryOperationClass } from "./history-operation";
 import { type DocumentHistoryOperationResponseItem as DocumentHistoryOperationResponseItemInterface } from "./api-responses";
-import {
-  fullDateTimeHuman,
-  timeAgo,
-  currentTimestamp,
-  currentFullDateTimeHuman,
-  currentTimeAgo
-} from "src/composables/useFormatDates";
+import { type GetDocumentResponse as GetDocumentResponseInterface } from "./api-responses";
+import { currentTimestamp } from "src/composables/useFormatDates";
 import { bus } from "src/composables/useBus";
-import { dateTimeFormat as localStorageDateTimeFormat } from "src/composables/useLocalStorage";
 
 interface Document {
   id: string | null;
@@ -153,45 +147,39 @@ class DocumentClass implements Document {
     }
   };
 
-  setFromAPIJSON(t: Ti18NFunction, data: any) {
-    this.id = data.id;
-    this.title = data.title;
-    this.description = data.description;
-
-    if (data.createdOnTimestamp) {
-      this.createdAt = new DateTimeClass(t, data.createdOnTimestamp);
+  parseJSONResponse(t: Ti18NFunction, response: GetDocumentResponseInterface) {
+    this.id = response.data.document.id;
+    this.title = response.data.document.title;
+    this.description = response.data.document.description;
+    this.createdAt = new DateTimeClass(t, response.data.document.createdAtTimestamp);
+    if (response.data.document.updatedAtTimestamp) {
+      this.updatedAt = new DateTimeClass(t, response.data.document.updatedAtTimestamp);
+    } else {
+      this.updatedAt = null;
     }
-
-    if (data.lastUpdateTimestamp) {
-      this.updatedAt = new DateTimeClass(t, data.lastUpdateTimestamp);
-    }
-
     this.tags.length = 0;
-    if (Array.isArray(data.tags) && data.tags.length > 0) {
-      this.tags.push(...data.tags);
+    if (response.data.document.tags.length > 0) {
+      this.tags.push(...response.data.document.tags);
     }
-
     this.attachments.length = 0;
-    if (Array.isArray(data.attachments) && data.attachments.length > 0) {
+    if (response.data.document.attachments.length > 0) {
       this.attachments.push(
-        ...data.attachments.map((file) =>
+        ...response.data.document.attachments.map((attachment) =>
           new AttachmentClass(
-            file.id,
-            file.name,
-            file.hash,
-            file.size,
-            new DateTimeClass(t, file.createdAtTimestamp),
+            attachment.id,
+            attachment.name,
+            attachment.hash,
+            attachment.size,
+            new DateTimeClass(t, attachment.createdAtTimestamp),
             false
           )
         ),
       );
     }
-    console.log(this.attachments);
-
     this.notes.length = 0;
-    if (Array.isArray(data.notes) && data.notes.length > 0) {
+    if (response.data.document.notes.length > 0) {
       this.notes.push(
-        ...data.notes.map((note) =>
+        ...response.data.document.notes.map((note) =>
           new NoteClass(
             note.id,
             note.body,
@@ -202,11 +190,10 @@ class DocumentClass implements Document {
         ),
       );
     }
-
     this.historyOperations.length = 0;
-    if (Array.isArray(data.historyOperations) && data.historyOperations.length > 0) {
+    if (response.data.document.historyOperations.length > 0) {
       this.historyOperations.push(
-        ...data.historyOperations.map((operation: DocumentHistoryOperationResponseItemInterface) =>
+        ...response.data.document.historyOperations.map((operation: DocumentHistoryOperationResponseItemInterface) =>
           new HistoryOperationClass(
             new DateTimeClass(t, operation.createdAtTimestamp),
             operation.operationType
@@ -215,7 +202,6 @@ class DocumentClass implements Document {
       );
     }
   };
-
 };
 
 export { type Document, DocumentClass };
