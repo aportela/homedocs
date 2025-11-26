@@ -116,6 +116,24 @@ interface SearchDocumentResponse extends Omit<DefaultAxiosResponse, 'data'> {
   }
 }
 
+interface GetTotalDocumentsStatsResponse extends Omit<DefaultAxiosResponse, 'data'> {
+  data: {
+    count: number;
+  }
+};
+
+interface GetTotalAttachmentsStatsResponse extends Omit<DefaultAxiosResponse, 'data'> {
+  data: {
+    count: number;
+  }
+};
+
+interface GetDiskUsageStatsResponse extends Omit<DefaultAxiosResponse, 'data'> {
+  data: {
+    count: number;
+  }
+};
+
 export {
   type DefaultAxiosResponse,
   type LoginResponse,
@@ -134,4 +152,7 @@ export {
   type PaginationResponse,
   type SearchDocumentResponseItem,
   type SearchDocumentResponse,
+  type GetTotalDocumentsStatsResponse,
+  type GetTotalAttachmentsStatsResponse,
+  type GetDiskUsageStatsResponse,
 };
