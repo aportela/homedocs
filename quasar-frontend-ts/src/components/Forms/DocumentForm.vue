@@ -132,8 +132,8 @@
       </form>
     </q-card>
   </div>
-  <DeleteDocumentConfirmationDialog v-if="showDeleteDocumentConfirmationDialog" :document-id="document.id"
-    @close="showDeleteDocumentConfirmationDialog = false"></DeleteDocumentConfirmationDialog>
+  <DeleteDocumentConfirmationDialog v-if="showDeleteDocumentConfirmationDialog && document.id"
+    :document-id="document.id" @close="showDeleteDocumentConfirmationDialog = false" />
 </template>
 
 <script setup lang="ts">
