@@ -58,13 +58,15 @@
                 <q-icon name="work" />
               </q-item-section>
               <q-item-section>
-                <q-item-label>{{ item.label }}</q-item-label>
+                <q-item-label>{{ item.title }}</q-item-label>
                 <q-item-label caption v-if="item.matchedOnFragment">
                   <div v-html="item.matchedOnFragment"></div>
                 </q-item-label>
               </q-item-section>
               <q-item-section side top>
-                <q-item-label caption>{{ item.lastUpdate }}
+                <q-item-label caption> ({{
+                  item.updatedAt.timeAgo || item.createdAt.timeAgo }})
+                  <span class="text-color-primary">{{ item.updatedAt.dateTime || item.createdAt.dateTime }}</span>
                 </q-item-label>
                 <ViewDocumentDetailsButton size="md" square class="min-width-9em" :count="item.attachmentCount"
                   :label="'Total attachments count'" :tool-tip="'View document attachments'"
@@ -101,10 +103,12 @@ import { useRoute, useRouter } from "vue-router";
 
 import { bus, onShowDocumentFiles, onShowDocumentNotes } from "src/composables/useBus";
 import { api } from "src/composables/useAPI";
-import { fullDateTimeHuman } from "src/composables/useFormatDates"
-import { searchDialogResultsPage as localStorageSearchDialogResultsPage, dateTimeFormat as localStorageDateTimeFormat } from "src/composables/useLocalStorage"
+import { searchDialogResultsPage as localStorageSearchDialogResultsPage } from "src/composables/useLocalStorage"
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
+import { type SearchDocumentResponse as SearchDocumentResponseInterface, type SearchDocumentResponseItem as SearchDocumentResponseItemInterface } from "src/types/api-responses";
+import { SearchDocumentItemClass } from "src/types/search-document-item";
 import { type QuasarVirtualScrollEventDetails as QuasarVirtualScrollEventDetailsInterface } from "src/types/quasar-virtual-scroll-event-details";
+import { DateTimeClass } from "src/types/date-time";
 
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue"
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
@@ -158,9 +162,9 @@ watch(() => searchOn.value, () => {
 
 const virtualListRef = ref<QVirtualScroll | null>(null);
 
-const totalResults = ref(0);
+const totalResults = ref<number>(0);
 
-const resultsPage = ref(localStorageSearchDialogResultsPage.get());
+const resultsPage = ref<number>(localStorageSearchDialogResultsPage.get());
 
 const resultsPageOptions = [1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 64, 128];
 
@@ -169,21 +173,15 @@ const onChangeResultsPage = (value: number) => {
   onSearch(text.value);
 };
 
-const text = ref("");
-const searchResults = reactive([]);
-const currentSearchResultSelectedIndex = ref(-1);
-const virtualListIndex = ref(0);
+const text = ref<string>("");
+const searchResults = reactive<Array<SearchDocumentItemClass>>([]);
+const currentSearchResultSelectedIndex = ref<number>(-1);
+const virtualListIndex = ref<number>(0);
 
-const showNoSearchResults = ref(false);
+const showNoSearchResults = ref<boolean>(false);
 
 const searchTextField = ref<QInput | null>(null);
 
-const boldStringMatch = (str: string, matchWord: string) => {
-  return str.replace(
-    new RegExp(matchWord, "gi"),
-    (match) => `<strong>${match}</strong>`
-  );
-};
 
 const onSearch = (val: string) => {
   showNoSearchResults.value = false;
@@ -201,30 +199,24 @@ const onSearch = (val: string) => {
       }
     };
     api.document.search(1, resultsPage.value, params, "lastUpdateTimestamp", "DESC")
-      .then((successResponse) => {
+      .then((successResponse: SearchDocumentResponseInterface) => {
         searchResults.length = 0;
         totalResults.value = successResponse.data.results.pagination.totalResults;
-        searchResults.push(...successResponse.data.results.documents.map((document) => {
-          document.matchedOnFragment = null;
-          if (Array.isArray(document.matchedFragments) && document.matchedFragments.length > 0) {
-            document.matchedOnFragment = t("Fast search match fragment",
-              {
-                fragment: document.matchedFragments[0].fragment ? `${boldStringMatch(document.matchedFragments[0].fragment, val)}` : '',
-                matchedOn: t(document.matchedFragments[0].matchedOn)
-              }
-            );
-          }
-          return (
-            {
-              id: document.id,
-              label: document.title,
-              createdOn: fullDateTimeHuman(document.createdOnTimestamp, localStorageDateTimeFormat.get()),
-              lastUpdate: fullDateTimeHuman(document.lastUpdateTimestamp, localStorageDateTimeFormat.get()),
-              attachmentCount: document.attachmentCount,
-              noteCount: document.noteCount,
-              matchedOnFragment: document.matchedOnFragment
-            });
-        }));
+        searchResults.push(...successResponse.data.results.documents.map((document: SearchDocumentResponseItemInterface) =>
+          new SearchDocumentItemClass(
+            t,
+            document.id,
+            new DateTimeClass(t, document.createdAtTimestamp),
+            new DateTimeClass(t, document.updatedAtTimestamp),
+            document.title,
+            document.description,
+            document.tags,
+            document.attachmentCount,
+            document.noteCount,
+            document.matchedFragments,
+            val.trim(),
+          )
+        ));
         showNoSearchResults.value = successResponse.data.results.documents.length <= 0; // REQUIRED ?
       })
       .catch((errorResponse) => {
@@ -289,7 +281,7 @@ const onKeyDown = (evt: KeyboardEvent) => {
         router.push({
           name: "document",
           params: {
-            id: searchResults[currentSearchResultSelectedIndex.value].id
+            id: searchResults[currentSearchResultSelectedIndex.value]!.id
           }
         }).catch((e) => {
           console.error(e);
@@ -315,7 +307,7 @@ const onShow = () => {
 
 const onClose = () => {
   searchResults.length = 0;
-  text.value = null;
+  text.value = "";
   showNoSearchResults.value = false;
   // this is required here because this modal dialog is persistent (from MainLayout.vue).
   // DOES NOT WORK with onMounted/onBeforeUnmount. WE ONLY WANT CAPTURE KEY EVENTS WHEN DIALOG IS VISIBLE
