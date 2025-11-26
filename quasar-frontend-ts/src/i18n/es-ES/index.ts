@@ -148,7 +148,6 @@ export default {
   "Document note (click on body to update)":
     "Nota del documento (haga click en el cuerpo para editar)",
   "Add note": "Añadir nota",
-  "Remove note": "Eliminar nota",
   "Add attachment": "Añadir adjunto",
   History: "Historial",
   Operation: "Operación",
