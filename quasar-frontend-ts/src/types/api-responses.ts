@@ -52,13 +52,9 @@ interface RecentDocumentsResponse extends Omit<DefaultAxiosResponse, 'data'> {
 interface DocumentAttachmentResponseItem {
   id: string;
   name: string;
-  size: number | null;
-  hash: string | null;
-  humanSize: string | null;
-  createdOnTimestamp: number;
-  createdOn: string;
-  createdOnTimeAgo: string;
-  orphaned: boolean;
+  size: number;
+  hash: string;
+  createdAtTimestamp: number;
 };
 
 interface DocumentAttachmentsResponse extends Omit<DefaultAxiosResponse, 'data'> {
