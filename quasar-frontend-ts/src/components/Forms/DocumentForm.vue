@@ -78,15 +78,15 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.loading" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                      }}</q-badge>
+                    }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
               <q-card-section class="q-pa-none">
                 <q-tab-panels v-model="rightDetailsTab" animated class="bg-transparent">
                   <q-tab-panel name="attachments" class="q-pa-none">
-                    <DocumentDetailsAttachments v-model="document.attachments" :disable="state.loading || state.saving"
-                      @add-attachment="onShowAttachmentsPicker"
+                    <DocumentDetailsAttachments :attachments="document.attachments"
+                      :disable="state.loading || state.saving" @add-attachment="onShowAttachmentsPicker"
                       @preview-attachment-at-index="(index: number) => document.previewAttachment(index)"
                       @remove-attachment-at-index="(index: number) => onRemoveAttachmentAtIndex(index)" />
                   </q-tab-panel>

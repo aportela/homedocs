@@ -87,7 +87,7 @@ const { escapeRegExp } = useDocument();
 const emit = defineEmits(['update:modelValue', 'addAttachment', 'previewAttachmentAtIndex', 'removeAttachmentAtIndex']);
 
 interface DocumentDetailsAttachmentsProps {
-  modelValue: AttachmentInterface[];
+  attachments: AttachmentInterface[];
   disable: boolean;
 };
 
@@ -99,26 +99,17 @@ const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
 const isDisabled = computed(() => props.disable || state.ajaxRunning);
 
-const attachments = computed({
-  get() {
-    return props.modelValue;
-  },
-  set(value) {
-    emit('update:modelValue', value);
-  }
-});
-
 const hiddenIds = reactive<Array<string>>([]);
 
-const hasAttachments = computed(() => attachments.value?.length > 0);
+const hasAttachments = computed(() => props.attachments?.length > 0);
 
 const searchText = ref(null);
 
 const onSearchTextChanged = (text: string | number | null) => {
   hiddenIds.length = 0;
-  if (text && attachments.value) {
+  if (text) {
     const regex = new RegExp(escapeRegExp(text), "i");
-    hiddenIds.push(...attachments.value.filter(attachment => !attachment.name?.match(regex)).map(attachment => attachment.id));
+    hiddenIds.push(...props.attachments.filter(attachment => !attachment.name?.match(regex)).map(attachment => attachment.id));
     // TODO: map new fragment with bold ?
   }
 };
