@@ -24,7 +24,7 @@ const api = {
   },
   user: {
     getProfile: () => axiosInstance.get("/user/profile"),
-    updateProfile: function (email: string, password: string) {
+    setProfile: function (email: string, password: string) {
       const params = {
         email: email,
         password: password,
