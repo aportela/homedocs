@@ -1,5 +1,7 @@
 import { type AxiosResponse } from "axios";
 
+import { type HistoryOperationType } from "./history-operation";
+
 interface DefaultAxiosResponse {
   data: AxiosResponse<any, any, {}>;
 };
@@ -75,6 +77,18 @@ interface DocumentNoteResponse extends Omit<DefaultAxiosResponse, 'data'> {
   }
 };
 
+
+interface DocumentHistoryOperationResponseItem {
+  createdAtTimestamp: number;
+  operationType: HistoryOperationType;
+};
+
+interface DocumentHistoryOperationResponse extends Omit<DefaultAxiosResponse, 'data'> {
+  data: {
+    historyOperations: DocumentHistoryOperationResponseItem[];
+  }
+};
+
 export {
   type DefaultAxiosResponse,
   type LoginResponse,
@@ -88,4 +102,6 @@ export {
   type DocumentAttachmentsResponse,
   type DocumentNoteResponseItem,
   type DocumentNoteResponse,
+  type DocumentHistoryOperationResponseItem,
+  type DocumentHistoryOperationResponse,
 };
