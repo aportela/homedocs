@@ -8,7 +8,7 @@ class Attachment
 {
     private string $localStoragePath;
 
-    public function __construct(public string $id, public ?string $name = null, public ?int $size = null, public ?string $hash = null, public ?int $createdOnTimestamp = null)
+    public function __construct(public string $id, public ?string $name = null, public ?int $size = null, public ?string $hash = null, public ?int $createdAtTimestamp = null)
     {
         if (!in_array($this->id, [null, '', '0'], true) && mb_strlen($this->id) === 36) {
             $this->localStoragePath = sprintf(

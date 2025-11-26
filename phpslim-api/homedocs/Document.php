@@ -593,7 +593,7 @@ class Document
             sprintf(
                 "
                 SELECT
-                    ATTACHMENT.id, ATTACHMENT.name, ATTACHMENT.size, ATTACHMENT.sha1_hash AS hash, ATTACHMENT.ctime AS createdOnTimestamp
+                    ATTACHMENT.id, ATTACHMENT.name, ATTACHMENT.size, ATTACHMENT.sha1_hash AS hash, ATTACHMENT.ctime AS createdAtTimestamp
                 FROM DOCUMENT_ATTACHMENT
                 INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_ATTACHMENT.document_id
                 LEFT JOIN ATTACHMENT ON ATTACHMENT.id = DOCUMENT_ATTACHMENT.attachment_id
@@ -620,7 +620,7 @@ class Document
                 property_exists($item, "name") && is_string($item->name) ? $item->name : null,
                 property_exists($item, "size") && is_numeric($item->size) ? intval($item->size) : 0,
                 property_exists($item, "hash") && is_string($item->hash) ? $item->hash : null,
-                property_exists($item, "createdOnTimestamp") && is_numeric($item->createdOnTimestamp) ? intval($item->createdOnTimestamp) : 0
+                property_exists($item, "createdAtTimestamp") && is_numeric($item->createdAtTimestamp) ? intval($item->createdAtTimestamp) : 0
             );
         }
 
