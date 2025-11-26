@@ -2,7 +2,7 @@ import { reactive } from "vue";
 import { uid, format } from "quasar";
 import { type Ti18NFunction } from "./i18n";
 import { type DateTime as DateTimeInterface, DateTimeClass } from "src/types/date-time";
-import type { Attachment as AttachmentInterface } from "./attachment";
+import { type Attachment as AttachmentInterface, AttachmentClass } from "./attachment";
 import { type Note as NoteInterface, NoteClass } from "./note";
 import { type HistoryOperation as HistoryOperationInterface, HistoryOperationClass } from "./history-operation";
 import { type DocumentHistoryOperationResponseItem as DocumentHistoryOperationResponseItemInterface } from "./api-responses";
@@ -174,15 +174,19 @@ class DocumentClass implements Document {
     this.attachments.length = 0;
     if (Array.isArray(data.attachments) && data.attachments.length > 0) {
       this.attachments.push(
-        ...JSON.parse(JSON.stringify(data.attachments)).map((file: AttachmentInterface) => {
-          file.createdOn = fullDateTimeHuman(file.createdOnTimestamp, localStorageDateTimeFormat.get());
-          file.createdOnTimeAgo = timeAgo(file.createdOnTimestamp);
-          file.humanSize = file.size ? format.humanStorageSize(file.size) : null;
-          file.orphaned = false;
-          return file;
-        }),
+        ...data.attachments.map((file) =>
+          new AttachmentClass(
+            file.id,
+            file.name,
+            file.hash,
+            file.size,
+            new DateTimeClass(t, file.createdAtTimestamp),
+            false
+          )
+        ),
       );
     }
+    console.log(this.attachments);
 
     this.notes.length = 0;
     if (Array.isArray(data.notes) && data.notes.length > 0) {
@@ -191,7 +195,7 @@ class DocumentClass implements Document {
           new NoteClass(
             note.id,
             note.body,
-            new DateTimeClass(t, note.createdOnTimestamp),
+            new DateTimeClass(t, note.createdAtTimestamp),
             false,
             false,
           )
