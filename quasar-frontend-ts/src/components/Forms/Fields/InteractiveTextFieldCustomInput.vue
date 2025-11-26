@@ -8,12 +8,12 @@
         {{ props.label }}</div>
       <span class="absolute-top-right text-grey q-mt-sm">
         <slot name="top-icon-prepend" :showTopHoverIcons="showTopHoverIcons"></slot>
-        <q-icon :name="!collapsedView ? 'unfold_less' : 'expand'" size="sm" v-show="showTopHoverIcons"
-          @click.stop="collapsedView = !collapsedView"
+        <q-icon class="icon-hover" :name="!collapsedView ? 'unfold_less' : 'expand'" size="sm"
+          v-show="showTopHoverIcons" @click.stop="collapsedView = !collapsedView"
           :aria-label="t(collapsedView ? 'Click to expand' : 'Click to collapse')">
           <DesktopToolTip>{{ t(collapsedView ? "Click to expand" : "Click to collapse") }}</DesktopToolTip>
         </q-icon>
-        <q-icon name="edit" size="sm" class="q-ml-sm" v-show="showTopHoverIcons"
+        <q-icon class="icon-hover q-ml-sm" name="edit" size="sm" v-show="showTopHoverIcons"
           :aria-label="t('Click to toggle edit mode')">
           <DesktopToolTip>{{ t("Click to toggle edit mode") }}</DesktopToolTip>
         </q-icon>
