@@ -22,7 +22,8 @@
     <div v-if="hasAttachments" class="q-list-attachments-container scroll">
       <div v-for="attachment, attachmentIndex in attachments" :key="attachment.id">
         <q-item class="q-pa-xs bg-transparent" v-show="!hiddenIds.includes(attachment.id)" clickable
-          :href="attachment.url" @click.stop.prevent="onDownload(attachment.id, attachment.name)">
+          :href="getAttachmentURL(attachment.id, true)"
+          @click.stop.prevent="onDownload(attachment.id, attachment.name)">
           <q-item-section class="q-mx-sm">
             <q-item-label>
               {{ t("Filename: ") }} {{ attachment.name }}
@@ -31,7 +32,7 @@
               {{ t("Size: ") }}{{ format.humanStorageSize(attachment.size) }}
             </q-item-label>
             <q-item-label caption>
-              {{ t("Uploaded on: ") }}{{ attachment.createdOn }} ({{ attachment.createdOnTimeAgo }})
+              {{ t("Uploaded on: ") }}{{ attachment.createdAt.dateTime }} ({{ attachment.createdAt.timeAgo }})
             </q-item-label>
           </q-item-section>
           <q-item-section side middle class="q-mr-sm q-item-section-attachment-actions">
