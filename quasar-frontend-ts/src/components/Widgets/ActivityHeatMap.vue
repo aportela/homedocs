@@ -61,8 +61,8 @@ const state: State = reactive({
   apiError: null
 });
 
-const leftButtonDisabled = ref(false);
-const rightButtonDisabled = ref(false);
+const leftButtonDisabled = ref<boolean>(false);
+const rightButtonDisabled = ref<boolean>(false);
 
 const currentLocale = computed(() => i18NStore.currentLocale.substring(0, 2));
 
@@ -104,7 +104,7 @@ const calDefaultPlugins = [
   [
     Tooltip,
     {
-      text: function (date, value, dayjsDate) {
+      text: function (date, value: number, dayjsDate) {
         return (value
           ? `${value} ${t(" change/s on date ")} ${dayjsDate.format('dddd, MMMM D, YYYY')}`
           : `${t("No activity on date ")} ${dayjsDate.format('dddd, MMMM D, YYYY')}`);
