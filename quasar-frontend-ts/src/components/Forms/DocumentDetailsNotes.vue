@@ -52,7 +52,7 @@ import { useI18n } from "vue-i18n";
 
 import { useFormUtils } from "src/composables/useFormUtils"
 import { useDocument } from "src/composables/useDocument"
-import { type NoteClass } from "src/types/note";
+import { type Note as NoteInterface } from "src/types/note";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 import { default as InteractiveTextFieldCustomInput } from "src/components/Forms/Fields/InteractiveTextFieldCustomInput.vue"
@@ -66,7 +66,7 @@ const { escapeRegExp } = useDocument();
 const emit = defineEmits(['update:modelValue', 'addNote', 'removeNoteAtIndex']);
 
 interface DocumentDetailsNotesProps {
-  modelValue: NoteClass[];
+  notes: NoteInterface[];
   disable: boolean;
 };
 
@@ -74,26 +74,17 @@ const props = withDefaults(defineProps<DocumentDetailsNotesProps>(), {
   disable: false
 });
 
-const notes = computed({
-  get() {
-    return props.modelValue;
-  },
-  set(value) {
-    emit('update:modelValue', value);
-  }
-});
-
 const hiddenIds = reactive<Array<string>>([]);
 
-const hasNotes = computed(() => notes.value?.length > 0);
+const hasNotes = computed(() => props.notes?.length > 0);
 
 const searchText = ref(null);
 
 const onSearchTextChanged = (text: string | number | null) => {
   hiddenIds.length = 0;
-  if (text && notes.value) {
+  if (text) {
     const regex = new RegExp(escapeRegExp(text), "i");
-    hiddenIds.push(...notes.value.filter(note => !note.body?.match(regex)).map(note => note.id));
+    hiddenIds.push(...props.notes.filter(note => !note.body?.match(regex)).map(note => note.id));
     // TODO: map new fragment with bold ?
   }
 };

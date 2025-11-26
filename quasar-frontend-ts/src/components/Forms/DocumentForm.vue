@@ -78,7 +78,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.loading" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                    }}</q-badge>
+                      }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
@@ -88,18 +88,15 @@
                     <DocumentDetailsAttachments v-model="document.attachments" :disable="state.loading || state.saving"
                       @add-attachment="onShowAttachmentsPicker"
                       @preview-attachment-at-index="(index: number) => document.previewAttachment(index)"
-                      @remove-attachment-at-index="(index: number) => onRemoveAttachmentAtIndex(index)">
-                    </DocumentDetailsAttachments>
+                      @remove-attachment-at-index="(index: number) => onRemoveAttachmentAtIndex(index)" />
                   </q-tab-panel>
                   <q-tab-panel name="notes" class="q-pa-none">
-                    <DocumentDetailsNotes v-model="document.notes" :disable="state.loading || state.saving"
-                      @add-note="onAddNote" @remove-note-at-index="(index: number) => onRemoveNoteAtIndex(index)">
-                    </DocumentDetailsNotes>
+                    <DocumentDetailsNotes :notes="document.notes" :disable="state.loading || state.saving"
+                      @add-note="onAddNote" @remove-note-at-index="(index: number) => onRemoveNoteAtIndex(index)" />
                   </q-tab-panel>
                   <q-tab-panel name="history" class="q-pa-none" v-if="document.id">
                     <DocumentDetailsHistory v-model="document.historyOperations"
-                      :disable="state.loading || state.saving">
-                    </DocumentDetailsHistory>
+                      :disable="state.loading || state.saving" />
                   </q-tab-panel>
                 </q-tab-panels>
               </q-card-section>
