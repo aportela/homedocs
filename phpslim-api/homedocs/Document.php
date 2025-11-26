@@ -12,7 +12,7 @@ class Document
      * @param array<\HomeDocs\Note> $notes
      * @param array<\HomeDocs\DocumentHistoryOperation> $history
      */
-    public function __construct(public ?string $id = null, public ?string $title = null, public ?string $description = null, public ?int $createdOnTimestamp = null, public ?int $lastUpdateTimestamp = null, public array $tags = [], public array $attachments = [], public array $notes = [], public array $historyOperations = []) {}
+    public function __construct(public ?string $id = null, public ?string $title = null, public ?string $description = null, public ?int $createdAtTimestamp = null, public ?int $updatedAtTimestamp = null, public array $tags = [], public array $attachments = [], public array $notes = [], public array $historyOperations = []) {}
 
     /**
      * @return array<mixed>
@@ -493,7 +493,7 @@ class Document
             $data = $db->query(
                 "
                     SELECT
-                        title, description, DOCUMENT_HISTORY.ctime AS createdOnTimestamp, COALESCE(HISTORY_LAST_UPDATE.document_last_update, DOCUMENT_HISTORY.ctime) AS lastUpdateTimestamp, DOCUMENT_HISTORY.cuid AS createdByUserId
+                        title, description, DOCUMENT_HISTORY.ctime AS createdAtTimestamp, COALESCE(HISTORY_LAST_UPDATE.document_last_update, DOCUMENT_HISTORY.ctime) AS updatedAtTimestamp, DOCUMENT_HISTORY.cuid AS createdByUserId
                     FROM DOCUMENT
                     INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT.id AND DOCUMENT_HISTORY.operation_type = :history_operation_add
                     LEFT JOIN (
@@ -518,8 +518,8 @@ class Document
                 if (($data[0]->createdByUserId ?? null) == \HomeDocs\UserSession::getUserId()) {
                     $this->title = property_exists($data[0], "title") && is_string($data[0]->title) ? $data[0]->title : null;
                     $this->description = property_exists($data[0], "description") && is_string($data[0]->description) ? $data[0]->description : null;
-                    $this->createdOnTimestamp = property_exists($data[0], "createdOnTimestamp") && is_numeric($data[0]->createdOnTimestamp) ? intval($data[0]->createdOnTimestamp) : 0;
-                    $this->lastUpdateTimestamp = property_exists($data[0], "lastUpdateTimestamp") && is_numeric($data[0]->lastUpdateTimestamp) ? intval($data[0]->lastUpdateTimestamp) : 0;
+                    $this->createdAtTimestamp = property_exists($data[0], "createdAtTimestamp") && is_numeric($data[0]->createdAtTimestamp) ? intval($data[0]->createdAtTimestamp) : 0;
+                    $this->updatedAtTimestamp = property_exists($data[0], "updatedAtTimestamp") && is_numeric($data[0]->updatedAtTimestamp) ? intval($data[0]->updatedAtTimestamp) : 0;
                     $this->tags = $this->getTags($db);
                     $this->attachments = $this->getAttachments($db);
                     $this->notes = $this->getNotes($db);
@@ -717,14 +717,14 @@ class Document
     /**
      * @param array<mixed> $filter
      */
-    public static function search(\aportela\DatabaseWrapper\DB $db, \aportela\DatabaseBrowserWrapper\Pager $pager, array $filter = [], string $sortBy = "createdOnTimestamp", \aportela\DatabaseBrowserWrapper\Order $sortOrder = \aportela\DatabaseBrowserWrapper\Order::DESC): \stdClass
+    public static function search(\aportela\DatabaseWrapper\DB $db, \aportela\DatabaseBrowserWrapper\Pager $pager, array $filter = [], string $sortBy = "createdAtTimestamp", \aportela\DatabaseBrowserWrapper\Order $sortOrder = \aportela\DatabaseBrowserWrapper\Order::DESC): \stdClass
     {
         $fieldDefinitions = [
             "id" => "DOCUMENT.id",
             "title" => "DOCUMENT.title",
             "description" => "DOCUMENT.description",
-            "createdOnTimestamp" => "DOCUMENT_HISTORY_CREATION_DATE.ctime",
-            "lastUpdateTimestamp" => "COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.ctime, DOCUMENT_HISTORY_CREATION_DATE.ctime)",
+            "createdAtTimestamp" => "DOCUMENT_HISTORY_CREATION_DATE.ctime",
+            "updatedAtTimestamp" => "COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.ctime, DOCUMENT_HISTORY_CREATION_DATE.ctime)",
             "attachmentCount" => "COALESCE(TMP_ATTACHMENT_COUNT.attachmentCount, 0)",
             "noteCount" => "COALESCE(TMP_NOTE_COUNT.noteCount, 0)",
         ];
@@ -733,8 +733,8 @@ class Document
         ];
         $sortItems = [];
         $sortItems[] = match ($sortBy) {
-            "title", "description", "attachmentCount", "noteCount", "createdOnTimestamp", "lastUpdateTimestamp" => new \aportela\DatabaseBrowserWrapper\SortItem($sortBy, $sortOrder, true),
-            default => new \aportela\DatabaseBrowserWrapper\SortItem("createdOnTimestamp", $sortOrder, true),
+            "title", "description", "attachmentCount", "noteCount", "createdAtTimestamp", "updatedAtTimestamp" => new \aportela\DatabaseBrowserWrapper\SortItem($sortBy, $sortOrder, true),
+            default => new \aportela\DatabaseBrowserWrapper\SortItem("createdAtTimestamp", $sortOrder, true),
         };
         // after launch search we need to make some changes foreach result
         $afterBrowse = function (\aportela\DatabaseBrowserWrapper\BrowserResults $browserResults) use ($filter, $db): void {
@@ -745,12 +745,12 @@ class Document
                         throw new \RuntimeException("Invalid");
                     }
 
-                    if (property_exists($item, "createdOnTimestamp") && is_numeric($item->createdOnTimestamp)) {
-                        $item->createdOnTimestamp =  intval($item->createdOnTimestamp);
+                    if (property_exists($item, "createdAtTimestamp") && is_numeric($item->createdAtTimestamp)) {
+                        $item->createdAtTimestamp =  intval($item->createdAtTimestamp);
                     }
 
-                    if (property_exists($item, "lastUpdateTimestamp") && is_numeric($item->lastUpdateTimestamp)) {
-                        $item->lastUpdateTimestamp =  intval($item->lastUpdateTimestamp);
+                    if (property_exists($item, "updatedAtTimestamp") && is_numeric($item->updatedAtTimestamp)) {
+                        $item->updatedAtTimestamp =  intval($item->updatedAtTimestamp);
                     }
 
                     if (property_exists($item, "attachmentCount") && is_numeric($item->attachmentCount)) {
@@ -913,30 +913,31 @@ class Document
             }
         }
 
-        if (isset($filter["fromCreationTimestampCondition"]) && $filter["fromCreationTimestampCondition"] > 0) {
-            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":fromCreationTimestamp", $filter["fromCreationTimestampCondition"]);
+        // TODO: IMPORTANT REVIEW FILTERS / PARAMS
+        if (isset($filter["fromCreatedAtTimestampCondition"]) && $filter["fromCreatedAtTimestampCondition"] > 0) {
+            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":fromCreatedAtTimestampCondition", $filter["fromCreatedAtTimestampCondition"]);
             $queryConditions[] = " DOCUMENT_HISTORY_CREATION_DATE.ctime >= :fromCreationTimestamp ";
         }
 
-        if (isset($filter["toCreationTimestampCondition"]) && $filter["toCreationTimestampCondition"] > 0) {
-            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":toCreationTimestamp", $filter["toCreationTimestampCondition"]);
-            $queryConditions[] = " DOCUMENT_HISTORY_CREATION_DATE.ctime <= :toCreationTimestamp ";
+        if (isset($filter["toCreatedAtTimestampCondition"]) && $filter["toCreatedAtTimestampCondition"] > 0) {
+            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":toCreatedAtTimestampCondition", $filter["toCreatedAtTimestampCondition"]);
+            $queryConditions[] = " DOCUMENT_HISTORY_CREATION_DATE.ctime <= :toCreatedAtTimestampCondition ";
         }
 
-        if (isset($filter["fromLastUpdateTimestampCondition"]) && $filter["fromLastUpdateTimestampCondition"] > 0) {
-            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":fromLastUpdateTimestamp", $filter["fromLastUpdateTimestampCondition"]);
-            $queryConditions[] = " COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.ctime, DOCUMENT_HISTORY_CREATION_DATE.ctime) >= :fromLastUpdateTimestamp ";
+        if (isset($filter["fromUpdatedAtTimestampCondition"]) && $filter["fromUpdatedAtTimestampCondition"] > 0) {
+            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":fromUpdatedAtTimestampCondition", $filter["fromUpdatedAtTimestampCondition"]);
+            $queryConditions[] = " DOCUMENT_HISTORY_LAST_UPDATE.ctime) >= :fromUpdatedAtTimestampCondition ";
         }
 
-        if (isset($filter["toLastUpdateTimestampCondition"]) && $filter["toLastUpdateTimestampCondition"] > 0) {
-            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":toLastUpdateTimestamp", $filter["toLastUpdateTimestampCondition"]);
-            $queryConditions[] = " COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.ctime, DOCUMENT_HISTORY_CREATION_DATE.ctime) <= :toLastUpdateTimestamp ";
+        if (isset($filter["toUpdatedAtTimestampCondition"]) && $filter["toUpdatedAtTimestampCondition"] > 0) {
+            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":toUpdatedAtTimestampCondition", $filter["toUpdatedAtTimestampCondition"]);
+            $queryConditions[] = " DOCUMENT_HISTORY_LAST_UPDATE.ctime <= :toUpdatedAtTimestampCondition ";
         }
 
         if (isset($filter["fromUpdatedOnTimestampCondition"]) && $filter["fromUpdatedOnTimestampCondition"] > 0  && isset($filter["toUpdatedOnTimestampCondition"]) && $filter["toUpdatedOnTimestampCondition"] > 0) {
 
-            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":fromUpdatedOnTimestamp", $filter["fromUpdatedOnTimestampCondition"]);
-            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":toUpdatedOnTimestamp", $filter["toUpdatedOnTimestampCondition"]);
+            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":fromUpdatedOnTimestampCondition", $filter["fromUpdatedOnTimestampCondition"]);
+            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":toUpdatedOnTimestampCondition", $filter["toUpdatedOnTimestampCondition"]);
             $queryConditions[] = "
                 EXISTS (
                     SELECT
