@@ -175,58 +175,50 @@ return function (\Slim\App $app): void {
                     throw new \RuntimeException("Failed to create database handler from container");
                 }
 
-                function getPagerFromParams(array $params = []): \aportela\DatabaseBrowserWrapper\Pager
+                /**
+                 * @param array<mixed> $params
+                 */
+                function getPagerFromParams(array $params): \aportela\DatabaseBrowserWrapper\Pager
                 {
                     $currentPageIndex = 1;
                     $resultsPage = \HomeDocs\Settings::DEFAULT_RESULTS_PAGE;
-                    if (array_key_exists("pager", $params)) {
+                    if (array_key_exists("pager", $params) && is_array($params["pager"])) {
                         if (array_key_exists("currentPageIndex", $params["pager"]) && is_numeric($params["pager"]["currentPageIndex"])) {
                             $currentPageIndex = intval($params["pager"]["currentPageIndex"]);
                         }
+                        
                         if (array_key_exists("resultsPage", $params["pager"]) && is_numeric($params["pager"]["resultsPage"])) {
                             $resultsPage = intval($params["pager"]["resultsPage"]);
                         }
                     }
+                    
                     return (new \aportela\DatabaseBrowserWrapper\Pager(true, $currentPageIndex, $resultsPage));
                 };
 
-                function getTextFilterFromParams(array $params = [], string $textFilterType): string | null
+                /**
+                 * @param array<mixed> $params
+                 */
+                function getSortFieldFromParams(array $params): string
                 {
                     return (
-                        array_key_exists("filter", $params) &&
-                        array_key_exists("text", $params["filter"]) &&
-                        array_key_exists($textFilterType, $params["filter"]["text"]) &&
-                        is_string($params["filter"]["text"][$textFilterType])
+                        array_key_exists("sort", $params) &&
+                        is_array($params["sort"])  &&
+                        array_key_exists("field", $params["sort"]) &&
+                        is_string($params["sort"]["field"])
                         ?
-                        $params["filter"]["text"][$textFilterType]
-                        :
-                        null
+                        $params["sort"]["field"]
+                        : ""
                     );
                 }
 
-                function getFromTimestampDateFilterFromParams(array $params = [], string $dateFilterType): int
-                {
-                    return (
-                        array_key_exists("filter", $params) &&
-                        array_key_exists("dates", $params["filter"]) &&
-                        array_key_exists($dateFilterType, $params["filter"]["dates"]) &&
-                        is_numeric($params["filter"]["dates"][$dateFilterType])
-                        ?
-                        intval($params["filter"]["dates"][$dateFilterType])
-                        :
-                        0
-                    );
-                };
-
-                function getSortFieldFromParams(array $params = []): string
-                {
-                    return (array_key_exists("sort", $params)  && array_key_exists("field", $params["sort"]) && is_string($params["sort"]["field"]) ? $params["sort"]["field"] : "");
-                }
-
-                function getSortOrderFromParams(array $params = []): \aportela\DatabaseBrowserWrapper\Order
+                /**
+                 * @param array<mixed> $params
+                 */
+                function getSortOrderFromParams(array $params): \aportela\DatabaseBrowserWrapper\Order
                 {
                     return (
                         array_key_exists("sort", $params)  &&
+                        is_array($params["sort"]) &&
                         array_key_exists("order", $params["sort"]) &&
                         is_string($params["sort"]["order"]) &&
                         $params["sort"]["order"] === \aportela\DatabaseBrowserWrapper\Order::ASC->value
@@ -237,12 +229,52 @@ return function (\Slim\App $app): void {
                     );
                 }
 
-                function getReturnFragmentsFlagFromParams(array $params = []): bool
+                /**
+                 * @param array<mixed> $params
+                 */
+                function getTextFilterFromParams(array $params, string $textFilterType): string | null
                 {
-                    return (array_key_exists("returnFragments", $params) && is_bool($params["returnFragments"]) && $params["returnFragments"] === true);
+                    return (
+                        array_key_exists("filter", $params) &&
+                        is_array($params["filter"]) &&
+                        array_key_exists("text", $params["filter"]) &&
+                        is_array(($params["filter"]["text"])) &&
+                        array_key_exists($textFilterType, $params["filter"]["text"]) &&
+                        is_string($params["filter"]["text"][$textFilterType])
+                        ?
+                        $params["filter"]["text"][$textFilterType]
+                        :
+                        null
+                    );
                 }
 
-                // TODO: is this required ? can be recplaced only with /search/document with custom params
+                /**
+                 * @param array<mixed> $params
+                 * @return array<mixed>
+                 */
+                function getTagsFilterFromParams(array $params): array
+                {
+                    return (
+                        array_key_exists("tags", $params)  &&
+                        is_array($params["tags"])
+                        ?
+                        $params["tags"]
+                        :
+                        []
+                    );
+                }
+
+                /**
+                 * @param array<mixed> $params
+                 */
+                function getReturnFragmentsFlagFromParams(array $params = []): bool
+                {
+                    return (
+                        array_key_exists("returnFragments", $params) && is_bool($params["tags"]) && $params["tags"]
+                    );
+                }
+
+                // TODO: is this route required ? can be replaced only with /search/document using custom params ??
                 $routeCollectorProxy->post('/recent_documents', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $params = $request->getParsedBody();
                     if (! is_array($params)) {
@@ -266,7 +298,7 @@ return function (\Slim\App $app): void {
                     if (! is_array($params)) {
                         throw new \HomeDocs\Exception\InvalidParamsException();
                     }
-
+                    
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
                             'results' => \HomeDocs\Document::search(
@@ -283,11 +315,11 @@ return function (\Slim\App $app): void {
                                     "toLastUpdateTimestampCondition" => is_int($params["toLastUpdateTimestampCondition"]) ? $params["toLastUpdateTimestampCondition"] : 0,
                                     "fromUpdatedOnTimestampCondition" => is_int($params["fromUpdatedOnTimestampCondition"]) ? $params["fromUpdatedOnTimestampCondition"] : 0,
                                     "toUpdatedOnTimestampCondition" => is_int($params["toUpdatedOnTimestampCondition"]) ? $params["toUpdatedOnTimestampCondition"] : 0,
-                                    "tags" => array_key_exists("tags", $params) && is_array($params["tags"]) ? $params["tags"] : [],
+                                    "tags" => getTagsFilterFromParams($params),
                                 ],
                                 getSortFieldFromParams($params),
                                 getSortOrderFromParams($params),
-                                getReturnFragmentsFlagFromParams($params)
+                                getReturnFragmentsFlagFromParams($params),
                             )
                         ]
                     );
