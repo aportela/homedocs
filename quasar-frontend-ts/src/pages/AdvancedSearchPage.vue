@@ -50,15 +50,15 @@
                 clearable :placeholder="t('Type text condition')">
               </InteractiveTagsFieldCustomSelect>
               <DateFieldCustomInput :options="dateFilterTypeOptions" :label="t('Document creation date')"
-                :disable="state.ajaxRunning || hasCreationDateRouteParamsFilter" v-model="filters.dates.creationDate"
+                :disable="state.ajaxRunning || hasCreationDateRouteParamsFilter" v-model="filters.dates.createdAt"
                 :auto-open-pop-ups="!hasCreationDateRouteParamsFilter">
               </DateFieldCustomInput>
               <DateFieldCustomInput :options="dateFilterTypeOptions" :label="t('Document last update')"
-                :disable="state.ajaxRunning || hasLastUpdateRouteParamsFilter" v-model="filters.dates.lastUpdate"
+                :disable="state.ajaxRunning || hasLastUpdateRouteParamsFilter" v-model="filters.dates.lastUpdateAt"
                 :auto-open-pop-ups="!hasLastUpdateRouteParamsFilter">
               </DateFieldCustomInput>
               <DateFieldCustomInput :options="dateFilterTypeOptions" :label="t('Document updated on')"
-                :disable="state.ajaxRunning || hasUpdatedOnRouteParamsFilter" v-model="filters.dates.updatedOn"
+                :disable="state.ajaxRunning || hasUpdatedOnRouteParamsFilter" v-model="filters.dates.updatedAt"
                 :auto-open-pop-ups="!hasUpdatedOnRouteParamsFilter">
               </DateFieldCustomInput>
             </div>
@@ -94,9 +94,9 @@
       </template>
       <template v-slot:content>
         <div class="q-ma-md flex flex-center" v-if="pager.totalPages > 1">
-          <q-pagination v-model="pager.currentPage" color="dark" :max="pager.totalPages" :max-pages="5" boundary-numbers
-            direction-links boundary-links @update:model-value="onPaginationChanged" :disable="state.ajaxRunning"
-            class="theme-default-q-pagination" />
+          <q-pagination v-model="pager.currentPageIndex" color="dark" :max="pager.totalPages" :max-pages="5"
+            boundary-numbers direction-links boundary-links @update:model-value="onPaginationChanged"
+            :disable="state.ajaxRunning" class="theme-default-q-pagination" />
         </div>
         <q-markup-table class="q-ma-md">
           <thead>
@@ -111,7 +111,7 @@
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <DesktopToolTip>{{ t('Toggle sort by this column', { field: t(column.title) })
-                }}</DesktopToolTip>
+                  }}</DesktopToolTip>
               </th>
             </tr>
           </thead>
@@ -129,7 +129,7 @@
                         document.createdAt.timeAgo }})</q-item-label>
                       <q-item-label caption v-if="document.updatedAt?.dateTime">{{ t("Last update") }}: {{
                         document.updatedAt.dateTime
-                      }} ({{ document.updatedAt.timeAgo }})</q-item-label>
+                        }} ({{ document.updatedAt.timeAgo }})</q-item-label>
                     </q-item-section>
                     <q-item-section side top>
                       <ViewDocumentDetailsButton size="md" square class="min-width-9em"
@@ -168,9 +168,9 @@
           </tbody>
         </q-markup-table>
         <div class="q-ma-md flex flex-center" v-if="pager.totalPages > 1">
-          <q-pagination v-model="pager.currentPage" color="dark" :max="pager.totalPages" :max-pages="5" boundary-numbers
-            direction-links boundary-links @update:model-value="onPaginationChanged" :disable="state.ajaxRunning"
-            class="theme-default-q-pagination" />
+          <q-pagination v-model="pager.currentPageIndex" color="dark" :max="pager.totalPages" :max-pages="5"
+            boundary-numbers direction-links boundary-links @update:model-value="onPaginationChanged"
+            :disable="state.ajaxRunning" class="theme-default-q-pagination" />
         </div>
       </template>
     </CustomExpansionWidget>
@@ -182,9 +182,9 @@ import { ref, reactive, computed, onMounted, onBeforeUnmount, nextTick } from "v
 import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 
+import { useAdvancedSearchData } from "src/stores/advancedSearchData"
 import { bus, onShowDocumentFiles, onShowDocumentNotes } from "src/composables/useBus";
 import { api } from "src/composables/useAPI";
-import { useAdvancedSearchData } from "src/stores/advancedSearchData"
 import { useDateFilter } from "src/composables/useDateFilter"
 
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
@@ -193,6 +193,9 @@ import { type SearchDocumentResponse as SearchDocumentResponseInterface, type Se
 import { SearchDocumentItemClass } from "src/types/search-document-item";
 import { PagerClass } from "src/types/pager";
 import { type OrderType } from "src/types/order-type";
+import { SearchOnTextEntitiesFilterClass, SearchDatesFilterClass, SearchFilterClass } from "src/types/search-filter";
+import { type Sort as SortInterface, SortClass } from "src/types/sort";
+
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
@@ -215,60 +218,40 @@ const columns = [
   { field: 'noteCount', title: 'Notes', defaultClass: "gt-lg" }
 ];
 
-const sortFields = columns.map(column => ({
+// options for selecting order via dropdown button on small screens
+// (on normal screens, order is toggled clicking in column header)
+const sortFields: SortInterface[] = columns.map(column => ({
   field: column.field,
   label: column.title,
+  order: "ASC",
 }));
 
 const searchLaunched = ref<boolean>(false);
 
 const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-const isFilterWidgetExpanded = ref<boolean>(route.meta.conditionsFilterExpanded);
+const isFilterWidgetExpanded = ref<boolean>(route.meta.conditionsFilterExpanded === true);
 
 const resultsWidgetRef = ref(null);
 
 const { getDateFilterInstance, dateFilterTypeOptions } = useDateFilter();
 
+
 const useStoreFilter = computed(() => route.name == 'advancedSearch');
 
 const store = useAdvancedSearchData();
 
-interface Filters {
-  text: {
-    title: string | null;
-    description: string | null;
-    notes: string | null;
-  },
-  tags: string[];
-  dates: {
-    creationDate: any;
-    lastUpdate: any;
-    updatedOn: any;
-  }
-};
-
-const filters = reactive<Filters>({
-  text: {
-    title: null,
-    description: null,
-    notes: null
-  },
-  tags: [],
-  dates: {
-    creationDate: getDateFilterInstance(),
-    lastUpdate: getDateFilterInstance(),
-    updatedOn: getDateFilterInstance()
-  }
-});
+const filters = reactive<SearchFilterClass>(
+  new SearchFilterClass(
+    new SearchOnTextEntitiesFilterClass(null, null, null, null),
+    [],
+    new SearchDatesFilterClass(null, null, null)
+  )
+);
 
 const pager = reactive<PagerClass>(new PagerClass(1, 32, 0, 0));
 
-const sort = reactive({
-  field: "lastUpdateTimestamp",
-  label: "Last update",
-  order: "DESC",
-});
+const sort = reactive<SortClass>(new SortClass("lastUpdateTimestamp", "Last update", "DESC"));
 
 const results = reactive<Array<SearchDocumentItemClass>>([]);
 
@@ -278,6 +261,7 @@ const showErrorBanner = computed(() => !state.ajaxRunning && state.ajaxErrors);
 const showNoResultsBanner = computed(() => !state.ajaxRunning && searchLaunched.value && !hasResults.value);
 
 if (route.params.tag !== undefined) {
+  //store.setTagsFilter([route.params.tag]);
   filters.tags.push(route.params.tag);
 }
 
@@ -289,70 +273,62 @@ const sortOrderIcon = computed(() => sort.order == "ASC" ? "keyboard_double_arro
 
 const totalSearchConditions = computed(() => {
   let total = 0;
-  if (filters.text.title) {
+  if (store.filter.text.title) {
     total++;
   }
-  if (filters.text.description) {
+  if (store.filter.text.description) {
     total++;
   }
-  if (filters.text.notesBody) {
+  if (store.filter.text.notesBody) {
     total++;
   }
-  if (filters.text.attachmentsFilename) {
+  if (store.filter.text.attachmentsFilename) {
     total++;
   }
-  if (filters.tags && filters.tags.length > 0) {
-    total += filters.tags.length;
+  if (store.filter.tags.length > 0) {
+    total += store.filter.tags.length;
   }
-  if (filters.dates.creationDate.state.hasValue) {
+  if (store.filter.dates.createdAt.state.hasValue) {
     total++;
   }
-  if (filters.dates.lastUpdate.state.hasValue) {
+  if (store.filter.dates.lastUpdateAt.state.hasValue) {
     total++;
   }
-  if (filters.dates.updatedOn.state.hasValue) {
+  if (store.filter.dates.updatedAt.state.hasValue) {
     total++;
   }
   return (total);
 });
 
 const onPaginationChanged = (pageIndex: number) => {
-  pager.currentPage = pageIndex;
+  pager.currentPageIndex = pageIndex;
   onSubmitForm(false);
 }
 
 const onToggleSort = (field: string, order?: OrderType) => {
   if (!state.ajaxRunning) {
-    if (sort.field == field) {
-      if (!order) {
-        sort.order = sort.order == "ASC" ? "DESC" : "ASC";
-      } else {
-        sort.order = order;
-      }
-    } else {
-      sort.field = field;
-      sort.order = !order ? "ASC" : order;
-    }
-    sort.label = sortFields.find((item) => item.field == field)?.label || "";
+    sort.toggle(field, order);
+    sort.refreshLabel(sortFields);
+    //sort.label = sortFields.find((item) => item.field == field)?.label || "";
     onSubmitForm(false);
   }
 }
 
 const onSubmitForm = (resetPager: boolean) => {
   if (resetPager) {
-    pager.currentPage = 1;
+    pager.currentPageIndex = 1;
   }
   Object.assign(state, defaultAjaxState);
   state.ajaxRunning = true;
   if (useStoreFilter.value) {
-    store.filters = filters;
-    store.sort = sort;
+    store.setFilter(filters);
+    store.setSort(sort);
   }
-  api.document.search(pager.currentPage, pager.resultsPage, filters, sort.field, sort.order)
+  api.document.search(pager, filters, sort, false)
     .then((successResponse: SearchDocumentResponseInterface) => {
       if (successResponse.data.results) {
         results.length = 0;
-        pager.currentPage = successResponse.data.results.pagination.currentPage;
+        pager.currentPageIndex = successResponse.data.results.pagination.currentPage;
         pager.resultsPage = successResponse.data.results.pagination.resultsPage;
         pager.totalResults = successResponse.data.results.pagination.totalResults;
         pager.totalPages = successResponse.data.results.pagination.totalPages;
@@ -408,9 +384,9 @@ const onResetForm = () => {
   filters.text.attachmentsFilename = null;
   filters.tags.length = 0;
   filters.dates = {
-    creationDate: getDateFilterInstance(),
-    lastUpdate: getDateFilterInstance(),
-    updatedOn: getDateFilterInstance()
+    createdAt: getDateFilterInstance(),
+    lastUpdateAt: getDateFilterInstance(),
+    updatedAt: getDateFilterInstance()
   }
   sort.field = "lastUpdateTimestamp";
   sort.order = "DESC";
@@ -420,57 +396,51 @@ const onResetForm = () => {
 
 onMounted(() => {
   if (hasCreationDateRouteParamsFilter.value) {
-    filters.dates.creationDate.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
-    filters.dates.creationDate.filterType = dateFilterTypeOptions.value[7];
-    filters.dates.creationDate.formattedDate.fixed = route.params.fixedCreationDate.replaceAll("-", "/");
+    filters.dates.createdAt.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
+    filters.dates.createdAt.filterType = dateFilterTypeOptions.value[7];
+    filters.dates.createdAt.formattedDate.fixed = route.params.fixedCreationDate ? route.params.fixedCreationDate.replaceAll("-", "/") : null;
   } else if (hasLastUpdateRouteParamsFilter.value) {
-    filters.dates.lastUpdate.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
-    filters.dates.lastUpdate.filterType = dateFilterTypeOptions.value[7];
-    filters.dates.lastUpdate.formattedDate.fixed = route.params.fixedLastUpdate.replaceAll("-", "/");
+    filters.dates.lastUpdateAt.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
+    filters.dates.lastUpdateAt.filterType = dateFilterTypeOptions.value[7];
+    filters.dates.lastUpdateAt.formattedDate.fixed = route.params.fixedLastUpdate ? route.params.fixedLastUpdate.replaceAll("-", "/") : null;
   } else if (hasUpdatedOnRouteParamsFilter.value) {
-    filters.dates.updatedOn.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
-    filters.dates.updatedOn.filterType = dateFilterTypeOptions.value[7];
-    filters.dates.updatedOn.formattedDate.fixed = route.params.fixedUpdatedOn.replaceAll("-", "/");
+    filters.dates.updatedAt.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
+    filters.dates.updatedAt.filterType = dateFilterTypeOptions.value[7];
+    filters.dates.updatedAt.formattedDate.fixed = route.params.fixedUpdatedOn ? route.params.fixedUpdatedOn.replaceAll("-", "/") : null;
   } else if (useStoreFilter.value) {
-    filters.text.title = store.filters?.text.title || null;
-    filters.text.description = store.filters?.text.description || null;
-    filters.text.notesBody = store.filters?.text.notesBody || null;
-    filters.text.attachmentsFilename = store.filters?.text.attachmentsFilename || null;
-    filters.tags = store.filters?.tags || [];
-    if (store.filters?.dates) {
-      // creation date
-      filters.dates.creationDate.skipClearOnRecalc.fixed = true;
-      filters.dates.creationDate.formattedDate.fixed = store.filters.dates.creationDate.formattedDate.fixed;
-      filters.dates.creationDate.skipClearOnRecalc.from = true;
-      filters.dates.creationDate.formattedDate.from = store.filters.dates.creationDate.formattedDate.from;
-      filters.dates.creationDate.skipClearOnRecalc.to = true;
-      filters.dates.creationDate.formattedDate.to = store.filters.dates.creationDate.formattedDate.to;
-      filters.dates.creationDate.filterType = store.filters.dates.creationDate.filterType;
-      // last update
-      filters.dates.lastUpdate.skipClearOnRecalc.fixed = true;
-      filters.dates.lastUpdate.formattedDate.fixed = store.filters.dates.lastUpdate.formattedDate.fixed;
-      filters.dates.lastUpdate.skipClearOnRecalc.from = true;
-      filters.dates.lastUpdate.formattedDate.from = store.filters.dates.lastUpdate.formattedDate.from;
-      filters.dates.lastUpdate.skipClearOnRecalc.to = true;
-      filters.dates.lastUpdate.formattedDate.to = store.filters.dates.lastUpdate.formattedDate.to;
-      filters.dates.lastUpdate.filterType = store.filters.dates.lastUpdate.filterType;
-      // updated on
-      filters.dates.updatedOn.skipClearOnRecalc.fixed = true;
-      filters.dates.updatedOn.formattedDate.fixed = store.filters.dates.updatedOn.formattedDate.fixed;
-      filters.dates.updatedOn.skipClearOnRecalc.from = true;
-      filters.dates.updatedOn.formattedDate.from = store.filters.dates.updatedOn.formattedDate.from;
-      filters.dates.updatedOn.skipClearOnRecalc.to = true;
-      filters.dates.updatedOn.formattedDate.to = store.filters.dates.updatedOn.formattedDate.to;
-      filters.dates.updatedOn.filterType = store.filters.dates.updatedOn.filterType;
-    }
-    if (store.sort?.field) {
-      sort.field = store.sort.field;
-    }
-    if (store.sort?.order) {
-      sort.order = store.sort.order;
-    }
+    filters.text.title = store.currentFilter.text.title;
+    filters.text.description = store.currentFilter.text.description;
+    filters.text.notesBody = store.currentFilter.text.notesBody;
+    filters.text.attachmentsFilename = store.currentFilter.text.attachmentsFilename;
+    filters.tags = store.currentFilter.tags;
+    // creation date
+    filters.dates.createdAt.skipClearOnRecalc.fixed = true;
+    filters.dates.createdAt.formattedDate.fixed = store.currentFilter.dates.createdAt.formattedDate.fixed;
+    filters.dates.createdAt.skipClearOnRecalc.from = true;
+    filters.dates.createdAt.formattedDate.from = store.currentFilter.dates.createdAt.formattedDate.from;
+    filters.dates.createdAt.skipClearOnRecalc.to = true;
+    filters.dates.createdAt.formattedDate.to = store.currentFilter.dates.createdAt.formattedDate.to;
+    filters.dates.createdAt.filterType = store.currentFilter.dates.createdAt.filterType;
+    // last update
+    filters.dates.lastUpdateAt.skipClearOnRecalc.fixed = true;
+    filters.dates.lastUpdateAt.formattedDate.fixed = store.currentFilter.dates.lastUpdateAt.formattedDate.fixed;
+    filters.dates.lastUpdateAt.skipClearOnRecalc.from = true;
+    filters.dates.lastUpdateAt.formattedDate.from = store.currentFilter.dates.lastUpdateAt.formattedDate.from;
+    filters.dates.lastUpdateAt.skipClearOnRecalc.to = true;
+    filters.dates.lastUpdateAt.formattedDate.to = store.currentFilter.dates.lastUpdateAt.formattedDate.to;
+    filters.dates.lastUpdateAt.filterType = store.currentFilter.dates.lastUpdateAt.filterType;
+    // updated on
+    filters.dates.updatedAt.skipClearOnRecalc.fixed = true;
+    filters.dates.updatedAt.formattedDate.fixed = store.currentFilter.dates.updatedAt.formattedDate.fixed;
+    filters.dates.updatedAt.skipClearOnRecalc.from = true;
+    filters.dates.updatedAt.formattedDate.from = store.currentFilter.dates.updatedAt.formattedDate.from;
+    filters.dates.updatedAt.skipClearOnRecalc.to = true;
+    filters.dates.updatedAt.formattedDate.to = store.currentFilter.dates.updatedAt.formattedDate.to;
+    filters.dates.updatedAt.filterType = store.currentFilter.dates.updatedAt.filterType;
+    sort.field = store.currentSort.field;
+    sort.order = store.currentSort.order;
   }
-  if (route.meta.autoLaunchSearch) {
+  if (route.meta.autoLaunchSearch === true) {
     nextTick()
       .then(() => {
         onSubmitForm(true);
