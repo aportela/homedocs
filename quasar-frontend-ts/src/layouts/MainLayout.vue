@@ -13,7 +13,7 @@
         <q-btn type="button" no-caps no-wrap align="left" outline :label="searchButtonLabel" icon="search"
           class="full-width no-caps theme-default-q-btn" @click.prevent="dialogs.fastSearch.visible = true">
           <DesktopToolTip anchor="bottom middle" self="top middle">{{ t("Click to open fast search")
-            }}</DesktopToolTip>
+          }}</DesktopToolTip>
         </q-btn>
         <!--
         <FastSearchSelector dense class="full-width"></FastSearchSelector>
@@ -72,7 +72,7 @@ import { default as DocumentNotesPreviewDialog } from "src/components/Dialogs/Do
 import { default as UploadingDialog } from "src/components/Dialogs/UploadingDialog.vue";
 
 import { type Attachment as AttachmentInterface } from "src/types/attachment";
-import { type UploadTransfer as UploadTransferInterface } from "src/types/upload-transfer";
+import { UploadTransferClass, type UploadTransfer as UploadTransferInterface } from "src/types/upload-transfer";
 
 const $q = useQuasar();
 
@@ -244,8 +244,7 @@ onMounted(() => {
           foundTransfer.done = true;
           foundTransfer.processed = true;
         } else {
-          // TODO:
-          console.error("Transfer not found");
+          console.error("Transfer not found", completedTransfer);
         }
       });
     } else {
@@ -265,19 +264,7 @@ onMounted(() => {
         foundTransfer.errorMessage = "Transfer rejected";
         foundTransfer.processed = true;
       } else {
-        dialogs.uploading.transfers.unshift({
-          id: uid(),
-          filename: transferUploadedWithError.filename,
-          filesize: transferUploadedWithError.filesize,
-          start: currentTimestamp(),
-          end: currentTimestamp(),
-          uploading: false,
-          done: false,
-          error: true,
-          errorHTTPCode: transferUploadedWithError.errorHTTPCode,
-          errorMessage: "Transfer rejected",
-          processed: true,
-        });
+        dialogs.uploading.transfers.unshift(transferUploadedWithError);
       }
     });
     dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0;
@@ -294,19 +281,7 @@ onMounted(() => {
         foundTransfer.errorMessage = "Transfer failed";
         foundTransfer.processed = true;
       } else {
-        dialogs.uploading.transfers.unshift({
-          id: uid(),
-          filename: transferUploadedWithError.filename,
-          filesize: transferUploadedWithError.filesize,
-          start: currentTimestamp(),
-          end: currentTimestamp(),
-          uploading: false,
-          done: false,
-          error: true,
-          errorHTTPCode: transferUploadedWithError.errorHTTPCode,
-          errorMessage: "Transfer failed",
-          processed: true,
-        });
+        dialogs.uploading.transfers.unshift(transferUploadedWithError);
       }
     });
     dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0;

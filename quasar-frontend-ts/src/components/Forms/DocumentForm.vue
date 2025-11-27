@@ -76,7 +76,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.ajaxRunning" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                    }}</q-badge>
+                      }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
@@ -562,14 +562,14 @@ const onFileUploaded = (info: { files: readonly any[]; xhr: any; }): void => {
           uid(),
           file.name,
           file.size,
-          0,
-          null,
+          currentTimestamp(),
+          currentTimestamp(),
           false,
           false,
           true,
           500,
-          "Invalid JSON response",
-          false
+          "Transfer rejected",
+          true
         )
       )
     });
@@ -606,14 +606,14 @@ const onUploadFailed = (info: { files: readonly any[]; xhr: any; }) => {
         uid(),
         file.name,
         file.size,
-        0,
-        null,
+        currentTimestamp(),
+        currentTimestamp(),
         false,
         false,
         true,
         info.xhr.status,
-        info.xhr.statusText,
-        false
+        "Transfer failed",
+        true
       )
     )
   });
