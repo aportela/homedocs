@@ -1,7 +1,7 @@
 import { defineBoot } from '#q-app/wrappers';
 import { createI18n } from "vue-i18n";
 import { default as messages } from "src/i18n";
-import { autodetectLocale } from "src/composables/usei18n";
+import { autodetectLocale } from "src/composables/i18n";
 
 export type MessageLanguages = keyof typeof messages;
 // Type-define 'en-US' as the master schema for the resource

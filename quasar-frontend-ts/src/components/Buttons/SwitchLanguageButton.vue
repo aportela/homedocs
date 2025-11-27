@@ -19,7 +19,7 @@ import { computed, useAttrs, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { useI18nStore } from "src/stores/i18n";
-import { availableSystemLocales } from "src/composables/usei18n";
+import { availableSystemLocales } from "src/composables/i18n";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 
