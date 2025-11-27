@@ -82,20 +82,6 @@ class DocumentClass implements Document {
     this.historyOperations.length = 0;
   };
 
-  addAttachment = (t: Ti18NFunction, id: string, name: string, size: number, hash: string | null): void => {
-    this.attachments.unshift(
-      reactive<AttachmentInterface>({
-        id: id || uid(),
-        name: name,
-        size: size,
-        humanSize: format.humanStorageSize(size),
-        hash: hash,
-        createdAt: new DateTimeClass(t, currentTimestamp()),
-        orphaned: true, // this property is used for checking if file was uploaded but not associated to document (while not saving document)
-      }),
-    );
-  };
-
   previewAttachment = (index: number): boolean => {
     if (index >= 0 && index < this.attachments.length) {
       bus.emit("showDocumentFilePreviewDialog", {
@@ -111,19 +97,6 @@ class DocumentClass implements Document {
       console.error("Invalid attachment index", index);
       return false;
     }
-  };
-
-  addNote = (t: Ti18NFunction): void => {
-    this.notes.unshift(
-      reactive<NoteClass>(
-        new NoteClass(
-          uid(),
-          "",
-          new DateTimeClass(t, currentTimestamp()),
-          false,
-          true, // new notes start with view mode = "edit" (for allowing input body text)
-        ))
-    );
   };
 
   parseJSONResponse(t: Ti18NFunction, response: GetDocumentResponseInterface) {
