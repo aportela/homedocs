@@ -301,7 +301,7 @@ const onSubmitForm = () => {
             switch (errorResponse.response.status) {
               case 400:
                 if (
-                  errorResponse.response.data.invalidOrMissingParams.find(function (e) {
+                  errorResponse.response.data.invalidOrMissingParams.find(function (e: string) {
                     return e === "title";
                   })
                 ) {
@@ -373,7 +373,7 @@ const onSubmitForm = () => {
             switch (errorResponse.response.status) {
               case 400:
                 if (
-                  errorResponse.response.data.invalidOrMissingParams.find(function (e) {
+                  errorResponse.response.data.invalidOrMissingParams.find(function (e: string) {
                     return e === "title";
                   })
                 ) {
@@ -386,7 +386,7 @@ const onSubmitForm = () => {
                       console.error(e);
                     });
                 } else if (
-                  errorResponse.response.data.invalidOrMissingParams.find(function (e) {
+                  errorResponse.response.data.invalidOrMissingParams.find(function (e: string) {
                     return e === "noteBody";
                   })
                 ) {
