@@ -111,7 +111,7 @@
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <DesktopToolTip>{{ t('Toggle sort by this column', { field: t(column.title) })
-                  }}</DesktopToolTip>
+                }}</DesktopToolTip>
               </th>
             </tr>
           </thead>
@@ -129,7 +129,7 @@
                         document.createdAt.timeAgo }})</q-item-label>
                       <q-item-label caption v-if="document.updatedAt?.dateTime">{{ t("Last update") }}: {{
                         document.updatedAt.dateTime
-                        }} ({{ document.updatedAt.timeAgo }})</q-item-label>
+                      }} ({{ document.updatedAt.timeAgo }})</q-item-label>
                     </q-item-section>
                     <q-item-section side top>
                       <ViewDocumentDetailsButton size="md" square class="min-width-9em"
@@ -186,14 +186,12 @@ import { bus, onShowDocumentFiles, onShowDocumentNotes } from "src/composables/u
 import { api } from "src/composables/useAPI";
 import { useAdvancedSearchData } from "src/stores/advancedSearchData"
 import { useDateFilter } from "src/composables/useDateFilter"
-import { fullDateTimeHuman, timeAgo } from "src/composables/useFormatDates"
-import { dateTimeFormat as localStorageDateTimeFormat } from "src/composables/useLocalStorage";
 
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 import { DateTimeClass } from "src/types/date-time";
 import { type SearchDocumentResponse as SearchDocumentResponseInterface, type SearchDocumentResponseItem as SearchDocumentResponseItemInterface } from "src/types/api-responses";
 import { SearchDocumentItemClass } from "src/types/search-document-item";
-import { type Pager as PagerInterface, PagerClass } from "src/types/pager";
+import { PagerClass } from "src/types/pager";
 import { type OrderType } from "src/types/order-type";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
@@ -264,12 +262,7 @@ const filters = reactive<Filters>({
   }
 });
 
-const pager = reactive<PagerInterface>({
-  currentPage: 1,
-  resultsPage: 32,
-  totalResults: 0,
-  totalPages: 0,
-});
+const pager = reactive<PagerClass>(new PagerClass(1, 32, 0, 0));
 
 const sort = reactive({
   field: "lastUpdateTimestamp",
