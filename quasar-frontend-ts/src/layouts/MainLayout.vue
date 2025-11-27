@@ -230,21 +230,7 @@ onMounted(() => {
   });
 
   bus.on("showUploadingDialog", (msg) => {
-    dialogs.uploading.transfers.unshift(...msg.transfers.map((transfer: UploadTransferInterface) => {
-      return ({
-        id: uid(),
-        filename: transfer.filename,
-        filesize: transfer.filesize,
-        start: currentTimestamp(),
-        end: null,
-        uploading: true,
-        done: false,
-        error: false,
-        errorHTTPCode: null,
-        errorMessage: null,
-        processed: false,
-      })
-    }) || []);
+    dialogs.uploading.transfers.unshift(...msg.transfers);
     dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0 && localStorageAlwaysOpenUploadDialog.get();
   });
 
