@@ -70,7 +70,7 @@ import { format } from "quasar";
 
 import { bgDownload } from "src/composables/axios";
 import { bus } from "src/composables/bus";
-import { allowPreview } from "src/composables/useFileUtils"
+import { allowPreview } from "src/composables/fileUtils"
 import { useDocument } from "src/composables/useDocument"
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 import { type Attachment as AttachmentInterface } from "src/types/attachment";
