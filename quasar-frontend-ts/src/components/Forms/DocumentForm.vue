@@ -76,7 +76,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.ajaxRunning" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                      }}</q-badge>
+                    }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
@@ -264,7 +264,6 @@ const onRefresh = () => {
         }).finally(() => {
           state.ajaxRunning = false;
           if (!state.ajaxErrors) {
-            saveSuccess.value = true;
             if (smallScreensTopTab.value == "metadata") {
               nextTick()
                 .then(() => {
