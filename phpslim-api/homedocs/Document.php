@@ -10,9 +10,11 @@ class Document
      * @param array<string> $tags
      * @param array<\HomeDocs\Attachment> $attachments
      * @param array<\HomeDocs\Note> $notes
-     * @param array<\HomeDocs\DocumentHistoryOperation> $history
+     * @param array<\HomeDocs\DocumentHistoryOperation> $historyOperations
      */
-    public function __construct(public ?string $id = null, public ?string $title = null, public ?string $description = null, public ?int $createdAtTimestamp = null, public ?int $updatedAtTimestamp = null, public array $tags = [], public array $attachments = [], public array $notes = [], public array $historyOperations = []) {}
+    public function __construct(public ?string $id = null, public ?string $title = null, public ?string $description = null, public ?int $createdAtTimestamp = null, public ?int $updatedAtTimestamp = null, public array $tags = [], public array $attachments = [], public array $notes = [], public array $historyOperations = [])
+    {
+    }
 
     /**
      * @return array<mixed>
@@ -812,6 +814,7 @@ class Document
                             }
                         }
                     }
+
                     return ($item);
                 },
                 $browserResults->items
