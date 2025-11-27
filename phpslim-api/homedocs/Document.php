@@ -717,7 +717,7 @@ class Document
     /**
      * @param array<mixed> $filter
      */
-    public static function search(\aportela\DatabaseWrapper\DB $db, \aportela\DatabaseBrowserWrapper\Pager $pager, array $filter = [], string $sortBy = "createdAtTimestamp", \aportela\DatabaseBrowserWrapper\Order $sortOrder = \aportela\DatabaseBrowserWrapper\Order::DESC): \stdClass
+    public static function search(\aportela\DatabaseWrapper\DB $db, \aportela\DatabaseBrowserWrapper\Pager $pager, array $filter = [], string $sortField = "createdAtTimestamp", \aportela\DatabaseBrowserWrapper\Order $sortOrder = \aportela\DatabaseBrowserWrapper\Order::DESC): \stdClass
     {
         $fieldDefinitions = [
             "id" => "DOCUMENT.id",
@@ -732,8 +732,8 @@ class Document
             "total" => "COUNT (DOCUMENT.id)"
         ];
         $sortItems = [];
-        $sortItems[] = match ($sortBy) {
-            "title", "description", "attachmentCount", "noteCount", "createdAtTimestamp", "updatedAtTimestamp" => new \aportela\DatabaseBrowserWrapper\SortItem($sortBy, $sortOrder, true),
+        $sortItems[] = match ($sortField) {
+            "title", "description", "attachmentCount", "noteCount", "createdAtTimestamp", "updatedAtTimestamp" => new \aportela\DatabaseBrowserWrapper\SortItem($sortField, $sortOrder, true),
             default => new \aportela\DatabaseBrowserWrapper\SortItem("createdAtTimestamp", $sortOrder, true),
         };
         // after launch search we need to make some changes foreach result
