@@ -32,9 +32,11 @@ export const useAdvancedSearchData = defineStore("advancedSearchData", {
       this.filter = defaultFilter;
       this.sort = defaultSort;
     },
-    setTagsFilter(tags: string[]) {
-      this.filter.tags.length = 0;
-      this.filter.tags.push(...tags);
+    setPager(pager: PagerInterface) {
+      this.pager = pager;
+    },
+    setFilter(filter: SearchFilterInterface) {
+      this.filter = filter;
     },
     setSort(sort: SortInterface): void {
       this.sort = sort;
