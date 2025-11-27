@@ -6,7 +6,7 @@ export function useFormUtils() {
 
   const fieldIsRequiredLabel = computed<string>(() => t("Field is required"));
 
-  const requiredFieldRules = [(val: string) => !!val || fieldIsRequiredLabel.value];
+  const requiredFieldRule = (val: string): boolean | string => !!val || fieldIsRequiredLabel.value;
 
-  return { requiredFieldRules, fieldIsRequiredLabel };
+  return { requiredFieldRule, fieldIsRequiredLabel };
 }

@@ -10,15 +10,15 @@
     </q-card-section>
     <q-card-section>
       <q-input dense outlined ref="emailRef" v-model="profile.email" type="email" name="email" :label="t('Email')"
-        :disable="state.ajaxRunning || signUpDenied" :autofocus="true" :rules="formUtils.requiredFieldRules" lazy-rules
+        :disable="state.ajaxRunning || signUpDenied" :autofocus="true" :rules="[requiredFieldRule]" lazy-rules
         :error="validator.email.hasErrors" :error-message="validator.email.message ? t(validator.email.message) : ''">
         <template v-slot:prepend>
           <q-icon name="alternate_email" />
         </template>
       </q-input>
       <PasswordFieldCustomInput dense outlined ref="passwordRef" class="q-mt-md" v-model="profile.password"
-        name="password" :label="t('Password')" :disable="state.ajaxRunning || signUpDenied"
-        :rules="formUtils.requiredFieldRules" lazy-rules :error="validator.password.hasErrors"
+        name="password" :label="t('Password')" :disable="state.ajaxRunning || signUpDenied" :rules="[requiredFieldRule]"
+        lazy-rules :error="validator.password.hasErrors"
         :error-message="validator.password.message ? t(validator.password.message) : ''">
       </PasswordFieldCustomInput>
     </q-card-section>
@@ -87,7 +87,7 @@ const emit = defineEmits(['success']);
 
 const { t } = useI18n();
 
-const formUtils = useFormUtils();
+const { requiredFieldRule } = useFormUtils();
 
 const serverEnvironment = useServerEnvironmentStore();
 

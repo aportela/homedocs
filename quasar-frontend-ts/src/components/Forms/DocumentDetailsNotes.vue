@@ -23,7 +23,7 @@
           <InteractiveTextFieldCustomInput v-model.trim="note.body" dense outlined type="textarea" maxlength="4096"
             autogrow name="description" :label="`${note.createdAt.dateTime} (${note.createdAt.timeAgo})`"
             :start-mode-editable="!!note.startOnEditMode" :disable="disable" clearable :max-lines="6"
-            :rules="requiredFieldRules" :error="!note.body" :error-message="fieldIsRequiredLabel"
+            :rules="[requiredFieldRule]" :error="!note.body" :error-message="fieldIsRequiredLabel"
             :autofocus="note.startOnEditMode" :placeholder="t('type note body')">
             <template v-slot:top-icon-append="{ showTopHoverIcons }">
               <q-icon name="delete" size="sm" class="q-ml-sm q-mr-sm icon-hover" clickable v-show="showTopHoverIcons"
@@ -60,7 +60,7 @@ import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue
 
 const { t } = useI18n();
 
-const { requiredFieldRules, fieldIsRequiredLabel } = useFormUtils();
+const { requiredFieldRule, fieldIsRequiredLabel } = useFormUtils();
 const { escapeRegExp } = useDocument();
 
 const emit = defineEmits(['update:modelValue', 'addNote', 'removeNoteAtIndex']);

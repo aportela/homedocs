@@ -5,8 +5,8 @@
         spellcheck="false">
         <q-input class="q-my-md" dense outlined v-model="profile.email" type="email" name="email" :label="t('Email')"
           :disable="state.ajaxRunning" :error="validator.email.hasErrors"
-          :error-message="validator.email.message ? t(validator.email.message) : ''"
-          :rules="formUtils.requiredFieldRules" lazy-rules ref="emailRef">
+          :error-message="validator.email.message ? t(validator.email.message) : ''" :rules="[requiredFieldRule]"
+          lazy-rules ref="emailRef">
           <template v-slot:prepend>
             <q-icon name="alternate_email" />
           </template>
@@ -14,7 +14,7 @@
         <PasswordFieldCustomInput class="q-my-md" dense outlined v-model="profile.password" name="password"
           :label="t('New password')" :error="validator.password.hasErrors"
           :error-message="validator.password.message ? t(validator.password.message) : ''" :disable="state.ajaxRunning"
-          :rules="formUtils.requiredFieldRules" lazy-rules ref="passwordRef">
+          :rules="[requiredFieldRule]" lazy-rules ref="passwordRef">
         </PasswordFieldCustomInput>
         <q-btn color="primary" size="md" :label="$t('Update profile')" no-caps class="full-width q-my-xs"
           icon=" account_circle" :disable="state.ajaxRunning || !profile.password" :loading="state.ajaxRunning"
@@ -54,7 +54,7 @@ import { default as CustomErrorBanner } from "src/components/Banners/CustomError
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 
 const { t } = useI18n();
-const formUtils = useFormUtils();
+const { requiredFieldRule } = useFormUtils();
 
 interface UpdateProfileFormProps {
   autoFocus?: boolean;

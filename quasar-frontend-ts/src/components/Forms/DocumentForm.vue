@@ -49,7 +49,7 @@
                 <InteractiveTextFieldCustomInput ref="documentTitleFieldRef" dense class="q-mb-md" maxlength="128"
                   outlined v-model.trim="document.title" type="textarea" autogrow name="title"
                   :label="t('Document title')" :disable="state.ajaxRunning" :autofocus="true" clearable
-                  :start-mode-editable="isNewDocument" :rules="requiredFieldRules" :error="!document.title"
+                  :start-mode-editable="isNewDocument" :rules="[requiredFieldRule]" :error="!document.title"
                   :error-message="fieldIsRequiredLabel" :max-lines="1">
                 </InteractiveTextFieldCustomInput>
                 <InteractiveTextFieldCustomInput dense class="q-mb-md" outlined v-model.trim="document.description"
@@ -168,8 +168,7 @@ const { t } = useI18n();
 const router = useRouter();
 const { screen } = useQuasar();
 const serverEnvironment = useServerEnvironmentStore();
-const { requiredFieldRules, fieldIsRequiredLabel } = useFormUtils();
-
+const { requiredFieldRule, fieldIsRequiredLabel } = useFormUtils();
 
 interface DocumentFormProps {
   documentId: string | null;
