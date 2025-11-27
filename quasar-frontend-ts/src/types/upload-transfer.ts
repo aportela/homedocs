@@ -1,6 +1,3 @@
-import { files } from "@vue/eslint-config-prettier/skip-formatting";
-import { FileEnumerator } from "eslint/use-at-your-own-risk";
-
 interface UploadTransfer {
   id: string;
   filename: string;
