@@ -96,16 +96,6 @@ class DocumentClass implements Document {
     );
   };
 
-  removeAttachmentAtIdx = (index: number): boolean => {
-    if (index >= 0 && index < this.attachments.length) {
-      this.attachments.splice(index, 1);
-      return true;
-    } else {
-      console.error("Invalid attachment index", index);
-      return false;
-    }
-  };
-
   previewAttachment = (index: number): boolean => {
     if (index >= 0 && index < this.attachments.length) {
       bus.emit("showDocumentFilePreviewDialog", {
@@ -134,16 +124,6 @@ class DocumentClass implements Document {
           true, // new notes start with view mode = "edit" (for allowing input body text)
         ))
     );
-  };
-
-  removeNoteAtIdx = (index: number): boolean => {
-    if (index >= 0 && index < this.notes.length) {
-      this.notes.splice(index, 1);
-      return true;
-    } else {
-      console.error("Invalid note index", index);
-      return false;
-    }
   };
 
   parseJSONResponse(t: Ti18NFunction, response: GetDocumentResponseInterface) {
