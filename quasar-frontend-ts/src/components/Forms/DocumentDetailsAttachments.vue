@@ -68,7 +68,7 @@ import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import { format } from "quasar";
 
-import { bgDownload } from "src/composables/useAxios";
+import { bgDownload } from "src/composables/axios";
 import { bus } from "src/composables/useBus";
 import { allowPreview } from "src/composables/useFileUtils"
 import { useDocument } from "src/composables/useDocument"

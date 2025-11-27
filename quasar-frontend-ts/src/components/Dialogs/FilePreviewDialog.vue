@@ -77,7 +77,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from "vue";
 import { useI18n } from "vue-i18n";
-import { bgDownload } from "src/composables/useAxios";
+import { bgDownload } from "src/composables/axios";
 import { allowPreview, isImage, isAudio, isPDF } from "src/composables/useFileUtils";
 import { getURL as getAttachmentURL, getInlineURL as getAttachmentInlineURL } from "src/composables/attachment";
 import { type Document } from "src/types/document";
