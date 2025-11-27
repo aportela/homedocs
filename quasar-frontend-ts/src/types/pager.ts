@@ -1,5 +1,5 @@
 interface Pager {
-  currentPage: number;
+  currentPageIndex: number;
   resultsPage: number;
   totalResults: number;
   totalPages: number;
@@ -7,13 +7,13 @@ interface Pager {
 
 
 class PagerClass implements Pager {
-  currentPage: number;
+  currentPageIndex: number;
   resultsPage: number;
   totalResults: number;
   totalPages: number;
 
-  constructor(currentPage: number, resultsPage: number, totalResults: number, totalPages: number) {
-    this.currentPage = currentPage;
+  constructor(currentPageIndex: number, resultsPage: number, totalResults: number, totalPages: number) {
+    this.currentPageIndex = currentPageIndex;
     this.resultsPage = resultsPage;
     this.totalResults = totalResults;
     this.totalPages = totalPages;
