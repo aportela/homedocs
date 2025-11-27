@@ -22,6 +22,7 @@
 
 import { computed, reactive, watch, useAttrs } from "vue";
 import { useI18n } from "vue-i18n";
+import { type OrderType } from "src/types/order-type";
 
 const attrs = useAttrs();
 
@@ -29,33 +30,32 @@ const { t } = useI18n();
 
 const emit = defineEmits(['change'])
 
-const props = defineProps({
-  options: {
-    type: Array,
-    required: true,
-    validator(value) {
-      return Array.isArray(value);
-    }
-  },
-  current: {
-    type: Object,
-    required: true
-  },
-  dense: {
-    type: Boolean,
-    required: false,
-    default: false
-  }
+interface Option {
+  field: string | null;
+  label: string | null;
+}
+
+interface OptionWithOrder extends Option {
+  order: OrderType;
+}
+
+interface SortByFieldCustomButtonDropdownProps {
+  options: Option[];
+  current: OptionWithOrder;
+  dense?: boolean;
+};
+const props = withDefaults(defineProps<SortByFieldCustomButtonDropdownProps>(), {
+  dense: false,
 });
 
-const currentSort = reactive({
+const currentSort = reactive<OptionWithOrder>({
   field: props.current?.field || null,
   label: props.current?.label || null,
   order: props.current?.order || null
 });
 
 if (!currentSort.label) {
-  currentSort.label = (props.options.find((option) => option.field == currentSort.field))?.label;
+  currentSort.label = (props.options.find((option) => option.field == currentSort.field))?.label || null;
 }
 
 const currentLabel = computed(() =>
@@ -66,7 +66,7 @@ const currentLabel = computed(() =>
     }
   )
 );
-const onClick = (option) => {
+const onClick = (option: OptionWithOrder) => {
   currentSort.field = option.field;
   currentSort.label = option.label;
   currentSort.order = option.order;
@@ -75,7 +75,7 @@ const onClick = (option) => {
 
 watch(() => props.current, val => { currentSort.field = val.field; currentSort.label = val.label; currentSort.order = val.order });
 
-const completeOptions = reactive([]);
+const completeOptions = reactive<Array<OptionWithOrder>>([]);
 
 props.options?.forEach((option) => {
   completeOptions.push({
@@ -89,6 +89,5 @@ props.options?.forEach((option) => {
     order: "DESC"
   })
 });
-
 
 </script>
