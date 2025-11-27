@@ -7,17 +7,17 @@
     <q-card flat class="bg-transparent">
       <form @submit.prevent.stop="onSubmitForm" autocorrect="off" autocapitalize="off" autocomplete="off"
         spellcheck="false">
-        <q-btn-group class="q-ma-sm" spread v-if="state.exists">
+        <q-btn-group class="q-ma-sm" spread v-if="exists">
           <q-btn type="submit" icon="save" size="md" color="primary" :title="t('Save')" :label="t('Save')" no-caps
-            @click="onSubmitForm" :disable="state.loading || state.saving || state.uploading || !document.title"
-            :loading="state.saving">
+            @click="onSubmitForm" :disable="state.ajaxRunning || isUploading || !document.title"
+            :loading="state.ajaxRunning">
             <template v-slot:loading>
               <q-spinner-hourglass class="on-left" />
               {{ t("Saving...") }}
             </template>
           </q-btn>
           <q-btn type="button" icon="autorenew" size="md" color="secondary" :title="t('Reload')" :label="t('Reload')"
-            no-caps v-if="!isNewDocument" @click="onRefresh" :loading="state.loading">
+            no-caps v-if="!isNewDocument" @click="onRefresh" :loading="state.ajaxRunning">
             <template v-slot:loading>
               <q-spinner-hourglass class="on-left" />
               {{ t("Loading...") }}
@@ -33,7 +33,7 @@
           <q-tab name="details" icon="list_alt" :label="t('Document details')"
             class="cursor-default full-width"></q-tab>
         </q-tabs>
-        <q-card-section class="row q-pa-none" v-if="state.exists">
+        <q-card-section class="row q-pa-none" v-if="exists">
           <div class="col-12 col-lg-6 col-xl-6 q-px-sm flex"
             v-show="isScreenGreaterThanMD || smallScreensTopTab == 'metadata'">
             <q-card class="q-ma-xs q-mt-sm full-width">
@@ -48,18 +48,16 @@
                   :updated-at="document.updatedAt" />
                 <InteractiveTextFieldCustomInput ref="documentTitleFieldRef" dense class="q-mb-md" maxlength="128"
                   outlined v-model.trim="document.title" type="textarea" autogrow name="title"
-                  :label="t('Document title')" :disable="state.loading || state.saving" :autofocus="true" clearable
+                  :label="t('Document title')" :disable="state.ajaxRunning" :autofocus="true" clearable
                   :start-mode-editable="isNewDocument" :rules="requiredFieldRules" :error="!document.title"
                   :error-message="fieldIsRequiredLabel" :max-lines="1">
                 </InteractiveTextFieldCustomInput>
                 <InteractiveTextFieldCustomInput dense class="q-mb-md" outlined v-model.trim="document.description"
                   type="textarea" maxlength="4096" autogrow name="description" :label="t('Document description')"
-                  :disable="state.loading || state.saving" clearable :start-mode-editable="isNewDocument"
-                  :max-lines="6">
+                  :disable="state.ajaxRunning" clearable :start-mode-editable="isNewDocument" :max-lines="6">
                 </InteractiveTextFieldCustomInput>
-                <InteractiveTagsFieldCustomSelect dense v-model="document.tags"
-                  :disabled="state.loading || state.saving" :start-mode-editable="isNewDocument"
-                  :deny-change-editable-mode="isNewDocument" clearable>
+                <InteractiveTagsFieldCustomSelect dense v-model="document.tags" :disabled="state.ajaxRunning"
+                  :start-mode-editable="isNewDocument" :deny-change-editable-mode="isNewDocument" clearable>
                 </InteractiveTagsFieldCustomSelect>
               </q-card-section>
             </q-card>
@@ -69,34 +67,33 @@
             <q-card class="q-ma-xs q-mt-sm full-width">
               <q-card-section class="q-pa-none q-mb-sm" style="border-bottom: 2px solid rgba(0, 0, 0, 0.12);">
                 <q-tabs v-model="rightDetailsTab" align="left">
-                  <q-tab name="attachments" icon="attach_file" :disable="state.loading" :label="t('Attachments')">
+                  <q-tab name="attachments" icon="attach_file" :disable="state.ajaxRunning" :label="t('Attachments')">
                     <q-badge floating v-show="document.hasAttachments">{{ document.attachments.length }}</q-badge>
                   </q-tab>
-                  <q-tab name="notes" icon="forum" :disable="state.loading" :label="t('Notes')">
+                  <q-tab name="notes" icon="forum" :disable="state.ajaxRunning" :label="t('Notes')">
                     <q-badge floating v-show="document.hasNotes">{{ document.notes.length }}</q-badge>
                   </q-tab>
-                  <q-tab name="history" icon="view_timeline" :disable="state.loading" :label="t('History')"
+                  <q-tab name="history" icon="view_timeline" :disable="state.ajaxRunning" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                    }}</q-badge>
+                      }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
               <q-card-section class="q-pa-none">
                 <q-tab-panels v-model="rightDetailsTab" animated class="bg-transparent">
                   <q-tab-panel name="attachments" class="q-pa-none">
-                    <DocumentDetailsAttachments :attachments="document.attachments"
-                      :disable="state.loading || state.saving" @add-attachment="onShowAttachmentsPicker"
+                    <DocumentDetailsAttachments :attachments="document.attachments" :disable="state.ajaxRunning"
+                      @add-attachment="onShowAttachmentsPicker"
                       @preview-attachment-at-index="(index: number) => document.previewAttachment(index)"
                       @remove-attachment-at-index="(index: number) => onRemoveAttachmentAtIndex(index)" />
                   </q-tab-panel>
                   <q-tab-panel name="notes" class="q-pa-none">
-                    <DocumentDetailsNotes :notes="document.notes" :disable="state.loading || state.saving"
-                      @add-note="onAddNote" @remove-note-at-index="(index: number) => onRemoveNoteAtIndex(index)" />
+                    <DocumentDetailsNotes :notes="document.notes" :disable="state.ajaxRunning" @add-note="onAddNote"
+                      @remove-note-at-index="(index: number) => onRemoveNoteAtIndex(index)" />
                   </q-tab-panel>
                   <q-tab-panel name="history" class="q-pa-none" v-if="document.id">
-                    <DocumentDetailsHistory v-model="document.historyOperations"
-                      :disable="state.loading || state.saving" />
+                    <DocumentDetailsHistory v-model="document.historyOperations" :disable="state.ajaxRunning" />
                   </q-tab-panel>
                 </q-tab-panels>
               </q-card-section>
@@ -104,22 +101,22 @@
           </div>
         </q-card-section>
         <q-card-section class="q-ma-xs q-mt-sm q-px-xs">
-          <CustomBanner v-if="state.saveSuccess" class="q-mt-md" text="Document saved" success></CustomBanner>
-          <CustomErrorBanner v-else-if="state.loadingError || state.savingError" class="q-mt-md"
-            :api-error="state.apiError" :text="state.errorMessage">
+          <CustomBanner v-if="saveSuccess" class="q-mt-md" text="Document saved" success></CustomBanner>
+          <CustomErrorBanner v-else-if="state.ajaxErrors" class="q-mt-md" :api-error="state.ajaxAPIErrorDetails"
+            :text="state.ajaxErrorMessage">
           </CustomErrorBanner>
         </q-card-section>
-        <q-btn-group class="q-ma-sm" spread v-if="state.exists">
+        <q-btn-group class="q-ma-sm" spread v-if="exists">
           <q-btn type="submit" icon="save" size="md" color="primary" :title="t('Save')" :label="t('Save')" no-caps
-            @click="onSubmitForm" :disable="state.loading || state.saving || state.uploading || !document.title"
-            :loading="state.saving">
+            @click="onSubmitForm" :disable="state.ajaxRunning || isUploading || !document.title"
+            :loading="state.ajaxRunning">
             <template v-slot:loading>
               <q-spinner-hourglass class="on-left" />
               {{ t("Saving...") }}
             </template>
           </q-btn>
           <q-btn type="button" icon="autorenew" size="md" color="secondary" :title="t('Reload')" :label="t('Reload')"
-            no-caps v-if="!isNewDocument" @click="onRefresh" :loading="state.loading">
+            no-caps v-if="!isNewDocument" @click="onRefresh" :loading="state.ajaxRunning">
             <template v-slot:loading>
               <q-spinner-hourglass class="on-left" />
               {{ t("Loading...") }}
@@ -141,7 +138,7 @@
 import { ref, reactive, nextTick, computed, watch, onMounted, onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { uid, useQuasar } from "quasar";
+import { uid, useQuasar, QUploader } from "quasar";
 
 import { bus } from "src/composables/useBus";
 import { api } from "src/composables/useAPI";
@@ -149,6 +146,7 @@ import { useFormUtils } from "src/composables/useFormUtils"
 import { DocumentClass } from "src/types/document";
 import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
 
+import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 import { type GetDocumentResponse as GetDocumentResponseInterface } from "src/types/api-responses";
 
 import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
@@ -199,21 +197,15 @@ const document = reactive<DocumentClass>(
 );
 
 const maxUploadFileSize = computed(() => serverEnvironment.maxUploadFileSize);
-const uploaderRef = ref(null);
+const uploaderRef = ref<QUploader | null>(null);
 const documentTitleFieldRef = ref(null);
 
-const state = reactive({
-  loading: false,
-  saving: false,
-  deleting: false,
-  uploading: false,
-  loadingError: false,
-  errorMessage: null,
-  apiError: null,
-  saveSuccess: false,
-  savingError: false,
-  exists: true,
-});
+const exists = ref<boolean>(true);
+const saveSuccess = ref<boolean>(false);
+
+const isUploading = ref<boolean>(false);
+
+const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
 const showDeleteDocumentConfirmationDialog = ref(false);
 
@@ -224,7 +216,7 @@ const rightDetailsTab = ref("attachments");
 // handle drag&drop files into q-uploader component
 const handleDrop = (evt: DragEvent) => {
   evt.preventDefault();
-  const files = evt.dataTransfer.files;
+  const files = evt.dataTransfer?.files || [];
   if (files.length) {
     uploaderRef.value?.addFiles(files);
   };
@@ -234,202 +226,201 @@ const handleDrop = (evt: DragEvent) => {
 // refresh document data from api
 const onRefresh = () => {
   if (document.id) {
-    state.loading = true;
-    state.loadingError = false;
-    state.errorMessage = null;
-    state.apiError = null;
-    state.saveSuccess = false;
-    state.savingError = false;
-    state.exists = true;
-    smallScreensTopTab.value = "metadata";
-    api.document
-      .get(document.id)
-      .then((successResponse: GetDocumentResponseInterface) => {
-        document.parseJSONResponse(t, successResponse);
-        state.loading = false;
-        nextTick()
-          .then(() => {
-            documentTitleFieldRef.value?.focus()
-          }).catch((e) => {
-            console.error(e);
-          });
-      })
-      .catch((errorResponse) => {
-        state.loadingError = true;
-        if (errorResponse.isAPIError) {
-          state.apiError = errorResponse.customAPIErrorDetails;
-          switch (errorResponse.response.status) {
-            case 401:
-              state.apiError = errorResponse.customAPIErrorDetails;
-              state.errorMessage = "Auth session expired, requesting new...";
-              bus.emit("reAuthRequired", { emitter: "DocumentPage.onRefresh" });
-              break;
-            case 404:
-              state.apiError = errorResponse.customAPIErrorDetails;
-              state.errorMessage = "Document not found";
-              state.exists = false;
-              break;
-            default:
-              // TODO: on this error (example 404 not found) do not use error validation fields on title (required, red border, this field is required)
-              state.errorMessage = "API Error: fatal error";
-              break;
+    if (!state.ajaxRunning) {
+      Object.assign(state, defaultAjaxState);
+      state.ajaxRunning = true;
+      smallScreensTopTab.value = "metadata";
+      api.document
+        .get(document.id)
+        .then((successResponse: GetDocumentResponseInterface) => {
+          document.parseJSONResponse(t, successResponse);
+        })
+        .catch((errorResponse) => {
+          state.ajaxErrors = true;
+          if (errorResponse.isAPIError) {
+            state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
+            switch (errorResponse.response.status) {
+              case 401:
+                state.ajaxErrorMessage = "Auth session expired, requesting new...";
+                bus.emit("reAuthRequired", { emitter: "DocumentPage.onRefresh" });
+                break;
+              case 404:
+                state.ajaxErrorMessage = "Document not found";
+                exists = false;
+                break;
+              default:
+                // TODO: on this error (example 404 not found) do not use error validation fields on title (required, red border, this field is required)
+                state.ajaxErrorMessage = "API Error: fatal error";
+                break;
+            }
+          } else {
+            state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
+            console.error(errorResponse);
           }
-        } else {
-          state.errorMessage = `Uncaught exception: ${errorResponse}`;
-          console.error(errorResponse);
-        }
-        state.loading = false;
-      });
+        }).finally(() => {
+          state.ajaxRunning = false;
+          if (!state.ajaxErrors) {
+            saveSuccess.value = true;
+            if (smallScreensTopTab.value == "metadata") {
+              nextTick()
+                .then(() => {
+                  documentTitleFieldRef.value?.focus();
+                }).catch((e) => {
+                  console.error(e);
+                });
+            }
+          }
+        });
+    }
   } else {
     // TODO
   }
+
 }
 
 // submit (add/update) document data to api
 const onSubmitForm = () => {
-  state.loading = true;
-  state.loadingError = false;
-  state.errorMessage = null;
-  state.apiError = null;
-  state.saveSuccess = false;
-  state.savingError = false;
-  state.saving = true;
-  if (!isNewDocument.value) {
-    api.document
-      .update(document)
-      .then((successResponse) => {
-        if (successResponse.data.document) {
-          document.parseJSONResponse(t, successResponse.data.document);
-          state.loading = false;
-          state.saving = false;
-          state.saveSuccess = true;
-          if (smallScreensTopTab.value == "metadata") {
-            nextTick()
-              .then(() => {
-                documentTitleFieldRef.value?.focus();
-              }).catch((e) => {
-                console.error(e);
-              });
+  if (!state.ajaxRunning) {
+    saveSuccess.value = false;
+    Object.assign(state, defaultAjaxState);
+    state.ajaxRunning = true;
+    if (!isNewDocument.value) {
+      api.document
+        .update(document)
+        .then((successResponse: GetDocumentResponseInterface) => {
+          document.parseJSONResponse(t, successResponse);
+        })
+        .catch((errorResponse) => {
+          state.ajaxErrors = true;
+          if (errorResponse.isAPIError) {
+            state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
+            switch (errorResponse.response.status) {
+              case 400:
+                if (
+                  errorResponse.response.data.invalidOrMissingParams.find(function (e) {
+                    return e === "title";
+                  })
+                ) {
+                  state.ajaxErrorMessage = t("API Error: missing document title param");
+                  smallScreensTopTab.value = "metadata";
+                  nextTick()
+                    .then(() => {
+                      documentTitleFieldRef.value?.focus()
+                    }).catch((e) => {
+                      console.error(e);
+                    });
+                } else if (
+                  errorResponse.response.data.invalidOrMissingParams.find(function (e) {
+                    return e === "noteBody";
+                  })
+                ) {
+                  state.ajaxErrorMessage = t("API Error: missing document note body");
+                  smallScreensTopTab.value = "details";
+                  rightDetailsTab.value = "notes";
+                  // TODO: focus note without body ???
+                } else {
+                  state.ajaxErrorMessage = "API Error: fatal error";
+                }
+                break;
+              case 401:
+                state.ajaxErrorMessage = "Auth session expired, requesting new...";
+                bus.emit("reAuthRequired", { emitter: "AdvancedSearchPage.onSubmitForm" });
+                break;
+              default:
+                state.ajaxErrorMessage = "API Error: fatal error";
+                break;
+            }
+          } else {
+            state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
+            console.error(errorResponse);
           }
-        } else {
-          // TODO
-          state.loading = false;
-          state.saving = false;
-        }
-      })
-      .catch((errorResponse) => {
-        state.loadingError = true;
-        state.savingError = true;
-        if (errorResponse.isAPIError) {
-          state.apiError = errorResponse.customAPIErrorDetails;
-          switch (errorResponse.response.status) {
-            case 400:
-              if (
-                errorResponse.response.data.invalidOrMissingParams.find(function (e) {
-                  return e === "title";
-                })
-              ) {
-                state.errorMessage = t("API Error: missing document title param");
-                smallScreensTopTab.value = "metadata";
-                nextTick()
-                  .then(() => {
-                    documentTitleFieldRef.value?.focus()
-                  }).catch((e) => {
-                    console.error(e);
-                  });
-              } else if (
-                errorResponse.response.data.invalidOrMissingParams.find(function (e) {
-                  return e === "noteBody";
-                })
-              ) {
-                state.errorMessage = t("API Error: missing document note body");
-                smallScreensTopTab.value = "details";
-                rightDetailsTab.value = "notes";
-                // TODO: focus note without body ???
-              } else {
-                state.errorMessage = "API Error: fatal error";
-              }
-              break;
-            case 401:
-              state.errorMessage = "Auth session expired, requesting new...";
-              bus.emit("reAuthRequired", { emitter: "AdvancedSearchPage.onSubmitForm" });
-              break;
-            default:
-              state.errorMessage = "API Error: fatal error";
-              break;
+        }).finally(() => {
+          state.ajaxRunning = false;
+          if (!state.ajaxErrors) {
+            saveSuccess.value = true;
+            if (smallScreensTopTab.value == "metadata") {
+              nextTick()
+                .then(() => {
+                  documentTitleFieldRef.value?.focus();
+                }).catch((e) => {
+                  console.error(e);
+                });
+            }
           }
-        } else {
-          state.errorMessage = `Uncaught exception: ${errorResponse}`;
-          console.error(errorResponse);
-        }
-        state.loading = false;
-        state.saving = false;
-      });
-  } else {
-    if (!document.id) {
-      document.id = uid();
-    }
-    api.document
-      .add(document)
-      .then(() => {
-        state.loading = false;
-        state.saving = false;
-        router.push({
-          name: "document",
-          params: { id: document.id }
-        }).catch((e) => {
-          console.error(e);
         });
-      })
-      .catch((errorResponse) => {
-        state.loadingError = true;
-        state.savingError = true;
-        if (errorResponse.isAPIError) {
-          document.id = null;
-          state.apiError = errorResponse.customAPIErrorDetails;
-          switch (errorResponse.response.status) {
-            case 400:
-              if (
-                errorResponse.response.data.invalidOrMissingParams.find(function (e) {
-                  return e === "title";
-                })
-              ) {
-                state.errorMessage = t("API Error: missing document title param");
-                smallScreensTopTab.value = "metadata";
-                nextTick()
-                  .then(() => {
-                    documentTitleFieldRef.value?.focus()
-                  }).catch((e) => {
-                    console.error(e);
-                  });
-              } else if (
-                errorResponse.response.data.invalidOrMissingParams.find(function (e) {
-                  return e === "noteBody";
-                })
-              ) {
-                state.errorMessage = t("API Error: missing document note body");
-                smallScreensTopTab.value = "details";
-                rightDetailsTab.value = "notes";
-                // TODO: focus note without body ???
-              } else {
-                state.errorMessage = "API Error: fatal error";
-              }
-              break;
-            case 401:
-              state.errorMessage = "Auth session expired, requesting new...";
-              bus.emit("reAuthRequired", { emitter: "AdvancedSearchPage.onSubmitForm" });
-              break;
-            default:
-              state.errorMessage = "API Error: fatal error";
-              break;
+    } else {
+      if (!document.id) {
+        document.id = uid();
+      }
+      api.document
+        .add(document)
+        .then(() => {
+          router.push({
+            name: "document",
+            params: { id: document.id }
+          }).catch((e) => {
+            console.error(e);
+          });
+        })
+        .catch((errorResponse) => {
+          state.ajaxErrors = true;
+          if (errorResponse.isAPIError) {
+            state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
+            switch (errorResponse.response.status) {
+              case 400:
+                if (
+                  errorResponse.response.data.invalidOrMissingParams.find(function (e) {
+                    return e === "title";
+                  })
+                ) {
+                  state.ajaxErrorMessage = t("API Error: missing document title param");
+                  smallScreensTopTab.value = "metadata";
+                  nextTick()
+                    .then(() => {
+                      documentTitleFieldRef.value?.focus()
+                    }).catch((e) => {
+                      console.error(e);
+                    });
+                } else if (
+                  errorResponse.response.data.invalidOrMissingParams.find(function (e) {
+                    return e === "noteBody";
+                  })
+                ) {
+                  state.ajaxErrorMessage = t("API Error: missing document note body");
+                  smallScreensTopTab.value = "details";
+                  rightDetailsTab.value = "notes";
+                  // TODO: focus note without body ???
+                } else {
+                  state.ajaxErrorMessage = "API Error: fatal error";
+                }
+                break;
+              case 401:
+                state.ajaxErrorMessage = "Auth session expired, requesting new...";
+                bus.emit("reAuthRequired", { emitter: "AdvancedSearchPage.onSubmitForm" });
+                break;
+              default:
+                state.ajaxErrorMessage = "API Error: fatal error";
+                break;
+            }
+          } else {
+            state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
+            console.error(errorResponse);
           }
-        } else {
-          state.errorMessage = `Uncaught exception: ${errorResponse}`;
-          console.error(errorResponse);
-        }
-        state.loading = false;
-        state.saving = false;
-      });
+        }).finally(() => {
+          state.ajaxRunning = false;
+          if (!state.ajaxErrors) {
+            saveSuccess.value = true;
+            if (smallScreensTopTab.value == "metadata") {
+              nextTick()
+                .then(() => {
+                  documentTitleFieldRef.value?.focus();
+                }).catch((e) => {
+                  console.error(e);
+                });
+            }
+          }
+        });
+    }
   }
 }
 
@@ -439,11 +430,11 @@ const onShowDeleteDocumentConfirmationDialog = () => {
   }
 };
 
-const onShowAttachmentsPicker = () => {
+const onShowAttachmentsPicker = (evt: Event) => {
   rightDetailsTab.value = 'attachments';
   nextTick()
     .then(() => {
-      uploaderRef.value.pickFiles();
+      uploaderRef.value?.pickFiles(evt);
     }).catch((e) => {
       console.error(e);
     });
@@ -498,7 +489,7 @@ const onRemoveNoteAtIndex = (index: number) => {
 
 // q-uploader component event => file upload starts
 const onUploadsStart = () => {
-  state.uploading = true;
+  isUploading.value = true;
   bus.emit("showUploadingDialog", { transfers: uploaderRef.value?.files.map((file) => { return { name: file.name, size: file.size } }) });
 }
 
@@ -562,7 +553,7 @@ const onUploadFailed = (e) => {
 
 // q-uploader component event => file upload finish (all files)
 const onUploadsFinish = () => {
-  state.uploading = false;
+  isUploading.value = false;
   uploaderRef.value?.reset();
 }
 
@@ -589,5 +580,4 @@ onMounted(() => {
 onBeforeUnmount(() => {
   bus.off("reAuthSucess");
 });
-
 </script>
