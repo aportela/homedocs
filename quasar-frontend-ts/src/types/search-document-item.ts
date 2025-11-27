@@ -48,7 +48,7 @@ class SearchDocumentItemClass implements SearchDocumentItem {
     this.attachmentCount = attachmentCount;
     this.noteCount = noteCount;
     //this.matchedFragments = matchedFragments;
-    if (matchedFragments.length > 0) {
+    if (matchedFragments.length > 0 && valtoMatch) {
       this.matchedOnFragment = t("Fast search match fragment",
         {
           fragment: matchedFragments[0]!.fragment ? `${boldStringMatch(matchedFragments[0]!.fragment, valtoMatch)}` : '',
