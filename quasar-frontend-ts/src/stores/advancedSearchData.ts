@@ -1,73 +1,43 @@
 import { defineStore } from "pinia";
-import { type OrderType } from "src/types/order-type";
-import { type DateFilterClass } from "src/types/date-filters";
+import { type SearchFilter as SearchFilterInterface, SearchFilterClass, SearchOnTextEntitiesFilterClass, SearchDatesFilterClass } from "src/types/search-filter";
+import { type Sort as SortInterface, SortClass } from "src/types/sort";
+import { type Pager as PagerInterface, PagerClass } from "src/types/pager";
 
-interface Filters {
-  text: {
-    title: string | null;
-    description: string | null;
-    notes: string | null;
-    attachmentNames: string | null;
-  },
-  tags: string[];
-  dates: {
-    creationDate: any; // DateFilterClass | null;
-    lastUpdate: any; // DateFilterClass | null;
-    updatedOn: any; // DateFilterClass | null;
-  }
-};
-
-interface Sort {
-  field: string;
-  label: string;
-  order: OrderType;
-}
+const defaultPager = new PagerClass(1, 32, 0, 0);
+const defaultSearchOnTextEntitiesFilter = new SearchOnTextEntitiesFilterClass(null, null, null, null);
+const defaultSearchDatesFilter = new SearchDatesFilterClass(null, null, null);
+const defaultFilter = new SearchFilterClass(defaultSearchOnTextEntitiesFilter, [], defaultSearchDatesFilter);
+const defaultSort = new SortClass("lastUpdateTimestamp", "Last update", "DESC")
 
 interface State {
-  filters: Filters | null;
-  sort: Sort | null;
+  pager: PagerInterface;
+  filter: SearchFilterInterface;
+  sort: SortInterface;
 };
 
 export const useAdvancedSearchData = defineStore("advancedSearchData", {
   state: (): State => ({
-    filters: null,
-    sort: null,
+    pager: defaultPager,
+    filter: defaultFilter,
+    sort: defaultSort,
   }),
   getters: {
-    filters: (state) => state.filters,
+    pager: (state) => state.pager,
+    filter: (state) => state.filter,
     sort: (state) => state.sort,
   },
   actions: {
     reset() {
-      this.filters = null;
-      this.sort = null;
+      this.pager = defaultPager;
+      this.filter = defaultFilter;
+      this.sort = defaultSort;
     },
-    setFilters(filters: Filters | null): void {
-      this.filters = filters;
+    setTagsFilter(tags: string[]) {
+      this.filter.tags.length = 0;
+      this.filter.tags.push(...tags);
     },
-    setSort(sort: Sort | null): void {
+    setSort(sort: SortInterface): void {
       this.sort = sort;
     },
-    getCurrentAPIFilter(currentPage: number, resultsPage: number, sortBy: string, sortOrder: OrderType): object {
-      return (
-        {
-          title: this.filters?.text?.title || null,
-          description: this.filters?.text?.description || null,
-          notesBody: this.filters?.text?.notes || null,
-          attachmentsFilename: this.filters?.text?.attachmentNames || null,
-          tags: this.filters?.tags || [],
-          fromCreationTimestampCondition: this.filters?.dates?.creationDate?.timestamps?.from || null,
-          toCreationTimestampCondition: this.filters?.dates?.creationDate?.timestamps?.to || null,
-          fromLastUpdateTimestampCondition: this.filters?.dates?.lastUpdate?.timestamps?.from || null,
-          toLastUpdateTimestampCondition: this.filters?.dates?.lastUpdate?.timestamps?.to || null,
-          fromUpdatedOnTimestampCondition: this.filters?.dates?.updatedOn?.timestamps?.from || null,
-          toUpdatedOnTimestampCondition: this.filters?.dates?.updatedOn?.timestamps?.to || null,
-          currentPage: currentPage,
-          resultsPage: resultsPage,
-          sortBy: sortBy,
-          sortOrder: sortOrder
-        }
-      );
-    }
   },
 });
