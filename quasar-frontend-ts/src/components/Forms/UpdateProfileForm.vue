@@ -40,7 +40,7 @@ import { ref, reactive, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import { QInput } from "quasar";
 
-import { bus } from "src/composables/useBus";
+import { bus } from "src/composables/bus";
 import { api } from "src/composables/api";
 import { useFormUtils } from "src/composables/useFormUtils";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";

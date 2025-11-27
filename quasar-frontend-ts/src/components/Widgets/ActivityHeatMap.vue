@@ -20,7 +20,7 @@ import { useI18n } from "vue-i18n";
 import { date } from "quasar";
 
 import { api } from "src/composables/api";
-import { bus } from "src/composables/useBus";
+import { bus } from "src/composables/bus";
 import { useDarkModeStore } from "src/stores/darkMode";
 import { useI18nStore } from "src/stores/i18n";
 import type { APIErrorDetails as APIErrorDetailsInterface } from "src/types/api-error-details";

@@ -1,4 +1,4 @@
-import { bus } from "src/composables/useBus";
+import { bus } from "src/composables/bus";
 import { type Ti18NFunction } from "./i18n";
 import { type DateTime as DateTimeInterface, DateTimeClass } from "src/types/date-time";
 import { type Attachment as AttachmentInterface, AttachmentClass } from "./attachment";

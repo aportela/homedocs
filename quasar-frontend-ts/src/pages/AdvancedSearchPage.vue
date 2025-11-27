@@ -111,7 +111,7 @@
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <DesktopToolTip>{{ t('Toggle sort by this column', { field: t(column.title) })
-                }}</DesktopToolTip>
+                  }}</DesktopToolTip>
               </th>
             </tr>
           </thead>
@@ -129,7 +129,7 @@
                         document.createdAt.timeAgo }})</q-item-label>
                       <q-item-label caption v-if="document.updatedAt?.dateTime">{{ t("Last update") }}: {{
                         document.updatedAt.dateTime
-                      }} ({{ document.updatedAt.timeAgo }})</q-item-label>
+                        }} ({{ document.updatedAt.timeAgo }})</q-item-label>
                     </q-item-section>
                     <q-item-section side top>
                       <ViewDocumentDetailsButton size="md" square class="min-width-9em"
@@ -183,7 +183,7 @@ import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 
 import { useAdvancedSearchData } from "src/stores/advancedSearchData"
-import { bus, onShowDocumentFiles, onShowDocumentNotes } from "src/composables/useBus";
+import { bus, onShowDocumentFiles, onShowDocumentNotes } from "src/composables/bus";
 import { api } from "src/composables/api";
 import { useDateFilter } from "src/composables/useDateFilter"
 

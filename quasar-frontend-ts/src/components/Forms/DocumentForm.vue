@@ -76,7 +76,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.ajaxRunning" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                      }}</q-badge>
+                    }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
@@ -140,7 +140,7 @@ import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { uid, useQuasar, QUploader, type QRejectedEntry } from "quasar";
 
-import { bus } from "src/composables/useBus";
+import { bus } from "src/composables/bus";
 import { api } from "src/composables/api";
 import { useFormUtils } from "src/composables/useFormUtils"
 import { DocumentClass } from "src/types/document";

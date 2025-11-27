@@ -69,7 +69,7 @@ import { useI18n } from "vue-i18n";
 import { format } from "quasar";
 
 import { bgDownload } from "src/composables/axios";
-import { bus } from "src/composables/useBus";
+import { bus } from "src/composables/bus";
 import { allowPreview } from "src/composables/useFileUtils"
 import { useDocument } from "src/composables/useDocument"
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";

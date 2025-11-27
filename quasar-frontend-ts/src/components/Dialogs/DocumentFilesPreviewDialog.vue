@@ -2,9 +2,9 @@
   <BaseDialog v-model="visible" @close="onClose" width="1280px" max-width="80vw">
     <template v-slot:header-left>
       <div v-if="documentTitle">{{ t("Document title")
-      }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
+        }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
           documentTitle
-        }}</router-link>
+          }}</router-link>
       </div>
       <div v-else>{{ t("Document attachments") }}</div>
     </template>
@@ -71,7 +71,7 @@
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { format } from "quasar";
 import { useI18n } from "vue-i18n";
-import { bus } from "src/composables/useBus";
+import { bus } from "src/composables/bus";
 import { allowPreview } from "src/composables/useFileUtils"
 import { bgDownload } from "src/composables/axios";
 import { api } from "src/composables/api";
