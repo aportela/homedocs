@@ -163,7 +163,6 @@ import { AttachmentClass } from "src/types/attachment";
 import { NoteClass } from "src/types/note";
 import { DateTimeClass } from "src/types/date-time";
 import { currentTimestamp } from "src/composables/useFormatDates";
-import { fileURLToPath } from "url";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -203,7 +202,7 @@ const document = reactive<DocumentClass>(
 
 const maxUploadFileSize = computed(() => serverEnvironment.maxUploadFileSize);
 const uploaderRef = ref<QUploader | null>(null);
-const documentTitleFieldRef = ref(null);
+const documentTitleFieldRef = ref<InstanceType<typeof InteractiveTextFieldCustomInput> | null>(null);
 
 const exists = ref<boolean>(true);
 const saveSuccess = ref<boolean>(false);
