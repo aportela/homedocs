@@ -29,9 +29,14 @@ interface SetProfileResponse extends Omit<DefaultAxiosResponse, 'data'> {
   }
 };
 
+interface TagCloudResponseItem {
+  total: number;
+  tag: string;
+};
+
 interface TagCloudResponse extends Omit<DefaultAxiosResponse, 'data'> {
   data: {
-    tags: string[];
+    tags: TagCloudResponseItem[];
   }
 };
 
@@ -156,6 +161,7 @@ export {
   type RegisterResponse,
   type GetProfileResponse,
   type SetProfileResponse,
+  type TagCloudResponseItem,
   type TagCloudResponse,
   type RecentDocumentResponseItem,
   type RecentDocumentsResponse,

@@ -30,7 +30,7 @@ import { useI18n } from "vue-i18n";
 import { bus } from "src/composables/useBus";
 import { api } from "src/composables/useAPI";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
-import { type TagCloudResponse } from "src/types/api-responses";
+import { type TagCloudResponse, type TagCloudResponseItem } from "src/types/api-responses";
 
 import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
@@ -51,7 +51,7 @@ const isExpanded = ref(props.expanded);
 
 const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-const tags = reactive<Array<string>>([]);
+const tags = reactive<Array<TagCloudResponseItem>>([]);
 
 const hasTags = computed(() => tags.length > 0);
 
