@@ -107,8 +107,8 @@ const savedEmail = localStorageEmail.get();
 
 const profile = reactive<AuthFieldsInterface>(
   {
-    email: savedEmail,
-    password: null
+    email: savedEmail || "",
+    password: ""
   }
 );
 

@@ -70,8 +70,8 @@ const validator = reactive<AuthValidatorInterface>({ ...defaultAuthValidator });
 
 const profile = reactive<AuthFieldsInterface>(
   {
-    email: null,
-    password: null
+    email: "",
+    password: ""
   }
 );
 
@@ -164,7 +164,7 @@ const onSubmitForm = () => {
       .then((successResponse: SetProfileResponse) => {
         profileUpdatedSuccessfully.value = true;
         profile.email = successResponse.data.user.email;
-        profile.password = null;
+        profile.password = "";
         nextTick()
           .then(() => {
             emailRef.value?.focus();

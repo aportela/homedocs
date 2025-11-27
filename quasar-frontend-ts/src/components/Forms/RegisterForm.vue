@@ -99,8 +99,8 @@ const validator = reactive<AuthValidatorInterface>({ ...defaultAuthValidator });
 
 const profile = reactive<AuthFieldsInterface>(
   {
-    email: null,
-    password: null
+    email: "",
+    password: ""
   }
 );
 
