@@ -1,6 +1,8 @@
 import { axiosInstance } from "src/composables/useAxios";
-import { type OrderType } from "src/types/order-type";
+import { type Sort as SortInterface } from "src/types/sort";
+import { type Pager as PagerInterface } from "src/types/pager";
 import { type Document } from "src/types/document";
+import { type SearchFilter as SearchFilterInterface } from "src/types/search-filter";
 
 const api = {
   common: {
@@ -41,24 +43,11 @@ const api = {
       };
       return axiosInstance.post("/search/recent_documents", params);
     },
-    // TODO: filter interface
-    search: function (currentPage: number, resultsPage: number, filter: any, sortBy: string, sortOrder: OrderType) {
+    search: function (pager: PagerInterface, filter: SearchFilterInterface, sort: SortInterface) {
       const params = {
-        title: filter.text?.title || null,
-        description: filter.text?.description || null,
-        notesBody: filter.text?.notesBody || null,
-        attachmentsFilename: filter.text?.attachmentsFilename || null,
-        tags: filter.tags || [],
-        fromCreationTimestampCondition: filter.dates?.creationDate?.timestamps?.from || null,
-        toCreationTimestampCondition: filter.dates?.creationDate?.timestamps?.to || null,
-        fromLastUpdateTimestampCondition: filter.dates?.lastUpdate?.timestamps?.from || null,
-        toLastUpdateTimestampCondition: filter.dates?.lastUpdate?.timestamps?.to || null,
-        fromUpdatedOnTimestampCondition: filter.dates?.updatedOn?.timestamps?.from || null,
-        toUpdatedOnTimestampCondition: filter.dates?.updatedOn?.timestamps?.to || null,
-        currentPage: currentPage,
-        resultsPage: resultsPage,
-        sortBy: sortBy,
-        sortOrder: sortOrder
+        pager: pager,
+        filter: filter,
+        sort: sort,
       };
       return axiosInstance.post("/search/document", params);
     },
