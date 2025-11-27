@@ -90,8 +90,8 @@ const onResetForm = () => {
 }
 
 const onGetProfile = () => {
-  profile.email = null;
-  profile.password = null;
+  profile.email = "";
+  profile.password = "";
   Object.assign(state, defaultAjaxState);
   state.ajaxRunning = true;
   api.user.getProfile()
