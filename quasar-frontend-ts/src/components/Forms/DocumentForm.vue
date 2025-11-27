@@ -159,6 +159,7 @@ import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue"
 import { default as DeleteDocumentConfirmationDialog } from "src/components/Dialogs/DeleteDocumentConfirmationDialog.vue"
 import { AttachmentClass } from "src/types/attachment";
+import { NoteClass } from "src/types/note";
 import { DateTimeClass } from "src/types/date-time";
 import { currentTimestamp } from "src/composables/useFormatDates";
 
@@ -480,7 +481,16 @@ const onRemoveAttachmentAtIndex = (index: number) => {
 };
 
 const onAddNote = () => {
-  document.addNote(t);
+  //document.addNote(t);
+  document.notes.unshift(
+    new NoteClass(
+      uid(),
+      "",
+      new DateTimeClass(t, currentTimestamp()),
+      false,
+      true, // new notes start with view mode = "edit" (for allowing input body text)
+    )
+  );
 };
 
 const onRemoveNoteAtIndex = (index: number) => {
