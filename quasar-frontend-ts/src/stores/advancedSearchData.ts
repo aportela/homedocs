@@ -22,9 +22,9 @@ export const useAdvancedSearchData = defineStore("advancedSearchData", {
     sort: defaultSort,
   }),
   getters: {
-    pager: (state) => state.pager,
-    filter: (state) => state.filter,
-    sort: (state) => state.sort,
+    currentPager: (state) => state.pager,
+    currentFilter: (state) => state.filter,
+    currentSort: (state) => state.sort,
   },
   actions: {
     reset() {
