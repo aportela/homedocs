@@ -1,7 +1,6 @@
 import { type AxiosResponse } from "axios";
 import { type HistoryOperationType } from "./history-operation";
 import { type SearchDocumentItemMatchedFragment as SearchDocumentItemMatchedFragmentInterface } from "./search-document-item";
-import { Attachment } from "./attachment";
 
 interface DefaultAxiosResponse {
   data: AxiosResponse<any, any, {}>;

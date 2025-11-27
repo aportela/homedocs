@@ -1,5 +1,4 @@
 import { date } from "quasar";
-import { useI18n } from "vue-i18n";
 
 interface timeAgoReturn {
   label: string;

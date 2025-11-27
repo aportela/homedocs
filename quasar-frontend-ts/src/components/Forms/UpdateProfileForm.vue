@@ -161,9 +161,9 @@ const onSubmitForm = () => {
     state.ajaxRunning = true;
     api.user
       .setProfile(profile.email, profile.password)
-      .then((successResponse) => {
+      .then((successResponse: SetProfileResponse) => {
         profileUpdatedSuccessfully.value = true;
-        profile.email = successResponse.data.data.email;
+        profile.email = successResponse.data.user.email;
         profile.password = null;
         nextTick()
           .then(() => {

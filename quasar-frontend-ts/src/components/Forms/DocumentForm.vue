@@ -76,7 +76,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.ajaxRunning" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                      }}</q-badge>
+                    }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
@@ -162,7 +162,6 @@ import { AttachmentClass } from "src/types/attachment";
 import { NoteClass } from "src/types/note";
 import { DateTimeClass } from "src/types/date-time";
 import { currentTimestamp } from "src/composables/useFormatDates";
-import { AxiosResponse } from "axios";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -171,12 +170,11 @@ const serverEnvironment = useServerEnvironmentStore();
 const { requiredFieldRules, fieldIsRequiredLabel } = useFormUtils();
 
 
-const props = defineProps({
-  documentId: {
-    type: String,
-    required: false,
-  }
-});
+interface DocumentFormProps {
+  documentId: string | null;
+};
+
+const props = defineProps<DocumentFormProps>();
 
 watch(() => props.documentId, val => {
   if (val) {
