@@ -237,6 +237,11 @@ return function (\Slim\App $app): void {
                     );
                 }
 
+                function getReturnFragmentsFlagFromParams(array $params = []): bool
+                {
+                    return (array_key_exists("returnFragments", $params) && is_bool($params["returnFragments"]) && $params["returnFragments"] === true);
+                }
+
                 // TODO: is this required ? can be recplaced only with /search/document with custom params
                 $routeCollectorProxy->post('/recent_documents', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $params = $request->getParsedBody();
@@ -281,7 +286,8 @@ return function (\Slim\App $app): void {
                                     "tags" => array_key_exists("tags", $params) && is_array($params["tags"]) ? $params["tags"] : [],
                                 ],
                                 getSortFieldFromParams($params),
-                                getSortOrderFromParams($params)
+                                getSortOrderFromParams($params),
+                                getReturnFragmentsFlagFromParams($params)
                             )
                         ]
                     );
