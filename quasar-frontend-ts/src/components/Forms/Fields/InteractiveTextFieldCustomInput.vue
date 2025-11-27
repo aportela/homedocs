@@ -40,7 +40,7 @@
 
 import { ref, useAttrs, computed, nextTick, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { useQuasar } from "quasar";
+import { useQuasar, QInput } from "quasar";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 
@@ -96,7 +96,7 @@ const isDesktop = computed(() => $q.platform.is.desktop);
 
 const emit = defineEmits(['update:modelValue']);
 
-const qInputRef = ref(null);
+const qInputRef = ref<QInput | null>(null);
 
 const readOnly = ref(!props.startModeEditable);
 

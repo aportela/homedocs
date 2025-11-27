@@ -17,6 +17,7 @@
 
 import { ref, computed, useAttrs, onMounted, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
+import { QInput } from "quasar";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 
@@ -67,7 +68,7 @@ const props = defineProps({
   },
 });
 
-const qInputPasswordRef = ref(null);
+const qInputPasswordRef = ref<QInput | null>(null);
 
 const visiblePassword = ref(false);
 
