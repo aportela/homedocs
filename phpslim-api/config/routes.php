@@ -175,6 +175,68 @@ return function (\Slim\App $app): void {
                     throw new \RuntimeException("Failed to create database handler from container");
                 }
 
+                function getPagerFromParams(array $params = []): \aportela\DatabaseBrowserWrapper\Pager
+                {
+                    $currentPageIndex = 1;
+                    $resultsPage = \HomeDocs\Settings::DEFAULT_RESULTS_PAGE;
+                    if (array_key_exists("pager", $params)) {
+                        if (array_key_exists("currentPageIndex", $params["pager"]) && is_numeric($params["pager"]["currentPageIndex"])) {
+                            $currentPageIndex = intval($params["pager"]["currentPageIndex"]);
+                        }
+                        if (array_key_exists("resultsPage", $params["pager"]) && is_numeric($params["pager"]["resultsPage"])) {
+                            $resultsPage = intval($params["pager"]["resultsPage"]);
+                        }
+                    }
+                    return (new \aportela\DatabaseBrowserWrapper\Pager(true, $currentPageIndex, $resultsPage));
+                };
+
+                function getTextFilterFromParams(array $params = [], string $textFilterType): string | null
+                {
+                    return (
+                        array_key_exists("filter", $params) &&
+                        array_key_exists("text", $params["filter"]) &&
+                        array_key_exists($textFilterType, $params["filter"]["text"]) &&
+                        is_string($params["filter"]["text"][$textFilterType])
+                        ?
+                        $params["filter"]["text"][$textFilterType]
+                        :
+                        null
+                    );
+                }
+
+                function getFromTimestampDateFilterFromParams(array $params = [], string $dateFilterType): int
+                {
+                    return (
+                        array_key_exists("filter", $params) &&
+                        array_key_exists("dates", $params["filter"]) &&
+                        array_key_exists($dateFilterType, $params["filter"]["dates"]) &&
+                        is_numeric($params["filter"]["dates"][$dateFilterType])
+                        ?
+                        intval($params["filter"]["dates"][$dateFilterType])
+                        :
+                        0
+                    );
+                };
+
+                function getSortFieldFromParams(array $params = []): string
+                {
+                    return (array_key_exists("sort", $params)  && array_key_exists("field", $params["sort"]) && is_string($params["sort"]["field"]) ? $params["sort"]["field"] : "");
+                }
+
+                function getSortOrderFromParams(array $params = []): \aportela\DatabaseBrowserWrapper\Order
+                {
+                    return (
+                        array_key_exists("sort", $params)  &&
+                        array_key_exists("order", $params["sort"]) &&
+                        is_string($params["sort"]["order"]) &&
+                        $params["sort"]["order"] === \aportela\DatabaseBrowserWrapper\Order::ASC->value
+                        ?
+                        \aportela\DatabaseBrowserWrapper\Order::ASC
+                        :
+                        \aportela\DatabaseBrowserWrapper\Order::DESC
+                    );
+                }
+
                 // TODO: is this required ? can be recplaced only with /search/document with custom params
                 $routeCollectorProxy->post('/recent_documents', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $params = $request->getParsedBody();
@@ -204,26 +266,22 @@ return function (\Slim\App $app): void {
                         [
                             'results' => \HomeDocs\Document::search(
                                 $dbh,
-                                new \aportela\DatabaseBrowserWrapper\Pager(
-                                    true,
-                                    is_int($params["currentPage"]) ? $params["currentPage"] : 1,
-                                    is_int($params["resultsPage"]) ? $params["resultsPage"] : \HomeDocs\Settings::DEFAULT_RESULTS_PAGE
-                                ),
+                                getPagerFromParams($params),
                                 [
-                                    "title" => $params["title"] ?? null,
-                                    "description" => $params["description"] ?? null,
-                                    "notesBody" => $params["notesBody"] ?? null,
-                                    "attachmentsFilename" => $params["attachmentsFilename"] ?? null,
-                                    "fromCreationTimestampCondition" => is_int($params["fromCreationTimestampCondition"]) ? $params["fromCreationTimestampCondition"] : 0,
-                                    "toCreationTimestampCondition" => is_int($params["toCreationTimestampCondition"]) ? $params["toCreationTimestampCondition"] : 0,
-                                    "fromLastUpdateTimestampCondition" => is_int($params["fromLastUpdateTimestampCondition"]) ? $params["fromLastUpdateTimestampCondition"] : 0,
+                                    "title" => getTextFilterFromParams($params, "title"),
+                                    "description" => getTextFilterFromParams($params, "description"),
+                                    "notesBody" => getTextFilterFromParams($params, "notesBody"),
+                                    "attachmentsFilename" => getTextFilterFromParams($params, "attachmentsFilename"),
+                                    "fromCreatedAtTimestampCondition" => is_int($params["fromCreatedAtTimestampCondition"]) ? $params["fromCreatedAtTimestampCondition"] : 0,
+                                    "toCreatedAtTimestampCondition" => is_int($params["toCreatedAtTimestampCondition"]) ? $params["toCreatedAtTimestampCondition"] : 0,
+                                    "fromLastUpdatedAtTimestampCondition" => is_int($params["fromLastUpdatedAtTimestampCondition"]) ? $params["fromLastUpdatedAtTimestampCondition"] : 0,
                                     "toLastUpdateTimestampCondition" => is_int($params["toLastUpdateTimestampCondition"]) ? $params["toLastUpdateTimestampCondition"] : 0,
                                     "fromUpdatedOnTimestampCondition" => is_int($params["fromUpdatedOnTimestampCondition"]) ? $params["fromUpdatedOnTimestampCondition"] : 0,
                                     "toUpdatedOnTimestampCondition" => is_int($params["toUpdatedOnTimestampCondition"]) ? $params["toUpdatedOnTimestampCondition"] : 0,
-                                    "tags" => is_array($params["tags"]) ? $params["tags"] : [],
+                                    "tags" => array_key_exists("tags", $params) && is_array($params["tags"]) ? $params["tags"] : [],
                                 ],
-                                array_key_exists("sortBy", $params) && is_string($params["sortBy"]) ? $params["sortBy"] : "",
-                                array_key_exists("sortOrder", $params) && is_string($params["sortOrder"]) && $params["sortOrder"] === "ASC" ? \aportela\DatabaseBrowserWrapper\Order::ASC : \aportela\DatabaseBrowserWrapper\Order::DESC
+                                getSortFieldFromParams($params),
+                                getSortOrderFromParams($params)
                             )
                         ]
                     );
