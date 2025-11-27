@@ -10,8 +10,8 @@ interface Document {
   id: string | null;
   createdAt: DateTimeInterface | null;
   updatedAt: DateTimeInterface | null;
-  title: string | null;
-  description: string | null;
+  title: string;
+  description: string;
   tags: string[];
   attachments: AttachmentInterface[];
   notes: NoteInterface[];
@@ -22,8 +22,8 @@ class DocumentClass implements Document {
   id: string | null;
   createdAt: DateTimeInterface | null;
   updatedAt: DateTimeInterface | null;
-  title: string | null;
-  description: string | null;
+  title: string;
+  description: string;
   tags: string[];
   attachments: AttachmentInterface[];
   notes: NoteInterface[];
@@ -33,8 +33,8 @@ class DocumentClass implements Document {
     id: string | null = null,
     createdAt: DateTimeInterface | null = null,
     updatedAt: DateTimeInterface | null = null,
-    title: string | null = null,
-    description: string | null = null,
+    title: string = "",
+    description: string = "",
     tags: string[] = [],
     attachments: AttachmentInterface[] = [],
     notes: NoteInterface[] = [],
