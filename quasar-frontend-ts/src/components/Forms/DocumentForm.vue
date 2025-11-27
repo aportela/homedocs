@@ -76,7 +76,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.ajaxRunning" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                      }}</q-badge>
+                    }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
@@ -158,6 +158,9 @@ import { default as InteractiveTextFieldCustomInput } from "src/components/Forms
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue"
 import { default as DeleteDocumentConfirmationDialog } from "src/components/Dialogs/DeleteDocumentConfirmationDialog.vue"
+import { AttachmentClass } from "src/types/attachment";
+import { DateTimeClass } from "src/types/date-time";
+import { currentTimestamp } from "src/composables/useFormatDates";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -441,17 +444,15 @@ const onShowAttachmentsPicker = (evt: Event) => {
 }
 
 const onRemoveAttachmentAtIndex = (index: number) => {
-  console.log("TODO", index);
   // orphaned elements are uploaded to server, but not associated (until document saved)
   // so we must remove them
-  /*
-  if (document.attachments.[index]!.orphaned) {
+  if (document.attachments[index]!.orphaned) {
     Object.assign(state, defaultAjaxState);
     state.ajaxRunning = true;
     api.document.
-      removeFile(document.attachments.value[index]!.id)
+      removeFile(document.attachments[index]!.id)
       .then(() => {
-        attachments.value = attachments.value.filter((_, i) => i !== index);
+        document.attachments = document.attachments.filter((_, i) => i !== index);
       })
       .catch((errorResponse) => {
         state.ajaxErrors = true;
@@ -474,9 +475,8 @@ const onRemoveAttachmentAtIndex = (index: number) => {
         state.ajaxRunning = false;
       });
   } else {
-    document.attachments.value = attachments.value.filter((_, i) => i !== index);
+    document.attachments = document.attachments.filter((_, i) => i !== index);
   }
-  */
 };
 
 const onAddNote = () => {
@@ -484,7 +484,7 @@ const onAddNote = () => {
 };
 
 const onRemoveNoteAtIndex = (index: number) => {
-  document.removeNoteAtIdx(index);
+  document.notes = document.notes.filter((_, i) => i !== index);
 };
 
 // q-uploader component event => file upload starts
@@ -500,7 +500,16 @@ const onFileUploaded = (e) => {
     jsonResponse = JSON.parse(e.xhr.response);
   } catch (e) { console.error(e); }
   if (jsonResponse != null) {
-    document.addAttachment((jsonResponse.data).id, e.files[0].name, e.files[0].size);
+    document.attachments.unshift(
+      new AttachmentClass(
+        (jsonResponse.data).id,
+        e.files[0].name,
+        "",
+        e.files[0].size,
+        new DateTimeClass(t, currentTimestamp()),
+        true // this property is used for checking if file was uploaded but not associated to document (while not saving document)
+      )
+    );
     bus.emit("refreshUploadingDialog.fileUploaded", { transfers: e.files.map((file) => { return { name: file.name, size: file.size } }) });
   } else {
     const transfers =
