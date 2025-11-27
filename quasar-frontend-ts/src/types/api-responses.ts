@@ -14,7 +14,7 @@ interface RegisterResponse extends DefaultAxiosResponse {
 
 interface UserProfileResponseData {
   id: string | null;
-  email: string | null;
+  email: string;
 };
 
 interface GetProfileResponse extends Omit<DefaultAxiosResponse, 'data'> {
