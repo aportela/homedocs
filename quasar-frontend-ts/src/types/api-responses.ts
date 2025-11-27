@@ -155,6 +155,12 @@ interface GetDocumentResponse extends Omit<DefaultAxiosResponse, 'data'> {
   }
 };
 
+interface GetTagsResponse extends Omit<DefaultAxiosResponse, 'data'> {
+  data: {
+    tags: string[];
+  }
+};
+
 export {
   type DefaultAxiosResponse,
   type LoginResponse,
@@ -178,4 +184,5 @@ export {
   type GetTotalAttachmentsStatsResponse,
   type GetDiskUsageStatsResponse,
   type GetDocumentResponse,
+  type GetTagsResponse,
 };
