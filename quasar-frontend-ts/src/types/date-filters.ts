@@ -105,6 +105,13 @@ class DateFilterClass implements DateFilter {
     };
   }
 
+  getFormattedDate = (daysToSubtract = 0) => {
+    return date.formatDate(
+      date.addToDate(Date.now(), { days: daysToSubtract }),
+      dateMask,
+    );
+  };
+
   onRecalcDates = () => {
     if (!this.skipClearOnRecalc.from) {
       this.formattedDate.from = null;
@@ -130,31 +137,31 @@ class DateFilterClass implements DateFilter {
         break;
       // TODAY
       case 1:
-        this.formattedDate.fixed = getFormattedDate();
+        this.formattedDate.fixed = this.getFormattedDate();
         break;
       // YESTERDAY
       case 2:
-        this.formattedDate.fixed = getFormattedDate(-1);
+        this.formattedDate.fixed = this.getFormattedDate(-1);
         break;
       // LAST 7 DAYS
       case 3:
-        this.formattedDate.from = getFormattedDate(-7);
-        this.formattedDate.to = getFormattedDate();
+        this.formattedDate.from = this.getFormattedDate(-7);
+        this.formattedDate.to = this.getFormattedDate();
         break;
       // LAST 15 DAYS
       case 4:
-        this.formattedDate.from = getFormattedDate(-15);
-        this.formattedDate.to = getFormattedDate();
+        this.formattedDate.from = this.getFormattedDate(-15);
+        this.formattedDate.to = this.getFormattedDate();
         break;
       // LAST 31 DAYS
       case 5:
-        this.formattedDate.from = getFormattedDate(-31);
-        this.formattedDate.to = getFormattedDate();
+        this.formattedDate.from = this.getFormattedDate(-31);
+        this.formattedDate.to = this.getFormattedDate();
         break;
       // LAST 365 DAYS
       case 6:
-        this.formattedDate.from = getFormattedDate(-365);
-        this.formattedDate.to = getFormattedDate();
+        this.formattedDate.from = this.getFormattedDate(-365);
+        this.formattedDate.to = this.getFormattedDate();
         break;
       // FIXED DATE
       case 7:
