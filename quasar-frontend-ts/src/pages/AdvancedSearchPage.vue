@@ -1,7 +1,7 @@
 <template>
   <q-page>
-    <CustomExpansionWidget title="Advanced search" icon="filter_alt" :loading="state.loading"
-      :error="state.loadingError" :expanded="isFilterWidgetExpanded">
+    <CustomExpansionWidget title="Advanced search" icon="filter_alt" :loading="state.ajaxRunning"
+      :error="state.ajaxErrors" :expanded="isFilterWidgetExpanded">
       <template v-slot:header-extra>
         <q-chip square size="sm" color="grey-7" text-color="white">{{
           t("Total search conditions count", {
@@ -16,27 +16,28 @@
           <div class="row q-col-gutter-sm">
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
               <q-input class="q-mb-md" dense outlined v-model.trim="filters.text.title" type="text" name="title"
-                clearable :label="t('Document title')" :disable="state.loading" :autofocus="true"
+                clearable :label="t('Document title')" :disable="state.ajaxRunning" :autofocus="true"
                 :placeholder="t('Type text condition')">
                 <template v-slot:prepend>
                   <q-icon name="article" />
                 </template>
               </q-input>
               <q-input class="q-mb-md" dense outlined v-model.trim="filters.text.description" type="text"
-                name="description" clearable :label="t('Document description')" :disable="state.loading"
+                name="description" clearable :label="t('Document description')" :disable="state.ajaxRunning"
                 :placeholder="t('Type text condition')">
                 <template v-slot:prepend>
                   <q-icon name="article" />
                 </template>
               </q-input>
               <q-input class="q-mb-md" dense outlined v-model.trim="filters.text.notesBody" type="text" name="notesBody"
-                clearable :label="t('Document notes')" :disable="state.loading" :placeholder="t('Type text condition')">
+                clearable :label="t('Document notes')" :disable="state.ajaxRunning"
+                :placeholder="t('Type text condition')">
                 <template v-slot:prepend>
                   <q-icon name="speaker_notes" />
                 </template>
               </q-input>
               <q-input class="q-mb-md" dense outlined v-model.trim="filters.text.attachmentsFilename" type="text"
-                name="notesBody" clearable :label="t('Document attachment filenames')" :disable="state.loading"
+                name="notesBody" clearable :label="t('Document attachment filenames')" :disable="state.ajaxRunning"
                 :placeholder="t('Type text condition')">
                 <template v-slot:prepend>
                   <q-icon name="attach_file" />
@@ -44,38 +45,38 @@
               </q-input>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
-              <InteractiveTagsFieldCustomSelect v-model="filters.tags" label="Document tags" :disabled="state.loading"
-                dense :start-mode-editable="true" :deny-change-editable-mode="true" clearable
-                :placeholder="t('Type text condition')">
+              <InteractiveTagsFieldCustomSelect v-model="filters.tags" label="Document tags"
+                :disabled="state.ajaxRunning" dense :start-mode-editable="true" :deny-change-editable-mode="true"
+                clearable :placeholder="t('Type text condition')">
               </InteractiveTagsFieldCustomSelect>
               <DateFieldCustomInput :options="dateFilterTypeOptions" :label="t('Document creation date')"
-                :disable="state.loading || hasCreationDateRouteParamsFilter" v-model="filters.dates.creationDate"
+                :disable="state.ajaxRunning || hasCreationDateRouteParamsFilter" v-model="filters.dates.creationDate"
                 :auto-open-pop-ups="!hasCreationDateRouteParamsFilter">
               </DateFieldCustomInput>
               <DateFieldCustomInput :options="dateFilterTypeOptions" :label="t('Document last update')"
-                :disable="state.loading || hasLastUpdateRouteParamsFilter" v-model="filters.dates.lastUpdate"
+                :disable="state.ajaxRunning || hasLastUpdateRouteParamsFilter" v-model="filters.dates.lastUpdate"
                 :auto-open-pop-ups="!hasLastUpdateRouteParamsFilter">
               </DateFieldCustomInput>
               <DateFieldCustomInput :options="dateFilterTypeOptions" :label="t('Document updated on')"
-                :disable="state.loading || hasUpdatedOnRouteParamsFilter" v-model="filters.dates.updatedOn"
+                :disable="state.ajaxRunning || hasUpdatedOnRouteParamsFilter" v-model="filters.dates.updatedOn"
                 :auto-open-pop-ups="!hasUpdatedOnRouteParamsFilter">
               </DateFieldCustomInput>
             </div>
           </div>
           <q-btn-group spread>
-            <q-btn color="primary" size="md" :label="$t('Search')" no-caps icon="search" :disable="state.loading"
-              :loading="state.loading" type="submit">
+            <q-btn color="primary" size="md" :label="$t('Search')" no-caps icon="search" :disable="state.ajaxRunning"
+              :loading="state.ajaxRunning" type="submit">
               <template v-slot:loading>
                 <q-spinner-hourglass class="on-left" />
                 {{ t("Searching...") }}
               </template>
             </q-btn>
             <q-btn class="action-secondary" size="md" :label="$t('Reset filters')" no-caps icon="undo"
-              :disable="state.loading || totalSearchConditions < 1" type="reset" v-if="useStoreFilter"></q-btn>
+              :disable="state.ajaxRunning || totalSearchConditions < 1" type="reset" v-if="useStoreFilter"></q-btn>
           </q-btn-group>
         </form>
-        <CustomErrorBanner v-if="showErrorBanner" :text="state.errorMessage || 'Error loading data'"
-          :api-error="state.apiError" class="q-ma-md">
+        <CustomErrorBanner v-if="showErrorBanner" :text="state.ajaxErrorMessage || 'Error loading data'"
+          :api-error="state.ajaxAPIErrorDetails" class="q-ma-md">
         </CustomErrorBanner>
         <CustomBanner v-else-if="showNoResultsBanner" warning text="No results found with current filter"
           class="q-ma-md">
@@ -83,7 +84,7 @@
       </template>
     </CustomExpansionWidget>
     <CustomExpansionWidget v-show="hasResults" title="Results" icon="folder_open" :staticIcon="true"
-      :loading="state.loading" :error="state.loadingError" expanded class="q-mt-sm" ref="resultsWidgetRef">
+      :loading="state.ajaxRunning" :error="state.ajaxErrors" expanded class="q-mt-sm" ref="resultsWidgetRef">
       <template v-slot:header-extra>
         <q-chip square size="sm" color="grey-7" text-color="white">{{ t("Total search results count",
           {
@@ -94,7 +95,7 @@
       <template v-slot:content>
         <div class="q-ma-md flex flex-center" v-if="pager.totalPages > 1">
           <q-pagination v-model="pager.currentPage" color="dark" :max="pager.totalPages" :max-pages="5" boundary-numbers
-            direction-links boundary-links @update:model-value="onPaginationChanged" :disable="state.loading"
+            direction-links boundary-links @update:model-value="onPaginationChanged" :disable="state.ajaxRunning"
             class="theme-default-q-pagination" />
         </div>
         <q-markup-table class="q-ma-md">
@@ -106,7 +107,7 @@
                 </SortByFieldCustomButtonDropdown>
               </th>
               <th v-for="(column, index) in columns" :key="index" :style2="{ width: column.width }"
-                :class="['text-left', column.defaultClass, { 'cursor-not-allowed': state.loading, 'cursor-pointer': !state.loading, 'action-primary': sort.field === column.field }]"
+                :class="['text-left', column.defaultClass, { 'cursor-not-allowed': state.ajaxRunning, 'cursor-pointer': !state.ajaxRunning, 'action-primary': sort.field === column.field }]"
                 @click="onToggleSort(column.field)">
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
@@ -119,25 +120,26 @@
             <tr v-for="document in results" :key="document.id">
               <td class="lt-xl">
                 <q-list dense>
-                  <q-item clickable :disable="state.loading" :to="{ name: 'document', params: { id: document.id } }"
+                  <q-item clickable :disable="state.ajaxRunning" :to="{ name: 'document', params: { id: document.id } }"
                     class="bg-transparent">
                     <q-item-section>
                       <q-item-label>
                         {{ t("Title") }}: {{ document.title }}
                       </q-item-label>
-                      <q-item-label caption>{{ t("Creation date") }}: {{ document.creationDate }} ({{
-                        document.creationDateTimeAgo }})</q-item-label>
-                      <q-item-label caption v-if="document.lastUpdate">{{ t("Last update") }}: {{ document.lastUpdate
-                        }} ({{ document.lastUpdateTimeAgo }})</q-item-label>
+                      <q-item-label caption>{{ t("Creation date") }}: {{ document.createdAt.dateTime }} ({{
+                        document.createdAt.timeAgo }})</q-item-label>
+                      <q-item-label caption v-if="document.updatedAt?.dateTime">{{ t("Last update") }}: {{
+                        document.updatedAt.dateTime
+                        }} ({{ document.updatedAt.timeAgo }})</q-item-label>
                     </q-item-section>
                     <q-item-section side top>
                       <ViewDocumentDetailsButton size="md" square class="min-width-9em"
                         :count="document.attachmentCount" :label="'Total attachments count'"
-                        :tool-tip="'View document attachments'" :disable="state.loading"
+                        :tool-tip="'View document attachments'" :disable="state.ajaxRunning"
                         @click.stop.prevent="onShowDocumentFiles(document.id, document.title)">
                       </ViewDocumentDetailsButton>
                       <ViewDocumentDetailsButton size="md" square class="min-width-9em" :count="document.noteCount"
-                        :label="'Total notes'" :tool-tip="'View document notes'" :disable="state.loading"
+                        :label="'Total notes'" :tool-tip="'View document notes'" :disable="state.ajaxRunning"
                         @click.stop.prevent="onShowDocumentNotes(document.id, document.title)">
                       </ViewDocumentDetailsButton>
                     </q-item-section>
@@ -148,17 +150,18 @@
                 <q-btn align="left" no-caps flat :to="{ name: 'document', params: { id: document.id } }"
                   class="fit text-decoration-hover" :label="document.title"></q-btn>
               </td>
-              <td class="gt-lg">{{ document.creationDate }}</td>
-              <td class="gt-lg">{{ document.lastUpdate }}</td>
+              <td class="gt-lg">{{ document.createdAt.dateTime }}</td>
+              <td class="gt-lg">{{ document.updatedAt?.dateTime }}</td>
               <td class="gt-lg">
                 <ViewDocumentDetailsButton size="md" square class="min-width-8em" :count="document.attachmentCount"
-                  :label="'Total attachments count'" :tool-tip="'View document attachments'" :disable="state.loading"
-                  @click.stop.prevent="onShowDocumentFiles(document.id, document.title)" q-chip-class="'q-chip-8em'">
+                  :label="'Total attachments count'" :tool-tip="'View document attachments'"
+                  :disable="state.ajaxRunning" @click.stop.prevent="onShowDocumentFiles(document.id, document.title)"
+                  q-chip-class="'q-chip-8em'">
                 </ViewDocumentDetailsButton>
               </td>
               <td class="gt-lg">
                 <ViewDocumentDetailsButton size="md" square class="min-width-8em" :count="document.noteCount"
-                  :label="'Total notes'" :tool-tip="'View document notes'" :disable="state.loading"
+                  :label="'Total notes'" :tool-tip="'View document notes'" :disable="state.ajaxRunning"
                   @click.stop.prevent="onShowDocumentNotes(document.id, document.title)" q-chip-class="'q-chip-8em'">
                 </ViewDocumentDetailsButton>
               </td>
@@ -167,7 +170,7 @@
         </q-markup-table>
         <div class="q-ma-md flex flex-center" v-if="pager.totalPages > 1">
           <q-pagination v-model="pager.currentPage" color="dark" :max="pager.totalPages" :max-pages="5" boundary-numbers
-            direction-links boundary-links @update:model-value="onPaginationChanged" :disable="state.loading"
+            direction-links boundary-links @update:model-value="onPaginationChanged" :disable="state.ajaxRunning"
             class="theme-default-q-pagination" />
         </div>
       </template>
@@ -186,6 +189,12 @@ import { useAdvancedSearchData } from "src/stores/advancedSearchData"
 import { useDateFilter } from "src/composables/useDateFilter"
 import { fullDateTimeHuman, timeAgo } from "src/composables/useFormatDates"
 import { dateTimeFormat as localStorageDateTimeFormat } from "src/composables/useLocalStorage";
+
+import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
+import { DateTimeClass } from "src/types/date-time";
+import { type SearchDocumentResponse as SearchDocumentResponseInterface, type SearchDocumentResponseItem as SearchDocumentResponseItemInterface } from "src/types/api-responses";
+import { SearchDocumentItemClass } from "src/types/search-document-item";
+import { type Pager as PagerInterface, PagerClass } from "src/types/pager";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
@@ -213,15 +222,11 @@ const sortFields = columns.map(column => ({
   label: column.title
 }));
 
-const state = reactive({
-  loading: false,
-  loadingError: false,
-  errorMessage: null,
-  apiError: null,
-  searchLaunched: false
-});
+const searchLaunched = ref<boolean>(false);
 
-const isFilterWidgetExpanded = ref(route.meta.conditionsFilterExpanded);
+const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
+
+const isFilterWidgetExpanded = ref<boolean>(route.meta.conditionsFilterExpanded);
 
 const resultsWidgetRef = ref(null);
 
@@ -231,7 +236,21 @@ const useStoreFilter = computed(() => route.name == 'advancedSearch');
 
 const store = useAdvancedSearchData();
 
-const filters = reactive({
+interface Filters {
+  text: {
+    title: string | null;
+    description: string | null;
+    notes: string | null;
+  },
+  tags: string[];
+  dates: {
+    creationDate: any;
+    lastUpdate: any;
+    updatedOn: any;
+  }
+};
+
+const filters = reactive<Filters>({
   text: {
     title: null,
     description: null,
@@ -245,7 +264,7 @@ const filters = reactive({
   }
 });
 
-const pager = reactive({
+const pager = reactive<PagerInterface>({
   currentPage: 1,
   resultsPage: 32,
   totalResults: 0,
@@ -257,11 +276,12 @@ const sort = reactive({
   order: "DESC",
 });
 
-const results = reactive([]);
+const results = reactive<Array<SearchDocumentItemClass>>([]);
+
 const hasResults = computed(() => results.length > 0);
 
-const showErrorBanner = computed(() => !state.loading && state.loadingError);
-const showNoResultsBanner = computed(() => !state.loading && state.searchLaunched && !hasResults.value);
+const showErrorBanner = computed(() => !state.ajaxRunning && state.ajaxErrors);
+const showNoResultsBanner = computed(() => !state.ajaxRunning && searchLaunched.value && !hasResults.value);
 
 if (route.params.tag !== undefined) {
   filters.tags.push(route.params.tag);
@@ -323,66 +343,66 @@ const onToggleSort = (field, order) => {
   }
 }
 
-const onSubmitForm = (resetPager) => {
+const onSubmitForm = (resetPager: bool) => {
   if (resetPager) {
     pager.currentPage = 1;
   }
-  state.loading = true;
-  state.loadingError = false;
-  state.errorMessage = null;
-  state.apiError = null;
+  Object.assign(state, defaultAjaxState);
+  state.ajaxRunning = true;
   if (useStoreFilter.value) {
     store.filters = filters;
     store.sort = sort;
   }
   api.document.search(pager.currentPage, pager.resultsPage, filters, sort.field, sort.order)
-    .then((successResponse) => {
+    .then((successResponse: SearchDocumentResponseInterface) => {
       if (successResponse.data.results) {
         results.length = 0;
         pager.currentPage = successResponse.data.results.pagination.currentPage;
         pager.resultsPage = successResponse.data.results.pagination.resultsPage;
         pager.totalResults = successResponse.data.results.pagination.totalResults;
         pager.totalPages = successResponse.data.results.pagination.totalPages;
-        results.push(...successResponse.data.results.documents.map((document) => {
-          document.creationDate = fullDateTimeHuman(document.createdOnTimestamp, localStorageDateTimeFormat.get());
-          const returnedTimeAgo1 = timeAgo(document.createdOnTimestamp);
-          document.creationDateTimeAgo = t(returnedTimeAgo1.label, returnedTimeAgo1.count != null ? { count: returnedTimeAgo1.count } : {});
-          document.lastUpdate = fullDateTimeHuman(document.lastUpdateTimestamp, localStorageDateTimeFormat.get());
-          const returnedTimeAgo2 = timeAgo(document.lastUpdateTimestamp);
-          document.lastUpdateTimeAgo = t(returnedTimeAgo2.label, returnedTimeAgo2.count != null ? { count: returnedTimeAgo2.count } : {});
-          return (document);
-        }));
-        state.searchLaunched = true;
+        results.push(...successResponse.data.results.documents.map((document: SearchDocumentResponseItemInterface) =>
+          new SearchDocumentItemClass(
+            t,
+            document.id,
+            new DateTimeClass(t, document.createdAtTimestamp),
+            new DateTimeClass(t, document.updatedAtTimestamp),
+            document.title,
+            document.description,
+            document.tags,
+            document.attachmentCount,
+            document.noteCount,
+            document.matchedFragments,
+            "",
+          )
+        ));
+        searchLaunched.value = true;
         resultsWidgetRef.value?.expand();
-        state.loading = false;
-      } else {
-        state.loading = false;
       }
     })
     .catch((errorResponse) => {
+      state.ajaxErrors = true;
       if (errorResponse.isAPIError) {
-        state.apiError = errorResponse.customAPIErrorDetails;
+        state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
         switch (errorResponse.response.status) {
           case 400:
-            state.loadingError = true;
-            state.errorMessage = "API Error: invalid/missing param";
+            state.ajaxErrorMessage = "API Error: invalid/missing param";
             break;
           case 401:
-            state.apiError = errorResponse.customAPIErrorDetails;
-            state.errorMessage = "Auth session expired, requesting new...";
+            state.ajaxErrorMessage = "Auth session expired, requesting new...";
             bus.emit("reAuthRequired", { emitter: "AdvancedSearchPage.onSubmitForm" });
             break;
           default:
-            state.loadingError = true;
-            state.errorMessage = "API Error: fatal error";
+            state.ajaxErrorMessage = "API Error: fatal error";
             break;
         }
       } else {
-        state.errorMessage = `Uncaught exception: ${errorResponse}`;
+        state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
         console.error(errorResponse);
       }
-      state.loading = false;
-      state.searchLaunched = true;
+      searchLaunched.value = true;
+    }).finally(() => {
+      state.ajaxRunning = false;
     });
 }
 
@@ -399,7 +419,7 @@ const onResetForm = () => {
   }
   sort.field = "lastUpdateTimestamp";
   sort.order = "DESC";
-  state.searchLaunched = false;
+  searchLaunched.value = false;
   results.length = 0;
 };
 
