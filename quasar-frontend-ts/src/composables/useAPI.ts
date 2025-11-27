@@ -43,11 +43,12 @@ const api = {
       };
       return axiosInstance.post("/search/recent_documents", params);
     },
-    search: function (pager: PagerInterface, filter: SearchFilterInterface, sort: SortInterface) {
+    search: function (pager: PagerInterface, filter: SearchFilterInterface, sort: SortInterface, returnFragments: boolean) {
       const params = {
         pager: pager,
         filter: filter,
         sort: sort,
+        returnFragments: returnFragments,
       };
       return axiosInstance.post("/search/document", params);
     },
