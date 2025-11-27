@@ -42,7 +42,8 @@
       :document-id="dialogs.documentNotesPreview.document.id"
       :document-title="dialogs.documentNotesPreview.document.title"
       @close="dialogs.documentNotesPreview.visible = false" />
-    <UploadingDialog v-model="dialogs.uploading.visible" :transfers="dialogs.uploading.transfers" />
+    <UploadingDialog v-model="dialogs.uploading.visible" :transfers="dialogs.uploading.transfers"
+      @clear-processed-transfers="onClearProcessedTransfers" />
   </q-layout>
 </template>
 
@@ -189,6 +190,10 @@ const onToggleminiSidebarCurrentMode = () => {
     LocalStorage.set("miniSidebarCurrentMode", miniSidebarCurrentMode.value);
   }
 }
+
+const onClearProcessedTransfers = () => {
+  dialogs.uploading.transfers = dialogs.uploading.transfers.filter((transfer) => !transfer.processed);
+};
 
 interface BusMsg {
   emitter: string;

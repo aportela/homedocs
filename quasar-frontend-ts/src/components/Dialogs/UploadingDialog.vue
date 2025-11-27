@@ -55,6 +55,8 @@
     <template v-slot:actions-prepend>
       <q-toggle v-model="visibilityCheck" @update:modelValue="saveVisibilityCheck" checked-icon="check" color="green"
         :label="t(visibilityCheckLabel)" unchecked-icon="clear" class="q-mr-md" />
+      <q-btn color="primary" size="md" no-caps @click.stop="onClearProcessedTransfers" :disable="hasProcessedTransfers"
+        icon="close" :label="t('Clear processed transfers')" />
     </template>
   </BaseDialog>
 </template>
@@ -75,7 +77,7 @@ const { t } = useI18n();
 
 const serverEnvironment = useServerEnvironmentStore();
 
-const emit = defineEmits(['update:modelValue', 'close']);
+const emit = defineEmits(['update:modelValue', 'close', 'clearProcessedTransfers']);
 
 interface UploadingDialogProps {
   modelValue: boolean;
@@ -102,6 +104,8 @@ const visible = computed({
   }
 });
 
+const hasProcessedTransfers = computed(() => props.transfers.length > 0 ? props.transfers.find((transfer) => transfer.processed === true) !== undefined : 0);
+
 const visibilityCheck = ref<boolean>(localStorageAlwaysOpenUploadDialog.get());
 
 watch(() => visible.value, (val: boolean) => {
@@ -121,6 +125,9 @@ const onClose = () => {
   emit('update:modelValue', false);
 }
 
+const onClearProcessedTransfers = () => {
+  emit('clearProcessedTransfers');
+};
 </script>
 
 <style lang="css" scoped>
