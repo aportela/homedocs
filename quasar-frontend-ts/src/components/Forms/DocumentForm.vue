@@ -76,7 +76,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.ajaxRunning" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                      }}</q-badge>
+                    }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
@@ -505,7 +505,7 @@ const onUploadsStart = () => {
   bus.emit("showUploadingDialog", {
     transfers: uploaderRef.value?.files.map((file) =>
       new UploadTransferClass(
-        "",
+        uid(),
         file.name,
         file.size,
         currentTimestamp(),
@@ -541,7 +541,7 @@ const onFileUploaded = (info: { files: readonly any[]; xhr: any; }): void => {
     bus.emit("refreshUploadingDialog.fileUploaded", {
       transfers: info.files.map((file) =>
         new UploadTransferClass(
-          "",
+          uid(),
           file.name,
           file.size,
           0,
@@ -559,7 +559,7 @@ const onFileUploaded = (info: { files: readonly any[]; xhr: any; }): void => {
     bus.emit("refreshUploadingDialog.fileUploadRejected", {
       transfers: info.files.map((file) =>
         new UploadTransferClass(
-          "",
+          uid(),
           file.name,
           file.size,
           0,
@@ -582,7 +582,7 @@ const onUploadRejected = (rejectedEntries: QRejectedEntry[]): void => {
   const transfers =
     rejectedEntries.map((error) =>
       new UploadTransferClass(
-        "",
+        uid(),
         error.file.name,
         error.file.size,
         0,
@@ -603,7 +603,7 @@ const onUploadFailed = (info: { files: readonly any[]; xhr: any; }) => {
   bus.emit("refreshUploadingDialog.fileUploadFailed", {
     transfers: info.files.map((file) =>
       new UploadTransferClass(
-        "",
+        uid(),
         file.name,
         file.size,
         0,
