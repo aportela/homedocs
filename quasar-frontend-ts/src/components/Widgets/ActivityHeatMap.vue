@@ -25,10 +25,10 @@ import { useDarkModeStore } from "src/stores/darkMode";
 import { useI18nStore } from "src/stores/i18n";
 import type { APIErrorDetails as APIErrorDetailsInterface } from "src/types/api-error-details";
 
-import CalHeatmap from "cal-heatmap";
+import { default as CalHeatmap } from "cal-heatmap";
 import "cal-heatmap/cal-heatmap.css";
-import Tooltip from "cal-heatmap/plugins/Tooltip";
-import CalendarLabel from "cal-heatmap/plugins/CalendarLabel";
+import { default as Tooltip } from "cal-heatmap/plugins/Tooltip";
+import { default as CalendarLabel } from "cal-heatmap/plugins/CalendarLabel";
 
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
 
