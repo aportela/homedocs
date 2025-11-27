@@ -103,8 +103,7 @@
             <tr>
               <th class="lt-xl">
                 <SortByFieldCustomButtonDropdown square dense no-caps :options="sortFields" :current="sort"
-                  @change="(opt) => onToggleSort(opt.field, opt.order)" flat class="action-primary fit full-height">
-                </SortByFieldCustomButtonDropdown>
+                  @change="(opt) => onToggleSort(opt.field, opt.order)" flat class="action-primary fit full-height" />
               </th>
               <th v-for="(column, index) in columns" :key="index" :style2="{ width: column.width }"
                 :class="['text-left', column.defaultClass, { 'cursor-not-allowed': state.ajaxRunning, 'cursor-pointer': !state.ajaxRunning, 'action-primary': sort.field === column.field }]"
@@ -112,7 +111,7 @@
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <DesktopToolTip>{{ t('Toggle sort by this column', { field: t(column.title) })
-                  }}</DesktopToolTip>
+                }}</DesktopToolTip>
               </th>
             </tr>
           </thead>
@@ -130,7 +129,7 @@
                         document.createdAt.timeAgo }})</q-item-label>
                       <q-item-label caption v-if="document.updatedAt?.dateTime">{{ t("Last update") }}: {{
                         document.updatedAt.dateTime
-                        }} ({{ document.updatedAt.timeAgo }})</q-item-label>
+                      }} ({{ document.updatedAt.timeAgo }})</q-item-label>
                     </q-item-section>
                     <q-item-section side top>
                       <ViewDocumentDetailsButton size="md" square class="min-width-9em"
