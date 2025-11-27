@@ -70,12 +70,49 @@ import { default as DocumentFilesPreviewDialog } from "src/components/Dialogs/Do
 import { default as DocumentNotesPreviewDialog } from "src/components/Dialogs/DocumentNotesPreviewDialog.vue";
 import { default as UploadingDialog } from "src/components/Dialogs/UploadingDialog.vue";
 
+import { type Attachment } from "src/types/attachment";
 
 const $q = useQuasar();
 
 const { t } = useI18n();
 
-const dialogs = reactive({
+interface DialogsInterface {
+  reauth: {
+    visible: boolean;
+  },
+  filePreview: {
+    visible: boolean;
+    document: {
+      id: string | null | undefined;
+      title: string | null | undefined;
+      attachments: Attachment[];
+    },
+    currentIndex: number | null | undefined;
+  },
+  documentFilesPreview: {
+    visible: boolean;
+    document: {
+      id: string | null | undefined;
+      title: string | null | undefined;
+    }
+  },
+  documentNotesPreview: {
+    visible: boolean;
+    document: {
+      id: string | null | undefined;
+      title: string | null | undefined;
+    }
+  },
+  fastSearch: {
+    visible: boolean;
+  },
+  uploading: {
+    visible: boolean;
+    transfers: []
+  }
+};
+
+const dialogs = reactive<DialogsInterface>({
   reauth: {
     visible: false
   },
@@ -119,7 +156,7 @@ const onSuccessReauth = () => {
   reAuthEmitters.length = 0;
 };
 
-const lockminiSidebarCurrentModeMode = ref(false);
+const lockminiSidebarCurrentModeMode = ref<boolean>(false);
 
 const visibleSidebar = ref($q.screen.gt.sm);
 
@@ -154,7 +191,8 @@ const onToggleminiSidebarCurrentMode = () => {
 
 interface BusMsg {
   emitter: string;
-  document?: Document | null
+  document?: Document | null;
+  currentIndex?: number | null;
 };
 
 onMounted(() => {
