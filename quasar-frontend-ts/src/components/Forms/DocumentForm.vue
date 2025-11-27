@@ -2,7 +2,7 @@
   <div @dragover.prevent @dragenter.prevent @drop="handleDrop">
     <!-- hidden quasar native uploader component -->
     <q-uploader ref="uploaderRef" class="hidden" hide-upload-btn no-thumbnails auto-upload field-name="file"
-      method="post" url="api3/attachment" :max-file-size="maxUploadFileSize" multiple @uploaded="onFileUploaded"
+      method="POST" url="api3/attachment" :max-file-size="maxUploadFileSize" multiple @uploaded="onFileUploaded"
       @rejected="onUploadRejected" @failed="onUploadFailed" @start="onUploadsStart" @finish="onUploadsFinish" />
     <q-card flat class="bg-transparent">
       <form @submit.prevent.stop="onSubmitForm" autocorrect="off" autocapitalize="off" autocomplete="off"
@@ -102,8 +102,8 @@
         </q-card-section>
         <q-card-section class="q-ma-xs q-mt-sm q-px-xs">
           <CustomBanner v-if="saveSuccess" class="q-mt-md" text="Document saved" success></CustomBanner>
-          <CustomErrorBanner v-else-if="state.ajaxErrors" class="q-mt-md" :api-error="state.ajaxAPIErrorDetails"
-            :text="state.ajaxErrorMessage">
+          <CustomErrorBanner v-else-if="state.ajaxErrors && state.ajaxErrorMessage" class="q-mt-md"
+            :api-error="state.ajaxAPIErrorDetails" :text="state.ajaxErrorMessage">
           </CustomErrorBanner>
         </q-card-section>
         <q-btn-group class="q-ma-sm" spread v-if="exists">
@@ -138,7 +138,7 @@
 import { ref, reactive, nextTick, computed, watch, onMounted, onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { uid, useQuasar, QUploader } from "quasar";
+import { uid, useQuasar, QUploader, type QRejectedEntry } from "quasar";
 
 import { bus } from "src/composables/useBus";
 import { api } from "src/composables/useAPI";
@@ -314,7 +314,7 @@ const onSubmitForm = () => {
                       console.error(e);
                     });
                 } else if (
-                  errorResponse.response.data.invalidOrMissingParams.find(function (e) {
+                  errorResponse.response.data.invalidOrMissingParams.find(function (e: string) {
                     return e === "noteBody";
                   })
                 ) {
@@ -503,42 +503,27 @@ const onUploadsStart = () => {
   bus.emit("showUploadingDialog", { transfers: uploaderRef.value?.files.map((file) => { return { name: file.name, size: file.size } }) });
 }
 
-
-interface OnFileUploadedParamFileItem {
-  name: string;
-  size: number;
-}
-
-interface OnFileUploadedEventParam {
-  files: OnFileUploadedParamFileItem[];
-  xhr: {
-    status?: number | null;
-    statusText?: string | null;
-    response: string;
-  };
-}
-
 // q-uploader component event => file was uploaded
-const onFileUploaded = (e: OnFileUploadedEventParam) => {
+const onFileUploaded = (info: { files: readonly any[]; xhr: any; }): void => {
   let jsonResponse = null;
   try {
-    jsonResponse = JSON.parse(e.xhr.response);
+    jsonResponse = JSON.parse(info.xhr.response);
   } catch (e) { console.error(e); }
   if (jsonResponse != null) {
     document.attachments.unshift(
       new AttachmentClass(
         (jsonResponse.data).id,
-        e.files[0]!.name,
+        info.files[0]!.name,
         "",
-        e.files[0]!.size,
+        info.files[0]!.size,
         new DateTimeClass(t, currentTimestamp()),
         true // this property is used for checking if file was uploaded but not associated to document (while not saving document)
       )
     );
-    bus.emit("refreshUploadingDialog.fileUploaded", { transfers: e.files.map((file) => { return { name: file.name, size: file.size } }) });
+    bus.emit("refreshUploadingDialog.fileUploaded", { transfers: info.files.map((file) => { return { name: file.name, size: file.size } }) });
   } else {
     const transfers =
-      e.files.map((file) => {
+      info.files.map((file) => {
         return ({
           name: file.name,
           size: file.size,
@@ -553,9 +538,9 @@ const onFileUploaded = (e: OnFileUploadedEventParam) => {
 }
 
 // q-uploader component event => file upload is rejected
-const onUploadRejected = (e) => {
+const onUploadRejected = (rejectedEntries: QRejectedEntry[]): void => {
   const transfers =
-    e.map((error) => {
+    rejectedEntries.map((error) => {
       return ({
         name: error.file.name,
         size: error.file.size,
@@ -569,15 +554,15 @@ const onUploadRejected = (e) => {
 }
 
 // q-uploader component event => file upload failed
-const onUploadFailed = (e) => {
+const onUploadFailed = (info: { files: readonly any[]; xhr: any; }) => {
   const transfers =
-    e.files.map((file) => {
+    info.files.map((file) => {
       return ({
         name: file.name,
         size: file.size,
         error: {
-          status: e.xhr.status,
-          statusText: e.xhr.statusText
+          status: info.xhr.status,
+          statusText: info.xhr.statusText
         }
       });
     });
@@ -585,7 +570,7 @@ const onUploadFailed = (e) => {
 }
 
 // q-uploader component event => file upload finish (all files)
-const onUploadsFinish = () => {
+const onUploadsFinish = (): void => {
   isUploading.value = false;
   uploaderRef.value?.reset();
 }
