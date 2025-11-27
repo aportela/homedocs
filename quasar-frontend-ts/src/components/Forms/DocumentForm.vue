@@ -76,7 +76,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.ajaxRunning" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                    }}</q-badge>
+                      }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
@@ -162,6 +162,7 @@ import { AttachmentClass } from "src/types/attachment";
 import { NoteClass } from "src/types/note";
 import { DateTimeClass } from "src/types/date-time";
 import { currentTimestamp } from "src/composables/useFormatDates";
+import { AxiosResponse } from "axios";
 
 const { t } = useI18n();
 const router = useRouter();
@@ -231,6 +232,7 @@ const handleDrop = (evt: DragEvent) => {
 const onRefresh = () => {
   if (document.id) {
     if (!state.ajaxRunning) {
+      exists.value = true;
       Object.assign(state, defaultAjaxState);
       state.ajaxRunning = true;
       smallScreensTopTab.value = "metadata";
@@ -250,7 +252,7 @@ const onRefresh = () => {
                 break;
               case 404:
                 state.ajaxErrorMessage = "Document not found";
-                exists = false;
+                exists.value = false;
                 break;
               default:
                 // TODO: on this error (example 404 not found) do not use error validation fields on title (required, red border, this field is required)
@@ -503,8 +505,23 @@ const onUploadsStart = () => {
   bus.emit("showUploadingDialog", { transfers: uploaderRef.value?.files.map((file) => { return { name: file.name, size: file.size } }) });
 }
 
+
+interface OnFileUploadedParamFileItem {
+  name: string;
+  size: number;
+}
+
+interface OnFileUploadedEventParam {
+  files: OnFileUploadedParamFileItem[];
+  xhr: {
+    status?: number | null;
+    statusText?: string | null;
+    response: string;
+  };
+}
+
 // q-uploader component event => file was uploaded
-const onFileUploaded = (e) => {
+const onFileUploaded = (e: OnFileUploadedEventParam) => {
   let jsonResponse = null;
   try {
     jsonResponse = JSON.parse(e.xhr.response);
@@ -513,9 +530,9 @@ const onFileUploaded = (e) => {
     document.attachments.unshift(
       new AttachmentClass(
         (jsonResponse.data).id,
-        e.files[0].name,
+        e.files[0]!.name,
         "",
-        e.files[0].size,
+        e.files[0]!.size,
         new DateTimeClass(t, currentTimestamp()),
         true // this property is used for checking if file was uploaded but not associated to document (while not saving document)
       )
@@ -568,7 +585,6 @@ const onUploadFailed = (e) => {
     });
   bus.emit("refreshUploadingDialog.fileUploadFailed", { transfers: transfers });
 }
-
 
 // q-uploader component event => file upload finish (all files)
 const onUploadsFinish = () => {
