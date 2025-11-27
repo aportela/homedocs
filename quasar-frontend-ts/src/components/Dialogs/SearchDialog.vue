@@ -182,8 +182,6 @@ const pager = reactive<PagerInterface>({
 
 const totalResults = ref<number>(0);
 
-const resultsPage = ref<number>(localStorageSearchDialogResultsPage.get());
-
 const resultsPageOptions = [1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 64, 128];
 
 const onChangeResultsPage = (value: number) => {
