@@ -77,7 +77,11 @@ class DateFilterClass implements DateFilter {
   };
 
   constructor() {
-    this.filterType = ;
+    this.filterType = {
+      label: "",
+      labelKey: "",
+      value: 0
+    };
     this.formattedDate = {
       fixed: null,
       from: null,
