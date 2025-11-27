@@ -55,8 +55,8 @@
     <template v-slot:actions-prepend>
       <q-toggle v-model="visibilityCheck" @update:modelValue="saveVisibilityCheck" checked-icon="check" color="green"
         :label="t(visibilityCheckLabel)" unchecked-icon="clear" class="q-mr-md" />
-      <q-btn color="primary" size="md" no-caps @click.stop="onClearProcessedTransfers" :disable="hasProcessedTransfers"
-        icon="close" :label="t('Clear processed transfers')" />
+      <q-btn color="primary" size="md" no-caps @click.stop="onClearProcessedTransfers"
+        :disable="!hasProcessedTransfers" icon="close" :label="t('Clear processed transfers')" />
     </template>
   </BaseDialog>
 </template>
@@ -104,7 +104,7 @@ const visible = computed({
   }
 });
 
-const hasProcessedTransfers = computed(() => props.transfers.length > 0 ? props.transfers.find((transfer) => transfer.processed === true) !== undefined : 0);
+const hasProcessedTransfers = computed(() => props.transfers.length > 0 ? props.transfers.find((transfer) => transfer.processed === true) !== undefined : false);
 
 const visibilityCheck = ref<boolean>(localStorageAlwaysOpenUploadDialog.get());
 
