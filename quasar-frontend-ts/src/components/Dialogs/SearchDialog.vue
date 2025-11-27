@@ -89,8 +89,9 @@
     </template>
     <template v-slot:actions-prepend>
       <q-space />
-      <q-select v-model="resultsPage" filled @update:model-value="onChangeResultsPage" :options="resultsPageOptions"
-        :label="t('Max results')" stack-label dense options-dense class="q-mr-md" style="min-width: 12em" />
+      <q-select v-model="pager.resultsPage" filled @update:model-value="onChangeResultsPage"
+        :options="resultsPageOptions" :label="t('Max results')" stack-label dense options-dense class="q-mr-md"
+        style="min-width: 12em" />
     </template>
   </BaseDialog>
 </template>
@@ -109,6 +110,10 @@ import { type SearchDocumentResponse as SearchDocumentResponseInterface, type Se
 import { SearchDocumentItemClass } from "src/types/search-document-item";
 import { type QuasarVirtualScrollEventDetails as QuasarVirtualScrollEventDetailsInterface } from "src/types/quasar-virtual-scroll-event-details";
 import { DateTimeClass } from "src/types/date-time";
+import { type Pager as PagerInterface } from "src/types/pager";
+import { type Sort as SortInterface } from "src/types/sort";
+import { type SearchFilter as SearchFilterInterface } from "src/types/search-filter";
+
 
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue"
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
@@ -149,6 +154,12 @@ const searchOnOptions = computed(() => [
   { label: 'Attachment names', value: 'attachmentsFilename' },
 ]);
 
+const sort: SortInterface = {
+  field: "lastUpdateTimestamp",
+  label: "",
+  order: "DESC"
+};
+
 const searchOn = ref(searchOnOptions.value[0]!);
 
 watch(() => searchOn.value, () => {
@@ -161,6 +172,13 @@ watch(() => searchOn.value, () => {
 });
 
 const virtualListRef = ref<QVirtualScroll | null>(null);
+
+const pager = reactive<PagerInterface>({
+  currentPageIndex: 1,
+  resultsPage: localStorageSearchDialogResultsPage.get(),
+  totalResults: 0,
+  totalPages: 0,
+});
 
 const totalResults = ref<number>(0);
 
@@ -189,15 +207,21 @@ const onSearch = (val: string) => {
     currentSearchResultSelectedIndex.value = -1;
     Object.assign(state, defaultAjaxState);
     state.ajaxRunning = true;
-    const params = {
+    const params: SearchFilterInterface = {
       text: {
         title: searchOn.value.value == "title" ? val.trim() : null,
         description: searchOn.value.value == "description" ? val.trim() : null,
         notesBody: searchOn.value.value == "notesBody" ? val.trim() : null,
         attachmentsFilename: searchOn.value.value == "attachmentsFilename" ? val.trim() : null,
-      }
+      },
+      tags: [],
+      dates: {
+        createdAt: null,
+        lastUpdateAt: null,
+        updatedAt: null,
+      },
     };
-    api.document.search(1, resultsPage.value, params, "lastUpdateTimestamp", "DESC")
+    api.document.search(pager, params, sort, true)
       .then((successResponse: SearchDocumentResponseInterface) => {
         searchResults.length = 0;
         totalResults.value = successResponse.data.results.pagination.totalResults;
@@ -243,7 +267,6 @@ const onSearch = (val: string) => {
     searchResults.length = 0;
   }
 };
-
 
 const onVirtualScroll = (details: QuasarVirtualScrollEventDetailsInterface) => {
   virtualListIndex.value = details.index;
@@ -292,7 +315,7 @@ const onKeyDown = (evt: KeyboardEvent) => {
 
 const onShow = () => {
   totalResults.value = 0;
-  resultsPage.value = localStorageSearchDialogResultsPage.get();
+  pager.resultsPage = localStorageSearchDialogResultsPage.get();
   // this is required here because this dialog v-model is controller from MainLayout.vue
   // DOES NOT WORK with onMounted/onBeforeUnmount. WE ONLY WANT CAPTURE KEY EVENTS WHEN DIALOG IS VISIBLE
   window.addEventListener('keydown', onKeyDown);
