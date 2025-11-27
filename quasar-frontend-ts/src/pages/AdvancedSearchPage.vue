@@ -111,7 +111,7 @@
                 <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <DesktopToolTip>{{ t('Toggle sort by this column', { field: t(column.title) })
-                }}</DesktopToolTip>
+                  }}</DesktopToolTip>
               </th>
             </tr>
           </thead>
@@ -129,7 +129,7 @@
                         document.createdAt.timeAgo }})</q-item-label>
                       <q-item-label caption v-if="document.updatedAt?.dateTime">{{ t("Last update") }}: {{
                         document.updatedAt.dateTime
-                      }} ({{ document.updatedAt.timeAgo }})</q-item-label>
+                        }} ({{ document.updatedAt.timeAgo }})</q-item-label>
                     </q-item-section>
                     <q-item-section side top>
                       <ViewDocumentDetailsButton size="md" square class="min-width-9em"
@@ -194,6 +194,7 @@ import { DateTimeClass } from "src/types/date-time";
 import { type SearchDocumentResponse as SearchDocumentResponseInterface, type SearchDocumentResponseItem as SearchDocumentResponseItemInterface } from "src/types/api-responses";
 import { SearchDocumentItemClass } from "src/types/search-document-item";
 import { type Pager as PagerInterface, PagerClass } from "src/types/pager";
+import { type OrderType } from "src/types/order-type";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
@@ -218,7 +219,7 @@ const columns = [
 
 const sortFields = columns.map(column => ({
   field: column.field,
-  label: column.title
+  label: column.title,
 }));
 
 const searchLaunched = ref<boolean>(false);
@@ -272,6 +273,7 @@ const pager = reactive<PagerInterface>({
 
 const sort = reactive({
   field: "lastUpdateTimestamp",
+  label: "Last update",
   order: "DESC",
 });
 
@@ -321,13 +323,13 @@ const totalSearchConditions = computed(() => {
   return (total);
 });
 
-const onPaginationChanged = (pageIndex) => {
+const onPaginationChanged = (pageIndex: number) => {
   pager.currentPage = pageIndex;
   onSubmitForm(false);
 }
 
-const onToggleSort = (field, order) => {
-  if (!state.loading) {
+const onToggleSort = (field: string, order?: OrderType) => {
+  if (!state.ajaxRunning) {
     if (sort.field == field) {
       if (!order) {
         sort.order = sort.order == "ASC" ? "DESC" : "ASC";
@@ -338,11 +340,12 @@ const onToggleSort = (field, order) => {
       sort.field = field;
       sort.order = !order ? "ASC" : order;
     }
+    sort.label = sortFields.find((item) => item.field == field)?.label || "";
     onSubmitForm(false);
   }
 }
 
-const onSubmitForm = (resetPager: bool) => {
+const onSubmitForm = (resetPager: boolean) => {
   if (resetPager) {
     pager.currentPage = 1;
   }
