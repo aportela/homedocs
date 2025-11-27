@@ -79,7 +79,7 @@ import { ref, reactive, computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { bgDownload } from "src/composables/useAxios";
 import { allowPreview, isImage, isAudio, isPDF } from "src/composables/useFileUtils";
-import { getURL as getAttachmentURL, getInlineURL as getAttachmentInlineURL } from "src/composables/useAttachments";
+import { getURL as getAttachmentURL, getInlineURL as getAttachmentInlineURL } from "src/composables/attachment";
 import { type Document } from "src/types/document";
 import { type CustomBanner as CustomBannerInterface, defaultCustomBanner } from "src/types/custom-banner";
 

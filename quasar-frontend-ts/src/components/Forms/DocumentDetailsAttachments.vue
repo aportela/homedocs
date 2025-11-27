@@ -74,7 +74,7 @@ import { allowPreview } from "src/composables/useFileUtils"
 import { useDocument } from "src/composables/useDocument"
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 import { type Attachment as AttachmentInterface } from "src/types/attachment";
-import { getURL as getAttachmentURL } from "src/composables/useAttachments";
+import { getURL as getAttachmentURL } from "src/composables/attachment";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
