@@ -13,7 +13,6 @@ interface SearchFilter {
     lastUpdateAt: any;
     updatedAt: any;
   },
-  returnFragments: boolean;
 };
 
 export { type SearchOnTextEntitiesFilter, type SearchFilter };
