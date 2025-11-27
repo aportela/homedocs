@@ -1,4 +1,6 @@
 import { axiosInstance } from "src/composables/useAxios";
+import { type OrderType } from "src/types/order-type";
+import { type Document } from "src/types/document";
 
 const api = {
   common: {
@@ -39,56 +41,47 @@ const api = {
       };
       return axiosInstance.post("/search/recent_documents", params);
     },
-    search: function (currentPage: number, resultsPage: number, filter, sortBy, sortOrder) {
+    // TODO: filter interface
+    search: function (currentPage: number, resultsPage: number, filter: any, sortBy: string, sortOrder: OrderType) {
       const params = {
         title: filter.text?.title || null,
         description: filter.text?.description || null,
         notesBody: filter.text?.notesBody || null,
         attachmentsFilename: filter.text?.attachmentsFilename || null,
         tags: filter.tags || [],
+        fromCreationTimestampCondition: filter.dates?.creationDate?.timestamps?.from || null,
+        toCreationTimestampCondition: filter.dates?.creationDate?.timestamps?.to || null,
+        fromLastUpdateTimestampCondition: filter.dates?.lastUpdate?.timestamps?.from || null,
+        toLastUpdateTimestampCondition: filter.dates?.lastUpdate?.timestamps?.to || null,
+        fromUpdatedOnTimestampCondition: filter.dates?.updatedOn?.timestamps?.from || null,
+        toUpdatedOnTimestampCondition: filter.dates?.updatedOn?.timestamps?.to || null,
+        currentPage: currentPage,
+        resultsPage: resultsPage,
+        sortBy: sortBy,
+        sortOrder: sortOrder
       };
-      params.fromCreationTimestampCondition =
-        filter.dates?.creationDate?.timestamps?.from || null;
-      params.toCreationTimestampCondition =
-        filter.dates?.creationDate?.timestamps?.to || null;
-      params.fromLastUpdateTimestampCondition =
-        filter.dates?.lastUpdate?.timestamps?.from || null;
-      params.toLastUpdateTimestampCondition =
-        filter.dates?.lastUpdate?.timestamps?.to || null;
-      params.fromUpdatedOnTimestampCondition =
-        filter.dates?.updatedOn?.timestamps?.from || null;
-      params.toUpdatedOnTimestampCondition =
-        filter.dates?.updatedOn?.timestamps?.to || null;
-      params.currentPage = currentPage;
-      params.resultsPage = resultsPage;
-      params.sortBy = sortBy;
-      params.sortOrder = sortOrder;
       return axiosInstance.post("/search/document", params);
     },
-    add: function (document) {
+    add: function (document: Document) {
       const params = {
         id: document.id,
         title: document.title,
+        description: document.description || null,
         tags: document.tags || [],
         attachments: document.attachments || [],
         notes: document.notes || [],
       };
-      if (document.description) {
-        params.description = document.description;
-      }
       return axiosInstance.post("/document/" + document.id, params);
     },
-    update: function (document) {
+    update: function (document: Document) {
       const params = {
         id: document.id,
         title: document.title,
+        description: document.description || null,
         tags: document.tags || [],
         attachments: document.attachments || [],
         notes: document.notes || [],
       };
-      if (document.description) {
-        params.description = document.description;
-      }
       return axiosInstance.put("/document/" + document.id, params);
     },
     remove: (id: string) => axiosInstance.delete("/document/" + id),
