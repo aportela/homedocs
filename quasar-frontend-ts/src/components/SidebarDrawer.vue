@@ -14,7 +14,7 @@
       </q-item>
       <q-item v-for="link in menuItems" :key="link.text" v-ripple clickable :to="{ name: link.routeName }"
         class="rounded-borders q-ma-sm theme-default-q-item"
-        :active="$route.name === link.routeName || (link.alternateRouteNames?.includes($route.name))"
+        :active="link.routeName == currentRouteName || (link.alternateRouteNames?.includes(currentRouteName))"
         active-class="theme-default-q-item-active">
         <q-item-section avatar>
           <q-icon :name="link.icon" />
@@ -38,7 +38,7 @@
 <script setup lang="ts">
 
 import { computed, useAttrs } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { api } from "src/composables/useAPI";
 import { useSessionStore } from "src/stores/session";
@@ -55,6 +55,9 @@ const attrs = useAttrs();
 
 const { t } = useI18n();
 const router = useRouter();
+const route = useRoute();
+
+const currentRouteName = computed(() => String(route.name));
 
 const session = useSessionStore();
 
@@ -67,13 +70,13 @@ const menuItems = [
   { icon: 'find_in_page', text: "Advanced search", routeName: 'advancedSearch', alternateRouteNames: ['advancedSearchByTag', 'advancedSearchByFixedCreationDate', 'advancedSearchByFixedLastUpdate', 'advancedSearchByFixedUpdatedOn'] }
 ];
 
-function onDrawerClick(e) {
+function onDrawerClick(evt: Event) {
   if (mini.value) {
     mini.value = false
     // notice we have registered an event with capture flag;
     // we need to stop further propagation as this click is
     // intended for switching drawer to "normal" mode only
-    e.stopPropagation()
+    evt.stopPropagation()
   }
 }
 
