@@ -428,6 +428,8 @@ export default {
     "The document has been deleted. Upon closing this dialog, you will be redirected to the home screen.",
   "File upload activity & status":
     "File upload activity & status",
+  "Clear processed transfers":
+    "Clear processed transfers",
   "Always display this progress window when uploading files":
     "Always display this progress window when uploading files",
   "Only display this progress window when uploading failed":
