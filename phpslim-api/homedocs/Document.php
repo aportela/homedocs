@@ -717,7 +717,7 @@ class Document
     /**
      * @param array<mixed> $filter
      */
-    public static function search(\aportela\DatabaseWrapper\DB $db, \aportela\DatabaseBrowserWrapper\Pager $pager, array $filter = [], string $sortField = "createdAtTimestamp", \aportela\DatabaseBrowserWrapper\Order $sortOrder = \aportela\DatabaseBrowserWrapper\Order::DESC): \stdClass
+    public static function search(\aportela\DatabaseWrapper\DB $db, \aportela\DatabaseBrowserWrapper\Pager $pager, array $filter = [], string $sortField = "createdAtTimestamp", \aportela\DatabaseBrowserWrapper\Order $sortOrder = \aportela\DatabaseBrowserWrapper\Order::DESC, bool $returnFragments = false): \stdClass
     {
         $fieldDefinitions = [
             "id" => "DOCUMENT.id",
@@ -737,9 +737,9 @@ class Document
             default => new \aportela\DatabaseBrowserWrapper\SortItem("createdAtTimestamp", $sortOrder, true),
         };
         // after launch search we need to make some changes foreach result
-        $afterBrowse = function (\aportela\DatabaseBrowserWrapper\BrowserResults $browserResults) use ($filter, $db): void {
+        $afterBrowse = function (\aportela\DatabaseBrowserWrapper\BrowserResults $browserResults) use ($filter, $db, $returnFragments): void {
             array_map(
-                function (object $item) use ($filter, $db): \stdClass {
+                function (object $item) use ($filter, $db, $returnFragments): \stdClass {
                     // fix warnings on matchedFragments property
                     if (! $item instanceof \stdClass) {
                         throw new \RuntimeException("Invalid");
@@ -762,54 +762,56 @@ class Document
                     }
 
                     $item->matchedFragments = [];
-                    if (isset($filter["title"]) && is_string($filter["title"]) && ($filter["title"] !== '' && $filter["title"] !== '0') && property_exists($item, "title") && is_string($item->title)) {
-                        $fragment = \HomeDocs\Utils::getStringFragment($item->title, $filter["title"], 64, true);
-                        if (!in_array($fragment, [null, '', '0'], true)) {
-                            $item->matchedFragments[] = [
-                                "matchedOn" => "title",
-                                "fragment" => $fragment
-                            ];
-                        }
-                    }
+                    if ($returnFragments) {
 
-                    if (isset($filter["description"]) && is_string($filter["description"]) && ($filter["description"] !== '' && $filter["description"] !== '0') && property_exists($item, "description") && is_string($item->description)) {
-                        $fragment = \HomeDocs\Utils::getStringFragment($item->description, $filter["description"], 64, true);
-                        if (!in_array($fragment, [null, '', '0'], true)) {
-                            $item->matchedFragments[] = [
-                                "matchedOn" => "description",
-                                "fragment" => $fragment
-                            ];
-                        }
-                    }
-
-                    if (isset($filter["notesBody"]) && is_string($filter["notesBody"]) && ($filter["notesBody"] !== '' && $filter["notesBody"] !== '0') && property_exists($item, "id")) {
-                        // TODO: this NEEDS to be rewritten with more efficient method
-                        $notes = new \HomeDocs\Document(is_string($item->id) ? $item->id : null)->getNotes($db, $filter["notesBody"]);
-                        foreach ($notes as $note) {
-                            $fragment = \HomeDocs\Utils::getStringFragment(is_string($note->body) ? $note->body : "", $filter["notesBody"], 64, true);
+                        if (isset($filter["title"]) && is_string($filter["title"]) && ($filter["title"] !== '' && $filter["title"] !== '0') && property_exists($item, "title") && is_string($item->title)) {
+                            $fragment = \HomeDocs\Utils::getStringFragment($item->title, $filter["title"], 64, true);
                             if (!in_array($fragment, [null, '', '0'], true)) {
                                 $item->matchedFragments[] = [
-                                    "matchedOn" => "note body",
+                                    "matchedOn" => "title",
                                     "fragment" => $fragment
                                 ];
                             }
                         }
-                    }
 
-                    if (isset($filter["attachmentsFilename"]) && is_string($filter["attachmentsFilename"]) && ($filter["attachmentsFilename"] !== '' && $filter["attachmentsFilename"] !== '0') && property_exists($item, "id")) {
-                        // TODO: this NEEDS to be rewritten with more efficient method
-                        $attachments = new \HomeDocs\Document(is_string($item->id) ? $item->id : null)->getAttachments($db, $filter["attachmentsFilename"]);
-                        foreach ($attachments as $attachment) {
-                            $fragment = \HomeDocs\Utils::getStringFragment(is_string($attachment->name) ? $attachment->name : "", $filter["attachmentsFilename"], 64, true);
+                        if (isset($filter["description"]) && is_string($filter["description"]) && ($filter["description"] !== '' && $filter["description"] !== '0') && property_exists($item, "description") && is_string($item->description)) {
+                            $fragment = \HomeDocs\Utils::getStringFragment($item->description, $filter["description"], 64, true);
                             if (!in_array($fragment, [null, '', '0'], true)) {
                                 $item->matchedFragments[] = [
-                                    "matchedOn" => "attachment filename",
+                                    "matchedOn" => "description",
                                     "fragment" => $fragment
                                 ];
                             }
                         }
-                    }
 
+                        if (isset($filter["notesBody"]) && is_string($filter["notesBody"]) && ($filter["notesBody"] !== '' && $filter["notesBody"] !== '0') && property_exists($item, "id")) {
+                            // TODO: this NEEDS to be rewritten with more efficient method
+                            $notes = new \HomeDocs\Document(is_string($item->id) ? $item->id : null)->getNotes($db, $filter["notesBody"]);
+                            foreach ($notes as $note) {
+                                $fragment = \HomeDocs\Utils::getStringFragment(is_string($note->body) ? $note->body : "", $filter["notesBody"], 64, true);
+                                if (!in_array($fragment, [null, '', '0'], true)) {
+                                    $item->matchedFragments[] = [
+                                        "matchedOn" => "note body",
+                                        "fragment" => $fragment
+                                    ];
+                                }
+                            }
+                        }
+
+                        if (isset($filter["attachmentsFilename"]) && is_string($filter["attachmentsFilename"]) && ($filter["attachmentsFilename"] !== '' && $filter["attachmentsFilename"] !== '0') && property_exists($item, "id")) {
+                            // TODO: this NEEDS to be rewritten with more efficient method
+                            $attachments = new \HomeDocs\Document(is_string($item->id) ? $item->id : null)->getAttachments($db, $filter["attachmentsFilename"]);
+                            foreach ($attachments as $attachment) {
+                                $fragment = \HomeDocs\Utils::getStringFragment(is_string($attachment->name) ? $attachment->name : "", $filter["attachmentsFilename"], 64, true);
+                                if (!in_array($fragment, [null, '', '0'], true)) {
+                                    $item->matchedFragments[] = [
+                                        "matchedOn" => "attachment filename",
+                                        "fragment" => $fragment
+                                    ];
+                                }
+                            }
+                        }
+                    }
                     return ($item);
                 },
                 $browserResults->items
