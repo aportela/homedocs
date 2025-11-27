@@ -24,7 +24,7 @@ import { bus } from "src/composables/useBus";
 import { useDarkModeStore } from "src/stores/darkMode";
 import { useI18nStore } from "src/stores/i18n";
 import type { APIErrorDetails as APIErrorDetailsInterface } from "src/types/api-error-details";
-
+import { type GetActivityHeatMapDataResponseItem as GetActivityHeatMapDataResponseItemInterface, type GetActivityHeatMapDataResponse as GetActivityHeatMapDataResponseInterface } from "src/types/api-responses";
 import { default as CalHeatmap } from "cal-heatmap";
 import "cal-heatmap/cal-heatmap.css";
 import { default as Tooltip } from "cal-heatmap/plugins/Tooltip";
@@ -75,7 +75,17 @@ const fromDate = (new Date(new Date().setFullYear(new Date().getFullYear() - 2))
 fromDate.setDate(1);
 fromDate.setHours(0, 0, 0, 0);
 
+interface DataInterface {
+  source: GetActivityHeatMapDataResponseItemInterface[];
+  x: string;
+  y: string;
+  type: string;
+};
+
 const calOptions = ref({
+  data: {
+    scale: [],
+  },
   date: {
     locale: currentLocale.value,
     start: new Date(new Date().setFullYear(new Date().getFullYear() - 1)), // last 12 months
@@ -104,7 +114,7 @@ const calDefaultPlugins = [
   [
     Tooltip,
     {
-      text: function (date, value: number, dayjsDate) {
+      text: function (_date: any, value: number, dayjsDate: any) {
         return (value
           ? `${value} ${t(" change/s on date ")} ${dayjsDate.format('dddd, MMMM D, YYYY')}`
           : `${t("No activity on date ")} ${dayjsDate.format('dddd, MMMM D, YYYY')}`);
@@ -178,7 +188,8 @@ cal.on('maxDateNotReached', () => {
   rightButtonDisabled.value = false;
 });
 
-const onCalRefresh = (data?, scaleDomain?) => {
+
+const onCalRefresh = (data?: DataInterface, scaleDomain?: number[]) => {
   if (data) {
     calOptions.value.data = data;
   }
@@ -208,7 +219,7 @@ const onRefresh = () => {
   state.errorMessage = null;
   state.apiError = null;
   api.stats.getActivityHeatMapData(date.formatDate(fromDate, 'x'))
-    .then((successResponse) => {
+    .then((successResponse: GetActivityHeatMapDataResponseInterface) => {
       const counts = successResponse.data.heatmap.map(d => d.count);
       //const min = Math.min(...counts);
       //const max = Math.max(...counts);

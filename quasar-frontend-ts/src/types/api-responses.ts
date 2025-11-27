@@ -161,6 +161,17 @@ interface GetTagsResponse extends Omit<DefaultAxiosResponse, 'data'> {
   }
 };
 
+interface GetActivityHeatMapDataResponseItem {
+  date: string;
+  count: number;
+};
+
+interface GetActivityHeatMapDataResponse extends Omit<DefaultAxiosResponse, 'data'> {
+  data: {
+    heatmap: GetActivityHeatMapDataResponseItem[];
+  }
+};
+
 export {
   type DefaultAxiosResponse,
   type LoginResponse,
@@ -185,4 +196,6 @@ export {
   type GetDiskUsageStatsResponse,
   type GetDocumentResponse,
   type GetTagsResponse,
+  type GetActivityHeatMapDataResponseItem,
+  type GetActivityHeatMapDataResponse,
 };
