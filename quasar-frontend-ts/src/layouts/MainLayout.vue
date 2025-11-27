@@ -13,7 +13,7 @@
         <q-btn type="button" no-caps no-wrap align="left" outline :label="searchButtonLabel" icon="search"
           class="full-width no-caps theme-default-q-btn" @click.prevent="dialogs.fastSearch.visible = true">
           <DesktopToolTip anchor="bottom middle" self="top middle">{{ t("Click to open fast search")
-          }}</DesktopToolTip>
+            }}</DesktopToolTip>
         </q-btn>
         <!--
         <FastSearchSelector dense class="full-width"></FastSearchSelector>
@@ -49,7 +49,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, watch, computed, onMounted, onBeforeUnmount } from "vue";
-import { useQuasar, LocalStorage, uid } from "quasar";
+import { useQuasar, LocalStorage } from "quasar";
 import { useI18n } from "vue-i18n";
 
 import { currentTimestamp } from "src/composables/useFormatDates"
@@ -72,7 +72,7 @@ import { default as DocumentNotesPreviewDialog } from "src/components/Dialogs/Do
 import { default as UploadingDialog } from "src/components/Dialogs/UploadingDialog.vue";
 
 import { type Attachment as AttachmentInterface } from "src/types/attachment";
-import { UploadTransferClass, type UploadTransfer as UploadTransferInterface } from "src/types/upload-transfer";
+import { type UploadTransfer as UploadTransferInterface } from "src/types/upload-transfer";
 
 const $q = useQuasar();
 
