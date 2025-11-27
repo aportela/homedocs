@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 
-import { computed, reactive, watch, useAttrs } from "vue";
+import { computed, reactive, useAttrs } from "vue";
 import { useI18n } from "vue-i18n";
 import { type OrderType } from "src/types/order-type";
 
@@ -31,63 +31,62 @@ const { t } = useI18n();
 const emit = defineEmits(['change'])
 
 interface Option {
-  field: string | null;
-  label: string | null;
+  field: string;
+  label: string;
+  order?: OrderType | undefined;
 }
 
-interface OptionWithOrder extends Option {
-  order: OrderType;
+class OptionClass implements Option {
+  field: string;
+  label: string;
+  order?: OrderType | undefined;
+
+  constructor(field: string, label: string, order?: OrderType) {
+    this.field = field;
+    this.label = label;
+    if (order) {
+      this.order = order;
+    }
+  }
 }
 
 interface SortByFieldCustomButtonDropdownProps {
   options: Option[];
-  current: OptionWithOrder;
+  current: Option;
   dense?: boolean;
 };
+
 const props = withDefaults(defineProps<SortByFieldCustomButtonDropdownProps>(), {
   dense: false,
 });
 
-const currentSort = reactive<OptionWithOrder>({
-  field: props.current?.field || null,
-  label: props.current?.label || null,
-  order: props.current?.order || null
+const completeOptions = reactive<Array<Option>>([]);
+
+props.options?.forEach((option) => {
+  completeOptions.push(new OptionClass(option.field, option.label, "ASC"));
+  completeOptions.push(new OptionClass(option.field, option.label, "DESC"));
 });
 
-if (!currentSort.label) {
-  currentSort.label = (props.options.find((option) => option.field == currentSort.field))?.label || null;
-}
+const currentSort = computed({
+  get() {
+    return props.current;
+  },
+  set() {
+    /* */
+  }
+});
 
 const currentLabel = computed(() =>
   t("Current sort by",
     {
-      label: currentSort.label ? t(currentSort.label) : null,
-      order: currentSort.order ? t(currentSort.order == "DESC" ? "descending" : "ascending") : null
+      label: currentSort.value.label ? t(currentSort.value.label) : null,
+      order: currentSort.value.order ? t(currentSort.value.order == "DESC" ? "descending" : "ascending") : null
     }
   )
 );
-const onClick = (option: OptionWithOrder) => {
-  currentSort.field = option.field;
-  currentSort.label = option.label;
-  currentSort.order = option.order;
-  emit("change", currentSort);
+
+const onClick = (option: Option) => {
+  emit("change", option);
 };
-
-watch(() => props.current, val => { currentSort.field = val.field; currentSort.label = val.label; currentSort.order = val.order });
-
-const completeOptions = reactive<Array<OptionWithOrder>>([]);
-
-props.options?.forEach((option) => {
-  completeOptions.push({
-    field: option.field,
-    label: option.label,
-    order: "ASC"
-  });
-  completeOptions.push({
-    field: option.field,
-    label: option.label,
-    order: "DESC"
-  })
-});
 
 </script>
