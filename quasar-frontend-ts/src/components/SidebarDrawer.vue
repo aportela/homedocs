@@ -40,7 +40,7 @@
 import { computed, useAttrs } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { api } from "src/composables/useAPI";
+import { api } from "src/composables/api";
 import { useSessionStore } from "src/stores/session";
 
 interface SidebarDrawerProps {

@@ -103,7 +103,7 @@ import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 
 import { bus, onShowDocumentFiles, onShowDocumentNotes } from "src/composables/useBus";
-import { api } from "src/composables/useAPI";
+import { api } from "src/composables/api";
 import { searchDialogResultsPage as localStorageSearchDialogResultsPage } from "src/composables/useLocalStorage"
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 import { type SearchDocumentResponse as SearchDocumentResponseInterface, type SearchDocumentResponseItem as SearchDocumentResponseItemInterface } from "src/types/api-responses";

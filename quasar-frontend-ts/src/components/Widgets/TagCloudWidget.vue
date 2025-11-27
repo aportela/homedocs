@@ -28,7 +28,7 @@
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import { bus } from "src/composables/useBus";
-import { api } from "src/composables/useAPI";
+import { api } from "src/composables/api";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 import { type TagCloudResponse, type TagCloudResponseItem } from "src/types/api-responses";
 

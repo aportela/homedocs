@@ -8,7 +8,7 @@
 import { ref, reactive, onMounted, onBeforeUnmount } from "vue";
 
 import { bus } from "src/composables/useBus";
-import { api } from "src/composables/useAPI";
+import { api } from "src/composables/api";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 import { type GetTotalDocumentsStatsResponse as GetTotalDocumentsStatsResponseInterface } from "src/types/api-responses";
 import { default as SystemStatsWidgetBase } from "src/components/Widgets/SystemStatsWidgetBase.vue";

@@ -19,7 +19,7 @@ import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { date } from "quasar";
 
-import { api } from "src/composables/useAPI";
+import { api } from "src/composables/api";
 import { bus } from "src/composables/useBus";
 import { useDarkModeStore } from "src/stores/darkMode";
 import { useI18nStore } from "src/stores/i18n";

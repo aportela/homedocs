@@ -2,9 +2,9 @@
   <BaseDialog v-model="visible" @close="onClose" width="1280px" max-width="80vw">
     <template v-slot:header-left>
       <div v-if="documentTitle">{{ t("Document title")
-        }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
+      }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
           documentTitle
-          }}</router-link>
+        }}</router-link>
       </div>
       <div v-else>{{ t("Document attachments") }}</div>
     </template>
@@ -74,7 +74,7 @@ import { useI18n } from "vue-i18n";
 import { bus } from "src/composables/useBus";
 import { allowPreview } from "src/composables/useFileUtils"
 import { bgDownload } from "src/composables/useAxios";
-import { api } from "src/composables/useAPI";
+import { api } from "src/composables/api";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 import { type Attachment as AttachmentInterface, AttachmentClass } from "src/types/attachment";
 import { DateTimeClass } from "src/types/date-time";

@@ -41,7 +41,7 @@ import { useI18n } from "vue-i18n";
 import { QInput } from "quasar";
 
 import { bus } from "src/composables/useBus";
-import { api } from "src/composables/useAPI";
+import { api } from "src/composables/api";
 import { useFormUtils } from "src/composables/useFormUtils";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 import { type AuthValidator as AuthValidatorInterface, defaultAuthValidator } from "src/types/auth-validator";
