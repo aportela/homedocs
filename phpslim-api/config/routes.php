@@ -186,12 +186,12 @@ return function (\Slim\App $app): void {
                         if (array_key_exists("currentPageIndex", $params["pager"]) && is_numeric($params["pager"]["currentPageIndex"])) {
                             $currentPageIndex = intval($params["pager"]["currentPageIndex"]);
                         }
-                        
+
                         if (array_key_exists("resultsPage", $params["pager"]) && is_numeric($params["pager"]["resultsPage"])) {
                             $resultsPage = intval($params["pager"]["resultsPage"]);
                         }
                     }
-                    
+
                     return (new \aportela\DatabaseBrowserWrapper\Pager(true, $currentPageIndex, $resultsPage));
                 };
 
@@ -270,7 +270,7 @@ return function (\Slim\App $app): void {
                 function getReturnFragmentsFlagFromParams(array $params = []): bool
                 {
                     return (
-                        array_key_exists("returnFragments", $params) && is_bool($params["tags"]) && $params["tags"]
+                        array_key_exists("returnFragments", $params) && is_bool($params["returnFragments"]) && $params["returnFragments"]
                     );
                 }
 
@@ -298,7 +298,7 @@ return function (\Slim\App $app): void {
                     if (! is_array($params)) {
                         throw new \HomeDocs\Exception\InvalidParamsException();
                     }
-                    
+
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
                             'results' => \HomeDocs\Document::search(
