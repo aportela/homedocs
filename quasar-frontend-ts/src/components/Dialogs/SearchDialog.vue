@@ -114,6 +114,7 @@ import { type Pager as PagerInterface } from "src/types/pager";
 import { type Sort as SortInterface } from "src/types/sort";
 import { type SearchFilter as SearchFilterInterface } from "src/types/search-filter";
 
+import { useDateFilter } from "src/composables/useDateFilter";
 
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue"
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
@@ -128,6 +129,7 @@ const props = defineProps<SearchDialogProps>();
 
 const router = useRouter();
 const currentRoute = useRoute();
+const dateFilter = useDateFilter();
 
 // if we are on document page, get current document id
 const currentDocumentId = ref(currentRoute.name == "document" ? currentRoute.params?.id || null : null);
@@ -214,9 +216,9 @@ const onSearch = (val: string) => {
       },
       tags: [],
       dates: {
-        createdAt: null,
-        lastUpdateAt: null,
-        updatedAt: null,
+        createdAt: dateFilter.getDateFilterInstance(),
+        lastUpdateAt: dateFilter.getDateFilterInstance(),
+        updatedAt: dateFilter.getDateFilterInstance(),
       },
     };
     api.document.search(pager, params, sort, true)
