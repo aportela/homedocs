@@ -129,7 +129,7 @@ function onRefresh() {
   }
 }
 
-function onAddTag(details: { index: number; value: any; }): void {
+function onAddTag(): void {
   selectRef.value?.hidePopup()
   selectRef.value?.reset();
   selectRef.value?.updateInputValue("");
