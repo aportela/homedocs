@@ -79,11 +79,6 @@ const api = {
     getNotes: (id: string) => axiosInstance.get("/document/" + id + "/notes"),
     getAttachments: (id: string) =>
       axiosInstance.get("/document/" + id + "/attachments"),
-    addAttachment: function (id: string, file) {
-      const formData = new FormData();
-      formData.append("file", file);
-      return axiosInstance.post("/attachment/" + id, formData);
-    },
     removeFile: (id: string) => axiosInstance.delete("/attachment/" + id),
   },
   tag: {
