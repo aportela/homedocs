@@ -162,7 +162,7 @@ import { default as DeleteDocumentConfirmationDialog } from "src/components/Dial
 import { AttachmentClass } from "src/types/attachment";
 import { NoteClass } from "src/types/note";
 import { DateTimeClass } from "src/types/date-time";
-import { currentTimestamp } from "src/composables/useFormatDates";
+import { currentTimestamp } from "/src/composables/dateUtils";
 
 const { t } = useI18n();
 const router = useRouter();
