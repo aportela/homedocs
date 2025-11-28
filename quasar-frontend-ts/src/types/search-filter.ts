@@ -1,4 +1,4 @@
-import { DateFilterInstance as DateFilterInstanceInterface, DateFilterInstanceClass } from "src/composables/useDateFilter";
+import { type DateFilterInstance as DateFilterInstanceInterface, DateFilterInstanceClass } from "src/composables/useDateFilter";
 
 interface SearchOnTextEntitiesFilter {
   title: string | null;
@@ -13,11 +13,11 @@ class SearchOnTextEntitiesFilterClass implements SearchOnTextEntitiesFilter {
   notesBody: string | null;
   attachmentsFilename: string | null;
 
-  constructor(title: string | null, description: string | null, notesBody: string | null, attachmentsFilename: string | null) {
-    this.title = title;
-    this.description = description;
-    this.notesBody = notesBody;
-    this.attachmentsFilename = attachmentsFilename;
+  constructor(title?: string | null, description?: string | null, notesBody?: string | null, attachmentsFilename?: string | null) {
+    this.title = title || null;
+    this.description = description || null;
+    this.notesBody = notesBody || null;
+    this.attachmentsFilename = attachmentsFilename || null;
   }
 }
 
@@ -32,10 +32,10 @@ class SearchDatesFilterClass implements SearchDatesFilter {
   lastUpdateAt: DateFilterInstanceInterface;
   updatedAt: DateFilterInstanceInterface;
 
-  constructor(createdAt: DateFilterInstanceInterface, lastUpdateAt: DateFilterInstanceInterface, updatedAt: DateFilterInstanceInterface) {
-    this.createdAt = createdAt;
-    this.lastUpdateAt = lastUpdateAt;
-    this.updatedAt = updatedAt;
+  constructor(createdAt?: DateFilterInstanceInterface | null, lastUpdateAt?: DateFilterInstanceInterface | null, updatedAt?: DateFilterInstanceInterface | null) {
+    this.createdAt = createdAt || new DateFilterInstanceClass();
+    this.lastUpdateAt = lastUpdateAt || new DateFilterInstanceClass();
+    this.updatedAt = updatedAt || new DateFilterInstanceClass();
   }
 }
 
@@ -50,10 +50,11 @@ class SearchFilterClass implements SearchFilter {
   tags: string[];
   dates: SearchDatesFilter;
 
-  constructor(text: SearchOnTextEntitiesFilter, tags: string[], dates: SearchDatesFilter) {
-    this.text = text;
-    this.tags = tags;
-    this.dates = dates;
+  constructor(text?: SearchOnTextEntitiesFilter | null, tags?: string[] | null, dates?: SearchDatesFilter | null) {
+    this.text = text || new SearchOnTextEntitiesFilterClass();
+    this.tags = tags || [];
+    this.dates = dates || new SearchDatesFilterClass();
   }
 }
+
 export { type SearchOnTextEntitiesFilter, SearchOnTextEntitiesFilterClass, type SearchDatesFilter, SearchDatesFilterClass, type SearchFilter, SearchFilterClass };
