@@ -49,21 +49,21 @@
                 :disabled="state.ajaxRunning" dense :start-mode-editable="true" :deny-change-editable-mode="true"
                 clearable :placeholder="t('Type text condition')">
               </InteractiveTagsFieldCustomSelect>
-              <DateFieldCustomInput :label="t('Document creation date')"
+              <DateFilterFieldCustomInputSelector :label="t('Document creation date')"
                 :disable="state.ajaxRunning || hasCreationDateRouteParamsFilter" v-model="filters.dates.createdAt"
                 @update:model-value="(value) => filters.dates.createdAt = value"
                 :auto-open-pop-ups="!hasCreationDateRouteParamsFilter">
-              </DateFieldCustomInput>
-              <DateFieldCustomInput :label="t('Document last update')"
+              </DateFilterFieldCustomInputSelector>
+              <DateFilterFieldCustomInputSelector :label="t('Document last update')"
                 :disable="state.ajaxRunning || hasLastUpdateRouteParamsFilter" v-model="filters.dates.lastUpdateAt"
                 @update:model-value="(value) => filters.dates.lastUpdateAt = value"
                 :auto-open-pop-ups="!hasLastUpdateRouteParamsFilter">
-              </DateFieldCustomInput>
-              <DateFieldCustomInput :label="t('Document updated on')"
+              </DateFilterFieldCustomInputSelector>
+              <DateFilterFieldCustomInputSelector :label="t('Document updated on')"
                 :disable="state.ajaxRunning || hasUpdatedOnRouteParamsFilter" v-model="filters.dates.updatedAt"
                 @update:model-value="(value) => filters.dates.updatedAt = value"
                 :auto-open-pop-ups="!hasUpdatedOnRouteParamsFilter">
-              </DateFieldCustomInput>
+              </DateFilterFieldCustomInputSelector>
             </div>
           </div>
           <q-btn-group spread>
@@ -204,7 +204,7 @@ import { default as InteractiveTagsFieldCustomSelect } from "src/components/Form
 import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
-import { default as DateFieldCustomInput } from "src/components/Forms/Fields/DateFieldCustomInput.vue";
+import { default as DateFilterFieldCustomInputSelector } from "src/components/Forms/Fields/DateFilterFieldCustomInputSelector.vue";
 import { default as SortByFieldCustomButtonDropdown } from "src/components/Forms/Fields/SortByFieldCustomButtonDropdown.vue";
 import { default as ViewDocumentDetailsButton } from "src/components/Buttons/ViewDocumentDetailsButton.vue";
 
