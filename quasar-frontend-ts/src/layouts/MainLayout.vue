@@ -13,7 +13,7 @@
         <q-btn type="button" no-caps no-wrap align="left" outline :label="searchButtonLabel" icon="search"
           class="full-width no-caps theme-default-q-btn" @click.prevent="dialogs.fastSearch.visible = true">
           <DesktopToolTip anchor="bottom middle" self="top middle">{{ t("Click to open fast search")
-          }}</DesktopToolTip>
+            }}</DesktopToolTip>
         </q-btn>
         <!--
         <FastSearchSelector dense class="full-width"></FastSearchSelector>
@@ -52,7 +52,7 @@ import { ref, reactive, watch, computed, onMounted, onBeforeUnmount } from "vue"
 import { useQuasar, LocalStorage } from "quasar";
 import { useI18n } from "vue-i18n";
 
-import { currentTimestamp } from "/src/composables/dateUtils"
+import { currentTimestamp } from "src/composables/dateUtils";
 import { alwaysOpenUploadDialog as localStorageAlwaysOpenUploadDialog } from "src/composables/localStorage"
 import { bus } from "src/composables/bus";
 import type { Document } from "src/types/document";
