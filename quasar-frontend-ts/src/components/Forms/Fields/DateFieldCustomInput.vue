@@ -69,16 +69,16 @@
 import { ref, watch, computed, onMounted, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import { QInput, QPopupProxy } from 'quasar';
-import { DateFilterInstance as DateFilterInstanceInterface } from "src/composables/useDateFilter";
-import { availableSelectOptions, type DateFilterOptionBaseType as DateFilterOptionBaseTypeInterface } from "src/types/date-filters";
-import { useDateFilter } from "src/composables/useDateFilter"
+import { DateFilterClass } from "src/types/date-filters";
+import { availableSelectOptions, type DateFilterSelectorOption as DateFilterSelectorOptionInterface } from "src/types/date-filters";
+//import { useDateFilter } from "src/composables/useDateFilter"
 
 const { t } = useI18n();
 
 const emit = defineEmits(['update:modelValue'])
 
 interface DateFieldCustomInput {
-  modelValue: DateFilterInstanceInterface;
+  modelValue: DateFilterClass;
   label?: string;
   dense?: boolean;
   outlined?: boolean;
@@ -144,7 +144,7 @@ const dateFilter = ref(props.modelValue || {});
 //const { dateFilterTypeOptions } = useDateFilter();
 
 const dateFilterTypeOptions = computed(() =>
-  availableSelectOptions.map((option: DateFilterOptionBaseTypeInterface) => ({
+  availableSelectOptions.map((option: DateFilterSelectorOptionInterface) => ({
     ...option,
     label: t(option.labelKey),
   })),
@@ -152,14 +152,16 @@ const dateFilterTypeOptions = computed(() =>
 
 const extraDateInputFieldsDisabled = computed(() => props.disable || dateFilter.value.state.denyChanges);
 
-watch(() => props.modelValue, val => dateFilter.value = val);
-watch(dateFilter.value, val => {
+watch(() => props.modelValue, (newValue: DateFilterClass) => dateFilter.value = newValue);
+
+watch(dateFilter.value, (val: DateFilterClass) => {
   focus();
   emit('update:modelValue', val);
   if (props.autoOpenPopUps) {
     nextTick()
       .then(() => {
-        switch (val.filterType.value) {
+        //switch (val.filterType.value) {
+        switch (val.currentType) {
           case 7: // fixed date
             if (!val.formattedDate.fixed) {
               qInputFixedDatePopupProfyRef.value?.show();
@@ -204,7 +206,8 @@ const focus = () => {
   if (!dateFilter.value.state.denyChanges) {
     nextTick()
       .then(() => {
-        switch (dateFilter.value.filterType.value) {
+        //switch (dateFilter.value.filterType.value) {
+        switch (dateFilter.value.currentType) {
           case 7: // fixed date
             qInputFixedDateRef.value?.focus();
             break;
