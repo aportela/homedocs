@@ -43,7 +43,7 @@ class SearchDatesFilterClass implements SearchDatesFilter {
 interface SearchFilter {
   text: SearchOnTextEntitiesFilter;
   tags: string[];
-  dates: SearchDatesFilter | null;
+  dates: SearchDatesFilter;
 };
 
 class SearchFilterClass implements SearchFilter {
