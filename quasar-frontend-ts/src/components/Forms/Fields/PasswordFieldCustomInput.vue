@@ -27,45 +27,25 @@ const { t } = useI18n();
 
 const emit = defineEmits(['update:modelValue'])
 
-const props = defineProps({
-  modelValue: {
-    type: String,
-    default: "",
-  },
-  label: {
-    type: String,
-    default: "Password",
-  },
-  dense: {
-    type: Boolean,
-    default: false,
-  },
-  outlined: {
-    type: Boolean,
-    default: false,
-  },
-  rules: {
-    type: Array,
-    default: () => [],
-    validator(value) {
-      return Array.isArray(value);
-    }
-  },
-  autofocus: {
-    type: Boolean,
-    default: false,
-  },
-  error:
-  {
-    type: Boolean,
-    required: false,
-    default: false
-  },
-  errorMessage: {
-    type: String,
-    required: false,
-    default: null
-  },
+interface PasswordFieldCustomInputProps {
+  modelValue: string;
+  label?: string;
+  dense?: boolean;
+  outlined?: boolean;
+  rules?: Array<(val: any) => boolean | string>;
+  autofocus?: boolean;
+  error?: boolean;
+  errorMessage?: string;
+};
+
+const props = withDefaults(defineProps<PasswordFieldCustomInputProps>(), {
+  label: "Password",
+  dense: false,
+  outlined: false,
+  rules: () => [],
+  autofocus: false,
+  error: false,
+  errorMessage: ""
 });
 
 const qInputPasswordRef = ref<QInput | null>(null);

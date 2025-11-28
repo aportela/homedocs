@@ -44,48 +44,25 @@ import { useQuasar, QInput } from "quasar";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 
-const props = defineProps({
-  startModeEditable: {
-    type: Boolean,
-    required: false,
-    default: true
-  },
-  modelValue: {
-    type: String,
-    required: false,
-    default: "",
-  },
-  label: {
-    type: String,
-    required: false,
-  },
-  maxLines: {
-    type: Number,
-    required: false,
-    default: 2
-  },
-  rules: {
-    type: Array,
-    default: () => [],
-    validator(value) {
-      return Array.isArray(value);
-    }
-  },
-  autofocus: {
-    type: Boolean,
-    default: false,
-  },
-  error:
-  {
-    type: Boolean,
-    required: false,
-    default: false
-  },
-  errorMessage: {
-    type: String,
-    required: false,
-    default: null
-  },
+interface InteractiveTextFieldCustomInput {
+  modelValue: string;
+  label?: string;
+  maxLines?: number;
+  rules?: Array<(val: any) => boolean | string>;
+  autofocus?: boolean;
+  startModeEditable?: boolean;
+  error?: boolean;
+  errorMessage?: string;
+};
+
+const props = withDefaults(defineProps<InteractiveTextFieldCustomInput>(), {
+  label: "",
+  maxLines: 2,
+  rules: () => [],
+  autofocus: false,
+  startModeEditable: true,
+  error: false,
+  errorMessage: ""
 });
 
 const attrs = useAttrs();
