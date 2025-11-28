@@ -112,7 +112,7 @@ import { type QuasarVirtualScrollEventDetails as QuasarVirtualScrollEventDetails
 import { DateTimeClass } from "src/types/date-time";
 import { type Pager as PagerInterface } from "src/types/pager";
 import { type Sort as SortInterface } from "src/types/sort";
-import { type SearchFilter as SearchFilterInterface } from "src/types/search-filter";
+import { type SearchFilter as SearchFilterInterface, SearchDatesFilterClass } from "src/types/search-filter";
 import { SearchOnTextEntitiesFilterClass } from "src/types/search-filter";
 
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue"
@@ -213,7 +213,7 @@ const onSearch = (val: string) => {
         searchOn.value.value == "attachmentsFilename" ? val.trim() : null,
       ),
       tags: [],
-      dates: null,
+      dates: new SearchDatesFilterClass(),
     };
     api.document.search(pager, params, sort, true)
       .then((successResponse: SearchDocumentResponseInterface) => {
