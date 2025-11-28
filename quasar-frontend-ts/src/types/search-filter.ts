@@ -1,4 +1,5 @@
-import { type DateFilterInstance as DateFilterInstanceInterface, DateFilterInstanceClass } from "src/composables/useDateFilter";
+
+import { type DateFilter as DateFilterInterface, type DateFilterClass as DateFilterClassInterface, DateFilterClass } from "./date-filters";
 
 interface SearchOnTextEntitiesFilter {
   title: string | null;
@@ -22,20 +23,20 @@ class SearchOnTextEntitiesFilterClass implements SearchOnTextEntitiesFilter {
 }
 
 interface SearchDatesFilter {
-  createdAt: DateFilterInstanceInterface;
-  lastUpdateAt: DateFilterInstanceInterface;
-  updatedAt: DateFilterInstanceInterface;
+  createdAt: DateFilterClassInterface;
+  lastUpdateAt: DateFilterClassInterface;
+  updatedAt: DateFilterClassInterface;
 };
 
 class SearchDatesFilterClass implements SearchDatesFilter {
-  createdAt: DateFilterInstanceInterface;
-  lastUpdateAt: DateFilterInstanceInterface;
-  updatedAt: DateFilterInstanceInterface;
+  createdAt: DateFilterClassInterface;
+  lastUpdateAt: DateFilterClassInterface;
+  updatedAt: DateFilterClassInterface;
 
-  constructor(createdAt?: DateFilterInstanceInterface | null, lastUpdateAt?: DateFilterInstanceInterface | null, updatedAt?: DateFilterInstanceInterface | null) {
-    this.createdAt = createdAt || new DateFilterInstanceClass();
-    this.lastUpdateAt = lastUpdateAt || new DateFilterInstanceClass();
-    this.updatedAt = updatedAt || new DateFilterInstanceClass();
+  constructor(createdAt?: DateFilterClassInterface | null, lastUpdateAt?: DateFilterClassInterface | null, updatedAt?: DateFilterClassInterface | null) {
+    this.createdAt = createdAt || new DateFilterClass();
+    this.lastUpdateAt = lastUpdateAt || new DateFilterClass();
+    this.updatedAt = updatedAt || new DateFilterClass();
   }
 }
 
