@@ -1,5 +1,5 @@
 
-import { type DateFilter as DateFilterInterface, type DateFilterClass as DateFilterClassInterface, DateFilterClass } from "./date-filters";
+import { type DateFilterClass as DateFilterClassInterface, DateFilterClass } from "./date-filters";
 
 interface SearchOnTextEntitiesFilter {
   title: string | null;

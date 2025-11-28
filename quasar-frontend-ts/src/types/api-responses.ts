@@ -6,10 +6,12 @@ interface DefaultAxiosResponse {
   data: AxiosResponse<any, any, {}>;
 };
 
-interface LoginResponse extends DefaultAxiosResponse {
+interface LoginResponse extends Omit<DefaultAxiosResponse, 'data'> {
+  data: undefined;
 };
 
-interface RegisterResponse extends DefaultAxiosResponse {
+interface RegisterResponse extends Omit<DefaultAxiosResponse, 'data'> {
+  data: undefined;
 };
 
 interface UserProfileResponseData {
