@@ -1,49 +1,10 @@
 import { computed, reactive, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { date } from "quasar";
-import { type DateFilterOptionBaseType as DateFilterOptionBaseTypeInterface, availableSelectOptions, dateMask } from "src/types/date-filters";
-
-interface DateFilterTypeOption {
-  labelKey: string;
-  value: number;
-  label: string;
-}
-
-interface DateFilterInstance {
-  filterType: DateFilterTypeOption;
-  formattedDate: {
-    fixed: string | null;
-    from: string | null;
-    to: string | null;
-  };
-  timestamps: {
-    from: number | null;
-    to: number | null;
-  };
-  state: {
-    hasFrom: boolean;
-    hasTo: boolean;
-    hasFixed: boolean;
-    hasValue: boolean;
-    denyChanges: boolean;
-  };
-  // UGLY HACK to skip clearing/reseting values on filterType watchers
-  skipClearOnRecalc: {
-    from: boolean;
-    to: boolean;
-    fixed: boolean;
-  };
-};
-
-const getFormattedDate = (daysToSubtract = 0) => {
-  return date.formatDate(
-    date.addToDate(Date.now(), { days: daysToSubtract }),
-    dateMask,
-  );
-};
+import { type DateFilterSelectorOption as DateFilterSelectorOptionInterface, availableSelectOptions, dateMask } from "src/types/date-filters";
 
 class DateFilterInstanceClass implements DateFilterInstance {
-  filterType: DateFilterTypeOption;
+  //filterType: DateFilterTypeOption;
   formattedDate: {
     fixed: string | null;
     from: string | null;
@@ -67,8 +28,8 @@ class DateFilterInstanceClass implements DateFilterInstance {
     fixed: boolean;
   };
 
-  constructor(filterType: DateFilterTypeOption) {
-    this.filterType = filterType; //dateFilterTypeOptions.value[0]!;
+  constructor() {
+    //this.filterType = filterType; //dateFilterTypeOptions.value[0]!;
     this.formattedDate = {
       fixed: null,
       from: null,
@@ -203,81 +164,120 @@ class DateFilterInstanceClass implements DateFilterInstance {
   };
 };
 
+interface DateFilterInstance {
+  //filterType: DateFilterTypeOption;
+  formattedDate: {
+    fixed: string | null;
+    from: string | null;
+    to: string | null;
+  };
+  timestamps: {
+    from: number | null;
+    to: number | null;
+  };
+  state: {
+    hasFrom: boolean;
+    hasTo: boolean;
+    hasFixed: boolean;
+    hasValue: boolean;
+    denyChanges: boolean;
+  };
+  // UGLY HACK to skip clearing/reseting values on filterType watchers
+  skipClearOnRecalc: {
+    from: boolean;
+    to: boolean;
+    fixed: boolean;
+  };
+};
+
+const getFormattedDate = (daysToSubtract = 0) => {
+  return date.formatDate(
+    date.addToDate(Date.now(), { days: daysToSubtract }),
+    dateMask,
+  );
+};
+
+
 export function useDateFilter() {
   const { t } = useI18n();
 
   const dateFilterTypeOptions = computed(() =>
-    availableSelectOptions.map((option: DateFilterOptionBaseTypeInterface) => ({
+    availableSelectOptions.map((option: DateFilterSelectorOptionInterface) => ({
       ...option,
       label: t(option.labelKey),
     })),
   );
 
   const getDateFilterInstance = () => {
-    const dateFilter = reactive<DateFilterInstanceClass>(new DateFilterInstanceClass(dateFilterTypeOptions.value[0]!));
+    const dateFilter: DateFilterInstanceClass = reactive<DateFilterInstanceClass>(new DateFilterInstanceClass());
 
-    watch(
-      () => dateFilter.formattedDate.from,
-      (value) => {
-        dateFilter.state.hasValue = !!value;
-        dateFilter.onRecalcTimestamps();
-      },
-    );
+    /*
 
-    watch(
-      () => dateFilter.formattedDate.to,
-      (value) => {
-        dateFilter.state.hasValue = !!value;
-        dateFilter.onRecalcTimestamps();
-      },
-    );
+watch(
+  () => dateFilter.formattedDate.from,
+  (value) => {
+    dateFilter.state.hasValue = !!value;
+    dateFilter.onRecalcTimestamps();
+  },
+);
 
-    watch(
-      () => dateFilter.formattedDate.fixed,
-      (value) => {
-        dateFilter.state.hasValue = !!value;
-        dateFilter.onRecalcTimestamps();
-      },
-    );
+watch(
+  () => dateFilter.formattedDate.to,
+  (value) => {
+    dateFilter.state.hasValue = !!value;
+    dateFilter.onRecalcTimestamps();
+  },
+);
 
-    // UGLY HACK: selected value (model with label/value) do not react to global i18n changes
-    // so we are watching changes on first option label and when this label translation changes
-    // we translate again the label assigned to the model
-    watch(
-      () => dateFilterTypeOptions.value[0]!.label,
-      () => {
-        dateFilter.filterType.label = t(dateFilter.filterType.labelKey);
-      },
-    );
+watch(
+  () => dateFilter.formattedDate.fixed,
+  (value) => {
+    dateFilter.state.hasValue = !!value;
+    dateFilter.onRecalcTimestamps();
+  },
+);
 
-    watch(
-      () => dateFilter.filterType,
-      (filterType) => {
-        if (filterType) {
-          dateFilter.state.hasFrom = [3, 4, 5, 6, 8, 10].includes(
-            filterType.value,
-          );
-          dateFilter.state.hasTo = [3, 4, 5, 6, 9, 10].includes(
-            filterType.value,
-          );
-          dateFilter.state.hasFixed = [1, 2, 7].includes(filterType.value);
-          dateFilter.state.denyChanges = [1, 2, 3, 4, 5, 6].includes(
-            filterType.value,
-          );
-        } else {
-          dateFilter.filterType = dateFilterTypeOptions.value[0]!;
-        }
-        dateFilter.onRecalcDates();
-        dateFilter.onRecalcTimestamps();
-      },
-    );
 
-    return dateFilter;
-  };
+// UGLY HACK: selected value (model with label/value) do not react to global i18n changes
+// so we are watching changes on first option label and when this label translation changes
+// we translate again the label assigned to the model
+watch(
+() => dateFilterTypeOptions.value[0]!.label,
+() => {
+dateFilter.filterType.label = t(dateFilter.filterType.labelKey);
+},
+);
 
+watch(
+() => dateFilter.filterType,
+(filterType) => {
+if (filterType) {
+  dateFilter.state.hasFrom = [3, 4, 5, 6, 8, 10].includes(
+    filterType.value,
+  );
+  dateFilter.state.hasTo = [3, 4, 5, 6, 9, 10].includes(
+    filterType.value,
+  );
+  dateFilter.state.hasFixed = [1, 2, 7].includes(filterType.value);
+  dateFilter.state.denyChanges = [1, 2, 3, 4, 5, 6].includes(
+    filterType.value,
+  );
+} else {
+  dateFilter.filterType = dateFilterTypeOptions.value[0]!;
+}
+dateFilter.onRecalcDates();
+dateFilter.onRecalcTimestamps();
+},
+);
+
+return dateFilter;
+};
+*/
+  }
   return {
     dateFilterTypeOptions,
     getDateFilterInstance,
   };
-}
-export { type DateFilterInstance, DateFilterInstanceClass };
+};
+
+//export { type DateFilterInstance, DateFilterInstanceClass };
