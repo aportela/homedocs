@@ -1,5 +1,9 @@
-const escapeRegExp = (string) => {
-  return string.replace(/[.*+?^=!:${}()|\[\]\/\\]/g, "\\$&");
+const escapeRegExp = (str: string) => {
+  return str.replace(/[.*+?^=!:${}()|\[\]\/\\]/g, "\\$&");
+};
+
+const getRegexForStringMatch = (str: string): RegExp => {
+  return (new RegExp(escapeRegExp(str), "i"));
 };
 
 const isPdfSupportedInIframe = (): Promise<boolean> => {
@@ -21,4 +25,4 @@ const isPdfSupportedInIframe = (): Promise<boolean> => {
   });
 };
 
-export { escapeRegExp, isPdfSupportedInIframe };
+export { getRegexForStringMatch, isPdfSupportedInIframe };

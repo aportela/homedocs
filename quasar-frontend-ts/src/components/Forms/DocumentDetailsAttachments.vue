@@ -71,7 +71,7 @@ import { format } from "quasar";
 import { bgDownload } from "src/composables/axios";
 import { bus } from "src/composables/bus";
 import { allowPreview } from "src/composables/fileUtils"
-import { escapeRegExp } from "src/composables/common";
+import { getRegexForStringMatch } from "src/composables/common";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 import { type Attachment as AttachmentInterface } from "src/types/attachment";
 import { getURL as getAttachmentURL } from "src/composables/attachment";
@@ -93,6 +93,7 @@ const props = withDefaults(defineProps<DocumentDetailsAttachmentsProps>(), {
   disable: false
 });
 
+const right = ref(null);
 const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
 const isDisabled = computed(() => props.disable || state.ajaxRunning);
@@ -106,7 +107,7 @@ const searchText = ref(null);
 const onSearchTextChanged = (text: string | number | null) => {
   hiddenIds.length = 0;
   if (text) {
-    const regex = new RegExp(escapeRegExp(text), "i");
+    const regex = getRegexForStringMatch(String(text));
     hiddenIds.push(...props.attachments.filter(attachment => !attachment.name?.match(regex)).map(attachment => attachment.id));
     // TODO: map new fragment with bold ?
   }

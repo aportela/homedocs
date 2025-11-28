@@ -51,7 +51,7 @@ import { ref, reactive, computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { useFormUtils } from "src/composables/useFormUtils"
-import { escapeRegExp } from "src/composables/common";
+import { getRegexForStringMatch } from "src/composables/common";
 import { type Note as NoteInterface } from "src/types/note";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
@@ -82,7 +82,7 @@ const searchText = ref(null);
 const onSearchTextChanged = (text: string | number | null) => {
   hiddenIds.length = 0;
   if (text) {
-    const regex = new RegExp(escapeRegExp(text), "i");
+    const regex = getRegexForStringMatch(String(text));
     hiddenIds.push(...props.notes.filter(note => !note.body?.match(regex)).map(note => note.id));
     // TODO: map new fragment with bold ?
   }
