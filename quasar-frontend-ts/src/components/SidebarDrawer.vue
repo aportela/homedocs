@@ -1,6 +1,5 @@
 <template>
-  <q-drawer v-bind="attrs" show-if-above bordered :width="240" :mini="mini" @click.capture="onDrawerClick"
-    class="fit theme-default-q-drawer">
+  <q-drawer v-model="drawerModel" show-if-above bordered :width="240" :mini="mini" class="fit theme-default-q-drawer">
     <q-list>
       <q-item class="cursor-pointer non-selectable no-pointer-events rounded-borders q-ma-sm theme-default-q-item">
         <q-item-section avatar>
@@ -37,13 +36,14 @@
 
 <script setup lang="ts">
 
-import { computed, useAttrs } from "vue";
+import { computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { api } from "src/composables/api";
 import { useSessionStore } from "src/stores/session";
 
 interface SidebarDrawerProps {
+  modelValue: boolean;
   mini: boolean
 };
 
@@ -51,7 +51,16 @@ const props = withDefaults(defineProps<SidebarDrawerProps>(), {
   mini: false
 });
 
-const attrs = useAttrs();
+const emit = defineEmits(['update:modelValue']);
+
+const drawerModel = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(value) {
+    emit('update:modelValue', value);
+  }
+});
 
 const { t } = useI18n();
 const router = useRouter();
@@ -69,16 +78,6 @@ const menuItems = [
   { icon: 'note_add', text: "Add", routeName: 'newDocument' },
   { icon: 'find_in_page', text: "Advanced search", routeName: 'advancedSearch', alternateRouteNames: ['advancedSearchByTag', 'advancedSearchByFixedCreationDate', 'advancedSearchByFixedLastUpdate', 'advancedSearchByFixedUpdatedOn'] }
 ];
-
-function onDrawerClick(evt: Event) {
-  if (mini.value) {
-    mini.value = false
-    // notice we have registered an event with capture flag;
-    // we need to stop further propagation as this click is
-    // intended for switching drawer to "normal" mode only
-    evt.stopPropagation()
-  }
-}
 
 function logout() {
   api.auth
