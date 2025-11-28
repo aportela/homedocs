@@ -13,7 +13,7 @@
         <q-btn type="button" no-caps no-wrap align="left" outline :label="searchButtonLabel" icon="search"
           class="full-width no-caps theme-default-q-btn" @click.prevent="dialogs.fastSearch.visible = true">
           <DesktopToolTip anchor="bottom middle" self="top middle">{{ t("Click to open fast search")
-            }}</DesktopToolTip>
+          }}</DesktopToolTip>
         </q-btn>
         <!--
         <FastSearchSelector dense class="full-width"></FastSearchSelector>
@@ -34,11 +34,13 @@
     <ReAuthDialog v-if="dialogs.reauth.visible" @success="onSuccessReauth" @close="dialogs.reauth.visible = false" />
     <FilePreviewDialog v-if="dialogs.filePreview.visible" :document="dialogs.filePreview.document"
       :current-index="dialogs.filePreview.currentIndex" @close="dialogs.filePreview.visible = false" />
-    <DocumentFilesPreviewDialog v-if="dialogs.documentFilesPreview.visible"
+    <DocumentFilesPreviewDialog
+      v-if="dialogs.documentFilesPreview.visible && dialogs.documentFilesPreview.document.id && dialogs.documentFilesPreview.document.title"
       :document-id="dialogs.documentFilesPreview.document.id"
       :document-title="dialogs.documentFilesPreview.document.title"
       @close="dialogs.documentFilesPreview.visible = false" />
-    <DocumentNotesPreviewDialog v-if="dialogs.documentNotesPreview.visible"
+    <DocumentNotesPreviewDialog
+      v-if="dialogs.documentNotesPreview.visible && dialogs.documentNotesPreview.document.id && dialogs.documentNotesPreview.document.title"
       :document-id="dialogs.documentNotesPreview.document.id"
       :document-title="dialogs.documentNotesPreview.document.title"
       @close="dialogs.documentNotesPreview.visible = false" />
@@ -71,8 +73,8 @@ import { default as DocumentFilesPreviewDialog } from "src/components/Dialogs/Do
 import { default as DocumentNotesPreviewDialog } from "src/components/Dialogs/DocumentNotesPreviewDialog.vue";
 import { default as UploadingDialog } from "src/components/Dialogs/UploadingDialog.vue";
 
-import { type Attachment as AttachmentInterface } from "src/types/attachment";
 import { type UploadTransfer as UploadTransferInterface } from "src/types/upload-transfer";
+import { type Document as DocumentInterface, DocumentClass } from "src/types/document";
 
 const $q = useQuasar();
 
@@ -84,25 +86,21 @@ interface DialogsInterface {
   },
   filePreview: {
     visible: boolean;
-    document: {
-      id: string | null | undefined;
-      title: string | null | undefined;
-      attachments: AttachmentInterface[];
-    },
-    currentIndex: number | null | undefined;
+    document: DocumentInterface;
+    currentIndex: number;
   },
   documentFilesPreview: {
     visible: boolean;
     document: {
-      id: string | null | undefined;
-      title: string | null | undefined;
+      id: string | null;
+      title: string | null;
     }
   },
   documentNotesPreview: {
     visible: boolean;
     document: {
-      id: string | null | undefined;
-      title: string | null | undefined;
+      id: string | null;
+      title: string | null;
     }
   },
   fastSearch: {
@@ -120,11 +118,7 @@ const dialogs = reactive<DialogsInterface>({
   },
   filePreview: {
     visible: false,
-    document: {
-      id: null,
-      title: null,
-      attachments: [],
-    },
+    document: new DocumentClass(),
     currentIndex: 0
   },
   documentFilesPreview: {
@@ -210,22 +204,22 @@ onMounted(() => {
   });
 
   bus.on("showDocumentFilePreviewDialog", (msg: BusMsg) => {
-    dialogs.filePreview.document.id = msg?.document?.id;
-    dialogs.filePreview.document.title = msg?.document?.title;
+    dialogs.filePreview.document.id = msg?.document?.id || null;
+    dialogs.filePreview.document.title = msg?.document?.title || "";
     dialogs.filePreview.document.attachments = msg?.document?.attachments || [];
-    dialogs.filePreview.currentIndex = msg?.currentIndex;
+    dialogs.filePreview.currentIndex = msg?.currentIndex || 0;
     dialogs.filePreview.visible = true;
   });
 
   bus.on("showDocumentFilesPreviewDialog", (msg: BusMsg) => {
-    dialogs.documentFilesPreview.document.id = msg?.document?.id;
-    dialogs.documentFilesPreview.document.title = msg?.document?.title;
+    dialogs.documentFilesPreview.document.id = msg?.document?.id || null;
+    dialogs.documentFilesPreview.document.title = msg?.document?.title || null;
     dialogs.documentFilesPreview.visible = true;
   });
 
   bus.on("showDocumentNotesPreviewDialog", (msg: BusMsg) => {
-    dialogs.documentNotesPreview.document.id = msg?.document?.id;
-    dialogs.documentNotesPreview.document.title = msg?.document?.title;
+    dialogs.documentNotesPreview.document.id = msg?.document?.id || null;
+    dialogs.documentNotesPreview.document.title = msg?.document?.title || null;
     dialogs.documentNotesPreview.visible = true;
   });
 
