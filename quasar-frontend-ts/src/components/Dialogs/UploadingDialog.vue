@@ -66,7 +66,7 @@ import { ref, watch, computed } from "vue";
 import { format } from "quasar";
 import { useI18n } from "vue-i18n";
 
-import { fullDateTimeHuman } from "/src/composables/dateUtils"
+import { fullDateTimeHuman } from "src/composables/dateUtils";
 import { alwaysOpenUploadDialog as localStorageAlwaysOpenUploadDialog, dateTimeFormat as localStorageDateTimeFormat } from "src/composables/localStorage"
 import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
 
