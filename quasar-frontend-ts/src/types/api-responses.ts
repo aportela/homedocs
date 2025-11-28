@@ -2,10 +2,9 @@ import { type AxiosResponse } from "axios";
 import { type HistoryOperationType } from "./history-operation";
 import { type SearchDocumentItemMatchedFragment as SearchDocumentItemMatchedFragmentInterface } from "./search-document-item";
 
-interface DefaultAxiosResponse {
-  data: AxiosResponse<any, any, unknown>;
-};
-
+interface DefaultAxiosResponse<T = unknown> {
+  data: AxiosResponse<T>;
+}
 interface LoginResponse extends Omit<DefaultAxiosResponse, 'data'> {
   data: undefined;
 };
