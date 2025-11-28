@@ -13,7 +13,7 @@
         <q-btn type="button" no-caps no-wrap align="left" outline :label="searchButtonLabel" icon="search"
           class="full-width no-caps theme-default-q-btn" @click.prevent="dialogs.fastSearch.visible = true">
           <DesktopToolTip anchor="bottom middle" self="top middle">{{ t("Click to open fast search")
-            }}</DesktopToolTip>
+          }}</DesktopToolTip>
         </q-btn>
         <!--
         <FastSearchSelector dense class="full-width"></FastSearchSelector>
@@ -25,8 +25,8 @@
         </q-btn-group>
       </q-toolbar>
     </q-header>
-    <SidebarDrawer v-model="visibleSidebar" :mini="miniSidebarCurrentMode"></SidebarDrawer>
-    <SearchDialog v-model="dialogs.fastSearch.visible"></SearchDialog>
+    <SidebarDrawer v-model="visibleSidebar" :mini="miniSidebarCurrentMode" />
+    <SearchDialog v-model="dialogs.fastSearch.visible" />
     <q-page-container>
       <router-view class="q-pa-sm" />
     </q-page-container>
