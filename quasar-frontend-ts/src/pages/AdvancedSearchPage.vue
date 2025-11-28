@@ -198,7 +198,6 @@ import { SearchDocumentItemClass } from "src/types/search-document-item";
 import { type OrderType } from "src/types/order-type";
 import { type Sort as SortInterface, SortClass } from "src/types/sort";
 
-
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
 import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
@@ -222,11 +221,11 @@ const columns = [
 
 // options for selecting order via dropdown button on small screens
 // (on normal screens, order is toggled clicking in column header)
-const sortFields: SortInterface[] = columns.map(column => ({
-  field: column.field,
-  label: column.title,
-  order: "ASC",
-}));
+const sortFields: SortInterface[] = [];
+columns.forEach(column => {
+  sortFields.push(new SortClass(column.field, column.title, "ASC"));
+  sortFields.push(new SortClass(column.field, column.title, "DESC"));
+});
 
 const searchLaunched = ref<boolean>(false);
 
