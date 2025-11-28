@@ -3,7 +3,7 @@ import { type HistoryOperationType } from "./history-operation";
 import { type SearchDocumentItemMatchedFragment as SearchDocumentItemMatchedFragmentInterface } from "./search-document-item";
 
 interface DefaultAxiosResponse {
-  data: AxiosResponse<any, any, {}>;
+  data: AxiosResponse<any, any, unknown>;
 };
 
 interface LoginResponse extends Omit<DefaultAxiosResponse, 'data'> {
