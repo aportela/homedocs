@@ -5,12 +5,12 @@
     </template>
     <template v-slot:header-right>
       <q-chip size="md" square class="gt-sm theme-default-q-chip shadow-1"
-        v-if="!state.ajaxRunning && !state.ajaxErrors" v-show="totalResults > 0">
-        <q-avatar class="theme-default-q-avatar">{{ totalResults }}</q-avatar>
+        v-if="!state.ajaxRunning && !state.ajaxErrors" v-show="searchResults.length > 0">
+        <q-avatar class="theme-default-q-avatar">{{ searchResults.length }}</q-avatar>
         {{ t("Results count",
           {
             count:
-              totalResults
+              searchResults.length
           }) }}
       </q-chip>
     </template>
@@ -180,7 +180,6 @@ const pager = reactive<PagerInterface>({
   totalPages: 0,
 });
 
-const totalResults = ref<number>(0);
 
 const resultsPageOptions = [1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 64, 128];
 
@@ -200,7 +199,6 @@ const searchTextField = ref<QInput | null>(null);
 
 const onSearch = (val: string) => {
   showNoSearchResults.value = false;
-  totalResults.value = 0;
   if (val && val.trim().length > 0) {
     currentSearchResultSelectedIndex.value = -1;
     Object.assign(state, defaultAjaxState);
@@ -219,7 +217,6 @@ const onSearch = (val: string) => {
     api.document.search(pager, params, sort, true)
       .then((successResponse: SearchDocumentResponseInterface) => {
         searchResults.length = 0;
-        totalResults.value = successResponse.data.results.pagination.totalResults;
         searchResults.push(...successResponse.data.results.documents.map((document: SearchDocumentResponseItemInterface) =>
           new SearchDocumentItemClass(
             t,
@@ -235,7 +232,7 @@ const onSearch = (val: string) => {
             val.trim(),
           )
         ));
-        showNoSearchResults.value = successResponse.data.results.documents.length <= 0; // REQUIRED ?
+        showNoSearchResults.value = searchResults.length <= 0;
       })
       .catch((errorResponse) => {
         state.ajaxErrors = true;
@@ -309,7 +306,6 @@ const onKeyDown = (evt: KeyboardEvent) => {
 };
 
 const onShow = () => {
-  totalResults.value = 0;
   pager.resultsPage = localStorageSearchDialogResultsPage.get();
   // this is required here because this dialog v-model is controller from MainLayout.vue
   // DOES NOT WORK with onMounted/onBeforeUnmount. WE ONLY WANT CAPTURE KEY EVENTS WHEN DIALOG IS VISIBLE
