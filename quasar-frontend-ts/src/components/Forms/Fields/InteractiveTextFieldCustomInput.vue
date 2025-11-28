@@ -48,7 +48,7 @@ interface InteractiveTextFieldCustomInput {
   modelValue: string;
   label?: string;
   maxLines?: number;
-  rules?: Array<(val: any) => boolean | string>;
+  rules?: Array<(val: string) => boolean | string>;
   autofocus?: boolean;
   startModeEditable?: boolean;
   error?: boolean;

@@ -8,7 +8,7 @@
       <q-icon :name="visibilityIcon" class="cursor-pointer" @click="visiblePassword = !visiblePassword"
         :aria-label="t(tooltipLabel)" />
       <DesktopToolTip anchor="bottom right" self="top end" :aria-label="t(tooltipLabel)">{{ t(tooltipLabel)
-      }}</DesktopToolTip>
+        }}</DesktopToolTip>
     </template>
   </q-input>
 </template>
@@ -32,7 +32,7 @@ interface PasswordFieldCustomInputProps {
   label?: string;
   dense?: boolean;
   outlined?: boolean;
-  rules?: Array<(val: any) => boolean | string>;
+  rules?: Array<(val: string) => boolean | string>;
   autofocus?: boolean;
   error?: boolean;
   errorMessage?: string;
