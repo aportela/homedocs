@@ -1,8 +1,10 @@
 import { date } from "quasar";
 
+type SelectorOptionTypeValue = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+
 interface SelectorOption {
   labelKey: string;
-  value: number;
+  value: SelectorOptionTypeValue;
 };
 
 const selectorAvailableOptions = <SelectorOption[]>[
@@ -19,7 +21,7 @@ const selectorAvailableOptions = <SelectorOption[]>[
   { labelKey: "Between dates", value: 10 },
 ];
 
-const defaultOptionValue: number = selectorAvailableOptions[0]!.value;
+const defaultSelectorOptionValue: number = selectorAvailableOptions[0]!.value;
 
 /*
 interface DateFilterOptionType extends SelectorOption {
@@ -31,7 +33,7 @@ interface DateFilterOptionType extends SelectorOption {
 const dateMask = "YYYY/MM/DD";
 
 interface DateFilter {
-  currentType: number;
+  currentType: SelectorOptionTypeValue;
   //filterType: DateFilterOptionType;
   formattedDate: {
     fixed: string | null;
@@ -58,7 +60,7 @@ interface DateFilter {
 };
 
 class DateFilterClass implements DateFilter {
-  currentType: number;
+  currentType: SelectorOptionTypeValue;
   //filterType: DateFilterOptionType;
   formattedDate: {
     fixed: string | null;
@@ -84,7 +86,7 @@ class DateFilterClass implements DateFilter {
   };
 
   constructor() {
-    this.currentType = defaultOptionValue;
+    this.currentType = defaultSelectorOptionValue;
     /*
     this.filterType = {
       label: "",
@@ -223,6 +225,28 @@ class DateFilterClass implements DateFilter {
       }
     }
   };
+
+  hasFrom() {
+    return (this.state.hasFrom);
+  };
+
+  hasTo() {
+    return (this.state.hasTo);
+  };
+
+  hasFixed() {
+    return (this.state.hasFixed);
+  };
+
+  setType(type: SelectorOptionTypeValue) {
+    this.currentType = type;
+    this.state.hasFrom = [3, 4, 5, 6, 8, 10].includes(type);
+    this.state.hasTo = [3, 4, 5, 6, 9, 10].includes(type);
+    this.state.hasFixed = [1, 2, 7].includes(type);
+    this.state.denyChanges = [1, 2, 3, 4, 5, 6].includes(type);
+    this.onRecalcDates();
+    this.onRecalcTimestamps();
+  };
 };
 
-export { type SelectorOption as DateFilterSelectorOption, selectorAvailableOptions as availableSelectOptions, defaultOptionValue as defaultDateFilterSelectedType, dateMask, type DateFilter, DateFilterClass };
+export { type SelectorOptionTypeValue, type SelectorOption, selectorAvailableOptions, defaultSelectorOptionValue, dateMask, type DateFilter, DateFilterClass };
