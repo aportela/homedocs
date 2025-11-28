@@ -1,5 +1,5 @@
 import { type Date as DateInterface, DateClass } from "./date";
-import { dateTimeFormat as localStorageDateTimeFormat } from "src/composables/useLocalStorage";
+import { dateTimeFormat as localStorageDateTimeFormat } from "src/composables/localStorage";
 import { fullDateTimeHuman, } from "src/composables/useFormatDates";
 import { type Ti18NFunction } from "./i18n";
 

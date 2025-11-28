@@ -1,5 +1,5 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
-import { locale as localStorageLocale } from 'src/composables/useLocalStorage';
+import { locale as localStorageLocale } from 'src/composables/localStorage';
 import { autodetectLocale, getMatchedLocale } from 'src/composables/i18n';
 
 interface State {

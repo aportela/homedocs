@@ -1,6 +1,6 @@
 import { Lang } from "quasar";
 import { default as messages } from "src/i18n";
-import { locale as localStorageLocale } from "./useLocalStorage";
+import { locale as localStorageLocale } from "./localStorage";
 import { DEFAULT_LOCALE } from 'src/constants';
 
 const availableSystemLocales: string[] = Object.keys(messages);

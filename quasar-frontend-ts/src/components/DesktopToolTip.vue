@@ -8,7 +8,7 @@
 import { computed } from "vue";
 import { useQuasar } from "quasar";
 
-import { showToolTips as localStorageShowToolTips } from "src/composables/useLocalStorage";
+import { showToolTips as localStorageShowToolTips } from "src/composables/localStorage";
 
 const $q = useQuasar()
 

@@ -1,4 +1,4 @@
-import { dateFormat as localStorageDateFormat } from "src/composables/useLocalStorage";
+import { dateFormat as localStorageDateFormat } from "src/composables/localStorage";
 import { dateHuman, timeAgo } from "src/composables/useFormatDates";
 import { type Ti18NFunction } from "./i18n";
 

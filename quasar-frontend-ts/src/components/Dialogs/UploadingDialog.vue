@@ -55,8 +55,8 @@
     <template v-slot:actions-prepend>
       <q-toggle v-model="visibilityCheck" @update:modelValue="saveVisibilityCheck" checked-icon="check" color="green"
         :label="t(visibilityCheckLabel)" unchecked-icon="clear" class="q-mr-md" />
-      <q-btn color="primary" size="md" no-caps @click.stop="onClearProcessedTransfers"
-        :disable="!hasProcessedTransfers" icon="close" :label="t('Clear processed transfers')" />
+      <q-btn color="primary" size="md" no-caps @click.stop="onClearProcessedTransfers" :disable="!hasProcessedTransfers"
+        icon="close" :label="t('Clear processed transfers')" />
     </template>
   </BaseDialog>
 </template>
@@ -67,7 +67,7 @@ import { format } from "quasar";
 import { useI18n } from "vue-i18n";
 
 import { fullDateTimeHuman } from "src/composables/useFormatDates"
-import { alwaysOpenUploadDialog as localStorageAlwaysOpenUploadDialog, dateTimeFormat as localStorageDateTimeFormat } from "src/composables/useLocalStorage"
+import { alwaysOpenUploadDialog as localStorageAlwaysOpenUploadDialog, dateTimeFormat as localStorageDateTimeFormat } from "src/composables/localStorage"
 import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
 
 import { type UploadTransfer as UploadTransferInterface } from "src/types/upload-transfer";

@@ -8,10 +8,10 @@
       <slot name="slogan">
         <h4 class="q-mt-sm q-mb-md text-h4 text-weight-bolder">{{
           t(!!savedEmail ? "Glad to see you again!" : "Welcome aboard!")
-          }}</h4>
+        }}</h4>
         <div class="text-color-secondary">{{
           t(!!savedEmail ? "Let's get back to organizing." : "Let's start organizing.")
-          }}
+        }}
         </div>
       </slot>
     </q-card-section>
@@ -71,7 +71,7 @@ import { QInput } from "quasar";
 import { api } from "src/composables/api";
 import { useFormUtils } from "src/composables/useFormUtils";
 import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
-import { email as localStorageEmail } from "src/composables/useLocalStorage";
+import { email as localStorageEmail } from "src/composables/localStorage";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 import { type AuthValidator as AuthValidatorInterface, defaultAuthValidator } from "src/types/auth-validator";
 import { type AuthFields as AuthFieldsInterface } from "src/types/auth-fields";
