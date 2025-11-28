@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { type SearchFilter as SearchFilterInterface, SearchFilterClass, SearchOnTextEntitiesFilterClass, SearchDatesFilterClass } from "src/types/search-filter";
-import { type Sort as SortInterface, SortClass } from "src/types/sort";
+import { type Sort as SortInterface, type SortClass as SortClassInterface, SortClass } from "src/types/sort";
 import { type Pager as PagerInterface, PagerClass } from "src/types/pager";
 
 const defaultPager = new PagerClass(1, 32, 0, 0);
@@ -12,7 +12,7 @@ const defaultSort = new SortClass("lastUpdateTimestamp", "Last update", "DESC")
 interface State {
   pager: PagerInterface;
   filter: SearchFilterInterface;
-  sort: SortInterface;
+  sort: SortClassInterface;
 };
 
 export const useAdvancedSearchData = defineStore("advancedSearchData", {
