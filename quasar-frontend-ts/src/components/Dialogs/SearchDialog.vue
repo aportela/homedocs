@@ -5,12 +5,12 @@
     </template>
     <template v-slot:header-right>
       <q-chip size="md" square class="gt-sm theme-default-q-chip shadow-1"
-        v-if="!state.ajaxRunning && !state.ajaxErrors" v-show="searchResults.length > 0">
-        <q-avatar class="theme-default-q-avatar">{{ searchResults.length }}</q-avatar>
+        v-if="!state.ajaxRunning && !state.ajaxErrors" v-show="pager.totalResults > 0">
+        <q-avatar class="theme-default-q-avatar">{{ pager.totalResults }}</q-avatar>
         {{ t("Results count",
           {
             count:
-              searchResults.length
+              pager.totalResults
           }) }}
       </q-chip>
     </template>
@@ -198,6 +198,8 @@ const showNoSearchResults = ref<boolean>(false);
 const searchTextField = ref<QInput | null>(null);
 
 const onSearch = (val: string) => {
+  pager.totalResults = 0;
+  pager.totalPages = 0;
   showNoSearchResults.value = false;
   if (val && val.trim().length > 0) {
     currentSearchResultSelectedIndex.value = -1;
@@ -216,6 +218,8 @@ const onSearch = (val: string) => {
     };
     api.document.search(pager, params, sort, true)
       .then((successResponse: SearchDocumentResponseInterface) => {
+        pager.totalResults = successResponse.data.results.pagination.totalResults;
+        pager.totalPages = successResponse.data.results.pagination.totalPages;
         searchResults.length = 0;
         searchResults.push(...successResponse.data.results.documents.map((document: SearchDocumentResponseItemInterface) =>
           new SearchDocumentItemClass(
@@ -307,6 +311,8 @@ const onKeyDown = (evt: KeyboardEvent) => {
 
 const onShow = () => {
   pager.resultsPage = localStorageSearchDialogResultsPage.get();
+  pager.totalResults = 0;
+  pager.totalPages = 0;
   // this is required here because this dialog v-model is controller from MainLayout.vue
   // DOES NOT WORK with onMounted/onBeforeUnmount. WE ONLY WANT CAPTURE KEY EVENTS WHEN DIALOG IS VISIBLE
   window.addEventListener('keydown', onKeyDown);
