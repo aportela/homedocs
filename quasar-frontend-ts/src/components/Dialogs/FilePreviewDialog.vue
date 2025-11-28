@@ -38,13 +38,10 @@
             {{ t("Your browser does not support the audio element") }}
           </audio>
         </div>
-        <!-- TODO-->
-        <!--
-        <div v-else-if="isPDF(currentAttachment.name)" class="q-pdf-min-height">
-          <q-pdfviewer :src="getAttachmentInlineURL(currentAttachment.id, true)" type="html5"
-            inner-content-class="q-pdfviewer-min-height" />
+        <div v-else-if="isPDF(currentAttachment.name)" class="pdf-container q-mx-auto q-mb-md">
+          <PDFWrapper :path="getAttachmentInlineURL(currentAttachment.id, true)"
+            inner-content-class="pdf-wrapper-inner-class" />
         </div>
-        -->
         <div v-else>
           <p class="text-center q-my-md">
             <q-icon name="hide_source" size="128px"></q-icon>
@@ -86,6 +83,7 @@ import { type CustomBanner as CustomBannerInterface, defaultCustomBanner } from 
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 import { type Attachment as AttachmentInterface } from "src/types/attachment";
+import { default as PDFWrapper } from "src/components/PDFWrapper.vue";
 import { DateTimeClass } from "src/types/date-time";
 
 const { t } = useI18n();
@@ -160,11 +158,12 @@ const onDownload = (attachmentId: string, fileName: string) => {
   max-height: 40vh;
 }
 
-.q-pdf-min-height {
+.pdf-container {
+  width: 98%;
   min-height: 70vh;
 }
 
-.q-pdfviewer-min-height {
+.pdf-wrapper-inner-class {
   height: 70vh;
 }
 </style>
