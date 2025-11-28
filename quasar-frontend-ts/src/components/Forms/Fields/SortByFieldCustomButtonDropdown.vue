@@ -1,8 +1,8 @@
 <template>
   <q-btn-dropdown v-bind="attrs" :label="currentLabel" :dense="dense">
     <q-list>
-      <q-item :dense="dense" v-close-popup v-for="(option, index) in completeOptions" :key="index"
-        @click="onClick(option)" :clickable="!(option.field == currentSort.field && option.order == currentSort.order)"
+      <q-item :dense="dense" v-close-popup v-for="(option, index) in options" :key="index" @click="onClick(option)"
+        :clickable="!(option.field == currentSort.field && option.order == currentSort.order)"
         :disable="option.field == currentSort.field && option.order == currentSort.order">
         <q-item-section avatar>
           <q-icon :name="option.order == 'ASC' ? 'keyboard_double_arrow_up' : 'keyboard_double_arrow_down'" />
@@ -20,9 +20,9 @@
 
 <script setup lang="ts">
 
-import { computed, reactive, useAttrs } from "vue";
+import { computed, useAttrs } from "vue";
 import { useI18n } from "vue-i18n";
-import { type OrderType } from "src/types/order-type";
+import { type Sort as SortInterface } from "src/types/sort";
 
 const attrs = useAttrs();
 
@@ -30,41 +30,15 @@ const { t } = useI18n();
 
 const emit = defineEmits(['change'])
 
-interface Option {
-  field: string;
-  label: string;
-  order?: OrderType | undefined;
-}
-
-class OptionClass implements Option {
-  field: string;
-  label: string;
-  order?: OrderType | undefined;
-
-  constructor(field: string, label: string, order?: OrderType) {
-    this.field = field;
-    this.label = label;
-    if (order) {
-      this.order = order;
-    }
-  }
-}
-
+// TODO: v-model ?
 interface SortByFieldCustomButtonDropdownProps {
-  options: Option[];
-  current: Option;
+  options: SortInterface[];
+  current: SortInterface;
   dense?: boolean;
 };
 
 const props = withDefaults(defineProps<SortByFieldCustomButtonDropdownProps>(), {
   dense: false,
-});
-
-const completeOptions = reactive<Array<Option>>([]);
-
-props.options?.forEach((option) => {
-  completeOptions.push(new OptionClass(option.field, option.label, "ASC"));
-  completeOptions.push(new OptionClass(option.field, option.label, "DESC"));
 });
 
 const currentSort = computed({
@@ -85,7 +59,7 @@ const currentLabel = computed(() =>
   )
 );
 
-const onClick = (option: Option) => {
+const onClick = (option: SortInterface) => {
   emit("change", option);
 };
 
