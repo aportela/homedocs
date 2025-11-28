@@ -64,6 +64,8 @@ const dateTimeFormat = createStorageEntry<string>(
   "YYYY/MM/DD HH:mm:ss"
 );
 
+const browserAllowPDFPreview = createStorageEntry<bool | null>("browserAllowPDFPreview", null);
+
 export {
   authJWT,
   email,
@@ -74,4 +76,5 @@ export {
   searchDialogResultsPage,
   dateFormat,
   dateTimeFormat,
+  browserAllowPDFPreview,
 };

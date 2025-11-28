@@ -3,7 +3,6 @@
 </template>
 
 <script setup lang="ts">
-
 interface PDFWrapperProps {
   path: string
   innerContentClass?: string;

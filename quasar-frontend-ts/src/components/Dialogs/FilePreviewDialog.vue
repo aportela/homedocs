@@ -39,8 +39,10 @@
           </audio>
         </div>
         <div v-else-if="isPDF(currentAttachment.name)" class="pdf-container q-mx-auto q-mb-md">
-          <PDFWrapper :path="getAttachmentInlineURL(currentAttachment.id, true)"
-            inner-content-class="pdf-wrapper-inner-class" />
+          <PDFWrapper :path="getAttachmentInlineURL(currentAttachment.id, true)" v-if="browserSupportPDFPreview"
+            inner-content-class="pdf-wrapper-inner-class">
+          </PDFWrapper>
+          <CustomErrorBanner v-else :text="t('Missing browser PDF preview support')" />
         </div>
         <div v-else>
           <p class="text-center q-my-md">
@@ -77,11 +79,13 @@ import { useI18n } from "vue-i18n";
 import { bgDownload } from "src/composables/axios";
 import { allowPreview, isImage, isAudio, isPDF } from "src/composables/fileUtils";
 import { getURL as getAttachmentURL, getInlineURL as getAttachmentInlineURL } from "src/composables/attachment";
+import { browserAllowPDFPreview as localStorageBrowserAllowPDFPreview } from "src/composables/localStorage";
 import { type Document } from "src/types/document";
 import { type CustomBanner as CustomBannerInterface, defaultCustomBanner } from "src/types/custom-banner";
 
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
+import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
 import { type Attachment as AttachmentInterface } from "src/types/attachment";
 import { default as PDFWrapper } from "src/components/PDFWrapper.vue";
 import { DateTimeClass } from "src/types/date-time";
@@ -123,6 +127,8 @@ const onClose = () => {
 };
 
 const downloadBanner: CustomBannerInterface = reactive({ ...defaultCustomBanner });
+
+const browserSupportPDFPreview = localStorageBrowserAllowPDFPreview.get() === true;
 
 const onPaginationChange = () => {
   Object.assign(downloadBanner, defaultCustomBanner);
