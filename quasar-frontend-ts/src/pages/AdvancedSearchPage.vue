@@ -106,7 +106,7 @@
                 <SortByFieldCustomButtonDropdown square dense no-caps :options="sortFields" :current="store.sort"
                   @change="(opt) => onToggleSort(opt.field, opt.order)" flat class="action-primary fit full-height" />
               </th>
-              <th v-for="(column, index) in columns" :key="index" :style2="{ width: column.width }"
+              <th v-for="(column, index) in columns" :key="index"
                 :class="['text-left', column.defaultClass, { 'cursor-not-allowed': state.ajaxRunning, 'cursor-pointer': !state.ajaxRunning, 'action-primary': store.sort.field === column.field }]"
                 @click="onToggleSort(column.field)">
                 <q-icon :name="store.sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
