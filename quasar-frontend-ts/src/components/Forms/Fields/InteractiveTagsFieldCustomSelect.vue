@@ -86,7 +86,7 @@ const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 const availableTags = reactive<Array<string>>([]);
 const filteredTags = reactive<Array<string>>([]);
 
-function onFilterTags(inputValue: string, doneFn: (callbackFn: () => void, afterFn?: (ref: QSelect) => void) => void, abortFn: () => void): void {
+function onFilterTags(inputValue: string, doneFn: (callbackFn: () => void, afterFn?: (ref: QSelect) => void) => void): void {
   const filtered = inputValue === ''
     ? availableTags
     : availableTags.filter(tag => tag.toLowerCase().includes(inputValue.toLowerCase()));
