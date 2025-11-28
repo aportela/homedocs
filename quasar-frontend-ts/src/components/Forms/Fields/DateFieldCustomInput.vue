@@ -1,8 +1,8 @@
 <template>
   <div class="row q-col-gutter-xs">
     <div class="col">
-      <q-select class="q-mb-md" dense options-dense outlined :clearable="dateFilter.filterType.value !== 0"
-        v-model="dateFilter.filterType" :options="dateFilterTypeOptions" :label="label" :disable="disable">
+      <q-select class="q-mb-md" dense options-dense outlined :clearable="dateFilter.currentType !== 0"
+        v-model="currentFilterTypeSelectorModel" :options="dateFilterTypeOptions" :label="label" :disable="disable">
         <template v-slot:prepend>
           <slot name="prepend">
             <q-icon name="calendar_month" />
@@ -10,14 +10,14 @@
         </template>
       </q-select>
     </div>
-    <div class="col" v-if="dateFilter.state.hasFrom">
+    <div class="col" v-if="dateFilter.hasFrom()">
       <q-input dense outlined mask="date" v-model="dateFilter.formattedDate.from" :label="t('From date')"
         :disable="extraDateInputFieldsDisabled" ref="qInputFromDateRef" :error="!dateFilter.formattedDate.from"
         :error-message="t('Field is required')">
         <template v-slot:append>
           <q-icon name="event" class="cursor-pointer">
             <q-popup-proxy cover transition-show="scale" transition-hide="scale" ref="qInputFromDatePopupProfyRef">
-              <q-date v-model="dateFilter.formattedDate.from" minimal @update:model-value="onFromDateSelected">
+              <q-date v-model="dateFilter.formattedDate.from" minimal @update:model-value="hideFromDatePopupProxy">
                 <div class="row items-center justify-end">
                   <q-btn v-close-popup label="Close" color="primary" flat />
                 </div>
@@ -27,14 +27,14 @@
         </template>
       </q-input>
     </div>
-    <div class="col" v-if="dateFilter.state.hasTo">
+    <div class="col" v-if="dateFilter.hasTo()">
       <q-input dense outlined mask="date" v-model="dateFilter.formattedDate.to" :label="t('To date')"
         :disable="extraDateInputFieldsDisabled" ref="qInputToDateRef" :error="!dateFilter.formattedDate.to"
         :error-message="t('Field is required')">
         <template v-slot:append>
           <q-icon name="event" class="cursor-pointer">
             <q-popup-proxy cover transition-show="scale" transition-hide="scale" ref="qInputToDatePopupProfyRef">
-              <q-date v-model="dateFilter.formattedDate.to" minimal @update:model-value="onToDateSelected">
+              <q-date v-model="dateFilter.formattedDate.to" minimal @update:model-value="hideToDatePopupProxy">
                 <div class="row items-center justify-end">
                   <q-btn v-close-popup label="Close" color="primary" flat />
                 </div>
@@ -44,14 +44,14 @@
         </template>
       </q-input>
     </div>
-    <div class="col" v-if="dateFilter.state.hasFixed">
+    <div class="col" v-if="dateFilter.hasFixed()">
       <q-input dense outlined mask="date" v-model="dateFilter.formattedDate.fixed" :label="t('Fixed date')"
         :disable="extraDateInputFieldsDisabled" ref="qInputFixedDateRef" :error="!dateFilter.formattedDate.fixed"
         :error-message="t('Field is required')">
         <template v-slot:append>
           <q-icon name="event" class="cursor-pointer">
             <q-popup-proxy cover transition-show="scale" transition-hide="scale" ref="qInputFixedDatePopupProfyRef">
-              <q-date v-model="dateFilter.formattedDate.fixed" minimal @update:model-value="onFixedDateSelected">
+              <q-date v-model="dateFilter.formattedDate.fixed" minimal @update:model-value="hideFixedDatePopupProxy">
                 <div class="row items-center justify-end">
                   <q-btn v-close-popup label="Close" color="primary" flat />
                 </div>
@@ -65,13 +65,11 @@
 </template>
 
 <script setup lang="ts">
-
-import { ref, watch, computed, onMounted, nextTick } from "vue";
+import { ref, computed, onMounted, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import { QInput, QPopupProxy } from 'quasar';
-import { DateFilterClass } from "src/types/date-filters";
-import { availableSelectOptions, type DateFilterSelectorOption as DateFilterSelectorOptionInterface } from "src/types/date-filters";
-//import { useDateFilter } from "src/composables/useDateFilter"
+import { type DateFilterClass } from "src/types/date-filters";
+import { selectorAvailableOptions, type SelectorOption as SelectorOptionInterface } from "src/types/date-filters";
 
 const { t } = useI18n();
 
@@ -96,41 +94,6 @@ const props = withDefaults(defineProps<DateFieldCustomInput>(), {
   autoOpenPopUps: true
 });
 
-/*
-const props = defineProps({
-  modelValue: {
-    type: Object,
-    required: true,
-  },
-  label: {
-    type: String,
-    default: "",
-  },
-  dense: {
-    type: Boolean,
-    default: false,
-  },
-  outlined: {
-    type: Boolean,
-    default: false,
-  },
-  autofocus: {
-    type: Boolean,
-    default: false,
-  },
-  disable: {
-    type: Boolean,
-    required: false,
-    default: false,
-  },
-  autoOpenPopUps: {
-    type: Boolean,
-    required: false,
-    default: true
-  }
-});
-*/
-
 const qInputFromDateRef = ref<QInput | null>(null);
 const qInputToDateRef = ref<QInput | null>(null);
 const qInputFixedDateRef = ref<QInput | null>(null);
@@ -139,19 +102,40 @@ const qInputFromDatePopupProfyRef = ref<QPopupProxy | null>(null);
 const qInputToDatePopupProfyRef = ref<QPopupProxy | null>(null);
 const qInputFixedDatePopupProfyRef = ref<QPopupProxy | null>(null);
 
-const dateFilter = ref(props.modelValue || {});
-
-//const { dateFilterTypeOptions } = useDateFilter();
+const dateFilter = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(value) {
+    console.log("set", value);
+    emit('update:modelValue', value);
+  }
+});
 
 const dateFilterTypeOptions = computed(() =>
-  availableSelectOptions.map((option: DateFilterSelectorOptionInterface) => ({
+  selectorAvailableOptions.map((option: SelectorOptionInterface) => ({
     ...option,
     label: t(option.labelKey),
   })),
 );
 
+const currentFilterTypeSelectorModel = computed({
+  get() {
+    if (props.modelValue.currentType === 0) {
+      return (dateFilterTypeOptions.value[0]);
+    } else {
+      return (dateFilterTypeOptions.value.find((option) => option.value === props.modelValue.currentType));
+    }
+  },
+  set(option: SelectorOptionInterface) {
+    dateFilter.value.setType(option.value);
+    emit('update:modelValue', dateFilter.value);
+  }
+});
+
 const extraDateInputFieldsDisabled = computed(() => props.disable || dateFilter.value.state.denyChanges);
 
+/*
 watch(() => props.modelValue, (newValue: DateFilterClass) => dateFilter.value = newValue);
 
 watch(dateFilter.value, (val: DateFilterClass) => {
@@ -189,15 +173,16 @@ watch(dateFilter.value, (val: DateFilterClass) => {
   }
 });
 
-const onFromDateSelected = () => {
+*/
+const hideFromDatePopupProxy = () => {
   qInputFromDatePopupProfyRef.value?.hide();
 }
 
-const onToDateSelected = () => {
+const hideToDatePopupProxy = () => {
   qInputToDatePopupProfyRef.value?.hide();
 }
 
-const onFixedDateSelected = () => {
+const hideFixedDatePopupProxy = () => {
   qInputFixedDatePopupProfyRef.value?.hide();
 }
 
@@ -206,7 +191,6 @@ const focus = () => {
   if (!dateFilter.value.state.denyChanges) {
     nextTick()
       .then(() => {
-        //switch (dateFilter.value.filterType.value) {
         switch (dateFilter.value.currentType) {
           case 7: // fixed date
             qInputFixedDateRef.value?.focus();
