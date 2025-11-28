@@ -127,8 +127,8 @@ const currentFilterTypeSelectorModel = computed({
       return (dateFilterTypeOptions.value.find((option) => option.value === props.modelValue.currentType));
     }
   },
-  set(option: SelectorOptionInterface) {
-    dateFilter.value.setType(option.value);
+  set(option?: SelectorOptionInterface) {
+    dateFilter.value.setType(option?.value || 0);
     emit('update:modelValue', dateFilter.value);
   }
 });
