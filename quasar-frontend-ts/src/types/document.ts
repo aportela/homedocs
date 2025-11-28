@@ -71,8 +71,8 @@ class DocumentClass implements Document {
     this.id = null;
     this.createdAt = null;
     this.updatedAt = null;
-    this.title = null;
-    this.description = null;
+    this.title = "";
+    this.description = "";
     this.tags.length = 0;
     this.attachments.length = 0;
     this.notes.length = 0;
@@ -99,7 +99,7 @@ class DocumentClass implements Document {
   parseJSONResponse(t: Ti18NFunction, response: GetDocumentResponseInterface) {
     this.id = response.data.document.id;
     this.title = response.data.document.title;
-    this.description = response.data.document.description;
+    this.description = response.data.document.description || "";
     this.createdAt = new DateTimeClass(t, response.data.document.createdAtTimestamp);
     if (response.data.document.updatedAtTimestamp) {
       this.updatedAt = new DateTimeClass(t, response.data.document.updatedAtTimestamp);
