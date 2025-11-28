@@ -69,13 +69,34 @@
 import { ref, watch, computed, onMounted, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import { QInput, QPopupProxy } from 'quasar';
-
+import { DateFilterInstance as DateFilterInstanceInterface } from "src/composables/useDateFilter";
+import { availableSelectOptions, type DateFilterOptionBaseType as DateFilterOptionBaseTypeInterface } from "src/types/date-filters";
 import { useDateFilter } from "src/composables/useDateFilter"
 
 const { t } = useI18n();
 
 const emit = defineEmits(['update:modelValue'])
 
+interface DateFieldCustomInput {
+  modelValue: DateFilterInstanceInterface;
+  label?: string;
+  dense?: boolean;
+  outlined?: boolean;
+  autofocus?: boolean;
+  disable?: boolean;
+  autoOpenPopUps?: boolean;
+};
+
+const props = withDefaults(defineProps<DateFieldCustomInput>(), {
+  label: "",
+  dense: false,
+  outlined: false,
+  autofocus: false,
+  disable: false,
+  autoOpenPopUps: true
+});
+
+/*
 const props = defineProps({
   modelValue: {
     type: Object,
@@ -108,6 +129,7 @@ const props = defineProps({
     default: true
   }
 });
+*/
 
 const qInputFromDateRef = ref<QInput | null>(null);
 const qInputToDateRef = ref<QInput | null>(null);
@@ -119,7 +141,14 @@ const qInputFixedDatePopupProfyRef = ref<QPopupProxy | null>(null);
 
 const dateFilter = ref(props.modelValue || {});
 
-const { dateFilterTypeOptions } = useDateFilter();
+//const { dateFilterTypeOptions } = useDateFilter();
+
+const dateFilterTypeOptions = computed(() =>
+  availableSelectOptions.map((option: DateFilterOptionBaseTypeInterface) => ({
+    ...option,
+    label: t(option.labelKey),
+  })),
+);
 
 const extraDateInputFieldsDisabled = computed(() => props.disable || dateFilter.value.state.denyChanges);
 
