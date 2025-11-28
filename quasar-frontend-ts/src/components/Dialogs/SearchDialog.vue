@@ -113,8 +113,7 @@ import { DateTimeClass } from "src/types/date-time";
 import { type Pager as PagerInterface } from "src/types/pager";
 import { type Sort as SortInterface } from "src/types/sort";
 import { type SearchFilter as SearchFilterInterface } from "src/types/search-filter";
-
-import { useDateFilter } from "src/composables/useDateFilter";
+import { SearchOnTextEntitiesFilterClass } from "src/types/search-filter";
 
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue"
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
@@ -129,7 +128,6 @@ const props = defineProps<SearchDialogProps>();
 
 const router = useRouter();
 const currentRoute = useRoute();
-const dateFilter = useDateFilter();
 
 // if we are on document page, get current document id
 const currentDocumentId = ref(currentRoute.name == "document" ? currentRoute.params?.id || null : null);
@@ -207,19 +205,16 @@ const onSearch = (val: string) => {
     currentSearchResultSelectedIndex.value = -1;
     Object.assign(state, defaultAjaxState);
     state.ajaxRunning = true;
+
     const params: SearchFilterInterface = {
-      text: {
-        title: searchOn.value.value == "title" ? val.trim() : null,
-        description: searchOn.value.value == "description" ? val.trim() : null,
-        notesBody: searchOn.value.value == "notesBody" ? val.trim() : null,
-        attachmentsFilename: searchOn.value.value == "attachmentsFilename" ? val.trim() : null,
-      },
+      text: new SearchOnTextEntitiesFilterClass(
+        searchOn.value.value == "title" ? val.trim() : null,
+        searchOn.value.value == "description" ? val.trim() : null,
+        searchOn.value.value == "notesBody" ? val.trim() : null,
+        searchOn.value.value == "attachmentsFilename" ? val.trim() : null,
+      ),
       tags: [],
-      dates: {
-        createdAt: dateFilter.getDateFilterInstance(),
-        lastUpdateAt: dateFilter.getDateFilterInstance(),
-        updatedAt: dateFilter.getDateFilterInstance(),
-      },
+      dates: null,
     };
     api.document.search(pager, params, sort, true)
       .then((successResponse: SearchDocumentResponseInterface) => {
