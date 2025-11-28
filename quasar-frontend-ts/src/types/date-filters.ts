@@ -21,7 +21,7 @@ const selectorAvailableOptions = <SelectorOption[]>[
   { labelKey: "Between dates", value: 10 },
 ];
 
-const defaultSelectorOptionValue: number = selectorAvailableOptions[0]!.value;
+const defaultSelectorOptionValue: SelectorOptionTypeValue = selectorAvailableOptions[0]!.value;
 
 /*
 interface DateFilterOptionType extends SelectorOption {
