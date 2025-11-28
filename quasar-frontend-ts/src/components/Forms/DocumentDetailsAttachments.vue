@@ -93,7 +93,6 @@ const props = withDefaults(defineProps<DocumentDetailsAttachmentsProps>(), {
   disable: false
 });
 
-const right = ref(null);
 const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
 const isDisabled = computed(() => props.disable || state.ajaxRunning);
