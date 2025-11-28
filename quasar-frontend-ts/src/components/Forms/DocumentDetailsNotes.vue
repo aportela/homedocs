@@ -51,17 +51,16 @@ import { ref, reactive, computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { useFormUtils } from "src/composables/useFormUtils"
-import { useDocument } from "src/composables/useDocument"
+import { escapeRegExp } from "src/composables/common";
 import { type Note as NoteInterface } from "src/types/note";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 import { default as InteractiveTextFieldCustomInput } from "src/components/Forms/Fields/InteractiveTextFieldCustomInput.vue"
-import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
+import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 
 const { t } = useI18n();
 
 const { requiredFieldRule, fieldIsRequiredLabel } = useFormUtils();
-const { escapeRegExp } = useDocument();
 
 const emit = defineEmits(['update:modelValue', 'addNote', 'removeNoteAtIndex']);
 

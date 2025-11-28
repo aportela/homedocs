@@ -71,18 +71,16 @@ import { format } from "quasar";
 import { bgDownload } from "src/composables/axios";
 import { bus } from "src/composables/bus";
 import { allowPreview } from "src/composables/fileUtils"
-import { useDocument } from "src/composables/useDocument"
+import { escapeRegExp } from "src/composables/common";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 import { type Attachment as AttachmentInterface } from "src/types/attachment";
 import { getURL as getAttachmentURL } from "src/composables/attachment";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
-import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
+import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 
 const { t } = useI18n();
-
-const { escapeRegExp } = useDocument();
 
 const emit = defineEmits(['update:modelValue', 'addAttachment', 'previewAttachmentAtIndex', 'removeAttachmentAtIndex']);
 
