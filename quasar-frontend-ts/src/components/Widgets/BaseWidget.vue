@@ -33,7 +33,7 @@ import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 const { t } = useI18n();
 
 interface BaseWidgetProps {
-  title?: string;
+  title: string;
   caption?: string;
   icon: string;
   iconToolTip?: string;
@@ -42,7 +42,6 @@ interface BaseWidgetProps {
   error?: boolean;
 };
 const props = withDefaults(defineProps<BaseWidgetProps>(), {
-  title: '',
   caption: '',
   iconToolTip: '',
   onHeaderIconClick: null,
@@ -50,7 +49,7 @@ const props = withDefaults(defineProps<BaseWidgetProps>(), {
   error: false
 });
 
-const iconClass = computed(() => !!props.onHeaderIconClick ? "cursor-pointer" : "cursor-default");
+const iconClass = computed(() => props.onHeaderIconClick && typeof props.onHeaderIconClick === 'function' ? "cursor-pointer" : "cursor-default");
 
 const onHeaderIconClicked = () => {
   if (props.onHeaderIconClick && typeof props.onHeaderIconClick === 'function') {
