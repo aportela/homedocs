@@ -1,11 +1,11 @@
 import { date } from "quasar";
 
-interface DateFilterOptionBaseType {
+interface SelectorOption {
   labelKey: string;
   value: number;
 };
 
-const availableSelectOptions = <DateFilterOptionBaseType[]>[
+const selectorAvailableOptions = <SelectorOption[]>[
   { labelKey: "Any date", value: 0 },
   { labelKey: "Today", value: 1 },
   { labelKey: "Yesterday", value: 2 },
@@ -19,14 +19,20 @@ const availableSelectOptions = <DateFilterOptionBaseType[]>[
   { labelKey: "Between dates", value: 10 },
 ];
 
-interface DateFilterOptionType extends DateFilterOptionBaseType {
+const defaultOptionValue: number = selectorAvailableOptions[0]!.value;
+
+/*
+interface DateFilterOptionType extends SelectorOption {
   label: string;
 };
+*/
 
+// TODO: use storage ????
 const dateMask = "YYYY/MM/DD";
 
 interface DateFilter {
-  filterType: DateFilterOptionType;
+  currentType: number;
+  //filterType: DateFilterOptionType;
   formattedDate: {
     fixed: string | null;
     from: string | null;
@@ -52,7 +58,8 @@ interface DateFilter {
 };
 
 class DateFilterClass implements DateFilter {
-  filterType: DateFilterOptionType;
+  currentType: number;
+  //filterType: DateFilterOptionType;
   formattedDate: {
     fixed: string | null;
     from: string | null;
@@ -77,11 +84,14 @@ class DateFilterClass implements DateFilter {
   };
 
   constructor() {
+    this.currentType = defaultOptionValue;
+    /*
     this.filterType = {
       label: "",
       labelKey: "",
       value: 0
     };
+    */
     this.formattedDate = {
       fixed: null,
       from: null,
@@ -128,7 +138,8 @@ class DateFilterClass implements DateFilter {
     this.timestamps.from = null;
     this.timestamps.to = null;
     // generate model/formatted (visible) dates
-    switch (this.filterType?.value) {
+    //switch (this.filterType?.value) {
+    switch (this.currentType) {
       // NONE
       case 0:
         this.formattedDate.from = null;
@@ -164,21 +175,13 @@ class DateFilterClass implements DateFilter {
         this.formattedDate.to = this.getFormattedDate();
         break;
       // FIXED DATE
-      case 7:
-        break;
+      //case 7:
       // FROM DATE
-      case 8:
-        //this.formattedDate.from = getFormattedDate();
-        break;
+      //case 8:
       // TO DATE
-      case 9:
-        //this.formattedDate.to = getFormattedDate();
-        break;
+      //case 9:
       // BETWEEN DATES
-      case 10:
-        //this.formattedDate.from = getFormattedDate();
-        //this.formattedDate.to = getFormattedDate();
-        break;
+      //case 10:
     }
   };
 
@@ -222,4 +225,4 @@ class DateFilterClass implements DateFilter {
   };
 };
 
-export { type DateFilterOptionBaseType, type DateFilterOptionType, availableSelectOptions, dateMask, type DateFilter, DateFilterClass };
+export { type SelectorOption as DateFilterSelectorOption, selectorAvailableOptions as availableSelectOptions, defaultOptionValue as defaultDateFilterSelectedType, dateMask, type DateFilter, DateFilterClass };
