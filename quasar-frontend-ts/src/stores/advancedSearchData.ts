@@ -1,25 +1,33 @@
 import { defineStore } from "pinia";
-import { type SearchFilter as SearchFilterInterface, SearchFilterClass, SearchOnTextEntitiesFilterClass, SearchDatesFilterClass } from "src/types/search-filter";
-import { type Sort as SortInterface, type SortClass as SortClassInterface, SortClass } from "src/types/sort";
-import { type Pager as PagerInterface, PagerClass } from "src/types/pager";
+import { type SearchFilterClass as SearchFilterClassInterface, SearchFilterClass, SearchOnTextEntitiesFilterClass, SearchDatesFilterClass } from "src/types/search-filter";
+import { type SortClass as SortClassInterface, SortClass } from "src/types/sort";
+import { type PagerClass as PagerClassInterface, PagerClass } from "src/types/pager";
 
-const defaultPager = new PagerClass(1, 32, 0, 0);
-const defaultSearchOnTextEntitiesFilter = new SearchOnTextEntitiesFilterClass(null, null, null, null);
-const defaultSearchDatesFilter = new SearchDatesFilterClass(null, null, null);
-const defaultFilter = new SearchFilterClass(defaultSearchOnTextEntitiesFilter, [], defaultSearchDatesFilter);
-const defaultSort = new SortClass("lastUpdateTimestamp", "Last update", "DESC")
+const getDefaultPager = (): PagerClass => {
+  return (new PagerClass(1, 32, 0, 0));
+};
+
+const getDefaultFilter = (): SearchFilterClass => {
+  const defaultSearchOnTextEntitiesFilter: SearchOnTextEntitiesFilterClass = new SearchOnTextEntitiesFilterClass(null, null, null, null);
+  const defaultSearchDatesFilter: SearchDatesFilterClass = new SearchDatesFilterClass(null, null, null);
+  return (new SearchFilterClass(defaultSearchOnTextEntitiesFilter, [], defaultSearchDatesFilter));
+};
+
+const getDefaultSort = (): SortClass => {
+  return (new SortClass("lastUpdateTimestamp", "Last update", "DESC"));
+};
 
 interface State {
-  pager: PagerInterface;
-  filter: SearchFilterInterface;
+  pager: PagerClassInterface;
+  filter: SearchFilterClassInterface;
   sort: SortClassInterface;
 };
 
 export const useAdvancedSearchData = defineStore("advancedSearchData", {
   state: (): State => ({
-    pager: defaultPager,
-    filter: defaultFilter,
-    sort: defaultSort,
+    pager: getDefaultPager(),
+    filter: getDefaultFilter(),
+    sort: getDefaultSort(),
   }),
   getters: {
     currentPager: (state) => state.pager,
@@ -28,17 +36,17 @@ export const useAdvancedSearchData = defineStore("advancedSearchData", {
   },
   actions: {
     reset() {
-      this.pager = defaultPager;
-      this.filter = defaultFilter;
-      this.sort = defaultSort;
+      this.pager = getDefaultPager();
+      this.filter = getDefaultFilter();
+      this.sort = getDefaultSort();
     },
-    setPager(pager: PagerInterface) {
+    setPager(pager: PagerClassInterface) {
       this.pager = pager;
     },
-    setFilter(filter: SearchFilterInterface) {
+    setFilter(filter: SearchFilterClassInterface) {
       this.filter = filter;
     },
-    setSort(sort: SortInterface): void {
+    setSort(sort: SortClassInterface): void {
       this.sort = sort;
     },
   },
