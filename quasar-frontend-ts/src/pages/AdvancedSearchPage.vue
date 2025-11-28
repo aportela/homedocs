@@ -45,24 +45,20 @@
               </q-input>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
-              <InteractiveTagsFieldCustomSelect v-model="store.filter.tags"
-                @update-model-value="(value: string[]) => store.filter.tags = value" label="Document tags"
+              <InteractiveTagsFieldCustomSelect v-model="store.filter.tags" label="Document tags"
                 :disabled="state.ajaxRunning" dense :start-mode-editable="true" :deny-change-editable-mode="true"
                 clearable :placeholder="t('Type text condition')">
               </InteractiveTagsFieldCustomSelect>
               <DateFilterFieldCustomInputSelector :label="t('Document creation date')"
                 :disable="state.ajaxRunning || hasCreationDateRouteParamsFilter" v-model="store.filter.dates.createdAt"
-                @update:model-value="(value) => store.filter.dates.createdAt = value"
                 :auto-open-pop-ups="!hasCreationDateRouteParamsFilter">
               </DateFilterFieldCustomInputSelector>
               <DateFilterFieldCustomInputSelector :label="t('Document last update')"
                 :disable="state.ajaxRunning || hasLastUpdateRouteParamsFilter" v-model="store.filter.dates.lastUpdateAt"
-                @update:model-value="(value) => store.filter.dates.lastUpdateAt = value"
                 :auto-open-pop-ups="!hasLastUpdateRouteParamsFilter">
               </DateFilterFieldCustomInputSelector>
               <DateFilterFieldCustomInputSelector :label="t('Document updated on')"
                 :disable="state.ajaxRunning || hasUpdatedOnRouteParamsFilter" v-model="store.filter.dates.updatedAt"
-                @update:model-value="(value) => store.filter.dates.updatedAt = value"
                 :auto-open-pop-ups="!hasUpdatedOnRouteParamsFilter">
               </DateFilterFieldCustomInputSelector>
             </div>
