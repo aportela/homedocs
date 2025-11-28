@@ -49,16 +49,19 @@
                 :disabled="state.ajaxRunning" dense :start-mode-editable="true" :deny-change-editable-mode="true"
                 clearable :placeholder="t('Type text condition')">
               </InteractiveTagsFieldCustomSelect>
-              <DateFieldCustomInput :options="dateFilterTypeOptions" :label="t('Document creation date')"
+              <DateFieldCustomInput :label="t('Document creation date')"
                 :disable="state.ajaxRunning || hasCreationDateRouteParamsFilter" v-model="filters.dates.createdAt"
+                @update:model-value="(value) => filters.dates.createdAt = value"
                 :auto-open-pop-ups="!hasCreationDateRouteParamsFilter">
               </DateFieldCustomInput>
-              <DateFieldCustomInput :options="dateFilterTypeOptions" :label="t('Document last update')"
+              <DateFieldCustomInput :label="t('Document last update')"
                 :disable="state.ajaxRunning || hasLastUpdateRouteParamsFilter" v-model="filters.dates.lastUpdateAt"
+                @update:model-value="(value) => filters.dates.lastUpdateAt = value"
                 :auto-open-pop-ups="!hasLastUpdateRouteParamsFilter">
               </DateFieldCustomInput>
-              <DateFieldCustomInput :options="dateFilterTypeOptions" :label="t('Document updated on')"
+              <DateFieldCustomInput :label="t('Document updated on')"
                 :disable="state.ajaxRunning || hasUpdatedOnRouteParamsFilter" v-model="filters.dates.updatedAt"
+                @update:model-value="(value) => filters.dates.updatedAt = value"
                 :auto-open-pop-ups="!hasUpdatedOnRouteParamsFilter">
               </DateFieldCustomInput>
             </div>
@@ -185,7 +188,6 @@ import { useI18n } from "vue-i18n";
 import { useAdvancedSearchData } from "src/stores/advancedSearchData"
 import { bus, onShowDocumentFiles, onShowDocumentNotes } from "src/composables/bus";
 import { api } from "src/composables/api";
-import { useDateFilter } from "src/composables/useDateFilter"
 
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 import { DateTimeClass } from "src/types/date-time";
@@ -233,9 +235,6 @@ const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 const isFilterWidgetExpanded = ref<boolean>(route.meta.conditionsFilterExpanded === true);
 
 const resultsWidgetRef = ref(null);
-
-const { getDateFilterInstance, dateFilterTypeOptions } = useDateFilter();
-
 
 const useStoreFilter = computed(() => route.name == 'advancedSearch');
 
