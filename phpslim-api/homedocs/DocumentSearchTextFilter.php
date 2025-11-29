@@ -7,8 +7,11 @@ namespace HomeDocs;
 class DocumentSearchTextFilter
 {
     public readonly ?string $title;
+
     public readonly ?string $description;
+
     public readonly ?string $notesBody;
+
     public readonly ?string $attachmentsFilename;
 
     public function __construct(array $routeParams = [])

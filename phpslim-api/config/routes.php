@@ -263,6 +263,7 @@ return function (\Slim\App $app): void {
                     if (! is_array($params)) {
                         throw new \HomeDocs\Exception\InvalidParamsException();
                     }
+                    
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
                             'results' => \HomeDocs\Document::search(

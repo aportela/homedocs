@@ -7,10 +7,15 @@ namespace HomeDocs;
 class DocumentSearchDatesFilter
 {
     public readonly int $createdAtFromTimestamp;
+
     public readonly int $createdAtToTimestamp;
+
     public readonly int $lastUpdateAtFromTimestamp;
+
     public readonly int $lastUpdateAtToTimestamp;
+
     public readonly int $updatedAtFromTimestamp;
+
     public readonly int $updatedAtToTimestamp;
 
     public function __construct(array $routeParams = [])
@@ -23,7 +28,7 @@ class DocumentSearchDatesFilter
         $this->updatedAtToTimestamp = $this->getDateFilterFromParams($routeParams, "updatedAt", "to") ?? 0;
     }
 
-    private function getDateFilterFromParams(array $params = [], string $dateType, $timestampType): int|null
+    private function getDateFilterFromParams(array $params = [], string $dateType = '', string $timestampType = ''): int|null
     {
         if (
             array_key_exists("filter", $params) &&

@@ -7,10 +7,12 @@ namespace HomeDocs;
 class DocumentSearchFilter
 {
     public readonly \HomeDocs\DocumentSearchDatesFilter $datesFilter;
+
     /**
      * @var array<string>
      */
     public readonly array $tags;
+
     public readonly \HomeDocs\DocumentSearchTextFilter $textFilter;
 
     public function __construct(array $routeParams = [])
