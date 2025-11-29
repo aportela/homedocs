@@ -59,6 +59,7 @@ export default defineConfig((ctx) => {
       // minify: false,
       // polyfillModulePreload: true,
       // distDir
+      distDir: "../phpslim-api/public",
 
       // extendViteConf (viteConf) {},
       // viteVuePluginOptions: {},
