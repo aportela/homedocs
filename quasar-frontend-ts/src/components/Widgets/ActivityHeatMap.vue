@@ -2,13 +2,13 @@
   <div id="cal-heatmap-container" class="calContainerRef">
     <div id="cal-heatmap"></div>
     <div class="q-mb-md q-gutter-sm q-py-sm" v-if="showNavigationButtons">
-      <q-btn icon="arrow_left" :disabled="state.loading || leftButtonDisabled" size="md" color="primary"
+      <q-btn icon="arrow_left" :disabled="state.ajaxRunning || leftButtonDisabled" size="md" color="primary"
         @click.prevent="onLeftButtonClicked">{{ t("Previous") }}</q-btn>
-      <q-btn icon-right="arrow_right" :disabled="state.loading || rightButtonDisabled" size="md" color="primary"
+      <q-btn icon-right="arrow_right" :disabled="state.ajaxRunning || rightButtonDisabled" size="md" color="primary"
         @click.prevent="onRightButtonClicked">{{ t("Next") }}</q-btn>
     </div>
-    <CustomErrorBanner v-if="state.loadingError" :text="state.errorMessage || 'Error loading data'"
-      :api-error="state.apiError">
+    <CustomErrorBanner v-if="state.ajaxErrors" :text="state.ajaxErrorMessage || 'Error loading data'"
+      :api-error="state.ajaxAPIErrorDetails">
     </CustomErrorBanner>
   </div>
 </template>
@@ -24,7 +24,7 @@ import { api } from "src/composables/api";
 import { bus } from "src/composables/bus";
 import { useDarkModeStore } from "src/stores/darkMode";
 import { useI18nStore } from "src/stores/i18n";
-import type { APIErrorDetails as APIErrorDetailsInterface } from "src/types/api-error-details";
+import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 import { type GetActivityHeatMapDataResponseItem as GetActivityHeatMapDataResponseItemInterface, type GetActivityHeatMapDataResponse as GetActivityHeatMapDataResponseInterface } from "src/types/api-responses";
 import { default as CalHeatmap } from "cal-heatmap";
 import "cal-heatmap/cal-heatmap.css";
@@ -48,19 +48,7 @@ withDefaults(defineProps<ActivityHeatMapProps>(), {
   showNavigationButtons: true
 });
 
-interface State {
-  loading: boolean,
-  loadingError: boolean,
-  errorMessage: string | null,
-  apiError: APIErrorDetailsInterface | null
-};
-
-const state: State = reactive({
-  loading: false,
-  loadingError: false,
-  errorMessage: null,
-  apiError: null
-});
+const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
 const leftButtonDisabled = ref<boolean>(false);
 const rightButtonDisabled = ref<boolean>(false);
@@ -254,10 +242,8 @@ const onRightButtonClicked = () => {
 
 const onRefresh = () => {
   emit("loading");
-  state.loading = true;
-  state.loadingError = false;
-  state.errorMessage = null;
-  state.apiError = null;
+  Object.assign(state, defaultAjaxState);
+  state.ajaxRunning = true;
   api.stats.getActivityHeatMapData(Number(date.formatDate(fromDate, 'x')))
     .then((successResponse: GetActivityHeatMapDataResponseInterface) => {
       const counts = successResponse.data.heatmap.map(d => d.count);
@@ -267,36 +253,35 @@ const onRefresh = () => {
       scaleDomain.unshift(0);
       scaleDomain.sort(function (a, b) { return a - b; });
       onCalRefresh(successResponse.data.heatmap, scaleDomain);
-      state.loading = false;
       emit("loaded");
     })
     .catch((errorResponse) => {
-      state.loadingError = true;
+      state.ajaxErrors = true;
       if (errorResponse.isAPIError) {
+        state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
         switch (errorResponse.response.status) {
           case 401:
-            state.apiError = errorResponse.customAPIErrorDetails;
-            state.errorMessage = "Auth session expired, requesting new...";
-            bus.emit("reAuthRequired", { emitter: "ActivityHeatMap" });
+            state.ajaxErrorMessage = "Auth session expired, requesting new...";
+            bus.emit("reAuthRequired", { emitter: "ActivityHeatMapWidget" });
             break;
           default:
-            state.apiError = errorResponse.customAPIErrorDetails;
-            state.errorMessage = "API Error: fatal error";
+            state.ajaxErrorMessage = "API Error: fatal error";
             break;
         }
       } else {
-        state.errorMessage = `Uncaught exception: ${errorResponse}`;
+        state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
         console.error(errorResponse);
       }
-      state.loading = false;
       emit("error");
+    }).finally(() => {
+      state.ajaxRunning = false;
     });
 }
 
 onMounted(() => {
   onRefresh();
   bus.on("reAuthSucess", (msg) => {
-    if (msg.to?.includes("ActivityHeatMap")) {
+    if (msg.to?.includes("ActivityHeatMapWidget")) {
       onRefresh();
     }
   });
