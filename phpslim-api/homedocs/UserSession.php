@@ -12,7 +12,7 @@ class UserSession
             session_set_cookie_params([
                 "SameSite" => "Strict",
                 "Secure" => true,
-                "HttpOnly" => true
+                "HttpOnly" => true,
             ]);
             session_name('HOMEDOCS');
             session_cache_limiter("nocache");
@@ -41,7 +41,7 @@ class UserSession
                     'path' => $params["path"],
                     'domain' => $params["domain"],
                     'secure' => $params["secure"],
-                    'httponly' => $params["httponly"]
+                    'httponly' => $params["httponly"],
                 ]);
             }
 

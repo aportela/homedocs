@@ -62,7 +62,7 @@ class JWT
             if (empty($clientHeaderJWT) && \HomeDocs\UserSession::isLogged()) {
                 $payload = [
                     "userId" => $_SESSION["userId"] ?? null,
-                    "email" => $_SESSION["email"] ?? null
+                    "email" => $_SESSION["email"] ?? null,
                 ];
                 $jwt = new \HomeDocs\JWT($this->logger, $this->passphrase);
                 $clientHeaderJWT = $jwt->encode($payload);

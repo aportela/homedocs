@@ -21,11 +21,11 @@ final class TagTest extends \HomeDocs\Test\BaseTest
         $tags = array_values(
             array_filter(
                 $tagCloud,
-                fn ($obj): bool =>
-                is_object($obj) &&
-                    property_exists($obj, "tag") &&
-                    is_string($obj->tag) &&
-                    $obj->tag === $tag1
+                fn($obj): bool
+                => is_object($obj)
+                    && property_exists($obj, "tag")
+                    && is_string($obj->tag)
+                    && $obj->tag === $tag1
             )
         );
         $this->assertEquals(1, count($tags));
@@ -35,10 +35,10 @@ final class TagTest extends \HomeDocs\Test\BaseTest
         $tags = array_values(
             array_filter(
                 $tagCloud,
-                fn ($obj): bool =>
-                is_object($obj) &&
-                    property_exists($obj, "tag") &&
-                    is_string($obj->tag)
+                fn($obj): bool
+                => is_object($obj)
+                    && property_exists($obj, "tag")
+                    && is_string($obj->tag)
                     && $obj->tag === $tag2
             )
         );

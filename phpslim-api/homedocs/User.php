@@ -8,9 +8,7 @@ class User
 {
     public ?string $passwordHash = null;
 
-    public function __construct(public ?string $id = "", public ?string $email = "", public ?string $password = "")
-    {
-    }
+    public function __construct(public ?string $id = "", public ?string $email = "", public ?string $password = "") {}
 
     private function passwordHash(string $password = ""): string
     {
@@ -88,7 +86,7 @@ class User
                     WHERE USER.id = :id
                 ",
                 [
-                    new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id))
+                    new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id)),
                 ]
             );
         } elseif (!in_array($this->email, [null, '', '0'], true) && filter_var($this->email, FILTER_VALIDATE_EMAIL) && mb_strlen($this->email) <= 255) {
@@ -100,7 +98,7 @@ class User
                         WHERE USER.email = :email
                     ",
                 [
-                    new \aportela\DatabaseWrapper\Param\StringParam(":email", mb_strtolower($this->email))
+                    new \aportela\DatabaseWrapper\Param\StringParam(":email", mb_strtolower($this->email)),
                 ]
             );
         } else {
@@ -138,7 +136,7 @@ class User
                         WHERE USER.email = :email
                 ",
                 [
-                    new \aportela\DatabaseWrapper\Param\StringParam(":email", mb_strtolower($email))
+                    new \aportela\DatabaseWrapper\Param\StringParam(":email", mb_strtolower($email)),
                 ]
             );
         } else {

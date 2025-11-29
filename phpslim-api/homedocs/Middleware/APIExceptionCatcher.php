@@ -6,9 +6,7 @@ namespace HomeDocs\Middleware;
 
 class APIExceptionCatcher
 {
-    public function __construct(protected \Psr\Log\LoggerInterface $logger)
-    {
-    }
+    public function __construct(protected \Psr\Log\LoggerInterface $logger) {}
 
     /**
      * @param array<mixed> $payload
@@ -38,7 +36,7 @@ class APIExceptionCatcher
             'type' => $throwable::class,
             'message' => $throwable->getMessage(),
             'file' => $throwable->getFile(),
-            'line' => $throwable->getLine()
+            'line' => $throwable->getLine(),
         ];
         $parent = $throwable->getPrevious();
         if ($parent instanceof \Throwable) {
@@ -46,14 +44,14 @@ class APIExceptionCatcher
                 'type' => $parent::class,
                 'message' => $parent->getMessage(),
                 'file' => $parent->getFile(),
-                'line' => $parent->getLine()
+                'line' => $parent->getLine(),
             ];
         }
 
         $payload = json_encode([
             'APIError' => true,
             'exception' => $exception,
-            'status' => 500
+            'status' => 500,
         ]);
         if (is_string($payload)) {
             $response->getBody()->write($payload);

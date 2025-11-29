@@ -42,7 +42,7 @@ class Attachment
                         id = :id
                 ",
             [
-                new \aportela\DatabaseWrapper\Param\StringParam(":id", $this->id)
+                new \aportela\DatabaseWrapper\Param\StringParam(":id", $this->id),
             ]
         );
         if (count($data) === 1) {
@@ -69,7 +69,7 @@ class Attachment
         if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
             $path = pathinfo($this->localStoragePath);
             if (isset($path['dirname']) && !file_exists($path['dirname'])) {
-                mkdir($path['dirname'], 0777, true);
+                mkdir($path['dirname'], 0o777, true);
             }
 
             $uploadedFile->moveTo($this->localStoragePath);
@@ -100,7 +100,7 @@ class Attachment
                 new \aportela\DatabaseWrapper\Param\StringParam(":name", $this->name),
                 new \aportela\DatabaseWrapper\Param\IntegerParam(":size", $this->size),
                 new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId()),
-                new \aportela\DatabaseWrapper\Param\IntegerParam(":ctime", $this->createdAtTimestamp)
+                new \aportela\DatabaseWrapper\Param\IntegerParam(":ctime", $this->createdAtTimestamp),
             ]
         );
     }
@@ -134,7 +134,7 @@ class Attachment
                     id = :id
             ",
             [
-                new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id))
+                new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id)),
             ]
         );
     }
@@ -150,7 +150,7 @@ class Attachment
                     attachment_id = :id
             ",
             [
-                new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id))
+                new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id)),
             ]
         );
         return (property_exists($result[0], "total") && is_numeric($result[0]->total) && intval($result[0]->total) > 0);

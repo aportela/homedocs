@@ -37,15 +37,15 @@ return function (\Slim\App $app): void {
             $routeCollectorProxy->get('/server_environment', function (Request $request, Response $response, array $args) use ($serverEnvironment): \Psr\Http\Message\MessageInterface {
                 $payload = \HomeDocs\Utils::getJSONPayload(
                     [
-                        'serverEnvironment' => $serverEnvironment
+                        'serverEnvironment' => $serverEnvironment,
                     ]
                 );
                 $response->getBody()->write($payload);
                 return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
             });
 
-            $routeCollectorProxy->group('/auth', function (RouteCollectorProxy $routeCollectorProxy) use ($container,  $settings): void {
-                $routeCollectorProxy->post('/register', function (Request $request, Response $response, array $args) use ($container,  $settings): \Psr\Http\Message\MessageInterface {
+            $routeCollectorProxy->group('/auth', function (RouteCollectorProxy $routeCollectorProxy) use ($container, $settings): void {
+                $routeCollectorProxy->post('/register', function (Request $request, Response $response, array $args) use ($container, $settings): \Psr\Http\Message\MessageInterface {
                     if ($settings->allowSignUp()) {
                         $params = $request->getParsedBody();
                         if (! is_array($params)) {
@@ -125,7 +125,7 @@ return function (\Slim\App $app): void {
                     unset($user->passwordHash);
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'user' => $user
+                            'user' => $user,
                         ]
                     );
                     $response->getBody()->write($payload);
@@ -161,7 +161,7 @@ return function (\Slim\App $app): void {
                     unset($user->passwordHash);
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'user' => $user
+                            'user' => $user,
                         ]
                     );
                     $response->getBody()->write($payload);
@@ -201,12 +201,11 @@ return function (\Slim\App $app): void {
                 function getSortFieldFromParams(array $params): string
                 {
                     return (
-                        array_key_exists("sort", $params) &&
-                        is_array($params["sort"])  &&
-                        array_key_exists("field", $params["sort"]) &&
-                        is_string($params["sort"]["field"])
-                        ?
-                        $params["sort"]["field"]
+                        array_key_exists("sort", $params)
+                        && is_array($params["sort"])
+                        && array_key_exists("field", $params["sort"])
+                        && is_string($params["sort"]["field"])
+                        ? $params["sort"]["field"]
                         : ""
                     );
                 }
@@ -217,15 +216,13 @@ return function (\Slim\App $app): void {
                 function getSortOrderFromParams(array $params): \aportela\DatabaseBrowserWrapper\Order
                 {
                     return (
-                        array_key_exists("sort", $params)  &&
-                        is_array($params["sort"]) &&
-                        array_key_exists("order", $params["sort"]) &&
-                        is_string($params["sort"]["order"]) &&
-                        $params["sort"]["order"] === \aportela\DatabaseBrowserWrapper\Order::ASC->value
-                        ?
-                        \aportela\DatabaseBrowserWrapper\Order::ASC
-                        :
-                        \aportela\DatabaseBrowserWrapper\Order::DESC
+                        array_key_exists("sort", $params)
+                        && is_array($params["sort"])
+                        && array_key_exists("order", $params["sort"])
+                        && is_string($params["sort"]["order"])
+                        && $params["sort"]["order"] === \aportela\DatabaseBrowserWrapper\Order::ASC->value
+                        ? \aportela\DatabaseBrowserWrapper\Order::ASC
+                        : \aportela\DatabaseBrowserWrapper\Order::DESC
                     );
                 }
 
@@ -251,7 +248,7 @@ return function (\Slim\App $app): void {
                             'documents' => \HomeDocs\Document::searchRecent(
                                 $dbh,
                                 is_int($params["count"]) ? $params["count"] : \HomeDocs\Settings::DEFAULT_RESULTS_PAGE
-                            )
+                            ),
                         ]
                     );
                     $response->getBody()->write($payload);
@@ -263,7 +260,7 @@ return function (\Slim\App $app): void {
                     if (! is_array($params)) {
                         throw new \HomeDocs\Exception\InvalidParamsException();
                     }
-                    
+
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
                             'results' => \HomeDocs\Document::search(
@@ -273,7 +270,7 @@ return function (\Slim\App $app): void {
                                 getSortFieldFromParams($params),
                                 getSortOrderFromParams($params),
                                 getReturnFragmentsFlagFromParams($params),
-                            )
+                            ),
                         ]
                     );
                     $response->getBody()->write($payload);
@@ -294,7 +291,7 @@ return function (\Slim\App $app): void {
 
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'document' => $document
+                            'document' => $document,
                         ]
                     );
                     $response->getBody()->write($payload);
@@ -308,7 +305,7 @@ return function (\Slim\App $app): void {
 
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'notes' => $document->notes
+                            'notes' => $document->notes,
                         ]
                     );
                     $response->getBody()->write($payload);
@@ -322,7 +319,7 @@ return function (\Slim\App $app): void {
 
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'attachments' => $document->attachments
+                            'attachments' => $document->attachments,
                         ]
                     );
                     $response->getBody()->write($payload);
@@ -362,7 +359,7 @@ return function (\Slim\App $app): void {
 
                             $notes[] = new \HomeDocs\Note(
                                 is_string($documentNote["id"]) ? $documentNote["id"] : null,
-                                is_int($documentNote["createdOnTimestamp"]) ?  $documentNote["createdOnTimestamp"] : null,
+                                is_int($documentNote["createdOnTimestamp"]) ? $documentNote["createdOnTimestamp"] : null,
                                 is_string($documentNote["body"]) ? $documentNote["body"] : null
                             );
                         }
@@ -397,7 +394,7 @@ return function (\Slim\App $app): void {
 
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'document' => $document
+                            'document' => $document,
                         ]
                     );
                     $response->getBody()->write($payload);
@@ -481,7 +478,7 @@ return function (\Slim\App $app): void {
                     $document->get($dbh);
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'document' => $document
+                            'document' => $document,
                         ]
                     );
                     $response->getBody()->write($payload);
@@ -598,8 +595,8 @@ return function (\Slim\App $app): void {
                                         "name" => $attachment->name,
                                         "size" => $attachment->size,
                                         "hash" => $attachment->hash,
-                                        "createdAtTimestamp" => $attachment->createdAtTimestamp
-                                    ]
+                                        "createdAtTimestamp" => $attachment->createdAtTimestamp,
+                                    ],
                                 ]
                             );
                             $response->getBody()->write($payload);
@@ -635,7 +632,7 @@ return function (\Slim\App $app): void {
 
                 $payload = \HomeDocs\Utils::getJSONPayload(
                     [
-                        'tags' => \HomeDocs\Tag::getCloud($dbh)
+                        'tags' => \HomeDocs\Tag::getCloud($dbh),
                     ]
                 );
                 $response->getBody()->write($payload);
@@ -650,7 +647,7 @@ return function (\Slim\App $app): void {
 
                 $payload = \HomeDocs\Utils::getJSONPayload(
                     [
-                        'tags' => \HomeDocs\Tag::search($dbh)
+                        'tags' => \HomeDocs\Tag::search($dbh),
                     ]
                 );
                 $response->getBody()->write($payload);
@@ -666,7 +663,7 @@ return function (\Slim\App $app): void {
                 $routeCollectorProxy->get('/total-published-documents', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'count' => \HomeDocs\Stats::getTotalPublishedDocuments($dbh)
+                            'count' => \HomeDocs\Stats::getTotalPublishedDocuments($dbh),
                         ]
                     );
                     $response->getBody()->write($payload);
@@ -676,7 +673,7 @@ return function (\Slim\App $app): void {
                 $routeCollectorProxy->get('/total-uploaded-attachments', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'count' => \HomeDocs\Stats::getTotalUploadedAttachments($dbh)
+                            'count' => \HomeDocs\Stats::getTotalUploadedAttachments($dbh),
                         ]
                     );
                     $response->getBody()->write($payload);
@@ -686,7 +683,7 @@ return function (\Slim\App $app): void {
                 $routeCollectorProxy->get('/total-uploaded-attachments-disk-usage', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'size' => \HomeDocs\Stats::getTotalUploadedAttachmentsDiskUsage($dbh)
+                            'size' => \HomeDocs\Stats::getTotalUploadedAttachmentsDiskUsage($dbh),
                         ]
                     );
                     $response->getBody()->write($payload);
@@ -700,7 +697,7 @@ return function (\Slim\App $app): void {
                             'heatmap' => \HomeDocs\Stats::getActivityHeatMapData(
                                 $dbh,
                                 is_int($queryParams["fromTimestamp"]) ? $queryParams["fromTimestamp"] : 0
-                            )
+                            ),
                         ]
                     );
                     $response->getBody()->write($payload);

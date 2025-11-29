@@ -114,5 +114,5 @@ return [
         }
 
         return (new \HomeDocs\Middleware\APIExceptionCatcher($logger));
-    }
+    },
 ];

@@ -24,7 +24,7 @@ class JWT
             $jwt = \Firebase\JWT\JWT::encode(
                 [
                     'iat' => time(),
-                    'data' => $payload
+                    'data' => $payload,
                 ],
                 $this->passphrase,
                 self::ALGORITHM

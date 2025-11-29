@@ -28,7 +28,7 @@ class Tag
                 ",
             [
                 new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
-                new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
+                new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId()),
             ]
         );
         return (array_map(
@@ -63,11 +63,11 @@ class Tag
                 ",
             [
                 new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
-                new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
+                new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId()),
             ]
         );
         return (array_map(
-            fn (object $item): string => property_exists($item, "tag") && is_string($item->tag) ? $item->tag : "",
+            fn(object $item): string => property_exists($item, "tag") && is_string($item->tag) ? $item->tag : "",
             $results
         ));
     }

@@ -20,7 +20,7 @@ class Stats
             ",
             [
                 new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
-                new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
+                new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId()),
             ]
         );
         return (count($results) === 1 && property_exists($results[0], "total") && is_numeric($results[0]->total) ? intval($results[0]->total) : 0);
@@ -41,7 +41,7 @@ class Stats
             ",
             [
                 new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
-                new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
+                new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId()),
             ]
         );
         return (count($results) === 1 && property_exists($results[0], "total") && is_numeric($results[0]->total) ? intval($results[0]->total) : 0);
@@ -63,7 +63,7 @@ class Stats
             ",
             [
                 new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
-                new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
+                new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId()),
             ]
         );
         return (count($results) === 1 && property_exists($results[0], "total") && is_numeric($results[0]->total) ? intval($results[0]->total) : 0);
@@ -76,7 +76,7 @@ class Stats
     {
         $whereCondition = null;
         $params = [
-            new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
+            new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId()),
         ];
         if ($fromTimestamp > 0) {
             $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":from_timestamp", $fromTimestamp);
@@ -103,7 +103,7 @@ class Stats
             $params
         );
         return (array_map(
-            fn (object $item): object => (object)["date" => $item->activity_date ?? null, "count" => property_exists($item, "total") && is_numeric($item->total) ? intval($item->total) : 0],
+            fn(object $item): object => (object) ["date" => $item->activity_date ?? null, "count" => property_exists($item, "total") && is_numeric($item->total) ? intval($item->total) : 0],
             $results
         ));
     }

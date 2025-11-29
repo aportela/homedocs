@@ -11,15 +11,15 @@ return [
     'environment' => $environment,
     'defaultTimezone' => 'Europe/Madrid',
     'common' => [
-        'allowSignUp' => true
+        'allowSignUp' => true,
     ],
     'jwt' => [
         // WARNING: for security reasons, generate a random string for using as your OWN (not default) passphrase
-        'passphrase' => '/@q]/?pc`c&bq,P/MCp{5#E~-Nr2]NXQ$pvSKiz$tLQd]K)>eIOOk!&6rKVO7J~'
+        'passphrase' => '/@q]/?pc`c&bq,P/MCp{5#E~-Nr2]NXQ$pvSKiz$tLQd]K)>eIOOk!&6rKVO7J~',
     ],
     'paths' => [
         'storage' => $dataPath . DIRECTORY_SEPARATOR . 'storage',
-        'logs' => $logPath
+        'logs' => $logPath,
     ],
     'db' => [
         //'driver' => 'sqlite',
@@ -38,9 +38,9 @@ return [
             // Emulate prepared statements
             PDO::ATTR_EMULATE_PREPARES => true,
             // Set default fetch mode to array
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         ],
-        'upgradeSchemaPath' => $basePath . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'db-schema.php'
+        'upgradeSchemaPath' => $basePath . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'db-schema.php',
     ],
     // Error Handling Middleware settings
     'error' => [
@@ -63,20 +63,20 @@ return [
         'channels' => [
             'default'  => [
                 'path' => isset($_ENV['docker']) ? 'php://stdout' : $logPath . DIRECTORY_SEPARATOR . 'default.log',
-                'name' => 'Homedocs::Default'
+                'name' => 'Homedocs::Default',
             ],
             'http'  => [
                 'path' => isset($_ENV['docker']) ? 'php://stdout' : $logPath . DIRECTORY_SEPARATOR . 'http.log',
-                'name' => 'Homedocs::HTTP'
+                'name' => 'Homedocs::HTTP',
             ],
             'installer' => [
                 'path' => isset($_ENV['docker']) ? 'php://stdout' : $logPath . DIRECTORY_SEPARATOR . 'installer.log',
-                'name' => 'Homedocs::Installer'
+                'name' => 'Homedocs::Installer',
             ],
             'database' => [
                 'path' => isset($_ENV['docker']) ? 'php://stdout' : $logPath . DIRECTORY_SEPARATOR . 'database.log',
-                'name' => 'Homedocs::Database'
-            ]
-        ]
-    ]
+                'name' => 'Homedocs::Database',
+            ],
+        ],
+    ],
 ];
