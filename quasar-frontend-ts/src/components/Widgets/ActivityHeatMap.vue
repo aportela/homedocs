@@ -18,6 +18,7 @@ import { ref, reactive, computed, onMounted, onBeforeUnmount, watch } from "vue"
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { date } from "quasar";
+import { type Dayjs } from 'dayjs';
 
 import { api } from "src/composables/api";
 import { bus } from "src/composables/bus";
@@ -114,7 +115,7 @@ const calDefaultPlugins = [
   [
     Tooltip,
     {
-      text: function (_date: any, value: number, dayjsDate: any) {
+      text: function (timestamp: number, value: number, dayjsDate: Dayjs) {
         return (value
           ? `${value} ${t(" change/s on date ")} ${dayjsDate.format('dddd, MMMM D, YYYY')}`
           : `${t("No activity on date ")} ${dayjsDate.format('dddd, MMMM D, YYYY')}`);
