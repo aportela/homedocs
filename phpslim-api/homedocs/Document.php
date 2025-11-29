@@ -12,9 +12,7 @@ class Document
      * @param array<\HomeDocs\Note> $notes
      * @param array<\HomeDocs\DocumentHistoryOperation> $historyOperations
      */
-    public function __construct(public ?string $id = null, public ?string $title = null, public ?string $description = null, public ?int $createdAtTimestamp = null, public ?int $updatedAtTimestamp = null, public array $tags = [], public array $attachments = [], public array $notes = [], public array $historyOperations = [])
-    {
-    }
+    public function __construct(public ?string $id = null, public ?string $title = null, public ?string $description = null, public ?int $createdAtTimestamp = null, public ?int $updatedAtTimestamp = null, public array $tags = [], public array $attachments = [], public array $notes = [], public array $historyOperations = []) {}
 
     /**
      * @return array<mixed>
@@ -931,7 +929,7 @@ class Document
 
         if ($documentSearchFilter->datesFilter->lastUpdateAtFromTimestamp > 0) {
             $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":lastUpdateAtFromTimestamp", $documentSearchFilter->datesFilter->lastUpdateAtFromTimestamp);
-            $queryConditions[] = " DOCUMENT_HISTORY_LAST_UPDATE.ctime) >= :lastUpdateAtFromTimestamp ";
+            $queryConditions[] = " DOCUMENT_HISTORY_LAST_UPDATE.ctime >= :lastUpdateAtFromTimestamp ";
         }
 
         if ($documentSearchFilter->datesFilter->lastUpdateAtToTimestamp > 0) {
