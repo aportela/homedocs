@@ -14,7 +14,5 @@ class DocumentHistoryOperation
 
     public const OPERATION_UPDATE_DOCUMENT = 2;
 
-    public function __construct(public int $createdAtTimestamp, public int $operationType)
-    {
-    }
+    public function __construct(public int $createdAtTimestamp, public int $operationType) {}
 }

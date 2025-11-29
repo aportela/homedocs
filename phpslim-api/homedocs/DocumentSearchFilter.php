@@ -15,6 +15,9 @@ class DocumentSearchFilter
 
     public readonly \HomeDocs\DocumentSearchTextFilter $textFilter;
 
+    /**
+     * @param array<mixed> $routeParams
+     */
     public function __construct(array $routeParams = [])
     {
         $this->datesFilter = new \HomeDocs\DocumentSearchDatesFilter($routeParams);
@@ -22,15 +25,17 @@ class DocumentSearchFilter
         $this->textFilter = new \HomeDocs\DocumentSearchTextFilter($routeParams);
     }
 
+    /**
+     * @param array<mixed> $params
+     * @return array<string>
+     */
     private function getTagsFilterFromParams(array $params): array
     {
         return (
-            array_key_exists("tags", $params)  &&
-            is_array($params["tags"])
-            ?
-            $params["tags"]
-            :
-            []
+            array_key_exists("tags", $params)
+            && is_array($params["tags"])
+            ? array_filter($params["tags"], 'is_string')
+            : []
         );
     }
 }

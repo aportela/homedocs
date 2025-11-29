@@ -14,6 +14,9 @@ class DocumentSearchTextFilter
 
     public readonly ?string $attachmentsFilename;
 
+    /**
+     * @param array<mixed> $routeParams
+     */
     public function __construct(array $routeParams = [])
     {
         $this->title = $this->getTextFilterFromParams($routeParams, "title");
@@ -22,19 +25,20 @@ class DocumentSearchTextFilter
         $this->attachmentsFilename = $this->getTextFilterFromParams($routeParams, "attachmentsFilename");
     }
 
-    private function getTextFilterFromParams(array $routeParams, string $textFilterType): string | null
+    /**
+     * @param array<mixed> $params
+     */
+    private function getTextFilterFromParams(array $params, string $textFilterType): ?string
     {
         return (
-            array_key_exists("filter", $routeParams) &&
-            is_array($routeParams["filter"]) &&
-            array_key_exists("text", $routeParams["filter"]) &&
-            is_array(($routeParams["filter"]["text"])) &&
-            array_key_exists($textFilterType, $routeParams["filter"]["text"]) &&
-            is_string($routeParams["filter"]["text"][$textFilterType])
-            ?
-            $routeParams["filter"]["text"][$textFilterType]
-            :
-            null
+            array_key_exists("filter", $params)
+            && is_array($params["filter"])
+            && array_key_exists("text", $params["filter"])
+            && is_array(($params["filter"]["text"]))
+            && array_key_exists($textFilterType, $params["filter"]["text"])
+            && is_string($params["filter"]["text"][$textFilterType])
+            ? $params["filter"]["text"][$textFilterType]
+            : null
         );
     }
 }

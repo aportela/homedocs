@@ -82,7 +82,7 @@ class Document
             ),
             [
                 new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
-                new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
+                new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId()),
             ]
         );
         return (array_map(
@@ -171,7 +171,7 @@ class Document
                 new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
                 new \aportela\DatabaseWrapper\Param\IntegerParam(":ctime", intval(microtime(true) * 1000)),
                 new \aportela\DatabaseWrapper\Param\IntegerParam(":operation_type", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
-                new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId())
+                new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId()),
             ]
         )) {
             foreach ($this->tags as $tag) {
@@ -185,7 +185,7 @@ class Document
                             ",
                         [
                             new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
-                            new \aportela\DatabaseWrapper\Param\StringParam(":tag", mb_strtolower($tag))
+                            new \aportela\DatabaseWrapper\Param\StringParam(":tag", mb_strtolower($tag)),
                         ]
                     );
                 } else {
@@ -204,7 +204,7 @@ class Document
                             ",
                         [
                             new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
-                            new \aportela\DatabaseWrapper\Param\StringParam(":attachment_id", mb_strtolower((string) $attachment->id))
+                            new \aportela\DatabaseWrapper\Param\StringParam(":attachment_id", mb_strtolower((string) $attachment->id)),
                         ]
                     );
                 } else {
@@ -237,7 +237,7 @@ class Document
         $this->validate();
         $params = [
             new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower((string) $this->id)),
-            new \aportela\DatabaseWrapper\Param\StringParam(":title", $this->title)
+            new \aportela\DatabaseWrapper\Param\StringParam(":title", $this->title),
         ];
         if (!in_array($this->description, [null, '', '0'], true)) {
             $params[] = new \aportela\DatabaseWrapper\Param\StringParam(":description", $this->description);
@@ -262,7 +262,7 @@ class Document
                 new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
                 new \aportela\DatabaseWrapper\Param\IntegerParam(":ctime", intval(microtime(true) * 1000)),
                 new \aportela\DatabaseWrapper\Param\IntegerParam(":operation_type", \HomeDocs\DocumentHistoryOperation::OPERATION_UPDATE_DOCUMENT),
-                new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId())
+                new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId()),
             ]
         )) {
             $db->execute(
@@ -286,7 +286,7 @@ class Document
                             ",
                         [
                             new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
-                            new \aportela\DatabaseWrapper\Param\StringParam(":tag", mb_strtolower($tag))
+                            new \aportela\DatabaseWrapper\Param\StringParam(":tag", mb_strtolower($tag)),
                         ]
                     );
                 } else {
@@ -314,7 +314,7 @@ class Document
                             ",
                         [
                             new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
-                            new \aportela\DatabaseWrapper\Param\StringParam(":attachment_id", mb_strtolower((string) $originalAttachment->id))
+                            new \aportela\DatabaseWrapper\Param\StringParam(":attachment_id", mb_strtolower((string) $originalAttachment->id)),
                         ]
                     );
                     $originalAttachment->remove($db);
@@ -340,7 +340,7 @@ class Document
                                 ",
                             [
                                 new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
-                                new \aportela\DatabaseWrapper\Param\StringParam(":attachment_id", mb_strtolower((string) $attachment->id))
+                                new \aportela\DatabaseWrapper\Param\StringParam(":attachment_id", mb_strtolower((string) $attachment->id)),
                             ]
                         );
                     }
@@ -369,7 +369,7 @@ class Document
                             ",
                         [
                             new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
-                            new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower((string) $originalNote->id))
+                            new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower((string) $originalNote->id)),
                         ]
                     );
                 }
@@ -400,7 +400,7 @@ class Document
                                     new \aportela\DatabaseWrapper\Param\StringParam(":note_body", $note->body),
                                     new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower($note->id)),
                                     new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
-                                    new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId())
+                                    new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId()),
                                 ]
                             );
                             break;
@@ -423,7 +423,7 @@ class Document
                             new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
                             new \aportela\DatabaseWrapper\Param\IntegerParam(":ctime", intval(microtime(true) * 1000)),
                             new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId()),
-                            new \aportela\DatabaseWrapper\Param\StringParam(":note_body", $note->body)
+                            new \aportela\DatabaseWrapper\Param\StringParam(":note_body", $note->body),
                         ]
                     );
                 }
@@ -511,7 +511,7 @@ class Document
                 ",
                 [
                     new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
-                    new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id))
+                    new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower($this->id)),
                 ]
             );
             if (count($data) === 1) {
@@ -553,7 +553,7 @@ class Document
                     DOCUMENT_TAG.tag
             ",
             [
-                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id))
+                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
             ]
         );
         foreach ($data as $item) {
@@ -572,7 +572,7 @@ class Document
     {
         $attachments = [];
         $params = [
-            new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id))
+            new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
         ];
         $queryConditions = [];
         if (!in_array($search, [null, '', '0'], true)) {
@@ -604,12 +604,11 @@ class Document
                     ATTACHMENT.ctime DESC,
                     ATTACHMENT.name
             ",
-                in_array($search, [null, '', '0'], true) ?
-                    ""
-                    :
-                    "
+                in_array($search, [null, '', '0'], true)
+                    ? ""
+                    : "
                     AND (
-                        " .  implode(" AND ", $queryConditions) . "
+                        " . implode(" AND ", $queryConditions) . "
                     )"
             ),
             $params
@@ -634,7 +633,7 @@ class Document
     {
         $notes = [];
         $params = [
-            new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id))
+            new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
         ];
         $queryConditions = [];
         if (!in_array($search, [null, '', '0'], true)) {
@@ -663,12 +662,11 @@ class Document
                     ORDER BY
                         DOCUMENT_NOTE.ctime DESC
                 ",
-                in_array($search, [null, '', '0'], true) ?
-                    ""
-                    :
-                    "
+                in_array($search, [null, '', '0'], true)
+                    ? ""
+                    : "
                     AND (
-                        " .  implode(" AND ", $queryConditions) . "
+                        " . implode(" AND ", $queryConditions) . "
                     )"
             ),
             $params
@@ -701,7 +699,7 @@ class Document
                     DOCUMENT_HISTORY.ctime DESC
             ",
             [
-                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id))
+                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
             ]
         );
         foreach ($data as $item) {
@@ -726,7 +724,7 @@ class Document
             "noteCount" => "COALESCE(TMP_NOTE_COUNT.noteCount, 0)",
         ];
         $fieldCountDefinition = [
-            "total" => "COUNT (DOCUMENT.id)"
+            "total" => "COUNT (DOCUMENT.id)",
         ];
         $sortItems = [];
         $sortItems[] = match ($sortField) {
@@ -760,27 +758,27 @@ class Document
 
                     $item->matchedFragments = [];
                     if ($returnFragments) {
-                        if (isset($documentSearchFilter->textFilter->title) && is_string($documentSearchFilter->textFilter->title) && ($documentSearchFilter->textFilter->title !== '' && $documentSearchFilter->textFilter->title !== '0') && property_exists($item, "title") && is_string($item->title)) {
+                        if (is_string($documentSearchFilter->textFilter->title) && ($documentSearchFilter->textFilter->title !== '' && $documentSearchFilter->textFilter->title !== '0') && property_exists($item, "title") && is_string($item->title)) {
                             $fragment = \HomeDocs\Utils::getStringFragment($item->title, $documentSearchFilter->textFilter->title, 64, true);
                             if (!in_array($fragment, [null, '', '0'], true)) {
                                 $item->matchedFragments[] = [
                                     "matchedOn" => "title",
-                                    "fragment" => $fragment
+                                    "fragment" => $fragment,
                                 ];
                             }
                         }
 
-                        if (isset($documentSearchFilter->textFilter->description) && is_string($documentSearchFilter->textFilter->description) && ($documentSearchFilter->textFilter->description !== '' && $documentSearchFilter->textFilter->description !== '0') && property_exists($item, "description") && is_string($item->description)) {
+                        if (is_string($documentSearchFilter->textFilter->description) && ($documentSearchFilter->textFilter->description !== '' && $documentSearchFilter->textFilter->description !== '0') && property_exists($item, "description") && is_string($item->description)) {
                             $fragment = \HomeDocs\Utils::getStringFragment($item->description, $documentSearchFilter->textFilter->description, 64, true);
                             if (!in_array($fragment, [null, '', '0'], true)) {
                                 $item->matchedFragments[] = [
                                     "matchedOn" => "description",
-                                    "fragment" => $fragment
+                                    "fragment" => $fragment,
                                 ];
                             }
                         }
 
-                        if (isset($documentSearchFilter->textFilter->notesBody) && is_string($documentSearchFilter->textFilter->notesBody) && ($documentSearchFilter->textFilter->notesBody !== '' && $documentSearchFilter->textFilter->notesBody !== '0') && property_exists($item, "id")) {
+                        if (is_string($documentSearchFilter->textFilter->notesBody) && ($documentSearchFilter->textFilter->notesBody !== '' && $documentSearchFilter->textFilter->notesBody !== '0') && property_exists($item, "id")) {
                             // TODO: this NEEDS to be rewritten with more efficient method
                             $notes = new \HomeDocs\Document(is_string($item->id) ? $item->id : null)->getNotes($db, $documentSearchFilter->textFilter->notesBody);
                             foreach ($notes as $note) {
@@ -788,13 +786,13 @@ class Document
                                 if (!in_array($fragment, [null, '', '0'], true)) {
                                     $item->matchedFragments[] = [
                                         "matchedOn" => "note body",
-                                        "fragment" => $fragment
+                                        "fragment" => $fragment,
                                     ];
                                 }
                             }
                         }
 
-                        if (isset($documentSearchFilter->textFilter->attachmentsFilename) && is_string($documentSearchFilter->textFilter->attachmentsFilename) && ($documentSearchFilter->textFilter->attachmentsFilename !== '' && $documentSearchFilter->textFilter->attachmentsFilename !== '0') && property_exists($item, "id")) {
+                        if (is_string($documentSearchFilter->textFilter->attachmentsFilename) && ($documentSearchFilter->textFilter->attachmentsFilename !== '' && $documentSearchFilter->textFilter->attachmentsFilename !== '0') && property_exists($item, "id")) {
                             // TODO: this NEEDS to be rewritten with more efficient method
                             $attachments = new \HomeDocs\Document(is_string($item->id) ? $item->id : null)->getAttachments($db, $documentSearchFilter->textFilter->attachmentsFilename);
                             foreach ($attachments as $attachment) {
@@ -802,7 +800,7 @@ class Document
                                 if (!in_array($fragment, [null, '', '0'], true)) {
                                     $item->matchedFragments[] = [
                                         "matchedOn" => "attachment filename",
-                                        "fragment" => $fragment
+                                        "fragment" => $fragment,
                                     ];
                                 }
                             }
@@ -827,11 +825,11 @@ class Document
         $params = [
             new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
             new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_update", \HomeDocs\DocumentHistoryOperation::OPERATION_UPDATE_DOCUMENT),
-            new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
+            new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId()),
         ];
 
 
-        if (isset($documentSearchFilter->textFilter->title) && is_string($documentSearchFilter->textFilter->title) && ($documentSearchFilter->textFilter->title !== '' && $documentSearchFilter->textFilter->title !== '0')) {
+        if (is_string($documentSearchFilter->textFilter->title) && ($documentSearchFilter->textFilter->title !== '' && $documentSearchFilter->textFilter->title !== '0')) {
             // explode into words, remove duplicated & empty elements
             $words = array_filter(array_unique(explode(" ", trim(mb_strtolower($documentSearchFilter->textFilter->title)))));
             $totalWords = count($words);
@@ -845,7 +843,7 @@ class Document
             }
         }
 
-        if (isset($documentSearchFilter->textFilter->description) && is_string($documentSearchFilter->textFilter->description) && ($documentSearchFilter->textFilter->description !== '' && $documentSearchFilter->textFilter->description !== '0')) {
+        if (is_string($documentSearchFilter->textFilter->description) && ($documentSearchFilter->textFilter->description !== '' && $documentSearchFilter->textFilter->description !== '0')) {
             // explode into words, remove duplicated & empty elements
             $words = array_filter(array_unique(explode(" ", trim(mb_strtolower($documentSearchFilter->textFilter->description)))));
             $totalWords = count($words);
@@ -859,7 +857,7 @@ class Document
             }
         }
 
-        if (isset($documentSearchFilter->textFilter->notesBody) && is_string($documentSearchFilter->textFilter->notesBody) && ($documentSearchFilter->textFilter->notesBody !== '' && $documentSearchFilter->textFilter->notesBody !== '0')) {
+        if (is_string($documentSearchFilter->textFilter->notesBody) && ($documentSearchFilter->textFilter->notesBody !== '' && $documentSearchFilter->textFilter->notesBody !== '0')) {
             // explode into words, remove duplicated & empty elements
             $words = array_filter(array_unique(explode(" ", trim(mb_strtolower($documentSearchFilter->textFilter->notesBody)))));
             $totalWords = count($words);
@@ -886,7 +884,7 @@ class Document
             }
         }
 
-        if (isset($documentSearchFilter->textFilter->attachmentsFilename) && is_string($documentSearchFilter->textFilter->attachmentsFilename) && ($documentSearchFilter->textFilter->attachmentsFilename !== '' && $documentSearchFilter->textFilter->attachmentsFilename !== '0')) {
+        if (is_string($documentSearchFilter->textFilter->attachmentsFilename) && ($documentSearchFilter->textFilter->attachmentsFilename !== '' && $documentSearchFilter->textFilter->attachmentsFilename !== '0')) {
             // explode into words, remove duplicated & empty elements
             $words = array_filter(array_unique(explode(" ", trim(mb_strtolower($documentSearchFilter->textFilter->attachmentsFilename)))));
             $totalWords = count($words);
@@ -914,18 +912,15 @@ class Document
             }
         }
 
-
         if ($documentSearchFilter->datesFilter->createdAtFromTimestamp > 0) {
             $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":createdAtFromTimestamp", $documentSearchFilter->datesFilter->createdAtFromTimestamp);
             $queryConditions[] = " DOCUMENT_HISTORY_CREATION_DATE.ctime >= :createdAtFromTimestamp ";
         }
 
-
         if ($documentSearchFilter->datesFilter->createdAtToTimestamp > 0) {
             $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":createdAtToTimestamp", $documentSearchFilter->datesFilter->createdAtToTimestamp);
             $queryConditions[] = " DOCUMENT_HISTORY_CREATION_DATE.ctime <= :createdAtToTimestamp ";
         }
-
 
         if ($documentSearchFilter->datesFilter->lastUpdateAtFromTimestamp > 0) {
             $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":lastUpdateAtFromTimestamp", $documentSearchFilter->datesFilter->lastUpdateAtFromTimestamp);
@@ -936,7 +931,6 @@ class Document
             $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":lastUpdateAtToTimestamp", $documentSearchFilter->datesFilter->lastUpdateAtToTimestamp);
             $queryConditions[] = " DOCUMENT_HISTORY_LAST_UPDATE.ctime <= :lastUpdateAtToTimestamp ";
         }
-
 
         if ($documentSearchFilter->datesFilter->updatedAtFromTimestamp > 0  && $documentSearchFilter->datesFilter->updatedAtToTimestamp > 0) {
             $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":updatedAtFromTimestamp", $documentSearchFilter->datesFilter->updatedAtFromTimestamp);
@@ -982,7 +976,7 @@ class Document
             ";
         }
 
-        if (isset($documentSearchFilter->tags) && is_array($documentSearchFilter->tags) && $documentSearchFilter->tags !== []) {
+        if ($documentSearchFilter->tags !== []) {
             foreach ($documentSearchFilter->tags as $i => $tag) {
                 $paramName = sprintf(":TAG_%03d", $i + 1);
                 $params[] = new \aportela\DatabaseWrapper\Param\StringParam($paramName, $tag);
@@ -1003,7 +997,7 @@ class Document
             }
         }
 
-        $whereCondition = $queryConditions !== [] ? " WHERE " .  implode(" AND ", $queryConditions) : "";
+        $whereCondition = $queryConditions !== [] ? " WHERE " . implode(" AND ", $queryConditions) : "";
         $browser->addDBQueryParams($params);
         $query = $browser->buildQuery(
             sprintf(

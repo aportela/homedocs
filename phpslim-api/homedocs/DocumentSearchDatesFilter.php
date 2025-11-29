@@ -18,6 +18,9 @@ class DocumentSearchDatesFilter
 
     public readonly int $updatedAtToTimestamp;
 
+    /**
+     * @param array<mixed> $routeParams
+     */
     public function __construct(array $routeParams = [])
     {
         $this->createdAtFromTimestamp = $this->getDateFilterFromParams($routeParams, "createdAt", "from") ?? 0;
@@ -28,19 +31,22 @@ class DocumentSearchDatesFilter
         $this->updatedAtToTimestamp = $this->getDateFilterFromParams($routeParams, "updatedAt", "to") ?? 0;
     }
 
-    private function getDateFilterFromParams(array $params = [], string $dateType = '', string $timestampType = ''): int|null
+    /**
+     * @param array<mixed> $params
+     */
+    private function getDateFilterFromParams(array $params = [], string $dateType = '', string $timestampType = ''): ?int
     {
         if (
-            array_key_exists("filter", $params) &&
-            is_array($params["filter"]) &&
-            array_key_exists("dates", $params["filter"]) &&
-            is_array($params["filter"]["dates"]) &&
-            array_key_exists($dateType, $params["filter"]["dates"]) &&
-            is_array($params["filter"]["dates"][$dateType]) &&
-            array_key_exists("timestamps", $params["filter"]["dates"][$dateType]) &&
-            is_array($params["filter"]["dates"][$dateType]["timestamps"]) &&
-            array_key_exists($timestampType, $params["filter"]["dates"][$dateType]["timestamps"]) &&
-            is_numeric($params["filter"]["dates"][$dateType]["timestamps"][$timestampType])
+            array_key_exists("filter", $params)
+            && is_array($params["filter"])
+            && array_key_exists("dates", $params["filter"])
+            && is_array($params["filter"]["dates"])
+            && array_key_exists($dateType, $params["filter"]["dates"])
+            && is_array($params["filter"]["dates"][$dateType])
+            && array_key_exists("timestamps", $params["filter"]["dates"][$dateType])
+            && is_array($params["filter"]["dates"][$dateType]["timestamps"])
+            && array_key_exists($timestampType, $params["filter"]["dates"][$dateType]["timestamps"])
+            && is_numeric($params["filter"]["dates"][$dateType]["timestamps"][$timestampType])
         ) {
             return (intval($params["filter"]["dates"][$dateType]["timestamps"][$timestampType]));
         } else {
