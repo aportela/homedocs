@@ -132,7 +132,7 @@ const calDefaultPlugins = [
   ],
 ];
 
-let cal = new CalHeatmap(calDefaultOptions);
+let cal: CalHeatmap = new CalHeatmap(calDefaultOptions);
 
 // UGLY-HACK
 // official dynamic cal-heatmap theme toggle is not supported (https://cal-heatmap.com/docs/options/theme)
