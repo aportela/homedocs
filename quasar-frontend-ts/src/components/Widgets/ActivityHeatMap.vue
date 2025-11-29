@@ -229,12 +229,12 @@ cal.on('maxDateNotReached', () => {
 });
 
 
-const onCalRefresh = (data?: DataInterface, scaleDomain?: number[]) => {
-  if (data) {
-    calOptions.data = data;
+const onCalRefresh = (dataSource?: GetActivityHeatMapDataResponseItemInterface[], scaleColorDomain?: number[]) => {
+  if (dataSource) {
+    calOptions.data.source = dataSource;
   }
-  if (scaleDomain) {
-    calOptions.scale.color.domain = scaleDomain;
+  if (scaleColorDomain) {
+    calOptions.scale.color.domain = scaleColorDomain;
   }
   calOptions.date.locale = currentLocale.value;
   calOptions.theme = darkModeStore.isActive ? "dark" : "light";
@@ -266,12 +266,7 @@ const onRefresh = () => {
       const scaleDomain = [...new Set(counts)];
       scaleDomain.unshift(0);
       scaleDomain.sort(function (a, b) { return a - b; });
-      onCalRefresh({
-        source: successResponse.data.heatmap,
-        x: "date",
-        y: "count",
-        type: "json",
-      }, scaleDomain);
+      onCalRefresh(successResponse.data.heatmap, scaleDomain);
       state.loading = false;
       emit("loaded");
     })
