@@ -28,7 +28,7 @@
   </q-expansion-item>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 
@@ -38,51 +38,30 @@ const { t } = useI18n();
 
 const emit = defineEmits(['expand', 'collapse']);
 
-const props = defineProps({
-  expanded: {
-    type: Boolean,
-    required: false,
-    default: true
-  },
-  title: {
-    type: String,
-    required: false,
-    default: ""
-  },
-  caption: {
-    type: String,
-    required: false,
-    default: ""
-  },
-  icon: {
-    type: String,
-    required: true
-  },
-  staticIcon: {
-    type: Boolean,
-    required: false,
-    default: false
-  },
-  iconToolTip: {
-    type: String,
-    required: false
-  },
-  onHeaderIconClick: {
-    type: Function,
-    default: null
-  },
-  loading: {
-    type: Boolean,
-    required: false
-  },
-  error: {
-    type: Boolean,
-    required: false
-  }
+interface CustomExpansionWidgetProps {
+  expanded?: boolean;
+  title?: string;
+  caption?: string;
+  icon: string;
+  staticIcon?: boolean;
+  iconToolTip?: string;
+  onHeaderIconClick?: (() => void) | null;
+  loading?: boolean;
+  error?: boolean;
+};
+
+const props = withDefaults(defineProps<CustomExpansionWidgetProps>(), {
+  expanded: true,
+  title: "",
+  caption: "",
+  staticIcon: false,
+  onHeaderIconClick: null,
+  loading: false,
+  error: false,
 });
 
 const isExpanded = ref(props.expanded === true);
-const iconClass = computed(() => !!props.onHeaderIconClick ? "cursor-pointer" : "cursor-default");
+const iconClass = computed(() => props.onHeaderIconClick && typeof props.onHeaderIconClick === 'function' ? "cursor-pointer" : "cursor-default");
 
 watch(() => isExpanded.value, val => {
   if (val) {

@@ -21,11 +21,11 @@ class APIExceptionCatcher
         if (is_string($json)) {
             $response->getBody()->write($json);
         } else {
-            $this->logger->error("Error serializing payload", $payload);
+            $this->logger->error("Error serializing payload", [$payload, json_last_error(), json_last_error_msg()]);
             $response->getBody()->write("{}");
         }
 
-        return $response->withStatus($statusCode);
+        return $response->withStatus($statusCode)->withHeader('Content-Type', 'application/json');
     }
 
     private function handleGenericException(\Throwable $throwable): \Psr\Http\Message\ResponseInterface
@@ -51,17 +51,18 @@ class APIExceptionCatcher
         }
 
         $payload = json_encode([
+            'APIError' => true,
             'exception' => $exception,
             'status' => 500
         ]);
         if (is_string($payload)) {
             $response->getBody()->write($payload);
         } else {
-            $this->logger->error("Error serializing payload", [$exception]);
+            $this->logger->error("Error serializing payload", [$exception, $payload, json_last_error(), json_last_error_msg()]);
             $response->getBody()->write("{}");
         }
 
-        return $response->withStatus(500);
+        return $response->withStatus(500)->withHeader('Content-Type', 'application/json');
     }
 
     /**
@@ -82,17 +83,17 @@ class APIExceptionCatcher
 
             return $requestHandler->handle($serverRequest);
         } catch (\HomeDocs\Exception\InvalidParamsException $e) {
-            return $this->handleException($e, 400, ['invalidOrMissingParams' => explode(",", $e->getMessage())]);
+            return $this->handleException($e, 400, ['APIError' => true, 'invalidOrMissingParams' => explode(",", $e->getMessage())]);
         } catch (\HomeDocs\Exception\AlreadyExistsException $e) {
-            return $this->handleException($e, 409, ['invalidOrMissingParams' => explode(",", $e->getMessage())]);
+            return $this->handleException($e, 409, ['APIError' => true, 'invalidOrMissingParams' => explode(",", $e->getMessage())]);
         } catch (\HomeDocs\Exception\UnauthorizedException $e) {
-            return $this->handleException($e, 401, []);
+            return $this->handleException($e, 401, ['APIError' => true,]);
         } catch (\HomeDocs\Exception\AccessDeniedException $e) {
-            return $this->handleException($e, 403, []);
+            return $this->handleException($e, 403, ['APIError' => true,]);
         } catch (\HomeDocs\Exception\UploadException $e) {
-            return $this->handleException($e, $e->getCode(), []);
+            return $this->handleException($e, $e->getCode(), ['APIError' => true,]);
         } catch (\HomeDocs\Exception\NotFoundException $e) {
-            return $this->handleException($e, 404, ['keyNotFound' => $e->getMessage()]);
+            return $this->handleException($e, 404, ['APIError' => true, 'keyNotFound' => $e->getMessage()]);
         } catch (\Throwable $e) {
             return $this->handleGenericException($e);
         }

@@ -17,32 +17,33 @@
     </q-card-section>
     <q-card-section>
       <q-input dense outlined ref="emailRef" v-model="profile.email" type="email" name="email" :label="t('Email')"
-        :disable="state.loading" :autofocus="!savedEmail" :rules="formUtils.requiredFieldRules" lazy-rules
+        :disable="state.ajaxRunning" :autofocus="!savedEmail" :rules="[requiredFieldRule]" lazy-rules
         :error="validator.email.hasErrors" :error-message="validator.email.message ? t(validator.email.message) : ''">
         <template v-slot:prepend>
           <q-icon name="alternate_email" />
         </template>
       </q-input>
       <PasswordFieldCustomInput dense outlined ref="passwordRef" class="q-mt-md" v-model="profile.password"
-        name="password" :label="t('Password')" :disable="state.loading" :autofocus="!!savedEmail"
-        :rules="formUtils.requiredFieldRules" lazy-rules :error="validator.password.hasErrors"
+        name="password" :label="t('Password')" :disable="state.ajaxRunning" :autofocus="!!savedEmail"
+        :rules="[requiredFieldRule]" lazy-rules :error="validator.password.hasErrors"
         :error-message="validator.password.message ? t(validator.password.message) : ''">
       </PasswordFieldCustomInput>
     </q-card-section>
     <q-card-section>
       <q-btn color="primary" size="md" :label="$t('Sign in')" no-caps class="full-width" icon="account_circle"
-        :disable="state.loading || (!(profile.email && profile.password))" :loading="state.loading" type="submit">
+        :disable="state.ajaxRunning || (!(profile.email && profile.password))" :loading="state.ajaxRunning"
+        type="submit">
         <template v-slot:loading>
           <q-spinner-hourglass class="on-left" />
           {{ t('Sign in') }}
         </template>
       </q-btn>
-      <CustomErrorBanner v-if="state.loadingError && state.errorMessage" :text="state.errorMessage"
-        :api-error="state.apiError" class="q-mt-lg">
+      <CustomErrorBanner v-if="state.ajaxErrors && state.ajaxErrorMessage" :text="state.ajaxErrorMessage"
+        :api-error="state.ajaxAPIErrorDetails" class="q-mt-lg">
       </CustomErrorBanner>
     </q-card-section>
     <div v-if="showExtraBottom">
-      <q-card-section class="text-center q-pt-none" v-if="signUpAllowed">
+      <q-card-section class="text-center q-pt-none" v-if="serverEnvironment.isSignUpAllowed">
         <div>
           {{ t("Don't have an account yet ?") }}
           <router-link :to="{ name: 'register' }" class="main-app-text-link-hover">{{ t("Click here to sign up") }}
@@ -61,16 +62,20 @@
   </form>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
-import { ref, reactive, nextTick, computed } from "vue";
+import { ref, reactive, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
+import { QInput } from "quasar";
 
-import { useAPI } from "src/composables/useAPI";
+import { api } from "src/composables/api";
 import { useFormUtils } from "src/composables/useFormUtils";
 import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
-import { useLocalStorage } from "src/composables/useLocalStorage";
-
+import { email as localStorageEmail } from "src/composables/localStorage";
+import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
+import { type AuthValidator as AuthValidatorInterface, defaultAuthValidator } from "src/types/auth-validator";
+import { type AuthFields as AuthFieldsInterface } from "src/types/auth-fields";
+import { type LoginResponse } from "src/types/api-responses";
 import { default as DarkModeButton } from "src/components/Buttons/DarkModeButton.vue"
 import { default as SwitchLanguageButton } from "src/components/Buttons/SwitchLanguageButton.vue"
 import { default as GitHubButton } from "src/components/Buttons/GitHubButton.vue"
@@ -78,57 +83,37 @@ import { GITHUB_PROJECT_URL } from "src/constants"
 import { default as PasswordFieldCustomInput } from "src/components/Forms/Fields/PasswordFieldCustomInput.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
 
-const props = defineProps({
-  showExtraBottom: {
-    type: Boolean,
-    required: false,
-    default: true
-  }
+interface LoginFormProps {
+  showExtraBottom?: boolean;
+};
+
+withDefaults(defineProps<LoginFormProps>(), {
+  showExtraBottom: true,
 });
 
 const emit = defineEmits(['success']);
 
 const { t } = useI18n();
 
-const { api } = useAPI();
-
-const formUtils = useFormUtils();
+const { requiredFieldRule } = useFormUtils();
 
 const serverEnvironment = useServerEnvironmentStore();
 
-const { email } = useLocalStorage();
+const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-const signUpAllowed = computed(() => serverEnvironment.signUpAllowed === true);
+const validator = reactive<AuthValidatorInterface>({ ...defaultAuthValidator });
 
-const state = reactive({
-  loading: false,
-  loadingError: false,
-  errorMessage: null,
-  apiError: null
-});
+const savedEmail = localStorageEmail.get();
 
-const validator = reactive({
-  email: {
-    hasErrors: false,
-    message: null
-  },
-  password: {
-    hasErrors: false,
-    message: null
-  }
-});
-
-const savedEmail = email.get();
-
-const profile = reactive(
+const profile = reactive<AuthFieldsInterface>(
   {
-    email: savedEmail || null,
-    password: null
+    email: savedEmail || "",
+    password: ""
   }
 );
 
-const emailRef = ref(null);
-const passwordRef = ref(null);
+const emailRef = ref<QInput | null>(null);
+const passwordRef = ref<QInput | null>(null);
 
 const onResetForm = () => {
   validator.email.hasErrors = false;
@@ -139,88 +124,108 @@ const onResetForm = () => {
   passwordRef.value?.resetValidation();
 }
 
-const onValidateForm = () => {
+const onValidateForm = async () => {
   onResetForm();
-  nextTick(() => {
-    emailRef.value?.validate();
-    passwordRef.value?.validate();
-    if (!(emailRef.value?.hasError || passwordRef.value?.hasError)) {
+  try {
+    await emailRef.value?.validate();
+    await passwordRef.value?.validate();
+    if (emailRef.value?.hasError) {
+      emailRef.value?.focus();
+    } else if (passwordRef.value?.hasError) {
+      passwordRef.value?.focus();
+    } else {
       onSubmitForm();
     }
-  });
-}
+  } catch (error) {
+    console.error('Validation error', error);
+  }
+};
 
 const onSubmitForm = () => {
-  state.loading = true;
-  state.loadingError = false;
-  state.errorMessage = null;
-  state.apiError = null;
-  api.auth
-    .login(profile.email, profile.password)
-    .then((successResponse) => {
-      email.set(profile.email);
-      state.loading = false;
-      emit("success", successResponse.data);
-    })
-    .catch((errorResponse) => {
-      state.loadingError = true;
-      if (errorResponse.isAPIError) {
-        state.apiError = errorResponse.customAPIErrorDetails;
-        switch (errorResponse.response.status) {
-          case 400:
-            if (
-              errorResponse.response.data.invalidOrMissingParams.find(function (e) {
-                return e === "email";
-              })
-            ) {
-              state.loadingError = true;
-              state.errorMessage = "API Error: missing email param";
-              nextTick(() => {
-                emailRef.value?.focus();
-              });
-            } else if (
-              errorResponse.response.data.invalidOrMissingParams.find(function (e) {
-                return e === "password";
-              })
-            ) {
-              state.loadingError = true;
-              state.errorMessage = "API Error: missing password param";
-              nextTick(() => {
-                passwordRef.value?.focus();
-              });
-            } else {
-              state.loadingError = true;
-              state.errorMessage = "API Error: invalid/missing param";
-              nextTick(() => {
-                emailRef.value?.focus();
-              });
-            }
-            break;
-          case 404:
-            validator.email.hasErrors = true;
-            validator.email.message = "Email not registered";
-            nextTick(() => {
-              emailRef.value?.focus();
-            });
-            break;
-          case 401:
-            validator.password.hasErrors = true;
-            validator.password.message = "Invalid password";
-            nextTick(() => {
-              passwordRef.value?.focus();
-            });
-            break;
-          default:
-            state.loadingError = true;
-            state.errorMessage = "API Error: fatal error";
-            break;
+  if (profile.email && profile.password) {
+    Object.assign(state, defaultAjaxState);
+    state.ajaxRunning = true;
+    api.auth
+      .login(profile.email, profile.password)
+      .then((successResponse: LoginResponse) => {
+        localStorageEmail.set(profile.email);
+        emit("success", successResponse.data);
+      })
+      .catch((errorResponse) => {
+        state.ajaxErrors = true;
+        if (errorResponse.isAPIError) {
+          state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
+          switch (errorResponse.response.status) {
+            case 400:
+              if (
+                errorResponse.response.data.invalidOrMissingParams.find(function (e: string) {
+                  return e === "email";
+                })
+              ) {
+                state.ajaxErrorMessage = "API Error: missing email param";
+                nextTick()
+                  .then(() => {
+                    emailRef.value?.focus();
+                  }).catch((e) => {
+                    console.error(e);
+                  });
+              } else if (
+                errorResponse.response.data.invalidOrMissingParams.find(function (e: string) {
+                  return e === "password";
+                })
+              ) {
+                state.ajaxErrorMessage = "API Error: missing password param";
+                nextTick()
+                  .then(() => {
+                    passwordRef.value?.focus();
+                  }).catch((e) => {
+                    console.error(e);
+                  });
+              } else {
+                state.ajaxErrorMessage = "API Error: invalid/missing param";
+                nextTick()
+                  .then(() => {
+                    emailRef.value?.focus();
+                  }).catch((e) => {
+                    console.error(e);
+                  });
+              }
+              break;
+            case 404:
+              validator.email.hasErrors = true;
+              validator.email.message = "Email not registered";
+              nextTick()
+                .then(() => {
+                  emailRef.value?.focus();
+                }).catch((e) => {
+                  console.error(e);
+                });
+              break;
+            case 401:
+              validator.password.hasErrors = true;
+              validator.password.message = "Invalid password";
+              nextTick()
+                .then(() => {
+                  passwordRef.value?.focus();
+                }).catch((e) => {
+                  console.error(e);
+                });
+              break;
+            default:
+              state.ajaxErrorMessage = "API Error: fatal error";
+              break;
+          }
+        } else {
+          state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
+          console.error(errorResponse);
         }
-      } else {
-        state.errorMessage = `Uncaught exception: ${errorResponse}`;
-        console.error(errorResponse);
-      }
-      state.loading = false;
-    });
+      }).finally(() => {
+        state.ajaxRunning = false;
+      });
+  } else {
+    // TODO
+    console.error("Missing email|password values");
+  }
 }
 
 </script>

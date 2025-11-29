@@ -1,20 +1,19 @@
 <template>
   <div class="row q-col-gutter-x-sm">
-    <div
-      :class="{ 'col-6': createdOnTimestamp != lastUpdateTimestamp, 'col-12': createdOnTimestamp == lastUpdateTimestamp }">
-      <q-input dense class="q-mb-md" outlined v-model="creationDateTime" :label="t('Created on')" readonly>
+    <div v-if="createdAt" :class="{ 'col-6': showBothDates, 'col-12': !showBothDates }">
+      <q-input dense class="q-mb-md" outlined v-model="createdAtModel" :label="t('Created on')" readonly>
         <template v-slot:append v-if="isScreenGreaterThanXS">
           <span style="font-size: 14px;">
-            {{ creationTimeAgo }}
+            {{ createdAt?.timeAgo }}
           </span>
         </template>
       </q-input>
     </div>
-    <div class="col-6" v-if="createdOnTimestamp != lastUpdateTimestamp">
-      <q-input dense class="q-mb-md" outlined v-model="lastUpdate" :label="t('Last update')" readonly>
+    <div class="col-6" v-if="updatedAtModel">
+      <q-input dense class="q-mb-md" outlined v-model="updatedAtModel" :label="t('Last update')" readonly>
         <template v-slot:append v-if="isScreenGreaterThanXS">
           <span style="font-size: 14px;">
-            {{ lastUpdateTimeAgo }}
+            {{ updatedAt?.timeAgo }}
           </span>
         </template>
       </q-input>
@@ -22,56 +21,44 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
-import { ref, computed, watch } from "vue";
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useQuasar } from "quasar";
 
-import { useFormatDates } from "src/composables/useFormatDates";
-import { useLocalStorage } from "src/composables/useLocalStorage";
+import { type DateTime as DateTimeInterface } from "src/types/date-time";
 
-const props = defineProps({
-  createdOnTimestamp: {
-    type: Number,
-    required: false,
-    default: 0,
-    validator(value) {
-      return (value > 0);
-    }
-  },
-  lastUpdateTimestamp: {
-    type: Number,
-    required: false,
-    default: 0,
-    validator(value) {
-      return (value > 0);
-    }
-  }
-});
+interface DocumentMetadataTopFormProps {
+  createdAt: DateTimeInterface | null;
+  updatedAt: DateTimeInterface | null;
+};
+
+const props = defineProps<DocumentMetadataTopFormProps>();
 
 const { t } = useI18n();
 const { screen } = useQuasar();
 
-const { fullDateTimeHuman, timeAgo } = useFormatDates();
-const { dateTimeFormat } = useLocalStorage();
-
 const isScreenGreaterThanXS = computed(() => screen.gt.xs);
 
-const creationDateTime = ref(props.createdOnTimestamp ? fullDateTimeHuman(props.createdOnTimestamp, dateTimeFormat.get()) : null);
-const lastUpdate = ref(props.lastUpdateTimestamp ? fullDateTimeHuman(props.lastUpdateTimestamp, dateTimeFormat.get()) : null);
+const showBothDates = computed(() => props.createdAt?.timestamp != props.updatedAt?.timestamp);
 
-const creationTimeAgo = ref(props.createdOnTimestamp ? timeAgo(props.createdOnTimestamp) : null);
-const lastUpdateTimeAgo = ref(props.lastUpdateTimestamp ? timeAgo(props.lastUpdateTimestamp) : null);
-
-watch(() => props.createdOnTimestamp, val => {
-  creationDateTime.value = val ? fullDateTimeHuman(val, dateTimeFormat.get()) : null;
-  creationTimeAgo.value = val ? timeAgo(val) : null;
+const createdAtModel = computed({
+  get() {
+    return props.createdAt?.dateTime;
+  },
+  set() {
+    /* */
+  }
 });
 
-watch(() => props.lastUpdateTimestamp, val => {
-  lastUpdate.value = val ? fullDateTimeHuman(val, dateTimeFormat.get()) : null;
-  lastUpdateTimeAgo.value = val ? timeAgo(val) : null;
+const updatedAtModel = computed({
+  get() {
+    return props.createdAt?.dateTime;
+  },
+  set() {
+    /* */
+  }
 });
 
 </script>

@@ -1,6 +1,6 @@
 <template>
   <CustomExpansionWidget title="Tag cloud" icon="tag" icon-tool-tip="Click to refresh data"
-    :on-header-icon-click="onRefresh" :loading="state.loading" :error="state.loadingError" :expanded="isExpanded"
+    :on-header-icon-click="onRefresh" :loading="state.ajaxRunning" :error="state.ajaxErrors" :expanded="isExpanded"
     @expand="isExpanded = true" @collapse="isExpanded = false">
     <template v-slot:header-extra>
       <q-chip square size="sm" color="grey-7" text-color="white">{{ t("Total tags", {
@@ -9,11 +9,11 @@
       }) }}</q-chip>
     </template>
     <template v-slot:content>
-      <div class="row items-center q-gutter-sm q-mt-none q-pa-xs" v-if="state.loading">
+      <div class="row items-center q-gutter-sm q-mt-none q-pa-xs" v-if="state.ajaxRunning">
         <q-skeleton square width="12em" height="2em" class="" v-for="j in 32" :key="j"></q-skeleton>
       </div>
-      <CustomErrorBanner v-else-if="state.loadingError" :text="state.errorMessage || 'Error loading data'"
-        :api-error="state.apiError">
+      <CustomErrorBanner v-else-if="state.ajaxErrors" :text="state.ajaxErrorMessage || 'Error loading data'"
+        :api-error="state.ajaxAPIErrorDetails">
       </CustomErrorBanner>
       <div v-else-if="hasTags">
         <BrowseByTagButton v-for="tag in tags" :key="tag.tag" :tag="tag.tag" :caption="String(tag.total)"
@@ -24,12 +24,13 @@
   </CustomExpansionWidget>
 </template>
 
-<script setup>
-
+<script setup lang="ts">
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
-import { useBus } from "src/composables/useBus";
-import { useAPI } from "src/composables/useAPI";
+import { bus } from "src/composables/bus";
+import { api } from "src/composables/api";
+import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
+import { type TagCloudResponse, type TagCloudResponseItem } from "src/types/api-responses";
 
 import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
@@ -37,60 +38,51 @@ import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue
 import { default as BrowseByTagButton } from "src/components/Buttons/BrowseByTagButton.vue";
 
 const { t } = useI18n();
-const { api } = useAPI();
-const { bus } = useBus();
 
-const props = defineProps({
-  expanded: {
-    type: Boolean,
-    required: false,
-    default: true
-  }
+interface TagCloudWidgetProps {
+  expanded?: boolean
+};
+
+const props = withDefaults(defineProps<TagCloudWidgetProps>(), {
+  expanded: true
 });
 
 const isExpanded = ref(props.expanded);
 
-const state = reactive({
-  loading: false,
-  loadingError: false,
-  errorMessage: null,
-  apiError: null
-});
+const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-const tags = reactive([]);
+const tags = reactive<Array<TagCloudResponseItem>>([]);
+
 const hasTags = computed(() => tags.length > 0);
 
 const onRefresh = () => {
-  if (!state.loading) {
-    state.loading = true;
-    state.loadingError = false;
-    state.errorMessage = null;
-    state.apiError = null;
+  if (!state.ajaxRunning) {
+    Object.assign(state, defaultAjaxState);
+    state.ajaxRunning = true;
     api.tag.getCloud()
-      .then((successResponse) => {
+      .then((successResponse: TagCloudResponse) => {
         tags.length = 0;
         tags.push(...successResponse.data.tags);
-        state.loading = false;
       })
       .catch((errorResponse) => {
-        state.loadingError = true;
+        state.ajaxErrors = true;
         if (errorResponse.isAPIError) {
+          state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
           switch (errorResponse.response.status) {
             case 401:
-              state.apiError = errorResponse.customAPIErrorDetails;
-              state.errorMessage = "Auth session expired, requesting new...";
+              state.ajaxErrorMessage = "Auth session expired, requesting new...";
               bus.emit("reAuthRequired", { emitter: "TagCloudWidget" });
               break;
             default:
-              state.apiError = errorResponse.customAPIErrorDetails;
-              state.errorMessage = "API Error: fatal error";
+              state.ajaxErrorMessage = "API Error: fatal error";
               break;
           }
         } else {
-          state.errorMessage = `Uncaught exception: ${errorResponse}`;
+          state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
           console.error(errorResponse);
         }
-        state.loading = false;
+      }).finally(() => {
+        state.ajaxRunning = false;
       });
   }
 };
@@ -107,7 +99,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   bus.off("reAuthSucess");
 });
-
 </script>
 
 <style lang="css">

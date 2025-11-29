@@ -16,13 +16,14 @@
       </q-item-section>
     </q-item>
     <q-separator class="q-my-md" />
-    <CustomErrorBanner v-if="state.loadingError && state.errorMessage" :text="state.errorMessage"
-      :api-error="state.apiError" class="q-mt-lg">
+    <CustomErrorBanner v-if="state.ajaxErrors && state.ajaxErrorMessage" :text="state.ajaxErrorMessage"
+      :api-error="state.ajaxAPIErrorDetails" class="q-mt-lg">
     </CustomErrorBanner>
     <div v-if="hasAttachments" class="q-list-attachments-container scroll">
       <div v-for="attachment, attachmentIndex in attachments" :key="attachment.id">
         <q-item class="q-pa-xs bg-transparent" v-show="!hiddenIds.includes(attachment.id)" clickable
-          :href="attachment.url" @click.stop.prevent="onDownload(attachment.url, attachment.name)">
+          :href="getAttachmentURL(attachment.id, true)"
+          @click.stop.prevent="onDownload(attachment.id, attachment.name)">
           <q-item-section class="q-mx-sm">
             <q-item-label>
               {{ t("Filename: ") }} {{ attachment.name }}
@@ -31,7 +32,7 @@
               {{ t("Size: ") }}{{ format.humanStorageSize(attachment.size) }}
             </q-item-label>
             <q-item-label caption>
-              {{ t("Uploaded on: ") }}{{ attachment.creationDate }} ({{ attachment.creationDateTimeAgo }})
+              {{ t("Uploaded on: ") }}{{ attachment.createdAt.dateTime }} ({{ attachment.createdAt.timeAgo }})
             </q-item-label>
           </q-item-section>
           <q-item-section side middle class="q-mr-sm q-item-section-attachment-actions">
@@ -62,79 +63,52 @@
 
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import { format } from "quasar";
 
-import { useAxios } from "src/composables/useAxios";
-import { useAPI } from "src/composables/useAPI";
-import { useBus } from "src/composables/useBus";
-import { useFileUtils } from "src/composables/useFileUtils"
-import { useDocument } from "src/composables/useDocument"
+import { bgDownload } from "src/composables/axios";
+import { bus } from "src/composables/bus";
+import { allowPreview } from "src/composables/fileUtils"
+import { getRegexForStringMatch } from "src/composables/common";
+import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
+import { type Attachment as AttachmentInterface } from "src/types/attachment";
+import { getURL as getAttachmentURL } from "src/composables/attachment";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
-import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
+import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 
 const { t } = useI18n();
 
-const { bgDownload } = useAxios();
-const { api } = useAPI();
-const { bus } = useBus();
+const emit = defineEmits(['update:modelValue', 'addAttachment', 'previewAttachmentAtIndex', 'removeAttachmentAtIndex']);
 
-const { allowPreview } = useFileUtils();
-const { escapeRegExp } = useDocument();
+interface DocumentDetailsAttachmentsProps {
+  attachments: AttachmentInterface[];
+  disable: boolean;
+};
 
-const emit = defineEmits(['update:modelValue', 'addAttachment', 'previewAttachmentAtIndex',]);
-
-const props = defineProps({
-  modelValue: {
-    type: Array,
-    required: false,
-    default: () => [],
-    validator(value) {
-      return Array.isArray(value);
-    }
-  },
-  disable: {
-    type: Boolean,
-    required: false,
-    default: false
-  }
+const props = withDefaults(defineProps<DocumentDetailsAttachmentsProps>(), {
+  disable: false
 });
 
-const state = reactive({
-  loading: false,
-  loadingError: false,
-  errorMessage: null,
-  apiError: null
-});
+const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-const isDisabled = computed(() => props.disable || state.loading);
+const isDisabled = computed(() => props.disable || state.ajaxRunning);
 
-const attachments = computed({
-  get() {
-    return props.modelValue;
-  },
-  set(value) {
-    emit('update:modelValue', value);
-  }
-});
+const hiddenIds = reactive<Array<string>>([]);
 
-const hiddenIds = ref([]);
-
-const hasAttachments = computed(() => attachments.value?.length > 0);
+const hasAttachments = computed(() => props.attachments?.length > 0);
 
 const searchText = ref(null);
 
-const onSearchTextChanged = (text) => {
+const onSearchTextChanged = (text: string | number | null) => {
+  hiddenIds.length = 0;
   if (text) {
-    const regex = new RegExp(escapeRegExp(text), "i");
-    hiddenIds.value = attachments.value?.filter(attachment => !attachment.name?.match(regex)).map(attachment => attachment.id);
+    const regex = getRegexForStringMatch(String(text));
+    hiddenIds.push(...props.attachments.filter(attachment => !attachment.name?.match(regex)).map(attachment => attachment.id));
     // TODO: map new fragment with bold ?
-  } else {
-    hiddenIds.value = [];
   }
 };
 
@@ -142,55 +116,21 @@ const onAddAttachment = () => {
   emit("addAttachment");
 };
 
-const onRemoveAttachmentAtIndex = (index) => {
-  // orphaned elements are uploaded to server, but not associated (until document saved)
-  // so we must remove them
-  if (attachments.value[index].orphaned) {
-    state.loading = true;
-    state.loadingError = false;
-    state.errorMessage = null;
-    state.apiError = null;
-    api.document.
-      removeFile(attachments.value[index].id)
-      .then((successResponse) => {
-        state.loading = false;
-        attachments.value = attachments.value.filter((_, i) => i !== index);
-      })
-      .catch((errorResponse) => {
-        state.loadingError = true;
-        if (errorResponse.isAPIError) {
-          state.apiError = errorResponse.customAPIErrorDetails;
-          switch (errorResponse.response.status) {
-            case 401:
-              state.errorMessage = "Auth session expired, requesting new...";
-              bus.emit("reAuthRequired", { emitter: "DocumentDetailsAttachments.onRemoveAttachmentAtIndex" });
-              break;
-            default:
-              state.errorMessage = "API Error: fatal error";
-              break;
-          }
-        } else {
-          state.errorMessage = `Uncaught exception: ${errorResponse}`;
-          console.error(errorResponse);
-        }
-        state.loading = false;
-      });
-  } else {
-    attachments.value = attachments.value.filter((_, i) => i !== index);
-  }
+const onRemoveAttachmentAtIndex = (index: number) => {
+  emit("removeAttachmentAtIndex", index);
 };
 
-const onPreviewAttachment = (index) => {
+const onPreviewAttachment = (index: number) => {
   emit("previewAttachmentAtIndex", index);
 };
 
-const onDownload = (url, fileName) => {
-  bgDownload(url, fileName)
-    .then((successResponse) => {
-      // TODO
+const onDownload = (attachmentId: string, fileName: string) => {
+  bgDownload(getAttachmentURL(attachmentId), fileName)
+    .then(() => {
+      /* TODO */
     })
-    .catch((errorResponse) => {
-      // TODO
+    .catch(() => {
+      /* TODO */
     });
 }
 
@@ -206,7 +146,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   bus.off("reAuthSucess");
 });
-
 </script>
 
 <style lang="css" scoped>

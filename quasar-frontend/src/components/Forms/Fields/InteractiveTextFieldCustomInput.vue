@@ -8,12 +8,12 @@
         {{ props.label }}</div>
       <span class="absolute-top-right text-grey q-mt-sm">
         <slot name="top-icon-prepend" :showTopHoverIcons="showTopHoverIcons"></slot>
-        <q-icon :name="!collapsedView ? 'unfold_less' : 'expand'" size="sm" v-show="showTopHoverIcons"
-          @click.stop="collapsedView = !collapsedView"
+        <q-icon class="icon-hover" :name="!collapsedView ? 'unfold_less' : 'expand'" size="sm"
+          v-show="showTopHoverIcons" @click.stop="collapsedView = !collapsedView"
           :aria-label="t(collapsedView ? 'Click to expand' : 'Click to collapse')">
           <DesktopToolTip>{{ t(collapsedView ? "Click to expand" : "Click to collapse") }}</DesktopToolTip>
         </q-icon>
-        <q-icon name="edit" size="sm" class="q-ml-sm" v-show="showTopHoverIcons"
+        <q-icon class="icon-hover q-ml-sm" name="edit" size="sm" v-show="showTopHoverIcons"
           :aria-label="t('Click to toggle edit mode')">
           <DesktopToolTip>{{ t("Click to toggle edit mode") }}</DesktopToolTip>
         </q-icon>
@@ -36,56 +36,33 @@
   </q-input>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref, useAttrs, computed, nextTick, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
-import { useQuasar } from "quasar";
+import { useQuasar, QInput } from "quasar";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 
-const props = defineProps({
-  startModeEditable: {
-    type: Boolean,
-    required: false,
-    default: true
-  },
-  modelValue: {
-    type: String,
-    required: false,
-    default: "",
-  },
-  label: {
-    type: String,
-    required: false,
-  },
-  maxLines: {
-    type: Number,
-    required: false,
-    default: 2
-  },
-  rules: {
-    type: Array,
-    default: () => [],
-    validator(value) {
-      return Array.isArray(value);
-    }
-  },
-  autofocus: {
-    type: Boolean,
-    default: false,
-  },
-  error:
-  {
-    type: Boolean,
-    required: false,
-    default: false
-  },
-  errorMessage: {
-    type: String,
-    required: false,
-    default: null
-  },
+interface InteractiveTextFieldCustomInput {
+  modelValue: string;
+  label?: string;
+  maxLines?: number;
+  rules?: Array<(val: string) => boolean | string>;
+  autofocus?: boolean;
+  startModeEditable?: boolean;
+  error?: boolean;
+  errorMessage?: string;
+};
+
+const props = withDefaults(defineProps<InteractiveTextFieldCustomInput>(), {
+  label: "",
+  maxLines: 2,
+  rules: () => [],
+  autofocus: false,
+  startModeEditable: true,
+  error: false,
+  errorMessage: ""
 });
 
 const attrs = useAttrs();
@@ -96,7 +73,7 @@ const isDesktop = computed(() => $q.platform.is.desktop);
 
 const emit = defineEmits(['update:modelValue']);
 
-const qInputRef = ref(null);
+const qInputRef = ref<QInput | null>(null);
 
 const readOnly = ref(!props.startModeEditable);
 
@@ -114,9 +91,12 @@ const showTopHoverIcons = ref(!isDesktop.value);
 const collapsedView = ref(true);
 
 const focus = () => {
-  nextTick(() => {
-    qInputRef.value?.focus();
-  });
+  nextTick()
+    .then(() => {
+      qInputRef.value?.focus();
+    }).catch((e) => {
+      console.error(e);
+    });
 }
 
 const onMouseEnter = () => {

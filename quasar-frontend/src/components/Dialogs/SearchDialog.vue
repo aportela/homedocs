@@ -4,13 +4,13 @@
       {{ t('Search on HomeDocs...') }}
     </template>
     <template v-slot:header-right>
-      <q-chip size="md" square class="gt-sm theme-default-q-chip shadow-1" v-if="!state.loading && !state.loadingError"
-        v-show="totalResults > 0">
-        <q-avatar class="theme-default-q-avatar">{{ totalResults }}</q-avatar>
+      <q-chip size="md" square class="gt-sm theme-default-q-chip shadow-1"
+        v-if="!state.ajaxRunning && !state.ajaxErrors" v-show="pager.totalResults > 0">
+        <q-avatar class="theme-default-q-avatar">{{ pager.totalResults }}</q-avatar>
         {{ t("Results count",
           {
             count:
-              totalResults
+              pager.totalResults
           }) }}
       </q-chip>
     </template>
@@ -19,7 +19,7 @@
         <div class="col-auto">
           <q-select v-model="searchOn" :options="searchOnOptions"
             :display-value="`${searchOn ? t(searchOn.label) : ''}`" dense options-dense outlined style="min-width: 8em;"
-            :label="t('Search on')" @update:model-value="onSearch(text)" :disable="state.loading">
+            :label="t('Search on')" @update:model-value="onSearch(text)" :disable="state.ajaxRunning">
             <template v-slot:option="scope">
               <q-item v-bind="scope.itemProps">
                 <q-item-section>
@@ -41,8 +41,9 @@
         </div>
       </div>
       <q-separator />
-      <div v-if="state.loadingError">
-        <CustomErrorBanner :text="state.errorMessage || 'Error loading data'" :api-error="state.apiError">
+      <div v-if="state.ajaxErrors">
+        <CustomErrorBanner :text="state.ajaxErrorMessage || 'Error loading data'"
+          :api-error="state.ajaxAPIErrorDetails">
         </CustomErrorBanner>
       </div>
       <q-virtual-scroll v-else component="q-list" :items="searchResults" @virtual-scroll="onVirtualScroll"
@@ -57,20 +58,22 @@
                 <q-icon name="work" />
               </q-item-section>
               <q-item-section>
-                <q-item-label>{{ item.label }}</q-item-label>
+                <q-item-label>{{ item.title }}</q-item-label>
                 <q-item-label caption v-if="item.matchedOnFragment">
                   <div v-html="item.matchedOnFragment"></div>
                 </q-item-label>
               </q-item-section>
               <q-item-section side top>
-                <q-item-label caption>{{ item.lastUpdate }}
+                <q-item-label caption> ({{
+                  item.updatedAt.timeAgo || item.createdAt.timeAgo }})
+                  <span class="text-color-primary">{{ item.updatedAt.dateTime || item.createdAt.dateTime }}</span>
                 </q-item-label>
                 <ViewDocumentDetailsButton size="md" square class="min-width-9em" :count="item.attachmentCount"
-                  :label="'Total attachments count'" :tool-tip="'View document attachments'" :disable="state.loading"
-                  @click.stop.prevent="onShowDocumentFiles(item.id, item.label)">
+                  :label="'Total attachments count'" :tool-tip="'View document attachments'"
+                  :disable="state.ajaxRunning" @click.stop.prevent="onShowDocumentFiles(item.id, item.label)">
                 </ViewDocumentDetailsButton>
                 <ViewDocumentDetailsButton size="md" square class="min-width-9em" :count="item.noteCount"
-                  :label="'Total notes'" :tool-tip="'View document notes'" :disable="state.loading"
+                  :label="'Total notes'" :tool-tip="'View document notes'" :disable="state.ajaxRunning"
                   @click.stop.prevent="onShowDocumentNotes(item.id, item.label)">
                 </ViewDocumentDetailsButton>
               </q-item-section>
@@ -86,34 +89,42 @@
     </template>
     <template v-slot:actions-prepend>
       <q-space />
-      <q-select v-model="resultsPage" filled @update:model-value="onChangeResultsPage" :options="resultsPageOptions"
-        :label="t('Max results')" stack-label dense options-dense class="q-mr-md" style="min-width: 12em" />
+      <q-select v-model="pager.resultsPage" filled @update:model-value="onChangeResultsPage"
+        :options="resultsPageOptions" :label="t('Max results')" stack-label dense options-dense class="q-mr-md"
+        style="min-width: 12em" />
     </template>
   </BaseDialog>
 </template>
 
-<script setup>
-
+<script setup lang="ts">
 import { ref, reactive, computed, watch, onMounted, onBeforeUnmount, nextTick } from "vue";
+import { QInput, QVirtualScroll } from "quasar";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 
-import { useBus } from "src/composables/useBus";
-import { useAPI } from "src/composables/useAPI";
-import { useFormatDates } from "src/composables/useFormatDates"
-import { useLocalStorage } from "src/composables/useLocalStorage"
+import { bus, onShowDocumentFiles, onShowDocumentNotes } from "src/composables/bus";
+import { api } from "src/composables/api";
+import { searchDialogResultsPage as localStorageSearchDialogResultsPage } from "src/composables/localStorage"
+import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
+import { type SearchDocumentResponse as SearchDocumentResponseInterface, type SearchDocumentResponseItem as SearchDocumentResponseItemInterface } from "src/types/api-responses";
+import { SearchDocumentItemClass } from "src/types/search-document-item";
+import { type QuasarVirtualScrollEventDetails as QuasarVirtualScrollEventDetailsInterface } from "src/types/quasar-virtual-scroll-event-details";
+import { DateTimeClass } from "src/types/date-time";
+import { type Pager as PagerInterface } from "src/types/pager";
+import { type Sort as SortInterface } from "src/types/sort";
+import { type SearchFilter as SearchFilterInterface, SearchDatesFilterClass } from "src/types/search-filter";
+import { SearchOnTextEntitiesFilterClass } from "src/types/search-filter";
 
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue"
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 import { default as ViewDocumentDetailsButton } from "src/components/Buttons/ViewDocumentDetailsButton.vue";
 
-const props = defineProps({
-  modelValue: {
-    type: Boolean,
-    required: true
-  }
-});
+interface SearchDialogProps {
+  modelValue: boolean;
+};
+
+const props = defineProps<SearchDialogProps>();
 
 const router = useRouter();
 const currentRoute = useRoute();
@@ -122,12 +133,6 @@ const currentRoute = useRoute();
 const currentDocumentId = ref(currentRoute.name == "document" ? currentRoute.params?.id || null : null);
 
 const { t } = useI18n();
-
-const { api } = useAPI();
-const { fullDateTimeHuman } = useFormatDates();
-
-const { bus, onShowDocumentFiles, onShowDocumentNotes } = useBus();
-const { searchDialogResultsPage, dateTimeFormat } = useLocalStorage();
 
 const emit = defineEmits(['update:modelValue', 'close']);
 
@@ -140,12 +145,7 @@ const visible = computed({
   }
 });
 
-const state = reactive({
-  loading: false,
-  loadingError: false,
-  errorMessage: null,
-  apiError: null
-});
+const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
 const searchOnOptions = computed(() => [
   { label: 'Title', value: 'title' },
@@ -154,150 +154,154 @@ const searchOnOptions = computed(() => [
   { label: 'Attachment names', value: 'attachmentsFilename' },
 ]);
 
-const searchOn = ref(searchOnOptions.value[0]);
+const sort: SortInterface = {
+  field: "lastUpdateTimestamp",
+  label: "",
+  order: "DESC"
+};
 
-watch(() => searchOn.value, val => {
-  nextTick(() => {
-    searchTextField.value?.focus();
-  });
+const searchOn = ref(searchOnOptions.value[0]!);
+
+watch(() => searchOn.value, () => {
+  nextTick()
+    .then(() => {
+      searchTextField.value?.focus();
+    }).catch((e) => {
+      console.error(e);
+    });
 });
 
-const virtualListRef = ref(null);
+const virtualListRef = ref<QVirtualScroll | null>(null);
 
-const totalResults = ref(0);
+const pager = reactive<PagerInterface>({
+  currentPageIndex: 1,
+  resultsPage: localStorageSearchDialogResultsPage.get(),
+  totalResults: 0,
+  totalPages: 0,
+});
 
-const resultsPage = ref(searchDialogResultsPage.get());
+const resultsPageOptions: number[] = [1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 64, 128];
 
-const resultsPageOptions = [1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 64, 128];
-
-const onChangeResultsPage = (value) => {
-  searchDialogResultsPage.set(value);
+const onChangeResultsPage = (value: number) => {
+  localStorageSearchDialogResultsPage.set(value);
   onSearch(text.value);
 };
 
-const text = ref("");
-const searchResults = reactive([]);
-const currentSearchResultSelectedIndex = ref(-1);
-const virtualListIndex = ref(0);
+const text = ref<string>("");
+const searchResults = reactive<Array<SearchDocumentItemClass>>([]);
+const currentSearchResultSelectedIndex = ref<number>(-1);
+const virtualListIndex = ref<number>(0);
 
-const showNoSearchResults = ref(false);
+const showNoSearchResults = ref<boolean>(false);
 
-const searchTextField = ref(null);
+const searchTextField = ref<QInput | null>(null);
 
-const boldStringMatch = (str, matchWord) => {
-  return str.replace(
-    new RegExp(matchWord, "gi"),
-    (match) => `<strong>${match}</strong>`
-  );
-};
-
-const onSearch = (val) => {
+const onSearch = (val: string) => {
+  pager.totalResults = 0;
+  pager.totalPages = 0;
   showNoSearchResults.value = false;
-  totalResults.value = 0;
   if (val && val.trim().length > 0) {
     currentSearchResultSelectedIndex.value = -1;
-    state.loading = true;
-    state.loadingError = false;
-    state.errorMessage = null;
-    state.apiError = null;
-    const params = {
-      text: {
-        title: searchOn.value.value == "title" ? val.trim() : null,
-        description: searchOn.value.value == "description" ? val.trim() : null,
-        notesBody: searchOn.value.value == "notesBody" ? val.trim() : null,
-        attachmentsFilename: searchOn.value.value == "attachmentsFilename" ? val.trim() : null,
-      }
+    Object.assign(state, defaultAjaxState);
+    state.ajaxRunning = true;
+
+    const params: SearchFilterInterface = {
+      text: new SearchOnTextEntitiesFilterClass(
+        searchOn.value.value == "title" ? val.trim() : null,
+        searchOn.value.value == "description" ? val.trim() : null,
+        searchOn.value.value == "notesBody" ? val.trim() : null,
+        searchOn.value.value == "attachmentsFilename" ? val.trim() : null,
+      ),
+      tags: [],
+      dates: new SearchDatesFilterClass(),
     };
-    api.document.search(1, resultsPage.value, params, "lastUpdateTimestamp", "DESC")
-      .then((successResponse) => {
+    api.document.search(pager, params, sort, true)
+      .then((successResponse: SearchDocumentResponseInterface) => {
+        pager.totalResults = successResponse.data.results.pagination.totalResults;
+        pager.totalPages = successResponse.data.results.pagination.totalPages;
         searchResults.length = 0;
-        totalResults.value = successResponse.data.results.pagination.totalResults;
-        searchResults.push(...successResponse.data.results.documents.map((document) => {
-          document.matchedOnFragment = null;
-          if (Array.isArray(document.matchedFragments) && document.matchedFragments.length > 0) {
-            document.matchedOnFragment = t("Fast search match fragment",
-              {
-                fragment: document.matchedFragments[0].fragment ? `${boldStringMatch(document.matchedFragments[0].fragment, val)}` : '',
-                matchedOn: t(document.matchedFragments[0].matchedOn)
-              }
-            );
-          }
-          return (
-            {
-              id: document.id,
-              label: document.title,
-              createdOn: fullDateTimeHuman(document.createdOnTimestamp, dateTimeFormat.get()),
-              lastUpdate: fullDateTimeHuman(document.lastUpdateTimestamp, dateTimeFormat.get()),
-              attachmentCount: document.attachmentCount,
-              noteCount: document.noteCount,
-              matchedOnFragment: document.matchedOnFragment
-            });
-        }));
-        state.loading = false;
-        showNoSearchResults.value = successResponse.data.results.documents.length <= 0; // REQUIRED ?
+        searchResults.push(...successResponse.data.results.documents.map((document: SearchDocumentResponseItemInterface) =>
+          new SearchDocumentItemClass(
+            t,
+            document.id,
+            new DateTimeClass(t, document.createdAtTimestamp),
+            new DateTimeClass(t, document.updatedAtTimestamp),
+            document.title,
+            document.description,
+            document.tags,
+            document.attachmentCount,
+            document.noteCount,
+            document.matchedFragments,
+            val.trim(),
+          )
+        ));
+        showNoSearchResults.value = searchResults.length <= 0;
       })
       .catch((errorResponse) => {
-        state.loadingError = true;
+        state.ajaxErrors = true;
         if (errorResponse.isAPIError) {
+          state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
           switch (errorResponse.response.status) {
             case 401:
-              state.apiError = errorResponse.customAPIErrorDetails;
-              state.errorMessage = "Auth session expired, requesting new...";
+              state.ajaxErrorMessage = "Auth session expired, requesting new...";
               bus.emit("reAuthRequired", { emitter: "SearchDialog.onSearch" });
               break;
             default:
-              state.apiError = errorResponse.customAPIErrorDetails;
-              state.errorMessage = "API Error: fatal error";
+              state.ajaxErrorMessage = "API Error: fatal error";
               break;
           }
         } else {
-          state.errorMessage = `Uncaught exception: ${errorResponse}`;
+          state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
           console.error(errorResponse);
         }
-        state.loading = false;
+
+      }).finally(() => {
+        state.ajaxRunning = false;
       });
   } else {
     searchResults.length = 0;
   }
 };
 
-const onVirtualScroll = (index) => {
-  virtualListIndex.value = index
+const onVirtualScroll = (details: QuasarVirtualScrollEventDetailsInterface) => {
+  virtualListIndex.value = details.index;
 };
 
-const scrollToItem = (index) => {
+const scrollToItem = (index: number) => {
   if (virtualListRef.value) {
     virtualListRef.value.scrollTo(index, "start-force");
   }
 };
 
-const onKeyDown = (event) => {
-  if (event.key === "ArrowUp") {
+const onKeyDown = (evt: KeyboardEvent) => {
+  if (evt.key === "ArrowUp") {
     if (searchResults.length > 0) {
       if (currentSearchResultSelectedIndex.value > 0) {
         currentSearchResultSelectedIndex.value--;
         scrollToItem(currentSearchResultSelectedIndex.value);
-        event.preventDefault();
-        event.stopPropagation();
+        evt.preventDefault();
+        evt.stopPropagation();
       }
     }
-  } else if (event.key === "ArrowDown") {
+  } else if (evt.key === "ArrowDown") {
     if (searchResults.length > 0) {
       if (currentSearchResultSelectedIndex.value < searchResults.length - 1) {
         currentSearchResultSelectedIndex.value++;
         scrollToItem(currentSearchResultSelectedIndex.value);
-        event.preventDefault();
-        event.stopPropagation();
+        evt.preventDefault();
+        evt.stopPropagation();
       }
     }
-  } else if (event.key === "Enter") {
+  } else if (evt.key === "Enter") {
     if (searchResults.length > 0) {
       if (currentSearchResultSelectedIndex.value >= 0 && currentSearchResultSelectedIndex.value < searchResults.length) {
         router.push({
           name: "document",
           params: {
-            id: searchResults[currentSearchResultSelectedIndex.value].id
+            id: searchResults[currentSearchResultSelectedIndex.value]!.id
           }
+        }).catch((e) => {
+          console.error(e);
         });
       }
     }
@@ -305,19 +309,23 @@ const onKeyDown = (event) => {
 };
 
 const onShow = () => {
-  totalResults.value = 0;
-  resultsPage.value = searchDialogResultsPage.get();
+  pager.resultsPage = localStorageSearchDialogResultsPage.get();
+  pager.totalResults = 0;
+  pager.totalPages = 0;
   // this is required here because this dialog v-model is controller from MainLayout.vue
   // DOES NOT WORK with onMounted/onBeforeUnmount. WE ONLY WANT CAPTURE KEY EVENTS WHEN DIALOG IS VISIBLE
   window.addEventListener('keydown', onKeyDown);
-  nextTick(() => {
-    searchTextField.value?.focus();
-  });
+  nextTick()
+    .then(() => {
+      searchTextField.value?.focus();
+    }).catch((e) => {
+      console.error(e);
+    });
 }
 
 const onClose = () => {
   searchResults.length = 0;
-  text.value = null;
+  text.value = "";
   showNoSearchResults.value = false;
   // this is required here because this modal dialog is persistent (from MainLayout.vue).
   // DOES NOT WORK with onMounted/onBeforeUnmount. WE ONLY WANT CAPTURE KEY EVENTS WHEN DIALOG IS VISIBLE
@@ -336,7 +344,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   bus.off("reAuthSucess");
 });
-
 </script>
 
 <style lang="css" scoped>
@@ -362,6 +369,5 @@ onBeforeUnmount(() => {
   .is-current .q-item__label {
     color: var(--color-zinc-950) !important;
   }
-
 }
 </style>

@@ -10,22 +10,22 @@
     </q-card-section>
     <q-card-section>
       <q-input dense outlined ref="emailRef" v-model="profile.email" type="email" name="email" :label="t('Email')"
-        :disable="state.loading || signUpDenied" :autofocus="true" :rules="formUtils.requiredFieldRules" lazy-rules
+        :disable="state.ajaxRunning || signUpDenied" :autofocus="true" :rules="[requiredFieldRule]" lazy-rules
         :error="validator.email.hasErrors" :error-message="validator.email.message ? t(validator.email.message) : ''">
         <template v-slot:prepend>
           <q-icon name="alternate_email" />
         </template>
       </q-input>
       <PasswordFieldCustomInput dense outlined ref="passwordRef" class="q-mt-md" v-model="profile.password"
-        name="password" :label="t('Password')" :disable="state.loading || signUpDenied"
-        :rules="formUtils.requiredFieldRules" lazy-rules :error="validator.password.hasErrors"
+        name="password" :label="t('Password')" :disable="state.ajaxRunning || signUpDenied" :rules="[requiredFieldRule]"
+        lazy-rules :error="validator.password.hasErrors"
         :error-message="validator.password.message ? t(validator.password.message) : ''">
       </PasswordFieldCustomInput>
     </q-card-section>
     <q-card-section>
       <q-btn color="primary" size="md" :label="$t('Sign up')" no-caps class="full-width" icon="account_circle"
-        :disable="state.loading || (!(profile.email && profile.password)) || signUpDenied" :loading="state.loading"
-        type="submit">
+        :disable="state.ajaxRunning || (!(profile.email && profile.password)) || signUpDenied"
+        :loading="state.ajaxRunning" type="submit">
         <template v-slot:loading>
           <q-spinner-hourglass class="on-left" />
           {{ t('Sign up') }}
@@ -38,8 +38,8 @@
           <q-btn size="sm" color="primary" class="float-right" :label="t('Sign in')" to="{ name: 'login'}"></q-btn>
         </template>
       </CustomBanner>
-      <CustomErrorBanner v-else-if="state.loadingError && state.errorMessage" :text="state.errorMessage"
-        :api-error="state.apiError" class="q-mt-lg">
+      <CustomErrorBanner v-else-if="state.ajaxErrors && state.ajaxErrorMessage" :text="state.ajaxErrorMessage"
+        :api-error="state.ajaxAPIErrorDetails" class="q-mt-lg">
       </CustomErrorBanner>
     </q-card-section>
     <q-card-section class="text-center q-pt-none">
@@ -60,15 +60,20 @@
   </form>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref, reactive, nextTick, computed } from "vue";
 import { uid } from "quasar";
 import { useI18n } from "vue-i18n";
+import { QInput } from "quasar";
 
-import { useAPI } from "src/composables/useAPI";
+import { api } from "src/composables/api";
 import { useFormUtils } from "src/composables/useFormUtils";
 import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
+import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
+import { type AuthValidator as AuthValidatorInterface, defaultAuthValidator } from "src/types/auth-validator";
+import { type AuthFields as AuthFieldsInterface } from "src/types/auth-fields";
+import { type RegisterResponse } from "src/types/api-responses";
 
 import { default as DarkModeButton } from "src/components/Buttons/DarkModeButton.vue"
 import { default as SwitchLanguageButton } from "src/components/Buttons/SwitchLanguageButton.vue"
@@ -82,41 +87,25 @@ const emit = defineEmits(['success']);
 
 const { t } = useI18n();
 
-const { api } = useAPI();
-
-const formUtils = useFormUtils();
+const { requiredFieldRule } = useFormUtils();
 
 const serverEnvironment = useServerEnvironmentStore();
 
 const signUpDenied = computed(() => serverEnvironment.isSignUpAllowed === false);
 
-const state = reactive({
-  loading: false,
-  loadingError: false,
-  errorMessage: null,
-  apiError: null
-});
+const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-const validator = reactive({
-  email: {
-    hasErrors: false,
-    message: null
-  },
-  password: {
-    hasErrors: false,
-    message: null
-  }
-});
+const validator = reactive<AuthValidatorInterface>({ ...defaultAuthValidator });
 
-const profile = reactive(
+const profile = reactive<AuthFieldsInterface>(
   {
-    email: null,
-    password: null
+    email: "",
+    password: ""
   }
 );
 
-const emailRef = ref(null);
-const passwordRef = ref(null);
+const emailRef = ref<QInput | null>(null);
+const passwordRef = ref<QInput | null>(null);
 
 const userCreatedSuccessfully = ref(false);
 
@@ -129,80 +118,99 @@ const onResetForm = () => {
   passwordRef.value?.resetValidation();
 }
 
-const onValidateForm = () => {
+const onValidateForm = async () => {
   onResetForm();
-  emailRef.value?.validate();
-  passwordRef.value?.validate();
-  if (!(emailRef.value?.hasError || passwordRef.value?.hasError)) {
-    onSubmitForm();
+  try {
+    await emailRef.value?.validate();
+    await passwordRef.value?.validate();
+    if (emailRef.value?.hasError) {
+      emailRef.value?.focus();
+    } else if (passwordRef.value?.hasError) {
+      passwordRef.value?.focus();
+    } else {
+      onSubmitForm();
+    }
+  } catch (error) {
+    console.error('Validation error', error);
   }
-}
+};
 
 const onSubmitForm = () => {
-  state.loading = true;
-  state.loadingError = false;
-  state.errorMessage = null;
-  state.apiError = null;
-  userCreatedSuccessfully.value = false;
-  api.auth
-    .register(uid(), profile.email, profile.password)
-    .then((successResponse) => {
-      userCreatedSuccessfully.value = true;
-      state.loading = false;
-      emit("success", successResponse.data);
-    })
-    .catch((errorResponse) => {
-      state.loadingError = true;
-      if (errorResponse.isAPIError) {
-        state.apiError = errorResponse.customAPIErrorDetails;
-        switch (errorResponse.response.status) {
-          case 400:
-            if (
-              errorResponse.response.data.invalidOrMissingParams.find(function (e) {
-                return e === "email";
-              })
-            ) {
-              state.loadingError = true;
-              state.errorMessage = "API Error: missing email param";
-              nextTick(() => {
-                emailRef.value?.focus();
-              });
-            } else if (
-              errorResponse.response.data.invalidOrMissingParams.find(function (e) {
-                return e === "password";
-              })
-            ) {
-              state.loadingError = true;
-              state.errorMessage = "API Error: missing password param";
-              nextTick(() => {
-                passwordRef.value?.focus();
-              });
-            } else {
-              state.loadingError = true;
-              state.errorMessage = "API Error: invalid/missing param";
-              nextTick(() => {
-                emailRef.value?.focus();
-              });
-            }
-            break;
-          case 409:
-            validator.email.hasErrors = true;
-            validator.email.message = "Email already used";
-            nextTick(() => {
-              emailRef.value?.focus();
-            });
-            break;
-          default:
-            state.loadingError = true;
-            state.errorMessage = "API Error: fatal error";
-            break;
+  if (profile.email && profile.password) {
+    userCreatedSuccessfully.value = false;
+    Object.assign(state, defaultAjaxState);
+    state.ajaxRunning = true;
+    api.auth
+      .register(uid(), profile.email, profile.password)
+      .then((successResponse: RegisterResponse) => {
+        userCreatedSuccessfully.value = true;
+        emit("success", successResponse.data);
+      })
+      .catch((errorResponse) => {
+        state.ajaxErrors = true;
+        if (errorResponse.isAPIError) {
+          state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
+          switch (errorResponse.response.status) {
+            case 400:
+              if (
+                errorResponse.response.data.invalidOrMissingParams.find(function (e: string) {
+                  return e === "email";
+                })
+              ) {
+                state.ajaxErrorMessage = "API Error: missing email param";
+                nextTick()
+                  .then(() => {
+                    emailRef.value?.focus();
+                  }).catch((e) => {
+                    console.error(e);
+                  });
+              } else if (
+                errorResponse.response.data.invalidOrMissingParams.find(function (e: string) {
+                  return e === "password";
+                })
+              ) {
+                state.ajaxErrorMessage = "API Error: missing password param";
+                nextTick()
+                  .then(() => {
+                    passwordRef.value?.focus();
+                  }).catch((e) => {
+                    console.error(e);
+                  });
+              } else {
+                state.ajaxErrorMessage = "API Error: invalid/missing param";
+                nextTick()
+                  .then(() => {
+                    emailRef.value?.focus();
+                  }).catch((e) => {
+                    console.error(e);
+                  });
+              }
+              break;
+            case 409:
+              validator.email.hasErrors = true;
+              validator.email.message = "Email already used";
+              nextTick()
+                .then(() => {
+                  emailRef.value?.focus();
+                }).catch((e) => {
+                  console.error(e);
+                });
+              break;
+            default:
+              state.ajaxErrorMessage = "API Error: fatal error";
+              break;
+          }
+        } else {
+          state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
+          console.error(errorResponse);
         }
-      } else {
-        state.errorMessage = `Uncaught exception: ${errorResponse}`;
-        console.error(errorResponse);
-      }
-      state.loading = false;
-    });
+      }).finally(() => {
+        state.ajaxRunning = false;
+      });
+  } else {
+    // TODO
+    console.error("Missing email|password values");
+  }
 }
 
 </script>

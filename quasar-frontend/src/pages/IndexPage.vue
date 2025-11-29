@@ -2,16 +2,16 @@
   <q-page>
     <div class="row q-col-gutter-sm">
       <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
-        <RecentDocuments :expanded="expanded"></RecentDocuments>
+        <RecentDocuments :expanded="expanded" />
       </div>
       <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
-        <TagCloudWidget :expanded="expanded"></TagCloudWidget>
+        <TagCloudWidget :expanded="expanded" />
       </div>
     </div>
   </q-page>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
 import { useQuasar } from "quasar";
 

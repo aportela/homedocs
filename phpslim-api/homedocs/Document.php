@@ -10,11 +10,9 @@ class Document
      * @param array<string> $tags
      * @param array<\HomeDocs\Attachment> $attachments
      * @param array<\HomeDocs\Note> $notes
-     * @param array<\HomeDocs\DocumentHistoryOperation> $history
+     * @param array<\HomeDocs\DocumentHistoryOperation> $historyOperations
      */
-    public function __construct(public ?string $id = null, public ?string $title = null, public ?string $description = null, public ?int $createdOnTimestamp = null, public ?int $lastUpdateTimestamp = null, public array $tags = [], public array $attachments = [], public array $notes = [], public array $history = [])
-    {
-    }
+    public function __construct(public ?string $id = null, public ?string $title = null, public ?string $description = null, public ?int $createdAtTimestamp = null, public ?int $updatedAtTimestamp = null, public array $tags = [], public array $attachments = [], public array $notes = [], public array $historyOperations = []) {}
 
     /**
      * @return array<mixed>
@@ -66,7 +64,7 @@ class Document
                         DOCUMENT.id,
                         DOCUMENT.title,
                         DOCUMENT.description,
-                        CAST(DOCUMENTS_LAST_HISTORY_OPERATION.max_ctime AS INT) AS lastUpdateTimestamp,
+                        CAST(DOCUMENTS_LAST_HISTORY_OPERATION.max_ctime AS INT) AS updatedAtTimestamp,
                         COALESCE(DOCUMENTS_ATTACHMENTS.attachmentCount, 0) AS attachmentCount,
                         COALESCE(DOCUMENTS_NOTES.noteCount, 0) AS noteCount,
                         DOCUMENTS_TAGS.tags
@@ -89,8 +87,8 @@ class Document
         );
         return (array_map(
             function (object $item): object {
-                if (property_exists($item, "lastUpdateTimestamp") && is_numeric($item->lastUpdateTimestamp)) {
-                    $item->lastUpdateTimestamp = intval($item->lastUpdateTimestamp);
+                if (property_exists($item, "updatedAtTimestamp") && is_numeric($item->updatedAtTimestamp)) {
+                    $item->updatedAtTimestamp = intval($item->updatedAtTimestamp);
                 }
 
                 if (property_exists($item, "attachmentCount") && is_numeric($item->attachmentCount)) {
@@ -495,7 +493,7 @@ class Document
             $data = $db->query(
                 "
                     SELECT
-                        title, description, DOCUMENT_HISTORY.ctime AS createdOnTimestamp, COALESCE(HISTORY_LAST_UPDATE.document_last_update, DOCUMENT_HISTORY.ctime) AS lastUpdateTimestamp, DOCUMENT_HISTORY.cuid AS createdByUserId
+                        title, description, DOCUMENT_HISTORY.ctime AS createdAtTimestamp, COALESCE(HISTORY_LAST_UPDATE.document_last_update, DOCUMENT_HISTORY.ctime) AS updatedAtTimestamp, DOCUMENT_HISTORY.cuid AS createdByUserId
                     FROM DOCUMENT
                     INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT.id AND DOCUMENT_HISTORY.operation_type = :history_operation_add
                     LEFT JOIN (
@@ -520,12 +518,12 @@ class Document
                 if (($data[0]->createdByUserId ?? null) == \HomeDocs\UserSession::getUserId()) {
                     $this->title = property_exists($data[0], "title") && is_string($data[0]->title) ? $data[0]->title : null;
                     $this->description = property_exists($data[0], "description") && is_string($data[0]->description) ? $data[0]->description : null;
-                    $this->createdOnTimestamp = property_exists($data[0], "createdOnTimestamp") && is_numeric($data[0]->createdOnTimestamp) ? intval($data[0]->createdOnTimestamp) : 0;
-                    $this->lastUpdateTimestamp = property_exists($data[0], "lastUpdateTimestamp") && is_numeric($data[0]->lastUpdateTimestamp) ? intval($data[0]->lastUpdateTimestamp) : 0;
+                    $this->createdAtTimestamp = property_exists($data[0], "createdAtTimestamp") && is_numeric($data[0]->createdAtTimestamp) ? intval($data[0]->createdAtTimestamp) : 0;
+                    $this->updatedAtTimestamp = property_exists($data[0], "updatedAtTimestamp") && is_numeric($data[0]->updatedAtTimestamp) ? intval($data[0]->updatedAtTimestamp) : 0;
                     $this->tags = $this->getTags($db);
                     $this->attachments = $this->getAttachments($db);
                     $this->notes = $this->getNotes($db);
-                    $this->history = $this->getHistory($db);
+                    $this->historyOperations = $this->getHistory($db);
                 } else {
                     throw new \HomeDocs\Exception\AccessDeniedException("id");
                 }
@@ -595,7 +593,7 @@ class Document
             sprintf(
                 "
                 SELECT
-                    ATTACHMENT.id, ATTACHMENT.name, ATTACHMENT.size, ATTACHMENT.sha1_hash AS hash, ATTACHMENT.ctime AS createdOnTimestamp
+                    ATTACHMENT.id, ATTACHMENT.name, ATTACHMENT.size, ATTACHMENT.sha1_hash AS hash, ATTACHMENT.ctime AS createdAtTimestamp
                 FROM DOCUMENT_ATTACHMENT
                 INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_ATTACHMENT.document_id
                 LEFT JOIN ATTACHMENT ON ATTACHMENT.id = DOCUMENT_ATTACHMENT.attachment_id
@@ -622,7 +620,7 @@ class Document
                 property_exists($item, "name") && is_string($item->name) ? $item->name : null,
                 property_exists($item, "size") && is_numeric($item->size) ? intval($item->size) : 0,
                 property_exists($item, "hash") && is_string($item->hash) ? $item->hash : null,
-                property_exists($item, "createdOnTimestamp") && is_numeric($item->createdOnTimestamp) ? intval($item->createdOnTimestamp) : 0
+                property_exists($item, "createdAtTimestamp") && is_numeric($item->createdAtTimestamp) ? intval($item->createdAtTimestamp) : 0
             );
         }
 
@@ -657,7 +655,7 @@ class Document
             sprintf(
                 "
                     SELECT
-                        DOCUMENT_NOTE.note_id AS noteId, DOCUMENT_NOTE.ctime AS createdOnTimestamp, DOCUMENT_NOTE.body
+                        DOCUMENT_NOTE.note_id AS noteId, DOCUMENT_NOTE.ctime AS createdAtTimestamp, DOCUMENT_NOTE.body
                     FROM DOCUMENT_NOTE
                     WHERE
                         DOCUMENT_NOTE.document_id = :document_id
@@ -678,7 +676,7 @@ class Document
         foreach ($data as $item) {
             $notes[] = new \HomeDocs\Note(
                 property_exists($item, "noteId") && is_string($item->noteId) ? $item->noteId : null,
-                property_exists($item, "createdOnTimestamp") && is_numeric($item->createdOnTimestamp) ? intval($item->createdOnTimestamp) : 0,
+                property_exists($item, "createdAtTimestamp") && is_numeric($item->createdAtTimestamp) ? intval($item->createdAtTimestamp) : 0,
                 property_exists($item, "body") && is_string($item->body) ? $item->body : null
             );
         }
@@ -691,11 +689,11 @@ class Document
      */
     private function getHistory(\aportela\DatabaseWrapper\DB $db): array
     {
-        $operations = [];
+        $historyOperations = [];
         $data = $db->query(
             "
                 SELECT
-                    DOCUMENT_HISTORY.ctime AS operationTimestamp, DOCUMENT_HISTORY.operation_type AS operationType
+                    DOCUMENT_HISTORY.ctime AS createdAtTimestamp, DOCUMENT_HISTORY.operation_type AS operationType
                 FROM DOCUMENT_HISTORY
                 WHERE
                     DOCUMENT_HISTORY.document_id = :document_id
@@ -707,26 +705,23 @@ class Document
             ]
         );
         foreach ($data as $item) {
-            $operations[] = new \HomeDocs\DocumentHistoryOperation(
-                property_exists($item, "operationTimestamp") && is_numeric($item->operationTimestamp) ? intval($item->operationTimestamp) : 0,
-                property_exists($item, "operationType") && is_numeric($item->operationType) ? intval($item->operationType) : null,
+            $historyOperations[] = new \HomeDocs\DocumentHistoryOperation(
+                property_exists($item, "createdAtTimestamp") && is_numeric($item->createdAtTimestamp) ? intval($item->createdAtTimestamp) : 0,
+                property_exists($item, "operationType") && is_numeric($item->operationType) ? intval($item->operationType) : 0,
             );
         }
 
-        return ($operations);
+        return ($historyOperations);
     }
 
-    /**
-     * @param array<mixed> $filter
-     */
-    public static function search(\aportela\DatabaseWrapper\DB $db, \aportela\DatabaseBrowserWrapper\Pager $pager, array $filter = [], string $sortBy = "createdOnTimestamp", \aportela\DatabaseBrowserWrapper\Order $sortOrder = \aportela\DatabaseBrowserWrapper\Order::DESC): \stdClass
+    public static function search(\aportela\DatabaseWrapper\DB $db, \aportela\DatabaseBrowserWrapper\Pager $pager, \HomeDocs\DocumentSearchFilter $documentSearchFilter, string $sortField = "createdAtTimestamp", \aportela\DatabaseBrowserWrapper\Order $sortOrder = \aportela\DatabaseBrowserWrapper\Order::DESC, bool $returnFragments = false): \stdClass
     {
         $fieldDefinitions = [
             "id" => "DOCUMENT.id",
             "title" => "DOCUMENT.title",
             "description" => "DOCUMENT.description",
-            "createdOnTimestamp" => "DOCUMENT_HISTORY_CREATION_DATE.ctime",
-            "lastUpdateTimestamp" => "COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.ctime, DOCUMENT_HISTORY_CREATION_DATE.ctime)",
+            "createdAtTimestamp" => "DOCUMENT_HISTORY_CREATION_DATE.ctime",
+            "updatedAtTimestamp" => "COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.ctime, DOCUMENT_HISTORY_CREATION_DATE.ctime)",
             "attachmentCount" => "COALESCE(TMP_ATTACHMENT_COUNT.attachmentCount, 0)",
             "noteCount" => "COALESCE(TMP_NOTE_COUNT.noteCount, 0)",
         ];
@@ -734,25 +729,25 @@ class Document
             "total" => "COUNT (DOCUMENT.id)"
         ];
         $sortItems = [];
-        $sortItems[] = match ($sortBy) {
-            "title", "description", "attachmentCount", "noteCount", "createdOnTimestamp", "lastUpdateTimestamp" => new \aportela\DatabaseBrowserWrapper\SortItem($sortBy, $sortOrder, true),
-            default => new \aportela\DatabaseBrowserWrapper\SortItem("createdOnTimestamp", $sortOrder, true),
+        $sortItems[] = match ($sortField) {
+            "title", "description", "attachmentCount", "noteCount", "createdAtTimestamp", "updatedAtTimestamp" => new \aportela\DatabaseBrowserWrapper\SortItem($sortField, $sortOrder, true),
+            default => new \aportela\DatabaseBrowserWrapper\SortItem("createdAtTimestamp", $sortOrder, true),
         };
         // after launch search we need to make some changes foreach result
-        $afterBrowse = function (\aportela\DatabaseBrowserWrapper\BrowserResults $browserResults) use ($filter, $db): void {
+        $afterBrowse = function (\aportela\DatabaseBrowserWrapper\BrowserResults $browserResults) use ($documentSearchFilter, $db, $returnFragments): void {
             array_map(
-                function (object $item) use ($filter, $db): \stdClass {
+                function (object $item) use ($documentSearchFilter, $db, $returnFragments): \stdClass {
                     // fix warnings on matchedFragments property
                     if (! $item instanceof \stdClass) {
                         throw new \RuntimeException("Invalid");
                     }
 
-                    if (property_exists($item, "createdOnTimestamp") && is_numeric($item->createdOnTimestamp)) {
-                        $item->createdOnTimestamp =  intval($item->createdOnTimestamp);
+                    if (property_exists($item, "createdAtTimestamp") && is_numeric($item->createdAtTimestamp)) {
+                        $item->createdAtTimestamp =  intval($item->createdAtTimestamp);
                     }
 
-                    if (property_exists($item, "lastUpdateTimestamp") && is_numeric($item->lastUpdateTimestamp)) {
-                        $item->lastUpdateTimestamp =  intval($item->lastUpdateTimestamp);
+                    if (property_exists($item, "updatedAtTimestamp") && is_numeric($item->updatedAtTimestamp)) {
+                        $item->updatedAtTimestamp =  intval($item->updatedAtTimestamp);
                     }
 
                     if (property_exists($item, "attachmentCount") && is_numeric($item->attachmentCount)) {
@@ -764,50 +759,52 @@ class Document
                     }
 
                     $item->matchedFragments = [];
-                    if (isset($filter["title"]) && is_string($filter["title"]) && ($filter["title"] !== '' && $filter["title"] !== '0') && property_exists($item, "title") && is_string($item->title)) {
-                        $fragment = \HomeDocs\Utils::getStringFragment($item->title, $filter["title"], 64, true);
-                        if (!in_array($fragment, [null, '', '0'], true)) {
-                            $item->matchedFragments[] = [
-                                "matchedOn" => "title",
-                                "fragment" => $fragment
-                            ];
-                        }
-                    }
-
-                    if (isset($filter["description"]) && is_string($filter["description"]) && ($filter["description"] !== '' && $filter["description"] !== '0') && property_exists($item, "description") && is_string($item->description)) {
-                        $fragment = \HomeDocs\Utils::getStringFragment($item->description, $filter["description"], 64, true);
-                        if (!in_array($fragment, [null, '', '0'], true)) {
-                            $item->matchedFragments[] = [
-                                "matchedOn" => "description",
-                                "fragment" => $fragment
-                            ];
-                        }
-                    }
-
-                    if (isset($filter["notesBody"]) && is_string($filter["notesBody"]) && ($filter["notesBody"] !== '' && $filter["notesBody"] !== '0') && property_exists($item, "id")) {
-                        // TODO: this NEEDS to be rewritten with more efficient method
-                        $notes = new \HomeDocs\Document(is_string($item->id) ? $item->id : null)->getNotes($db, $filter["notesBody"]);
-                        foreach ($notes as $note) {
-                            $fragment = \HomeDocs\Utils::getStringFragment(is_string($note->body) ? $note->body : "", $filter["notesBody"], 64, true);
+                    if ($returnFragments) {
+                        if (isset($documentSearchFilter->textFilter->title) && is_string($documentSearchFilter->textFilter->title) && ($documentSearchFilter->textFilter->title !== '' && $documentSearchFilter->textFilter->title !== '0') && property_exists($item, "title") && is_string($item->title)) {
+                            $fragment = \HomeDocs\Utils::getStringFragment($item->title, $documentSearchFilter->textFilter->title, 64, true);
                             if (!in_array($fragment, [null, '', '0'], true)) {
                                 $item->matchedFragments[] = [
-                                    "matchedOn" => "note body",
+                                    "matchedOn" => "title",
                                     "fragment" => $fragment
                                 ];
                             }
                         }
-                    }
 
-                    if (isset($filter["attachmentsFilename"]) && is_string($filter["attachmentsFilename"]) && ($filter["attachmentsFilename"] !== '' && $filter["attachmentsFilename"] !== '0') && property_exists($item, "id")) {
-                        // TODO: this NEEDS to be rewritten with more efficient method
-                        $attachments = new \HomeDocs\Document(is_string($item->id) ? $item->id : null)->getAttachments($db, $filter["attachmentsFilename"]);
-                        foreach ($attachments as $attachment) {
-                            $fragment = \HomeDocs\Utils::getStringFragment(is_string($attachment->name) ? $attachment->name : "", $filter["attachmentsFilename"], 64, true);
+                        if (isset($documentSearchFilter->textFilter->description) && is_string($documentSearchFilter->textFilter->description) && ($documentSearchFilter->textFilter->description !== '' && $documentSearchFilter->textFilter->description !== '0') && property_exists($item, "description") && is_string($item->description)) {
+                            $fragment = \HomeDocs\Utils::getStringFragment($item->description, $documentSearchFilter->textFilter->description, 64, true);
                             if (!in_array($fragment, [null, '', '0'], true)) {
                                 $item->matchedFragments[] = [
-                                    "matchedOn" => "attachment filename",
+                                    "matchedOn" => "description",
                                     "fragment" => $fragment
                                 ];
+                            }
+                        }
+
+                        if (isset($documentSearchFilter->textFilter->notesBody) && is_string($documentSearchFilter->textFilter->notesBody) && ($documentSearchFilter->textFilter->notesBody !== '' && $documentSearchFilter->textFilter->notesBody !== '0') && property_exists($item, "id")) {
+                            // TODO: this NEEDS to be rewritten with more efficient method
+                            $notes = new \HomeDocs\Document(is_string($item->id) ? $item->id : null)->getNotes($db, $documentSearchFilter->textFilter->notesBody);
+                            foreach ($notes as $note) {
+                                $fragment = \HomeDocs\Utils::getStringFragment(is_string($note->body) ? $note->body : "", $documentSearchFilter->textFilter->notesBody, 64, true);
+                                if (!in_array($fragment, [null, '', '0'], true)) {
+                                    $item->matchedFragments[] = [
+                                        "matchedOn" => "note body",
+                                        "fragment" => $fragment
+                                    ];
+                                }
+                            }
+                        }
+
+                        if (isset($documentSearchFilter->textFilter->attachmentsFilename) && is_string($documentSearchFilter->textFilter->attachmentsFilename) && ($documentSearchFilter->textFilter->attachmentsFilename !== '' && $documentSearchFilter->textFilter->attachmentsFilename !== '0') && property_exists($item, "id")) {
+                            // TODO: this NEEDS to be rewritten with more efficient method
+                            $attachments = new \HomeDocs\Document(is_string($item->id) ? $item->id : null)->getAttachments($db, $documentSearchFilter->textFilter->attachmentsFilename);
+                            foreach ($attachments as $attachment) {
+                                $fragment = \HomeDocs\Utils::getStringFragment(is_string($attachment->name) ? $attachment->name : "", $documentSearchFilter->textFilter->attachmentsFilename, 64, true);
+                                if (!in_array($fragment, [null, '', '0'], true)) {
+                                    $item->matchedFragments[] = [
+                                        "matchedOn" => "attachment filename",
+                                        "fragment" => $fragment
+                                    ];
+                                }
                             }
                         }
                     }
@@ -832,9 +829,11 @@ class Document
             new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_update", \HomeDocs\DocumentHistoryOperation::OPERATION_UPDATE_DOCUMENT),
             new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId())
         ];
-        if (isset($filter["title"]) && is_string($filter["title"])) {
+
+
+        if (isset($documentSearchFilter->textFilter->title) && is_string($documentSearchFilter->textFilter->title) && ($documentSearchFilter->textFilter->title !== '' && $documentSearchFilter->textFilter->title !== '0')) {
             // explode into words, remove duplicated & empty elements
-            $words = array_filter(array_unique(explode(" ", trim(mb_strtolower($filter["title"])))));
+            $words = array_filter(array_unique(explode(" ", trim(mb_strtolower($documentSearchFilter->textFilter->title)))));
             $totalWords = count($words);
             if ($totalWords > 0) {
                 foreach ($words as $word) {
@@ -846,9 +845,9 @@ class Document
             }
         }
 
-        if (isset($filter["description"]) && is_string($filter["description"])) {
+        if (isset($documentSearchFilter->textFilter->description) && is_string($documentSearchFilter->textFilter->description) && ($documentSearchFilter->textFilter->description !== '' && $documentSearchFilter->textFilter->description !== '0')) {
             // explode into words, remove duplicated & empty elements
-            $words = array_filter(array_unique(explode(" ", trim(mb_strtolower($filter["description"])))));
+            $words = array_filter(array_unique(explode(" ", trim(mb_strtolower($documentSearchFilter->textFilter->description)))));
             $totalWords = count($words);
             if ($totalWords > 0) {
                 foreach ($words as $word) {
@@ -860,9 +859,9 @@ class Document
             }
         }
 
-        if (isset($filter["notesBody"]) && is_string($filter["notesBody"])) {
+        if (isset($documentSearchFilter->textFilter->notesBody) && is_string($documentSearchFilter->textFilter->notesBody) && ($documentSearchFilter->textFilter->notesBody !== '' && $documentSearchFilter->textFilter->notesBody !== '0')) {
             // explode into words, remove duplicated & empty elements
-            $words = array_filter(array_unique(explode(" ", trim(mb_strtolower($filter["notesBody"])))));
+            $words = array_filter(array_unique(explode(" ", trim(mb_strtolower($documentSearchFilter->textFilter->notesBody)))));
             $totalWords = count($words);
             if ($totalWords > 0) {
                 $notesConditions = [];
@@ -874,22 +873,22 @@ class Document
                 }
 
                 $queryConditions[] = sprintf("
-                    EXISTS (
-                        SELECT
-                            DOCUMENT_NOTE.document_id
-                        FROM DOCUMENT_NOTE
-                        WHERE
-                            DOCUMENT_NOTE.document_id = DOCUMENT.id
-                        AND
-                            (%s)
-                    )
-                ", implode(" AND ", $notesConditions));
+                EXISTS (
+                    SELECT
+                        DOCUMENT_NOTE.document_id
+                    FROM DOCUMENT_NOTE
+                    WHERE
+                        DOCUMENT_NOTE.document_id = DOCUMENT.id
+                    AND
+                        (%s)
+                )
+            ", implode(" AND ", $notesConditions));
             }
         }
 
-        if (isset($filter["attachmentsFilename"]) && is_string($filter["attachmentsFilename"])) {
+        if (isset($documentSearchFilter->textFilter->attachmentsFilename) && is_string($documentSearchFilter->textFilter->attachmentsFilename) && ($documentSearchFilter->textFilter->attachmentsFilename !== '' && $documentSearchFilter->textFilter->attachmentsFilename !== '0')) {
             // explode into words, remove duplicated & empty elements
-            $words = array_filter(array_unique(explode(" ", trim(mb_strtolower($filter["attachmentsFilename"])))));
+            $words = array_filter(array_unique(explode(" ", trim(mb_strtolower($documentSearchFilter->textFilter->attachmentsFilename)))));
             $totalWords = count($words);
             if ($totalWords > 0) {
                 $notesConditions = [];
@@ -901,44 +900,47 @@ class Document
                 }
 
                 $queryConditions[] = sprintf("
-                    EXISTS (
-                        SELECT
-                            DOCUMENT_ATTACHMENT.document_id
-                        FROM DOCUMENT_ATTACHMENT
-                        INNER JOIN ATTACHMENT ON ATTACHMENT.id = DOCUMENT_ATTACHMENT.attachment_id
-                        WHERE
-                            DOCUMENT_ATTACHMENT.document_id = DOCUMENT.id
-                        AND
-                            (%s)
-                    )
-                ", implode(" AND ", $notesConditions));
+                EXISTS (
+                    SELECT
+                        DOCUMENT_ATTACHMENT.document_id
+                    FROM DOCUMENT_ATTACHMENT
+                    INNER JOIN ATTACHMENT ON ATTACHMENT.id = DOCUMENT_ATTACHMENT.attachment_id
+                    WHERE
+                        DOCUMENT_ATTACHMENT.document_id = DOCUMENT.id
+                    AND
+                        (%s)
+                )
+            ", implode(" AND ", $notesConditions));
             }
         }
 
-        if (isset($filter["fromCreationTimestampCondition"]) && $filter["fromCreationTimestampCondition"] > 0) {
-            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":fromCreationTimestamp", $filter["fromCreationTimestampCondition"]);
-            $queryConditions[] = " DOCUMENT_HISTORY_CREATION_DATE.ctime >= :fromCreationTimestamp ";
+
+        if ($documentSearchFilter->datesFilter->createdAtFromTimestamp > 0) {
+            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":createdAtFromTimestamp", $documentSearchFilter->datesFilter->createdAtFromTimestamp);
+            $queryConditions[] = " DOCUMENT_HISTORY_CREATION_DATE.ctime >= :createdAtFromTimestamp ";
         }
 
-        if (isset($filter["toCreationTimestampCondition"]) && $filter["toCreationTimestampCondition"] > 0) {
-            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":toCreationTimestamp", $filter["toCreationTimestampCondition"]);
-            $queryConditions[] = " DOCUMENT_HISTORY_CREATION_DATE.ctime <= :toCreationTimestamp ";
+
+        if ($documentSearchFilter->datesFilter->createdAtToTimestamp > 0) {
+            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":createdAtToTimestamp", $documentSearchFilter->datesFilter->createdAtToTimestamp);
+            $queryConditions[] = " DOCUMENT_HISTORY_CREATION_DATE.ctime <= :createdAtToTimestamp ";
         }
 
-        if (isset($filter["fromLastUpdateTimestampCondition"]) && $filter["fromLastUpdateTimestampCondition"] > 0) {
-            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":fromLastUpdateTimestamp", $filter["fromLastUpdateTimestampCondition"]);
-            $queryConditions[] = " COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.ctime, DOCUMENT_HISTORY_CREATION_DATE.ctime) >= :fromLastUpdateTimestamp ";
+
+        if ($documentSearchFilter->datesFilter->lastUpdateAtFromTimestamp > 0) {
+            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":lastUpdateAtFromTimestamp", $documentSearchFilter->datesFilter->lastUpdateAtFromTimestamp);
+            $queryConditions[] = " DOCUMENT_HISTORY_LAST_UPDATE.ctime >= :lastUpdateAtFromTimestamp ";
         }
 
-        if (isset($filter["toLastUpdateTimestampCondition"]) && $filter["toLastUpdateTimestampCondition"] > 0) {
-            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":toLastUpdateTimestamp", $filter["toLastUpdateTimestampCondition"]);
-            $queryConditions[] = " COALESCE(DOCUMENT_HISTORY_LAST_UPDATE.ctime, DOCUMENT_HISTORY_CREATION_DATE.ctime) <= :toLastUpdateTimestamp ";
+        if ($documentSearchFilter->datesFilter->lastUpdateAtToTimestamp > 0) {
+            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":lastUpdateAtToTimestamp", $documentSearchFilter->datesFilter->lastUpdateAtToTimestamp);
+            $queryConditions[] = " DOCUMENT_HISTORY_LAST_UPDATE.ctime <= :lastUpdateAtToTimestamp ";
         }
 
-        if (isset($filter["fromUpdatedOnTimestampCondition"]) && $filter["fromUpdatedOnTimestampCondition"] > 0  && isset($filter["toUpdatedOnTimestampCondition"]) && $filter["toUpdatedOnTimestampCondition"] > 0) {
 
-            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":fromUpdatedOnTimestamp", $filter["fromUpdatedOnTimestampCondition"]);
-            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":toUpdatedOnTimestamp", $filter["toUpdatedOnTimestampCondition"]);
+        if ($documentSearchFilter->datesFilter->updatedAtFromTimestamp > 0  && $documentSearchFilter->datesFilter->updatedAtToTimestamp > 0) {
+            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":updatedAtFromTimestamp", $documentSearchFilter->datesFilter->updatedAtFromTimestamp);
+            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":updatedAtToTimestamp", $documentSearchFilter->datesFilter->updatedAtToTimestamp);
             $queryConditions[] = "
                 EXISTS (
                     SELECT
@@ -947,14 +949,13 @@ class Document
                     WHERE
                         DOCUMENT_HISTORY_UPDATED_ON.document_id = DOCUMENT.id
                     AND
-                        DOCUMENT_HISTORY_UPDATED_ON.ctime >= :fromUpdatedOnTimestamp
+                        DOCUMENT_HISTORY_UPDATED_ON.ctime >= :updatedAtFromTimestamp
                     AND
-                        DOCUMENT_HISTORY_UPDATED_ON.ctime <= :toUpdatedOnTimestamp
+                        DOCUMENT_HISTORY_UPDATED_ON.ctime <= :updatedAtToTimestamp
                 )
             ";
-        } elseif (isset($filter["fromUpdatedOnTimestampCondition"]) && $filter["fromUpdatedOnTimestampCondition"] > 0) {
-
-            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":fromUpdatedOnTimestamp", $filter["fromUpdatedOnTimestampCondition"]);
+        } elseif ($documentSearchFilter->datesFilter->updatedAtFromTimestamp > 0) {
+            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":updatedAtFromTimestamp", $documentSearchFilter->datesFilter->updatedAtFromTimestamp);
             $queryConditions[] = "
                 EXISTS (
                     SELECT
@@ -963,11 +964,11 @@ class Document
                     WHERE
                         DOCUMENT_HISTORY_UPDATED_ON.document_id = DOCUMENT.id
                     AND
-                        DOCUMENT_HISTORY_UPDATED_ON.ctime >= :fromUpdatedOnTimestamp
+                        DOCUMENT_HISTORY_UPDATED_ON.ctime >= :updatedAtFromTimestamp
                 )
             ";
-        } elseif (isset($filter["toUpdatedOnTimestampCondition"]) && $filter["toUpdatedOnTimestampCondition"] > 0) {
-            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":toUpdatedOnTimestamp", $filter["toUpdatedOnTimestampCondition"]);
+        } elseif ($documentSearchFilter->datesFilter->updatedAtToTimestamp > 0) {
+            $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":updatedAtToTimestamp", $documentSearchFilter->datesFilter->updatedAtToTimestamp);
             $queryConditions[] = "
                 EXISTS (
                     SELECT
@@ -976,13 +977,13 @@ class Document
                     WHERE
                         DOCUMENT_HISTORY_UPDATED_ON.document_id = DOCUMENT.id
                     AND
-                        DOCUMENT_HISTORY_UPDATED_ON.ctime <= :toUpdatedOnTimestamp
+                        DOCUMENT_HISTORY_UPDATED_ON.ctime <= :updatedAtToTimestamp
                 )
             ";
         }
 
-        if (isset($filter["tags"]) && is_array($filter["tags"]) && $filter["tags"] !== []) {
-            foreach ($filter["tags"] as $i => $tag) {
+        if (isset($documentSearchFilter->tags) && is_array($documentSearchFilter->tags) && $documentSearchFilter->tags !== []) {
+            foreach ($documentSearchFilter->tags as $i => $tag) {
                 $paramName = sprintf(":TAG_%03d", $i + 1);
                 $params[] = new \aportela\DatabaseWrapper\Param\StringParam($paramName, $tag);
                 $queryConditions[] = sprintf(

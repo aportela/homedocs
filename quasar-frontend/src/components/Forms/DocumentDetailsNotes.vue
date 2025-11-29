@@ -21,12 +21,12 @@
         v-show="!hiddenIds.includes(note.id)">
         <q-item-section>
           <InteractiveTextFieldCustomInput v-model.trim="note.body" dense outlined type="textarea" maxlength="4096"
-            autogrow name="description" :label="`${note.creationDate} (${note.creationDateTimeAgo})`"
+            autogrow name="description" :label="`${note.createdAt.dateTime} (${note.createdAt.timeAgo})`"
             :start-mode-editable="!!note.startOnEditMode" :disable="disable" clearable :max-lines="6"
-            :rules="requiredFieldRules" :error="!note.body" :error-message="fieldIsRequiredLabel"
+            :rules="[requiredFieldRule]" :error="!note.body" :error-message="fieldIsRequiredLabel"
             :autofocus="note.startOnEditMode" :placeholder="t('type note body')">
             <template v-slot:top-icon-append="{ showTopHoverIcons }">
-              <q-icon name="delete" size="sm" class="q-ml-sm q-mr-sm" clickable v-show="showTopHoverIcons"
+              <q-icon name="delete" size="sm" class="q-ml-sm q-mr-sm icon-hover" clickable v-show="showTopHoverIcons"
                 @click.stop.prevent="onRemoveNoteAtIndex(noteIndex)">
                 <DesktopToolTip>{{ t("Click to remove note") }}</DesktopToolTip>
               </q-icon>
@@ -46,73 +46,55 @@
 
 </template>
 
-<script setup>
-import { ref, computed } from "vue";
+<script setup lang="ts">
+import { ref, reactive, computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { useFormUtils } from "src/composables/useFormUtils"
-import { useDocument } from "src/composables/useDocument"
+import { getRegexForStringMatch } from "src/composables/common";
+import { type Note as NoteInterface } from "src/types/note";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 import { default as InteractiveTextFieldCustomInput } from "src/components/Forms/Fields/InteractiveTextFieldCustomInput.vue"
-import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
+import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 
 const { t } = useI18n();
 
-const { requiredFieldRules, fieldIsRequiredLabel } = useFormUtils();
-const { escapeRegExp, getNewNote } = useDocument();
+const { requiredFieldRule, fieldIsRequiredLabel } = useFormUtils();
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits(['update:modelValue', 'addNote', 'removeNoteAtIndex']);
 
-const props = defineProps({
-  modelValue: {
-    type: Array,
-    required: false,
-    default: () => [],
-    validator(value) {
-      return Array.isArray(value);
-    }
-  },
-  disable: {
-    type: Boolean,
-    required: false,
-    default: false,
-  }
+interface DocumentDetailsNotesProps {
+  notes: NoteInterface[];
+  disable: boolean;
+};
+
+const props = withDefaults(defineProps<DocumentDetailsNotesProps>(), {
+  disable: false
 });
 
-const notes = computed({
-  get() {
-    return props.modelValue;
-  },
-  set(value) {
-    emit('update:modelValue', value);
-  }
-});
+const hiddenIds = reactive<Array<string>>([]);
 
-const hiddenIds = ref([]);
-
-const hasNotes = computed(() => notes.value?.length > 0);
+const hasNotes = computed(() => props.notes?.length > 0);
 
 const searchText = ref(null);
 
-const onSearchTextChanged = (text) => {
+const onSearchTextChanged = (text: string | number | null) => {
+  hiddenIds.length = 0;
   if (text) {
-    const regex = new RegExp(escapeRegExp(text), "i");
-    hiddenIds.value = notes.value?.filter(note => !note.body?.match(regex)).map(note => note.id);
+    const regex = getRegexForStringMatch(String(text));
+    hiddenIds.push(...props.notes.filter(note => !note.body?.match(regex)).map(note => note.id));
     // TODO: map new fragment with bold ?
-  } else {
-    hiddenIds.value = [];
   }
 };
 
 const onAddNote = () => {
-  notes.value = [getNewNote(), ...notes.value];
+  emit("addNote");
 };
 
-const onRemoveNoteAtIndex = (index) => {
-  notes.value = notes.value.filter((_, i) => i !== index);
+const onRemoveNoteAtIndex = (index: number) => {
+  emit("removeNoteAtIndex", index);
 };
-
 </script>
 
 <style lang="css" scoped>

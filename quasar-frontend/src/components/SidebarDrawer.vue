@@ -1,6 +1,5 @@
 <template>
-  <q-drawer v-bind="attrs" show-if-above bordered :width="240" :mini="mini" @click.capture="onDrawerClick"
-    class="fit theme-default-q-drawer">
+  <q-drawer v-model="drawerModel" show-if-above bordered :width="240" :mini="mini" class="fit theme-default-q-drawer">
     <q-list>
       <q-item class="cursor-pointer non-selectable no-pointer-events rounded-borders q-ma-sm theme-default-q-item">
         <q-item-section avatar>
@@ -14,7 +13,7 @@
       </q-item>
       <q-item v-for="link in menuItems" :key="link.text" v-ripple clickable :to="{ name: link.routeName }"
         class="rounded-borders q-ma-sm theme-default-q-item"
-        :active="$route.name === link.routeName || (link.alternateRouteNames?.includes($route.name))"
+        :active="link.routeName == currentRouteName || (link.alternateRouteNames?.includes(currentRouteName))"
         active-class="theme-default-q-item-active">
         <q-item-section avatar>
           <q-icon :name="link.icon" />
@@ -35,28 +34,39 @@
   </q-drawer>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
-import { computed, useAttrs } from "vue";
-import { useRouter } from "vue-router";
+import { computed } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { useAPI } from "src/composables/useAPI";
+import { api } from "src/composables/api";
 import { useSessionStore } from "src/stores/session";
 
-const props = defineProps({
-  mini: {
-    type: Boolean,
-    required: false,
-    default: false
+interface SidebarDrawerProps {
+  modelValue: boolean;
+  mini: boolean
+};
+
+const props = withDefaults(defineProps<SidebarDrawerProps>(), {
+  mini: false
+});
+
+const emit = defineEmits(['update:modelValue']);
+
+const drawerModel = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(value) {
+    emit('update:modelValue', value);
   }
 });
 
-const attrs = useAttrs();
-
 const { t } = useI18n();
 const router = useRouter();
+const route = useRoute();
 
-const { api } = useAPI();
+const currentRouteName = computed(() => String(route.name));
 
 const session = useSessionStore();
 
@@ -69,23 +79,15 @@ const menuItems = [
   { icon: 'find_in_page', text: "Advanced search", routeName: 'advancedSearch', alternateRouteNames: ['advancedSearchByTag', 'advancedSearchByFixedCreationDate', 'advancedSearchByFixedLastUpdate', 'advancedSearchByFixedUpdatedOn'] }
 ];
 
-function onDrawerClick(e) {
-  if (mini.value) {
-    mini.value = false
-    // notice we have registered an event with capture flag;
-    // we need to stop further propagation as this click is
-    // intended for switching drawer to "normal" mode only
-    e.stopPropagation()
-  }
-}
-
 function logout() {
   api.auth
     .logout()
-    .then((successResponse) => {
+    .then(() => {
       session.setJWT(null);
       router.push({
         name: "login",
+      }).catch((e) => {
+        console.error(e);
       });
     })
     .catch((errorResponse) => {
@@ -93,6 +95,8 @@ function logout() {
       session.setJWT(null);
       router.push({
         name: "login",
+      }).catch((e) => {
+        console.error(e);
       });
     });
 }

@@ -5,7 +5,7 @@
     </template>
     <template v-slot:body>
       <div class="q-p-none q-markup-table-container scroll">
-        <q-markup-table v-if="transfers?.length > 0">
+        <q-markup-table v-if="hasTransfers">
           <thead>
             <tr>
               <th class="text-left">{{ t("Name") }}</th>
@@ -20,8 +20,11 @@
               :class="{ 'bg-green-5': transfer.done, 'bg-red-4': transfer.error, 'bg-light-blue': transfer.uploading }">
               <td class="text-left">{{ transfer.filename }}</td>
               <td class="text-right">{{ format.humanStorageSize(transfer.filesize) }}</td>
-              <td class="text-right">{{ fullDateTimeHuman(transfer.start, dateTimeFormat.get()) }}</td>
-              <td class="text-right">{{ fullDateTimeHuman(transfer.end, dateTimeFormat.get()) }}</td>
+              <td class="text-right">{{ fullDateTimeHuman(transfer.start, localStorageDateTimeFormat.get()) }}</td>
+              <td class="text-right">
+                <span v-if="transfer.end && transfer.end > 0">{{ fullDateTimeHuman(transfer.end,
+                  localStorageDateTimeFormat.get()) }}</span>
+              </td>
               <td class="text-center">
                 <q-chip square v-if="transfer.error" class="full-width bg-red-9 text-white">
                   <q-avatar icon="cancel" class="q-ma-xs" />
@@ -32,7 +35,7 @@
                         format.humanStorageSize(serverEnvironment.maxUploadFileSize)
                     })
                     :
-                    t(transfer.errorMessage)
+                    t(transfer.errorMessage || 'Error')
                   }}
                 </q-chip>
                 <q-chip square v-else-if="transfer.done" class="full-width bg-green-9 text-white">
@@ -52,43 +55,38 @@
     <template v-slot:actions-prepend>
       <q-toggle v-model="visibilityCheck" @update:modelValue="saveVisibilityCheck" checked-icon="check" color="green"
         :label="t(visibilityCheckLabel)" unchecked-icon="clear" class="q-mr-md" />
+      <q-btn color="primary" size="md" no-caps @click.stop="onClearProcessedTransfers" :disable="!hasProcessedTransfers"
+        icon="close" :label="t('Clear processed transfers')" />
     </template>
   </BaseDialog>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch, computed } from "vue";
 import { format } from "quasar";
 import { useI18n } from "vue-i18n";
 
-import { useFormatDates } from "src/composables/useFormatDates"
-import { useLocalStorage } from "src/composables/useLocalStorage"
+import { fullDateTimeHuman } from "src/composables/dateUtils";
+import { alwaysOpenUploadDialog as localStorageAlwaysOpenUploadDialog, dateTimeFormat as localStorageDateTimeFormat } from "src/composables/localStorage"
 import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
 
+import { type UploadTransfer as UploadTransferInterface } from "src/types/upload-transfer";
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue"
 
 const { t } = useI18n();
 
-const { fullDateTimeHuman } = useFormatDates();
-const { alwaysOpenUploadDialog, dateTimeFormat } = useLocalStorage();
 const serverEnvironment = useServerEnvironmentStore();
 
-const emit = defineEmits(['update:modelValue', 'close']);
+const emit = defineEmits(['update:modelValue', 'close', 'clearProcessedTransfers']);
 
-const props = defineProps({
-  modelValue: {
-    type: Boolean,
-    required: true
-  },
-  transfers: {
-    type: Array,
-    required: false,
-    default: () => [],
-    validator(value) {
-      return Array.isArray(value);
-    }
-  }
-});
+interface UploadingDialogProps {
+  modelValue: boolean;
+  transfers: UploadTransferInterface[]
+};
+
+const props = defineProps<UploadingDialogProps>();
+
+const hasTransfers = computed(() => props.transfers?.length > 0);
 
 const visible = computed({
   get() {
@@ -97,7 +95,7 @@ const visible = computed({
   set(value) {
     if (value) {
       // before showing dialog always set q-toggle value
-      const toggleValue = alwaysOpenUploadDialog.get();
+      const toggleValue = localStorageAlwaysOpenUploadDialog.get();
       if (toggleValue !== visibilityCheck.value) {
         visibilityCheck.value = toggleValue; // only if there are changes
       }
@@ -106,16 +104,18 @@ const visible = computed({
   }
 });
 
-const visibilityCheck = ref(alwaysOpenUploadDialog.get());
+const hasProcessedTransfers = computed(() => props.transfers.length > 0 ? props.transfers.find((transfer) => transfer.processed === true) !== undefined : false);
 
-watch(() => visible.value, val => {
+const visibilityCheck = ref<boolean>(localStorageAlwaysOpenUploadDialog.get());
+
+watch(() => visible.value, (val: boolean) => {
   if (val) {
-    visibilityCheck.value = alwaysOpenUploadDialog.get();
+    visibilityCheck.value = localStorageAlwaysOpenUploadDialog.get();
   }
 });
 
-const saveVisibilityCheck = (val) => {
-  alwaysOpenUploadDialog.set(val);
+const saveVisibilityCheck = (val: boolean) => {
+  localStorageAlwaysOpenUploadDialog.set(val);
 };
 
 const visibilityCheckLabel = computed(() => visibilityCheck.value ? "Always display this progress window when uploading files" : "Only display this progress window when uploading failed");
@@ -125,6 +125,9 @@ const onClose = () => {
   emit('update:modelValue', false);
 }
 
+const onClearProcessedTransfers = () => {
+  emit('clearProcessedTransfers');
+};
 </script>
 
 <style lang="css" scoped>

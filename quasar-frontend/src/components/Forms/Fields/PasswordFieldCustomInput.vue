@@ -8,15 +8,16 @@
       <q-icon :name="visibilityIcon" class="cursor-pointer" @click="visiblePassword = !visiblePassword"
         :aria-label="t(tooltipLabel)" />
       <DesktopToolTip anchor="bottom right" self="top end" :aria-label="t(tooltipLabel)">{{ t(tooltipLabel)
-      }}</DesktopToolTip>
+        }}</DesktopToolTip>
     </template>
   </q-input>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref, computed, useAttrs, onMounted, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
+import { QInput } from "quasar";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 
@@ -26,48 +27,28 @@ const { t } = useI18n();
 
 const emit = defineEmits(['update:modelValue'])
 
-const props = defineProps({
-  modelValue: {
-    type: String,
-    default: "",
-  },
-  label: {
-    type: String,
-    default: "Password",
-  },
-  dense: {
-    type: Boolean,
-    default: false,
-  },
-  outlined: {
-    type: Boolean,
-    default: false,
-  },
-  rules: {
-    type: Array,
-    default: () => [],
-    validator(value) {
-      return Array.isArray(value);
-    }
-  },
-  autofocus: {
-    type: Boolean,
-    default: false,
-  },
-  error:
-  {
-    type: Boolean,
-    required: false,
-    default: false
-  },
-  errorMessage: {
-    type: String,
-    required: false,
-    default: null
-  },
+interface PasswordFieldCustomInputProps {
+  modelValue: string;
+  label?: string;
+  dense?: boolean;
+  outlined?: boolean;
+  rules?: Array<(val: string) => boolean | string>;
+  autofocus?: boolean;
+  error?: boolean;
+  errorMessage?: string;
+};
+
+const props = withDefaults(defineProps<PasswordFieldCustomInputProps>(), {
+  label: "Password",
+  dense: false,
+  outlined: false,
+  rules: () => [],
+  autofocus: false,
+  error: false,
+  errorMessage: ""
 });
 
-const qInputPasswordRef = ref(null);
+const qInputPasswordRef = ref<QInput | null>(null);
 
 const visiblePassword = ref(false);
 
@@ -84,9 +65,12 @@ const visibilityIcon = computed(() => visiblePassword.value ? "visibility_off" :
 const tooltipLabel = computed(() => visiblePassword.value ? "Hide password" : "Show password");
 
 const focus = () => {
-  nextTick(() => {
-    qInputPasswordRef.value?.focus();
-  });
+  nextTick()
+    .then(() => {
+      qInputPasswordRef.value?.focus();
+    }).catch((e) => {
+      console.error(e);
+    });
 }
 
 const resetValidation = () => {

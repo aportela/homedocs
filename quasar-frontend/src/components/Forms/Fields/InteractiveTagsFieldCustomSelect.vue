@@ -11,9 +11,9 @@
   </div>
   <q-select v-else ref="selectRef" :label="t(label)" v-model="tags" :dense="dense" :options-dense="dense" outlined
     use-input use-chips multiple hide-dropdown-icon :options="filteredTags" input-debounce="0"
-    new-value-mode="add-unique" :disable="disabled || state.loading || state.loadingError" :loading="state.loading"
-    :error="state.loadingError" :error-message="t('Error loading available tags')" @filter="onFilterTags"
-    @add="onAddTag">
+    new-value-mode="add-unique" :disable="disabled || state.ajaxRunning || state.ajaxErrors"
+    :loading="state.ajaxRunning" :error="state.ajaxErrors" :error-message="t('Error loading available tags')"
+    @filter="onFilterTags" @add="onAddTag">
     <template v-slot:prepend>
       <slot name="prepend">
         <q-icon name="tag" />
@@ -32,56 +32,37 @@
   </q-select>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { ref, reactive, computed, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
+import { QSelect } from "quasar";
 
-import { useBus } from "src/composables/useBus";
-import { useAPI } from "src/composables/useAPI";
+import { bus } from "src/composables/bus";
+import { api } from "src/composables/api";
+import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
+import { type GetTagsResponse as GetTagsResponseInterface } from "src/types/api-responses";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 import { default as BrowseByTagButton } from "src/components/Buttons/BrowseByTagButton.vue";
 
 const { t } = useI18n();
 
-const { api } = useAPI();
-const { bus } = useBus();
+interface InteractiveTagsFieldCustomSelectProps {
+  startModeEditable?: boolean;
+  denyChangeEditableMode?: boolean;
+  modelValue: string[];
+  disabled?: boolean;
+  dense?: boolean;
+  label?: string;
+};
 
-const props = defineProps({
-  startModeEditable: {
-    type: Boolean,
-    required: false,
-    default: false,
-  },
-  denyChangeEditableMode: {
-    type: Boolean,
-    required: false,
-    default: false,
-  },
-  modelValue: {
-    type: Array,
-    required: true,
-    default: () => [],
-    validator(value) {
-      return Array.isArray(value);
-    }
-  },
-  disabled: {
-    type: Boolean,
-    required: false,
-    default: true,
-  },
-  dense: {
-    type: Boolean,
-    required: false,
-    default: false,
-  },
-  label: {
-    type: String,
-    required: false,
-    default: "Document tags"
-  }
+const props = withDefaults(defineProps<InteractiveTagsFieldCustomSelectProps>(), {
+  startModeEditable: false,
+  denyChangeEditableMode: false,
+  disabled: false,
+  delse: false,
+  label: "Document tags",
 });
 
 const emit = defineEmits(['update:modelValue', 'error']);
@@ -89,8 +70,7 @@ const emit = defineEmits(['update:modelValue', 'error']);
 const showUpdateHoverIcon = ref(false);
 
 const readOnly = ref(!props.startModeEditable);
-const selectRef = ref(null);
-const filteredTags = ref([]);
+const selectRef = ref<QSelect | null>(null);
 
 const tags = computed({
   get() {
@@ -101,72 +81,71 @@ const tags = computed({
   }
 });
 
-const state = reactive({
-  loading: false,
-  loadingError: false,
-  errorMessage: null,
-  apiError: null
-});
+const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-const availableTags = reactive([]);
+const availableTags = reactive<Array<string>>([]);
+const filteredTags = reactive<Array<string>>([]);
 
-function onFilterTags(val, update) {
-  const filtered = val === ''
-    ? availableTags.value
-    : availableTags.filter(tag => tag.toLowerCase().includes(val.toLowerCase()));
+function onFilterTags(inputValue: string, doneFn: (callbackFn: () => void, afterFn?: (ref: QSelect) => void) => void): void {
+  const filtered = inputValue === ''
+    ? availableTags
+    : availableTags.filter(tag => tag.toLowerCase().includes(inputValue.toLowerCase()));
 
-  update(() => {
-    filteredTags.value = filtered;
+  doneFn(() => {
+    filteredTags.length = 0;
+    filteredTags.push(...filtered);
   });
 }
 
 function onRefresh() {
-  if (!state.loading) {
-    state.loading = true;
-    state.loadingError = false;
-    state.errorMessage = null;
-    state.apiError = null;
-    api.tag.search().then((successResponse) => {
-      availableTags.length = 0;
-      availableTags.push(...successResponse.data.tags);
-      state.loading = false;
-    }).catch((errorResponse) => {
-      state.loadingError = true;
-      if (errorResponse.isAPIError) {
-        switch (errorResponse.response.status) {
-          case 401:
-            state.apiError = errorResponse.customAPIErrorDetails;
-            state.errorMessage = "Auth session expired, requesting new...";
-            bus.emit("reAuthRequired", { emitter: "InteractiveTagsFieldCustomSelect" });
-            break;
-          default:
-            state.apiError = errorResponse.customAPIErrorDetails;
-            state.errorMessage = "API Error: fatal error";
-            break;
+  if (!state.ajaxRunning) {
+    Object.assign(state, defaultAjaxState);
+    state.ajaxRunning = true;
+    api.tag.search()
+      .then((successResponse: GetTagsResponseInterface) => {
+        availableTags.length = 0;
+        availableTags.push(...successResponse.data.tags);
+      }).catch((errorResponse) => {
+        state.ajaxErrors = true;
+        if (errorResponse.isAPIError) {
+          state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
+          switch (errorResponse.response.status) {
+            case 401:
+              state.ajaxErrorMessage = "Auth session expired, requesting new...";
+              bus.emit("reAuthRequired", { emitter: "InteractiveTagsFieldCustomSelect" });
+              break;
+            default:
+              state.ajaxErrorMessage = "API Error: fatal error";
+              break;
+          }
+        } else {
+          state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
+          console.error(errorResponse);
         }
-      } else {
-        state.errorMessage = `Uncaught exception: ${errorResponse}`;
-        console.error(errorResponse);
-      }
-      state.loading = false;
-      emit('error', errorResponse.response);
-    });
+        emit('error', errorResponse.response);
+      }).finally(() => {
+        state.ajaxRunning = false;
+      });
   }
 }
 
-function onAddTag(tag) {
+function onAddTag(): void {
   selectRef.value?.hidePopup()
   selectRef.value?.reset();
   selectRef.value?.updateInputValue("");
 }
 
-function removeTagAtIndex(index) {
+function removeTagAtIndex(index: number) {
   tags.value?.splice(index, 1);
 }
 
-async function focus() {
-  await nextTick()
-  selectRef.value?.focus()
+function focus() {
+  nextTick()
+    .then(() => {
+      selectRef.value?.focus()
+    }).catch((e) => {
+      console.error(e);
+    });
 }
 
 defineExpose({

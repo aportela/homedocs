@@ -7,8 +7,7 @@
   </q-chip>
 </template>
 
-<script setup>
-
+<script setup lang="ts">
 import { useI18n } from "vue-i18n";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
@@ -17,32 +16,18 @@ const { t } = useI18n();
 
 const emit = defineEmits(['click'])
 
-const props = defineProps({
-  disable: {
-    type: Boolean,
-    required: false,
-    default: false
-  },
-  label: {
-    type: String,
-    required: true
-  },
-  count: {
-    type: Number,
-    required: false,
-    default: 0,
-    validator(value) {
-      return (value >= 0);
-    }
-  },
-  toolTip: {
-    type: String,
-    required: false,
-  }
+interface ViewDocumentDetailsButtonProps {
+  disable?: boolean;
+  label: string;
+  count: number;
+  toolTip?: string | null;
+};
+
+withDefaults(defineProps<ViewDocumentDetailsButtonProps>(), {
+  disable: false
 });
 
-const onClick = (e) => {
-  emit("click", e);
+const onClick = (evt: Event) => {
+  emit("click", evt);
 }
-
 </script>

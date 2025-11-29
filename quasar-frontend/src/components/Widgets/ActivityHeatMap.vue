@@ -2,75 +2,121 @@
   <div id="cal-heatmap-container" class="calContainerRef">
     <div id="cal-heatmap"></div>
     <div class="q-mb-md q-gutter-sm q-py-sm" v-if="showNavigationButtons">
-      <q-btn icon="arrow_left" :disabled="state.loading || leftButtonDisabled" size="md" color="primary"
+      <q-btn icon="arrow_left" :disabled="state.ajaxRunning || leftButtonDisabled" size="md" color="primary"
         @click.prevent="onLeftButtonClicked">{{ t("Previous") }}</q-btn>
-      <q-btn icon-right="arrow_right" :disabled="state.loading || rightButtonDisabled" size="md" color="primary"
+      <q-btn icon-right="arrow_right" :disabled="state.ajaxRunning || rightButtonDisabled" size="md" color="primary"
         @click.prevent="onRightButtonClicked">{{ t("Next") }}</q-btn>
     </div>
-    <CustomErrorBanner v-if="state.loadingError" :text="state.errorMessage || 'Error loading data'"
-      :api-error="state.apiError">
+    <CustomErrorBanner v-if="state.ajaxErrors" :text="state.ajaxErrorMessage || 'Error loading data'"
+      :api-error="state.ajaxAPIErrorDetails">
     </CustomErrorBanner>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, reactive, computed, onMounted, onBeforeUnmount, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { date } from "quasar";
+import { type Dayjs } from 'dayjs';
 
-import { usei18n } from "src/composables/usei18n";
-import { useAPI } from "src/composables/useAPI";
-import { useBus } from "src/composables/useBus";
-import { useDarkMode } from 'src/composables/useDarkMode';
-
-import CalHeatmap from "cal-heatmap";
+import { api } from "src/composables/api";
+import { bus } from "src/composables/bus";
+import { useDarkModeStore } from "src/stores/darkMode";
+import { useI18nStore } from "src/stores/i18n";
+import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
+import { type GetActivityHeatMapDataResponseItem as GetActivityHeatMapDataResponseItemInterface, type GetActivityHeatMapDataResponse as GetActivityHeatMapDataResponseInterface } from "src/types/api-responses";
+// @ts-expect-error: `cCalHeatmap` is missing TypeScript type definitions
+import { default as CalHeatmap } from "cal-heatmap";
 import "cal-heatmap/cal-heatmap.css";
-import Tooltip from "cal-heatmap/plugins/Tooltip";
-import CalendarLabel from "cal-heatmap/plugins/CalendarLabel";
+// @ts-expect-error: `Tooltip` is missing TypeScript type definitions
+import { default as Tooltip } from "cal-heatmap/plugins/Tooltip";
+// @ts-expect-error: `CalendarLabel` is missing TypeScript type definitions
+import { default as CalendarLabel } from "cal-heatmap/plugins/CalendarLabel";
 
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
 
 const router = useRouter();
-
 const { t } = useI18n();
-
-const { isDarkModeActive } = useDarkMode();
-const { i18n } = usei18n();
-const { api } = useAPI();
-const { bus } = useBus();
+const darkModeStore = useDarkModeStore();
+const i18NStore = useI18nStore();
 
 const emit = defineEmits(['loading', 'loaded', 'error']);
 
-const props = defineProps({
-  showNavigationButtons: {
-    type: Boolean,
-    required: false,
-    default: true
-  }
+interface ActivityHeatMapProps {
+  showNavigationButtons?: boolean
+};
+
+withDefaults(defineProps<ActivityHeatMapProps>(), {
+  showNavigationButtons: true
 });
 
-const state = reactive({
-  loading: false,
-  loadingError: false,
-  errorMessage: null,
-  apiError: null
-});
+const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-const leftButtonDisabled = ref(false);
-const rightButtonDisabled = ref(false);
+const leftButtonDisabled = ref<boolean>(false);
+const rightButtonDisabled = ref<boolean>(false);
 
-const currentLocale = computed(() => i18n.global.locale.value.substring(0, 2));
+const currentLocale = computed(() => i18NStore.currentLocale.substring(0, 2));
 
 const calDefaultOptions = {
   itemSelector: '#cal-heatmap',
 };
 
 // last 2 years
-let fromDate = (new Date(new Date().setFullYear(new Date().getFullYear() - 2)));
-fromDate.setDate(1); fromDate.setHours(0, 0, 0, 0);
+const fromDate = (new Date(new Date().setFullYear(new Date().getFullYear() - 2)));
+fromDate.setDate(1);
+fromDate.setHours(0, 0, 0, 0);
 
-const calOptions = ref({
+interface DataInterface {
+  source: GetActivityHeatMapDataResponseItemInterface[];
+  x: string;
+  y: string;
+  type: string;
+};
+
+interface CalOptions {
+  data: DataInterface;
+  date: {
+    locale: string;
+    start: Date;
+    end: Date;
+    min: Date;
+    max: Date;
+  };
+  range: number;
+  scale: {
+    color: {
+      scheme: string;
+      type: string;
+      domain: number[] | null;
+    };
+  };
+  domain: {
+    type: string;
+    gutter: number;
+    label: {
+      text: string;
+      textAlign: string;
+      position: string;
+    };
+  };
+  subDomain: {
+    type: string;
+    radius: number;
+    width: number;
+    height: number;
+    gutter: number;
+  };
+  theme: string;
+};
+
+const calOptions: CalOptions = reactive<CalOptions>({
+  data: {
+    source: [],
+    x: "date",
+    y: "count",
+    type: "json",
+  },
   date: {
     locale: currentLocale.value,
     start: new Date(new Date().setFullYear(new Date().getFullYear() - 1)), // last 12 months
@@ -83,7 +129,7 @@ const calOptions = ref({
     color: {
       scheme: 'greens',
       type: 'threshold',
-      domain: null,
+      domain: null as number[] | null,
     },
   },
   domain: {
@@ -92,14 +138,14 @@ const calOptions = ref({
     label: { text: 'MMM', textAlign: 'start', position: 'top' },
   },
   subDomain: { type: 'ghDay', radius: 2, width: 11, height: 11, gutter: 4 },
-  theme: isDarkModeActive() ? "dark" : "light"
+  theme: darkModeStore.isActive ? "dark" : "light"
 });
 
 const calDefaultPlugins = [
   [
     Tooltip,
     {
-      text: function (date, value, dayjsDate) {
+      text: function (timestamp: number, value: number, dayjsDate: Dayjs) {
         return (value
           ? `${value} ${t(" change/s on date ")} ${dayjsDate.format('dddd, MMMM D, YYYY')}`
           : `${t("No activity on date ")} ${dayjsDate.format('dddd, MMMM D, YYYY')}`);
@@ -117,14 +163,11 @@ const calDefaultPlugins = [
   ],
 ];
 
-
-
-let cal = new CalHeatmap(calDefaultOptions);
+let cal: CalHeatmap = new CalHeatmap(calDefaultOptions);
 
 // UGLY-HACK
 // official dynamic cal-heatmap theme toggle is not supported (https://cal-heatmap.com/docs/options/theme)
-watch(() => isDarkModeActive(), val => {
-  console.log(val);
+watch(() => darkModeStore.isActive, () => {
   cal.destroy();
   cal = new CalHeatmap(calDefaultOptions);
   onCalRefresh();
@@ -132,7 +175,7 @@ watch(() => isDarkModeActive(), val => {
 
 // UGLY-HACK
 // day/month labels not updated on i18n changes
-watch(() => currentLocale.value, val => {
+watch(() => currentLocale.value, () => {
   cal.destroy();
   cal = new CalHeatmap(calDefaultOptions);
   onCalRefresh();
@@ -147,13 +190,15 @@ cal.on('resize', (newW, newH, oldW, oldH) => {
 });
 */
 
-cal.on('click', (event, timestamp, value) => {
+cal.on('click', (event: Event, timestamp: number, value: number) => {
   if (value > 0) {
     router.push({
       name: "advancedSearchByFixedUpdatedOn",
       params: {
         fixedUpdatedOn: new Date(timestamp).toISOString().split('T')[0]
       }
+    }).catch((e) => {
+      console.error(e);
     });
   }
 });
@@ -174,17 +219,18 @@ cal.on('maxDateNotReached', () => {
   rightButtonDisabled.value = false;
 });
 
-const onCalRefresh = (data, scaleDomain) => {
-  if (data) {
-    calOptions.value.data = data;
+
+const onCalRefresh = (dataSource?: GetActivityHeatMapDataResponseItemInterface[], scaleColorDomain?: number[]) => {
+  if (dataSource) {
+    calOptions.data.source = dataSource;
   }
-  if (scaleDomain) {
-    calOptions.value.scale.color.domain = scaleDomain;
+  if (scaleColorDomain) {
+    calOptions.scale.color.domain = scaleColorDomain;
   }
-  calOptions.value.date.locale = currentLocale.value;
-  calOptions.value.theme = isDarkModeActive() ? "dark" : "light";
+  calOptions.date.locale = currentLocale.value;
+  calOptions.theme = darkModeStore.isActive ? "dark" : "light";
   cal.paint(
-    calOptions.value,
+    calOptions,
     calDefaultPlugins
   );
 };
@@ -199,54 +245,46 @@ const onRightButtonClicked = () => {
 
 const onRefresh = () => {
   emit("loading");
-  state.loading = true;
-  state.loadingError = false;
-  state.errorMessage = null;
-  state.apiError = null;
-  api.stats.getActivityHeatMapData(date.formatDate(fromDate, 'x'))
-    .then((successResponse) => {
+  Object.assign(state, defaultAjaxState);
+  state.ajaxRunning = true;
+  api.stats.getActivityHeatMapData(Number(date.formatDate(fromDate, 'x')))
+    .then((successResponse: GetActivityHeatMapDataResponseInterface) => {
       const counts = successResponse.data.heatmap.map(d => d.count);
       //const min = Math.min(...counts);
       //const max = Math.max(...counts);
-      let scaleDomain = [...new Set(counts)];
+      const scaleDomain = [...new Set(counts)];
       scaleDomain.unshift(0);
       scaleDomain.sort(function (a, b) { return a - b; });
-      onCalRefresh({
-        source: successResponse.data.heatmap,
-        x: "date",
-        y: "count",
-        type: "json",
-      }, scaleDomain);
-      state.loading = false;
+      onCalRefresh(successResponse.data.heatmap, scaleDomain);
       emit("loaded");
     })
     .catch((errorResponse) => {
-      state.loadingError = true;
+      state.ajaxErrors = true;
       if (errorResponse.isAPIError) {
+        state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
         switch (errorResponse.response.status) {
           case 401:
-            state.apiError = errorResponse.customAPIErrorDetails;
-            state.errorMessage = "Auth session expired, requesting new...";
-            bus.emit("reAuthRequired", { emitter: "ActivityHeatMap" });
+            state.ajaxErrorMessage = "Auth session expired, requesting new...";
+            bus.emit("reAuthRequired", { emitter: "ActivityHeatMapWidget" });
             break;
           default:
-            state.apiError = errorResponse.customAPIErrorDetails;
-            state.errorMessage = "API Error: fatal error";
+            state.ajaxErrorMessage = "API Error: fatal error";
             break;
         }
       } else {
-        state.errorMessage = `Uncaught exception: ${errorResponse}`;
+        state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
         console.error(errorResponse);
       }
-      state.loading = false;
       emit("error");
+    }).finally(() => {
+      state.ajaxRunning = false;
     });
 }
 
 onMounted(() => {
   onRefresh();
   bus.on("reAuthSucess", (msg) => {
-    if (msg.to?.includes("ActivityHeatMap")) {
+    if (msg.to?.includes("ActivityHeatMapWidget")) {
       onRefresh();
     }
   });
