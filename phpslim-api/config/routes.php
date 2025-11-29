@@ -232,41 +232,6 @@ return function (\Slim\App $app): void {
                 /**
                  * @param array<mixed> $params
                  */
-                function getTextFilterFromParams(array $params, string $textFilterType): string | null
-                {
-                    return (
-                        array_key_exists("filter", $params) &&
-                        is_array($params["filter"]) &&
-                        array_key_exists("text", $params["filter"]) &&
-                        is_array(($params["filter"]["text"])) &&
-                        array_key_exists($textFilterType, $params["filter"]["text"]) &&
-                        is_string($params["filter"]["text"][$textFilterType])
-                        ?
-                        $params["filter"]["text"][$textFilterType]
-                        :
-                        null
-                    );
-                }
-
-                /**
-                 * @param array<mixed> $params
-                 * @return array<mixed>
-                 */
-                function getTagsFilterFromParams(array $params): array
-                {
-                    return (
-                        array_key_exists("tags", $params)  &&
-                        is_array($params["tags"])
-                        ?
-                        $params["tags"]
-                        :
-                        []
-                    );
-                }
-
-                /**
-                 * @param array<mixed> $params
-                 */
                 function getReturnFragmentsFlagFromParams(array $params = []): bool
                 {
                     return (
@@ -298,25 +263,12 @@ return function (\Slim\App $app): void {
                     if (! is_array($params)) {
                         throw new \HomeDocs\Exception\InvalidParamsException();
                     }
-
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
                             'results' => \HomeDocs\Document::search(
                                 $dbh,
                                 getPagerFromParams($params),
-                                [
-                                    "title" => getTextFilterFromParams($params, "title"),
-                                    "description" => getTextFilterFromParams($params, "description"),
-                                    "notesBody" => getTextFilterFromParams($params, "notesBody"),
-                                    "attachmentsFilename" => getTextFilterFromParams($params, "attachmentsFilename"),
-                                    "fromCreatedAtTimestampCondition" => is_int($params["fromCreatedAtTimestampCondition"]) ? $params["fromCreatedAtTimestampCondition"] : 0,
-                                    "toCreatedAtTimestampCondition" => is_int($params["toCreatedAtTimestampCondition"]) ? $params["toCreatedAtTimestampCondition"] : 0,
-                                    "fromLastUpdatedAtTimestampCondition" => is_int($params["fromLastUpdatedAtTimestampCondition"]) ? $params["fromLastUpdatedAtTimestampCondition"] : 0,
-                                    "toLastUpdateTimestampCondition" => is_int($params["toLastUpdateTimestampCondition"]) ? $params["toLastUpdateTimestampCondition"] : 0,
-                                    "fromUpdatedOnTimestampCondition" => is_int($params["fromUpdatedOnTimestampCondition"]) ? $params["fromUpdatedOnTimestampCondition"] : 0,
-                                    "toUpdatedOnTimestampCondition" => is_int($params["toUpdatedOnTimestampCondition"]) ? $params["toUpdatedOnTimestampCondition"] : 0,
-                                    "tags" => getTagsFilterFromParams($params),
-                                ],
+                                new \HomeDocs\DocumentSearchFilter($params),
                                 getSortFieldFromParams($params),
                                 getSortOrderFromParams($params),
                                 getReturnFragmentsFlagFromParams($params),
