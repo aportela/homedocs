@@ -83,9 +83,48 @@ interface DataInterface {
   type: string;
 };
 
-const calOptions = ref({
+interface CalOptions {
+  data: DataInterface;
+  date: {
+    locale: string;
+    start: Date;
+    end: Date;
+    min: Date;
+    max: Date;
+  };
+  range: number;
+  scale: {
+    color: {
+      scheme: string;
+      type: string;
+      domain: number[] | null;
+    };
+  };
+  domain: {
+    type: string;
+    gutter: number;
+    label: {
+      text: string;
+      textAlign: string;
+      position: string;
+    };
+  };
+  subDomain: {
+    type: string;
+    radius: number;
+    width: number;
+    height: number;
+    gutter: number;
+  };
+  theme: string;
+};
+
+const calOptions: CalOptions = reactive<CalOptions>({
   data: {
-    scale: [],
+    source: [],
+    x: "date",
+    y: "count",
+    type: "json",
   },
   date: {
     locale: currentLocale.value,
@@ -99,7 +138,7 @@ const calOptions = ref({
     color: {
       scheme: 'greens',
       type: 'threshold',
-      domain: null,
+      domain: null as number[] | null,
     },
   },
   domain: {
@@ -192,15 +231,15 @@ cal.on('maxDateNotReached', () => {
 
 const onCalRefresh = (data?: DataInterface, scaleDomain?: number[]) => {
   if (data) {
-    calOptions.value.data = data;
+    calOptions.data = data;
   }
   if (scaleDomain) {
-    calOptions.value.scale.color.domain = scaleDomain;
+    calOptions.scale.color.domain = scaleDomain;
   }
-  calOptions.value.date.locale = currentLocale.value;
-  calOptions.value.theme = darkModeStore.isActive ? "dark" : "light";
+  calOptions.date.locale = currentLocale.value;
+  calOptions.theme = darkModeStore.isActive ? "dark" : "light";
   cal.paint(
-    calOptions.value,
+    calOptions,
     calDefaultPlugins
   );
 };
