@@ -26,9 +26,12 @@ import { useDarkModeStore } from "src/stores/darkMode";
 import { useI18nStore } from "src/stores/i18n";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 import { type GetActivityHeatMapDataResponseItem as GetActivityHeatMapDataResponseItemInterface, type GetActivityHeatMapDataResponse as GetActivityHeatMapDataResponseInterface } from "src/types/api-responses";
+// @ts-expect-error: `cCalHeatmap` is missing TypeScript type definitions
 import { default as CalHeatmap } from "cal-heatmap";
 import "cal-heatmap/cal-heatmap.css";
+// @ts-expect-error: `Tooltip` is missing TypeScript type definitions
 import { default as Tooltip } from "cal-heatmap/plugins/Tooltip";
+// @ts-expect-error: `CalendarLabel` is missing TypeScript type definitions
 import { default as CalendarLabel } from "cal-heatmap/plugins/CalendarLabel";
 
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
