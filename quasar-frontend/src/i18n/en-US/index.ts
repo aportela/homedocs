@@ -89,7 +89,6 @@ export default {
     "API Error: missing password param",
   /* auth & profile messages */
 
-
   /* api errors */
   "API Error: invalid/missing param":
     "API Error: invalid/missing param",
@@ -101,7 +100,6 @@ export default {
     "API Error: error removing file",
   "API Error: error deleting document":
     "API Error: error deleting document",
-
   /* api errors */
 
   /* recent documents widget labels / messages */
@@ -116,8 +114,6 @@ export default {
     "Tag cloud",
   "You haven't created any tags yet":
     "You haven't created any tags yet",
-
-
   /* tag cloud widget labels / messages */
 
   /* common document fields / labels */
@@ -131,8 +127,11 @@ export default {
     "description",
   /* common document fields / labels */
 
+  /* tag hint */
   "Browse by tag: ":
     "Browse by tag: {tag}",
+  /* tag hint */
+
   "Uploaded on":
     "Uploaded on",
   "Document not found":
@@ -147,6 +146,8 @@ export default {
     "Attachments",
   "Add new file (Drag & Drop supported)":
     "Add new file (Drag & Drop supported)",
+
+
   "API Error: error loading document":
     "API Error: error loading document",
   "API Error: error updating document":
@@ -157,6 +158,7 @@ export default {
     "API Error: missing document title param",
   "API Error: invalid response data":
     "API Error: invalid response data",
+
   "Document metadata":
     "Document metadata",
   "Document details":
@@ -267,36 +269,52 @@ export default {
     "No results found with current filter",
   "Fast search match fragment":
     "Fragment matched on {matchedOn}: {fragment}",
+
+  /* Sidebar menu itemsMenu */
   "Dashboard":
     "Dashboard",
   "My profile":
     "My profile",
+  /* Sidebar menu itemsMenu */
+
+  /* profile account widget */
   "Personal information":
     "Personal information",
   "Update your data":
     "Update your data",
   "Update profile":
     "Update profile",
+  /* profile account widget */
+
+
   "Add":
     "Add",
   "Selected language":
     "Selected language",
+
+  /* profile activity heatmap widget */
   "Your system stats":
     "Your system stats",
   "Small resume of your platform usage":
     "Small resume of your platform usage",
   "Activity Heatmap":
     "Activity Heatmap",
+  "No activity on date ":
+    "No activity on date ",
+  " change/s on date ":
+    " change/s on date ",
+  /* profile activity heatmap widget */
+
+  /* profile stats widgets */
   "Total documents":
     "Total documents",
   "Total attachments":
     "Total attachments",
   "Disk usage":
     "Disk usage",
-  "No activity on date ":
-    "No activity on date ",
-  " change/s on date ":
-    " change/s on date ",
+  /* profile stats widgets */
+
+
   "Document note (click on body to update)":
     "Document note (click on body to update)",
   "Add note":
