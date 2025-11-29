@@ -34,7 +34,7 @@ class DocumentSearchFilter
         return (
             array_key_exists("tags", $params)
             && is_array($params["tags"])
-            ? array_filter($params["tags"], 'is_string')
+            ? array_filter($params["tags"], is_string(...))
             : []
         );
     }

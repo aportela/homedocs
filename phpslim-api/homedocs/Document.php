@@ -976,12 +976,11 @@ class Document
             ";
         }
 
-        if ($documentSearchFilter->tags !== []) {
-            foreach ($documentSearchFilter->tags as $i => $tag) {
-                $paramName = sprintf(":TAG_%03d", $i + 1);
-                $params[] = new \aportela\DatabaseWrapper\Param\StringParam($paramName, $tag);
-                $queryConditions[] = sprintf(
-                    "
+        foreach ($documentSearchFilter->tags as $i => $tag) {
+            $paramName = sprintf(":TAG_%03d", $i + 1);
+            $params[] = new \aportela\DatabaseWrapper\Param\StringParam($paramName, $tag);
+            $queryConditions[] = sprintf(
+                "
                             EXISTS (
                                 SELECT
                                     document_id
@@ -992,9 +991,8 @@ class Document
                                     DOCUMENT_TAG.tag IN (%s)
                             )
                         ",
-                    $paramName
-                );
-            }
+                $paramName
+            );
         }
 
         $whereCondition = $queryConditions !== [] ? " WHERE " . implode(" AND ", $queryConditions) : "";
