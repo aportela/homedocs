@@ -1,0 +1,1 @@
+import{b as o}from"./index-3fevySbJ.js";import{a as t}from"./api-DiLYfQz-.js";import"./axios-RI6aZEej.js";import"./localStorage-dsyGJO5t.js";import"./index-BSZHI2pT.js";import"./session-bV_Kq9am.js";const s=o(async()=>{try{await t.common.getServerEnvironment()}catch(r){console.error(r)}});export{s as default};
