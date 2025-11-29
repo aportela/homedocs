@@ -1,6 +1,6 @@
 <template>
   <SystemStatsWidgetBase :loading="state.ajaxRunning" :error="state.ajaxErrors" icon="shelves"
-    header-label="Total documents" :total="total" :error-message="state.ajaxErrorMessage"
+    header-label="Total documents" :value="total" :error-message="state.ajaxErrorMessage"
     :api-error-details="state.ajaxAPIErrorDetails" />
 </template>
 

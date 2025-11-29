@@ -136,7 +136,7 @@ interface GetTotalAttachmentsStatsResponse extends Omit<DefaultAxiosResponse, 'd
 
 interface GetDiskUsageStatsResponse extends Omit<DefaultAxiosResponse, 'data'> {
   data: {
-    count: number;
+    size: number;
   }
 };
 

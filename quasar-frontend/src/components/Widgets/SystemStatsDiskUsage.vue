@@ -1,11 +1,11 @@
 <template>
-  <SystemStatsWidgetBase :loading="state.ajaxRunning" :error="state.ajaxErrors" icon="attachment"
-    header-label="Total attachments" :total="total" :error-message="state.ajaxErrorMessage"
-    :api-error-details="state.ajaxAPIErrorDetails" />
+  <SystemStatsWidgetBase :loading="state.ajaxRunning" :error="state.ajaxErrors" icon="storage" header-label="Disk usage"
+    :value="total" :error-message="state.ajaxErrorMessage" :api-error-details="state.ajaxAPIErrorDetails" />
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, onMounted, onBeforeUnmount } from "vue";
+import { format } from "quasar";
 
 import { bus } from "src/composables/bus";
 import { api } from "src/composables/api";
@@ -15,15 +15,15 @@ import { default as SystemStatsWidgetBase } from "src/components/Widgets/SystemS
 
 const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-const total = ref<number>(0);
+const total = ref<string>(format.humanStorageSize(0));
 
 const onRefresh = () => {
   if (!state.ajaxRunning) {
     Object.assign(state, defaultAjaxState);
     state.ajaxRunning = true;
-    api.stats.attachmentCount()
+    api.stats.attachmentDiskSize()
       .then((successResponse: GetDiskUsageStatsResponseInterface) => {
-        total.value = successResponse.data.count;
+        total.value = format.humanStorageSize(successResponse.data.size);
       })
       .catch((errorResponse) => {
         state.ajaxErrors = true;

@@ -5,7 +5,7 @@
         :class="{ 'text-red': error, 'animation-spin': loading }" />
       {{ t(headerLabel) }}
     </q-card-section>
-    <q-card-section class="text-center text-h4" v-if="!error">{{ total }}</q-card-section>
+    <q-card-section class="text-center text-h4" v-if="!error">{{ value }}</q-card-section>
     <q-card-section v-else>
       <CustomErrorBanner :text="errorMessage || 'Error loading data'" :api-error-details="apiErrorDetails">
       </CustomErrorBanner>
@@ -27,7 +27,7 @@ interface SystemStatsCountWidgetBaseProps {
   error: boolean;
   icon: string;
   headerLabel: string;
-  total: number;
+  value: number | string;
   errorMessage: string | null;
   apiErrorDetails: APIErrorDetailsInterface | null;
 };
