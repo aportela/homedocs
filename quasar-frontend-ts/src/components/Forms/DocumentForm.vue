@@ -139,6 +139,7 @@ import { ref, reactive, nextTick, computed, watch, onMounted, onBeforeUnmount } 
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { uid, useQuasar, QUploader, type QRejectedEntry } from "quasar";
+import { type AxiosResponse } from "axios";
 
 import { bus } from "src/composables/bus";
 import { api } from "src/composables/api";
@@ -519,10 +520,14 @@ const onUploadsStart = () => {
 };
 
 // q-uploader component event => file was uploaded
-const onFileUploaded = (info: { files: readonly any[]; xhr: any; }): void => {
+const onFileUploaded = (info: { files: readonly File[]; xhr: XMLHttpRequest | AxiosResponse; }): void => {
   let jsonResponse = null;
   try {
-    jsonResponse = JSON.parse(info.xhr.response);
+    if (info.xhr instanceof XMLHttpRequest) {
+      jsonResponse = JSON.parse(info.xhr.response);
+    } else if (info.xhr.data) {
+      jsonResponse = info.xhr.data;
+    }
   } catch (e) { console.error(e); }
   if (jsonResponse != null) {
     document.attachments.unshift(
@@ -596,7 +601,7 @@ const onUploadRejected = (rejectedEntries: QRejectedEntry[]): void => {
 }
 
 // q-uploader component event => file upload failed
-const onUploadFailed = (info: { files: readonly any[]; xhr: any; }) => {
+const onUploadFailed = (info: { files: readonly File[]; xhr: XMLHttpRequest | AxiosResponse; }) => {
   bus.emit("refreshUploadingDialog.fileUploadFailed", {
     transfers: info.files.map((file) =>
       new UploadTransferClass(
