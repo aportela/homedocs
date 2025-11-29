@@ -1,6 +1,7 @@
 <template>
   <q-btn v-bind="attrs" :label="shortLabels ? selectedLocale.shortLabel : selectedLocale.label" icon="language"
-    icon-right="unfold_more" no-caps dense :disable="availableLocales.length <= 1">
+    :icon-right="availableLocales.length > 1 ? 'unfold_more' : undefined" no-caps dense
+    :disable="availableLocales.length <= 1">
     <DesktopToolTip>{{ tooltip }}</DesktopToolTip>
     <q-menu fit anchor="top left" self="bottom left" v-if="availableLocales.length > 1">
       <q-item dense clickable v-close-popup v-for="availableLanguage in availableLocales" :key="availableLanguage.value"
