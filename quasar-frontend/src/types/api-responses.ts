@@ -1,13 +1,17 @@
 import { type AxiosResponse } from "axios";
 import { type HistoryOperationType } from "./history-operation";
 import { type SearchDocumentItemMatchedFragment as SearchDocumentItemMatchedFragmentInterface } from "./search-document-item";
-import { type EnvironmentType } from "./common";
+import { type EnvironmentType, type ValidAuthTypes } from "./common";
 
 interface DefaultAxiosResponse<T = unknown> {
   data: AxiosResponse<T>;
 }
+
 interface LoginResponse extends Omit<DefaultAxiosResponse, 'data'> {
-  data: undefined;
+  data: {
+    accessToken: string;
+    tokenType: ValidAuthTypes;
+  }
 };
 
 interface RegisterResponse extends Omit<DefaultAxiosResponse, 'data'> {
@@ -175,9 +179,13 @@ interface GetActivityHeatMapDataResponse extends Omit<DefaultAxiosResponse, 'dat
 };
 
 interface getServerEnvironmentResponseData {
-  allowSignUp: boolean;
-  environment: EnvironmentType;
-  maxUploadFileSize: number;
+  data: {
+    serverEnvironment: {
+      allowSignUp: boolean;
+      environment: EnvironmentType;
+      maxUploadFileSize: number;
+    }
+  }
 };
 
 export {
