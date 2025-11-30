@@ -68,7 +68,7 @@ const route = useRoute();
 
 const currentRouteName = computed(() => String(route.name));
 
-const session = useSessionStore();
+const sessionStore = useSessionStore();
 
 const mini = computed(() => props.mini);
 
@@ -83,7 +83,7 @@ function logout() {
   api.auth
     .logout()
     .then(() => {
-      session.setJWT(null);
+      sessionStore.setJWT(null);
       router.push({
         name: "login",
       }).catch((e) => {
@@ -92,7 +92,7 @@ function logout() {
     })
     .catch((errorResponse) => {
       console.error(errorResponse);
-      session.setJWT(null);
+      sessionStore.setJWT(null);
       router.push({
         name: "login",
       }).catch((e) => {
