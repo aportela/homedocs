@@ -1,6 +1,4 @@
 export default {
-
-  /* project name & slogans */
   "Homedocs":
     "Homedocs",
   "Welcome to HomeDocs":
@@ -19,9 +17,6 @@ export default {
     "Sign up now and take control.",
   "The first step to a more organized you starts here!":
     "The first step to a more organized you starts here!",
-  /* project name & slogans */
-
-  /* hints for some action buttons */
   "Browse project page":
     "Browse project page",
   "Switch language":
@@ -30,24 +25,12 @@ export default {
     "Switch to light mode",
   "Switch to dark mode":
     "Switch to dark mode",
-  /* hints for some action buttons */
-
-  /* common labels */
   "Loading...":
     "Loading...",
-  /* common labels */
-
-  /* common validations */
   "Field is required":
     "Field is required",
-  /* common validations */
-
-  /* common error messages */
   "Error loading data":
     "Error loading data",
-  /* common error messages */
-
-  /* auth & profile labels / buttons */
   "Sign in":
     "Sign in",
   "Email":
@@ -64,9 +47,6 @@ export default {
     "Don't have an account yet ?",
   "Click here to sign up":
     "Click here to sign up",
-  /* auth & profile labels / buttons */
-
-  /* auth & profile messages */
   "Email not registered":
     "Email not registered",
   "Invalid password":
@@ -87,9 +67,6 @@ export default {
     "API Error: missing email param",
   "API Error: missing password param":
     "API Error: missing password param",
-  /* auth & profile messages */
-
-  /* api errors */
   "API Error: invalid/missing param":
     "API Error: invalid/missing param",
   "API Error: fatal error":
@@ -100,23 +77,14 @@ export default {
     "API Error: error removing file",
   "API Error: error deleting document":
     "API Error: error deleting document",
-  /* api errors */
-
-  /* recent documents widget labels / messages */
   "Recent documents":
     "Recent documents",
   "You haven't created any documents yet":
     "You haven't created any documents yet",
-  /* recent documents widget labels / messages */
-
-  /* tag cloud widget labels / messages */
   "Tag cloud":
     "Tag cloud",
   "You haven't created any tags yet":
     "You haven't created any tags yet",
-  /* tag cloud widget labels / messages */
-
-  /* common document fields / labels */
   "Title":
     "Title",
   "title":
@@ -125,13 +93,8 @@ export default {
     "Description",
   "description":
     "description",
-  /* common document fields / labels */
-
-  /* tag hint */
   "Browse by tag: ":
     "Browse by tag: {tag}",
-  /* tag hint */
-
   "Uploaded on":
     "Uploaded on",
   "Document not found":
@@ -146,8 +109,6 @@ export default {
     "Attachments",
   "Add new file (Drag & Drop supported)":
     "Add new file (Drag & Drop supported)",
-
-
   "API Error: error loading document":
     "API Error: error loading document",
   "API Error: error updating document":
@@ -158,7 +119,6 @@ export default {
     "API Error: missing document title param",
   "API Error: invalid response data":
     "API Error: invalid response data",
-
   "Document metadata":
     "Document metadata",
   "Document details":
@@ -269,30 +229,20 @@ export default {
     "No results found with current filter",
   "Fast search match fragment":
     "Fragment matched on {matchedOn}: {fragment}",
-
-  /* Sidebar menu itemsMenu */
   "Dashboard":
     "Dashboard",
   "My profile":
     "My profile",
-  /* Sidebar menu itemsMenu */
-
-  /* profile account widget */
   "Personal information":
     "Personal information",
   "Update your data":
     "Update your data",
   "Update profile":
     "Update profile",
-  /* profile account widget */
-
-
   "Add":
     "Add",
   "Selected language":
     "Selected language",
-
-  /* profile activity heatmap widget */
   "Your system stats":
     "Your system stats",
   "Small resume of your platform usage":
@@ -303,18 +253,12 @@ export default {
     "No activity on date ",
   " change/s on date ":
     " change/s on date ",
-  /* profile activity heatmap widget */
-
-  /* profile stats widgets */
   "Total documents":
     "Total documents",
   "Total attachments":
     "Total attachments",
   "Disk usage":
     "Disk usage",
-  /* profile stats widgets */
-
-
   "Document note (click on body to update)":
     "Document note (click on body to update)",
   "Add note":
@@ -512,5 +456,4 @@ export default {
     "Oooops",
   "Error":
     "Error",
-
 };
