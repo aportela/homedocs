@@ -1,6 +1,7 @@
 import { type AxiosResponse } from "axios";
 import { type HistoryOperationType } from "./history-operation";
 import { type SearchDocumentItemMatchedFragment as SearchDocumentItemMatchedFragmentInterface } from "./search-document-item";
+import { type EnvironmentType } from "./common";
 
 interface DefaultAxiosResponse<T = unknown> {
   data: AxiosResponse<T>;
@@ -173,6 +174,12 @@ interface GetActivityHeatMapDataResponse extends Omit<DefaultAxiosResponse, 'dat
   }
 };
 
+interface getServerEnvironmentResponseData {
+  allowSignUp: boolean;
+  environment: EnvironmentType;
+  maxUploadFileSize: number;
+};
+
 export {
   type DefaultAxiosResponse,
   type LoginResponse,
@@ -199,4 +206,5 @@ export {
   type GetTagsResponse,
   type GetActivityHeatMapDataResponseItem,
   type GetActivityHeatMapDataResponse,
+  type getServerEnvironmentResponseData,
 };
