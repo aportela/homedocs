@@ -1,10 +1,8 @@
 import axios from "axios";
 import { SERVER_API_BASE_PATH } from "src/constants";
 import { useSessionStore } from "src/stores/session";
-import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
 
 const sessionStore = useSessionStore();
-const serverEnvironment = useServerEnvironmentStore();
 
 const axiosInstance = axios.create({
   baseURL: SERVER_API_BASE_PATH,
@@ -13,8 +11,7 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     if (sessionStore.jwt) {
-      // TODO: cange to Authorization Bearer
-      config.headers["HOMEDOCS-JWT"] = sessionStore.jwt;
+      config.headers["Authorization"] = `Bearer ${sessionStore.jwt}`;
       config.withCredentials = true;
     }
     return config;
@@ -26,20 +23,6 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
   (response) => {
-    // warning: axios received header names in lowercase
-    const apiResponseJWT = response.headers["homedocs-jwt"] || null;
-    if (apiResponseJWT) {
-      if (apiResponseJWT !== sessionStore.jwt) {
-        sessionStore.setJWT(apiResponseJWT);
-      }
-    }
-    if (response.data.serverEnvironment) {
-      serverEnvironment.set(
-        response.data?.serverEnvironment?.allowSignUp,
-        response.data?.serverEnvironment?.environment,
-        response.data?.serverEnvironment?.maxUploadFileSize,
-      );
-    }
     return response;
   },
   (error) => {
