@@ -71,6 +71,7 @@ import { QInput } from "quasar";
 import { api } from "src/composables/api";
 import { useFormUtils } from "src/composables/useFormUtils";
 import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
+import { useSessionStore } from "src/stores/session";
 import { email as localStorageEmail } from "src/composables/localStorage";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 import { type AuthValidator as AuthValidatorInterface, defaultAuthValidator } from "src/types/auth-validator";
@@ -98,6 +99,8 @@ const { t } = useI18n();
 const { requiredFieldRule } = useFormUtils();
 
 const serverEnvironment = useServerEnvironmentStore();
+
+const sessionStore = useSessionStore();
 
 const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
@@ -148,6 +151,7 @@ const onSubmitForm = () => {
     api.auth
       .login(profile.email, profile.password)
       .then((successResponse: LoginResponse) => {
+        sessionStore.setJWT(successResponse.data.accessToken);
         localStorageEmail.set(profile.email);
         emit("success", successResponse.data);
       })
