@@ -8,24 +8,32 @@ class JWT
 {
     public const ALGORITHM = 'HS256';
 
-    /**
-     * jwt constructor
-     */
+    public const int TIMESTAMP_EXPIRE_NEVER = 0;
+    public const int TIMESTAMP_EXPIRE_IN_1_DAY = 86400;
+    public const int TIMESTAMP_EXPIRE_IN_31_DAYS = 2678400;
+    public const int TIMESTAMP_EXPIRE_IN_365_DAYS = 31536000;
+
     public function __construct(private readonly \Psr\Log\LoggerInterface $logger, private readonly string $passphrase)
     {
         $this->logger->debug("JWT passphrase", [$this->passphrase]);
     }
 
-    public function encode(mixed $payload): string
+    public function encode(mixed $payload, int $expirationTime = self::TIMESTAMP_EXPIRE_IN_1_DAY): string
     {
         $jwt = "";
         $this->logger->notice("JWT encoding", [$payload]);
         try {
+            $issuedAt = time();
+            $jwtPayload = [
+                'iat' => $issuedAt,
+                'data' => $payload,
+            ];
+            if ($expirationTime > self::TIMESTAMP_EXPIRE_NEVER) {
+                $expirationTime = $issuedAt + $expirationTime;
+                $jwtPayload['exp'] = $expirationTime;
+            }
             $jwt = \Firebase\JWT\JWT::encode(
-                [
-                    'iat' => time(),
-                    'data' => $payload,
-                ],
+                $jwtPayload,
                 $this->passphrase,
                 self::ALGORITHM
             );
@@ -39,38 +47,9 @@ class JWT
     public function decode(string $jwt): \stdClass
     {
         $data = new \stdClass();
-        try {
-            $this->logger->notice("JWT decoding", [$jwt]);
-            $data = \Firebase\JWT\JWT::decode($jwt, new \Firebase\JWT\Key($this->passphrase, self::ALGORITHM));
-        } catch (\InvalidArgumentException $e) {
-            // provided key/key-array is empty or malformed.
-            $this->logger->error("JWT decoding error", [$e->getMessage()]);
-        } catch (\DomainException $e) {
-            // provided algorithm is unsupported OR
-            // provided key is invalid OR
-            // unknown error thrown in openSSL or libsodium OR
-            // libsodium is required but not available.
-            $this->logger->error("JWT decoding error", [$e->getMessage()]);
-        } catch (\Firebase\JWT\SignatureInvalidException $e) {
-            // provided JWT signature verification failed.
-            $this->logger->error("JWT decoding error", [$e->getMessage()]);
-        } catch (\Firebase\JWT\BeforeValidException $e) {
-            // provided JWT is trying to be used before "nbf" claim OR
-            // provided JWT is trying to be used before "iat" claim.
-            $this->logger->error("JWT decoding error", [$e->getMessage()]);
-        } catch (\Firebase\JWT\ExpiredException $e) {
-            // provided JWT is trying to be used after "exp" claim.
-            $this->logger->error("JWT decoding error", [$e->getMessage()]);
-        } catch (\UnexpectedValueException $e) {
-            // provided JWT is malformed OR
-            // provided JWT is missing an algorithm / using an unsupported algorithm OR
-            // provided JWT algorithm does not match provided key OR
-            // provided key ID in key/key-array is empty or invalid.
-            $this->logger->error("JWT decoding error", [$e->getMessage()]);
-        } catch (\Throwable $e) {
-            $this->logger->error("JWT decoding error", [$e->getMessage()]);
-        } finally {
-            return ($data);
-        }
+        $this->logger->notice("JWT decoding", [$jwt]);
+        $data = \Firebase\JWT\JWT::decode($jwt, new \Firebase\JWT\Key($this->passphrase, self::ALGORITHM));
+        $this->logger->debug("Decoded JWT ", [$data]);
+        return ($data);
     }
 }
