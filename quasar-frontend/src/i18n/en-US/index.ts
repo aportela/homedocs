@@ -287,8 +287,8 @@ export default {
   "Filename: ":
     "Filename: ",
 
-  "Filter by text on file name":
-    "Filter by text on file name",
+  "Filter by text on attachment filename":
+    "Filter by text on attachment filename",
 
   "Filter by text on note body":
     "Filter by text on note body",
