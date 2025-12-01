@@ -54,6 +54,7 @@ import { ref, reactive, watch, computed, onMounted, onBeforeUnmount } from "vue"
 import { useQuasar, LocalStorage } from "quasar";
 import { useI18n } from "vue-i18n";
 
+import { useSessionStore } from "src/stores/session";
 import { currentTimestamp } from "src/composables/dateUtils";
 import { alwaysOpenUploadDialog as localStorageAlwaysOpenUploadDialog } from "src/composables/localStorage"
 import { bus } from "src/composables/bus";
@@ -75,6 +76,8 @@ import { default as UploadingDialog } from "src/components/Dialogs/UploadingDial
 
 import { type UploadTransfer as UploadTransferInterface } from "src/types/upload-transfer";
 import { type Document as DocumentInterface, DocumentClass } from "src/types/document";
+import { type GetNewAccessTokenResponse as GetNewAccessTokenResponseInterface } from "src/types/api-responses";
+import { api } from "src/composables/api";
 
 const $q = useQuasar();
 
@@ -200,7 +203,20 @@ onMounted(() => {
     if (msg.emitter) {
       reAuthEmitters.push(msg.emitter);
     }
-    dialogs.reauth.visible = true;
+    const sessionStore = useSessionStore();
+    if (sessionStore.hasRefreshToken) {
+      api.auth.getNewAccessToken(String(sessionStore.refreshToken)).then((successResponse: GetNewAccessTokenResponseInterface) => {
+        sessionStore.setAccessToken(successResponse.data.accessToken);
+        bus.emit("reAuthSucess", ({ to: reAuthEmitters }))
+        reAuthEmitters.length = 0;
+      }).catch((errorResponse) => {
+        console.error(errorResponse);
+        sessionStore.removeRefreshToken();
+        dialogs.reauth.visible = true;
+      });
+    } else {
+      dialogs.reauth.visible = true;
+    }
   });
 
   bus.on("showDocumentFilePreviewDialog", (msg: BusMsg) => {
