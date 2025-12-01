@@ -95,14 +95,14 @@ return function (\Slim\App $app): void {
                     );
                     $user->login($dbh);
                     $jwt = new \HomeDocs\JWT($container->get(\HomeDocs\Logger\DefaultLogger::class), new \HomeDocs\Settings()->getJWTPassphrase());
+
                     $JWTPayload = [
-                        "userId" => $_SESSION["userId"] ?? null,
-                        "email" => $_SESSION["email"] ?? null,
+                        "userId" => \HomeDocs\UserSession::getUserId() ?? null,
+                        "email" => \HomeDocs\UserSession::getEmail() ?? null,
                     ];
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            "accessToken" => $jwt->encode("userId", $JWTPayload),
-                            //"expires_in" => 3600,
+                            "accessToken" => $jwt->encode($JWTPayload),
                             "tokenType" => "Bearer"
                         ]
                     );
