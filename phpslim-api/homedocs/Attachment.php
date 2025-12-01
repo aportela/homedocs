@@ -46,7 +46,7 @@ class Attachment
             ]
         );
         if (count($data) === 1) {
-            if (($data[0]->uploadedByUserId ?? null) == \HomeDocs\UserSession::getUserId()) {
+            if (($data[0]->uploadedByUserId ?? null) === \HomeDocs\UserSession::getUserId()) {
                 $this->name = property_exists($data[0], "name") && is_string($data[0]->name) ? $data[0]->name : null;
                 $this->size = property_exists($data[0], "size") && is_numeric($data[0]->size) ? intval($data[0]->size) : 0;
                 $this->hash = property_exists($data[0], "hash") && is_string($data[0]->hash) ? $data[0]->hash : null;
