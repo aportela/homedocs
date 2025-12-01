@@ -3,44 +3,48 @@ import { defineStore } from "pinia";
 import { accessJWT as localStorageAccessJWT, refreshJWT as localStorageRefreshJWT } from "src/composables/localStorage";
 
 interface State {
-  accessJWT: string | null;
-  refreshJWT: string | null;
+  tokens: {
+    access: string | null;
+    refresh: string | null;
+  }
 };
 
 export const useSessionStore = defineStore("session", {
   state: (): State => ({
-    accessJWT: localStorageAccessJWT.get() ?? null,
-    refreshJWT: localStorageRefreshJWT.get() ?? null,
+    tokens: {
+      access: localStorageAccessJWT.get() ?? null,
+      refresh: localStorageRefreshJWT.get() ?? null,
+    }
   }),
   getters: {
     hasAccessToken(state): boolean {
-      return state.accessJWT !== null;
+      return state.tokens.access !== null;
     },
     hasRefreshToken(state): boolean {
-      return state.refreshJWT !== null;
+      return state.tokens.refresh !== null;
     },
-    accessJWT(state): string | null {
-      return state.accessJWT
+    accessToken(state): string | null {
+      return state.tokens.access
     },
-    refreshJWT(state): string | null {
-      return state.refreshJWT
+    refreshToken(state): string | null {
+      return state.tokens.refresh
     },
   },
   actions: {
     setAccessToken(jwt: string): void {
-      this.accessJWT = jwt;
-      localStorageAccessJWT.set(this.accessJWT);
+      this.tokens.access = jwt;
+      localStorageAccessJWT.set(this.tokens.access);
     },
     removeAccessToken(): void {
-      this.accessJWT = null;
+      this.tokens.access = null;
       localStorageAccessJWT.remove();
     },
     setRefreshToken(jwt: string): void {
-      this.refreshJWT = jwt;
-      localStorageRefreshJWT.set(this.refreshJWT);
+      this.tokens.refresh = jwt;
+      localStorageRefreshJWT.set(this.tokens.refresh);
     },
     removeRefreshToken(): void {
-      this.refreshJWT = null;
+      this.tokens.refresh = null;
       localStorageRefreshJWT.remove();
     },
   },
