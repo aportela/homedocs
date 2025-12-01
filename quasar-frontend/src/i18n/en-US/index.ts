@@ -17,9 +17,6 @@ export default {
   "Add attachment":
     "Add attachment",
 
-  "Add new file (Drag & Drop supported)":
-    "Add new file (Drag & Drop supported)",
-
   "Add note":
     "Add note",
 
@@ -47,8 +44,8 @@ export default {
   "API Error: error loading document":
     "API Error: error loading document",
 
-  "API Error: error removing file":
-    "API Error: error removing file",
+  "API Error: error removing attachment":
+    "API Error: error removing attachment",
 
   "API Error: error updating document":
     "API Error: error updating document",
@@ -73,9 +70,6 @@ export default {
 
   "API Error: missing password param":
     "API Error: missing password param",
-
-  "Are you sure ? (You must save the document after deleting this file)":
-    "Are you sure ? (You must save the document after deleting this file)",
 
   "ascending":
     "ascending",
@@ -278,7 +272,7 @@ export default {
   "File preview":
     "File preview",
 
-  "File preview not available":
+  "Attachment preview not available":
     "File {filename} preview not available",
 
   "File upload activity & status":

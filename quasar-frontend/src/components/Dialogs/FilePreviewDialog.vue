@@ -62,7 +62,7 @@
       </CustomBanner>
       <CustomBanner warning v-else-if="!allowPreview(currentAttachment.name)">
         <template v-slot:text>
-          {{ t("File preview not available", { filename: currentAttachment.name }) }}
+          {{ t("Attachment preview not available", { filename: currentAttachment.name }) }}
         </template>
       </CustomBanner>
       <q-space />
