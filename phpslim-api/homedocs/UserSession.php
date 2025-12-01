@@ -58,18 +58,13 @@ class UserSession
         return array_key_exists("userId", $_SESSION) && is_string($_SESSION["userId"]);
     }
 
-    public static function isExpired(): bool
+    public static function getUserId(): string|null
     {
-        return array_key_exists("createdAt", $_SESSION) && is_numeric($_SESSION["createdAt"]);
+        return array_key_exists("userId", $_SESSION) && is_string($_SESSION["userId"]) ? $_SESSION["userId"] : null;
     }
 
-    public static function getUserId(): string
+    public static function getEmail(): string|null
     {
-        return array_key_exists("userId", $_SESSION) && is_string($_SESSION["userId"]) ? $_SESSION["userId"] : '';
-    }
-
-    public static function getEmail(): string
-    {
-        return array_key_exists("email", $_SESSION) && is_string($_SESSION["email"]) ? $_SESSION["email"] : '';
+        return array_key_exists("email", $_SESSION) && is_string($_SESSION["email"]) ? $_SESSION["email"] : null;
     }
 }
