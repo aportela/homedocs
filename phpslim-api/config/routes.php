@@ -77,7 +77,7 @@ return function (\Slim\App $app): void {
                     }
                 });
 
-                $routeCollectorProxy->post('/login', function (Request $request, Response $response, array $args) use ($container): \Psr\Http\Message\MessageInterface {
+                $routeCollectorProxy->post('/login', function (Request $request, Response $response, array $args) use ($container, $settings): \Psr\Http\Message\MessageInterface {
                     $params = $request->getParsedBody();
                     if (! is_array($params)) {
                         throw new \HomeDocs\Exception\InvalidParamsException();
@@ -94,7 +94,6 @@ return function (\Slim\App $app): void {
                         array_key_exists("password", $params) && is_string($params["password"]) ? $params["password"] : ""
                     );
                     $user->login($dbh);
-                    $settings =  new \HomeDocs\Settings();
                     $jwt = new \HomeDocs\JWT($container->get(\HomeDocs\Logger\DefaultLogger::class), $settings->getJWTPassphrase());
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
@@ -116,6 +115,58 @@ return function (\Slim\App $app): void {
                     );
                     $response->getBody()->write($payload);
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
+                });
+
+                $routeCollectorProxy->post('/get_new_access_token', function (Request $request, Response $response, array $args) use ($container, $settings): \Psr\Http\Message\MessageInterface {
+                    $params = $request->getParsedBody();
+                    if (! is_array($params)) {
+                        throw new \HomeDocs\Exception\InvalidParamsException();
+                    }
+                    if (! (array_key_exists("refresh_token", $params) && is_string($params["refresh_token"]))) {
+                        throw new \HomeDocs\Exception\InvalidParamsException("refresh_token");
+                    }
+
+                    $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
+                    if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
+                        throw new \RuntimeException("Failed to create database handler from container");
+                    }
+
+
+                    $jwt = new \HomeDocs\JWT($container->get(\HomeDocs\Logger\DefaultLogger::class), $settings->getJWTPassphrase());
+                    $decoded = null;
+                    try {
+                        $decoded = $jwt->decode($params["refresh_token"]);
+                    } catch (\Firebase\JWT\ExpiredException $e) {
+                        $this->logger->notice("JWT expired", [$e->getMessage()]);
+                        throw new \HomeDocs\Exception\UnauthorizedException("JWT expired");
+                    } catch (\Throwable $e) {
+                        $this->logger->notice("JWT decode error", [$e->getMessage()]);
+                        throw new \HomeDocs\Exception\UnauthorizedException("JWT decode error");
+                    }
+
+                    if (is_object($decoded) && property_exists($decoded, "data") && is_object($decoded->data) && property_exists($decoded->data, "userId") && is_string($decoded->data->userId) && ! empty($decoded->data->userId)) {
+                        $user = new \HomeDocs\User($decoded->data->userId);
+                        $user->get($dbh);
+                        $user->login($dbh);
+
+                        $jwt = new \HomeDocs\JWT($container->get(\HomeDocs\Logger\DefaultLogger::class), $settings->getJWTPassphrase());
+                        $payload = \HomeDocs\Utils::getJSONPayload(
+                            [
+                                "accessToken" => $jwt->encode(
+                                    [
+                                        "userId" => \HomeDocs\UserSession::getUserId() ?? null,
+                                        "email" => \HomeDocs\UserSession::getEmail() ?? null,
+                                    ],
+                                    $settings->getJWTAccessTokenExpireTime()
+                                ),
+                                "tokenType" => "Bearer",
+                            ]
+                        );
+                        $response->getBody()->write($payload);
+                        return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
+                    } else {
+                        throw new \HomeDocs\Exception\UnauthorizedException("Missing user id on JWT refresh token");
+                    }
                 });
 
                 $routeCollectorProxy->post('/logout', function (Request $request, Response $response, array $args): \Psr\Http\Message\MessageInterface {
