@@ -88,13 +88,20 @@ return function (\Slim\App $app): void {
                         throw new \RuntimeException("Failed to create database handler from container");
                     }
 
+                    $logger = $container->get(\HomeDocs\Logger\DefaultLogger::class);
+                    if (! $logger instanceof \HomeDocs\Logger\DefaultLogger) {
+                        throw new \RuntimeException("Failed to create logger from container");
+                    }
+
                     $user = new \HomeDocs\User(
                         "",
                         array_key_exists("email", $params) && is_string($params["email"]) ? $params["email"] : "",
                         array_key_exists("password", $params) && is_string($params["password"]) ? $params["password"] : ""
                     );
                     $user->login($dbh);
-                    $jwt = new \HomeDocs\JWT($container->get(\HomeDocs\Logger\DefaultLogger::class), $settings->getJWTPassphrase());
+                    $jwt = new \HomeDocs\JWT($logger, $settings->getJWTPassphrase());
+
+                    $currentTimestamp = time();
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
                             "accessToken" => $jwt->encode(
@@ -102,13 +109,13 @@ return function (\Slim\App $app): void {
                                     "userId" => \HomeDocs\UserSession::getUserId() ?? null,
                                     "email" => \HomeDocs\UserSession::getEmail() ?? null,
                                 ],
-                                $settings->getJWTAccessTokenExpireTime()
+                                $currentTimestamp + $settings->getJWTAccessTokenExpireTime()
                             ),
                             "refreshToken" => $jwt->encode(
                                 [
                                     "userId" => \HomeDocs\UserSession::getUserId() ?? null,
                                 ],
-                                $settings->getJWTRefreshTokenExpireTime()
+                                $currentTimestamp + $settings->getJWTRefreshTokenExpireTime()
                             ),
                             "tokenType" => "Bearer",
                         ]
@@ -131,25 +138,29 @@ return function (\Slim\App $app): void {
                         throw new \RuntimeException("Failed to create database handler from container");
                     }
 
+                    $logger = $container->get(\HomeDocs\Logger\DefaultLogger::class);
+                    if (! $logger instanceof \HomeDocs\Logger\DefaultLogger) {
+                        throw new \RuntimeException("Failed to create logger from container");
+                    }
 
-                    $jwt = new \HomeDocs\JWT($container->get(\HomeDocs\Logger\DefaultLogger::class), $settings->getJWTPassphrase());
+                    $jwt = new \HomeDocs\JWT($logger, $settings->getJWTPassphrase());
                     $decoded = null;
                     try {
                         $decoded = $jwt->decode($params["refresh_token"]);
                     } catch (\Firebase\JWT\ExpiredException $e) {
-                        $this->logger->notice("JWT expired", [$e->getMessage()]);
+                        $logger->notice("JWT expired", [$e->getMessage()]);
                         throw new \HomeDocs\Exception\UnauthorizedException("JWT expired");
                     } catch (\Throwable $e) {
-                        $this->logger->notice("JWT decode error", [$e->getMessage()]);
+                        $logger->notice("JWT decode error", [$e->getMessage()]);
                         throw new \HomeDocs\Exception\UnauthorizedException("JWT decode error");
                     }
 
-                    if (is_object($decoded) && property_exists($decoded, "data") && is_object($decoded->data) && property_exists($decoded->data, "userId") && is_string($decoded->data->userId) && ! empty($decoded->data->userId)) {
+                    if (property_exists($decoded, "data") && is_object($decoded->data) && property_exists($decoded->data, "userId") && is_string($decoded->data->userId) && ! empty($decoded->data->userId)) {
                         $user = new \HomeDocs\User($decoded->data->userId);
                         $user->get($dbh);
                         $user->login($dbh);
 
-                        $jwt = new \HomeDocs\JWT($container->get(\HomeDocs\Logger\DefaultLogger::class), $settings->getJWTPassphrase());
+                        $jwt = new \HomeDocs\JWT($logger, $settings->getJWTPassphrase());
                         $payload = \HomeDocs\Utils::getJSONPayload(
                             [
                                 "accessToken" => $jwt->encode(
@@ -157,7 +168,7 @@ return function (\Slim\App $app): void {
                                         "userId" => \HomeDocs\UserSession::getUserId() ?? null,
                                         "email" => \HomeDocs\UserSession::getEmail() ?? null,
                                     ],
-                                    $settings->getJWTAccessTokenExpireTime()
+                                    time() + $settings->getJWTAccessTokenExpireTime()
                                 ),
                                 "tokenType" => "Bearer",
                             ]
