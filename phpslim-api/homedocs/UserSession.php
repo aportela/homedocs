@@ -32,6 +32,12 @@ class UserSession
         $_SESSION["email"] = $email;
     }
 
+    public static function setAccessTokenData(string $token, int $expiresAt)
+    {
+        $_SESSION["accessToken"] = $token;
+        $_SESSION["accessTokenExpiresAt"] = $expiresAt;
+    }
+
     public static function clear(): void
     {
         if (session_status() === PHP_SESSION_ACTIVE) {
@@ -55,7 +61,14 @@ class UserSession
 
     public static function isLogged(): bool
     {
-        return array_key_exists("userId", $_SESSION) && is_string($_SESSION["userId"]);
+        return array_key_exists("userId", $_SESSION) && is_string($_SESSION["userId"]) && ! empty($_SESSION["userId"]);
+    }
+
+    public static function hasValidAccessToken(): bool
+    {
+        return array_key_exists("accessToken", $_SESSION) && is_string($_SESSION["accessToken"]) &&
+            array_key_exists("accessTokenExpiresAt", $_SESSION) && is_numeric($_SESSION["accessTokenExpiresAt"]) &&
+            $_SESSION["accessTokenExpiresAt"] < time();
     }
 
     public static function getUserId(): string|null
