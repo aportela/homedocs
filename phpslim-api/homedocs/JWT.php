@@ -24,7 +24,11 @@ class JWT
                 'data' => $payload,
             ];
             if ($expiresAt > 0) {
-                $jwtPayload['exp'] = $expiresAt;
+                if ($expiresAt > $issuedAt) {
+                    $jwtPayload['exp'] = $expiresAt;
+                } else {
+                    throw new \InvalidArgumentException("expiresAt");
+                }
             }
             $jwt = \Firebase\JWT\JWT::encode(
                 $jwtPayload,
