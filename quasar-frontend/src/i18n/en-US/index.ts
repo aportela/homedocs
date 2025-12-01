@@ -281,7 +281,7 @@ export default {
   "FileDownloadedMessage":
     "File {filename} has been downloaded ({length})",
 
-  "FileDownloadeErrorMessage":
+  "FileDownloadErrorMessage":
     "Error downloading file {filename}",
 
   "Filename: ":

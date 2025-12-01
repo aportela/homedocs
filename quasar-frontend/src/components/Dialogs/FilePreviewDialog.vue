@@ -152,7 +152,7 @@ const onDownload = (attachmentId: string, fileName: string) => {
     })
     .catch(() => {
       downloadBanner.error = true;
-      downloadBanner.text = t("FileDownloadeErrorMessage", { filename: fileName });
+      downloadBanner.text = t("FileDownloadErrorMessage", { filename: fileName });
     }).finally(() => {
       downloadBanner.visible = true;
     });
