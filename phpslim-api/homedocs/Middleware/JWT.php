@@ -37,25 +37,44 @@ class JWT
      */
     public function __invoke(\Psr\Http\Message\ServerRequestInterface $serverRequest, \Psr\Http\Server\RequestHandlerInterface $requestHandler): \Psr\Http\Message\ResponseInterface
     {
-        // extract the Bearer Token from the Authorization header
+        // TODO: search in cookies ?
         $authorizationHeader = $serverRequest->getHeader('Authorization');
         if (empty($authorizationHeader)) {
-            throw new \HomeDocs\Exception\UnauthorizedException();
+            throw new \HomeDocs\Exception\UnauthorizedException('Authorization header is missing');
+        }
+        $bearerToken = $authorizationHeader[0];
+        if (strpos($bearerToken, 'Bearer ') !== 0) {
+            throw new \HomeDocs\Exception\UnauthorizedException('Invalid Authorization header format');
+        }
+        $bearerToken = trim(substr($bearerToken, 7));
+        if (empty($bearerToken)) {
+            throw new \HomeDocs\Exception\UnauthorizedException('Bearer token is missing');
         } else {
-            $bearerToken = trim(strval(preg_replace('/Bearer\s/', '', $authorizationHeader[0])));
             // user not logged (or session lost) && jwt auth bearer header found => re-validate session with jwt
-            if (!\HomeDocs\UserSession::isLogged() && !empty($bearerToken)) {
+            if (!\HomeDocs\UserSession::isLogged()) {
                 // try decoding jwt data
                 $jwt = new \HomeDocs\JWT($this->logger, $this->passphrase);
-                $decoded = $jwt->decode($bearerToken);
+                $decoded = null;
+                try {
+                    $decoded = $jwt->decode($bearerToken);
+                } catch (\Firebase\JWT\ExpiredException $e) {
+                    $this->logger->notice("JWT expired", [$e->getMessage()]);
+                    \HomeDocs\UserSession::clear();
+                    throw new \HomeDocs\Exception\UnauthorizedException("JWT expired");
+                } catch (\Throwable $e) {
+                    $this->logger->notice("JWT decode error", [$e->getMessage()]);
+                    \HomeDocs\UserSession::clear();
+                    throw new \HomeDocs\Exception\UnauthorizedException("JWT decode error");
+                }
                 if (property_exists($decoded, "data") && is_object($decoded->data) && property_exists($decoded->data, "userId") && is_string($decoded->data->userId) && property_exists($decoded->data, "email") && is_string($decoded->data->email)) {
                     $this->logger->notice("JWT valid data decoded", [print_r($decoded->data, true)]);
                     $user = new \HomeDocs\User($decoded->data->userId);
-                    if ($user->exists($this->dbh)) {
-                        \HomeDocs\UserSession::init($decoded->data->userId, $decoded->data->email);
-                    } else {
+                    try {
+                        $user->get($this->dbh);
+                    } catch (\HomeDocs\Exception\NotFoundException) {
                         throw new \HomeDocs\Exception\NotFoundException("userId");
                     }
+                    \HomeDocs\UserSession::init($user->id, $user->email);
                 } else {
                     throw new \HomeDocs\Exception\InvalidParamsException("jwt");
                 }
