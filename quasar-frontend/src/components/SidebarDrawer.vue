@@ -83,7 +83,7 @@ function logout() {
   api.auth
     .logout()
     .then(() => {
-      sessionStore.setAccessJWT(null);
+      sessionStore.removeAccessToken();
       router.push({
         name: "login",
       }).catch((e) => {
@@ -92,7 +92,7 @@ function logout() {
     })
     .catch((errorResponse) => {
       console.error(errorResponse);
-      sessionStore.setAccessJWT(null);
+      sessionStore.removeAccessToken();
       router.push({
         name: "login",
       }).catch((e) => {
