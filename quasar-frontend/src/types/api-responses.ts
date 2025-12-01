@@ -10,6 +10,7 @@ interface DefaultAxiosResponse<T = unknown> {
 interface LoginResponse extends Omit<DefaultAxiosResponse, 'data'> {
   data: {
     accessToken: string;
+    refreshToken: string;
     tokenType: ValidAuthTypes;
   }
 };
