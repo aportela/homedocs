@@ -42,7 +42,7 @@ class JWT
         if (empty($authorizationHeader)) {
             throw new \HomeDocs\Exception\UnauthorizedException();
         } else {
-            $bearerToken = trim(preg_replace('/Bearer\s/', '', $authorizationHeader[0]));
+            $bearerToken = trim(strval(preg_replace('/Bearer\s/', '', $authorizationHeader[0])));
             // user not logged (or session lost) && jwt auth bearer header found => re-validate session with jwt
             if (!\HomeDocs\UserSession::isLogged() && !empty($bearerToken)) {
                 // try decoding jwt data
