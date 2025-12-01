@@ -71,6 +71,15 @@ class Settings
         }
     }
 
+    public function getJWTAuthExpireTime(): int
+    {
+        if (is_array($this->settings['jwt']) && is_numeric($this->settings['jwt']['authExpireTime'])) {
+            return ($this->settings['jwt']['authExpireTime']);
+        } else {
+            throw new \RuntimeException("Settings key (jwt->authExpireTime) not found");
+        }
+    }
+
     public function getStoragePath(): string
     {
         if (is_array($this->settings['paths']) && is_string($this->settings['paths']['storage'])) {
