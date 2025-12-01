@@ -13,21 +13,35 @@ export const useSessionStore = defineStore("session", {
     currentRefreshJWT: localStorageRefreshJWT.get() ?? null,
   }),
   getters: {
-    isLogged(state): boolean {
-      return state.currentAccessJWT !== null
+    hasAccessToken(state): boolean {
+      return state.currentAccessJWT !== null;
     },
-    jwt(state): string | null {
+    hasRefreshToken(state): boolean {
+      return state.currentRefreshJWT !== null;
+    },
+    accessJWT(state): string | null {
       return state.currentAccessJWT
+    },
+    refreshJWT(state): string | null {
+      return state.currentRefreshJWT
     },
   },
   actions: {
-    setAccessJWT(jwt: string | null): void {
+    setAccessToken(jwt: string): void {
       this.currentAccessJWT = jwt;
-      if (this.currentAccessJWT !== null) {
-        localStorageAccessJWT.set(this.currentAccessJWT);
-      } else {
-        localStorageAccessJWT.remove();
-      }
+      localStorageAccessJWT.set(this.currentAccessJWT);
+    },
+    removeAccessToken(): void {
+      this.currentAccessJWT = null;
+      localStorageAccessJWT.remove();
+    },
+    setRefreshToken(jwt: string): void {
+      this.currentRefreshJWT = jwt;
+      localStorageRefreshJWT.set(this.currentRefreshJWT);
+    },
+    removeRefreshToken(): void {
+      this.currentRefreshJWT = null;
+      localStorageRefreshJWT.remove();
     },
   },
 });

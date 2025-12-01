@@ -10,8 +10,8 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    if (sessionStore.jwt) {
-      config.headers["Authorization"] = `Bearer ${sessionStore.jwt}`;
+    if (sessionStore.accessJWT) {
+      config.headers["Authorization"] = `Bearer ${sessionStore.accessJWT}`;
       config.withCredentials = true;
     }
     return config;
@@ -36,8 +36,8 @@ axiosInstance.interceptors.response.use(
         };
       }
       if (error.response?.status === 401) {
-        if (sessionStore.jwt) {
-          sessionStore.setAccessJWT(null);
+        if (sessionStore.hasAccessToken) {
+          sessionStore.removeAccessToken();
         }
       }
       error.isAPIError = error.response.headers["content-type"] == 'application/json' && error.response.data.APIError === true;

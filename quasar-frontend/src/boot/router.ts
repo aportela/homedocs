@@ -10,13 +10,14 @@ export default boot(({ router }) => {
       next({ name: "notFound" });
       return;
     }
-    if (session.isLogged) {
+    if (session.hasAccessToken) {
       if (to.name === "login" || to.name === "register") {
         next({ name: "index" });
       } else {
         next();
       }
     } else {
+      // TODO: session.hasRefreshToken
       if (to.name === "login" || to.name === "register") {
         next();
       } else {
