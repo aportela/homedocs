@@ -151,7 +151,7 @@ const onSubmitForm = () => {
     api.auth
       .login(profile.email, profile.password)
       .then((successResponse: LoginResponse) => {
-        sessionStore.setJWT(successResponse.data.accessToken);
+        sessionStore.setAccessJWT(successResponse.data.accessToken);
         localStorageEmail.set(profile.email);
         emit("success", successResponse.data);
       })

@@ -37,7 +37,7 @@ axiosInstance.interceptors.response.use(
       }
       if (error.response?.status === 401) {
         if (sessionStore.jwt) {
-          sessionStore.setJWT(null);
+          sessionStore.setAccessJWT(null);
         }
       }
       error.isAPIError = error.response.headers["content-type"] == 'application/json' && error.response.data.APIError === true;
