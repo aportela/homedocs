@@ -15,30 +15,31 @@ class JWT
 
     public function encode(mixed $payload, int $expiresAt): string
     {
-        $jwt = "";
-        $this->logger->notice("JWT encoding", [$payload]);
-        try {
-            $issuedAt = time();
-            $jwtPayload = [
-                'iat' => $issuedAt,
-                'data' => $payload,
-            ];
-            if ($expiresAt > 0) {
-                if ($expiresAt > $issuedAt) {
+        $currentTimestamp = time();
+        if ($expiresAt !== 0 && $expiresAt <= $currentTimestamp) {
+            throw new \InvalidArgumentException("expiresAt");
+        } else {
+
+            $jwt = "";
+            $this->logger->notice("JWT encoding", [$payload]);
+            try {
+                $jwtPayload = [
+                    'iat' => $currentTimestamp,
+                    'data' => $payload,
+                ];
+                if ($expiresAt > 0) {
                     $jwtPayload['exp'] = $expiresAt;
-                } else {
-                    throw new \InvalidArgumentException("expiresAt");
                 }
+                $jwt = \Firebase\JWT\JWT::encode(
+                    $jwtPayload,
+                    $this->passphrase,
+                    self::ALGORITHM
+                );
+            } catch (\Throwable $throwable) {
+                $this->logger->error("JWT encoding error", [$throwable->getMessage()]);
+            } finally {
+                return ($jwt);
             }
-            $jwt = \Firebase\JWT\JWT::encode(
-                $jwtPayload,
-                $this->passphrase,
-                self::ALGORITHM
-            );
-        } catch (\Throwable $throwable) {
-            $this->logger->error("JWT encoding error", [$throwable->getMessage()]);
-        } finally {
-            return ($jwt);
         }
     }
 
