@@ -13,7 +13,7 @@ class JWT
         $this->logger->debug("JWT passphrase", [$this->passphrase]);
     }
 
-    public function encode(mixed $payload, int $expiresAt): string
+    public function encode(string $subject, int $expiresAt): string
     {
         $currentTimestamp = time();
         if ($expiresAt !== 0 && $expiresAt <= $currentTimestamp) {
@@ -21,11 +21,10 @@ class JWT
         } else {
 
             $jwt = "";
-            $this->logger->notice("JWT encoding", [$payload]);
             try {
                 $jwtPayload = [
                     'iat' => $currentTimestamp,
-                    'data' => $payload,
+                    'sub' => $subject,
                 ];
                 if ($expiresAt > 0) {
                     $jwtPayload['exp'] = $expiresAt;
@@ -37,6 +36,7 @@ class JWT
                 );
             } catch (\Throwable $throwable) {
                 $this->logger->error("JWT encoding error", [$throwable->getMessage()]);
+                throw $throwable;
             } finally {
                 return ($jwt);
             }
