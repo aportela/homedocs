@@ -25,8 +25,6 @@ class UserSession
         self::start();
         $_SESSION["userId"] = $userId;
         $_SESSION["email"] = $email;
-        $currentTimstamp = time();
-        $_SESSION["createdAt"] = $currentTimstamp;
     }
 
     public static function setEmail(string $email): void
