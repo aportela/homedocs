@@ -37,7 +37,8 @@ function createStorageEntry<T extends StorageValue>(
   };
 }
 
-const authJWT = createStorageEntry<string | null>("authJWT", null);
+const accessJWT = createStorageEntry<string | null>("accessJWT", null);
+const refreshJWT = createStorageEntry<string | null>("refreshJWT", null);
 const email = createStorageEntry<string | null>("email", null);
 const darkMode = createStorageEntry<boolean>("darkMode", false);
 const locale = createStorageEntry<string | null>("locale", null);
@@ -67,7 +68,8 @@ const dateTimeFormat = createStorageEntry<string>(
 const browserAllowPDFPreview = createStorageEntry<boolean | null>("browserAllowPDFPreview", null);
 
 export {
-  authJWT,
+  accessJWT,
+  refreshJWT,
   email,
   darkMode,
   locale,
