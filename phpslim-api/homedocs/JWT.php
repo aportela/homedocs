@@ -8,17 +8,12 @@ class JWT
 {
     public const ALGORITHM = 'HS256';
 
-    public const int TIMESTAMP_EXPIRE_NEVER = 0;
-    public const int TIMESTAMP_EXPIRE_IN_1_DAY = 86400;
-    public const int TIMESTAMP_EXPIRE_IN_31_DAYS = 2678400;
-    public const int TIMESTAMP_EXPIRE_IN_365_DAYS = 31536000;
-
     public function __construct(private readonly \Psr\Log\LoggerInterface $logger, private readonly string $passphrase)
     {
         $this->logger->debug("JWT passphrase", [$this->passphrase]);
     }
 
-    public function encode(mixed $payload, int $expirationTime = self::TIMESTAMP_EXPIRE_IN_1_DAY): string
+    public function encode(mixed $payload, int $expiresAt): string
     {
         $jwt = "";
         $this->logger->notice("JWT encoding", [$payload]);
@@ -28,9 +23,8 @@ class JWT
                 'iat' => $issuedAt,
                 'data' => $payload,
             ];
-            if ($expirationTime > self::TIMESTAMP_EXPIRE_NEVER) {
-                $expirationTime = $issuedAt + $expirationTime;
-                $jwtPayload['exp'] = $expirationTime;
+            if ($expiresAt > 0) {
+                $jwtPayload['exp'] = $expiresAt;
             }
             $jwt = \Firebase\JWT\JWT::encode(
                 $jwtPayload,
