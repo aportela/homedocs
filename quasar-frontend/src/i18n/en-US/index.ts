@@ -1,5 +1,4 @@
 export default {
-
   " change/s on date ":
     " change/s on date ",
 
