@@ -70,7 +70,7 @@ class User
             $params
         );
         if (ini_get("session.use_cookies") && PHP_SAPI !== 'cli' && is_string($this->email)) {
-            \HomeDocs\UserSession::set(\HomeDocs\UserSession::getUserId(), $this->email);
+            \HomeDocs\UserSession::setEmail($this->email);
         }
     }
 
@@ -152,7 +152,7 @@ class User
             $this->get($db);
             if (password_verify((string) $this->password, (string) $this->passwordHash)) {
                 if (is_string($this->id) && is_string($this->email)) {
-                    \HomeDocs\UserSession::set($this->id, $this->email);
+                    \HomeDocs\UserSession::init($this->id, $this->email);
                 }
 
                 return (true);

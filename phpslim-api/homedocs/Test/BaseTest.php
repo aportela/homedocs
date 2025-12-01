@@ -24,7 +24,7 @@ abstract class BaseTest extends \PHPUnit\Framework\TestCase
         $id = \HomeDocs\Utils::uuidv4();
         $user = new \HomeDocs\User($id, $id . "@server.com", "secret");
         $user->add(self::$dbh);
-        \HomeDocs\UserSession::set($id, $id . "@server.com");
+        \HomeDocs\UserSession::init($id, $id . "@server.com");
     }
 
     /**

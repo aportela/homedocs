@@ -12,7 +12,7 @@ final class UserSessionTest extends \HomeDocs\Test\BaseTest
     {
         $id = \HomeDocs\Utils::uuidv4();
         $email = "john@do.e";
-        \HomeDocs\UserSession::set($id, $email);
+        \HomeDocs\UserSession::init($id, $email);
         $this->assertEquals($id, $_SESSION["userId"]);
         $this->assertEquals($email, $_SESSION["email"]);
     }
@@ -23,7 +23,7 @@ final class UserSessionTest extends \HomeDocs\Test\BaseTest
         $this->assertFalse(\HomeDocs\UserSession::isLogged());
         $id = \HomeDocs\Utils::uuidv4();
         $email = "john@do.e";
-        \HomeDocs\UserSession::set($id, $email);
+        \HomeDocs\UserSession::init($id, $email);
         $this->assertTrue(\HomeDocs\UserSession::isLogged());
     }
 
@@ -31,7 +31,7 @@ final class UserSessionTest extends \HomeDocs\Test\BaseTest
     {
         $id = \HomeDocs\Utils::uuidv4();
         $email = "john@do.e";
-        \HomeDocs\UserSession::set($id, $email);
+        \HomeDocs\UserSession::init($id, $email);
         $this->assertEquals($id, \HomeDocs\UserSession::getUserId());
     }
 
@@ -39,7 +39,7 @@ final class UserSessionTest extends \HomeDocs\Test\BaseTest
     {
         $id = \HomeDocs\Utils::uuidv4();
         $email = "john@do.e";
-        \HomeDocs\UserSession::set($id, $email);
+        \HomeDocs\UserSession::init($id, $email);
         $this->assertEquals($email, \HomeDocs\UserSession::getEmail());
     }
 }

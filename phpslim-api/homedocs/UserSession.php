@@ -20,11 +20,17 @@ class UserSession
         }
     }
 
-    public static function set(string $userId = "", string $email = ""): void
+    public static function init(string $userId, string $email): void
     {
         self::start();
-
         $_SESSION["userId"] = $userId;
+        $_SESSION["email"] = $email;
+        $currentTimstamp = time();
+        $_SESSION["createdAt"] = $currentTimstamp;
+    }
+
+    public static function setEmail(string $email): void
+    {
         $_SESSION["email"] = $email;
     }
 
@@ -52,6 +58,11 @@ class UserSession
     public static function isLogged(): bool
     {
         return array_key_exists("userId", $_SESSION) && is_string($_SESSION["userId"]);
+    }
+
+    public static function isExpired(): bool
+    {
+        return array_key_exists("createdAt", $_SESSION) && is_numeric($_SESSION["createdAt"]);
     }
 
     public static function getUserId(): string
