@@ -431,9 +431,6 @@ export default {
   "Remove":
     "Remove",
 
-  "Remove document file":
-    "Remove document file",
-
   "Reset filters":
     "Reset filters",
 
