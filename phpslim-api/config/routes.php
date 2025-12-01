@@ -102,24 +102,46 @@ return function (\Slim\App $app): void {
                     $jwt = new \HomeDocs\JWT($logger, $settings->getJWTPassphrase());
 
                     $currentTimestamp = time();
+                    $accessToken = $jwt->encode(
+                        [
+                            "userId" => \HomeDocs\UserSession::getUserId() ?? null,
+                            "email" => \HomeDocs\UserSession::getEmail() ?? null,
+                        ],
+                        $currentTimestamp + $settings->getAccessTokenExpirationTimeInSeconds()
+                    );
+                    $refreshToken = $jwt->encode(
+                        [
+                            "userId" => \HomeDocs\UserSession::getUserId() ?? null,
+                        ],
+                        $currentTimestamp + $settings->getRefreshTokenExpirationTimeInSeconds()
+                    );
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            "accessToken" => $jwt->encode(
-                                [
-                                    "userId" => \HomeDocs\UserSession::getUserId() ?? null,
-                                    "email" => \HomeDocs\UserSession::getEmail() ?? null,
-                                ],
-                                $currentTimestamp + $settings->getAccessTokenExpirationTimeInSeconds()
-                            ),
-                            "refreshToken" => $jwt->encode(
-                                [
-                                    "userId" => \HomeDocs\UserSession::getUserId() ?? null,
-                                ],
-                                $currentTimestamp + $settings->getRefreshTokenExpirationTimeInSeconds()
-                            ),
+                            "accessToken" => $accessToken,
+                            "refreshToken" => $refreshToken,
                             "tokenType" => "Bearer",
                         ]
                     );
+                    // TODO: send tokens via cookies
+                    /*
+                        setcookie('access_token', $accessToken, [
+                            'expires' => $currentTimestamp + $settings->getAccessTokenExpirationTimeInSeconds(),
+                            'path' => '/',
+                            'domain' => $request->getUri()->getHost(),
+                            'secure' => true,
+                            'httponly' => true,
+                            'samesite' => 'Strict'
+                        ]);
+
+                        setcookie('refresh_token', $refreshToken, [
+                            'expires' => $currentTimestamp + $settings->getRefreshTokenExpirationTimeInSeconds(),
+                            'path' => '/',
+                            'domain' => $request->getUri()->getHost(),
+                            'secure' => true,
+                            'httponly' => true,
+                            'samesite' => 'Strict'
+                        ]);
+                    */
                     $response->getBody()->write($payload);
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
@@ -173,6 +195,7 @@ return function (\Slim\App $app): void {
                                 "tokenType" => "Bearer",
                             ]
                         );
+                        // TODO: send token via cookies
                         $response->getBody()->write($payload);
                         return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                     } else {
