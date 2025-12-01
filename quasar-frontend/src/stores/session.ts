@@ -19,7 +19,7 @@ export const useSessionStore = defineStore("session", {
     },
   },
   actions: {
-    setJWT(jwt = null): void {
+    setJWT(jwt: string | null): void {
       this.currentJWT = jwt;
       if (this.currentJWT !== null) {
         localStorageJWT.set(this.currentJWT);

@@ -94,9 +94,17 @@ return function (\Slim\App $app): void {
                         array_key_exists("password", $params) && is_string($params["password"]) ? $params["password"] : ""
                     );
                     $user->login($dbh);
-
+                    $jwt = new \HomeDocs\JWT($container->get(\HomeDocs\Logger\DefaultLogger::class), new \HomeDocs\Settings()->getJWTPassphrase());
+                    $JWTPayload = [
+                        "userId" => $_SESSION["userId"] ?? null,
+                        "email" => $_SESSION["email"] ?? null,
+                    ];
                     $payload = \HomeDocs\Utils::getJSONPayload(
-                        []
+                        [
+                            "accessToken" => $jwt->encode("userId", $JWTPayload),
+                            //"expires_in" => 3600,
+                            "tokenType" => "Bearer"
+                        ]
                     );
                     $response->getBody()->write($payload);
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
@@ -167,7 +175,7 @@ return function (\Slim\App $app): void {
                     $response->getBody()->write($payload);
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
-            })->add(\HomeDocs\Middleware\CheckAuth::class);
+            })->add(\HomeDocs\Middleware\JWT::class)->add(\HomeDocs\Middleware\CheckAuth::class);
 
             $routeCollectorProxy->group('/search', function (RouteCollectorProxy $routeCollectorProxy) use ($container): void {
                 $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
@@ -276,7 +284,7 @@ return function (\Slim\App $app): void {
                     $response->getBody()->write($payload);
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
-            })->add(\HomeDocs\Middleware\CheckAuth::class);
+            })->add(\HomeDocs\Middleware\JWT::class)->add(\HomeDocs\Middleware\CheckAuth::class);
 
             $routeCollectorProxy->group('/document', function (RouteCollectorProxy $routeCollectorProxy) use ($container): void {
                 $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
@@ -507,7 +515,7 @@ return function (\Slim\App $app): void {
                     $response->getBody()->write($payload);
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
-            })->add(\HomeDocs\Middleware\CheckAuth::class);
+            })->add(\HomeDocs\Middleware\JWT::class)->add(\HomeDocs\Middleware\CheckAuth::class);
 
             $routeCollectorProxy->group('/attachment', function (RouteCollectorProxy $routeCollectorProxy) use ($container): void {
                 $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
@@ -622,7 +630,7 @@ return function (\Slim\App $app): void {
                         return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                     }
                 });
-            })->add(\HomeDocs\Middleware\CheckAuth::class);
+            })->add(\HomeDocs\Middleware\JWT::class)->add(\HomeDocs\Middleware\CheckAuth::class);
 
             $routeCollectorProxy->get('/tag-cloud', function (Request $request, Response $response, array $args) use ($container): \Psr\Http\Message\MessageInterface {
                 $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
@@ -637,7 +645,7 @@ return function (\Slim\App $app): void {
                 );
                 $response->getBody()->write($payload);
                 return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
-            })->add(\HomeDocs\Middleware\CheckAuth::class);
+            })->add(\HomeDocs\Middleware\JWT::class)->add(\HomeDocs\Middleware\CheckAuth::class);
 
             $routeCollectorProxy->get('/tags', function (Request $request, Response $response, array $args) use ($container): \Psr\Http\Message\MessageInterface {
                 $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
@@ -652,7 +660,7 @@ return function (\Slim\App $app): void {
                 );
                 $response->getBody()->write($payload);
                 return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
-            })->add(\HomeDocs\Middleware\CheckAuth::class);
+            })->add(\HomeDocs\Middleware\JWT::class)->add(\HomeDocs\Middleware\CheckAuth::class);
 
             $routeCollectorProxy->group('/stats', function (RouteCollectorProxy $routeCollectorProxy) use ($container): void {
                 $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
@@ -703,7 +711,7 @@ return function (\Slim\App $app): void {
                     $response->getBody()->write($payload);
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
-            })->add(\HomeDocs\Middleware\CheckAuth::class);
+            })->add(\HomeDocs\Middleware\JWT::class)->add(\HomeDocs\Middleware\CheckAuth::class);
         }
-    )->add(\HomeDocs\Middleware\JWT::class)->add(\HomeDocs\Middleware\APIExceptionCatcher::class);
+    )->add(\HomeDocs\Middleware\APIExceptionCatcher::class);
 };

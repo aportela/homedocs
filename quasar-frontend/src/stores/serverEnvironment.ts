@@ -1,10 +1,10 @@
 import { defineStore } from "pinia";
 
-type environmentType = "development" | "production";
+import { type EnvironmentType } from "src/types/common";
 
 interface State {
   allowSignUp: boolean;
-  environment: environmentType;
+  environment: EnvironmentType;
   maxUploadFileSize: number;
 };
 
@@ -28,12 +28,11 @@ export const useServerEnvironmentStore = defineStore("serverEnvironment", {
   actions: {
     set(
       allowSignUp: boolean = false,
-      environment: string = "production",
+      environment: EnvironmentType = "production",
       maxUploadFileSize: number = 0,
     ): void {
       this.allowSignUp = !!allowSignUp;
-      this.environment =
-        environment === "development" ? "development" : "production";
+      this.environment = environment;
       this.maxUploadFileSize = maxUploadFileSize > 0 ? maxUploadFileSize : 0;
     },
   },
