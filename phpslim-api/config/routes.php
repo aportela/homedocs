@@ -109,13 +109,13 @@ return function (\Slim\App $app): void {
                                     "userId" => \HomeDocs\UserSession::getUserId() ?? null,
                                     "email" => \HomeDocs\UserSession::getEmail() ?? null,
                                 ],
-                                $currentTimestamp + $settings->getJWTAccessTokenExpireTime()
+                                $currentTimestamp + $settings->getAccessTokenExpirationTimeInSeconds()
                             ),
                             "refreshToken" => $jwt->encode(
                                 [
                                     "userId" => \HomeDocs\UserSession::getUserId() ?? null,
                                 ],
-                                $currentTimestamp + $settings->getJWTRefreshTokenExpireTime()
+                                $currentTimestamp + $settings->getRefreshTokenExpirationTimeInSeconds()
                             ),
                             "tokenType" => "Bearer",
                         ]
@@ -168,7 +168,7 @@ return function (\Slim\App $app): void {
                                         "userId" => \HomeDocs\UserSession::getUserId() ?? null,
                                         "email" => \HomeDocs\UserSession::getEmail() ?? null,
                                     ],
-                                    time() + $settings->getJWTAccessTokenExpireTime()
+                                    time() + $settings->getAccessTokenExpirationTimeInSeconds()
                                 ),
                                 "tokenType" => "Bearer",
                             ]

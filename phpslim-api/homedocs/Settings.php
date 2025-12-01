@@ -71,21 +71,21 @@ class Settings
         }
     }
 
-    public function getJWTAccessTokenExpireTime(): int
+    public function getAccessTokenExpirationTimeInSeconds(): int
     {
-        if (is_array($this->settings['jwt']) && is_numeric($this->settings['jwt']['accessTokenExpireTime'])) {
-            return (intval($this->settings['jwt']['accessTokenExpireTime']));
+        if (is_array($this->settings['jwt']) && is_numeric($this->settings['jwt']['accessTokenExpirationTimeInSeconds'])) {
+            return (intval($this->settings['jwt']['accessTokenExpirationTimeInSeconds']));
         } else {
-            throw new \RuntimeException("Settings key (jwt->accessTokenExpireTime) not found");
+            throw new \RuntimeException("Settings key (jwt->accessTokenExpirationTimeInSeconds) not found");
         }
     }
 
-    public function getJWTRefreshTokenExpireTime(): int
+    public function getRefreshTokenExpirationTimeInSeconds(): int
     {
-        if (is_array($this->settings['jwt']) && is_numeric($this->settings['jwt']['refreshTokenExpireTime'])) {
-            return (intval($this->settings['jwt']['refreshTokenExpireTime']));
+        if (is_array($this->settings['jwt']) && is_numeric($this->settings['jwt']['refreshTokenExpirationTimeInSeconds'])) {
+            return (intval($this->settings['jwt']['refreshTokenExpirationTimeInSeconds']));
         } else {
-            throw new \RuntimeException("Settings key (jwt->refreshTokenExpireTime) not found");
+            throw new \RuntimeException("Settings key (jwt->refreshTokenExpirationTimeInSeconds) not found");
         }
     }
 
