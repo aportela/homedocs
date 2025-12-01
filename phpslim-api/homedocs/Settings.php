@@ -74,7 +74,7 @@ class Settings
     public function getJWTAccessTokenExpireTime(): int
     {
         if (is_array($this->settings['jwt']) && is_numeric($this->settings['jwt']['accessTokenExpireTime'])) {
-            return ($this->settings['jwt']['accessTokenExpireTime']);
+            return (intval($this->settings['jwt']['accessTokenExpireTime']));
         } else {
             throw new \RuntimeException("Settings key (jwt->accessTokenExpireTime) not found");
         }
@@ -83,7 +83,7 @@ class Settings
     public function getJWTRefreshTokenExpireTime(): int
     {
         if (is_array($this->settings['jwt']) && is_numeric($this->settings['jwt']['refreshTokenExpireTime'])) {
-            return ($this->settings['jwt']['refreshTokenExpireTime']);
+            return (intval($this->settings['jwt']['refreshTokenExpireTime']));
         } else {
             throw new \RuntimeException("Settings key (jwt->refreshTokenExpireTime) not found");
         }
