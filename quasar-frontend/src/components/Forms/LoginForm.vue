@@ -8,10 +8,10 @@
       <slot name="slogan">
         <h4 class="q-mt-sm q-mb-md text-h4 text-weight-bolder">{{
           t(!!savedEmail ? "Glad to see you again!" : "Welcome aboard!")
-        }}</h4>
+          }}</h4>
         <div class="text-color-secondary">{{
           t(!!savedEmail ? "Let's get back to organizing." : "Let's start organizing.")
-        }}
+          }}
         </div>
       </slot>
     </q-card-section>
@@ -151,7 +151,8 @@ const onSubmitForm = () => {
     api.auth
       .login(profile.email, profile.password)
       .then((successResponse: LoginResponse) => {
-        sessionStore.setAccessJWT(successResponse.data.accessToken);
+        sessionStore.setAccessToken(successResponse.data.accessToken);
+        sessionStore.setRefreshToken(successResponse.data.refreshToken);
         localStorageEmail.set(profile.email);
         emit("success", successResponse.data);
       })
