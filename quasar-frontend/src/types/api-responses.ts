@@ -15,6 +15,13 @@ interface LoginResponse extends Omit<DefaultAxiosResponse, 'data'> {
   }
 };
 
+interface GetNewAccessTokenResponse extends Omit<DefaultAxiosResponse, 'data'> {
+  data: {
+    accessToken: string;
+    tokenType: ValidAuthTypes;
+  }
+};
+
 interface RegisterResponse extends Omit<DefaultAxiosResponse, 'data'> {
   data: undefined;
 };
@@ -192,6 +199,7 @@ interface getServerEnvironmentResponseData {
 export {
   type DefaultAxiosResponse,
   type LoginResponse,
+  type GetNewAccessTokenResponse,
   type RegisterResponse,
   type GetProfileResponse,
   type SetProfileResponse,
