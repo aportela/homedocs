@@ -94,16 +94,24 @@ return function (\Slim\App $app): void {
                         array_key_exists("password", $params) && is_string($params["password"]) ? $params["password"] : ""
                     );
                     $user->login($dbh);
-                    $jwt = new \HomeDocs\JWT($container->get(\HomeDocs\Logger\DefaultLogger::class), new \HomeDocs\Settings()->getJWTPassphrase());
-
-                    $JWTPayload = [
-                        "userId" => \HomeDocs\UserSession::getUserId() ?? null,
-                        "email" => \HomeDocs\UserSession::getEmail() ?? null,
-                    ];
+                    $settings =  new \HomeDocs\Settings();
+                    $jwt = new \HomeDocs\JWT($container->get(\HomeDocs\Logger\DefaultLogger::class), $settings->getJWTPassphrase());
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            "accessToken" => $jwt->encode($JWTPayload),
-                            "tokenType" => "Bearer"
+                            "accessToken" => $jwt->encode(
+                                [
+                                    "userId" => \HomeDocs\UserSession::getUserId() ?? null,
+                                    "email" => \HomeDocs\UserSession::getEmail() ?? null,
+                                ],
+                                $settings->getJWTAccessTokenExpireTime()
+                            ),
+                            "refreshToken" => $jwt->encode(
+                                [
+                                    "userId" => \HomeDocs\UserSession::getUserId() ?? null,
+                                ],
+                                $settings->getJWTRefreshTokenExpireTime()
+                            ),
+                            "tokenType" => "Bearer",
                         ]
                     );
                     $response->getBody()->write($payload);
