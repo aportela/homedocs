@@ -133,10 +133,7 @@ return function (\Slim\App $app): void {
                         $refreshToken = $_COOKIE['refresh_token'];
                     } else {
                         $params = $request->getParsedBody();
-                        if (! is_array($params)) {
-                            throw new \HomeDocs\Exception\InvalidParamsException();
-                        }
-                        if (array_key_exists("refreshToken", $params) && is_string($params["refreshToken"])) {
+                        if (is_array($params) && array_key_exists("refreshToken", $params) && is_string($params["refreshToken"]) && ! empty($params["refreshToken"])) {
                             $refreshToken = $params["refreshToken"];
                         }
                     }
