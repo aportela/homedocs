@@ -14,7 +14,6 @@ class UserSession
                 "Secure" => true,
                 "HttpOnly" => true,
             ]);
-            session_name('HOMEDOCS');
             session_cache_limiter("nocache");
             session_start();
         }
@@ -22,6 +21,7 @@ class UserSession
 
     public static function init(string $userId, string $email): void
     {
+        self::clear();
         self::start();
         $_SESSION["userId"] = $userId;
         $_SESSION["email"] = $email;
@@ -32,10 +32,16 @@ class UserSession
         $_SESSION["email"] = $email;
     }
 
-    public static function setAccessTokenData(string $token, int $expiresAt)
+    public static function setAccessTokenData(string $token, int $expiresAt): void
     {
         $_SESSION["accessToken"] = $token;
         $_SESSION["accessTokenExpiresAt"] = $expiresAt;
+    }
+
+    public static function unsetAccessTokenData(): void
+    {
+        unset($_SESSION["accessToken"]);
+        unset($_SESSION["accessTokenExpiresAt"]);
     }
 
     public static function clear(): void
@@ -54,8 +60,8 @@ class UserSession
                     'httponly' => $params["httponly"],
                 ]);
             }
-
             session_destroy();
+            session_id(session_create_id('HOMEDOCS-'));
         }
     }
 
@@ -68,7 +74,7 @@ class UserSession
     {
         return array_key_exists("accessToken", $_SESSION) && is_string($_SESSION["accessToken"]) &&
             array_key_exists("accessTokenExpiresAt", $_SESSION) && is_numeric($_SESSION["accessTokenExpiresAt"]) &&
-            $_SESSION["accessTokenExpiresAt"] < time();
+            $_SESSION["accessTokenExpiresAt"] >= time();
     }
 
     public static function getUserId(): string|null
