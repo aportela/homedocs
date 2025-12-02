@@ -1,1 +1,0 @@
-import{d as e}from"./index-BSZHI2pT.js";import{a as t,m as a}from"./i18n-B_UsvApA.js";import{c as s}from"./vue-i18n.runtime-C1BpSJts.js";import"./localStorage-dsyGJO5t.js";const r=s({locale:t(),globalInjection:!0,messages:a}),l=e(({app:o})=>{o.use(r)});export{l as default};

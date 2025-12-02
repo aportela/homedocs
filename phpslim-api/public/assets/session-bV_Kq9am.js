@@ -1,1 +1,0 @@
-import{a0 as r}from"./index-BSZHI2pT.js";import{g as t}from"./localStorage-dsyGJO5t.js";const u=r("session",{state:()=>({currentJWT:t.get()??null}),getters:{isLogged(e){return e.currentJWT!==null},jwt(e){return e.currentJWT}},actions:{setJWT(e=null){this.currentJWT=e,this.currentJWT!==null?t.set(this.currentJWT):t.remove()}}});export{u};
