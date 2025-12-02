@@ -341,7 +341,7 @@ const onSubmitForm = (resetPager: boolean) => {
             state.ajaxErrorMessage = "API Error: invalid/missing param";
             break;
           case 401:
-            state.ajaxErrorMessage = "Auth session expired, requesting new...";
+            state.ajaxErrors = false;
             bus.emit("reAuthRequired", { emitter: "AdvancedSearchPage.onSubmitForm" });
             break;
           default:

@@ -71,7 +71,7 @@ const onDelete = () => {
         state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
         switch (errorResponse.response.status) {
           case 401:
-            state.ajaxErrorMessage = "Auth session expired, requesting new...";
+            state.ajaxErrors = false;
             bus.emit("reAuthRequired", { emitter: "DeleteDocumentConfirmationDialog.onDelete" });
             break;
           case 403: // access denied

@@ -246,7 +246,7 @@ const onRefresh = () => {
             state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
             switch (errorResponse.response.status) {
               case 401:
-                state.ajaxErrorMessage = "Auth session expired, requesting new...";
+                state.ajaxErrors = false;
                 bus.emit("reAuthRequired", { emitter: "DocumentPage.onRefresh" });
                 break;
               case 404:
@@ -327,7 +327,7 @@ const onSubmitForm = () => {
                 }
                 break;
               case 401:
-                state.ajaxErrorMessage = "Auth session expired, requesting new...";
+                state.ajaxErrors = false;
                 bus.emit("reAuthRequired", { emitter: "AdvancedSearchPage.onSubmitForm" });
                 break;
               default:
@@ -399,7 +399,7 @@ const onSubmitForm = () => {
                 }
                 break;
               case 401:
-                state.ajaxErrorMessage = "Auth session expired, requesting new...";
+                state.ajaxErrors = false;
                 bus.emit("reAuthRequired", { emitter: "AdvancedSearchPage.onSubmitForm" });
                 break;
               default:
@@ -461,7 +461,7 @@ const onRemoveAttachmentAtIndex = (index: number) => {
           state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
           switch (errorResponse.response.status) {
             case 401:
-              state.ajaxErrorMessage = "Auth session expired, requesting new...";
+              state.ajaxErrors = false;
               bus.emit("reAuthRequired", { emitter: "DocumentDetailsAttachments.onRemoveAttachmentAtIndex" });
               break;
             default:

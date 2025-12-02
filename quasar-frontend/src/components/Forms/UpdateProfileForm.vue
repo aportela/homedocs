@@ -113,7 +113,7 @@ const onGetProfile = () => {
         switch (errorResponse.response.status) {
           // TODO: invalid fields check
           case 401:
-            state.ajaxErrorMessage = "Auth session expired, requesting new...";
+            state.ajaxErrors = false;
             bus.emit("reAuthRequired", { emitter: "UpdateProfileForm.onGetProfile" });
             break;
           default:
@@ -179,7 +179,7 @@ const onSubmitForm = () => {
           switch (errorResponse.response.status) {
             // TODO: invalid fields check
             case 401:
-              state.ajaxErrorMessage = "Auth session expired, requesting new...";
+              state.ajaxErrors = false;
               bus.emit("reAuthRequired", { emitter: "UpdateProfileForm.onSubmitForm" });
               break;
             case 409: // email already exists

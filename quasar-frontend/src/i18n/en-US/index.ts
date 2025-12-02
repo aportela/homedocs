@@ -83,9 +83,6 @@ export default {
   "Attachments":
     "Attachments",
 
-  "Auth session expired, requesting new...":
-    "Auth session expired, requesting new...",
-
   "Between dates":
     "Between dates",
 

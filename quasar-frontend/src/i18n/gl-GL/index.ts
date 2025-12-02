@@ -253,7 +253,6 @@ export default {
   "Show tooltips": "Mostrar pistas/suxerencias emerxentes",
   "Date format": "Formato de data",
   "Datetime format": "Formato de data e hora",
-  "Auth session expired, requesting new...": "A sesión a expirou, vaise solicitar unha nova...",
   "Oooops": "¡Ups!",
   "Error": "Error",
 };

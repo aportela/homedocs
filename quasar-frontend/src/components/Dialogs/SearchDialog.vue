@@ -243,7 +243,7 @@ const onSearch = (val: string) => {
           state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
           switch (errorResponse.response.status) {
             case 401:
-              state.ajaxErrorMessage = "Auth session expired, requesting new...";
+              state.ajaxErrors = false;
               bus.emit("reAuthRequired", { emitter: "SearchDialog.onSearch" });
               break;
             default:
