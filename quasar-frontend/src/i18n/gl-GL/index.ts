@@ -38,7 +38,7 @@ export default {
   "API Error: error adding document":
     "Error de API: error engadindo o documento",
 
-  "API Error: error doeting document":
+  "API Error: error deleting document":
     "Error de API: error eliminando o documento",
 
   "API Error: error loading document":
@@ -59,16 +59,16 @@ export default {
   "API Error: invalid response data":
     "Error de API: datos de resposta non válidos",
 
-  "API Error: invalid/missing pram":
+  "API Error: invalid/missing param":
     "Error de API: falta un parámetro ou é incorrecto",
 
-  "API Error: missing document title pram":
+  "API Error: missing document title param":
     "Error de API: falta o parámetro do título do documento",
 
-  "API Error: missing email pram":
+  "API Error: missing email param":
     "Error de API: falta o correo electrónico",
 
-  "API Error: missing password pram":
+  "API Error: missing password param":
     "Error de API: falta o contrasinal",
 
   "ascending":
@@ -616,7 +616,7 @@ export default {
   "type text search condition":
     "teclee a condición de procura por texto",
 
-  "Unfortunhately, your search didn't return any results. You might want to modify your filters or search terms":
+  "Unfortunately, your search didn't return any results. You might want to modify your filters or search terms":
     "Desafortunhadamente, a tu procura non devolveu ningún resultado. Quizáis queiras modifica-los teus filtros ou términos de procura.",
 
   "Unknown operation":
@@ -652,7 +652,7 @@ export default {
   "Yesterday":
     "Onte",
 
-  "You are about to doete the current document. Are you sure? (this action cannot be undone).":
+  "You are about to delete the current document. Are you sure? (this action cannot be undone).":
     "Está a punto de elimina-lo documento actual. ¿ Está seguro ? (esta operación non se pode revertir)",
 
   "You haven't created any documents yet":
