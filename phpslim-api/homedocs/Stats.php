@@ -6,7 +6,7 @@ namespace HomeDocs;
 
 class Stats
 {
-    public static function getTotalPublishedDocuments(\aportela\DatabaseWrapper\DB $db): int
+    public static function getTotalPublishedDocuments(\aportela\DatabaseWrapper\DB $db, string $userId): int
     {
         $results = $db->query(
             "
@@ -20,13 +20,13 @@ class Stats
             ",
             [
                 new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
-                new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId()),
+                new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", $userId),
             ]
         );
         return (count($results) === 1 && property_exists($results[0], "total") && is_numeric($results[0]->total) ? intval($results[0]->total) : 0);
     }
 
-    public static function getTotalUploadedAttachments(\aportela\DatabaseWrapper\DB $db): int
+    public static function getTotalUploadedAttachments(\aportela\DatabaseWrapper\DB $db, string $userId): int
     {
         $results = $db->query(
             "
@@ -41,13 +41,13 @@ class Stats
             ",
             [
                 new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
-                new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId()),
+                new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", $userId),
             ]
         );
         return (count($results) === 1 && property_exists($results[0], "total") && is_numeric($results[0]->total) ? intval($results[0]->total) : 0);
     }
 
-    public static function getTotalUploadedAttachmentsDiskUsage(\aportela\DatabaseWrapper\DB $db): int
+    public static function getTotalUploadedAttachmentsDiskUsage(\aportela\DatabaseWrapper\DB $db, string $userId): int
     {
         $results = $db->query(
             "
@@ -63,7 +63,7 @@ class Stats
             ",
             [
                 new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
-                new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId()),
+                new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", $userId),
             ]
         );
         return (count($results) === 1 && property_exists($results[0], "total") && is_numeric($results[0]->total) ? intval($results[0]->total) : 0);
@@ -72,11 +72,11 @@ class Stats
     /**
      * @return array<object>
      */
-    public static function getActivityHeatMapData(\aportela\DatabaseWrapper\DB $db, int $fromTimestamp = 0): array
+    public static function getActivityHeatMapData(\aportela\DatabaseWrapper\DB $db, string $userId, int $fromTimestamp = 0): array
     {
         $whereCondition = null;
         $params = [
-            new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId()),
+            new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", $userId),
         ];
         if ($fromTimestamp > 0) {
             $params[] = new \aportela\DatabaseWrapper\Param\IntegerParam(":from_timestamp", $fromTimestamp);

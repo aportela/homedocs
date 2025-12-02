@@ -751,7 +751,7 @@ return function (\Slim\App $app): void {
                 $routeCollectorProxy->get('/total-published-documents', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'count' => \HomeDocs\Stats::getTotalPublishedDocuments($dbh),
+                            'count' => \HomeDocs\Stats::getTotalPublishedDocuments($dbh, \HomeDocs\UserSession::getUserId()),
                         ]
                     );
                     $response->getBody()->write($payload);
@@ -761,7 +761,7 @@ return function (\Slim\App $app): void {
                 $routeCollectorProxy->get('/total-uploaded-attachments', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'count' => \HomeDocs\Stats::getTotalUploadedAttachments($dbh),
+                            'count' => \HomeDocs\Stats::getTotalUploadedAttachments($dbh, \HomeDocs\UserSession::getUserId()),
                         ]
                     );
                     $response->getBody()->write($payload);
@@ -771,7 +771,7 @@ return function (\Slim\App $app): void {
                 $routeCollectorProxy->get('/total-uploaded-attachments-disk-usage', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'size' => \HomeDocs\Stats::getTotalUploadedAttachmentsDiskUsage($dbh),
+                            'size' => \HomeDocs\Stats::getTotalUploadedAttachmentsDiskUsage($dbh, \HomeDocs\UserSession::getUserId()),
                         ]
                     );
                     $response->getBody()->write($payload);
@@ -784,6 +784,7 @@ return function (\Slim\App $app): void {
                         [
                             'heatmap' => \HomeDocs\Stats::getActivityHeatMapData(
                                 $dbh,
+                                \HomeDocs\UserSession::getUserId(),
                                 is_int($queryParams["fromTimestamp"]) ? $queryParams["fromTimestamp"] : 0
                             ),
                         ]
