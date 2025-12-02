@@ -1,16 +1,27 @@
 import { boot } from "quasar/wrappers";
 
+import { type GetNewAccessTokenResponse as GetNewAccessTokenResponseInterface } from "src/types/api-responses";
 import { useSessionStore } from "src/stores/session";
+import { api } from "src/composables/api";
 
-const session = useSessionStore();
+const sessionStore = useSessionStore();
 
-export default boot(({ router }) => {
+export default boot(async ({ router }) => {
+
+  if (!sessionStore.hasAccessToken) {
+    try {
+      const successResponse: GetNewAccessTokenResponseInterface = await api.auth.renewAccessToken();
+      sessionStore.setAccessToken(successResponse.data.accessToken);
+    } catch (e) {
+      console.error(e);
+    }
+  }
   router.beforeEach((to, _from, next) => {
     if (!to.matched.length) {
       next({ name: "notFound" });
       return;
     }
-    if (session.hasAccessToken) {
+    if (sessionStore.hasAccessToken) {
       if (to.name === "login" || to.name === "register") {
         next({ name: "index" });
       } else {
