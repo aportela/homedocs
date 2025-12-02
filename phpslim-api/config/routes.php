@@ -112,37 +112,37 @@ return function (\Slim\App $app): void {
                             "tokenType" => "Bearer",
                         ]
                     );
-                    // TODO: send tokens via cookies ?
-                    /*
-                        setcookie('access_token', $accessToken, [
-                            'expires' => $currentTimestamp + $settings->getAccessTokenExpirationTimeInSeconds(),
-                            'path' => '/',
-                            'domain' => $request->getUri()->getHost(),
-                            'secure' => true,
-                            'httponly' => true,
-                            'samesite' => 'Strict'
-                        ]);
-
-                        setcookie('refresh_token', $refreshToken, [
+                    setcookie(
+                        "refresh_token",
+                        $refreshToken,
+                        [
                             'expires' => $currentTimestamp + $settings->getRefreshTokenExpirationTimeInSeconds(),
-                            'path' => '/',
-                            'domain' => $request->getUri()->getHost(),
+                            'path' => '/api3/auth/renew_access_token',
                             'secure' => true,
                             'httponly' => true,
                             'samesite' => 'Strict'
-                        ]);
-                    */
+                        ]
+                    );
                     $response->getBody()->write($payload);
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
                 $routeCollectorProxy->post('/renew_access_token', function (Request $request, Response $response, array $args) use ($container, $settings): \Psr\Http\Message\MessageInterface {
-                    $params = $request->getParsedBody();
-                    if (! is_array($params)) {
-                        throw new \HomeDocs\Exception\InvalidParamsException();
+                    $refreshToken = null;
+                    if (isset($_COOKIE['refresh_token']) && ! empty($_COOKIE['refresh_token'])) {
+                        $refreshToken = $_COOKIE['refresh_token'];
+                    } else {
+                        $params = $request->getParsedBody();
+                        if (! is_array($params)) {
+                            throw new \HomeDocs\Exception\InvalidParamsException();
+                        }
+                        if (array_key_exists("refreshToken", $params) && is_string($params["refreshToken"])) {
+                            $refreshToken = $params["refreshToken"];
+                        }
                     }
-                    if (! (array_key_exists("refreshToken", $params) && is_string($params["refreshToken"]))) {
-                        throw new \HomeDocs\Exception\InvalidParamsException("refreshToken");
+
+                    if (empty($refreshToken)) {
+                        throw new \HomeDocs\Exception\UnauthorizedException("Missing refresh token (cookie/POST param)");
                     }
 
                     $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
@@ -160,7 +160,7 @@ return function (\Slim\App $app): void {
                     $jwt = new \HomeDocs\JWT($logger, $settings->getJWTPassphrase());
                     $decoded = null;
                     try {
-                        $decoded = $jwt->decode($params["refreshToken"]);
+                        $decoded = $jwt->decode($refreshToken);
                     } catch (\Firebase\JWT\ExpiredException $e) {
                         $logger->notice("JWT expired", [$e->getMessage()]);
                         throw new \HomeDocs\Exception\UnauthorizedException("JWT expired");
