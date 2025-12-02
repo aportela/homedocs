@@ -11,7 +11,7 @@
         </q-input>
       </q-item-section>
       <q-item-section side>
-        <q-btn size="md" :label="t('Add attachment')" icon="add" class="bg-blue text-white full-width"
+        <q-btn size="md" :label="t('Add attachment')" icon="add" no-caps class="bg-blue text-white full-width"
           :disable="isDisabled" @click.stop="onAddAttachment"></q-btn>
       </q-item-section>
     </q-item>

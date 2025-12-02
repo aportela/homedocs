@@ -11,8 +11,8 @@
         </q-input>
       </q-item-section>
       <q-item-section side>
-        <q-btn size="md" :label="t('Add note')" icon="add" class="bg-blue text-white full-width" :disable="disable"
-          @click.stop.prevent="onAddNote"></q-btn>
+        <q-btn size="md" :label="t('Add note')" icon="add" no-caps class="bg-blue text-white full-width"
+          :disable="disable" @click.stop.prevent="onAddNote"></q-btn>
       </q-item-section>
     </q-item>
     <q-separator class="q-my-md" />
