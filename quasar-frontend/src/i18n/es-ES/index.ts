@@ -168,7 +168,7 @@ export default {
     "descendente",
 
   "Description":
-    "Description",
+    "Descripción",
 
   "description":
     "descripción",
