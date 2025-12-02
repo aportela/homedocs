@@ -192,6 +192,17 @@ return function (\Slim\App $app): void {
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         []
                     );
+                    setcookie(
+                        "refresh_token",
+                        "",
+                        [
+                            'expires' => time() - 3600,
+                            'path' => '/api3/auth/renew_access_token',
+                            'secure' => true,
+                            'httponly' => true,
+                            'samesite' => 'Strict'
+                        ]
+                    );
                     $response->getBody()->write($payload);
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
