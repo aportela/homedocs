@@ -222,7 +222,7 @@ export default {
     "Documento modificado",
 
   "Document updated on":
-    "Documento actualizado en",
+    "Documento modificado en",
 
   "Don't have an account yet ?":
     "¿ Aún no dispone de una cuenta ?",

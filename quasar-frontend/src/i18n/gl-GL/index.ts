@@ -222,7 +222,7 @@ export default {
     "Documento modificado",
 
   "Document updated on":
-    "Documento actualizado en",
+    "Documento modificado en",
 
   "Don't have an account yet ?":
     "¿ Aínda non dispón dunha conta ?",
@@ -557,13 +557,13 @@ export default {
     "título",
 
   "To date":
-    "Hata unha data",
+    "Ata unha data",
 
   "Today":
     "Hoxe",
 
   "Toggle sort by this column":
-    "Trocar el orden por esta columna: {field}",
+    "Troca-lo orden por esta columna: {field}",
 
   "Total attachments":
     "Adxuntos totais",
