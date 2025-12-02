@@ -13,7 +13,7 @@
         <q-btn type="button" no-caps no-wrap align="left" outline :label="searchButtonLabel" icon="search"
           class="full-width no-caps theme-default-q-btn" @click.prevent="dialogs.fastSearch.visible = true">
           <DesktopToolTip anchor="bottom middle" self="top middle">{{ t("Click to open fast search")
-          }}</DesktopToolTip>
+            }}</DesktopToolTip>
         </q-btn>
         <!--
         <FastSearchSelector dense class="full-width"></FastSearchSelector>
@@ -205,7 +205,7 @@ onMounted(() => {
     }
     const sessionStore = useSessionStore();
     if (sessionStore.hasRefreshToken) {
-      api.auth.getNewAccessToken(String(sessionStore.refreshToken)).then((successResponse: GetNewAccessTokenResponseInterface) => {
+      api.auth.renewAccessToken(String(sessionStore.refreshToken)).then((successResponse: GetNewAccessTokenResponseInterface) => {
         sessionStore.setAccessToken(successResponse.data.accessToken);
         bus.emit("reAuthSucess", ({ to: reAuthEmitters }))
         reAuthEmitters.length = 0;

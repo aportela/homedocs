@@ -136,7 +136,7 @@ return function (\Slim\App $app): void {
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
-                $routeCollectorProxy->post('/get_new_access_token', function (Request $request, Response $response, array $args) use ($container, $settings): \Psr\Http\Message\MessageInterface {
+                $routeCollectorProxy->post('/renew_access_token', function (Request $request, Response $response, array $args) use ($container, $settings): \Psr\Http\Message\MessageInterface {
                     $params = $request->getParsedBody();
                     if (! is_array($params)) {
                         throw new \HomeDocs\Exception\InvalidParamsException();
