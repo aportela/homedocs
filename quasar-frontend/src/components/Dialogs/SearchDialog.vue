@@ -6,7 +6,8 @@
     <template v-slot:header-right>
       <q-chip size="md" square class="gt-sm theme-default-q-chip shadow-1"
         v-if="!state.ajaxRunning && !state.ajaxErrors" v-show="pager.totalResults > 0">
-        <q-avatar class="theme-default-q-avatar">{{ pager.totalResults }}</q-avatar>
+        <q-avatar class="theme-default-q-avatar theme-default-q-avatar-width-auto">{{ pager.totalResults
+        }}</q-avatar>
         {{ t("Results count",
           {
             count:
@@ -369,5 +370,10 @@ onBeforeUnmount(() => {
   .is-current .q-item__label {
     color: var(--color-zinc-950) !important;
   }
+}
+
+.theme-default-q-avatar-width-auto {
+  width: auto;
+  padding: 0em 0.2em;
 }
 </style>
