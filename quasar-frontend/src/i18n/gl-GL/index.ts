@@ -21,7 +21,7 @@ export default {
     "Engadir adxunto",
 
   "Advanced search":
-    "Búsqueda avanzada",
+    "Procura avanzada",
 
   "Already have an account ?":
     "¿ Xa dispón dunha conta ?",
