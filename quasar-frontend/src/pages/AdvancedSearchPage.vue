@@ -112,7 +112,7 @@
                 <q-icon :name="store.sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <DesktopToolTip>{{ t('Toggle sort by this column', { field: t(column.title) })
-                }}</DesktopToolTip>
+                  }}</DesktopToolTip>
               </th>
             </tr>
           </thead>
@@ -130,7 +130,7 @@
                         document.createdAt.timeAgo }})</q-item-label>
                       <q-item-label caption v-if="document.updatedAt?.dateTime">{{ t("Last update") }}: {{
                         document.updatedAt.dateTime
-                      }} ({{ document.updatedAt.timeAgo }})</q-item-label>
+                        }} ({{ document.updatedAt.timeAgo }})</q-item-label>
                     </q-item-section>
                     <q-item-section side top>
                       <ViewDocumentDetailsButton size="md" square class="min-width-9em"
@@ -179,7 +179,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, onBeforeUnmount, nextTick } from "vue";
+import { ref, shallowRef, reactive, computed, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
 
@@ -243,9 +243,9 @@ if (!usePreviousStoreValues.value) {
   }
 }
 
-const results = reactive<Array<SearchDocumentItemClass>>([]);
+const results = shallowRef<Array<SearchDocumentItemClass>>([]);
 
-const hasResults = computed(() => results.length > 0);
+const hasResults = computed(() => results.value.length > 0);
 
 const showErrorBanner = computed(() => !state.ajaxRunning && state.ajaxErrors);
 const showNoResultsBanner = computed(() => !state.ajaxRunning && searchLaunched.value && !hasResults.value);
@@ -308,12 +308,12 @@ const onSubmitForm = (resetPager: boolean) => {
   api.document.search(store.pager, store.filter, store.sort, false)
     .then((successResponse: SearchDocumentResponseInterface) => {
       if (successResponse.data.results) {
-        results.length = 0;
+        results.value = [];
         store.pager.currentPageIndex = successResponse.data.results.pagination.currentPage;
         store.pager.resultsPage = successResponse.data.results.pagination.resultsPage;
         store.pager.totalResults = successResponse.data.results.pagination.totalResults;
         store.pager.totalPages = successResponse.data.results.pagination.totalPages;
-        results.push(...successResponse.data.results.documents.map((document: SearchDocumentResponseItemInterface) =>
+        results.value = successResponse.data.results.documents.map((document: SearchDocumentResponseItemInterface) =>
           new SearchDocumentItemClass(
             t,
             document.id,
@@ -327,7 +327,7 @@ const onSubmitForm = (resetPager: boolean) => {
             document.matchedFragments,
             "",
           )
-        ));
+        );
         searchLaunched.value = true;
         resultsWidgetRef.value?.expand();
       }
@@ -375,7 +375,7 @@ const onResetForm = () => {
   sort.order = "DESC";
   */
   searchLaunched.value = false;
-  results.length = 0;
+  results.value = [];;
 };
 
 onMounted(() => {
@@ -461,12 +461,12 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="css" scoped>
-th:first-child {
+th:first-child_ {
   height: 100%;
   padding: 0px !important;
 }
 
-td:first-child {
+td:first-child_ {
   padding: 0px !important;
 }
 
