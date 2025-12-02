@@ -73,7 +73,7 @@ const sessionStore = useSessionStore();
 const mini = computed(() => props.mini);
 
 const menuItems = [
-  { icon: 'home', text: "Dashboard", routeName: 'index' },
+  { icon: 'home', text: "Home", routeName: 'index' },
   { icon: 'account_circle', text: "My profile", routeName: 'profile' },
   { icon: 'note_add', text: "Add", routeName: 'newDocument' },
   { icon: 'find_in_page', text: "Advanced search", routeName: 'advancedSearch', alternateRouteNames: ['advancedSearchByTag', 'advancedSearchByFixedCreationDate', 'advancedSearchByFixedLastUpdate', 'advancedSearchByFixedUpdatedOn'] }

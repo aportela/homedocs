@@ -146,9 +146,6 @@ export default {
   "Customize how you interact with the platform.":
     "Personaliza cómo interactúas con la plataforma.",
 
-  "Dashboard":
-    "Panel de control",
-
   "Date":
     "Fecha",
 
@@ -307,6 +304,9 @@ export default {
 
   "History":
     "Historial",
+
+  "Home":
+    "Inicio",
 
   "Homedocs":
     "Homedocs",
