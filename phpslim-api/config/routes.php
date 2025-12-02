@@ -21,7 +21,7 @@ return function (\Slim\App $app): void {
         } else {
             return $response->withStatus(404);
         }
-    })->add(\HomeDocs\Middleware\JWT::class);
+    });
 
     $app->group(
         '/api3',
@@ -102,19 +102,9 @@ return function (\Slim\App $app): void {
                     $jwt = new \HomeDocs\JWT($logger, $settings->getJWTPassphrase());
 
                     $currentTimestamp = time();
-                    $accessToken = $jwt->encode(
-                        [
-                            "userId" => \HomeDocs\UserSession::getUserId() ?? null,
-                            "email" => \HomeDocs\UserSession::getEmail() ?? null,
-                        ],
-                        $currentTimestamp + $settings->getAccessTokenExpirationTimeInSeconds()
-                    );
-                    $refreshToken = $jwt->encode(
-                        [
-                            "userId" => \HomeDocs\UserSession::getUserId() ?? null,
-                        ],
-                        $currentTimestamp + $settings->getRefreshTokenExpirationTimeInSeconds()
-                    );
+                    $accessToken = $jwt->encode(\HomeDocs\UserSession::getUserId(), $currentTimestamp + $settings->getAccessTokenExpirationTimeInSeconds());
+                    $refreshToken = $jwt->encode(\HomeDocs\UserSession::getUserId(), $currentTimestamp + $settings->getRefreshTokenExpirationTimeInSeconds());
+                    \HomeDocs\UserSession::setAccessTokenData($accessToken, $currentTimestamp + $settings->getAccessTokenExpirationTimeInSeconds());
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
                             "accessToken" => $accessToken,
@@ -122,7 +112,7 @@ return function (\Slim\App $app): void {
                             "tokenType" => "Bearer",
                         ]
                     );
-                    // TODO: send tokens via cookies
+                    // TODO: send tokens via cookies ?
                     /*
                         setcookie('access_token', $accessToken, [
                             'expires' => $currentTimestamp + $settings->getAccessTokenExpirationTimeInSeconds(),
@@ -151,8 +141,8 @@ return function (\Slim\App $app): void {
                     if (! is_array($params)) {
                         throw new \HomeDocs\Exception\InvalidParamsException();
                     }
-                    if (! (array_key_exists("refresh_token", $params) && is_string($params["refresh_token"]))) {
-                        throw new \HomeDocs\Exception\InvalidParamsException("refresh_token");
+                    if (! (array_key_exists("refreshToken", $params) && is_string($params["refreshToken"]))) {
+                        throw new \HomeDocs\Exception\InvalidParamsException("refreshToken");
                     }
 
                     $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
@@ -165,10 +155,12 @@ return function (\Slim\App $app): void {
                         throw new \RuntimeException("Failed to create logger from container");
                     }
 
+                    \HomeDocs\UserSession::clear();
+
                     $jwt = new \HomeDocs\JWT($logger, $settings->getJWTPassphrase());
                     $decoded = null;
                     try {
-                        $decoded = $jwt->decode($params["refresh_token"]);
+                        $decoded = $jwt->decode($params["refreshToken"]);
                     } catch (\Firebase\JWT\ExpiredException $e) {
                         $logger->notice("JWT expired", [$e->getMessage()]);
                         throw new \HomeDocs\Exception\UnauthorizedException("JWT expired");
@@ -177,25 +169,20 @@ return function (\Slim\App $app): void {
                         throw new \HomeDocs\Exception\UnauthorizedException("JWT decode error");
                     }
 
-                    if (property_exists($decoded, "data") && is_object($decoded->data) && property_exists($decoded->data, "userId") && is_string($decoded->data->userId) && ! empty($decoded->data->userId)) {
-                        $user = new \HomeDocs\User($decoded->data->userId);
+                    if (property_exists($decoded, "sub") && is_string($decoded->sub) && ! empty($decoded->sub)) {
+                        $user = new \HomeDocs\User($decoded->sub);
                         $user->get($dbh);
-                        $user->login($dbh);
-
                         $jwt = new \HomeDocs\JWT($logger, $settings->getJWTPassphrase());
+                        $currentTimestamp = time();
+                        $accessToken = $jwt->encode($user->id, $currentTimestamp + $settings->getAccessTokenExpirationTimeInSeconds());
+                        \HomeDocs\UserSession::setAccessTokenData($accessToken, $currentTimestamp + $settings->getAccessTokenExpirationTimeInSeconds());
                         $payload = \HomeDocs\Utils::getJSONPayload(
                             [
-                                "accessToken" => $jwt->encode(
-                                    [
-                                        "userId" => \HomeDocs\UserSession::getUserId() ?? null,
-                                        "email" => \HomeDocs\UserSession::getEmail() ?? null,
-                                    ],
-                                    time() + $settings->getAccessTokenExpirationTimeInSeconds()
-                                ),
+                                "accessToken" => $accessToken,
                                 "tokenType" => "Bearer",
                             ]
                         );
-                        // TODO: send token via cookies
+                        // TODO: send token via cookies ?
                         $response->getBody()->write($payload);
                         return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                     } else {
@@ -268,7 +255,7 @@ return function (\Slim\App $app): void {
                     $response->getBody()->write($payload);
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
-            })->add(\HomeDocs\Middleware\JWT::class)->add(\HomeDocs\Middleware\CheckAuth::class);
+            })->add(\HomeDocs\Middleware\CheckAuth::class);
 
             $routeCollectorProxy->group('/search', function (RouteCollectorProxy $routeCollectorProxy) use ($container): void {
                 $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
@@ -377,7 +364,7 @@ return function (\Slim\App $app): void {
                     $response->getBody()->write($payload);
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
-            })->add(\HomeDocs\Middleware\JWT::class)->add(\HomeDocs\Middleware\CheckAuth::class);
+            })->add(\HomeDocs\Middleware\CheckAuth::class);
 
             $routeCollectorProxy->group('/document', function (RouteCollectorProxy $routeCollectorProxy) use ($container): void {
                 $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
@@ -608,7 +595,7 @@ return function (\Slim\App $app): void {
                     $response->getBody()->write($payload);
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
-            })->add(\HomeDocs\Middleware\JWT::class)->add(\HomeDocs\Middleware\CheckAuth::class);
+            })->add(\HomeDocs\Middleware\CheckAuth::class);
 
             $routeCollectorProxy->group('/attachment', function (RouteCollectorProxy $routeCollectorProxy) use ($container): void {
                 $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
@@ -723,7 +710,7 @@ return function (\Slim\App $app): void {
                         return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                     }
                 });
-            })->add(\HomeDocs\Middleware\JWT::class)->add(\HomeDocs\Middleware\CheckAuth::class);
+            })->add(\HomeDocs\Middleware\CheckAuth::class);
 
             $routeCollectorProxy->get('/tag-cloud', function (Request $request, Response $response, array $args) use ($container): \Psr\Http\Message\MessageInterface {
                 $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
@@ -738,7 +725,7 @@ return function (\Slim\App $app): void {
                 );
                 $response->getBody()->write($payload);
                 return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
-            })->add(\HomeDocs\Middleware\JWT::class)->add(\HomeDocs\Middleware\CheckAuth::class);
+            })->add(\HomeDocs\Middleware\CheckAuth::class);
 
             $routeCollectorProxy->get('/tags', function (Request $request, Response $response, array $args) use ($container): \Psr\Http\Message\MessageInterface {
                 $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
@@ -753,7 +740,7 @@ return function (\Slim\App $app): void {
                 );
                 $response->getBody()->write($payload);
                 return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
-            })->add(\HomeDocs\Middleware\JWT::class)->add(\HomeDocs\Middleware\CheckAuth::class);
+            })->add(\HomeDocs\Middleware\CheckAuth::class);
 
             $routeCollectorProxy->group('/stats', function (RouteCollectorProxy $routeCollectorProxy) use ($container): void {
                 $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
@@ -804,7 +791,7 @@ return function (\Slim\App $app): void {
                     $response->getBody()->write($payload);
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
-            })->add(\HomeDocs\Middleware\JWT::class)->add(\HomeDocs\Middleware\CheckAuth::class);
+            })->add(\HomeDocs\Middleware\CheckAuth::class);
         }
     )->add(\HomeDocs\Middleware\APIExceptionCatcher::class);
 };
