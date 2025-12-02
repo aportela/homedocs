@@ -278,9 +278,6 @@ export default {
   "FileDownloadErrorMessage":
     "Error descargando el fichero {filename}",
 
-  "Filename: ":
-    "Nombre de fichero: ",
-
   "Filter by text on attachment filename":
     "Filtrar por texto en nombre del adjunto",
 

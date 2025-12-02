@@ -26,7 +26,7 @@
           @click.stop.prevent="onDownload(attachment.id, attachment.name)">
           <q-item-section class="q-mx-sm">
             <q-item-label>
-              {{ t("Filename: ") }} {{ attachment.name }}
+              {{ attachment.name }}
             </q-item-label>
             <q-item-label caption>
               {{ t("Size: ") }}{{ format.humanStorageSize(attachment.size) }}
