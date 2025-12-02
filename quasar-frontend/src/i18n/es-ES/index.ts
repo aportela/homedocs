@@ -219,7 +219,7 @@ export default {
     "Título del documento",
 
   "Document updated":
-    "Documento actualizado",
+    "Documento modificado",
 
   "Document updated on":
     "Documento actualizado en",
