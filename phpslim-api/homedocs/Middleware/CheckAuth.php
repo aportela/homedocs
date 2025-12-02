@@ -14,8 +14,8 @@ class CheckAuth
 
     public function __construct(\Psr\Container\ContainerInterface $container)
     {
-        $logger = $container->get(\HomeDocs\Logger\DefaultLogger::class);
-        if (! $logger instanceof \HomeDocs\Logger\DefaultLogger) {
+        $logger = $container->get(\HomeDocs\Logger\HTTPRequestLogger::class);
+        if (! $logger instanceof \HomeDocs\Logger\HTTPRequestLogger) {
             throw new \RuntimeException("Failed to get logger (DefaultLogger) from container");
         }
 
@@ -42,8 +42,7 @@ class CheckAuth
             $response = $requestHandler->handle($serverRequest);
             return ($response);
         } else {
-            $this->logger->debug("SESSION", [time(), $_SESSION]);
-            \HomeDocs\UserSession::clear();
+            \HomeDocs\UserSession::unsetAccessTokenData();
             // check for valid Authorization Bearer header with (JWT) access token
             $authorizationHeader = $serverRequest->getHeader('Authorization');
             if (empty($authorizationHeader)) {
