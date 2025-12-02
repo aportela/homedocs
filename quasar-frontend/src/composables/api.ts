@@ -16,11 +16,8 @@ const api = {
       };
       return axiosInstance.post("/auth/login", params);
     },
-    renewAccessToken: function (refreshToken: string) {
-      const params = {
-        refreshToken: refreshToken,
-      };
-      return axiosInstance.post("/auth/renew_access_token", params);
+    renewAccessToken: function () {
+      return axiosInstance.post("/auth/renew_access_token");
     },
     logout: () => axiosInstance.post("/auth/logout"),
     register: function (id: string, email: string, password: string) {

@@ -152,7 +152,6 @@ const onSubmitForm = () => {
       .login(profile.email, profile.password)
       .then((successResponse: LoginResponse) => {
         sessionStore.setAccessToken(successResponse.data.accessToken);
-        sessionStore.setRefreshToken(successResponse.data.refreshToken);
         localStorageEmail.set(profile.email);
         emit("success", successResponse.data);
       })

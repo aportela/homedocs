@@ -204,19 +204,14 @@ onMounted(() => {
       reAuthEmitters.push(msg.emitter);
     }
     const sessionStore = useSessionStore();
-    if (sessionStore.hasRefreshToken) {
-      api.auth.renewAccessToken(String(sessionStore.refreshToken)).then((successResponse: GetNewAccessTokenResponseInterface) => {
-        sessionStore.setAccessToken(successResponse.data.accessToken);
-        bus.emit("reAuthSucess", ({ to: reAuthEmitters }))
-        reAuthEmitters.length = 0;
-      }).catch((errorResponse) => {
-        console.error(errorResponse);
-        sessionStore.removeRefreshToken();
-        dialogs.reauth.visible = true;
-      });
-    } else {
+    api.auth.renewAccessToken().then((successResponse: GetNewAccessTokenResponseInterface) => {
+      sessionStore.setAccessToken(successResponse.data.accessToken);
+      bus.emit("reAuthSucess", ({ to: reAuthEmitters }))
+      reAuthEmitters.length = 0;
+    }).catch((errorResponse) => {
+      console.error(errorResponse);
       dialogs.reauth.visible = true;
-    }
+    });
   });
 
   bus.on("showDocumentFilePreviewDialog", (msg: BusMsg) => {
