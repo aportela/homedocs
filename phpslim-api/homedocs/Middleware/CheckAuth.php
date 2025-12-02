@@ -16,7 +16,7 @@ class CheckAuth
     {
         $logger = $container->get(\HomeDocs\Logger\HTTPRequestLogger::class);
         if (! $logger instanceof \HomeDocs\Logger\HTTPRequestLogger) {
-            throw new \RuntimeException("Failed to get logger (DefaultLogger) from container");
+            throw new \RuntimeException("Failed to get logger (HTTPRequestLogger) from container");
         }
 
         $this->logger = $logger;
