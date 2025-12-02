@@ -60,29 +60,33 @@ class UserSession
                     'httponly' => $params["httponly"],
                 ]);
             }
+
             session_destroy();
-            session_id(session_create_id('HOMEDOCS-'));
+            $newId = session_create_id('HOMEDOCS-');
+            if (is_string($newId)) {
+                session_id($newId);
+            }
         }
     }
 
     public static function isLogged(): bool
     {
-        return array_key_exists("userId", $_SESSION) && is_string($_SESSION["userId"]) && ! empty($_SESSION["userId"]);
+        return array_key_exists("userId", $_SESSION) && is_string($_SESSION["userId"]) && (($_SESSION["userId"] !== '' && $_SESSION["userId"] !== '0'));
     }
 
     public static function hasValidAccessToken(): bool
     {
-        return array_key_exists("accessToken", $_SESSION) && is_string($_SESSION["accessToken"]) &&
-            array_key_exists("accessTokenExpiresAt", $_SESSION) && is_numeric($_SESSION["accessTokenExpiresAt"]) &&
-            $_SESSION["accessTokenExpiresAt"] >= time();
+        return array_key_exists("accessToken", $_SESSION) && is_string($_SESSION["accessToken"])
+            && array_key_exists("accessTokenExpiresAt", $_SESSION) && is_numeric($_SESSION["accessTokenExpiresAt"])
+            && $_SESSION["accessTokenExpiresAt"] >= time();
     }
 
-    public static function getUserId(): string|null
+    public static function getUserId(): ?string
     {
         return array_key_exists("userId", $_SESSION) && is_string($_SESSION["userId"]) ? $_SESSION["userId"] : null;
     }
 
-    public static function getEmail(): string|null
+    public static function getEmail(): ?string
     {
         return array_key_exists("email", $_SESSION) && is_string($_SESSION["email"]) ? $_SESSION["email"] : null;
     }

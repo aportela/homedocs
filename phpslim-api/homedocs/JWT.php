@@ -19,8 +19,6 @@ class JWT
         if ($expiresAt !== 0 && $expiresAt <= $currentTimestamp) {
             throw new \InvalidArgumentException("expiresAt");
         } else {
-
-            $jwt = "";
             try {
                 $jwtPayload = [
                     'iat' => $currentTimestamp,
@@ -29,16 +27,14 @@ class JWT
                 if ($expiresAt > 0) {
                     $jwtPayload['exp'] = $expiresAt;
                 }
-                $jwt = \Firebase\JWT\JWT::encode(
+                return (\Firebase\JWT\JWT::encode(
                     $jwtPayload,
                     $this->passphrase,
                     self::ALGORITHM
-                );
+                ));
             } catch (\Throwable $throwable) {
                 $this->logger->error("JWT encoding error", [$throwable->getMessage()]);
                 throw $throwable;
-            } finally {
-                return ($jwt);
             }
         }
     }

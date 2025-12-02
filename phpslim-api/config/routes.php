@@ -99,11 +99,12 @@ return function (\Slim\App $app): void {
                         array_key_exists("password", $params) && is_string($params["password"]) ? $params["password"] : ""
                     );
                     $user->login($dbh);
+
                     $jwt = new \HomeDocs\JWT($logger, $settings->getJWTPassphrase());
 
                     $currentTimestamp = time();
-                    $accessToken = $jwt->encode(\HomeDocs\UserSession::getUserId(), $currentTimestamp + $settings->getAccessTokenExpirationTimeInSeconds());
-                    $refreshToken = $jwt->encode(\HomeDocs\UserSession::getUserId(), $currentTimestamp + $settings->getRefreshTokenExpirationTimeInSeconds());
+                    $accessToken = $jwt->encode(strval(\HomeDocs\UserSession::getUserId()), $currentTimestamp + $settings->getAccessTokenExpirationTimeInSeconds());
+                    $refreshToken = $jwt->encode(strval(\HomeDocs\UserSession::getUserId()), $currentTimestamp + $settings->getRefreshTokenExpirationTimeInSeconds());
                     \HomeDocs\UserSession::setAccessTokenData($accessToken, $currentTimestamp + $settings->getAccessTokenExpirationTimeInSeconds());
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
@@ -120,7 +121,7 @@ return function (\Slim\App $app): void {
                             'path' => '/api3/auth/renew_access_token',
                             'secure' => true,
                             'httponly' => true,
-                            'samesite' => 'Strict'
+                            'samesite' => 'Strict',
                         ]
                     );
                     $response->getBody()->write($payload);
@@ -133,12 +134,12 @@ return function (\Slim\App $app): void {
                         $refreshToken = $_COOKIE['refresh_token'];
                     } else {
                         $params = $request->getParsedBody();
-                        if (is_array($params) && array_key_exists("refreshToken", $params) && is_string($params["refreshToken"]) && ! empty($params["refreshToken"])) {
+                        if (is_array($params) && array_key_exists("refreshToken", $params) && is_string($params["refreshToken"]) && ($params["refreshToken"] !== '' && $params["refreshToken"] !== '0')) {
                             $refreshToken = $params["refreshToken"];
                         }
                     }
 
-                    if (empty($refreshToken)) {
+                    if (! is_string($refreshToken) || ($refreshToken === '' || $refreshToken === '0')) {
                         throw new \HomeDocs\Exception\UnauthorizedException("Missing refresh token (cookie/POST param)");
                     }
 
@@ -166,12 +167,12 @@ return function (\Slim\App $app): void {
                         throw new \HomeDocs\Exception\UnauthorizedException("JWT decode error");
                     }
 
-                    if (property_exists($decoded, "sub") && is_string($decoded->sub) && ! empty($decoded->sub)) {
+                    if (property_exists($decoded, "sub") && is_string($decoded->sub) && ($decoded->sub !== '' && $decoded->sub !== '0')) {
                         $user = new \HomeDocs\User($decoded->sub);
                         $user->get($dbh);
                         $jwt = new \HomeDocs\JWT($logger, $settings->getJWTPassphrase());
                         $currentTimestamp = time();
-                        $accessToken = $jwt->encode($user->id, $currentTimestamp + $settings->getAccessTokenExpirationTimeInSeconds());
+                        $accessToken = $jwt->encode(strval($user->id), $currentTimestamp + $settings->getAccessTokenExpirationTimeInSeconds());
                         \HomeDocs\UserSession::setAccessTokenData($accessToken, $currentTimestamp + $settings->getAccessTokenExpirationTimeInSeconds());
                         $payload = \HomeDocs\Utils::getJSONPayload(
                             [
@@ -200,7 +201,7 @@ return function (\Slim\App $app): void {
                             'path' => '/api3/auth/renew_access_token',
                             'secure' => true,
                             'httponly' => true,
-                            'samesite' => 'Strict'
+                            'samesite' => 'Strict',
                         ]
                     );
                     $response->getBody()->write($payload);
@@ -759,7 +760,7 @@ return function (\Slim\App $app): void {
                 $routeCollectorProxy->get('/total-published-documents', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'count' => \HomeDocs\Stats::getTotalPublishedDocuments($dbh, \HomeDocs\UserSession::getUserId()),
+                            'count' => \HomeDocs\Stats::getTotalPublishedDocuments($dbh, strval(\HomeDocs\UserSession::getUserId())),
                         ]
                     );
                     $response->getBody()->write($payload);
@@ -769,7 +770,7 @@ return function (\Slim\App $app): void {
                 $routeCollectorProxy->get('/total-uploaded-attachments', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'count' => \HomeDocs\Stats::getTotalUploadedAttachments($dbh, \HomeDocs\UserSession::getUserId()),
+                            'count' => \HomeDocs\Stats::getTotalUploadedAttachments($dbh, strval(\HomeDocs\UserSession::getUserId())),
                         ]
                     );
                     $response->getBody()->write($payload);
@@ -779,7 +780,7 @@ return function (\Slim\App $app): void {
                 $routeCollectorProxy->get('/total-uploaded-attachments-disk-usage', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'size' => \HomeDocs\Stats::getTotalUploadedAttachmentsDiskUsage($dbh, \HomeDocs\UserSession::getUserId()),
+                            'size' => \HomeDocs\Stats::getTotalUploadedAttachmentsDiskUsage($dbh, strval(\HomeDocs\UserSession::getUserId())),
                         ]
                     );
                     $response->getBody()->write($payload);
@@ -792,7 +793,7 @@ return function (\Slim\App $app): void {
                         [
                             'heatmap' => \HomeDocs\Stats::getActivityHeatMapData(
                                 $dbh,
-                                \HomeDocs\UserSession::getUserId(),
+                                strval(\HomeDocs\UserSession::getUserId()),
                                 is_int($queryParams["fromTimestamp"]) ? $queryParams["fromTimestamp"] : 0
                             ),
                         ]

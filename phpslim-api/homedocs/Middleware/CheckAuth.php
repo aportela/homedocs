@@ -39,26 +39,27 @@ class CheckAuth
     {
         // check for valid (non empty/not expired) access token on current session (requires cookies sent by client)
         if (\HomeDocs\UserSession::hasValidAccessToken()) {
-            $response = $requestHandler->handle($serverRequest);
-            return ($response);
+            return ($requestHandler->handle($serverRequest));
         } else {
             \HomeDocs\UserSession::unsetAccessTokenData();
             // check for valid Authorization Bearer header with (JWT) access token
             $authorizationHeader = $serverRequest->getHeader('Authorization');
-            if (empty($authorizationHeader)) {
+            if ($authorizationHeader === []) {
                 throw new \HomeDocs\Exception\UnauthorizedException('Authorization header is missing');
             }
+
             $bearerToken = $authorizationHeader[0];
-            if (strpos($bearerToken, 'Bearer ') !== 0) {
+            if (!str_starts_with($bearerToken, 'Bearer ')) {
                 throw new \HomeDocs\Exception\UnauthorizedException('Invalid Authorization header format');
             }
+
             $bearerToken = trim(substr($bearerToken, 7));
-            if (empty($bearerToken)) {
+            if ($bearerToken === '' || $bearerToken === '0') {
                 throw new \HomeDocs\Exception\UnauthorizedException('Bearer token is missing');
             } else {
                 $decoded = null;
                 try {
-                    $decoded = (new \HomeDocs\JWT($this->logger, $this->passphrase))->decode($bearerToken);
+                    $decoded = new \HomeDocs\JWT($this->logger, $this->passphrase)->decode($bearerToken);
                 } catch (\Firebase\JWT\ExpiredException $e) {
                     $this->logger->notice("JWT expired", [$e->getMessage()]);
                     throw new \HomeDocs\Exception\UnauthorizedException("JWT expired");
@@ -66,21 +67,27 @@ class CheckAuth
                     $this->logger->notice("JWT decode error", [$e->getMessage()]);
                     throw new \HomeDocs\Exception\UnauthorizedException("JWT decode error");
                 }
-                if (property_exists($decoded, "sub") && is_string($decoded->sub) && ! empty($decoded->sub)) {
+
+                if (property_exists($decoded, "sub") && is_string($decoded->sub) && ($decoded->sub !== '' && $decoded->sub !== '0')) {
                     $user = new \HomeDocs\User($decoded->sub);
                     try {
                         $user->get($this->dbh);
                     } catch (\HomeDocs\Exception\NotFoundException) {
                         throw new \HomeDocs\Exception\NotFoundException("userId");
                     }
+
                     // access token from Authorization Bearer header is good, set new valid session & continue
-                    \HomeDocs\UserSession::init($user->id, $user->email);
-                    \HomeDocs\UserSession::setAccessTokenData($bearerToken, $decoded->exp);
+                    \HomeDocs\UserSession::init(strval($user->id), strval($user->email));
+                    if (is_numeric($decoded->exp)) {
+                        \HomeDocs\UserSession::setAccessTokenData($bearerToken, intval($decoded->exp));
+                    } else {
+                        throw new \HomeDocs\Exception\UnauthorizedException('Invalid token expiration');
+                    }
                 } else {
                     throw new \HomeDocs\Exception\UnauthorizedException('Bearer token is missing');
                 }
-                $response = $requestHandler->handle($serverRequest);
-                return ($response);
+
+                return ($requestHandler->handle($serverRequest));
             }
         }
     }

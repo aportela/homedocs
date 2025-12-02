@@ -15,7 +15,7 @@ final class StatsTest extends \HomeDocs\Test\BaseTest
         $this->createValidSession();
         $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, []);
         $document->add(self::$dbh);
-        $this->assertTrue(\HomeDocs\Stats::getTotalPublishedDocuments(self::$dbh, \HomeDocs\UserSession::getUserId()) > 0);
+        $this->assertTrue(\HomeDocs\Stats::getTotalPublishedDocuments(self::$dbh, strval(\HomeDocs\UserSession::getUserId())) > 0);
     }
 
     public function testGetTotalUploadedAttachments(): void
@@ -23,13 +23,13 @@ final class StatsTest extends \HomeDocs\Test\BaseTest
         $this->createValidSession();
         $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, []);
         $document->add(self::$dbh);
-        $this->assertTrue(\HomeDocs\Stats::getTotalUploadedAttachments(self::$dbh, \HomeDocs\UserSession::getUserId()) >= 0);
+        $this->assertTrue(\HomeDocs\Stats::getTotalUploadedAttachments(self::$dbh, strval(\HomeDocs\UserSession::getUserId())) >= 0);
     }
 
     public function testGetTotalUploadedAttachmentsDiskUsage(): void
     {
         // TODO: simulate file uploading for adding test attachment
-        $this->assertTrue(\HomeDocs\Stats::getTotalUploadedAttachmentsDiskUsage(self::$dbh, \HomeDocs\UserSession::getUserId()) >= 0);
+        $this->assertTrue(\HomeDocs\Stats::getTotalUploadedAttachmentsDiskUsage(self::$dbh, strval(\HomeDocs\UserSession::getUserId())) >= 0);
     }
 
     public function testGetActivityHeatMapDataWithoutTimestamp(): void
@@ -38,7 +38,7 @@ final class StatsTest extends \HomeDocs\Test\BaseTest
         $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, []);
         $document->add(self::$dbh);
 
-        $data = \HomeDocs\Stats::getActivityHeatMapData(self::$dbh, \HomeDocs\UserSession::getUserId());
+        $data = \HomeDocs\Stats::getActivityHeatMapData(self::$dbh, strval(\HomeDocs\UserSession::getUserId()));
         $this->assertTrue(count($data) >= 1);
         foreach ($data as $item) {
             $this->assertTrue(property_exists($item, "date"));
@@ -55,7 +55,7 @@ final class StatsTest extends \HomeDocs\Test\BaseTest
         $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, []);
         $document->add(self::$dbh);
 
-        $data = \HomeDocs\Stats::getActivityHeatMapData(self::$dbh, \HomeDocs\UserSession::getUserId(), strtotime('-1 day', time()) * 1000);
+        $data = \HomeDocs\Stats::getActivityHeatMapData(self::$dbh, strval(\HomeDocs\UserSession::getUserId()), strtotime('-1 day', time()) * 1000);
         $this->assertTrue(count($data) >= 1);
         foreach ($data as $item) {
             $this->assertTrue(property_exists($item, "date"));
