@@ -15,10 +15,10 @@ export default {
     "Engadir",
 
   "Add attachment":
-    "Add attachment",
+    "Engadir adxunto",
 
   "Add note":
-    "Engadir adxunto",
+    "Engadir nota",
 
   "Advanced search":
     "Procura avanzada",

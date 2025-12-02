@@ -15,10 +15,10 @@ export default {
     "Añadir",
 
   "Add attachment":
-    "Add attachment",
+    "Añadir adjunto",
 
   "Add note":
-    "Añadir adjunto",
+    "Añadir nota",
 
   "Advanced search":
     "Búsqueda avanzada",
