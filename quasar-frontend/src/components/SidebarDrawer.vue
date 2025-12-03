@@ -79,7 +79,7 @@ const menuItems = [
   { icon: 'find_in_page', text: "Advanced search", routeName: 'advancedSearch', alternateRouteNames: ['advancedSearchByTag', 'advancedSearchByFixedCreationDate', 'advancedSearchByFixedLastUpdate', 'advancedSearchByFixedUpdatedOn'] }
 ];
 
-function logout() {
+const logout = () => {
   api.auth
     .logout()
     .then(() => {
@@ -99,6 +99,6 @@ function logout() {
         console.error(e);
       });
     });
-}
+};
 
 </script>
