@@ -122,7 +122,7 @@
                         document.createdAt.timeAgo }})</q-item-label>
                       <q-item-label caption v-if="document.updatedAt?.dateTime">{{ t("Last update") }}: {{
                         document.updatedAt.dateTime
-                        }} ({{ document.updatedAt.timeAgo }})</q-item-label>
+                      }} ({{ document.updatedAt.timeAgo }})</q-item-label>
                     </q-item-section>
                     <q-item-section side top>
                       <ViewDocumentDetailsButton size="md" square class="min-width-9em"
@@ -152,7 +152,7 @@
                 <q-icon :name="store.sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <DesktopToolTip>{{ t('Toggle sort by this column', { field: t(column.title) })
-                  }}</DesktopToolTip>
+                }}</DesktopToolTip>
               </th>
             </tr>
           </thead>
@@ -384,15 +384,15 @@ const onResetForm = () => {
 };
 
 onMounted(() => {
-  if (hasCreationDateRouteParamsFilter.value) {
+  if (hasCreationDateRouteParamsFilter.value && typeof route.params.fixedCreationDate === "string") {
     store.filter.dates.createdAt.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
     store.filter.dates.createdAt.formattedDate.fixed = route.params.fixedCreationDate ? route.params.fixedCreationDate.replaceAll("-", "/") : null;
     store.filter.dates.createdAt.setType(7); // fixed date
-  } else if (hasLastUpdateRouteParamsFilter.value) {
+  } else if (hasLastUpdateRouteParamsFilter.value && typeof route.params.fixedLastUpdate === "string") {
     store.filter.dates.lastUpdateAt.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
     store.filter.dates.lastUpdateAt.formattedDate.fixed = route.params.fixedLastUpdate ? route.params.fixedLastUpdate.replaceAll("-", "/") : null;
     store.filter.dates.lastUpdateAt.setType(7); // fixed date
-  } else if (hasUpdatedOnRouteParamsFilter.value) {
+  } else if (hasUpdatedOnRouteParamsFilter.value && typeof route.params.fixedUpdatedOn === "string") {
     store.filter.dates.updatedAt.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
     store.filter.dates.updatedAt.formattedDate.fixed = route.params.fixedUpdatedOn ? route.params.fixedUpdatedOn.replaceAll("-", "/") : null;
     store.filter.dates.updatedAt.setType(7); // fixed date
