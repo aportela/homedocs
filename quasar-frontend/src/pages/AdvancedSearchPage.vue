@@ -47,7 +47,7 @@
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
               <InteractiveTagsFieldCustomSelect v-model="store.filter.tags" label="Document tags"
                 :disabled="state.ajaxRunning" dense :start-mode-editable="true" :deny-change-editable-mode="true"
-                clearable :placeholder="t('Type text condition')" class="q-mb-md">
+                clearable :placeholder="t('Type text condition')" class="q-mb-md q-pb-none">
               </InteractiveTagsFieldCustomSelect>
               <DateFilterFieldCustomInputSelector :label="t('Document creation date')"
                 :disable="state.ajaxRunning || hasCreationDateRouteParamsFilter" v-model="store.filter.dates.createdAt"
