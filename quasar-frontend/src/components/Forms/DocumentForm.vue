@@ -28,10 +28,10 @@
           </q-btn>
         </q-btn-group>
         <q-tabs class="lt-lg q-mb-sm" v-model="smallScreensTopTab">
-          <q-tab name="metadata" icon="description" :label="t('Document metadata')"
-            class="cursor-default full-width"></q-tab>
-          <q-tab name="details" icon="list_alt" :label="t('Document details')"
-            class="cursor-default full-width"></q-tab>
+          <q-tab name="metadata" icon="description" :label="t('Document metadata')" class="cursor-default full-width"
+            no-caps></q-tab>
+          <q-tab name="details" icon="list_alt" :label="t('Document details')" class="cursor-default full-width"
+            no-caps></q-tab>
         </q-tabs>
         <q-card-section class="row q-pa-none" v-if="exists">
           <div class="col-12 col-lg-6 col-xl-6 q-px-sm flex"
@@ -39,7 +39,7 @@
             <q-card class="q-ma-xs q-mt-sm full-width">
               <q-card-section class="q-pa-none q-mb-sm gt-md">
                 <q-tabs v-model="leftMetadataTab">
-                  <q-tab name="metadata" icon="description" :label="t('Document metadata')"
+                  <q-tab name="metadata" icon="description" :label="t('Document metadata')" no-caps
                     class="cursor-default full-width"></q-tab>
                 </q-tabs>
               </q-card-section>
@@ -76,7 +76,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.ajaxRunning" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                    }}</q-badge>
+                      }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
