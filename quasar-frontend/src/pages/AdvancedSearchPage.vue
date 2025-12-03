@@ -99,20 +99,12 @@
             boundary-numbers direction-links boundary-links @update:model-value="onPaginationChanged"
             :disable="state.ajaxRunning" class="theme-default-q-pagination" />
         </div>
-        <q-markup-table class="q-ma-md">
+        <q-markup-table class="q-ma-md" v-if="showCompactedTable">
           <thead>
             <tr>
               <th class="lt-xl">
                 <SortByFieldCustomButtonDropdown square dense no-caps :options="sortFields" :current="store.sort"
                   @change="(opt) => onToggleSort(opt.field, opt.order)" flat class="action-primary fit full-height" />
-              </th>
-              <th v-for="(column, index) in columns" :key="index"
-                :class="['text-left', column.defaultClass, { 'cursor-not-allowed': state.ajaxRunning, 'cursor-pointer': !state.ajaxRunning, 'action-primary': store.sort.field === column.field }]"
-                @click="onToggleSort(column.field)">
-                <q-icon :name="store.sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
-                {{ t(column.title) }}
-                <DesktopToolTip>{{ t('Toggle sort by this column', { field: t(column.title) })
-                  }}</DesktopToolTip>
               </th>
             </tr>
           </thead>
@@ -145,6 +137,28 @@
                     </q-item-section>
                   </q-item>
                 </q-list>
+              </td>
+            </tr>
+          </tbody>
+        </q-markup-table>
+        <q-markup-table class="q-ma-md" v-else>
+          <thead>
+            <tr>
+              <th class="lt-xl">
+              </th>
+              <th v-for="(column, index) in columns" :key="index"
+                :class="['text-left', column.defaultClass, { 'cursor-not-allowed': state.ajaxRunning, 'cursor-pointer': !state.ajaxRunning, 'action-primary': store.sort.field === column.field }]"
+                @click="onToggleSort(column.field)">
+                <q-icon :name="store.sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
+                {{ t(column.title) }}
+                <DesktopToolTip>{{ t('Toggle sort by this column', { field: t(column.title) })
+                  }}</DesktopToolTip>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="document in results" :key="document.id">
+              <td class="lt-xl">
               </td>
               <td class="td-document-link gt-lg">
                 <q-btn align="left" no-caps flat :to="{ name: 'document', params: { id: document.id } }"
@@ -182,6 +196,7 @@
 import { ref, shallowRef, reactive, computed, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
+import { useQuasar } from "quasar";
 
 import { useAdvancedSearchData } from "src/stores/advancedSearchData"
 import { bus, onShowDocumentFiles, onShowDocumentNotes } from "src/composables/bus";
@@ -206,6 +221,7 @@ import { default as ViewDocumentDetailsButton } from "src/components/Buttons/Vie
 const { t } = useI18n();
 
 const route = useRoute();
+const { screen } = useQuasar();
 
 const columns = [
   { field: 'title', title: 'Title', defaultClass: "gt-lg" },
@@ -244,6 +260,9 @@ if (!usePreviousStoreValues.value) {
 }
 
 const results = shallowRef<Array<SearchDocumentItemClass>>([]);
+
+// on screens less than xl show compacted table (one col with all fields grouped)
+const showCompactedTable = computed(() => screen.lt.xl);
 
 const hasResults = computed(() => results.value.length > 0);
 
