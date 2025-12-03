@@ -45,10 +45,6 @@
               </q-input>
             </div>
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
-              <InteractiveTagsFieldCustomSelect v-model="store.filter.tags" label="Document tags"
-                :disabled="state.ajaxRunning" dense :start-mode-editable="true" :deny-change-editable-mode="true"
-                clearable :placeholder="t('Type text condition')" class="q-mb-md q-pb-none">
-              </InteractiveTagsFieldCustomSelect>
               <DateFilterFieldCustomInputSelector :label="t('Document creation date')"
                 :disable="state.ajaxRunning || hasCreationDateRouteParamsFilter" v-model="store.filter.dates.createdAt"
                 :auto-open-pop-ups="!hasCreationDateRouteParamsFilter" class="q-mb-md">
@@ -61,9 +57,13 @@
                 :disable="state.ajaxRunning || hasUpdatedOnRouteParamsFilter" v-model="store.filter.dates.updatedAt"
                 :auto-open-pop-ups="!hasUpdatedOnRouteParamsFilter" class="q-mb-md">
               </DateFilterFieldCustomInputSelector>
+              <InteractiveTagsFieldCustomSelect v-model="store.filter.tags" label="Document tags"
+                :disabled="state.ajaxRunning" dense :start-mode-editable="true" :deny-change-editable-mode="true"
+                clearable :placeholder="t('Type text condition')" class="q-mb-md q-pb-none">
+              </InteractiveTagsFieldCustomSelect>
             </div>
           </div>
-          <q-btn-group spread>
+          <q-btn-group spread class="q-mt-md">
             <q-btn color="primary" size="md" :label="$t('Search')" no-caps icon="search" :disable="state.ajaxRunning"
               :loading="state.ajaxRunning" type="submit">
               <template v-slot:loading>
@@ -122,7 +122,7 @@
                         document.createdAt.timeAgo }})</q-item-label>
                       <q-item-label caption v-if="document.updatedAt?.dateTime">{{ t("Last update") }}: {{
                         document.updatedAt.dateTime
-                        }} ({{ document.updatedAt.timeAgo }})</q-item-label>
+                      }} ({{ document.updatedAt.timeAgo }})</q-item-label>
                     </q-item-section>
                     <q-item-section side top>
                       <ViewDocumentDetailsButton size="md" square class="min-width-9em"
@@ -152,7 +152,7 @@
                 <q-icon :name="store.sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <DesktopToolTip>{{ t('Toggle sort by this column', { field: t(column.title) })
-                  }}</DesktopToolTip>
+                }}</DesktopToolTip>
               </th>
             </tr>
           </thead>
