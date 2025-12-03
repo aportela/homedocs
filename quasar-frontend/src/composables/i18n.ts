@@ -2,6 +2,8 @@ import { Lang } from "quasar";
 import { default as messages } from "src/i18n";
 import { locale as localStorageLocale } from "./localStorage";
 import { DEFAULT_LOCALE } from 'src/constants';
+import { default as enUS_Quasar } from "../../node_modules/quasar/lang/en-US";
+import { default as esES_Quasar } from "../../node_modules/quasar/lang/es";
 
 const availableSystemLocales: string[] = Object.keys(messages);
 
@@ -22,4 +24,28 @@ const autodetectLocale = (): string => {
   return getMatchedLocale(localStorageLocale.get() || Lang.getLocale() || "") ?? DEFAULT_LOCALE;
 };
 
-export { availableSystemLocales, autodetectLocale, getMatchedLocale };
+const quasarLanguages = {
+  "en-US": enUS_Quasar,
+  "es-ES": esES_Quasar,
+  "gl-GL": esES_Quasar,
+};
+
+const setQuasarLanguage = (locale: string) => {
+  switch (locale) {
+    case "en-US":
+      Lang.set(quasarLanguages["en-US"]);
+      break;
+    case "es-ES":
+      Lang.set(quasarLanguages["es-ES"]);
+      break;
+    case "gl-GL":
+      Lang.set(quasarLanguages["gl-GL"]);
+      break;
+    default:
+      console.error("Invalid locale for quasar language:", locale);
+      Lang.set(quasarLanguages["en-US"]);
+      break;
+  }
+};
+
+export { availableSystemLocales, autodetectLocale, getMatchedLocale, setQuasarLanguage };

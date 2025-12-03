@@ -1,7 +1,7 @@
 import { defineBoot } from '#q-app/wrappers';
 import { createI18n } from "vue-i18n";
 import { default as messages } from "src/i18n";
-import { autodetectLocale } from "src/composables/i18n";
+import { autodetectLocale, setQuasarLanguage } from "src/composables/i18n";
 
 export type MessageLanguages = keyof typeof messages;
 // Type-define 'en-US' as the master schema for the resource
@@ -21,8 +21,11 @@ declare module 'vue-i18n' {
 }
 /* eslint-enable @typescript-eslint/no-empty-object-type */
 
+const currentLocale = autodetectLocale();
+setQuasarLanguage(currentLocale);
+
 const i18n = createI18n<{ message: MessageSchema }, MessageLanguages>({
-  locale: autodetectLocale(),
+  locale: currentLocale,
   legacy: false, // you must set `false`, to use Composition API
   globalInjection: true,
   messages,
