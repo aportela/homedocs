@@ -98,7 +98,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, watch, onMounted, onBeforeUnmount, nextTick } from "vue";
+import { ref, shallowRef, reactive, computed, watch, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { QInput, QVirtualScroll } from "quasar";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
@@ -189,7 +189,7 @@ const onChangeResultsPage = (value: number) => {
 };
 
 const text = ref<string>("");
-const searchResults = reactive<Array<SearchDocumentItemClass>>([]);
+const searchResults = shallowRef<Array<SearchDocumentItemClass>>([]);
 const currentSearchResultSelectedIndex = ref<number>(-1);
 const virtualListIndex = ref<number>(0);
 
@@ -220,8 +220,7 @@ const onSearch = (val: string) => {
       .then((successResponse: SearchDocumentResponseInterface) => {
         pager.totalResults = successResponse.data.results.pagination.totalResults;
         pager.totalPages = successResponse.data.results.pagination.totalPages;
-        searchResults.length = 0;
-        searchResults.push(...successResponse.data.results.documents.map((document: SearchDocumentResponseItemInterface) =>
+        searchResults.value = successResponse.data.results.documents.map((document: SearchDocumentResponseItemInterface) =>
           new SearchDocumentItemClass(
             t,
             document.id,
@@ -235,8 +234,8 @@ const onSearch = (val: string) => {
             document.matchedFragments,
             val.trim(),
           )
-        ));
-        showNoSearchResults.value = searchResults.length <= 0;
+        );
+        showNoSearchResults.value = searchResults.value.length <= 0;
       })
       .catch((errorResponse) => {
         state.ajaxErrors = true;
@@ -260,7 +259,7 @@ const onSearch = (val: string) => {
         state.ajaxRunning = false;
       });
   } else {
-    searchResults.length = 0;
+    searchResults.value = [];
   }
 };
 
@@ -276,7 +275,7 @@ const scrollToItem = (index: number) => {
 
 const onKeyDown = (evt: KeyboardEvent) => {
   if (evt.key === "ArrowUp") {
-    if (searchResults.length > 0) {
+    if (searchResults.value.length > 0) {
       if (currentSearchResultSelectedIndex.value > 0) {
         currentSearchResultSelectedIndex.value--;
         scrollToItem(currentSearchResultSelectedIndex.value);
@@ -285,8 +284,8 @@ const onKeyDown = (evt: KeyboardEvent) => {
       }
     }
   } else if (evt.key === "ArrowDown") {
-    if (searchResults.length > 0) {
-      if (currentSearchResultSelectedIndex.value < searchResults.length - 1) {
+    if (searchResults.value.length > 0) {
+      if (currentSearchResultSelectedIndex.value < searchResults.value.length - 1) {
         currentSearchResultSelectedIndex.value++;
         scrollToItem(currentSearchResultSelectedIndex.value);
         evt.preventDefault();
@@ -294,12 +293,12 @@ const onKeyDown = (evt: KeyboardEvent) => {
       }
     }
   } else if (evt.key === "Enter") {
-    if (searchResults.length > 0) {
-      if (currentSearchResultSelectedIndex.value >= 0 && currentSearchResultSelectedIndex.value < searchResults.length) {
+    if (searchResults.value.length > 0) {
+      if (currentSearchResultSelectedIndex.value >= 0 && currentSearchResultSelectedIndex.value < searchResults.value.length) {
         router.push({
           name: "document",
           params: {
-            id: searchResults[currentSearchResultSelectedIndex.value]!.id
+            id: searchResults.value[currentSearchResultSelectedIndex.value]!.id
           }
         }).catch((e) => {
           console.error(e);
@@ -325,7 +324,7 @@ const onShow = () => {
 }
 
 const onClose = () => {
-  searchResults.length = 0;
+  searchResults.value = [];
   text.value = "";
   showNoSearchResults.value = false;
   // this is required here because this modal dialog is persistent (from MainLayout.vue).
