@@ -101,8 +101,9 @@ class Document
 
                 if (property_exists($item, "tags") && is_string($item->tags)) {
                     $item->tags = $item->tags !== '' && $item->tags !== '0' ? explode(",", $item->tags) : [];
+                } else {
+                    $item->tags = [];
                 }
-
                 return ($item);
             },
             $results
