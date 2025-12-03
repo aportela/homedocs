@@ -79,7 +79,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
+import { ref, shallowRef, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { bus, onShowDocumentFiles, onShowDocumentNotes } from "src/composables/bus";
@@ -109,9 +109,9 @@ const isExpanded = ref(props.expanded);
 
 const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-const recentDocuments = reactive<Array<RecentDocumentItem>>([]);
+const recentDocuments = shallowRef<Array<RecentDocumentItem>>([]);
 
-const hasRecentDocuments = computed(() => recentDocuments.length > 0);
+const hasRecentDocuments = computed(() => recentDocuments.value.length > 0);
 
 const onRefresh = () => {
   if (!state.ajaxRunning) {
@@ -119,8 +119,7 @@ const onRefresh = () => {
     state.ajaxRunning = true;
     api.document.searchRecent(16)
       .then((successResponse: RecentDocumentsResponse) => {
-        recentDocuments.length = 0;
-        recentDocuments.push(...successResponse.data.documents.map((document: RecentDocumentResponseItem) =>
+        recentDocuments.value = successResponse.data.documents.map((document: RecentDocumentResponseItem) =>
           new RecentDocumentItemClass(
             document.id,
             new DateTimeClass(t, document.updatedAtTimestamp),
@@ -130,7 +129,7 @@ const onRefresh = () => {
             document.attachmentCount,
             document.noteCount,
           )
-        ));
+        );
       })
       .catch((errorResponse) => {
         state.ajaxErrors = true;

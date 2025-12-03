@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
+import { ref, shallowRef, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import { bus } from "src/composables/bus";
 import { api } from "src/composables/api";
@@ -51,9 +51,9 @@ const isExpanded = ref(props.expanded);
 
 const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-const tags = reactive<Array<TagCloudResponseItem>>([]);
+const tags = shallowRef<Array<TagCloudResponseItem>>([]);
 
-const hasTags = computed(() => tags.length > 0);
+const hasTags = computed(() => tags.value.length > 0);
 
 const onRefresh = () => {
   if (!state.ajaxRunning) {
@@ -61,8 +61,7 @@ const onRefresh = () => {
     state.ajaxRunning = true;
     api.tag.getCloud()
       .then((successResponse: TagCloudResponse) => {
-        tags.length = 0;
-        tags.push(...successResponse.data.tags);
+        tags.value = successResponse.data.tags;
       })
       .catch((errorResponse) => {
         state.ajaxErrors = true;
