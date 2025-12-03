@@ -32,9 +32,11 @@ class DocumentSearchFilter
     private function getTagsFilterFromParams(array $params): array
     {
         return (
-            array_key_exists("tags", $params)
-            && is_array($params["tags"])
-            ? array_filter($params["tags"], is_string(...))
+            array_key_exists("filter", $params) &&
+            is_array($params["filter"]) &&
+            array_key_exists("tags", $params["filter"])
+            && is_array($params["filter"]["tags"])
+            ? array_filter($params["filter"]["tags"], is_string(...))
             : []
         );
     }
