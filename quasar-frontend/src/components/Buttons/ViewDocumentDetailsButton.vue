@@ -3,7 +3,7 @@
     :clickable="count > 0 && !disable" @click.stop.prevent="onClick">
     <q-avatar class="theme-default-q-avatar" :class="{ 'text-white bg-blue-6': count > 0 }">{{ count }}</q-avatar>
     {{ t(label, { count: count }) }}
-    <DesktopToolTip v-if="toolTip && count > 0">{{ t(toolTip) }}</DesktopToolTip>
+    <DesktopToolTip v-if="localStorageShowToolTips && toolTip && count > 0">{{ t(toolTip) }}</DesktopToolTip>
   </q-chip>
 </template>
 
@@ -11,6 +11,7 @@
 import { useI18n } from "vue-i18n";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
+import { showToolTips as localStorageShowToolTips } from "src/composables/localStorage";
 
 const { t } = useI18n();
 
