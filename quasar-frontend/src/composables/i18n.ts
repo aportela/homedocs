@@ -2,7 +2,9 @@ import { Lang } from "quasar";
 import { default as messages } from "src/i18n";
 import { locale as localStorageLocale } from "./localStorage";
 import { DEFAULT_LOCALE } from 'src/constants';
+// @ts-expect-error: missing TypeScript type definitions
 import { default as enUS_Quasar } from "../../node_modules/quasar/lang/en-US";
+// @ts-expect-error: missing TypeScript type definitions
 import { default as esES_Quasar } from "../../node_modules/quasar/lang/es";
 
 const availableSystemLocales: string[] = Object.keys(messages);
