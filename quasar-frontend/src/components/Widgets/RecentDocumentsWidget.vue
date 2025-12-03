@@ -3,10 +3,12 @@
     :on-header-icon-click="onRefresh" :loading="state.ajaxRunning" :error="state.ajaxErrors" :expanded="isExpanded"
     @expand="isExpanded = true" @collapse="isExpanded = false">
     <template v-slot:header-extra>
-      <q-chip square size="sm" color="grey-7" text-color="white">{{ t("Total document count", {
-        count:
-          recentDocuments.length
-      }) }}</q-chip>
+      <q-chip square size="sm" class="theme-q-chip-highlight" v-show="recentDocuments.length > 0">{{
+        t("Total document count", {
+          count:
+            recentDocuments.length
+        })
+        }}</q-chip>
     </template>
     <template v-slot:content>
       <q-list v-if="state.ajaxRunning">

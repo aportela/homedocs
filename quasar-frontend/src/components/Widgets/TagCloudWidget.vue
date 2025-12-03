@@ -3,7 +3,7 @@
     :on-header-icon-click="onRefresh" :loading="state.ajaxRunning" :error="state.ajaxErrors" :expanded="isExpanded"
     @expand="isExpanded = true" @collapse="isExpanded = false">
     <template v-slot:header-extra>
-      <q-chip square size="sm" color="grey-7" text-color="white">{{ t("Total tags", {
+      <q-chip square size="sm" class="theme-q-chip-highlight" v-show="tags.length > 0">{{ t("Total tags", {
         count:
           tags.length
       }) }}</q-chip>
