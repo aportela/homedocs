@@ -1,7 +1,7 @@
 <template>
   <div class="row q-col-gutter-xs">
     <div class="col">
-      <q-select class="q-mb-md" dense options-dense outlined :clearable="dateFilter.currentType !== 0"
+      <q-select dense options-dense outlined :clearable="dateFilter.currentType !== 0"
         v-model="currentFilterTypeSelectorModel" :options="dateFilterTypeOptions" :label="label" :disable="disable">
         <template v-slot:prepend>
           <slot name="prepend">
