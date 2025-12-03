@@ -53,7 +53,7 @@ const index = availableLocales.findIndex((l) => l.value === i18NStore.currentLoc
 
 const selectedLocale = ref(availableLocales[index >= 0 ? index : 0]!);
 
-function onSelectLocale(newLocale: string) {
+const onSelectLocale = (newLocale: string) => {
   setQuasarLanguage(newLocale);
   if (i18NStore.setLocale(newLocale)) {
     i18nInstanceCurrentLocale.value = i18NStore.currentLocale;
@@ -62,5 +62,5 @@ function onSelectLocale(newLocale: string) {
   } else {
     console.error("Invalid locale", newLocale)
   }
-}
+};
 </script>
