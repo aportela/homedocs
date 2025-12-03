@@ -238,11 +238,21 @@ class DateFilterClass implements DateFilter {
     return (this.state.hasFixed);
   };
 
+  recalcDates() {
+    this.onRecalcDates();
+    this.onRecalcTimestamps();
+  };
+
+  recalcTimestamps() {
+    this.onRecalcTimestamps();
+  };
+
   setType(type: SelectorOptionTypeValue) {
     this.currentType = type;
     this.state.hasFrom = [3, 4, 5, 6, 8, 10].includes(type);
     this.state.hasTo = [3, 4, 5, 6, 9, 10].includes(type);
     this.state.hasFixed = [1, 2, 7].includes(type);
+    this.state.hasValue = this.state.hasFrom || this.state.hasTo || this.state.hasFixed;
     this.state.denyChanges = [1, 2, 3, 4, 5, 6].includes(type);
     this.onRecalcDates();
     this.onRecalcTimestamps();
