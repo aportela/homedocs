@@ -34,8 +34,24 @@
             <q-item-label caption>
               {{ t("Uploaded on: ") }}{{ attachment.createdAt.dateTime }} ({{ attachment.createdAt.timeAgo }})
             </q-item-label>
+            <div v-if="screen.lt.xl">
+              <q-chip size="md" square class="theme-default-q-chip shadow-1 full-width text-center"
+                :class="{ 'cursor-not-allowed': isDisabled }" :clickable="!isDisabled"
+                @click.stop.prevent="onRemoveAttachmentAtIndex(attachmentIndex)">
+                <q-avatar class="theme-default-q-avatar text-white bg-blue-6" icon="delete" />
+                {{ t("Remove") }}
+              </q-chip>
+              <q-chip size="md" square class="theme-default-q-chip shadow-1 full-width"
+                v-if="allowPreview(attachment.name)"
+                :class="{ 'cursor-not-allowed': isDisabled || !allowPreview(attachment.name) }"
+                :clickable="!isDisabled && allowPreview(attachment.name)"
+                @click.stop.prevent="onPreviewAttachment(attachmentIndex)">
+                <q-avatar class="theme-default-q-avatar text-white bg-blue-6" icon="preview" />
+                {{ t("Preview") }}
+              </q-chip>
+            </div>
           </q-item-section>
-          <q-item-section side middle class="q-mr-sm q-item-section-attachment-actions">
+          <q-item-section side middle class="q-mr-sm q-item-section-attachment-actions" v-if="!screen.lt.xl">
             <q-chip size="md" square class="theme-default-q-chip shadow-1 full-width text-center"
               :class="{ 'cursor-not-allowed': isDisabled }" :clickable="!isDisabled"
               @click.stop.prevent="onRemoveAttachmentAtIndex(attachmentIndex)">
@@ -66,7 +82,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
-import { format } from "quasar";
+import { format, useQuasar } from "quasar";
 
 import { bgDownload } from "src/composables/axios";
 import { bus } from "src/composables/bus";
@@ -92,6 +108,8 @@ interface DocumentDetailsAttachmentsProps {
 const props = withDefaults(defineProps<DocumentDetailsAttachmentsProps>(), {
   disable: false
 });
+
+const { screen } = useQuasar();
 
 const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
