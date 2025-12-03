@@ -12,8 +12,8 @@
   <q-select v-else ref="selectRef" :label="t(label)" v-model="tags" :dense="dense" :options-dense="dense" outlined
     use-input use-chips multiple hide-dropdown-icon :options="filteredTags" input-debounce="0"
     new-value-mode="add-unique" :disable="disabled || state.ajaxRunning || state.ajaxErrors"
-    :loading="state.ajaxRunning" :error="state.ajaxErrors" :error-message="t('Error loading available tags')"
-    @filter="onFilterTags" @add="onAddTag">
+    :loading="state.ajaxRunning" :error="state.ajaxErrors || invalidTagFormat" :error-message="t(errorMessage)"
+    @filter="onFilterTags" @add="onAddTag" @new-value="onNewValue">
     <template v-slot:prepend>
       <slot name="prepend">
         <q-icon name="tag" />
@@ -86,18 +86,34 @@ const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 const availableTags = reactive<Array<string>>([]);
 const filteredTags = reactive<Array<string>>([]);
 
-function onFilterTags(inputValue: string, doneFn: (callbackFn: () => void, afterFn?: (ref: QSelect) => void) => void): void {
+const invalidTagFormat = ref<boolean>(false);
+
+const errorMessage = computed(() => invalidTagFormat.value ? "Only lowercase letters, numbers and hyphens are allowed in tags" : "Error loading available tags");
+
+const onFilterTags = (inputValue: string, doneFn: (callbackFn: () => void, afterFn?: (ref: QSelect) => void) => void): void => {
+  const regex = /^[0-9a-z-]*$/;
+
+  invalidTagFormat.value = inputValue.length > 0 && !regex.test(inputValue);
+
   const filtered = inputValue === ''
     ? availableTags
     : availableTags.filter(tag => tag.toLowerCase().includes(inputValue.toLowerCase()));
 
   doneFn(() => {
     filteredTags.length = 0;
-    filteredTags.push(...filtered);
+    if (inputValue.length > 0 && !invalidTagFormat.value) {
+      filteredTags.push(...filtered);
+    }
   });
-}
+};
 
-function onRefresh() {
+const onNewValue = (value: string, done: (value?: string) => void): void => {
+  if (!invalidTagFormat.value) {
+    done(value);
+  }
+};
+
+const onRefresh = () => {
   if (!state.ajaxRunning) {
     Object.assign(state, defaultAjaxState);
     state.ajaxRunning = true;
@@ -127,37 +143,37 @@ function onRefresh() {
         state.ajaxRunning = false;
       });
   }
-}
+};
 
-function onAddTag(): void {
+const onAddTag = (): void => {
   selectRef.value?.hidePopup()
   selectRef.value?.reset();
   selectRef.value?.updateInputValue("");
-}
+};
 
-function removeTagAtIndex(index: number) {
+const removeTagAtIndex = (index: number) => {
   tags.value?.splice(index, 1);
-}
+};
 
-function focus() {
+const focus = () => {
   nextTick()
     .then(() => {
       selectRef.value?.focus()
     }).catch((e) => {
       console.error(e);
     });
-}
+};
 
 defineExpose({
   focus
 });
 
-function onToggleReadOnly() {
+const onToggleReadOnly = () => {
   readOnly.value = !readOnly.value;
   if (!readOnly.value) {
     focus();
   }
-}
+};
 
 onMounted(() => {
   onRefresh();

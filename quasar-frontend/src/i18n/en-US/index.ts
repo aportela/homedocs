@@ -383,6 +383,9 @@ export default {
   "Only display this progress window when uploading failed":
     "Only display this progress window when uploading failed",
 
+  "Only lowercase letters, numbers and hyphens are allowed in tags":
+    "Only lowercase letters, numbers and hyphens are allowed in tags",
+
   "Oooops":
     "Oooops",
 

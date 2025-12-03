@@ -383,6 +383,9 @@ export default {
   "Only display this progress window when uploading failed":
     "Mostrar unicamente este diálogo cuando haya errores al subir archivos",
 
+  "Only lowercase letters, numbers and hyphens are allowed in tags":
+    "Sólo se permiten letras minúsculas, números y guiones en las etiquetas",
+
   "Oooops":
     "¡Ups!",
 
