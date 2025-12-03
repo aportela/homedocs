@@ -250,25 +250,15 @@ const resultsWidgetRef = ref<typeof CustomExpansionWidget | null>(null);
 // some routes ignore previous store saved values (ex: browsing by tag from Tag cloud widget, or click on profile activity heatmap widget) and use custom fixed values
 const usePreviousStoreValues = computed(() => route.name === 'advancedSearch');
 
-const store = useAdvancedSearchData();
-if (!usePreviousStoreValues.value) {
-  store.reset();
-
-  if (route.params.tag !== undefined && typeof route.params.tag === "string") {
-    store.filter.tags = [route.params.tag];
-  }
-}
-
 const results = shallowRef<Array<SearchDocumentItemClass>>([]);
 
-// on screens less than xl show compacted table (one col with all fields grouped)
+// on screens less than xl (width 1920px / fullhd) show compacted table (one col with all fields grouped per item)
 const showCompactedTable = computed(() => screen.lt.xl);
 
 const hasResults = computed(() => results.value.length > 0);
 
 const showErrorBanner = computed(() => !state.ajaxRunning && state.ajaxErrors);
 const showNoResultsBanner = computed(() => !state.ajaxRunning && searchLaunched.value && !hasResults.value);
-
 
 const hasCreationDateRouteParamsFilter = computed(() => route.params.fixedCreationDate !== undefined);
 const hasLastUpdateRouteParamsFilter = computed(() => route.params.fixedLastUpdate !== undefined);
@@ -304,6 +294,30 @@ const totalSearchConditions = computed(() => {
   }
   return (total);
 });
+
+const store = useAdvancedSearchData();
+
+if (!usePreviousStoreValues.value) {
+  store.reset();
+
+  if (route.params.tag !== undefined && typeof route.params.tag === "string") {
+    store.filter.tags = [route.params.tag];
+  }
+
+  if (hasCreationDateRouteParamsFilter.value && typeof route.params.fixedCreationDate === "string") {
+    store.filter.dates.createdAt.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
+    store.filter.dates.createdAt.formattedDate.fixed = route.params.fixedCreationDate ? route.params.fixedCreationDate.replaceAll("-", "/") : null;
+    store.filter.dates.createdAt.setType(7); // fixed date
+  } else if (hasLastUpdateRouteParamsFilter.value && typeof route.params.fixedLastUpdate === "string") {
+    store.filter.dates.lastUpdateAt.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
+    store.filter.dates.lastUpdateAt.formattedDate.fixed = route.params.fixedLastUpdate ? route.params.fixedLastUpdate.replaceAll("-", "/") : null;
+    store.filter.dates.lastUpdateAt.setType(7); // fixed date
+  } else if (hasUpdatedOnRouteParamsFilter.value && typeof route.params.fixedUpdatedOn === "string") {
+    store.filter.dates.updatedAt.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
+    store.filter.dates.updatedAt.formattedDate.fixed = route.params.fixedUpdatedOn ? route.params.fixedUpdatedOn.replaceAll("-", "/") : null;
+    store.filter.dates.updatedAt.setType(7); // fixed date
+  }
+}
 
 const onPaginationChanged = (pageIndex: number) => {
   store.pager.currentPageIndex = pageIndex;
@@ -384,61 +398,6 @@ const onResetForm = () => {
 };
 
 onMounted(() => {
-  if (hasCreationDateRouteParamsFilter.value && typeof route.params.fixedCreationDate === "string") {
-    store.filter.dates.createdAt.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
-    store.filter.dates.createdAt.formattedDate.fixed = route.params.fixedCreationDate ? route.params.fixedCreationDate.replaceAll("-", "/") : null;
-    store.filter.dates.createdAt.setType(7); // fixed date
-  } else if (hasLastUpdateRouteParamsFilter.value && typeof route.params.fixedLastUpdate === "string") {
-    store.filter.dates.lastUpdateAt.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
-    store.filter.dates.lastUpdateAt.formattedDate.fixed = route.params.fixedLastUpdate ? route.params.fixedLastUpdate.replaceAll("-", "/") : null;
-    store.filter.dates.lastUpdateAt.setType(7); // fixed date
-  } else if (hasUpdatedOnRouteParamsFilter.value && typeof route.params.fixedUpdatedOn === "string") {
-    store.filter.dates.updatedAt.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
-    store.filter.dates.updatedAt.formattedDate.fixed = route.params.fixedUpdatedOn ? route.params.fixedUpdatedOn.replaceAll("-", "/") : null;
-    store.filter.dates.updatedAt.setType(7); // fixed date
-  } else if (usePreviousStoreValues.value) {
-    /*
-    store.filter.text.title = store.currentFilter.text.title;
-    store.filter.text.description = store.currentFilter.text.description;
-    store.filter.text.notesBody = store.currentFilter.text.notesBody;
-    store.filter.text.attachmentsFilename = store.currentFilter.text.attachmentsFilename;
-    store.filter.tags = store.currentFilter.tags;
-    */
-    // creation date
-    /*
-    store.filter.dates.createdAt.skipClearOnRecalc.fixed = true;
-    store.filter.dates.createdAt.formattedDate.fixed = store.currentFilter.dates.createdAt.formattedDate.fixed;
-    store.filter.dates.createdAt.skipClearOnRecalc.from = true;
-    store.filter.dates.createdAt.formattedDate.from = store.currentFilter.dates.createdAt.formattedDate.from;
-    store.filter.dates.createdAt.skipClearOnRecalc.to = true;
-    store.filter.dates.createdAt.formattedDate.to = store.currentFilter.dates.createdAt.formattedDate.to;
-    store.filter.dates.createdAt.filterType = store.currentFilter.dates.createdAt.filterType;
-    */
-    // last update
-    /*
-    store.filter.dates.lastUpdateAt.skipClearOnRecalc.fixed = true;
-    store.filter.dates.lastUpdateAt.formattedDate.fixed = store.currentFilter.dates.lastUpdateAt.formattedDate.fixed;
-    store.filter.dates.lastUpdateAt.skipClearOnRecalc.from = true;
-    store.filter.dates.lastUpdateAt.formattedDate.from = store.currentFilter.dates.lastUpdateAt.formattedDate.from;
-    store.filter.dates.lastUpdateAt.skipClearOnRecalc.to = true;
-    store.filter.dates.lastUpdateAt.formattedDate.to = store.currentFilter.dates.lastUpdateAt.formattedDate.to;
-    store.filter.dates.lastUpdateAt.filterType = store.currentFilter.dates.lastUpdateAt.filterType;
-    */
-    // updated on
-    /*
-    store.filter.dates.updatedAt.skipClearOnRecalc.fixed = true;
-    store.filter.dates.updatedAt.formattedDate.fixed = store.currentFilter.dates.updatedAt.formattedDate.fixed;
-    store.filter.dates.updatedAt.skipClearOnRecalc.from = true;
-    store.filter.dates.updatedAt.formattedDate.from = store.currentFilter.dates.updatedAt.formattedDate.from;
-    store.filter.dates.updatedAt.skipClearOnRecalc.to = true;
-    store.filter.dates.updatedAt.formattedDate.to = store.currentFilter.dates.updatedAt.formattedDate.to;
-    store.filter.dates.updatedAt.filterType = store.currentFilter.dates.updatedAt.filterType;
-    */
-    /*
-     sort.field = store.currentSort.field;
-     sort.order = store.currentSort.order;
-     */
-  }
   if (route.meta.autoLaunchSearch === true) {
     nextTick()
       .then(() => {
@@ -460,15 +419,6 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="css" scoped>
-th:first-child_ {
-  height: 100%;
-  padding: 0px !important;
-}
-
-td:first-child_ {
-  padding: 0px !important;
-}
-
 .q-chip-8em {
   width: 8em;
 }
