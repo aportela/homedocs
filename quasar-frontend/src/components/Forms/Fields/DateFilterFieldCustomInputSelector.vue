@@ -107,7 +107,6 @@ const dateFilter = computed({
     return props.modelValue;
   },
   set(value) {
-    console.log("set", value);
     emit('update:modelValue', value);
   }
 });
@@ -175,14 +174,17 @@ watch(dateFilter.value, (val: DateFilterClass) => {
 
 */
 const hideFromDatePopupProxy = () => {
+  dateFilter.value.recalcTimestamps();
   qInputFromDatePopupProfyRef.value?.hide();
 }
 
 const hideToDatePopupProxy = () => {
+  dateFilter.value.recalcTimestamps();
   qInputToDatePopupProfyRef.value?.hide();
 }
 
 const hideFixedDatePopupProxy = () => {
+  dateFilter.value.recalcTimestamps();
   qInputFixedDatePopupProfyRef.value?.hide();
 }
 
