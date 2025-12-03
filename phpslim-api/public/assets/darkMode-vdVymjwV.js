@@ -1,1 +1,0 @@
-import{a0 as a,au as e}from"./index-DaQ8xmOW.js";import{h as i}from"./localStorage-C56SKG55.js";const s=i.get();s===!0?e.set(!0):s===!1?e.set(!1):e.set("auto");const c=a("darkModeStore",{state:()=>({active:e.isActive}),getters:{isActive(t){return t.active}},actions:{set(t){this.active=t,e.set(this.active),i.set(this.active)},toggle(){this.set(!this.active)}}});export{c as u};

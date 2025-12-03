@@ -1,0 +1,1 @@
+import{d as o}from"./index-BliOkcHh.js";import{a as t,s,m as r}from"./i18n-C9ehMPRD.js";import{c}from"./vue-i18n.runtime-2HrbWCRO.js";import"./localStorage-DcFk6gN0.js";const a=t();s(a);const n=c({locale:a,globalInjection:!0,messages:r}),f=o(({app:e})=>{e.use(n)});export{f as default};
