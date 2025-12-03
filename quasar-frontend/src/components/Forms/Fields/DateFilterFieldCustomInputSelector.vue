@@ -19,7 +19,7 @@
             <q-popup-proxy cover transition-show="scale" transition-hide="scale" ref="qInputFromDatePopupProfyRef">
               <q-date v-model="dateFilter.formattedDate.from" minimal @update:model-value="hideFromDatePopupProxy">
                 <div class="row items-center justify-end">
-                  <q-btn v-close-popup label="Close" color="primary" flat />
+                  <q-btn v-close-popup :label="t('Close')" no-caps color="primary" flat />
                 </div>
               </q-date>
             </q-popup-proxy>
@@ -36,7 +36,7 @@
             <q-popup-proxy cover transition-show="scale" transition-hide="scale" ref="qInputToDatePopupProfyRef">
               <q-date v-model="dateFilter.formattedDate.to" minimal @update:model-value="hideToDatePopupProxy">
                 <div class="row items-center justify-end">
-                  <q-btn v-close-popup label="Close" color="primary" flat />
+                  <q-btn v-close-popup :label="t('Close')" no-caps color="primary" flat />
                 </div>
               </q-date>
             </q-popup-proxy>
@@ -53,7 +53,7 @@
             <q-popup-proxy cover transition-show="scale" transition-hide="scale" ref="qInputFixedDatePopupProfyRef">
               <q-date v-model="dateFilter.formattedDate.fixed" minimal @update:model-value="hideFixedDatePopupProxy">
                 <div class="row items-center justify-end">
-                  <q-btn v-close-popup label="Close" color="primary" flat />
+                  <q-btn v-close-popup :label="t('Close')" no-caps color="primary" flat />
                 </div>
               </q-date>
             </q-popup-proxy>
