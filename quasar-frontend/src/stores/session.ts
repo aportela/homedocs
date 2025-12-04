@@ -1,4 +1,4 @@
-import { defineStore } from "pinia";
+import { defineStore, acceptHMRUpdate } from "pinia";
 
 interface State {
   tokens: {
@@ -21,11 +21,15 @@ export const useSessionStore = defineStore("session", {
     },
   },
   actions: {
-    setAccessToken(jwt: string): void {
-      this.tokens.access = jwt;
+    setAccessToken(token: string): void {
+      this.tokens.access = token;
     },
     removeAccessToken(): void {
       this.tokens.access = null;
     },
   },
 });
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useSessionStore, import.meta.hot));
+}

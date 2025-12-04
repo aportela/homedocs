@@ -1,4 +1,4 @@
-import { defineStore } from "pinia";
+import { defineStore, acceptHMRUpdate } from "pinia";
 
 import { type EnvironmentType } from "src/types/common";
 
@@ -37,3 +37,7 @@ export const useServerEnvironmentStore = defineStore("serverEnvironment", {
     },
   },
 });
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useServerEnvironmentStore, import.meta.hot));
+}
