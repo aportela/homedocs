@@ -179,7 +179,6 @@ return function (\Slim\App $app): void {
                                 "tokenType" => "Bearer",
                             ]
                         );
-                        // TODO: send token via cookies ?
                         $response->getBody()->write($payload);
                         return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                     } else {
