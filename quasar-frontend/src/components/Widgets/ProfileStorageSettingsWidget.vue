@@ -19,11 +19,14 @@
 import { ref } from "vue";
 import { useI18n } from "vue-i18n";
 
-import { alwaysOpenUploadDialog as localStorageAlwaysOpenUploadDialog, showToolTips as localStorageShowToolTips, dateFormat as localStorageDateFormat, dateTimeFormat as localStorageDateTimeFormat } from "src/composables/localStorage";
+import { useSessionStore } from "src/stores/session";
+import { alwaysOpenUploadDialog as localStorageAlwaysOpenUploadDialog, dateFormat as localStorageDateFormat, dateTimeFormat as localStorageDateTimeFormat } from "src/composables/localStorage";
 
 import { default as BaseWidget } from "src/components/Widgets/BaseWidget.vue";
 
 const { t } = useI18n();
+
+const sessionStore = useSessionStore();
 
 const dateFormatModel = ref<string>(localStorageDateFormat.get());
 
@@ -51,9 +54,9 @@ const saveVisibilityCheck = (val: boolean) => {
   localStorageAlwaysOpenUploadDialog.set(val);
 };
 
-const toolTipsCheckModel = ref<boolean>(localStorageShowToolTips.get());
+const toolTipsCheckModel = ref<boolean>(sessionStore.toolTipsEnabled);
 
 const saveToolTipsCheck = (val: boolean) => {
-  localStorageShowToolTips.set(val);
+  sessionStore.toggleToolTips(val);
 };
 </script>

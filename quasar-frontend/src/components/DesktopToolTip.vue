@@ -1,5 +1,5 @@
 <template>
-  <q-tooltip v-if="isDesktop && visibleToolTips" :delay="delay" :anchor="anchor" :self="self">
+  <q-tooltip v-if="isDesktop && sessionStore.toolTipsEnabled" :delay="delay" :anchor="anchor" :self="self">
     <slot></slot>
   </q-tooltip>
 </template>
@@ -8,13 +8,13 @@
 import { computed } from "vue";
 import { useQuasar } from "quasar";
 
-import { showToolTips as localStorageShowToolTips } from "src/composables/localStorage";
+import { useSessionStore } from "src/stores/session";
 
 const $q = useQuasar()
 
 const isDesktop = computed(() => $q.platform.is.desktop);
 
-const visibleToolTips = localStorageShowToolTips.get();
+const sessionStore = useSessionStore();
 
 type TooltipAnchor =
   | 'top left' | 'top middle' | 'top right' | 'top start' | 'top end'
