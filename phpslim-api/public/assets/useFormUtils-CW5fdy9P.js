@@ -1,0 +1,1 @@
+import{u as i}from"./vue-i18n.runtime-CD4rYiPD.js";import{g as o}from"./index-DWyQQ7Hn.js";function l(){const{t:r}=i(),e=o(()=>r("Field is required"));return{requiredFieldRule:u=>!!u||e.value,fieldIsRequiredLabel:e}}export{l as u};

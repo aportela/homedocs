@@ -1,1 +1,0 @@
-import{a1 as o}from"./index-BliOkcHh.js";import{l as a}from"./localStorage-DcFk6gN0.js";import{a as r,g as l}from"./i18n-C9ehMPRD.js";const i=o("i18nStore",{state:()=>({locale:r()}),getters:{currentLocale(e){return e.locale}},actions:{setLocale(e){const t=l(e);return t!==null?(this.locale=t,a.set(this.locale),!0):!1}}});export{i as u};
