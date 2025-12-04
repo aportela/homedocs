@@ -8,7 +8,6 @@ const serverEnvironment = useServerEnvironmentStore();
 
 export default boot(async () => {
   try {
-    // on useAxios composable we declare a response interceptor that assign serverEnvironment (if found) for every response
     const response: getServerEnvironmentResponseData = await api.common.getServerEnvironment();
     serverEnvironment.set(
       response.data.serverEnvironment.allowSignUp,
