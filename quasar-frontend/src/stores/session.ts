@@ -4,7 +4,7 @@ import { showToolTips as localStorageShowToolTips } from "src/composables/localS
 interface State {
   tokens: {
     access: string | null;
-  }
+  };
   toolTips: boolean;
 };
 
