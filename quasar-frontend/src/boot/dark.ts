@@ -1,6 +1,6 @@
-import { boot } from "quasar/wrappers";
+import { defineBoot } from "#q-app/wrappers";
 import { useDarkModeStore } from "src/stores/darkMode";
 
-export default boot(() => {
+export default defineBoot(() => {
   useDarkModeStore();
 });

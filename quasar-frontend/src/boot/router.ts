@@ -1,12 +1,11 @@
-import { boot } from "quasar/wrappers";
-
+import { defineBoot } from "#q-app/wrappers";
 import { type GetNewAccessTokenResponse as GetNewAccessTokenResponseInterface } from "src/types/api-responses";
 import { useSessionStore } from "src/stores/session";
 import { api } from "src/composables/api";
 
 const sessionStore = useSessionStore();
 
-export default boot(async ({ router }) => {
+export default defineBoot(async ({ router }) => {
 
   if (!sessionStore.hasAccessToken) {
     try {

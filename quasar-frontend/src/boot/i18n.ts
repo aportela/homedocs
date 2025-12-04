@@ -1,4 +1,4 @@
-import { defineBoot } from '#q-app/wrappers';
+import { defineBoot } from "#q-app/wrappers";
 import { createI18n } from "vue-i18n";
 import { default as messages } from "src/i18n";
 import { autodetectLocale, setQuasarLanguage } from "src/composables/i18n";

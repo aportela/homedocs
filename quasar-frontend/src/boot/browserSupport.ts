@@ -1,8 +1,8 @@
-import { boot } from "quasar/wrappers";
+import { defineBoot } from "#q-app/wrappers";
 import { browserAllowPDFPreview as localStorageBrowserAllowPDFPreview } from "src/composables/localStorage";
 import { isPdfSupportedInIframe } from "src/composables/common";
 
-export default boot(async () => {
+export default defineBoot(async () => {
   if (localStorageBrowserAllowPDFPreview.get() === null) {
     try {
       const supported = await isPdfSupportedInIframe();
