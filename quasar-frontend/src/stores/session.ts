@@ -1,7 +1,5 @@
 import { defineStore } from "pinia";
 
-import { accessJWT as localStorageAccessJWT } from "src/composables/localStorage";
-
 interface State {
   tokens: {
     access: string | null;
@@ -11,7 +9,7 @@ interface State {
 export const useSessionStore = defineStore("session", {
   state: (): State => ({
     tokens: {
-      access: localStorageAccessJWT.get() ?? null,
+      access: null,
     }
   }),
   getters: {
@@ -25,11 +23,9 @@ export const useSessionStore = defineStore("session", {
   actions: {
     setAccessToken(jwt: string): void {
       this.tokens.access = jwt;
-      localStorageAccessJWT.set(this.tokens.access);
     },
     removeAccessToken(): void {
       this.tokens.access = null;
-      localStorageAccessJWT.remove();
     },
   },
 });
