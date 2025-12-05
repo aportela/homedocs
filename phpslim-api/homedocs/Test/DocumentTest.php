@@ -155,7 +155,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
         $results = \HomeDocs\Document::search(
             self::$dbh,
             new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16),
-            new \HomeDocs\DocumentSearchFilter(["filter" => []]),
+            new \HomeDocs\DocumentSearchFilter(["filter" => []], \HomeDocs\UserSession::getUserId() ?? ""),
             "createdAtTimestamp",
             \aportela\DatabaseBrowserWrapper\Order::ASC
         );
@@ -169,7 +169,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
         $results = \HomeDocs\Document::search(
             self::$dbh,
             new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16),
-            new \HomeDocs\DocumentSearchFilter(["filter" => ["text" => ["title" => "condition"]]]),
+            new \HomeDocs\DocumentSearchFilter(["filter" => ["text" => ["title" => "condition"]]], \HomeDocs\UserSession::getUserId() ?? ""),
             "createdAtTimestamp",
             \aportela\DatabaseBrowserWrapper\Order::DESC
         );
@@ -183,7 +183,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
         $results = \HomeDocs\Document::search(
             self::$dbh,
             new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16),
-            new \HomeDocs\DocumentSearchFilter(["filter" => ["text" => ["description" => "condition"]]]),
+            new \HomeDocs\DocumentSearchFilter(["filter" => ["text" => ["description" => "condition"]]], \HomeDocs\UserSession::getUserId() ?? ""),
             "createdAtTimestamp",
             \aportela\DatabaseBrowserWrapper\Order::ASC
         );
@@ -197,7 +197,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
         $results = \HomeDocs\Document::search(
             self::$dbh,
             new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16),
-            new \HomeDocs\DocumentSearchFilter(["filter" => ["text" => ["notesBody" => "condition"]]]),
+            new \HomeDocs\DocumentSearchFilter(["filter" => ["text" => ["notesBody" => "condition"]]], \HomeDocs\UserSession::getUserId() ?? ""),
             "createdAtTimestamp",
             \aportela\DatabaseBrowserWrapper\Order::ASC
         );
@@ -211,7 +211,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
         $results = \HomeDocs\Document::search(
             self::$dbh,
             new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16),
-            new \HomeDocs\DocumentSearchFilter(["filter" => ["text" => ["attachmentsFilename" => "condition"]]]),
+            new \HomeDocs\DocumentSearchFilter(["filter" => ["text" => ["attachmentsFilename" => "condition"]]], \HomeDocs\UserSession::getUserId() ?? ""),
             "createdAtTimestamp",
             \aportela\DatabaseBrowserWrapper\Order::DESC
         );
@@ -225,7 +225,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
         $results = \HomeDocs\Document::search(
             self::$dbh,
             new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16),
-            new \HomeDocs\DocumentSearchFilter(["filter" => ["tags" => ["tag1", "tag2"]]]),
+            new \HomeDocs\DocumentSearchFilter(["filter" => ["tags" => ["tag1", "tag2"]]], \HomeDocs\UserSession::getUserId() ?? ""),
             "createdAtTimestamp",
             \aportela\DatabaseBrowserWrapper\Order::DESC
         );
@@ -239,7 +239,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
         $results = \HomeDocs\Document::search(
             self::$dbh,
             new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16),
-            new \HomeDocs\DocumentSearchFilter(["filter" => ["dates" => ["createdAt" => ["timestamps" => ["from" => 1690236000]]]]]),
+            new \HomeDocs\DocumentSearchFilter(["filter" => ["dates" => ["createdAt" => ["timestamps" => ["from" => 1690236000]]]]], \HomeDocs\UserSession::getUserId() ?? ""),
             "createdAtTimestamp",
             \aportela\DatabaseBrowserWrapper\Order::ASC
         );
@@ -253,7 +253,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
         $results = \HomeDocs\Document::search(
             self::$dbh,
             new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16),
-            new \HomeDocs\DocumentSearchFilter(["filter" => ["dates" => ["createdAt" => ["timestamps" => ["to" => 1690408799]]]]]),
+            new \HomeDocs\DocumentSearchFilter(["filter" => ["dates" => ["createdAt" => ["timestamps" => ["to" => 1690408799]]]]], \HomeDocs\UserSession::getUserId() ?? ""),
             "createdAtTimestamp",
             \aportela\DatabaseBrowserWrapper\Order::DESC
         );
@@ -267,7 +267,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
         $results = \HomeDocs\Document::search(
             self::$dbh,
             new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16),
-            new \HomeDocs\DocumentSearchFilter(["filter" => ["dates" => ["lastUpdateAt" => ["timestamps" => ["from" => 1690236000]]]]]),
+            new \HomeDocs\DocumentSearchFilter(["filter" => ["dates" => ["lastUpdateAt" => ["timestamps" => ["from" => 1690236000]]]]], \HomeDocs\UserSession::getUserId() ?? ""),
             "lastUpdateTimestamp",
             \aportela\DatabaseBrowserWrapper\Order::ASC
         );
@@ -281,7 +281,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
         $results = \HomeDocs\Document::search(
             self::$dbh,
             new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16),
-            new \HomeDocs\DocumentSearchFilter(["filter" => ["dates" => ["lastUpdateAt" => ["timestamps" => ["to" => 1690408799]]]]]),
+            new \HomeDocs\DocumentSearchFilter(["filter" => ["dates" => ["lastUpdateAt" => ["timestamps" => ["to" => 1690408799]]]]], \HomeDocs\UserSession::getUserId() ?? ""),
             "lastUpdateTimestamp",
             \aportela\DatabaseBrowserWrapper\Order::DESC
         );
@@ -295,7 +295,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
         $results = \HomeDocs\Document::search(
             self::$dbh,
             new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16),
-            new \HomeDocs\DocumentSearchFilter(["filter" => ["dates" => ["updatedAt" => ["timestamps" => ["from" => 1690236000]]]]]),
+            new \HomeDocs\DocumentSearchFilter(["filter" => ["dates" => ["updatedAt" => ["timestamps" => ["from" => 1690236000]]]]], \HomeDocs\UserSession::getUserId() ?? ""),
             "lastUpdateTimestamp",
             \aportela\DatabaseBrowserWrapper\Order::ASC
         );
@@ -309,7 +309,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
         $results = \HomeDocs\Document::search(
             self::$dbh,
             new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16),
-            new \HomeDocs\DocumentSearchFilter(["filter" => ["dates" => ["updatedAt" => ["timestamps" => ["to" => 1690408799]]]]]),
+            new \HomeDocs\DocumentSearchFilter(["filter" => ["dates" => ["updatedAt" => ["timestamps" => ["to" => 1690408799]]]]], \HomeDocs\UserSession::getUserId() ?? ""),
             "lastUpdateTimestamp",
             \aportela\DatabaseBrowserWrapper\Order::DESC
         );
@@ -320,7 +320,7 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
 
     public function testSearchRecent(): void
     {
-        $recentDocuments = \HomeDocs\Document::searchRecent(self::$dbh, 8);
+        $recentDocuments = \HomeDocs\Document::searchRecent(self::$dbh, \HomeDocs\UserSession::getUserId() ?? "", 8);
         $total = count($recentDocuments);
         $this->assertTrue($total <= 8);
     }

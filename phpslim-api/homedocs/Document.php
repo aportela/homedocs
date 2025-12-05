@@ -17,7 +17,7 @@ class Document
     /**
      * @return array<mixed>
      */
-    public static function searchRecent(\aportela\DatabaseWrapper\DB $db, int $count = 16): array
+    public static function searchRecent(\aportela\DatabaseWrapper\DB $db, string $currentUserId, int $count = 16): array
     {
         $results = $db->query(
             sprintf(
@@ -67,7 +67,7 @@ class Document
                         CAST(DOCUMENTS_LAST_HISTORY_OPERATION.max_ctime AS INT) AS updatedAtTimestamp,
                         COALESCE(DOCUMENTS_ATTACHMENTS.attachmentCount, 0) AS attachmentCount,
                         COALESCE(DOCUMENTS_NOTES.noteCount, 0) AS noteCount,
-                        DOCUMENTS_TAGS.tags
+                        COALESCE(DOCUMENTS_TAGS.tags, '') AS tags
                     FROM DOCUMENT
                     INNER JOIN DOCUMENT_HISTORY ON DOCUMENT_HISTORY.document_id = DOCUMENT.id AND DOCUMENT_HISTORY.operation_type = :history_operation_add AND DOCUMENT_HISTORY.cuid = :session_user_id
                     LEFT JOIN DOCUMENTS_ATTACHMENTS ON DOCUMENTS_ATTACHMENTS.document_id = DOCUMENT.id
@@ -82,7 +82,7 @@ class Document
             ),
             [
                 new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
-                new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId()),
+                new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", $currentUserId),
             ]
         );
         return (array_map(
@@ -101,9 +101,8 @@ class Document
 
                 if (property_exists($item, "tags") && is_string($item->tags)) {
                     $item->tags = $item->tags !== '' && $item->tags !== '0' ? explode(",", $item->tags) : [];
-                } else {
-                    $item->tags = [];
                 }
+
                 return ($item);
             },
             $results
@@ -826,7 +825,7 @@ class Document
         $params = [
             new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
             new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_update", \HomeDocs\DocumentHistoryOperation::OPERATION_UPDATE_DOCUMENT),
-            new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId()),
+            new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", $documentSearchFilter->currentUserId),
         ];
 
 

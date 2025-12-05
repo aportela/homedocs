@@ -342,6 +342,7 @@ return function (\Slim\App $app): void {
                         [
                             'documents' => \HomeDocs\Document::searchRecent(
                                 $dbh,
+                                \HomeDocs\UserSession::getUserId() ?? "",
                                 is_int($params["count"]) ? $params["count"] : \HomeDocs\Settings::DEFAULT_RESULTS_PAGE
                             ),
                         ]
@@ -361,7 +362,7 @@ return function (\Slim\App $app): void {
                             'results' => \HomeDocs\Document::search(
                                 $dbh,
                                 getPagerFromParams($params),
-                                new \HomeDocs\DocumentSearchFilter($params),
+                                new \HomeDocs\DocumentSearchFilter($params, \HomeDocs\UserSession::getUserId() ?? ""),
                                 getSortFieldFromParams($params),
                                 getSortOrderFromParams($params),
                                 getReturnFragmentsFlagFromParams($params),

@@ -18,7 +18,7 @@ class DocumentSearchFilter
     /**
      * @param array<mixed> $routeParams
      */
-    public function __construct(array $routeParams = [])
+    public function __construct(array $routeParams = [], public string $currentUserId = '')
     {
         $this->datesFilter = new \HomeDocs\DocumentSearchDatesFilter($routeParams);
         $this->tags = $this->getTagsFilterFromParams($routeParams);
@@ -32,9 +32,9 @@ class DocumentSearchFilter
     private function getTagsFilterFromParams(array $params): array
     {
         return (
-            array_key_exists("filter", $params) &&
-            is_array($params["filter"]) &&
-            array_key_exists("tags", $params["filter"])
+            array_key_exists("filter", $params)
+            && is_array($params["filter"])
+            && array_key_exists("tags", $params["filter"])
             && is_array($params["filter"]["tags"])
             ? array_filter($params["filter"]["tags"], is_string(...))
             : []
