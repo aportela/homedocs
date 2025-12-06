@@ -38,15 +38,7 @@ const createStorageEntry = <T extends StorageValue>(
 
 const locale = createStorageEntry<string | null>("locale", null);
 
-
-
-const searchDialogResultsPage = createStorageEntry<number>(
-  "searchDialogResultsPage",
-  8
-);
-
 export {
   createStorageEntry,
   locale,
-  searchDialogResultsPage,
 };

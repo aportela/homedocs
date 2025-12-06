@@ -103,9 +103,9 @@ import { QInput, QVirtualScroll } from "quasar";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 
+import { useSessionStore } from "src/stores/session";
 import { bus, onShowDocumentFiles, onShowDocumentNotes } from "src/composables/bus";
 import { api } from "src/composables/api";
-import { searchDialogResultsPage as localStorageSearchDialogResultsPage } from "src/composables/localStorage"
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 import { type SearchDocumentResponse as SearchDocumentResponseInterface, type SearchDocumentResponseItem as SearchDocumentResponseItemInterface } from "src/types/api-responses";
 import { SearchDocumentItemClass } from "src/types/search-document-item";
@@ -129,6 +129,7 @@ const props = defineProps<SearchDialogProps>();
 
 const router = useRouter();
 const currentRoute = useRoute();
+const sessionStore = useSessionStore();
 
 // if we are on document page, get current document id
 const currentDocumentId = ref(currentRoute.name == "document" ? currentRoute.params?.id || null : null);
@@ -176,7 +177,7 @@ const virtualListRef = ref<QVirtualScroll | null>(null);
 
 const pager = reactive<PagerInterface>({
   currentPageIndex: 1,
-  resultsPage: localStorageSearchDialogResultsPage.get(),
+  resultsPage: sessionStore.searchDialogResultsPage,
   totalResults: 0,
   totalPages: 0,
 });
@@ -184,7 +185,7 @@ const pager = reactive<PagerInterface>({
 const resultsPageOptions: number[] = [1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 64, 128];
 
 const onChangeResultsPage = (value: number) => {
-  localStorageSearchDialogResultsPage.set(value);
+  sessionStore.setSearchDialogResultsPage(value);
   onSearch(text.value);
 };
 
@@ -309,7 +310,7 @@ const onKeyDown = (evt: KeyboardEvent) => {
 };
 
 const onShow = () => {
-  pager.resultsPage = localStorageSearchDialogResultsPage.get();
+  pager.resultsPage = sessionStore.searchDialogResultsPage;
   pager.totalResults = 0;
   pager.totalPages = 0;
   // this is required here because this dialog v-model is controller from MainLayout.vue

@@ -18,14 +18,23 @@ const localStorageDateTimeFormat = createStorageEntry<string>(
   "YYYY/MM/DD HH:mm:ss"
 );
 
+const localStorageSearchDialogResultsPage = createStorageEntry<number>(
+  "searchDialogResultsPage",
+  8
+);
+
+
 interface State {
   tokens: {
     access: string | null;
   };
-  toolTips: boolean;
-  alwaysOpenUploadDialog: boolean;
-  dateFormat: string;
-  dateTimeFormat: string;
+  other: {
+    toolTips: boolean;
+    alwaysOpenUploadDialog: boolean;
+    dateFormat: string;
+    dateTimeFormat: string;
+    searchDialogResultsPage: number;
+  }
 };
 
 export const useSessionStore = defineStore("session", {
@@ -33,10 +42,13 @@ export const useSessionStore = defineStore("session", {
     tokens: {
       access: null,
     },
-    toolTips: localStorageShowToolTips.get(),
-    alwaysOpenUploadDialog: localStorageAlwaysOpenUploadDialog.get(),
-    dateFormat: localStorageDateFormat.get(),
-    dateTimeFormat: localStorageDateTimeFormat.get(),
+    other: {
+      toolTips: localStorageShowToolTips.get(),
+      alwaysOpenUploadDialog: localStorageAlwaysOpenUploadDialog.get(),
+      dateFormat: localStorageDateFormat.get(),
+      dateTimeFormat: localStorageDateTimeFormat.get(),
+      searchDialogResultsPage: localStorageSearchDialogResultsPage.get(),
+    },
   }),
   getters: {
     hasAccessToken(state): boolean {
@@ -46,16 +58,19 @@ export const useSessionStore = defineStore("session", {
       return state.tokens.access
     },
     toolTipsEnabled(state): boolean {
-      return (state.toolTips);
+      return (state.other.toolTips);
     },
     openUploadDialog(state): boolean {
-      return (state.alwaysOpenUploadDialog);
+      return (state.other.alwaysOpenUploadDialog);
     },
-    savedDateFormat(state): string | null {
-      return (state.dateFormat);
+    savedDateFormat(state): string {
+      return (state.other.dateFormat);
     },
-    savedDateTimeFormat(state): string | null {
-      return (state.dateTimeFormat);
+    savedDateTimeFormat(state): string {
+      return (state.other.dateTimeFormat);
+    },
+    searchDialogResultsPage(state): number {
+      return (state.other.searchDialogResultsPage);
     }
   },
   actions: {
@@ -66,29 +81,33 @@ export const useSessionStore = defineStore("session", {
       this.tokens.access = null;
     },
     toggleToolTips(enabled: boolean) {
-      this.toolTips = enabled;
-      localStorageShowToolTips.set(this.toolTips);
+      this.other.toolTips = enabled;
+      localStorageShowToolTips.set(this.other.toolTips);
     },
     setOpenUploadDialog(value: boolean) {
-      this.alwaysOpenUploadDialog = value;
-      localStorageAlwaysOpenUploadDialog.set(this.alwaysOpenUploadDialog);
+      this.other.alwaysOpenUploadDialog = value;
+      localStorageAlwaysOpenUploadDialog.set(this.other.alwaysOpenUploadDialog);
     },
     setDateFormat(value: string) {
-      this.dateFormat = value;
-      localStorageDateFormat.set(this.dateFormat);
+      this.other.dateFormat = value;
+      localStorageDateFormat.set(this.other.dateFormat);
     },
     removeDateFormat() {
-      this.dateFormat = "YYYY/MM/DD";
+      this.other.dateFormat = "YYYY/MM/DD";
       localStorageDateFormat.remove();
     },
     setDateTimeFormat(value: string) {
-      this.dateTimeFormat = value;
-      localStorageDateTimeFormat.set(this.dateTimeFormat);
+      this.other.dateTimeFormat = value;
+      localStorageDateTimeFormat.set(this.other.dateTimeFormat);
     },
     removeDateTimeFormat() {
-      this.dateTimeFormat = "YYYY/MM/DD HH:mm:ss";
+      this.other.dateTimeFormat = "YYYY/MM/DD HH:mm:ss";
       localStorageDateTimeFormat.remove();
     },
+    setSearchDialogResultsPage(value: number) {
+      this.other.searchDialogResultsPage = value;
+      localStorageSearchDialogResultsPage.set(this.other.searchDialogResultsPage);
+    }
   },
 });
 
