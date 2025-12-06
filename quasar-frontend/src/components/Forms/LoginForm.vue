@@ -8,10 +8,10 @@
       <slot name="slogan">
         <h4 class="q-mt-sm q-mb-md text-h4 text-weight-bolder">{{
           t(!!savedEmail ? "Glad to see you again!" : "Welcome aboard!")
-          }}</h4>
+        }}</h4>
         <div class="text-color-secondary">{{
           t(!!savedEmail ? "Let's get back to organizing." : "Let's start organizing.")
-          }}
+        }}
         </div>
       </slot>
     </q-card-section>
@@ -72,7 +72,7 @@ import { api } from "src/composables/api";
 import { useFormUtils } from "src/composables/useFormUtils";
 import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
 import { useSessionStore } from "src/stores/session";
-import { email as localStorageEmail } from "src/composables/localStorage";
+import { createStorageEntry } from "src/composables/localStorage";
 import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
 import { type AuthValidator as AuthValidatorInterface, defaultAuthValidator } from "src/types/auth-validator";
 import { type AuthFields as AuthFieldsInterface } from "src/types/auth-fields";
@@ -106,7 +106,8 @@ const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
 const validator = reactive<AuthValidatorInterface>({ ...defaultAuthValidator });
 
-const savedEmail = localStorageEmail.get();
+const lastUsedEmail = createStorageEntry<string | null>("lastUsedEmail", null);
+const savedEmail = lastUsedEmail.get();
 
 const profile = reactive<AuthFieldsInterface>(
   {
@@ -152,7 +153,7 @@ const onSubmitForm = () => {
       .login(profile.email, profile.password)
       .then((successResponse: LoginResponse) => {
         sessionStore.setAccessToken(successResponse.data.accessToken);
-        localStorageEmail.set(profile.email);
+        lastUsedEmail.set(profile.email);
         emit("success", successResponse.data);
       })
       .catch((errorResponse) => {
