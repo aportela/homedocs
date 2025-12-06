@@ -60,8 +60,6 @@ const dateTimeFormat = createStorageEntry<string>(
   "YYYY/MM/DD HH:mm:ss"
 );
 
-const browserAllowPDFPreview = createStorageEntry<boolean | null>("browserAllowPDFPreview", null);
-
 export {
   createStorageEntry,
   locale,
@@ -69,6 +67,5 @@ export {
   showToolTips,
   searchDialogResultsPage,
   dateFormat,
-  dateTimeFormat,
-  browserAllowPDFPreview,
+  dateTimeFormat
 };
