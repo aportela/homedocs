@@ -56,7 +56,6 @@ import { useI18n } from "vue-i18n";
 
 import { useSessionStore } from "src/stores/session";
 import { currentTimestamp } from "src/composables/dateUtils";
-import { alwaysOpenUploadDialog as localStorageAlwaysOpenUploadDialog } from "src/composables/localStorage"
 import { bus } from "src/composables/bus";
 import type { Document } from "src/types/document";
 
@@ -149,6 +148,8 @@ const dialogs = reactive<DialogsInterface>({
 
 const reAuthEmitters = reactive<Array<string>>([]);
 
+const sessionStore = useSessionStore();
+
 const onSuccessReauth = () => {
   dialogs.reauth.visible = false;
   bus.emit("reAuthSucess", ({ to: reAuthEmitters }))
@@ -203,7 +204,6 @@ onMounted(() => {
     if (msg.emitter) {
       reAuthEmitters.push(msg.emitter);
     }
-    const sessionStore = useSessionStore();
     api.auth.renewAccessToken().then((successResponse: GetNewAccessTokenResponseInterface) => {
       sessionStore.setAccessToken(successResponse.data.accessToken);
       bus.emit("reAuthSucess", ({ to: reAuthEmitters }))
@@ -236,7 +236,7 @@ onMounted(() => {
 
   bus.on("showUploadingDialog", (msg) => {
     dialogs.uploading.transfers.unshift(...msg.transfers);
-    dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0 && localStorageAlwaysOpenUploadDialog.get();
+    dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0 && sessionStore.openUploadDialog;
   });
 
   bus.on("refreshUploadingDialog.fileUploaded", (msg) => {
@@ -255,7 +255,7 @@ onMounted(() => {
     } else {
       console.error("Missing previous transfers");
     }
-    dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0 && localStorageAlwaysOpenUploadDialog.get();
+    dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0 && sessionStore.openUploadDialog;
   });
 
   bus.on("refreshUploadingDialog.fileUploadRejected", (msg) => {

@@ -3,12 +3,18 @@ import { createStorageEntry } from "src/composables/localStorage";
 
 const localStorageShowToolTips = createStorageEntry<boolean>("showToolTips", false);
 
+const localStorageAlwaysOpenUploadDialog = createStorageEntry<boolean>(
+  "alwaysOpenUploadDialog",
+  true
+);
+
 
 interface State {
   tokens: {
     access: string | null;
   };
   toolTips: boolean;
+  alwaysOpenUploadDialog: boolean;
 };
 
 export const useSessionStore = defineStore("session", {
@@ -17,6 +23,7 @@ export const useSessionStore = defineStore("session", {
       access: null,
     },
     toolTips: localStorageShowToolTips.get(),
+    alwaysOpenUploadDialog: localStorageAlwaysOpenUploadDialog.get(),
   }),
   getters: {
     hasAccessToken(state): boolean {
@@ -28,6 +35,9 @@ export const useSessionStore = defineStore("session", {
     toolTipsEnabled(state): boolean {
       return (state.toolTips);
     },
+    openUploadDialog(state): boolean {
+      return (state.alwaysOpenUploadDialog);
+    }
   },
   actions: {
     setAccessToken(token: string): void {
@@ -39,6 +49,10 @@ export const useSessionStore = defineStore("session", {
     toggleToolTips(enabled: boolean) {
       this.toolTips = enabled;
       localStorageShowToolTips.set(this.toolTips);
+    },
+    setOpenUploadDialog(value: boolean) {
+      this.alwaysOpenUploadDialog = value;
+      localStorageAlwaysOpenUploadDialog.set(this.alwaysOpenUploadDialog);
     }
   },
 });

@@ -38,10 +38,6 @@ const createStorageEntry = <T extends StorageValue>(
 
 const locale = createStorageEntry<string | null>("locale", null);
 
-const alwaysOpenUploadDialog = createStorageEntry<boolean>(
-  "alwaysOpenUploadDialog",
-  true
-);
 
 
 const searchDialogResultsPage = createStorageEntry<number>(
@@ -62,7 +58,6 @@ const dateTimeFormat = createStorageEntry<string>(
 export {
   createStorageEntry,
   locale,
-  alwaysOpenUploadDialog,
   searchDialogResultsPage,
   dateFormat,
   dateTimeFormat

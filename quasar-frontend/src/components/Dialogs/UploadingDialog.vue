@@ -66,8 +66,9 @@ import { ref, watch, computed } from "vue";
 import { format } from "quasar";
 import { useI18n } from "vue-i18n";
 
+import { useSessionStore } from "src/stores/session";
 import { fullDateTimeHuman } from "src/composables/dateUtils";
-import { alwaysOpenUploadDialog as localStorageAlwaysOpenUploadDialog, dateTimeFormat as localStorageDateTimeFormat } from "src/composables/localStorage"
+import { dateTimeFormat as localStorageDateTimeFormat } from "src/composables/localStorage"
 import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
 
 import { type UploadTransfer as UploadTransferInterface } from "src/types/upload-transfer";
@@ -76,6 +77,7 @@ import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue"
 const { t } = useI18n();
 
 const serverEnvironment = useServerEnvironmentStore();
+const sessionStore = useSessionStore();
 
 const emit = defineEmits(['update:modelValue', 'close', 'clearProcessedTransfers']);
 
@@ -95,7 +97,7 @@ const visible = computed({
   set(value) {
     if (value) {
       // before showing dialog always set q-toggle value
-      const toggleValue = localStorageAlwaysOpenUploadDialog.get();
+      const toggleValue = sessionStore.openUploadDialog;
       if (toggleValue !== visibilityCheck.value) {
         visibilityCheck.value = toggleValue; // only if there are changes
       }
@@ -106,16 +108,16 @@ const visible = computed({
 
 const hasProcessedTransfers = computed(() => props.transfers.length > 0 ? props.transfers.find((transfer) => transfer.processed === true) !== undefined : false);
 
-const visibilityCheck = ref<boolean>(localStorageAlwaysOpenUploadDialog.get());
+const visibilityCheck = ref<boolean>(sessionStore.openUploadDialog);
 
 watch(() => visible.value, (val: boolean) => {
   if (val) {
-    visibilityCheck.value = localStorageAlwaysOpenUploadDialog.get();
+    visibilityCheck.value = sessionStore.openUploadDialog;
   }
 });
 
 const saveVisibilityCheck = (val: boolean) => {
-  localStorageAlwaysOpenUploadDialog.set(val);
+  sessionStore.setOpenUploadDialog(val);
 };
 
 const visibilityCheckLabel = computed(() => visibilityCheck.value ? "Always display this progress window when uploading files" : "Only display this progress window when uploading failed");
