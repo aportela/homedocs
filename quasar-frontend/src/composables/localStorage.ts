@@ -45,20 +45,8 @@ const searchDialogResultsPage = createStorageEntry<number>(
   8
 );
 
-const dateFormat = createStorageEntry<string>(
-  "dateFormat",
-  "YYYY/MM/DD"
-);
-
-const dateTimeFormat = createStorageEntry<string>(
-  "dateTimeFormat",
-  "YYYY/MM/DD HH:mm:ss"
-);
-
 export {
   createStorageEntry,
   locale,
   searchDialogResultsPage,
-  dateFormat,
-  dateTimeFormat
 };

@@ -8,6 +8,15 @@ const localStorageAlwaysOpenUploadDialog = createStorageEntry<boolean>(
   true
 );
 
+const localStorageDateFormat = createStorageEntry<string>(
+  "dateFormat",
+  "YYYY/MM/DD"
+);
+
+const localStorageDateTimeFormat = createStorageEntry<string>(
+  "dateTimeFormat",
+  "YYYY/MM/DD HH:mm:ss"
+);
 
 interface State {
   tokens: {
@@ -15,6 +24,8 @@ interface State {
   };
   toolTips: boolean;
   alwaysOpenUploadDialog: boolean;
+  dateFormat: string;
+  dateTimeFormat: string;
 };
 
 export const useSessionStore = defineStore("session", {
@@ -24,6 +35,8 @@ export const useSessionStore = defineStore("session", {
     },
     toolTips: localStorageShowToolTips.get(),
     alwaysOpenUploadDialog: localStorageAlwaysOpenUploadDialog.get(),
+    dateFormat: localStorageDateFormat.get(),
+    dateTimeFormat: localStorageDateTimeFormat.get(),
   }),
   getters: {
     hasAccessToken(state): boolean {
@@ -37,6 +50,12 @@ export const useSessionStore = defineStore("session", {
     },
     openUploadDialog(state): boolean {
       return (state.alwaysOpenUploadDialog);
+    },
+    savedDateFormat(state): string | null {
+      return (state.dateFormat);
+    },
+    savedDateTimeFormat(state): string | null {
+      return (state.dateTimeFormat);
     }
   },
   actions: {
@@ -53,7 +72,23 @@ export const useSessionStore = defineStore("session", {
     setOpenUploadDialog(value: boolean) {
       this.alwaysOpenUploadDialog = value;
       localStorageAlwaysOpenUploadDialog.set(this.alwaysOpenUploadDialog);
-    }
+    },
+    setDateFormat(value: string) {
+      this.dateFormat = value;
+      localStorageDateFormat.set(this.dateFormat);
+    },
+    removeDateFormat() {
+      this.dateFormat = "YYYY/MM/DD";
+      localStorageDateFormat.remove();
+    },
+    setDateTimeFormat(value: string) {
+      this.dateTimeFormat = value;
+      localStorageDateTimeFormat.set(this.dateTimeFormat);
+    },
+    removeDateTimeFormat() {
+      this.dateTimeFormat = "YYYY/MM/DD HH:mm:ss";
+      localStorageDateTimeFormat.remove();
+    },
   },
 });
 

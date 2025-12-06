@@ -1,6 +1,8 @@
-import { dateFormat as localStorageDateFormat } from "src/composables/localStorage";
 import { dateHuman, timeAgo } from "src/composables/dateUtils";
 import { type Ti18NFunction } from "./i18n";
+import { useSessionStore } from "src/stores/session";
+
+const sessionStore = useSessionStore();
 
 interface Date {
   timestamp: number | null,
@@ -18,7 +20,7 @@ class DateClass implements Date {
   constructor(t: Ti18NFunction, timestamp: number | null) {
     if (timestamp) {
       this.timestamp = timestamp;
-      this.date = dateHuman(timestamp, localStorageDateFormat.get());
+      this.date = dateHuman(timestamp, sessionStore.savedDateFormat);
       const returnedTimeAgo = timeAgo(timestamp);
       this.timeAgo = t(returnedTimeAgo.label, returnedTimeAgo.count != null ? { count: returnedTimeAgo.count } : {});
     } else {

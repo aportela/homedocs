@@ -20,10 +20,10 @@
               :class="{ 'bg-green-5': transfer.done, 'bg-red-4': transfer.error, 'bg-light-blue': transfer.uploading }">
               <td class="text-left">{{ transfer.filename }}</td>
               <td class="text-right">{{ format.humanStorageSize(transfer.filesize) }}</td>
-              <td class="text-right">{{ fullDateTimeHuman(transfer.start, localStorageDateTimeFormat.get()) }}</td>
+              <td class="text-right">{{ fullDateTimeHuman(transfer.start, sessionStore.savedDateTimeFormat) }}</td>
               <td class="text-right">
                 <span v-if="transfer.end && transfer.end > 0">{{ fullDateTimeHuman(transfer.end,
-                  localStorageDateTimeFormat.get()) }}</span>
+                  sessionStore.savedDateTimeFormat) }}</span>
               </td>
               <td class="text-center">
                 <q-chip square v-if="transfer.error" class="full-width bg-red-9 text-white">
@@ -68,7 +68,6 @@ import { useI18n } from "vue-i18n";
 
 import { useSessionStore } from "src/stores/session";
 import { fullDateTimeHuman } from "src/composables/dateUtils";
-import { dateTimeFormat as localStorageDateTimeFormat } from "src/composables/localStorage"
 import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
 
 import { type UploadTransfer as UploadTransferInterface } from "src/types/upload-transfer";
