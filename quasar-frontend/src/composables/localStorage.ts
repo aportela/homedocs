@@ -43,7 +43,6 @@ const alwaysOpenUploadDialog = createStorageEntry<boolean>(
   true
 );
 
-const showToolTips = createStorageEntry<boolean>("showToolTips", false);
 
 const searchDialogResultsPage = createStorageEntry<number>(
   "searchDialogResultsPage",
@@ -64,7 +63,6 @@ export {
   createStorageEntry,
   locale,
   alwaysOpenUploadDialog,
-  showToolTips,
   searchDialogResultsPage,
   dateFormat,
   dateTimeFormat

@@ -1,5 +1,8 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
-import { showToolTips as localStorageShowToolTips } from "src/composables/localStorage";
+import { createStorageEntry } from "src/composables/localStorage";
+
+const localStorageShowToolTips = createStorageEntry<boolean>("showToolTips", false);
+
 
 interface State {
   tokens: {
