@@ -36,7 +36,6 @@ const createStorageEntry = <T extends StorageValue>(
 });
 
 
-const darkMode = createStorageEntry<boolean>("darkMode", false);
 const locale = createStorageEntry<string | null>("locale", null);
 
 const alwaysOpenUploadDialog = createStorageEntry<boolean>(
@@ -65,7 +64,6 @@ const browserAllowPDFPreview = createStorageEntry<boolean | null>("browserAllowP
 
 export {
   createStorageEntry,
-  darkMode,
   locale,
   alwaysOpenUploadDialog,
   showToolTips,
