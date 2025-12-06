@@ -6,17 +6,16 @@
       <p class="q-my-md"><q-input dense outlined clearable v-model.trim="dateTimeFormatModel"
           :label="t('Datetime format')" @update:modelValue="saveDateTimeFormat" /></p>
       <p class="q-my-none"><q-toggle v-model="visibilityCheckModel" checked-icon="check" color="green"
-          :label="t('Always show uploading dialog after adding files')" unchecked-icon="clear" class="q-mr-md"
-          @update:modelValue="saveVisibilityCheck" /></p>
+          :label="t('Always show uploading dialog after adding files')" unchecked-icon="clear" class="q-mr-md" /></p>
       <p class="q-my-none"><q-toggle v-model="toolTipsCheckModel" checked-icon="check" color="green"
-          :label="t('Show tooltips')" unchecked-icon="clear" class="q-mr-md" @update:modelValue="saveToolTipsCheck" />
+          :label="t('Show tooltips')" unchecked-icon="clear" class="q-mr-md" />
       </p>
     </template>
   </BaseWidget>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useI18n } from "vue-i18n";
 
 import { useSessionStore } from "src/stores/session";
@@ -48,15 +47,24 @@ const saveDateTimeFormat = (val: string | number | null) => {
   }
 };
 
-const visibilityCheckModel = ref<boolean>(sessionStore.openUploadDialog);
+const visibilityCheckModel = computed({
+  get() {
+    return (sessionStore.openUploadDialog);
+  },
+  set(value: boolean) {
+    sessionStore.setOpenUploadDialog(value);
+  }
+});
 
-const saveVisibilityCheck = (val: boolean) => {
-  sessionStore.setOpenUploadDialog(val);
-};
 
-const toolTipsCheckModel = ref<boolean>(sessionStore.toolTipsEnabled);
+const toolTipsCheckModel = computed({
+  get() {
+    return (sessionStore.toolTipsEnabled);
+  },
+  set(value: boolean) {
+    sessionStore.toggleToolTips(value);
+  }
+});
 
-const saveToolTipsCheck = (val: boolean) => {
-  sessionStore.toggleToolTips(val);
-};
+
 </script>
