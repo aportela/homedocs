@@ -35,10 +35,4 @@ const createStorageEntry = <T extends StorageValue>(
   },
 });
 
-
-const locale = createStorageEntry<string | null>("locale", null);
-
-export {
-  createStorageEntry,
-  locale,
-};
+export { createStorageEntry };
