@@ -31,7 +31,7 @@ export const useServerEnvironmentStore = defineStore("serverEnvironment", {
       environment: EnvironmentType = "production",
       maxUploadFileSize: number = 0,
     ): void {
-      this.allowSignUp = !!allowSignUp;
+      this.allowSignUp = allowSignUp;
       this.environment = environment;
       this.maxUploadFileSize = maxUploadFileSize > 0 ? maxUploadFileSize : 0;
     },
