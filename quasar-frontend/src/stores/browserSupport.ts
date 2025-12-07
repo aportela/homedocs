@@ -1,18 +1,7 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import { createStorageEntry } from "src/composables/localStorage";
-import { isPdfSupportedInIframe } from "src/composables/common";
 
 const localStorageBrowserAllowPDFPreview = createStorageEntry<boolean | null>("browserAllowPDFPreview", null);
-
-if (localStorageBrowserAllowPDFPreview.get() === null) {
-  try {
-    const supported = await isPdfSupportedInIframe();
-    localStorageBrowserAllowPDFPreview.set(supported)
-  } catch (e) {
-    localStorageBrowserAllowPDFPreview.set(false)
-    console.error(e);
-  }
-}
 
 interface State {
   allowPDFPreviewSavedValue: boolean | null;
@@ -23,10 +12,19 @@ export const useBrowserSupportStore = defineStore('browserSupportStore', {
     allowPDFPreviewSavedValue: localStorageBrowserAllowPDFPreview.get(),
   }),
   getters: {
+    hasPDFPreviewSavedValue(state): boolean {
+      return state.allowPDFPreviewSavedValue !== null;
+    },
     allowPDFPreviews(state): boolean {
-      return state.allowPDFPreviewSavedValue === true
+      return state.allowPDFPreviewSavedValue === true;
     },
   },
+  actions: {
+    setAllowPDFPreview(allowed: boolean) {
+      this.allowPDFPreviewSavedValue = allowed;
+      localStorageBrowserAllowPDFPreview.set(this.allowPDFPreviewSavedValue);
+    }
+  }
 });
 
 if (import.meta.hot) {
