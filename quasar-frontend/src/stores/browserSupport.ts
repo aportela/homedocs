@@ -12,12 +12,8 @@ export const useBrowserSupportStore = defineStore('browserSupportStore', {
     allowPDFPreviewSavedValue: localStorageBrowserAllowPDFPreview.get(),
   }),
   getters: {
-    hasPDFPreviewSavedValue(state): boolean {
-      return state.allowPDFPreviewSavedValue !== null;
-    },
-    allowPDFPreviews(state): boolean {
-      return state.allowPDFPreviewSavedValue === true;
-    },
+    hasPDFPreviewSavedValue: (state): boolean => state.allowPDFPreviewSavedValue !== null,
+    allowPDFPreviews: (state): boolean => state.allowPDFPreviewSavedValue === true,
   },
   actions: {
     setAllowPDFPreview(allowed: boolean) {

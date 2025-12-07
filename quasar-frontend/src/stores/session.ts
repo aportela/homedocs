@@ -51,27 +51,13 @@ export const useSessionStore = defineStore("session", {
     },
   }),
   getters: {
-    hasAccessToken(state): boolean {
-      return state.tokens.access !== null;
-    },
-    accessToken(state): string | null {
-      return state.tokens.access
-    },
-    toolTipsEnabled(state): boolean {
-      return (state.other.toolTips);
-    },
-    openUploadDialog(state): boolean {
-      return (state.other.alwaysOpenUploadDialog);
-    },
-    savedDateFormat(state): string {
-      return (state.other.dateFormat);
-    },
-    savedDateTimeFormat(state): string {
-      return (state.other.dateTimeFormat);
-    },
-    searchDialogResultsPage(state): number {
-      return (state.other.searchDialogResultsPage);
-    }
+    hasAccessToken: (state): boolean => state.tokens.access !== null,
+    accessToken: (state): string | null => state.tokens.access,
+    toolTipsEnabled: (state): boolean => state.other.toolTips,
+    openUploadDialog: (state): boolean => state.other.alwaysOpenUploadDialog,
+    savedDateFormat: (state): string => state.other.dateFormat,
+    savedDateTimeFormat: (state): string => state.other.dateTimeFormat,
+    searchDialogResultsPage: (state): number => state.other.searchDialogResultsPage,
   },
   actions: {
     setAccessToken(token: string): void {
