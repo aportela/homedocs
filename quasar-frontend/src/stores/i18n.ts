@@ -12,6 +12,14 @@ const localStorageLocale = createStorageEntry<string | null>("locale", null);
 
 const availableSystemLocales: string[] = Object.keys(messages);
 
+const localeSelectorOptionItems = [
+  { shortLabel: "EN", label: "English", value: "en-US" },
+  { shortLabel: "ES", label: "Español", value: "es-ES" },
+  { shortLabel: "GL", label: "Galego", value: "gl-GL" },
+];
+
+export const availableLocaleSelectorOptions = localeSelectorOptionItems.filter((l) => availableSystemLocales.includes(l.value));
+
 const quasarLanguages = {
   "en-US": enUS_Quasar,
   "es-ES": esES_Quasar,
@@ -36,7 +44,6 @@ const autodetectLocale = (): string => {
 };
 
 interface State {
-  availableSystemLocales: string[];
   locale: string;
 };
 
@@ -63,15 +70,11 @@ export const setQuasarLanguage = (locale: string) => {
 
 export const useI18nStore = defineStore('i18nStore', {
   state: (): State => ({
-    availableSystemLocales: Object.keys(messages),
     locale: autodetectLocale(),
   }),
   getters: {
     currentLocale(state): string {
       return state.locale;
-    },
-    currentAvailableSystemLocales(state): string[] {
-      return (state.availableSystemLocales);
     },
   },
   actions: {
@@ -84,6 +87,10 @@ export const useI18nStore = defineStore('i18nStore', {
       } else {
         return (false);
       }
+    },
+    getCurrentLocaleSelectorOptionItem() {
+      const currentIndex = availableLocaleSelectorOptions.findIndex((l) => l.value === this.locale);
+      return (availableLocaleSelectorOptions[currentIndex >= 0 ? currentIndex : 0]!);
     },
   }
 });
