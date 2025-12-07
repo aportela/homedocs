@@ -8,24 +8,24 @@
       <slot name="slogan">
         <h4 class="q-mt-sm q-mb-md text-h4 text-weight-bolder">{{
           t(!!savedEmail ? "Glad to see you again!" : "Welcome aboard!")
-        }}</h4>
+          }}</h4>
         <div class="text-color-secondary">{{
           t(!!savedEmail ? "Let's get back to organizing." : "Let's start organizing.")
-        }}
+          }}
         </div>
       </slot>
     </q-card-section>
     <q-card-section>
       <q-input dense outlined ref="emailRef" v-model="profile.email" type="email" name="email" :label="t('Email')"
-        :disable="state.ajaxRunning" :autofocus="!savedEmail" :rules="[requiredFieldRule]" lazy-rules
-        :error="validator.email.hasErrors" :error-message="validator.email.message ? t(validator.email.message) : ''">
+        :disable="state.ajaxRunning" :rules="[requiredFieldRule]" lazy-rules :error="validator.email.hasErrors"
+        :error-message="validator.email.message ? t(validator.email.message) : ''">
         <template v-slot:prepend>
           <q-icon name="alternate_email" />
         </template>
       </q-input>
       <PasswordFieldCustomInput dense outlined ref="passwordRef" class="q-mt-md" v-model="profile.password"
-        name="password" :label="t('Password')" :disable="state.ajaxRunning" :autofocus="!!savedEmail"
-        :rules="[requiredFieldRule]" lazy-rules :error="validator.password.hasErrors"
+        name="password" :label="t('Password')" :disable="state.ajaxRunning" :rules="[requiredFieldRule]" lazy-rules
+        :error="validator.password.hasErrors"
         :error-message="validator.password.message ? t(validator.password.message) : ''">
       </PasswordFieldCustomInput>
     </q-card-section>
@@ -64,7 +64,7 @@
 
 <script setup lang="ts">
 
-import { ref, reactive, nextTick } from "vue";
+import { ref, reactive, nextTick, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { QInput } from "quasar";
 
@@ -233,4 +233,16 @@ const onSubmitForm = () => {
   }
 }
 
+onMounted(() => {
+  nextTick()
+    .then(() => {
+      if (savedEmail) {
+        passwordRef.value?.focus();
+      } else {
+        emailRef.value?.focus();
+      }
+    }).catch((e) => {
+      console.error(e);
+    });
+});
 </script>
