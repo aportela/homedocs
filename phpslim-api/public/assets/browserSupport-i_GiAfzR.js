@@ -1,1 +1,0 @@
-import{d as e}from"./index-DWyQQ7Hn.js";import{b as r}from"./localStorage-BRK9taKx.js";import{i as t}from"./common-CaK3FoAb.js";const i=e(async()=>{if(r.get()===null)try{const o=await t();r.set(o)}catch(o){console.error(o)}});export{i as default};
