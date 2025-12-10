@@ -658,6 +658,9 @@ export default {
   "You haven't created any documents yet":
     "You haven't created any documents yet",
 
+  "You haven't created any share yet":
+    "You haven't created any share yet",
+
   "You haven't created any tags yet":
     "You haven't created any tags yet",
 

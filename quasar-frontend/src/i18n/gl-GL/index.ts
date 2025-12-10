@@ -658,6 +658,9 @@ export default {
   "You haven't created any documents yet":
     "Aínda non creou ningún documento",
 
+  "You haven't created any share yet":
+    "Aínda non compartíu ningún elemento",
+
   "You haven't created any tags yet":
     "Aínda non creou ningunha etiqueta",
 

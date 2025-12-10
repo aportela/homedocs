@@ -74,6 +74,11 @@ const routes: RouteRecordRaw[] = [
         component: () => import("pages/AdvancedSearchPage.vue"),
         meta: { conditionsFilterExpanded: false, autoLaunchSearch: true },
       },
+      {
+        name: "shares",
+        path: "shares",
+        component: () => import("pages/SharesPage.vue"),
+      },
     ],
   },
   // Always leave this as last one,

@@ -76,7 +76,8 @@ const menuItems = [
   { icon: 'home', text: "Home", routeName: 'index' },
   { icon: 'account_circle', text: "My profile", routeName: 'profile' },
   { icon: 'note_add', text: "Add", routeName: 'newDocument' },
-  { icon: 'find_in_page', text: "Advanced search", routeName: 'advancedSearch', alternateRouteNames: ['advancedSearchByTag', 'advancedSearchByFixedCreationDate', 'advancedSearchByFixedLastUpdate', 'advancedSearchByFixedUpdatedOn'] }
+  { icon: 'find_in_page', text: "Advanced search", routeName: 'advancedSearch', alternateRouteNames: ['advancedSearchByTag', 'advancedSearchByFixedCreationDate', 'advancedSearchByFixedLastUpdate', 'advancedSearchByFixedUpdatedOn'] },
+  { icon: 'share', text: "Shares", routeName: 'shares' },
 ];
 
 const logout = () => {
