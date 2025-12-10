@@ -467,6 +467,12 @@ export default {
   "Session lost... re-auth required":
     "La sesión se ha perdido... se requiere re-autentificación",
 
+  "Share":
+    "Compartir",
+
+  "Shares":
+    "Compartidos",
+
   "Show password":
     "Mostrar contraseña",
 

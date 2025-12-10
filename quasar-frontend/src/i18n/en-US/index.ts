@@ -467,6 +467,12 @@ export default {
   "Session lost... re-auth required":
     "Session lost... re-auth required",
 
+  "Share":
+    "Share",
+
+  "Shares":
+    "Shares",
+
   "Show password":
     "Show password",
 

@@ -26,7 +26,7 @@
           <q-btn type="button" icon="delete" size="md" color="red" :title="t('Delete')" :label="t('Delete')" no-caps
             v-if="!isNewDocument" @click="onShowDeleteDocumentConfirmationDialog">
           </q-btn>
-          <q-btn type="button" icon="share" size="md" color="grey-7" label="share" no-caps v-if="!isNewDocument"
+          <q-btn type="button" icon="share" size="md" color="grey-7" :label="t('Share')" no-caps v-if="!isNewDocument"
             @click="onShowShareDocumentDialog" />
         </q-btn-group>
         <q-tabs class="lt-lg q-mb-sm" v-model="smallScreensTopTab">
@@ -127,7 +127,7 @@
           <q-btn type="button" icon="delete" size="md" color="red" :title="t('Delete')" :label="t('Delete')" no-caps
             v-if="!isNewDocument" @click="onShowDeleteDocumentConfirmationDialog">
           </q-btn>
-          <q-btn type="button" icon="share" size="md" color="grey-7" label="share" no-caps v-if="!isNewDocument"
+          <q-btn type="button" icon="share" size="md" color="grey-7" :label="t('Share')" no-caps v-if="!isNewDocument"
             @click="onShowShareDocumentDialog" />
         </q-btn-group>
       </form>
@@ -439,7 +439,7 @@ const onShowDeleteDocumentConfirmationDialog = () => {
 };
 
 const onShowShareDocumentDialog = () => {
-  console.log(document.id);
+  bus.emit('showSharePreviewDialog', { document: { id: document.id, title: document.title } });
 };
 
 const onShowAttachmentsPicker = (evt: Event) => {

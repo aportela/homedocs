@@ -12,7 +12,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="share in shares">
+          <tr v-for="share, shareIndex in shares" :key="shareIndex">
             <td class="text-left">{{ share.createdAt.dateTime }} ({{ share.createdAt.timeAgo }})</td>
             <td class="text-left">{{ share.lastActivity.dateTime }} ({{ share.lastActivity.timeAgo }})</td>
             <td class="text-left">{{ t('never') }}</td>
@@ -35,7 +35,7 @@
 <script setup lang="ts">
 import { useI18n } from "vue-i18n";
 import { default as CustomBanner } from 'src/components/Banners/CustomBanner.vue';
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import { DateTimeClass } from "src/types/dateTime";
 import { currentTimestamp } from "src/composables/dateUtils";
 const { t } = useI18n();

@@ -13,7 +13,7 @@
         <q-btn type="button" no-caps no-wrap align="left" outline :label="searchButtonLabel" icon="search"
           class="full-width no-caps theme-default-q-btn" @click.prevent="dialogs.fastSearch.visible = true">
           <DesktopToolTip anchor="bottom middle" self="top middle">{{ t("Click to open fast search")
-            }}</DesktopToolTip>
+          }}</DesktopToolTip>
         </q-btn>
         <!--
         <FastSearchSelector dense class="full-width"></FastSearchSelector>
@@ -46,7 +46,10 @@
       @close="dialogs.documentNotesPreview.visible = false" />
     <UploadingDialog v-model="dialogs.uploading.visible" :transfers="dialogs.uploading.transfers"
       @clear-processed-transfers="onClearProcessedTransfers" />
+    <SharePreviewDialog v-if="dialogs.sharePreview.visible" :document-id="dialogs.sharePreview.document.id"
+      :document-title="dialogs.sharePreview.document.title" @close="dialogs.sharePreview.visible = false" />
   </q-layout>
+
 </template>
 
 <script setup lang="ts">
@@ -77,6 +80,7 @@ import { type UploadTransfer as UploadTransferInterface } from "src/types/upload
 import { type Document as DocumentInterface, DocumentClass } from "src/types/document";
 import { type GetNewAccessTokenResponse as GetNewAccessTokenResponseInterface } from "src/types/apiResponses";
 import { api } from "src/composables/api";
+import SharePreviewDialog from "src/components/Dialogs/SharePreviewDialog.vue";
 
 const $q = useQuasar();
 
@@ -111,6 +115,13 @@ interface DialogsInterface {
   uploading: {
     visible: boolean;
     transfers: UploadTransferInterface[]
+  },
+  sharePreview: {
+    visible: boolean;
+    document: {
+      id: string | null;
+      title: string | null;
+    }
   }
 };
 
@@ -143,6 +154,13 @@ const dialogs = reactive<DialogsInterface>({
   uploading: {
     visible: false,
     transfers: []
+  },
+  sharePreview: {
+    visible: false,
+    document: {
+      id: null,
+      title: null,
+    }
   }
 });
 
@@ -291,6 +309,12 @@ onMounted(() => {
     });
     dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0;
   });
+
+  bus.on("showSharePreviewDialog", (msg) => {
+    dialogs.sharePreview.visible = true;
+    dialogs.sharePreview.document.id = msg.document.id;
+    dialogs.sharePreview.document.title = msg.document.title;
+  });
 });
 
 onBeforeUnmount(() => {
@@ -302,6 +326,7 @@ onBeforeUnmount(() => {
   bus.off("refreshUploadingDialog.fileUploaded");
   bus.off("refreshUploadingDialog.fileUploadRejected");
   bus.off("refreshUploadingDialog.fileUploadFailed");
+  bus.off("showSharePreviewDialog");
 });
 
 </script>
