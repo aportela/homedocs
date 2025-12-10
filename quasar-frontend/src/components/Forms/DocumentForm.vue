@@ -26,6 +26,8 @@
           <q-btn type="button" icon="delete" size="md" color="red" :title="t('Delete')" :label="t('Delete')" no-caps
             v-if="!isNewDocument" @click="onShowDeleteDocumentConfirmationDialog">
           </q-btn>
+          <q-btn type="button" icon="share" size="md" color="grey-7" label="share" no-caps v-if="!isNewDocument"
+            @click="onShowShareDocumentDialog" />
         </q-btn-group>
         <q-tabs class="lt-lg q-mb-sm" v-model="smallScreensTopTab">
           <q-tab name="metadata" icon="description" :label="t('Document metadata')" class="cursor-default full-width"
@@ -76,7 +78,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.ajaxRunning" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                      }}</q-badge>
+                    }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
@@ -125,6 +127,8 @@
           <q-btn type="button" icon="delete" size="md" color="red" :title="t('Delete')" :label="t('Delete')" no-caps
             v-if="!isNewDocument" @click="onShowDeleteDocumentConfirmationDialog">
           </q-btn>
+          <q-btn type="button" icon="share" size="md" color="grey-7" label="share" no-caps v-if="!isNewDocument"
+            @click="onShowShareDocumentDialog" />
         </q-btn-group>
       </form>
     </q-card>
@@ -432,6 +436,10 @@ const onShowDeleteDocumentConfirmationDialog = () => {
   if (document.id) {
     showDeleteDocumentConfirmationDialog.value = true;
   }
+};
+
+const onShowShareDocumentDialog = () => {
+  console.log(document.id);
 };
 
 const onShowAttachmentsPicker = (evt: Event) => {
