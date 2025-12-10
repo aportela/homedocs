@@ -66,6 +66,11 @@
               <q-avatar class="theme-default-q-avatar text-white bg-blue-6" icon="preview" />
               {{ t("Preview") }}
             </q-chip>
+            <q-chip size="md" square class="theme-default-q-chip shadow-1 full-width" :clickable="!isDisabled"
+              @click.stop.prevent="onShare(attachmentIndex)">
+              <q-avatar class="theme-default-q-avatar text-white bg-blue-6" icon="share" />
+              {{ t("Share") }}
+            </q-chip>
           </q-item-section>
           <DesktopToolTip>{{ t("Click to download") }}</DesktopToolTip>
         </q-item>
@@ -76,7 +81,6 @@
     <CustomBanner v-else-if="!isDisabled" warning text="No document attachments found" class="q-ma-none">
     </CustomBanner>
   </q-list>
-
 </template>
 
 <script setup lang="ts">
@@ -140,6 +144,11 @@ const onRemoveAttachmentAtIndex = (index: number) => {
 
 const onPreviewAttachment = (index: number) => {
   emit("previewAttachmentAtIndex", index);
+};
+
+const onShare = (index: number) => {
+  console.log(index);
+  bus.emit('showSharePreviewDialog', { document: { id: null, title: null } });
 };
 
 const onDownload = (attachmentId: string, fileName: string) => {

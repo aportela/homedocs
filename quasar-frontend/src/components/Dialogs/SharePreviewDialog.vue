@@ -15,11 +15,16 @@
         </div>
         <div class="col-6 q-col-gutter-sm">
           <p>
-            <q-input dense outlined v-model="url" icon="delete">
+            <q-input dense outlined v-model="url" icon="delete" :hint="copiedToClipboardMessage">
               <template v-slot:append>
                 <q-icon name="content_copy" class="cursor-pointer" @click="onCopyURLToClipboard" />
               </template>
             </q-input>
+          </p>
+          <p><q-toggle v-model="enabled" color="green" icon="share" label="Enabled" /></p>
+          <p><q-toggle v-model="hasExpiration" color="green" icon="lock_clock" label="Has expiration" /></p>
+          <p v-if="hasExpiration">
+            <q-btn-toggle v-model="expiresOn" toggle-color="primary" :options="expiresOnOptions" />
           </p>
           <p>
             <q-btn @click="onClick" icon="note" label="regenerate" class="full-width" />
@@ -47,12 +52,27 @@ interface SharePreviewDialogProps {
 withDefaults(defineProps<SharePreviewDialogProps>(), {
 });
 
+const expiresOnOptions = [
+  { label: '1 minute', value: 'oneMinute' },
+  { label: '1 hour', value: 'oneHour' },
+  { label: '1 day', value: 'oneDay' },
+  { label: '1 week', value: 'oneWeek' },
+  { label: '1 month', value: 'oneMonth' },
+  { label: '1 year', value: 'oneYear' }
+];
 const visible = ref<boolean>(true);
 
+const copiedToClipboardMessage = ref<string | undefined>(undefined);
 
 const url = ref<string | null>(null);
 
+const enabled = ref<boolean>(true);
+
+const hasExpiration = ref<boolean>(true);
+const expiresOn = ref(expiresOnOptions[0]?.value);
+
 watch(() => url.value, () => {
+  copiedToClipboardMessage.value = undefined;
   onUpdate();
 });
 
@@ -112,13 +132,14 @@ const onClick = () => {
 
 
 const onCopyURLToClipboard = () => {
+  copiedToClipboardMessage.value = undefined;
   if (url.value) {
     navigator.clipboard.writeText(url.value)
       .then(() => {
-        console.log("Texto copiado al portapapeles: ", url.value);
+        copiedToClipboardMessage.value = "Copied to clipboard!";
       })
       .catch((error) => {
-        console.error("Error al copiar al portapapeles: ", error);
+        console.error("Error copying url to clipboard", error);
       });
   }
 };
