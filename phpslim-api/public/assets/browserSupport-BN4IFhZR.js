@@ -1,1 +1,0 @@
-import{d as e}from"./index-Ct92d8Em.js";import{u as t}from"./browserSupport-He0zzorG.js";import{i as s}from"./common-CaK3FoAb.js";const u=e(async()=>{const r=t();if(!r.hasPDFPreviewSavedValue)try{r.setAllowPDFPreview(await s())}catch(o){console.error("Error testing PDF support in browser",o)}});export{u as default};
