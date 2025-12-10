@@ -1,6 +1,6 @@
 import { format } from "quasar";
 
-import { type DateTime as DateTimeInterface } from "src/types/date-time";
+import { type DateTime as DateTimeInterface } from "./dateTime";
 
 interface Attachment {
   id: string;

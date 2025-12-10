@@ -1,5 +1,5 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
-import { type SearchFilterClass as SearchFilterClassInterface, SearchFilterClass, SearchOnTextEntitiesFilterClass, SearchDatesFilterClass } from "src/types/search-filter";
+import { type SearchFilterClass as SearchFilterClassInterface, SearchFilterClass, SearchOnTextEntitiesFilterClass, SearchDatesFilterClass } from "src/types/searchFilter";
 import { type SortClass as SortClassInterface, SortClass } from "src/types/sort";
 import { type PagerClass as PagerClassInterface, PagerClass } from "src/types/pager";
 

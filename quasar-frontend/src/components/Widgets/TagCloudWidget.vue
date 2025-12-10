@@ -29,8 +29,8 @@ import { ref, shallowRef, reactive, computed, onMounted, onBeforeUnmount } from 
 import { useI18n } from "vue-i18n";
 import { bus } from "src/composables/bus";
 import { api } from "src/composables/api";
-import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
-import { type TagCloudResponse, type TagCloudResponseItem } from "src/types/api-responses";
+import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
+import { type TagCloudResponse, type TagCloudResponseItem } from "src/types/apiResponses";
 
 import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";

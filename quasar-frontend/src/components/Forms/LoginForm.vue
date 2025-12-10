@@ -73,10 +73,10 @@ import { useFormUtils } from "src/composables/useFormUtils";
 import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
 import { useSessionStore } from "src/stores/session";
 import { createStorageEntry } from "src/composables/localStorage";
-import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
-import { type AuthValidator as AuthValidatorInterface, defaultAuthValidator } from "src/types/auth-validator";
-import { type AuthFields as AuthFieldsInterface } from "src/types/auth-fields";
-import { type LoginResponse } from "src/types/api-responses";
+import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
+import { type AuthValidator as AuthValidatorInterface, defaultAuthValidator } from "src/types/authValidator";
+import { type AuthFields as AuthFieldsInterface } from "src/types/authFields";
+import { type LoginResponse } from "src/types/apiResponses";
 import { default as DarkModeButton } from "src/components/Buttons/DarkModeButton.vue"
 import { default as SwitchLanguageButton } from "src/components/Buttons/SwitchLanguageButton.vue"
 import { default as GitHubButton } from "src/components/Buttons/GitHubButton.vue"

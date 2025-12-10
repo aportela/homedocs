@@ -1,4 +1,4 @@
-import { type DateTime as DateTimeInterface } from "src/types/date-time";
+import { type DateTime as DateTimeInterface } from "./dateTime";
 
 interface Note {
   id: string;

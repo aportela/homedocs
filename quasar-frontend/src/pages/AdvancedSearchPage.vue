@@ -202,11 +202,11 @@ import { useAdvancedSearchData } from "src/stores/advancedSearchData"
 import { bus, onShowDocumentFiles, onShowDocumentNotes } from "src/composables/bus";
 import { api } from "src/composables/api";
 
-import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
-import { DateTimeClass } from "src/types/date-time";
-import { type SearchDocumentResponse as SearchDocumentResponseInterface, type SearchDocumentResponseItem as SearchDocumentResponseItemInterface } from "src/types/api-responses";
-import { SearchDocumentItemClass } from "src/types/search-document-item";
-import { type OrderType } from "src/types/order-type";
+import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
+import { DateTimeClass } from "src/types/dateTime";
+import { type SearchDocumentResponse as SearchDocumentResponseInterface, type SearchDocumentResponseItem as SearchDocumentResponseItemInterface } from "src/types/apiResponses";
+import { SearchDocumentItemClass } from "src/types/searchDocumentItem";
+import { type OrderType } from "src/types/orderType";
 import { type Sort as SortInterface, SortClass } from "src/types/sort";
 
 import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";

@@ -24,8 +24,8 @@ import { api } from "src/composables/api";
 import { bus } from "src/composables/bus";
 import { useDarkModeStore } from "src/stores/darkMode";
 import { useI18nStore } from "src/stores/i18n";
-import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
-import { type GetActivityHeatMapDataResponseItem as GetActivityHeatMapDataResponseItemInterface, type GetActivityHeatMapDataResponse as GetActivityHeatMapDataResponseInterface } from "src/types/api-responses";
+import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
+import { type GetActivityHeatMapDataResponseItem as GetActivityHeatMapDataResponseItemInterface, type GetActivityHeatMapDataResponse as GetActivityHeatMapDataResponseInterface } from "src/types/apiResponses";
 // @ts-expect-error: `cCalHeatmap` is missing TypeScript type definitions
 import { default as CalHeatmap } from "cal-heatmap";
 import "cal-heatmap/cal-heatmap.css";

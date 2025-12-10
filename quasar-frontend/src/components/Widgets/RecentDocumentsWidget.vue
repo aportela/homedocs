@@ -86,10 +86,10 @@ import { useI18n } from "vue-i18n";
 
 import { bus, onShowDocumentFiles, onShowDocumentNotes } from "src/composables/bus";
 import { api } from "src/composables/api";
-import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
-import { type RecentDocumentsResponse, type RecentDocumentResponseItem } from "src/types/api-responses";
-import { type RecentDocumentItem, RecentDocumentItemClass } from "src/types/recent-document-item";
-import { DateTimeClass } from "src/types/date-time";
+import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
+import { type RecentDocumentsResponse, type RecentDocumentResponseItem } from "src/types/apiResponses";
+import { type RecentDocumentItem, RecentDocumentItemClass } from "src/types/recentDocumentItem";
+import { DateTimeClass } from "src/types/dateTime";
 
 import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";

@@ -1,4 +1,4 @@
-import { type DateTime as DateTimeInterface } from "src/types/date-time";
+import { type DateTime as DateTimeInterface } from "./dateTime";
 import { uid } from "quasar";
 
 type HistoryOperationType = 1 | 2;

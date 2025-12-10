@@ -73,9 +73,9 @@ import { default as DocumentFilesPreviewDialog } from "src/components/Dialogs/Do
 import { default as DocumentNotesPreviewDialog } from "src/components/Dialogs/DocumentNotesPreviewDialog.vue";
 import { default as UploadingDialog } from "src/components/Dialogs/UploadingDialog.vue";
 
-import { type UploadTransfer as UploadTransferInterface } from "src/types/upload-transfer";
+import { type UploadTransfer as UploadTransferInterface } from "src/types/uploadTransfer";
 import { type Document as DocumentInterface, DocumentClass } from "src/types/document";
-import { type GetNewAccessTokenResponse as GetNewAccessTokenResponseInterface } from "src/types/api-responses";
+import { type GetNewAccessTokenResponse as GetNewAccessTokenResponseInterface } from "src/types/apiResponses";
 import { api } from "src/composables/api";
 
 const $q = useQuasar();

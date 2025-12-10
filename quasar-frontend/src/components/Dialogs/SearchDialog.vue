@@ -106,15 +106,15 @@ import { useRoute, useRouter } from "vue-router";
 import { useSessionStore } from "src/stores/session";
 import { bus, onShowDocumentFiles, onShowDocumentNotes } from "src/composables/bus";
 import { api } from "src/composables/api";
-import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
-import { type SearchDocumentResponse as SearchDocumentResponseInterface, type SearchDocumentResponseItem as SearchDocumentResponseItemInterface } from "src/types/api-responses";
-import { SearchDocumentItemClass } from "src/types/search-document-item";
-import { type QuasarVirtualScrollEventDetails as QuasarVirtualScrollEventDetailsInterface } from "src/types/quasar-virtual-scroll-event-details";
-import { DateTimeClass } from "src/types/date-time";
+import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
+import { type SearchDocumentResponse as SearchDocumentResponseInterface, type SearchDocumentResponseItem as SearchDocumentResponseItemInterface } from "src/types/apiResponses";
+import { SearchDocumentItemClass } from "src/types/searchDocumentItem";
+import { type QuasarVirtualScrollEventDetails as QuasarVirtualScrollEventDetailsInterface } from "src/types/quasarVirtualScrollEventDetails";
+import { DateTimeClass } from "src/types/dateTime";
 import { type Pager as PagerInterface } from "src/types/pager";
 import { type Sort as SortInterface } from "src/types/sort";
-import { type SearchFilter as SearchFilterInterface, SearchDatesFilterClass } from "src/types/search-filter";
-import { SearchOnTextEntitiesFilterClass } from "src/types/search-filter";
+import { type SearchFilter as SearchFilterInterface, SearchDatesFilterClass } from "src/types/searchFilter";
+import { SearchOnTextEntitiesFilterClass } from "src/types/searchFilter";
 
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue"
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";

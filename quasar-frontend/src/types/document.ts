@@ -1,10 +1,10 @@
 import { bus } from "src/composables/bus";
 import { type Ti18NFunction } from "./i18n";
-import { type DateTime as DateTimeInterface, DateTimeClass } from "src/types/date-time";
+import { type DateTime as DateTimeInterface, DateTimeClass } from "./dateTime";
 import { type Attachment as AttachmentInterface, AttachmentClass } from "./attachment";
 import { type Note as NoteInterface, NoteClass } from "./note";
-import { type HistoryOperation as HistoryOperationInterface, HistoryOperationClass } from "./history-operation";
-import { type DocumentHistoryOperationResponseItem as DocumentHistoryOperationResponseItemInterface, type GetDocumentResponse as GetDocumentResponseInterface } from "./api-responses";
+import { type HistoryOperation as HistoryOperationInterface, HistoryOperationClass } from "./historyOperation";
+import { type DocumentHistoryOperationResponseItem as DocumentHistoryOperationResponseItemInterface, type GetDocumentResponse as GetDocumentResponseInterface } from "./apiResponses";
 
 interface Document {
   id: string | null;

@@ -68,8 +68,8 @@
 import { ref, computed, onMounted, nextTick } from "vue";
 import { useI18n } from "vue-i18n";
 import { QInput, QPopupProxy } from 'quasar';
-import { type DateFilterClass } from "src/types/date-filters";
-import { selectorAvailableOptions, type SelectorOption as SelectorOptionInterface } from "src/types/date-filters";
+import { type DateFilterClass } from "src/types/dateFilters";
+import { selectorAvailableOptions, type SelectorOption as SelectorOptionInterface } from "src/types/dateFilters";
 
 const { t } = useI18n();
 

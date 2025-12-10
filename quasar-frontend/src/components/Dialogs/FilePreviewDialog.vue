@@ -81,14 +81,14 @@ import { allowPreview, isImage, isAudio, isPDF } from "src/composables/fileUtils
 import { getURL as getAttachmentURL, getInlineURL as getAttachmentInlineURL } from "src/composables/attachment";
 import { useBrowserSupportStore } from "src/stores/browserSupport";
 import { type Document } from "src/types/document";
-import { type CustomBanner as CustomBannerInterface, defaultCustomBanner } from "src/types/custom-banner";
+import { type CustomBanner as CustomBannerInterface, defaultCustomBanner } from "src/types/customBanner";
 
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
 import { type Attachment as AttachmentInterface } from "src/types/attachment";
 import { default as PDFWrapper } from "src/components/PDFWrapper.vue";
-import { DateTimeClass } from "src/types/date-time";
+import { DateTimeClass } from "src/types/dateTime";
 
 const { t } = useI18n();
 

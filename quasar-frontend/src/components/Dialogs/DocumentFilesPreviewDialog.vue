@@ -75,11 +75,11 @@ import { bus } from "src/composables/bus";
 import { allowPreview } from "src/composables/fileUtils"
 import { bgDownload } from "src/composables/axios";
 import { api } from "src/composables/api";
-import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
+import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
 import { type Attachment as AttachmentInterface, AttachmentClass } from "src/types/attachment";
-import { DateTimeClass } from "src/types/date-time";
-import { type CustomBanner as CustomBannerInterface, defaultCustomBanner } from "src/types/custom-banner";
-import { type DocumentAttachmentsResponse as DocumentAttachmentsResponseInterface, type DocumentAttachmentResponseItem as DocumentAttachmentResponseItemInterface } from "src/types/api-responses";
+import { DateTimeClass } from "src/types/dateTime";
+import { type CustomBanner as CustomBannerInterface, defaultCustomBanner } from "src/types/customBanner";
+import { type DocumentAttachmentsResponse as DocumentAttachmentsResponseInterface, type DocumentAttachmentResponseItem as DocumentAttachmentResponseItemInterface } from "src/types/apiResponses";
 import { getURL as getAttachmentURL } from "src/composables/attachment";
 
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";

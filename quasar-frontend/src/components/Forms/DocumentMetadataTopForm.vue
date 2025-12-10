@@ -27,7 +27,7 @@ import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import { useQuasar } from "quasar";
 
-import { type DateTime as DateTimeInterface } from "src/types/date-time";
+import { type DateTime as DateTimeInterface } from "src/types/dateTime";
 
 interface DocumentMetadataTopFormProps {
   createdAt: DateTimeInterface | null;

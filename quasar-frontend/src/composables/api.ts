@@ -2,7 +2,7 @@ import { axiosInstance } from "src/composables/axios";
 import { type Sort as SortInterface } from "src/types/sort";
 import { type Pager as PagerInterface } from "src/types/pager";
 import { type Document } from "src/types/document";
-import { type SearchFilter as SearchFilterInterface } from "src/types/search-filter";
+import { type SearchFilter as SearchFilterInterface } from "src/types/searchFilter";
 
 const api = {
   common: {

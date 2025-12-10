@@ -88,7 +88,7 @@ import { bgDownload } from "src/composables/axios";
 import { bus } from "src/composables/bus";
 import { allowPreview } from "src/composables/fileUtils"
 import { getRegexForStringMatch } from "src/composables/common";
-import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
+import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
 import { type Attachment as AttachmentInterface } from "src/types/attachment";
 import { getURL as getAttachmentURL } from "src/composables/attachment";
 

@@ -9,8 +9,8 @@ import { ref, reactive, onMounted, onBeforeUnmount } from "vue";
 
 import { bus } from "src/composables/bus";
 import { api } from "src/composables/api";
-import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
-import { type GetTotalAttachmentsStatsResponse as GetTotalAttachmentsStatsResponseInterface } from "src/types/api-responses";
+import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
+import { type GetTotalAttachmentsStatsResponse as GetTotalAttachmentsStatsResponseInterface } from "src/types/apiResponses";
 import { default as SystemStatsWidgetBase } from "src/components/Widgets/SystemStatsWidgetBase.vue";
 
 const state: AjaxStateInterface = reactive({ ...defaultAjaxState });

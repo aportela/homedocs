@@ -147,9 +147,9 @@ import { useFormUtils } from "src/composables/useFormUtils"
 import { DocumentClass } from "src/types/document";
 import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
 
-import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
-import { type GetDocumentResponse as GetDocumentResponseInterface } from "src/types/api-responses";
-import { UploadTransferClass } from "src/types/upload-transfer";
+import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
+import { type GetDocumentResponse as GetDocumentResponseInterface } from "src/types/apiResponses";
+import { UploadTransferClass } from "src/types/uploadTransfer";
 
 import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
 import { default as DocumentMetadataTopForm } from "src/components/Forms/DocumentMetadataTopForm.vue"
@@ -162,7 +162,7 @@ import { default as CustomErrorBanner } from "src/components/Banners/CustomError
 import { default as DeleteDocumentConfirmationDialog } from "src/components/Dialogs/DeleteDocumentConfirmationDialog.vue"
 import { AttachmentClass } from "src/types/attachment";
 import { NoteClass } from "src/types/note";
-import { DateTimeClass } from "src/types/date-time";
+import { DateTimeClass } from "src/types/dateTime";
 import { currentTimestamp } from "src/composables/dateUtils";
 
 const { t } = useI18n();

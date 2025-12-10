@@ -1,4 +1,4 @@
-import type { APIErrorDetails } from "./api-error-details";
+import type { APIErrorDetails } from "./apiErrorDetails";
 
 interface AjaxState {
   ajaxRunning: boolean;

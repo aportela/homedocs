@@ -33,7 +33,7 @@ import { useI18n } from "vue-i18n";
 import { bus } from "src/composables/bus";
 import { api } from "src/composables/api";
 
-import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajax-state";
+import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
 
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
 import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"

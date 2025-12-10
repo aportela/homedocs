@@ -1,4 +1,4 @@
-import { type DateTime as DateTimeInterface } from "./date-time";
+import { type DateTime as DateTimeInterface } from "./dateTime";
 import { type Ti18NFunction } from "./i18n";
 
 interface SearchDocumentItemMatchedFragment {

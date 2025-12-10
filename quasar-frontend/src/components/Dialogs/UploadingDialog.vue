@@ -70,7 +70,7 @@ import { useSessionStore } from "src/stores/session";
 import { fullDateTimeHuman } from "src/composables/dateUtils";
 import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
 
-import { type UploadTransfer as UploadTransferInterface } from "src/types/upload-transfer";
+import { type UploadTransfer as UploadTransferInterface } from "src/types/uploadTransfer";
 import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue"
 
 const { t } = useI18n();
