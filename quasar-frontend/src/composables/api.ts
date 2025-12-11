@@ -104,6 +104,12 @@ const api = {
     create: (attachmentId: string) => {
       return axiosInstance.post(`/attachment/${attachmentId}/share`);
     },
+    update: (attachmentId: string) => {
+      return axiosInstance.post(`/attachment/${attachmentId}/share`);
+    },
+    remove: (attachmentId: string) => {
+      return axiosInstance.delete(`/attachment/${attachmentId}/share`);
+    },
     get: (attachmentId: string) => {
       return axiosInstance.get(`/attachment/${attachmentId}/share`);
     },
