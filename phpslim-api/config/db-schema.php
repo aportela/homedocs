@@ -82,15 +82,15 @@ return ([
             CREATE INDEX idx_document_history_user_id ON DOCUMENT_HISTORY (cuid);
 
             CREATE TABLE SHARED_ATTACHMENT (
-                id TEXT NOT NULL CHECK(length(id) == 36),
+                id TEXT NOT NULL UNIQUE CHECK(length(id) <= 200),
                 cuid TEXT NOT NULL CHECK(length(cuid) == 36),
-                attachment_id TEXT NOT NULL CHECK(length(attachment_id) == 36),
+                attachment_id TEXT NOT NULL UNIQUE CHECK(length(attachment_id) == 36),
                 ctime INTEGER NOT NULL,
                 etime INTEGER NOT NULL,
                 access_limit INTEGER NOT NULL,
                 access_count INTEGER NOT NULL,
                 enabled INTEGER NOT NULL,
-                PRIMARY KEY (id),
+                PRIMARY KEY (attachment_id),
                 FOREIGN KEY (cuid) REFERENCES USER(id),
                 FOREIGN KEY (attachment_id) REFERENCES ATTACHMENT(id)
             ) STRICT;
