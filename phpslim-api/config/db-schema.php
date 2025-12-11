@@ -14,8 +14,8 @@ return ([
 
             CREATE TABLE DOCUMENT (
                 id TEXT NOT NULL CHECK(length(id) == 36),
-                title TEXT NOT NULL CHECK(length(email) <= 128),
-                description TEXT NULL CHECK(length(email) <= 8192),
+                title TEXT NOT NULL CHECK(length(title) <= 128),
+                description TEXT NULL CHECK(length(description) <= 8192),
                 PRIMARY KEY (id)
             ) STRICT;
 
@@ -59,7 +59,7 @@ return ([
                 document_id TEXT NOT NULL CHECK(length(document_id) == 36),
                 ctime INTEGER NOT NULL,
                 cuid TEXT NOT NULL CHECK(length(cuid) == 36),
-                body TEXT NULL CHECK(length(email) <= 16384),
+                body TEXT NULL CHECK(length(body) <= 16384),
                 PRIMARY KEY (note_id),
                 FOREIGN KEY (document_id) REFERENCES DOCUMENT(id),
                 FOREIGN KEY (cuid) REFERENCES USER(id)
@@ -80,6 +80,20 @@ return ([
 
             CREATE INDEX idx_document_history_document_id ON DOCUMENT_HISTORY (document_id);
             CREATE INDEX idx_document_history_user_id ON DOCUMENT_HISTORY (cuid);
+
+            CREATE TABLE SHARED_ATTACHMENT (
+                id TEXT NOT NULL CHECK(length(id) == 36),
+                cuid TEXT NOT NULL CHECK(length(cuid) == 36),
+                attachment_id TEXT NOT NULL CHECK(length(attachment_id) == 36),
+                ctime INTEGER NOT NULL,
+                etime INTEGER NOT NULL,
+                access_limit INTEGER NOT NULL,
+                access_count INTEGER NOT NULL,
+                enabled INTEGER NOT NULL,
+                PRIMARY KEY (id),
+                FOREIGN KEY (cuid) REFERENCES USER(id),
+                FOREIGN KEY (attachment_id) REFERENCES ATTACHMENT(id)
+            ) STRICT;
         ',
     ]
 ]);
