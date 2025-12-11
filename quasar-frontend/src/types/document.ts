@@ -120,7 +120,8 @@ class DocumentClass implements Document {
             attachment.hash,
             attachment.size,
             new DateTimeClass(t, attachment.createdAtTimestamp),
-            false
+            false,
+            attachment.shareId,
           )
         ),
       );

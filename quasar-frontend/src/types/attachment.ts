@@ -10,6 +10,7 @@ interface Attachment {
   humanSize: string;
   createdAt: DateTimeInterface;
   orphaned: boolean;
+  shareId: string | null;
 };
 
 class AttachmentClass implements Attachment {
@@ -20,8 +21,9 @@ class AttachmentClass implements Attachment {
   humanSize: string;
   createdAt: DateTimeInterface;
   orphaned: boolean;
+  shareId: string | null;
 
-  constructor(id: string, name: string, hash: string | null, size: number, createdAt: DateTimeInterface, orphaned: boolean) {
+  constructor(id: string, name: string, hash: string | null, size: number, createdAt: DateTimeInterface, orphaned: boolean, shareId: string | null) {
     this.id = id;
     this.name = name;
     this.hash = hash;
@@ -29,6 +31,7 @@ class AttachmentClass implements Attachment {
     this.humanSize = format.humanStorageSize(size);
     this.createdAt = createdAt;
     this.orphaned = orphaned;
+    this.shareId = shareId;
   }
 };
 
