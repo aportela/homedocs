@@ -187,6 +187,19 @@ interface GetActivityHeatMapDataResponse extends Omit<DefaultAxiosResponse, 'dat
   }
 };
 
+interface attachmentShareResponse {
+  data: {
+    share: {
+      id: string;
+      createdAtTimestamp: number;
+      expiresAtTimestamp: number;
+      accessLimit: number;
+      accessCount: number;
+      enabled: boolean;
+    }
+  }
+};
+
 interface getServerEnvironmentResponseData {
   data: {
     serverEnvironment: {
@@ -224,5 +237,6 @@ export {
   type GetTagsResponse,
   type GetActivityHeatMapDataResponseItem,
   type GetActivityHeatMapDataResponse,
+  type attachmentShareResponse,
   type getServerEnvironmentResponseData,
 };
