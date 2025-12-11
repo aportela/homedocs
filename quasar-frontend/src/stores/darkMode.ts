@@ -23,7 +23,7 @@ export const useDarkModeStore = defineStore('darkModeStore', {
     active: Dark.isActive
   }),
   getters: {
-    isActive: (state): boolean => state.active,
+    isActive: (state: State): boolean => state.active,
   },
   actions: {
     set(active: boolean): void {

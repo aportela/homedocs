@@ -30,9 +30,9 @@ export const useAdvancedSearchData = defineStore("advancedSearchData", {
     sort: getDefaultSort(),
   }),
   getters: {
-    currentPager: (state) => state.pager,
-    currentFilter: (state) => state.filter,
-    currentSort: (state) => state.sort,
+    currentPager: (state: State) => state.pager,
+    currentFilter: (state: State) => state.filter,
+    currentSort: (state: State) => state.sort,
   },
   actions: {
     reset() {

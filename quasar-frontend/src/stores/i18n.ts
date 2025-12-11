@@ -28,7 +28,7 @@ export const useI18nStore = defineStore('i18nStore', {
     locale: getMatchedLocale(localStorageLocale.get() || Lang.getLocale() || "") ?? DEFAULT_LOCALE,
   }),
   getters: {
-    currentLocale: (state): string => state.locale,
+    currentLocale: (state: State): string => state.locale,
   },
   actions: {
     setLocale(locale: string): boolean {
