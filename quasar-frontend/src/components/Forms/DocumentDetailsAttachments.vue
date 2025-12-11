@@ -69,7 +69,7 @@
             <q-chip size="md" square class="theme-default-q-chip shadow-1 full-width" :clickable="!isDisabled"
               @click.stop.prevent="onShare(attachmentIndex)">
               <q-avatar class="theme-default-q-avatar text-white bg-blue-6" icon="share" />
-              {{ t("Share") }}
+              {{ t(attachment.shareId ? "Shared" : "Share") }}
             </q-chip>
           </q-item-section>
           <DesktopToolTip>{{ t("Click to download") }}</DesktopToolTip>

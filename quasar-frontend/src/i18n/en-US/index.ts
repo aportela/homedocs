@@ -470,6 +470,9 @@ export default {
   "Share":
     "Share",
 
+  "Shared":
+    "Shared",
+
   "Shares":
     "Shares",
 
