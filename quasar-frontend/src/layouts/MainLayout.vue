@@ -13,7 +13,7 @@
         <q-btn type="button" no-caps no-wrap align="left" outline :label="searchButtonLabel" icon="search"
           class="full-width no-caps theme-default-q-btn" @click.prevent="dialogs.fastSearch.visible = true">
           <DesktopToolTip anchor="bottom middle" self="top middle">{{ t("Click to open fast search")
-          }}</DesktopToolTip>
+            }}</DesktopToolTip>
         </q-btn>
         <!--
         <FastSearchSelector dense class="full-width"></FastSearchSelector>
@@ -46,8 +46,8 @@
       @close="dialogs.documentNotesPreview.visible = false" />
     <UploadingDialog v-model="dialogs.uploading.visible" :transfers="dialogs.uploading.transfers"
       @clear-processed-transfers="onClearProcessedTransfers" />
-    <SharePreviewDialog v-if="dialogs.sharePreview.visible" :document-id="dialogs.sharePreview.document.id"
-      :document-title="dialogs.sharePreview.document.title" @close="dialogs.sharePreview.visible = false" />
+    <SharePreviewDialog v-if="dialogs.sharePreview.visible" :attachment-id="dialogs.sharePreview.attachmentId"
+      :create="dialogs.sharePreview.create" @close="dialogs.sharePreview.visible = false" />
   </q-layout>
 
 </template>
@@ -118,10 +118,8 @@ interface DialogsInterface {
   },
   sharePreview: {
     visible: boolean;
-    document: {
-      id: string | null;
-      title: string | null;
-    }
+    attachmentId: string;
+    create: false,
   }
 };
 
@@ -157,10 +155,8 @@ const dialogs = reactive<DialogsInterface>({
   },
   sharePreview: {
     visible: false,
-    document: {
-      id: null,
-      title: null,
-    }
+    attachmentId: "",
+    create: false,
   }
 });
 
@@ -312,8 +308,8 @@ onMounted(() => {
 
   bus.on("showSharePreviewDialog", (msg) => {
     dialogs.sharePreview.visible = true;
-    dialogs.sharePreview.document.id = msg.document.id;
-    dialogs.sharePreview.document.title = msg.document.title;
+    dialogs.sharePreview.attachmentId = msg.attachmentId;
+    dialogs.sharePreview.create = msg.create;
   });
 });
 
