@@ -16,7 +16,7 @@ class ShareAttachment
     public function __construct(string $id, int $createdAtTimestamp, int $expiresAtTimestamp, int $accessLimit, bool $enabled)
     {
         if (empty($id)) {
-            $this->id = $this->getNewToken();
+            $this->id = sprintf("%s%014d", password_hash(bin2hex(random_bytes(1024)), CRYPT_BLOWFISH), intval(microtime(true) * 1000));
         } else {
             $this->id = $id;
         }
@@ -24,16 +24,6 @@ class ShareAttachment
         $this->expiresAtTimestamp = $expiresAtTimestamp;
         $this->accessLimit = $accessLimit > 0 ? $accessLimit : 0;
         $this->enabled = $enabled;
-    }
-
-    private function encodeURLToken(string $input): string
-    {
-        return \str_replace('=', '', \strtr(\base64_encode($input), '+/', '-_'));
-    }
-
-    private function getNewToken(): string
-    {
-        return ($this->encodeURLToken(\HomeDocs\Utils::uuidv4()));
     }
 
     public function add(\aportela\DatabaseWrapper\DB $db, string $attachmentId): bool
