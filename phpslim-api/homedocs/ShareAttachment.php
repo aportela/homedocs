@@ -15,27 +15,37 @@ class ShareAttachment
 
     public function __construct(string $id, int $createdAtTimestamp, int $expiresAtTimestamp, int $accessLimit, bool $enabled)
     {
-        if (! empty($id) && mb_strlen(($id) === 36)) {
-            $this->id = $id;
-            $this->createdAtTimestamp = $createdAtTimestamp > 0 ? $createdAtTimestamp : intval(microtime(true) * 1000);
-            $this->expiresAtTimestamp = $expiresAtTimestamp;
-            $this->accessLimit = $accessLimit > 0 ? $accessLimit : 0;
-            $this->enabled = $enabled;
+        if (empty($id)) {
+            $this->id = $this->getNewToken();
         } else {
-            throw new \HomeDocs\Exception\InvalidParamsException("id");
+            $this->id = $id;
         }
+        $this->createdAtTimestamp = $createdAtTimestamp > 0 ? $createdAtTimestamp : intval(microtime(true) * 1000);
+        $this->expiresAtTimestamp = $expiresAtTimestamp;
+        $this->accessLimit = $accessLimit > 0 ? $accessLimit : 0;
+        $this->enabled = $enabled;
+    }
+
+    private function encodeURLToken(string $input): string
+    {
+        return \str_replace('=', '', \strtr(\base64_encode($input), '+/', '-_'));
+    }
+
+    private function getNewToken(): string
+    {
+        return ($this->encodeURLToken(\HomeDocs\Utils::uuidv4()));
     }
 
     public function add(\aportela\DatabaseWrapper\DB $db, string $attachmentId): bool
     {
-        if (! empty($attachmentId) && mb_strlen(($attachmentId) === 36)) {
+        if (! empty($attachmentId) && mb_strlen($attachmentId) === 36) {
             return ($db->execute(
                 "
                     INSERT
                     INTO SHARED_ATTACHMENT
                         (id, cuid, attachment_id, ctime, etime, access_limit, access_count, enabled)
                     VALUES
-                        (:id, :cuid, :attachment_id, :ctime, :etime, :access_limit, :access_count, :enabled)
+                        (:id, :cuid, :attachment_id, :ctime, :etime, :access_limit, 0, :enabled)
                 ",
                 [
                     new \aportela\DatabaseWrapper\Param\StringParam(":id", $this->id),
@@ -44,7 +54,6 @@ class ShareAttachment
                     new \aportela\DatabaseWrapper\Param\IntegerParam(":ctime", $this->createdAtTimestamp),
                     new \aportela\DatabaseWrapper\Param\IntegerParam(":etime", $this->expiresAtTimestamp > 0 ? $this->expiresAtTimestamp : 0),
                     new \aportela\DatabaseWrapper\Param\IntegerParam(":access_limit", $this->accessLimit > 0 ? $this->accessLimit : 0),
-                    new \aportela\DatabaseWrapper\Param\IntegerParam(":access_count", $this->accessCount > 0 ? $this->accessCount : 0),
                     new \aportela\DatabaseWrapper\Param\IntegerParam(":enabled", $this->enabled ? 1 : 0),
                 ]
             ));
@@ -123,14 +132,60 @@ class ShareAttachment
         ));
     }
 
-    public function get(\aportela\DatabaseWrapper\DB $db, ?string $attachmentId)
+    public function get(\aportela\DatabaseWrapper\DB $db, string|null $attachmentId)
     {
+        $results = [];
         if (! empty($attachmentId)) {
-            $results = $db->query("", []);
+            $results = $db->query(
+                "
+                    SELECT
+                        SA.id,
+                        SA.cuid as creatorId,
+                        SA.attachment_id AS attachmentId,
+                        SA.ctime AS createdAtTimestamp,
+                        SA.etime AS expiresAtTimestamp,
+                        SA.access_limit AS accessLimit,
+                        SA.access_count AS accessCount,
+                        SA.enabled
+                    FROM SHARED_ATTACHMENT SA
+                    WHERE
+                        SA.attachment_id = :attachment_id
+                ",
+                [
+                    new \aportela\DatabaseWrapper\Param\StringParam(":attachment_id", $attachmentId)
+                ]
+            );
         } else if (! empty($this->id)) {
-            $results = $db->query("", []);
+            $results = $db->query(
+                "
+                    SELECT
+                        SA.id,
+                        SA.cuid as creatorId,
+                        SA.attachment_id AS attachmentId,
+                        SA.ctime AS createdAtTimestamp,
+                        SA.etime AS expiresAtTimestamp,
+                        SA.access_limit AS accessLimit,
+                        SA.access_count AS accessCount,
+                        SA.enabled
+                    FROM SHARED_ATTACHMENT SA
+                    WHERE
+                        SA.id = :id
+                ",
+                [
+                    new \aportela\DatabaseWrapper\Param\StringParam(":id", $this->id)
+                ]
+            );
         } else {
             throw new \HomeDocs\Exception\InvalidParamsException("id");
+        }
+        if (count($results) == 1) {
+            $this->id = property_exists($results[0], "id") && is_string($results[0]->id) ? $results[0]->id : "";
+            $this->createdAtTimestamp = property_exists($results[0], "createdAtTimestamp") && is_numeric($results[0]->createdAtTimestamp) ? intval($results[0]->createdAtTimestamp) : 0;
+            $this->expiresAtTimestamp = property_exists($results[0], "expiresAtTimestamp") && is_numeric($results[0]->expiresAtTimestamp) ? intval($results[0]->expiresAtTimestamp) : 0;
+            $this->accessLimit = property_exists($results[0], "accessLimit") && is_numeric($results[0]->accessLimit) ? intval($results[0]->accessLimit) : 0;
+            $this->accessCount = property_exists($results[0], "accessCount") && is_numeric($results[0]->accessCount) ? intval($results[0]->accessCount) : 0;
+        } else {
+            throw new \HomeDocs\Exception\NotFoundException("id");
         }
     }
 

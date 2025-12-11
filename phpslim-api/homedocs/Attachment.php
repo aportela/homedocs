@@ -8,7 +8,7 @@ class Attachment
 {
     private string $localStoragePath;
 
-    public function __construct(public string $id, public ?string $name = null, public ?int $size = null, public ?string $hash = null, public ?int $createdAtTimestamp = null, public string|null $shareId = null)
+    public function __construct(public string $id, public ?string $name = null, public ?int $size = null, public ?string $hash = null, public ?int $createdAtTimestamp = null, public bool $shared = false)
     {
         if (!in_array($this->id, [null, '', '0'], true) && mb_strlen($this->id) === 36) {
             $this->localStoragePath = sprintf(
@@ -36,11 +36,11 @@ class Attachment
         $data = $db->query(
             "
                     SELECT
-                        A.name, A.size, A.sha1_hash AS hash, A.ctime AS createdAtTimestamp, A.cuid AS uploadedByUserId, SA.id AS shareId
+                        A.name, A.size, A.sha1_hash AS hash, A.ctime AS createdAtTimestamp, A.cuid AS uploadedByUserId, SA.attachment_id AS shareAttachmentId
                     FROM ATTACHMENT A
                     LEFT JOIN SHARED_ATTACHMENT SA ON SA.attachment_id = A.id
                     WHERE
-                        id = :id
+                        A.id = :id
                 ",
             [
                 new \aportela\DatabaseWrapper\Param\StringParam(":id", $this->id),
@@ -52,7 +52,7 @@ class Attachment
                 $this->size = property_exists($data[0], "size") && is_numeric($data[0]->size) ? intval($data[0]->size) : 0;
                 $this->hash = property_exists($data[0], "hash") && is_string($data[0]->hash) ? $data[0]->hash : null;
                 $this->createdAtTimestamp = property_exists($data[0], "createdAtTimestamp") && is_numeric($data[0]->createdAtTimestamp) ? intval($data[0]->createdAtTimestamp) : 0;
-                $this->shareId = property_exists($data[0], "shareId") && is_string($data[0]->shareId) ? $data[0]->shareId : null;
+                $this->shared = property_exists($data[0], "shareAttachmentId") && is_string($data[0]->shareAttachmentId) && ! empty($data[0]->shareAttachmentId);
             } else {
                 throw new \HomeDocs\Exception\AccessDeniedException("id");
             }

@@ -611,6 +611,41 @@ return function (\Slim\App $app): void {
                     throw new \RuntimeException("Failed to create database handler from container");
                 }
 
+                $routeCollectorProxy->post('/{attachment_id}/share', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
+                    // check existence
+                    $attachment = new \HomeDocs\Attachment(
+                        array_key_exists("attachment_id", $args) && is_string($args['attachment_id']) ? $args['attachment_id'] : ""
+                    );
+                    $attachment->get($dbh);
+                    $share = new \HomeDocs\ShareAttachment("", 0, 0, 0, false);
+                    $share->add($dbh, $attachment->id);
+                    $share->get($dbh, null);
+                    $payload = \HomeDocs\Utils::getJSONPayload(
+                        [
+                            'share' => $share
+                        ]
+                    );
+                    $response->getBody()->write($payload);
+                    return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
+                });
+
+                $routeCollectorProxy->get('/{attachment_id}/share', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
+                    // check existence
+                    $attachment = new \HomeDocs\Attachment(
+                        array_key_exists("attachment_id", $args) && is_string($args['attachment_id']) ? $args['attachment_id'] : ""
+                    );
+                    $attachment->get($dbh);
+                    $share = new \HomeDocs\ShareAttachment("", 0, 0, 0, false);
+                    $share->get($dbh, $attachment->id);
+                    $payload = \HomeDocs\Utils::getJSONPayload(
+                        [
+                            'share' => $share
+                        ]
+                    );
+                    $response->getBody()->write($payload);
+                    return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
+                });
+
                 $routeCollectorProxy->get('/{id}[/{inline}]', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $attachment = new \HomeDocs\Attachment(
                         array_key_exists("id", $args) && is_string($args['id']) ? $args['id'] : ""
