@@ -21,8 +21,8 @@
               </template>
             </q-input>
           </p>
-          <p><q-toggle v-model="enabled" color="green" icon="share" label="Enabled" /></p>
-          <p><q-toggle v-model="hasExpiration" color="green" icon="lock_clock" label="Has expiration" /></p>
+          <p><q-toggle size="xl" v-model="enabled" color="green" icon="share" label="Enabled" /></p>
+          <p><q-toggle size="xl" v-model="hasExpiration" color="green" icon="lock_clock" label="Has expiration" /></p>
           <p v-if="hasExpiration">
             <q-btn-toggle v-model="expiresOn" toggle-color="primary" :options="expiresOnOptions" />
           </p>

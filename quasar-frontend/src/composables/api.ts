@@ -100,6 +100,14 @@ const api = {
         params: { fromTimestamp: fromTimestamp || null },
       }),
   },
+  sharedAttachment: {
+    create: (attachmentId: string) => {
+      return axiosInstance.post(`/attachment/${attachmentId}/share`);
+    },
+    get: (attachmentId: string) => {
+      return axiosInstance.get(`/attachment/${attachmentId}/share`);
+    },
+  }
 };
 
 export { api };

@@ -78,7 +78,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.ajaxRunning" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                      }}</q-badge>
+                    }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
@@ -546,7 +546,7 @@ const onFileUploaded = (info: { files: readonly File[]; xhr: XMLHttpRequest | Ax
         info.files[0]!.size,
         new DateTimeClass(t, currentTimestamp()),
         true, // this property is used for checking if file was uploaded but not associated to document (while not saving document)
-        null,
+        false,
       )
     );
     bus.emit("refreshUploadingDialog.fileUploaded", {

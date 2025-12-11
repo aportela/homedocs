@@ -121,7 +121,7 @@ class DocumentClass implements Document {
             attachment.size,
             new DateTimeClass(t, attachment.createdAtTimestamp),
             false,
-            attachment.shareId,
+            attachment.shared,
           )
         ),
       );

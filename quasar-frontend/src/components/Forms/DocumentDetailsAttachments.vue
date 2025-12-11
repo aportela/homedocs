@@ -67,9 +67,9 @@
               {{ t("Preview") }}
             </q-chip>
             <q-chip size="md" square class="theme-default-q-chip shadow-1 full-width" :clickable="!isDisabled"
-              @click.stop.prevent="onShare(attachmentIndex)">
+              @click.stop.prevent="onShareClick(attachment)">
               <q-avatar class="theme-default-q-avatar text-white bg-blue-6" icon="share" />
-              {{ t(attachment.shareId ? "Shared" : "Share") }}
+              {{ t(attachment.shared ? "Shared" : "Share") }}
             </q-chip>
           </q-item-section>
           <DesktopToolTip>{{ t("Click to download") }}</DesktopToolTip>
@@ -87,7 +87,7 @@
 import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import { format, useQuasar } from "quasar";
-
+import { api } from "src/composables/api";
 import { bgDownload } from "src/composables/axios";
 import { bus } from "src/composables/bus";
 import { allowPreview } from "src/composables/fileUtils"
@@ -146,9 +146,23 @@ const onPreviewAttachment = (index: number) => {
   emit("previewAttachmentAtIndex", index);
 };
 
-const onShare = (index: number) => {
-  console.log(index);
-  bus.emit('showSharePreviewDialog', { document: { id: null, title: null } });
+const onShareClick = (attachment: AttachmentInterface) => {
+  if (attachment.shared) {
+    api.sharedAttachment.get(attachment.id).then(() => {
+      bus.emit('showSharePreviewDialog', { document: { id: null, title: null } });
+    }).catch((e) => {
+      // TODO:
+      console.error(e);
+    }).finally(() => { });
+  } else {
+    api.sharedAttachment.create(attachment.id).then(() => {
+      bus.emit('showSharePreviewDialog', { document: { id: null, title: null } });
+    }).catch((e) => {
+      // TODO:
+      console.error(e);
+    }).finally(() => { });
+  }
+
 };
 
 const onDownload = (attachmentId: string, fileName: string) => {

@@ -76,7 +76,7 @@ interface DocumentAttachmentResponseItem {
   size: number;
   hash: string;
   createdAtTimestamp: number;
-  shareId: string | null;
+  shared: boolean;
 };
 
 interface DocumentAttachmentsResponse extends Omit<DefaultAxiosResponse, 'data'> {
