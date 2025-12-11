@@ -629,6 +629,53 @@ return function (\Slim\App $app): void {
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
+                $routeCollectorProxy->put('/{attachment_id}/share', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
+                    // check existence
+                    $attachment = new \HomeDocs\Attachment(
+                        array_key_exists("attachment_id", $args) && is_string($args['attachment_id']) ? $args['attachment_id'] : ""
+                    );
+                    $params = $request->getParsedBody();
+                    if (! is_array($params)) {
+                        throw new \HomeDocs\Exception\InvalidParamsException();
+                    }
+
+                    if (! (array_key_exists("expiresAtTimestamp", $params) && is_numeric($params["expiresAtTimestamp"]))) {
+                        throw new \HomeDocs\Exception\InvalidParamsException("expiresAtTimestamp");
+                    }
+                    if (! (array_key_exists("accessLimit", $params) && is_numeric($params["accessLimit"]))) {
+                        throw new \HomeDocs\Exception\InvalidParamsException("accessLimit");
+                    }
+                    if (! (array_key_exists("enabled", $params) && is_bool($params["enabled"]))) {
+                        throw new \HomeDocs\Exception\InvalidParamsException("enabled");
+                    }
+                    $attachment->get($dbh);
+                    $share = new \HomeDocs\ShareAttachment("", 0, intval($params["expiresAtTimestamp"]), intval($params["accessLimit"]), $params["enabled"]);
+                    $share->update($dbh, $attachment->id);
+                    $share->get($dbh, null);
+                    $payload = \HomeDocs\Utils::getJSONPayload(
+                        [
+                            'share' => $share
+                        ]
+                    );
+                    $response->getBody()->write($payload);
+                    return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
+                });
+
+                $routeCollectorProxy->delete('/{attachment_id}/share', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
+                    // check existence
+                    $attachment = new \HomeDocs\Attachment(
+                        array_key_exists("attachment_id", $args) && is_string($args['attachment_id']) ? $args['attachment_id'] : ""
+                    );
+                    $attachment->get($dbh);
+                    $share = new \HomeDocs\ShareAttachment("", 0, 0, 0, false);
+                    $share->delete($dbh, $attachment->id);
+                    $payload = \HomeDocs\Utils::getJSONPayload(
+                        []
+                    );
+                    $response->getBody()->write($payload);
+                    return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
+                });
+
                 $routeCollectorProxy->get('/{attachment_id}/share', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     // check existence
                     $attachment = new \HomeDocs\Attachment(
