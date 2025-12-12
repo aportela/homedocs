@@ -1,7 +1,7 @@
-import { type AxiosResponse } from "axios";
-import { type HistoryOperationType } from "./historyOperation";
-import { type SearchDocumentItemMatchedFragment as SearchDocumentItemMatchedFragmentInterface } from "./searchDocumentItem";
-import { type EnvironmentType, type ValidAuthTypes } from "./common";
+import { type AxiosResponse } from 'axios';
+import { type HistoryOperationType } from './historyOperation';
+import { type SearchDocumentItemMatchedFragment as SearchDocumentItemMatchedFragmentInterface } from './searchDocumentItem';
+import { type EnvironmentType, type ValidAuthTypes } from './common';
 
 interface DefaultAxiosResponse<T = unknown> {
   data: AxiosResponse<T>;
@@ -12,47 +12,47 @@ interface LoginResponse extends Omit<DefaultAxiosResponse, 'data'> {
     accessToken: string;
     refreshToken: string;
     tokenType: ValidAuthTypes;
-  }
-};
+  };
+}
 
 interface GetNewAccessTokenResponse extends Omit<DefaultAxiosResponse, 'data'> {
   data: {
     accessToken: string;
     tokenType: ValidAuthTypes;
-  }
-};
+  };
+}
 
 interface RegisterResponse extends Omit<DefaultAxiosResponse, 'data'> {
   data: undefined;
-};
+}
 
 interface UserProfileResponseData {
   id: string | null;
   email: string;
-};
+}
 
 interface GetProfileResponse extends Omit<DefaultAxiosResponse, 'data'> {
   data: {
     user: UserProfileResponseData;
-  }
-};
+  };
+}
 
 interface SetProfileResponse extends Omit<DefaultAxiosResponse, 'data'> {
   data: {
     user: UserProfileResponseData;
-  }
-};
+  };
+}
 
 interface TagCloudResponseItem {
   total: number;
   tag: string;
-};
+}
 
 interface TagCloudResponse extends Omit<DefaultAxiosResponse, 'data'> {
   data: {
     tags: TagCloudResponseItem[];
-  }
-};
+  };
+}
 
 interface RecentDocumentResponseItem {
   id: string;
@@ -62,13 +62,13 @@ interface RecentDocumentResponseItem {
   tags: string[];
   attachmentCount: number;
   noteCount: number;
-};
+}
 
 interface RecentDocumentsResponse extends Omit<DefaultAxiosResponse, 'data'> {
   data: {
     documents: RecentDocumentResponseItem[];
-  }
-};
+  };
+}
 
 interface DocumentAttachmentResponseItem {
   id: string;
@@ -77,36 +77,36 @@ interface DocumentAttachmentResponseItem {
   hash: string;
   createdAtTimestamp: number;
   shared: boolean;
-};
+}
 
 interface DocumentAttachmentsResponse extends Omit<DefaultAxiosResponse, 'data'> {
   data: {
     attachments: DocumentAttachmentResponseItem[];
-  }
-};
+  };
+}
 
 interface DocumentNoteResponseItem {
   id: string;
   body: string;
   createdAtTimestamp: number;
-};
+}
 
 interface DocumentNoteResponse extends Omit<DefaultAxiosResponse, 'data'> {
   data: {
     notes: DocumentNoteResponseItem[];
-  }
-};
+  };
+}
 
 interface DocumentHistoryOperationResponseItem {
   createdAtTimestamp: number;
   operationType: HistoryOperationType;
-};
+}
 
 interface DocumentHistoryOperationResponse extends Omit<DefaultAxiosResponse, 'data'> {
   data: {
     historyOperations: DocumentHistoryOperationResponseItem[];
-  }
-};
+  };
+}
 
 interface PaginationResponse {
   currentPage: number;
@@ -125,34 +125,34 @@ interface SearchDocumentResponseItem {
   attachmentCount: number;
   noteCount: number;
   matchedFragments: SearchDocumentItemMatchedFragmentInterface[];
-};
+}
 
 interface SearchDocumentResponse extends Omit<DefaultAxiosResponse, 'data'> {
   data: {
     results: {
-      pagination: PaginationResponse,
+      pagination: PaginationResponse;
       documents: SearchDocumentResponseItem[];
-    }
-  }
+    };
+  };
 }
 
 interface GetTotalDocumentsStatsResponse extends Omit<DefaultAxiosResponse, 'data'> {
   data: {
     count: number;
-  }
-};
+  };
+}
 
 interface GetTotalAttachmentsStatsResponse extends Omit<DefaultAxiosResponse, 'data'> {
   data: {
     count: number;
-  }
-};
+  };
+}
 
 interface GetDiskUsageStatsResponse extends Omit<DefaultAxiosResponse, 'data'> {
   data: {
     size: number;
-  }
-};
+  };
+}
 
 interface GetDocumentResponse extends Omit<DefaultAxiosResponse, 'data'> {
   data: {
@@ -166,28 +166,28 @@ interface GetDocumentResponse extends Omit<DefaultAxiosResponse, 'data'> {
       attachments: DocumentAttachmentResponseItem[];
       notes: DocumentNoteResponseItem[];
       historyOperations: DocumentHistoryOperationResponseItem[];
-    }
-  }
-};
+    };
+  };
+}
 
 interface GetTagsResponse extends Omit<DefaultAxiosResponse, 'data'> {
   data: {
     tags: string[];
-  }
-};
+  };
+}
 
 interface GetActivityHeatMapDataResponseItem {
   date: string;
   count: number;
-};
+}
 
 interface GetActivityHeatMapDataResponse extends Omit<DefaultAxiosResponse, 'data'> {
   data: {
     heatmap: GetActivityHeatMapDataResponseItem[];
-  }
-};
+  };
+}
 
-interface attachmentShareResponse {
+interface attachmentShareResponse extends Omit<DefaultAxiosResponse, 'data'> {
   data: {
     share: {
       id: string;
@@ -196,9 +196,9 @@ interface attachmentShareResponse {
       accessLimit: number;
       accessCount: number;
       enabled: boolean;
-    }
-  }
-};
+    };
+  };
+}
 
 interface getServerEnvironmentResponseData {
   data: {
@@ -206,9 +206,9 @@ interface getServerEnvironmentResponseData {
       allowSignUp: boolean;
       environment: EnvironmentType;
       maxUploadFileSize: number;
-    }
-  }
-};
+    };
+  };
+}
 
 export {
   type DefaultAxiosResponse,
