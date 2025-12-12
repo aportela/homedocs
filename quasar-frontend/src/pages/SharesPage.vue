@@ -1,6 +1,11 @@
 <template>
   <q-page>
     <div>
+      <div class="q-ma-md flex flex-center" v-if="pager.totalPages > 1">
+        <q-pagination v-model="pager.currentPageIndex" color="dark" :max="pager.totalPages" :max-pages="5"
+          boundary-numbers direction-links boundary-links @update:model-value="onPaginationChanged"
+          :disable="state.ajaxRunning" class="theme-default-q-pagination" />
+      </div>
       <q-markup-table v-if="hasSharedAttachments">
         <thead>
           <tr>
@@ -63,7 +68,11 @@
           </tr>
         </tbody>
       </q-markup-table>
-
+      <div class="q-ma-md flex flex-center" v-if="pager.totalPages > 1">
+        <q-pagination v-model="pager.currentPageIndex" color="dark" :max="pager.totalPages" :max-pages="5"
+          boundary-numbers direction-links boundary-links @update:model-value="onPaginationChanged"
+          :disable="state.ajaxRunning" class="theme-default-q-pagination" />
+      </div>
       <CustomBanner v-else warning text="You haven't created any share yet" />
     </div>
   </q-page>
@@ -81,6 +90,9 @@
   import { fullDateTimeHuman, timeAgo } from "src/composables/dateUtils";
   import { api } from "src/composables/api";
   import { getURL as getAttachmentURL } from 'src/composables/attachment';
+  //import { type SortClass as SortClassInterface, SortClass } from 'src/types/sort';
+  import { PagerClass } from 'src/types/pager';
+
   import { default as CustomBanner } from 'src/components/Banners/CustomBanner.vue';
 
   const { t } = useI18n();
@@ -91,18 +103,20 @@
 
   const hasSharedAttachments = computed(() => results.value.length > 0);
 
+  const pager = new PagerClass(1, 16, 0, 0);
+
+  const onPaginationChanged = (pageIndex: number) => {
+    pager.currentPageIndex = pageIndex;
+    onSubmitForm(false);
+  }
+
   const onSubmitForm = (resetPager: boolean) => {
     if (resetPager) {
-      //store.pager.currentPageIndex = 1;
+      pager.currentPageIndex = 1;
     }
     Object.assign(state, defaultAjaxState);
     state.ajaxRunning = true;
-    api.sharedAttachment.search({
-      currentPageIndex: 1,
-      resultsPage: 16,
-      totalResults: 0,
-      totalPages: 0,
-    }, {
+    api.sharedAttachment.search(pager, {
       field: "createdAtTimestamp",
       label: "",
       order: "DESC"
@@ -114,29 +128,10 @@
           results.value = successResponse.data.results.sharedAttachments.map((result) => {
             return (result);
           });
-          /*
-          store.pager.currentPageIndex = successResponse.data.results.pagination.currentPage;
-          store.pager.resultsPage = successResponse.data.results.pagination.resultsPage;
-          store.pager.totalResults = successResponse.data.results.pagination.totalResults;
-          store.pager.totalPages = successResponse.data.results.pagination.totalPages;
-          results.value = successResponse.data.results.documents.map((document: SearchDocumentResponseItemInterface) =>
-            new SearchDocumentItemClass(
-              t,
-              document.id,
-              new DateTimeClass(t, document.createdAtTimestamp),
-              new DateTimeClass(t, document.updatedAtTimestamp),
-              document.title,
-              document.description,
-              document.tags,
-              document.attachmentCount,
-              document.noteCount,
-              document.matchedFragments,
-              "",
-            )
-          );
-          searchLaunched.value = true;
-          resultsWidgetRef.value?.expand();
-          */
+          pager.currentPageIndex = successResponse.data.results.pagination.currentPage;
+          pager.resultsPage = successResponse.data.results.pagination.resultsPage;
+          pager.totalResults = successResponse.data.results.pagination.totalResults;
+          pager.totalPages = successResponse.data.results.pagination.totalPages;
         }
       })
       .catch((errorResponse) => {
@@ -165,7 +160,6 @@
       });
   }
 
-
   const onShareClick = (attachmentId: string) => {
     bus.emit('showSharePreviewDialog', { attachmentId: attachmentId, create: false });
   };
@@ -183,11 +177,11 @@
 
   onMounted(() => {
     bus.on("attachmentShareChanged", () => {
-      onSubmitForm(true);
+      onSubmitForm(false);
     });
 
     bus.on("attachmentShareDeleted", () => {
-      onSubmitForm(true);
+      onSubmitForm(false);
     });
 
     onSubmitForm(true);
