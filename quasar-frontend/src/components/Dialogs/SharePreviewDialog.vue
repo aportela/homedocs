@@ -249,7 +249,7 @@
             bus.emit("reAuthRequired", { emitter: "SharePreviewDialog.onCreate" });
             break;
           default:
-            state.ajaxErrorMessage = "API Error: Error creating attachment share";
+            state.ajaxErrorMessage = "API Error: Error adding attachment share";
             break;
         }
       } else {
