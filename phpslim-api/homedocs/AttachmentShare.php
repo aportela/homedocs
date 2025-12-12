@@ -109,18 +109,19 @@ class AttachmentShare
             $results = $db->query(
                 "
                     SELECT
-                        AS.id,
-                        AS.cuid as creatorId,
-                        AS.attachment_id AS attachmentId,
-                        AS.ctime AS createdAtTimestamp,
-                        AS.etime AS expiresAtTimestamp,
-                        AS.ltime AS lastAccessTimestamp,
-                        AS.access_limit AS accessLimit,
-                        AS.access_count AS accessCount,
-                        AS.enabled
-                    FROM ATTACHMENT_SHARE AS
+                        ATTACHMENT_SHARE.id,
+                        ATTACHMENT_SHARE.cuid as creatorId,
+                        ATTACHMENT_SHARE.attachment_id AS attachmentId,
+                        ATTACHMENT_SHARE.ctime AS createdAtTimestamp,
+                        ATTACHMENT_SHARE.etime AS expiresAtTimestamp,
+                        ATTACHMENT_SHARE.ltime AS lastAccessTimestamp,
+                        ATTACHMENT_SHARE.access_limit AS accessLimit,
+                        ATTACHMENT_SHARE.access_count AS accessCount,
+                        ATTACHMENT_SHARE.enabled
+                    FROM ATTACHMENT_SHARE
+                    INNER JOIN ATTACHMENT ON ATTACHMENT.id = ATTACHMENT_SHARE.attachment_id
                     WHERE
-                        AS.attachment_id = :attachment_id
+                        ATTACHMENT_SHARE.attachment_id = :attachment_id
                 ",
                 [
                     new \aportela\DatabaseWrapper\Param\StringParam(":attachment_id", $attachmentId),
@@ -130,18 +131,19 @@ class AttachmentShare
             $results = $db->query(
                 "
                     SELECT
-                        AS.id,
-                        AS.cuid as creatorId,
-                        AS.attachment_id AS attachmentId,
-                        AS.ctime AS createdAtTimestamp,
-                        AS.etime AS expiresAtTimestamp,
-                        AS.ltime AS lastAccessTimestamp,
-                        AS.access_limit AS accessLimit,
-                        AS.access_count AS accessCount,
-                        AS.enabled
-                    FROM ATTACHMENT_SHARE AS
+                        ATTACHMENT_SHARE.id,
+                        ATTACHMENT_SHARE.cuid as creatorId,
+                        ATTACHMENT_SHARE.attachment_id AS attachmentId,
+                        ATTACHMENT_SHARE.ctime AS createdAtTimestamp,
+                        ATTACHMENT_SHARE.etime AS expiresAtTimestamp,
+                        ATTACHMENT_SHARE.ltime AS lastAccessTimestamp,
+                        ATTACHMENT_SHARE.access_limit AS accessLimit,
+                        ATTACHMENT_SHARE.access_count AS accessCount,
+                        ATTACHMENT_SHARE.enabled
+                    FROM ATTACHMENT_SHARE
+                    INNER JOIN ATTACHMENT ON ATTACHMENT.id = ATTACHMENT_SHARE.attachment_id
                     WHERE
-                        AS.id = :id
+                        ATTACHMENT_SHARE.id = :id
                 ",
                 [
                     new \aportela\DatabaseWrapper\Param\StringParam(":id", $this->id),
