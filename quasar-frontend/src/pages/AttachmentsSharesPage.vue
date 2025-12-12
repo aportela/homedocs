@@ -11,15 +11,15 @@
           <tr>
             <th class="text-left">{{ t('Created on') }}</th>
             <th class="text-left">{{ t('Enabled') }}</th>
-            <th class="text-left">{{ t('Element') }}</th>
+            <th class="text-left">{{ t('Shared element') }}</th>
             <th class="text-left">{{ t('Expires on') }}</th>
-            <th class="text-right">{{ t('Total access') }}</th>
-            <th class="text-left">{{ t('Last access on') }}</th>
-            <th class="text-center">{{ t('Actions') }}</th>
+            <th class="text-right">{{ t('Access count') }}</th>
+            <th class="text-left">{{ t('Most recent access') }}</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="attachmentShare in results" :key="attachmentShare.id">
+          <tr v-for="attachmentShare in results" :key="attachmentShare.id" class="cursor-pointer"
+            @click="onShareClick(attachmentShare.attachment.id)">
             <td class="text-left">
               <p class="q-my-sm">{{ fullDateTimeHuman(attachmentShare.createdAtTimestamp) }}</p>
               <p class="q-my-sm">({{
@@ -33,19 +33,10 @@
             <td class="text-left"><q-icon class="text-weight-bold" size="sm"
                 :name="attachmentShare.enabled ? 'done' : 'block'" />
             </td>
-            <td>
-              <p class="q-my-sm"><q-icon name="file_download" class="q-mr-sm" />
-                <a :href="getAttachmentURL(attachmentShare.attachment.id, true)"
-                  @click.stop.prevent="onDownload(attachmentShare.attachment.id, attachmentShare.attachment.name)">{{
-                    attachmentShare.attachment.name
-                  }}</a>
-                ({{ format.humanStorageSize(attachmentShare.attachment.size) }})
-              </p>
-              <p class="q-my-sm"><q-icon name="work" class="q-mr-sm" />
-                <router-link :to="{ name: 'document', params: { id: attachmentShare.document.id } }">{{
-                  attachmentShare.document.title
-                }}</router-link>
-              </p>
+            <td class="text-left">
+              <p class="q-my-sm"><q-icon name="file_download" class="q-mr-sm" />{{ attachmentShare.attachment.name }}
+                ({{ format.humanStorageSize(attachmentShare.attachment.size) }})</p>
+              <p class="q-my-sm"><q-icon name="work" class="q-mr-sm" />{{ attachmentShare.document.title }}</p>
             </td>
             <td class="text-left">
               <div v-if="attachmentShare.expiresAtTimestamp">
@@ -73,10 +64,6 @@
                 }) }})</p>
               </div>
             </td>
-            <td class="text-center">
-              <q-btn flat outline no-caps size="md" icon="settings" :label="t('Settings')"
-                @click="onShareClick(attachmentShare.attachment.id)" />
-            </td>
           </tr>
         </tbody>
       </q-markup-table>
@@ -97,12 +84,9 @@
   import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
   import { type SearchAttachmentShareResponse as SearchAttachmentShareResponseInterface } from 'src/types/apiResponses';
   import { type AttachmentShare as AttachmentShareInterface } from 'src/types/attachmentShare';
-  import { bgDownload } from 'src/composables/axios';
   import { bus } from 'src/composables/bus';
   import { fullDateTimeHuman, timeAgo, timeUntil, currentTimestamp } from "src/composables/dateUtils";
   import { api } from "src/composables/api";
-  import { getURL as getAttachmentURL } from 'src/composables/attachment';
-  //import { type SortClass as SortClassInterface, SortClass } from 'src/types/sort';
   import { PagerClass } from 'src/types/pager';
 
   import { default as CustomBanner } from 'src/components/Banners/CustomBanner.vue';
@@ -135,7 +119,6 @@
     })
       .then((successResponse: SearchAttachmentShareResponseInterface) => {
         if (successResponse.data.results) {
-          console.log(successResponse.data.results);
           results.value = [];
           results.value = successResponse.data.results.sharedAttachments.map((result) => {
             return (result);
@@ -175,16 +158,6 @@
   const onShareClick = (attachmentId: string) => {
     bus.emit('showSharePreviewDialog', { attachmentId: attachmentId, create: false });
   };
-
-  const onDownload = (attachmentId: string, fileName: string) => {
-    bgDownload(getAttachmentURL(attachmentId), fileName)
-      .then(() => {
-        // TODO:
-      })
-      .catch(() => {
-        // TODO:
-      });
-  }
 
 
   onMounted(() => {

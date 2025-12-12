@@ -20,6 +20,12 @@ export default {
   "1 year":
     "1 año",
 
+  "(expired)":
+    "(expirado)",
+
+  "Access count":
+    "Nº de accesos",
+
   "Access denied":
     "Acceso denegado",
 
@@ -286,9 +292,9 @@ export default {
 
   "Expand sidebar":
     "Expandir sidebar",
-
-  "Expires at":
-    "Expira el",
+	
+  "Expires on":
+    "Expira en",
 
   "Fast search match fragment":
     "Coincidencia encontrada en {matchedOn}: {fragment}",
@@ -379,6 +385,9 @@ export default {
 
   "Max results":
     "Nº máximo resultados",
+
+  "Most recent access":
+    "Acceso más reciente",
 
   "Most recent activity":
     "Actividad más reciente",
@@ -514,6 +523,9 @@ export default {
 
   "Shared":
     "Compartido",
+
+  "Shared element":
+    "Elemento compartido",
 
   "Show password":
     "Mostrar contraseña",

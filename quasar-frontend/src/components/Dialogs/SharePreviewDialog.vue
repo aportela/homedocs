@@ -22,7 +22,7 @@
               :label="t('Enabled')" /></p>
           <p><q-toggle size="xl" v-model="hasExpiration" :disable="!enabled || state.ajaxRunning" color="green"
               icon="lock_clock" :label="t('Has expiration')" @update:model-value="onToggleHasExpiration" /> <span
-              class="text-weight-bold" v-if="hasExpiration">({{ t('Expires at') }} {{ expiresAtTimestampLabel }})</span>
+              class="text-weight-bold" v-if="hasExpiration">({{ t('Expires on') }} {{ expiresAtTimestampLabel }})</span>
           </p>
           <p v-if="hasExpiration">
             <q-btn-toggle no-caps v-model="expiresOn" :disable="!enabled || state.ajaxRunning" toggle-color="primary"
