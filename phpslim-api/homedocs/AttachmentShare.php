@@ -14,7 +14,8 @@ class AttachmentShare
 
     public int $accessCount;
 
-    public \HomeDocs\Attachment $attachment;
+    public \stdClass $attachment;
+    public \stdClass $document;
 
     public function __construct(string $id, int $createdAtTimestamp, public int $expiresAtTimestamp, int $accessLimit, public bool $enabled)
     {
@@ -158,12 +159,13 @@ class AttachmentShare
             $this->accessLimit = property_exists($results[0], "accessLimit") && is_numeric($results[0]->accessLimit) ? intval($results[0]->accessLimit) : 0;
             $this->accessCount = property_exists($results[0], "accessCount") && is_numeric($results[0]->accessCount) ? intval($results[0]->accessCount) : 0;
             $this->enabled = property_exists($results[0], "enabled") && is_numeric($results[0]->enabled) && intval($results[0]->enabled) === 1;
-            if (property_exists($results[0], "attachmentId") && is_string($results[0]->attachmentId)) {
-                $this->attachment = new \HomeDocs\Attachment($results[0]->attachmentId);
-                $this->attachment->get($db);
-            } else {
-                throw new \HomeDocs\Exception\NotFoundException("attachmentId");
-            }
+            $this->attachment = new \stdClass();
+            $this->attachment->id = property_exists($results[0], "attachmentId") && is_string($results[0]->attachmentId) ? $results[0]->attachmentId : null;
+            $this->attachment->name = property_exists($results[0], "attachmentFileName") && is_string($results[0]->attachmentFileName) ? $results[0]->attachmentFileName : null;
+            $this->attachment->size = property_exists($results[0], "attachmentFileSize") && is_string($results[0]->attachmentFileSize) ? $results[0]->attachmentFileSize : null;
+            $this->document = new \stdClass();
+            $this->document->id = null;
+            $this->document->title = null;
         } else {
             throw new \HomeDocs\Exception\NotFoundException("id");
         }
@@ -226,6 +228,11 @@ class AttachmentShare
             "accessLimit" => "SHARED_ATTACHMENT.access_limit",
             "accessCount" => "SHARED_ATTACHMENT.access_count",
             "enabled" => "SHARED_ATTACHMENT.enabled",
+            "attachmentId" => "SHARED_ATTACHMENT.attachment_id",
+            "attachmentFileName" => "ATTACHMENT.name",
+            "attachmentFileSize" => "ATTACHMENT.size",
+            "documentId" => "DOCUMENT_ATTACHMENT.document_id",
+            "documentTitle" => "DOCUMENT.title"
         ];
         $fieldCountDefinition = [
             "total" => "COUNT (SHARED_ATTACHMENT.id)",
@@ -264,6 +271,10 @@ class AttachmentShare
                         $item->enabled =  intval($item->enabled) === 1;
                     }
 
+                    if (property_exists($item, "attachmentFileSize") && is_numeric($item->attachmentFileSize)) {
+                        $item->attachmentFileSize = intval($item->attachmentFileSize);
+                    }
+
                     return ($item);
                 },
                 $browserResults->items
@@ -294,6 +305,7 @@ class AttachmentShare
                     FROM SHARED_ATTACHMENT
                     INNER JOIN ATTACHMENT ON ATTACHMENT.id = SHARED_ATTACHMENT.attachment_id
                     INNER JOIN DOCUMENT_ATTACHMENT ON DOCUMENT_ATTACHMENT.attachment_id = ATTACHMENT.id
+                    INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_ATTACHMENT.document_id
                     INNER JOIN DOCUMENT_HISTORY ON (
                         DOCUMENT_HISTORY.document_id = DOCUMENT_ATTACHMENT.document_id
                         AND
@@ -308,7 +320,6 @@ class AttachmentShare
                 $whereCondition
             )
         );
-        // TODO: only LEFT JOIN LAST UPDATE IF REQUIRED BY FILTERS
         $queryCount = $browser->buildQueryCount(
             sprintf(
                 "
@@ -317,6 +328,7 @@ class AttachmentShare
                     FROM SHARED_ATTACHMENT
                     INNER JOIN ATTACHMENT ON ATTACHMENT.id = SHARED_ATTACHMENT.attachment_id
                     INNER JOIN DOCUMENT_ATTACHMENT ON DOCUMENT_ATTACHMENT.attachment_id = ATTACHMENT.id
+                    INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_ATTACHMENT.document_id
                     INNER JOIN DOCUMENT_HISTORY ON (
                         DOCUMENT_HISTORY.document_id = DOCUMENT_ATTACHMENT.document_id
                         AND
@@ -330,9 +342,19 @@ class AttachmentShare
             )
         );
         $browserResults = $browser->launch($query, $queryCount);
-        // TODO: reuse $browserResults object ?
         $data = new \stdClass();
-        $data->sharedAttachments = $browserResults->items;
+        foreach ($browserResults->items as $item) {
+            $at = new \HomeDocs\AttachmentShare($item->id, $item->createdAtTimestamp, $item->expiresAtTimestamp, $item->accessLimit, $item->enabled);
+            $at->attachment = new \stdClass();
+            $at->attachment->id = $item->attachmentId;
+            $at->attachment->name = $item->attachmentFileName;
+            $at->attachment->size = $item->attachmentFileSize;
+            $at->document = new \stdClass();
+            $at->document->id = $item->documentId;
+            $at->document->title = $item->documentTitle;
+            $data->sharedAttachments[] = $at;
+        }
+
         $data->pagination = new \stdClass();
         $data->pagination->currentPage = $pager->getCurrentPageIndex();
         $data->pagination->resultsPage = $pager->getResultsPage();
