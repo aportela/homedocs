@@ -59,7 +59,7 @@
   import { timestamp, fullDateTimeHuman } from "src/composables/dateUtils";
   import { default as QRCodeStyling } from "qr-code-styling";
   import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
-  import { type attachmentShareResponse as attachmentShareResponseInterface, } from "src/types/apiResponses";
+  import { type CreateUpdateGetAttachmentShareResponse as CreateUpdateGetAttachmentShareResponseInterface, } from "src/types/apiResponses";
   import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
   import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
   const { t } = useI18n();
@@ -230,7 +230,7 @@
     enabled.value = false;
     accessLimit.value = 0;
     accessCount.value = 0;
-    api.sharedAttachment.create(props.attachmentId).then((successResponse: attachmentShareResponseInterface) => {
+    api.sharedAttachment.create(props.attachmentId).then((successResponse: CreateUpdateGetAttachmentShareResponseInterface) => {
       id.value = successResponse.data.share.id;
       enabled.value = successResponse.data.share.enabled;
       expiresAtTimestamp.value = successResponse.data.share.expiresAtTimestamp;
@@ -264,7 +264,7 @@
   const onGet = () => {
     Object.assign(state, defaultAjaxState);
     state.ajaxRunning = true;
-    api.sharedAttachment.get(props.attachmentId).then((successResponse: attachmentShareResponseInterface) => {
+    api.sharedAttachment.get(props.attachmentId).then((successResponse: CreateUpdateGetAttachmentShareResponseInterface) => {
       id.value = successResponse.data.share.id;
       enabled.value = successResponse.data.share.enabled;
       expiresAtTimestamp.value = successResponse.data.share.expiresAtTimestamp;
@@ -297,7 +297,7 @@
   const onSave = () => {
     Object.assign(state, defaultAjaxState);
     state.ajaxRunning = true;
-    api.sharedAttachment.update(props.attachmentId, enabled.value, expiresAtTimestamp.value, accessLimit.value).then((successResponse: attachmentShareResponseInterface) => {
+    api.sharedAttachment.update(props.attachmentId, enabled.value, expiresAtTimestamp.value, accessLimit.value).then((successResponse: CreateUpdateGetAttachmentShareResponseInterface) => {
       id.value = successResponse.data.share.id;
       enabled.value = successResponse.data.share.enabled;
       expiresAtTimestamp.value = successResponse.data.share.expiresAtTimestamp;

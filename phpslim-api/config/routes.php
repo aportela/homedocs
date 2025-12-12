@@ -226,7 +226,7 @@ return function (\Slim\App $app): void {
                 );
                 $attachment->get($dbh);
 
-                $share = new \HomeDocs\ShareAttachment($params['id'], 0, 0, 0, false);
+                $share = new \HomeDocs\AttachmentShare($params['id'], 0, 0, 0, false);
                 $share->get($dbh, null);
                 if ($share->isEnabled() && ! $share->isExpired() && ! $share->hasExceedAccessLimit()) {
                     $share->incrementAccessCount($dbh);
@@ -461,7 +461,7 @@ return function (\Slim\App $app): void {
 
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'results' => \HomeDocs\ShareAttachment::search(
+                            'results' => \HomeDocs\AttachmentShare::search(
                                 $dbh,
                                 getPagerFromParams($params),
                                 getSortFieldFromParams($params),
@@ -718,7 +718,7 @@ return function (\Slim\App $app): void {
                     );
                     $attachment->get($dbh);
 
-                    $share = new \HomeDocs\ShareAttachment("", 0, 0, 0, false);
+                    $share = new \HomeDocs\AttachmentShare("", 0, 0, 0, false);
                     $share->add($dbh, $attachment->id);
                     $share->get($dbh, null);
 
@@ -754,7 +754,7 @@ return function (\Slim\App $app): void {
                     }
 
                     $attachment->get($dbh);
-                    $share = new \HomeDocs\ShareAttachment("", 0, intval($params["expiresAtTimestamp"]), intval($params["accessLimit"]), $params["enabled"]);
+                    $share = new \HomeDocs\AttachmentShare("", 0, intval($params["expiresAtTimestamp"]), intval($params["accessLimit"]), $params["enabled"]);
                     $share->update($dbh, $attachment->id);
                     $share->get($dbh, $attachment->id);
 
@@ -774,7 +774,7 @@ return function (\Slim\App $app): void {
                     );
                     $attachment->get($dbh);
 
-                    $share = new \HomeDocs\ShareAttachment("", 0, 0, 0, false);
+                    $share = new \HomeDocs\AttachmentShare("", 0, 0, 0, false);
                     $share->delete($dbh, $attachment->id);
 
                     $payload = \HomeDocs\Utils::getJSONPayload(
@@ -791,7 +791,7 @@ return function (\Slim\App $app): void {
                     );
                     $attachment->get($dbh);
 
-                    $share = new \HomeDocs\ShareAttachment("", 0, 0, 0, false);
+                    $share = new \HomeDocs\AttachmentShare("", 0, 0, 0, false);
                     $share->get($dbh, $attachment->id);
 
                     $payload = \HomeDocs\Utils::getJSONPayload(

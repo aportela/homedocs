@@ -1,9 +1,10 @@
 <template>
   <q-page>
     <div>
-      <q-markup-table v-if="hasShares">
+      <q-markup-table v-if="hasSharedAttachments">
         <thead>
           <tr>
+            <th class="text-left">{{ t('Enabled') }}</th>
             <th class="text-left">{{ t('Created on') }}</th>
             <th class="text-left">Last activity on</th>
             <th class="text-left">Expires on</th>
@@ -12,11 +13,17 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="share, shareIndex in shares" :key="shareIndex">
-            <td class="text-left">{{ share.createdAt.dateTime }} ({{ share.createdAt.timeAgo }})</td>
-            <td class="text-left">{{ share.lastActivity.dateTime }} ({{ share.lastActivity.timeAgo }})</td>
+          <tr v-for="attachmentShare in results" :key="attachmentShare.id">
+            <td class="text-left"><q-icon class="text-weight-bold" size="xs"
+                :name="attachmentShare.enabled ? 'done' : 'block'" :color="attachmentShare.enabled ? 'green' : 'red'" />
+            </td>
+            <td class="text-left">{{ fullDateTimeHuman(attachmentShare.createdAtTimestamp) }} ({{
+              timeAgo(attachmentShare.createdAtTimestamp) }})</td>
+            <td class="text-left"><span v-if="attachmentShare.lastAccessTimestamp">{{
+              attachmentShare.lastAccessTimestamp }} ({{
+                  attachmentShare.lastAccessTimestamp }})</span></td>
             <td class="text-left">{{ t('never') }}</td>
-            <td class="text-right">{{ share.totalClicks }}</td>
+            <td class="text-right">{{ attachmentShare.accessCount || 0 }}</td>
             <td class="text-center">
               <q-btn-group flat>
                 <q-btn outline no-caps size="md" icon="settings" label="settings" />
@@ -36,9 +43,10 @@
   import { computed, reactive, shallowRef, onMounted } from 'vue';
   import { useI18n } from "vue-i18n";
   import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
-  import { DateTimeClass } from "src/types/dateTime";
+  import { type SearchAttachmentShareResponse as SearchAttachmentShareResponseInterface } from 'src/types/apiResponses';
+  import { type AttachmentShare as AttachmentShareInterface } from 'src/types/attachmentShare';
   import { bus } from 'src/composables/bus';
-  import { currentTimestamp } from "src/composables/dateUtils";
+  import { fullDateTimeHuman, timeAgo } from "src/composables/dateUtils";
   import { api } from "src/composables/api";
   import { default as CustomBanner } from 'src/components/Banners/CustomBanner.vue';
 
@@ -46,32 +54,9 @@
 
   const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-  const results = shallowRef([]);
+  const results = shallowRef<AttachmentShareInterface[]>([]);
 
-  const shares = [
-    {
-      createdAt: new DateTimeClass(t, currentTimestamp() - Math.random() * 1000000000),
-      lastActivity: new DateTimeClass(t, currentTimestamp() - Math.random() * 1000000000),
-      totalClicks: Math.floor(Math.random() * 101),
-    },
-    {
-      createdAt: new DateTimeClass(t, currentTimestamp() - Math.random() * 1000000000),
-      lastActivity: new DateTimeClass(t, currentTimestamp() - Math.random() * 1000000000),
-      totalClicks: Math.floor(Math.random() * 101),
-    },
-    {
-      createdAt: new DateTimeClass(t, currentTimestamp() - Math.random() * 1000000000),
-      lastActivity: new DateTimeClass(t, currentTimestamp() - Math.random() * 1000000000),
-      totalClicks: Math.floor(Math.random() * 101),
-    },
-    {
-      createdAt: new DateTimeClass(t, currentTimestamp() - Math.random() * 1000000000),
-      lastActivity: new DateTimeClass(t, currentTimestamp() - Math.random() * 1000000000),
-      totalClicks: Math.floor(Math.random() * 101),
-    }
-  ];
-
-  const hasShares = computed(() => shares.length > 0);
+  const hasSharedAttachments = computed(() => results.value.length > 0);
 
   const onSubmitForm = (resetPager: boolean) => {
     if (resetPager) {
@@ -89,10 +74,13 @@
       label: "",
       order: "DESC"
     })
-      .then((successResponse) => {
+      .then((successResponse: SearchAttachmentShareResponseInterface) => {
         if (successResponse.data.results) {
           console.log(successResponse.data.results);
           results.value = [];
+          results.value = successResponse.data.results.sharedAttachments.map((result) => {
+            return (result);
+          });
           /*
           store.pager.currentPageIndex = successResponse.data.results.pagination.currentPage;
           store.pager.resultsPage = successResponse.data.results.pagination.resultsPage;

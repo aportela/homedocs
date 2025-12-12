@@ -1,5 +1,6 @@
 import { type AxiosResponse } from 'axios';
-import { type HistoryOperationType } from './historyOperation';
+import { type HistoryOperationType as HistoryOperationTypeInterface } from './historyOperation';
+import { type AttachmentShare as AttachmentShareInterface } from './attachmentShare';
 import { type SearchDocumentItemMatchedFragment as SearchDocumentItemMatchedFragmentInterface } from './searchDocumentItem';
 import { type EnvironmentType, type ValidAuthTypes } from './common';
 
@@ -99,7 +100,7 @@ interface DocumentNoteResponse extends Omit<DefaultAxiosResponse, 'data'> {
 
 interface DocumentHistoryOperationResponseItem {
   createdAtTimestamp: number;
-  operationType: HistoryOperationType;
+  operationType: HistoryOperationTypeInterface;
 }
 
 interface DocumentHistoryOperationResponse extends Omit<DefaultAxiosResponse, 'data'> {
@@ -187,15 +188,17 @@ interface GetActivityHeatMapDataResponse extends Omit<DefaultAxiosResponse, 'dat
   };
 }
 
-interface attachmentShareResponse extends Omit<DefaultAxiosResponse, 'data'> {
+interface CreateUpdateGetAttachmentShareResponse extends Omit<DefaultAxiosResponse, 'data'> {
   data: {
-    share: {
-      id: string;
-      createdAtTimestamp: number;
-      expiresAtTimestamp: number;
-      accessLimit: number;
-      accessCount: number;
-      enabled: boolean;
+    share: AttachmentShareInterface;
+  };
+}
+
+interface SearchAttachmentShareResponse extends Omit<DefaultAxiosResponse, 'data'> {
+  data: {
+    results: {
+      pagination: PaginationResponse;
+      sharedAttachments: AttachmentShareInterface[];
     };
   };
 }
@@ -237,6 +240,7 @@ export {
   type GetTagsResponse,
   type GetActivityHeatMapDataResponseItem,
   type GetActivityHeatMapDataResponse,
-  type attachmentShareResponse,
+  type CreateUpdateGetAttachmentShareResponse,
+  type SearchAttachmentShareResponse,
   type getServerEnvironmentResponseData,
 };

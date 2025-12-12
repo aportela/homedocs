@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace HomeDocs;
 
-class ShareAttachment
+class AttachmentShare
 {
     public string $id;
 
@@ -13,6 +13,8 @@ class ShareAttachment
     public int $accessLimit;
 
     public int $accessCount;
+
+    public \HomeDocs\Attachment $attachment;
 
     public function __construct(string $id, int $createdAtTimestamp, public int $expiresAtTimestamp, int $accessLimit, public bool $enabled)
     {
@@ -156,6 +158,12 @@ class ShareAttachment
             $this->accessLimit = property_exists($results[0], "accessLimit") && is_numeric($results[0]->accessLimit) ? intval($results[0]->accessLimit) : 0;
             $this->accessCount = property_exists($results[0], "accessCount") && is_numeric($results[0]->accessCount) ? intval($results[0]->accessCount) : 0;
             $this->enabled = property_exists($results[0], "enabled") && is_numeric($results[0]->enabled) && intval($results[0]->enabled) === 1;
+            if (property_exists($results[0], "attachmentId") && is_string($results[0]->attachmentId)) {
+                $this->attachment = new \HomeDocs\Attachment($results[0]->attachmentId);
+                $this->attachment->get($db);
+            } else {
+                throw new \HomeDocs\Exception\NotFoundException("attachmentId");
+            }
         } else {
             throw new \HomeDocs\Exception\NotFoundException("id");
         }
