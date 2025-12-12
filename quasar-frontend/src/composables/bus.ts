@@ -1,4 +1,4 @@
-import { EventBus } from "quasar";
+import { EventBus } from 'quasar';
 
 export interface DocumentPayload {
   document: {
@@ -14,34 +14,22 @@ export interface BusEvents {
 
 const bus = new EventBus();
 
-const onShowDocumentFiles = (
-  documentId: string,
-  documentTitle: string
-): void => {
-  bus.emit(
-    "showDocumentFilesPreviewDialog",
-    {
-      document: {
-        id: documentId,
-        title: documentTitle,
-      },
-    } as DocumentPayload
-  );
+const onShowDocumentFiles = (documentId: string, documentTitle: string): void => {
+  bus.emit('showDocumentFilesPreviewDialog', {
+    document: {
+      id: documentId,
+      title: documentTitle,
+    },
+  } as DocumentPayload);
 };
 
-const onShowDocumentNotes = (
-  documentId: string | number,
-  documentTitle: string
-): void => {
-  bus.emit(
-    "showDocumentNotesPreviewDialog",
-    {
-      document: {
-        id: documentId,
-        title: documentTitle,
-      },
-    } as DocumentPayload
-  );
+const onShowDocumentNotes = (documentId: string | number, documentTitle: string): void => {
+  bus.emit('showDocumentNotesPreviewDialog', {
+    document: {
+      id: documentId,
+      title: documentTitle,
+    },
+  } as DocumentPayload);
 };
 
 export { bus, onShowDocumentFiles, onShowDocumentNotes };

@@ -1,9 +1,9 @@
-import { date } from "quasar";
+import { date } from 'quasar';
 
 interface timeAgoReturn {
   label: string;
   count: number | null;
-};
+}
 
 const timeAgo = (timestamp: number): timeAgoReturn => {
   const now = Date.now();
@@ -17,48 +17,57 @@ const timeAgo = (timestamp: number): timeAgoReturn => {
   const years = Math.floor(days / 365); // WARNING: NOT EXACT (365 days / year)
 
   if (years > 0) {
-    return { label: "timeAgo.year", count: years };
+    return { label: 'timeAgo.year', count: years };
   } else if (months > 0) {
-    return { label: "timeAgo.month", count: months };
+    return { label: 'timeAgo.month', count: months };
   } else if (days > 0) {
-    return { label: "timeAgo.day", count: days };
+    return { label: 'timeAgo.day', count: days };
   } else if (hours > 0) {
-    return { label: "timeAgo.hour", count: hours };
+    return { label: 'timeAgo.hour', count: hours };
   } else if (minutes > 0) {
-    return { label: "timeAgo.minute", count: minutes };
+    return { label: 'timeAgo.minute', count: minutes };
   } else if (seconds > 0) {
-    return { label: "timeAgo.second", count: seconds };
+    return { label: 'timeAgo.second', count: seconds };
   } else {
-    return { label: "timeAgo.now", count: null };
+    return { label: 'timeAgo.now', count: null };
   }
 };
 
 const currentTimeAgo = (): string => {
-  return "timeAgo.now";
+  return 'timeAgo.now';
 };
 
 const timestamp = (dateObj: Date): number => {
-  return Number(date.formatDate(dateObj, "x"));
+  return Number(date.formatDate(dateObj, 'x'));
 };
 
 const currentTimestamp = (): number => {
   return Number(timestamp(new Date()));
 };
 
-const dateHuman = (timestamp: number, format: string = "YYYY/MM/DD"): string => {
+const dateHuman = (timestamp: number, format: string = 'YYYY/MM/DD'): string => {
   return date.formatDate(timestamp, format);
 };
 
-const currentDateHuman = (format: string = "YYYY/MM/DD"): string => {
+const currentDateHuman = (format: string = 'YYYY/MM/DD'): string => {
   return dateHuman(currentTimestamp(), format);
 };
 
-const fullDateTimeHuman = (timestamp: number, format: string = "YYYY/MM/DD HH:mm:ss"): string => {
+const fullDateTimeHuman = (timestamp: number, format: string = 'YYYY/MM/DD HH:mm:ss'): string => {
   return date.formatDate(timestamp, format);
 };
 
-const currentFullDateTimeHuman = (format: string = "YYYY/MM/DD HH:mm:ss"): string => {
+const currentFullDateTimeHuman = (format: string = 'YYYY/MM/DD HH:mm:ss'): string => {
   return fullDateTimeHuman(currentTimestamp(), format);
 };
 
-export { timeAgo, currentTimeAgo, timestamp, currentTimestamp, dateHuman, currentDateHuman, fullDateTimeHuman, currentFullDateTimeHuman };
+export {
+  timeAgo,
+  currentTimeAgo,
+  timestamp,
+  currentTimestamp,
+  dateHuman,
+  currentDateHuman,
+  fullDateTimeHuman,
+  currentFullDateTimeHuman,
+};
