@@ -9,7 +9,7 @@
       <q-markup-table>
         <thead>
           <tr>
-            <th class="text-left">{{ t('Created on') }}</th>
+            <th class="text-left"><q-icon name="keyboard_double_arrow_down" size="sm" />{{ t('Created on') }}</th>
             <th class="text-left">{{ t('Enabled') }}</th>
             <th class="text-left">{{ t('Shared element') }}</th>
             <th class="text-left">{{ t('Expires on') }}</th>
