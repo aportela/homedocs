@@ -601,6 +601,30 @@ export default {
     "year":
       "fai {count} año | fai {count} anos"
   },
+  
+  "timeUntil": {
+
+    "day":
+      "dentro de {count} día|dentro de {count} días",
+
+    "hour":
+      "dentro de {count} hora|dentro de {count} horas",
+
+    "minute":
+      "dentro de {count} minuto|dentro de {count} minutos",
+
+    "month":
+      "dentro de {count} mes|dentro de {count} meses",
+
+    "now":
+      "ahora",
+
+    "second":
+      "dentro de {count} segundo|dentro de {count} segundos",
+
+    "year":
+      "dentro de {count} ano|dentro de {count} anos"
+  },
 
   "Title":
     "Título",

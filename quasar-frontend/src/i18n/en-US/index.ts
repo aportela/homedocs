@@ -601,6 +601,30 @@ export default {
     "year":
       "{count} year ago|{count} years ago"
   },
+  
+  "timeUntil": {
+
+    "day":
+      "in {count} day|in {count} days",
+
+    "hour":
+      "in {count} hour|in {count} hours",
+
+    "minute":
+      "in {count} minute|in {count} minutes",
+
+    "month":
+      "in {count} month|in {count} months",
+
+    "now":
+      "now",
+
+    "second":
+      "in {count} second|in {count} seconds",
+
+    "year":
+      "in {count} year|in {count} years"
+  },
 
   "Title":
     "Title",
