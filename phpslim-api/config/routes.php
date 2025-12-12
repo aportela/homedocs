@@ -453,7 +453,7 @@ return function (\Slim\App $app): void {
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
-                $routeCollectorProxy->post('/shared_attachment', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
+                $routeCollectorProxy->post('/attachment_share', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $params = $request->getParsedBody();
                     if (! is_array($params)) {
                         throw new \HomeDocs\Exception\InvalidParamsException();

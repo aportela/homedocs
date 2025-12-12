@@ -101,7 +101,7 @@ const api = {
         params: { fromTimestamp: fromTimestamp || null },
       }),
   },
-  sharedAttachment: {
+  attachmentShare: {
     create: (attachmentId: string) => {
       return axiosInstance.post(`/attachment/${attachmentId}/share`);
     },
@@ -129,7 +129,7 @@ const api = {
         pager: pager,
         sort: sort,
       };
-      return axiosInstance.post('/search/shared_attachment', params);
+      return axiosInstance.post('/search/attachment_share', params);
     },
   },
 };

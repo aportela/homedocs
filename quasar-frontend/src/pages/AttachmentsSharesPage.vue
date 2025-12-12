@@ -112,7 +112,7 @@
     }
     Object.assign(state, defaultAjaxState);
     state.ajaxRunning = true;
-    api.sharedAttachment.search(pager, {
+    api.attachmentShare.search(pager, {
       field: "createdAtTimestamp",
       label: "",
       order: "DESC"

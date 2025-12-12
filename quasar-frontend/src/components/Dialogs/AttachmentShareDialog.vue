@@ -2,7 +2,7 @@
   <BaseDialog v-model="visible" @close="onClose" width="1280px" max-width="80vw">
     <template v-slot:header-left>
       <div v-if="attachmentShare.document.title">{{ t("Document title")
-        }}: <router-link :to="{ name: 'document', params: { id: attachmentShare.document.id } }"
+      }}: <router-link :to="{ name: 'document', params: { id: attachmentShare.document.id } }"
           class="text-decoration-hover">{{
             attachmentShare.document.title
           }}</router-link>
@@ -252,7 +252,7 @@
     enabled.value = false;
     accessLimit.value = 0;
     accessCount.value = 0;
-    api.sharedAttachment.create(props.attachmentId).then((successResponse: CreateUpdateGetAttachmentShareResponseInterface) => {
+    api.attachmentShare.create(props.attachmentId).then((successResponse: CreateUpdateGetAttachmentShareResponseInterface) => {
       attachmentShare.id = successResponse.data.attachmentShare.id;
       attachmentShare.createdAtTimestamp = successResponse.data.attachmentShare.createdAtTimestamp;
       attachmentShare.expiresAtTimestamp = successResponse.data.attachmentShare.expiresAtTimestamp;
@@ -296,7 +296,7 @@
   const onGet = () => {
     Object.assign(state, defaultAjaxState);
     state.ajaxRunning = true;
-    api.sharedAttachment.get(props.attachmentId).then((successResponse: CreateUpdateGetAttachmentShareResponseInterface) => {
+    api.attachmentShare.get(props.attachmentId).then((successResponse: CreateUpdateGetAttachmentShareResponseInterface) => {
       id.value = successResponse.data.attachmentShare.id;
       enabled.value = successResponse.data.attachmentShare.enabled;
       expiresAtTimestamp.value = successResponse.data.attachmentShare.expiresAtTimestamp;
@@ -329,7 +329,7 @@
   const onSave = () => {
     Object.assign(state, defaultAjaxState);
     state.ajaxRunning = true;
-    api.sharedAttachment.update(props.attachmentId, enabled.value, expiresAtTimestamp.value, accessLimit.value).then((successResponse: CreateUpdateGetAttachmentShareResponseInterface) => {
+    api.attachmentShare.update(props.attachmentId, enabled.value, expiresAtTimestamp.value, accessLimit.value).then((successResponse: CreateUpdateGetAttachmentShareResponseInterface) => {
       id.value = successResponse.data.attachmentShare.id;
       enabled.value = successResponse.data.attachmentShare.enabled;
       expiresAtTimestamp.value = successResponse.data.attachmentShare.expiresAtTimestamp;
@@ -363,7 +363,7 @@
   const onDelete = () => {
     Object.assign(state, defaultAjaxState);
     state.ajaxRunning = true;
-    api.sharedAttachment.remove(props.attachmentId).then(() => {
+    api.attachmentShare.remove(props.attachmentId).then(() => {
       bus.emit("attachmentShareDeleted", { attachmentId: props.attachmentId });
       emit('close');
     }).catch((errorResponse) => {
