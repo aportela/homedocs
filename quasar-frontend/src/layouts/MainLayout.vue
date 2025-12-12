@@ -46,283 +46,283 @@
       @close="dialogs.documentNotesPreview.visible = false" />
     <UploadingDialog v-model="dialogs.uploading.visible" :transfers="dialogs.uploading.transfers"
       @clear-processed-transfers="onClearProcessedTransfers" />
-    <SharePreviewDialog v-if="dialogs.sharePreview.visible" :attachment-id="dialogs.sharePreview.attachmentId"
+    <AttachmentShareDialog v-if="dialogs.sharePreview.visible" :attachment-id="dialogs.sharePreview.attachmentId"
       :create="dialogs.sharePreview.create" @close="dialogs.sharePreview.visible = false" />
   </q-layout>
 
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, watch, computed, onMounted, onBeforeUnmount } from "vue";
-import { useQuasar, LocalStorage } from "quasar";
-import { useI18n } from "vue-i18n";
+  import { ref, reactive, watch, computed, onMounted, onBeforeUnmount } from "vue";
+  import { useQuasar, LocalStorage } from "quasar";
+  import { useI18n } from "vue-i18n";
 
-import { useSessionStore } from "src/stores/session";
-import { currentTimestamp } from "src/composables/dateUtils";
-import { bus } from "src/composables/bus";
-import type { Document } from "src/types/document";
+  import { useSessionStore } from "src/stores/session";
+  import { currentTimestamp } from "src/composables/dateUtils";
+  import { bus } from "src/composables/bus";
+  import type { Document } from "src/types/document";
 
-import { default as SidebarDrawer } from "src/components/SidebarDrawer.vue"
-import { default as SearchDialog } from "src/components/Dialogs/SearchDialog.vue"
-import { default as DarkModeButton } from "src/components/Buttons/DarkModeButton.vue"
-import { default as SwitchLanguageButton } from "src/components/Buttons/SwitchLanguageButton.vue"
-import { default as GitHubButton } from "src/components/Buttons/GitHubButton.vue"
-import { GITHUB_PROJECT_URL } from "src/constants"
-import { default as ReAuthDialog } from "src/components/Dialogs/ReAuthDialog.vue"
+  import { default as SidebarDrawer } from "src/components/SidebarDrawer.vue"
+  import { default as SearchDialog } from "src/components/Dialogs/SearchDialog.vue"
+  import { default as DarkModeButton } from "src/components/Buttons/DarkModeButton.vue"
+  import { default as SwitchLanguageButton } from "src/components/Buttons/SwitchLanguageButton.vue"
+  import { default as GitHubButton } from "src/components/Buttons/GitHubButton.vue"
+  import { GITHUB_PROJECT_URL } from "src/constants"
+  import { default as ReAuthDialog } from "src/components/Dialogs/ReAuthDialog.vue"
 
-import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
-import { default as FilePreviewDialog } from "src/components/Dialogs/FilePreviewDialog.vue"
-import { default as DocumentFilesPreviewDialog } from "src/components/Dialogs/DocumentFilesPreviewDialog.vue"
-import { default as DocumentNotesPreviewDialog } from "src/components/Dialogs/DocumentNotesPreviewDialog.vue";
-import { default as UploadingDialog } from "src/components/Dialogs/UploadingDialog.vue";
+  import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
+  import { default as FilePreviewDialog } from "src/components/Dialogs/FilePreviewDialog.vue"
+  import { default as DocumentFilesPreviewDialog } from "src/components/Dialogs/DocumentFilesPreviewDialog.vue"
+  import { default as DocumentNotesPreviewDialog } from "src/components/Dialogs/DocumentNotesPreviewDialog.vue";
+  import { default as UploadingDialog } from "src/components/Dialogs/UploadingDialog.vue";
 
-import { type UploadTransfer as UploadTransferInterface } from "src/types/uploadTransfer";
-import { type Document as DocumentInterface, DocumentClass } from "src/types/document";
-import { type GetNewAccessTokenResponse as GetNewAccessTokenResponseInterface } from "src/types/apiResponses";
-import { api } from "src/composables/api";
-import SharePreviewDialog from "src/components/Dialogs/SharePreviewDialog.vue";
+  import { type UploadTransfer as UploadTransferInterface } from "src/types/uploadTransfer";
+  import { type Document as DocumentInterface, DocumentClass } from "src/types/document";
+  import { type GetNewAccessTokenResponse as GetNewAccessTokenResponseInterface } from "src/types/apiResponses";
+  import { api } from "src/composables/api";
+  import AttachmentShareDialog from "src/components/Dialogs/AttachmentShareDialog.vue";
 
-const $q = useQuasar();
+  const $q = useQuasar();
 
-const { t } = useI18n();
+  const { t } = useI18n();
 
-interface DialogsInterface {
-  reauth: {
-    visible: boolean;
-  },
-  filePreview: {
-    visible: boolean;
-    document: DocumentInterface;
-    currentIndex: number;
-  },
-  documentFilesPreview: {
-    visible: boolean;
-    document: {
-      id: string | null;
-      title: string | null;
+  interface DialogsInterface {
+    reauth: {
+      visible: boolean;
+    },
+    filePreview: {
+      visible: boolean;
+      document: DocumentInterface;
+      currentIndex: number;
+    },
+    documentFilesPreview: {
+      visible: boolean;
+      document: {
+        id: string | null;
+        title: string | null;
+      }
+    },
+    documentNotesPreview: {
+      visible: boolean;
+      document: {
+        id: string | null;
+        title: string | null;
+      }
+    },
+    fastSearch: {
+      visible: boolean;
+    },
+    uploading: {
+      visible: boolean;
+      transfers: UploadTransferInterface[]
+    },
+    sharePreview: {
+      visible: boolean;
+      attachmentId: string;
+      create: false,
     }
-  },
-  documentNotesPreview: {
-    visible: boolean;
-    document: {
-      id: string | null;
-      title: string | null;
+  };
+
+  const dialogs = reactive<DialogsInterface>({
+    reauth: {
+      visible: false
+    },
+    filePreview: {
+      visible: false,
+      document: new DocumentClass(),
+      currentIndex: 0
+    },
+    documentFilesPreview: {
+      visible: false,
+      document: {
+        id: null,
+        title: null,
+      }
+    },
+    documentNotesPreview: {
+      visible: false,
+      document: {
+        id: null,
+        title: null,
+      }
+    },
+    fastSearch: {
+      visible: false
+    },
+    uploading: {
+      visible: false,
+      transfers: []
+    },
+    sharePreview: {
+      visible: false,
+      attachmentId: "",
+      create: false,
     }
-  },
-  fastSearch: {
-    visible: boolean;
-  },
-  uploading: {
-    visible: boolean;
-    transfers: UploadTransferInterface[]
-  },
-  sharePreview: {
-    visible: boolean;
-    attachmentId: string;
-    create: false,
+  });
+
+  const reAuthEmitters = reactive<Array<string>>([]);
+
+  const sessionStore = useSessionStore();
+
+  const onSuccessReauth = () => {
+    dialogs.reauth.visible = false;
+    bus.emit("reAuthSucess", ({ to: reAuthEmitters }))
+    reAuthEmitters.length = 0;
+  };
+
+  const lockminiSidebarCurrentModeMode = ref<boolean>(false);
+
+  const visibleSidebar = ref($q.screen.gt.sm);
+
+  // toggle this for using current mini sidebar saved mode
+  const saveMiniSidebarMode = true;
+
+  const miniSidebarCurrentModeSavedMode = saveMiniSidebarMode ? LocalStorage.getItem("miniSidebarCurrentMode") : null;
+
+  if (saveMiniSidebarMode && miniSidebarCurrentModeSavedMode != null) {
+    lockminiSidebarCurrentModeMode.value = true;
   }
-};
 
-const dialogs = reactive<DialogsInterface>({
-  reauth: {
-    visible: false
-  },
-  filePreview: {
-    visible: false,
-    document: new DocumentClass(),
-    currentIndex: 0
-  },
-  documentFilesPreview: {
-    visible: false,
-    document: {
-      id: null,
-      title: null,
+  const miniSidebarCurrentMode = ref(miniSidebarCurrentModeSavedMode != null ? miniSidebarCurrentModeSavedMode == true : $q.screen.md);
+
+  const currentScreenSize = computed(() => $q.screen.name);
+
+  watch(currentScreenSize, () => {
+    if (!lockminiSidebarCurrentModeMode.value) {
+      miniSidebarCurrentMode.value = $q.screen.lt.lg;
     }
-  },
-  documentNotesPreview: {
-    visible: false,
-    document: {
-      id: null,
-      title: null,
+  });
+
+  const searchButtonLabel = computed(() => $q.screen.gt.xs ? t('Search on HomeDocs...') : '');
+
+  const onToggleminiSidebarCurrentMode = () => {
+    miniSidebarCurrentMode.value = !miniSidebarCurrentMode.value;
+    lockminiSidebarCurrentModeMode.value = true;
+    if (saveMiniSidebarMode) {
+      LocalStorage.set("miniSidebarCurrentMode", miniSidebarCurrentMode.value);
     }
-  },
-  fastSearch: {
-    visible: false
-  },
-  uploading: {
-    visible: false,
-    transfers: []
-  },
-  sharePreview: {
-    visible: false,
-    attachmentId: "",
-    create: false,
   }
-});
 
-const reAuthEmitters = reactive<Array<string>>([]);
+  const onClearProcessedTransfers = () => {
+    dialogs.uploading.transfers = dialogs.uploading.transfers.filter((transfer) => !transfer.processed);
+  };
 
-const sessionStore = useSessionStore();
+  interface BusMsg {
+    emitter: string;
+    document?: Document | null;
+    currentIndex?: number | null;
+  };
 
-const onSuccessReauth = () => {
-  dialogs.reauth.visible = false;
-  bus.emit("reAuthSucess", ({ to: reAuthEmitters }))
-  reAuthEmitters.length = 0;
-};
-
-const lockminiSidebarCurrentModeMode = ref<boolean>(false);
-
-const visibleSidebar = ref($q.screen.gt.sm);
-
-// toggle this for using current mini sidebar saved mode
-const saveMiniSidebarMode = true;
-
-const miniSidebarCurrentModeSavedMode = saveMiniSidebarMode ? LocalStorage.getItem("miniSidebarCurrentMode") : null;
-
-if (saveMiniSidebarMode && miniSidebarCurrentModeSavedMode != null) {
-  lockminiSidebarCurrentModeMode.value = true;
-}
-
-const miniSidebarCurrentMode = ref(miniSidebarCurrentModeSavedMode != null ? miniSidebarCurrentModeSavedMode == true : $q.screen.md);
-
-const currentScreenSize = computed(() => $q.screen.name);
-
-watch(currentScreenSize, () => {
-  if (!lockminiSidebarCurrentModeMode.value) {
-    miniSidebarCurrentMode.value = $q.screen.lt.lg;
-  }
-});
-
-const searchButtonLabel = computed(() => $q.screen.gt.xs ? t('Search on HomeDocs...') : '');
-
-const onToggleminiSidebarCurrentMode = () => {
-  miniSidebarCurrentMode.value = !miniSidebarCurrentMode.value;
-  lockminiSidebarCurrentModeMode.value = true;
-  if (saveMiniSidebarMode) {
-    LocalStorage.set("miniSidebarCurrentMode", miniSidebarCurrentMode.value);
-  }
-}
-
-const onClearProcessedTransfers = () => {
-  dialogs.uploading.transfers = dialogs.uploading.transfers.filter((transfer) => !transfer.processed);
-};
-
-interface BusMsg {
-  emitter: string;
-  document?: Document | null;
-  currentIndex?: number | null;
-};
-
-onMounted(() => {
-  bus.on("reAuthRequired", (msg: BusMsg) => {
-    if (msg.emitter) {
-      reAuthEmitters.push(msg.emitter);
-    }
-    api.auth.renewAccessToken().then((successResponse: GetNewAccessTokenResponseInterface) => {
-      sessionStore.setAccessToken(successResponse.data.accessToken);
-      bus.emit("reAuthSucess", ({ to: reAuthEmitters }))
-      reAuthEmitters.length = 0;
-    }).catch((errorResponse) => {
-      console.error(errorResponse);
-      dialogs.reauth.visible = true;
+  onMounted(() => {
+    bus.on("reAuthRequired", (msg: BusMsg) => {
+      if (msg.emitter) {
+        reAuthEmitters.push(msg.emitter);
+      }
+      api.auth.renewAccessToken().then((successResponse: GetNewAccessTokenResponseInterface) => {
+        sessionStore.setAccessToken(successResponse.data.accessToken);
+        bus.emit("reAuthSucess", ({ to: reAuthEmitters }))
+        reAuthEmitters.length = 0;
+      }).catch((errorResponse) => {
+        console.error(errorResponse);
+        dialogs.reauth.visible = true;
+      });
     });
-  });
 
-  bus.on("showDocumentFilePreviewDialog", (msg: BusMsg) => {
-    dialogs.filePreview.document.id = msg?.document?.id || null;
-    dialogs.filePreview.document.title = msg?.document?.title || "";
-    dialogs.filePreview.document.attachments = msg?.document?.attachments || [];
-    dialogs.filePreview.currentIndex = msg?.currentIndex || 0;
-    dialogs.filePreview.visible = true;
-  });
+    bus.on("showDocumentFilePreviewDialog", (msg: BusMsg) => {
+      dialogs.filePreview.document.id = msg?.document?.id || null;
+      dialogs.filePreview.document.title = msg?.document?.title || "";
+      dialogs.filePreview.document.attachments = msg?.document?.attachments || [];
+      dialogs.filePreview.currentIndex = msg?.currentIndex || 0;
+      dialogs.filePreview.visible = true;
+    });
 
-  bus.on("showDocumentFilesPreviewDialog", (msg: BusMsg) => {
-    dialogs.documentFilesPreview.document.id = msg?.document?.id || null;
-    dialogs.documentFilesPreview.document.title = msg?.document?.title || null;
-    dialogs.documentFilesPreview.visible = true;
-  });
+    bus.on("showDocumentFilesPreviewDialog", (msg: BusMsg) => {
+      dialogs.documentFilesPreview.document.id = msg?.document?.id || null;
+      dialogs.documentFilesPreview.document.title = msg?.document?.title || null;
+      dialogs.documentFilesPreview.visible = true;
+    });
 
-  bus.on("showDocumentNotesPreviewDialog", (msg: BusMsg) => {
-    dialogs.documentNotesPreview.document.id = msg?.document?.id || null;
-    dialogs.documentNotesPreview.document.title = msg?.document?.title || null;
-    dialogs.documentNotesPreview.visible = true;
-  });
+    bus.on("showDocumentNotesPreviewDialog", (msg: BusMsg) => {
+      dialogs.documentNotesPreview.document.id = msg?.document?.id || null;
+      dialogs.documentNotesPreview.document.title = msg?.document?.title || null;
+      dialogs.documentNotesPreview.visible = true;
+    });
 
-  bus.on("showUploadingDialog", (msg) => {
-    dialogs.uploading.transfers.unshift(...msg.transfers);
-    dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0 && sessionStore.openUploadDialog;
-  });
+    bus.on("showUploadingDialog", (msg) => {
+      dialogs.uploading.transfers.unshift(...msg.transfers);
+      dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0 && sessionStore.openUploadDialog;
+    });
 
-  bus.on("refreshUploadingDialog.fileUploaded", (msg) => {
-    if (dialogs.uploading.transfers.length > 0) {
-      msg.transfers?.forEach((completedTransfer: UploadTransferInterface) => {
-        const foundTransfer = dialogs.uploading.transfers?.find((transfer) => !transfer.processed && completedTransfer.filename == transfer.filename && completedTransfer.filesize == transfer.filesize);
+    bus.on("refreshUploadingDialog.fileUploaded", (msg) => {
+      if (dialogs.uploading.transfers.length > 0) {
+        msg.transfers?.forEach((completedTransfer: UploadTransferInterface) => {
+          const foundTransfer = dialogs.uploading.transfers?.find((transfer) => !transfer.processed && completedTransfer.filename == transfer.filename && completedTransfer.filesize == transfer.filesize);
+          if (foundTransfer) {
+            foundTransfer.end = currentTimestamp();
+            foundTransfer.uploading = false;
+            foundTransfer.done = true;
+            foundTransfer.processed = true;
+          } else {
+            console.error("Transfer not found", completedTransfer);
+          }
+        });
+      } else {
+        console.error("Missing previous transfers");
+      }
+      dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0 && sessionStore.openUploadDialog;
+    });
+
+    bus.on("refreshUploadingDialog.fileUploadRejected", (msg) => {
+      msg.transfers?.forEach((transferUploadedWithError: UploadTransferInterface) => {
+        const foundTransfer = dialogs.uploading.transfers?.find((transfer) => !transfer.processed && transferUploadedWithError.filename == transfer.filename && transferUploadedWithError.filesize == transfer.filesize);
         if (foundTransfer) {
           foundTransfer.end = currentTimestamp();
           foundTransfer.uploading = false;
-          foundTransfer.done = true;
+          foundTransfer.error = true;
+          foundTransfer.errorHTTPCode = transferUploadedWithError.errorHTTPCode;
+          foundTransfer.errorMessage = "Transfer rejected";
           foundTransfer.processed = true;
         } else {
-          console.error("Transfer not found", completedTransfer);
+          dialogs.uploading.transfers.unshift(transferUploadedWithError);
         }
       });
-    } else {
-      console.error("Missing previous transfers");
-    }
-    dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0 && sessionStore.openUploadDialog;
-  });
-
-  bus.on("refreshUploadingDialog.fileUploadRejected", (msg) => {
-    msg.transfers?.forEach((transferUploadedWithError: UploadTransferInterface) => {
-      const foundTransfer = dialogs.uploading.transfers?.find((transfer) => !transfer.processed && transferUploadedWithError.filename == transfer.filename && transferUploadedWithError.filesize == transfer.filesize);
-      if (foundTransfer) {
-        foundTransfer.end = currentTimestamp();
-        foundTransfer.uploading = false;
-        foundTransfer.error = true;
-        foundTransfer.errorHTTPCode = transferUploadedWithError.errorHTTPCode;
-        foundTransfer.errorMessage = "Transfer rejected";
-        foundTransfer.processed = true;
-      } else {
-        dialogs.uploading.transfers.unshift(transferUploadedWithError);
-      }
+      dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0;
     });
-    dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0;
-  });
 
-  bus.on("refreshUploadingDialog.fileUploadFailed", (msg) => {
-    msg.transfers?.forEach((transferUploadedWithError: UploadTransferInterface) => {
-      const foundTransfer = dialogs.uploading.transfers?.find((transfer) => !transfer.processed && transferUploadedWithError.filename == transfer.filename && transferUploadedWithError.filesize == transfer.filesize);
-      if (foundTransfer) {
-        foundTransfer.end = currentTimestamp();
-        foundTransfer.uploading = false;
-        foundTransfer.error = true;
-        foundTransfer.errorHTTPCode = transferUploadedWithError.errorHTTPCode;
-        foundTransfer.errorMessage = "Transfer failed";
-        foundTransfer.processed = true;
-      } else {
-        dialogs.uploading.transfers.unshift(transferUploadedWithError);
-      }
+    bus.on("refreshUploadingDialog.fileUploadFailed", (msg) => {
+      msg.transfers?.forEach((transferUploadedWithError: UploadTransferInterface) => {
+        const foundTransfer = dialogs.uploading.transfers?.find((transfer) => !transfer.processed && transferUploadedWithError.filename == transfer.filename && transferUploadedWithError.filesize == transfer.filesize);
+        if (foundTransfer) {
+          foundTransfer.end = currentTimestamp();
+          foundTransfer.uploading = false;
+          foundTransfer.error = true;
+          foundTransfer.errorHTTPCode = transferUploadedWithError.errorHTTPCode;
+          foundTransfer.errorMessage = "Transfer failed";
+          foundTransfer.processed = true;
+        } else {
+          dialogs.uploading.transfers.unshift(transferUploadedWithError);
+        }
+      });
+      dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0;
     });
-    dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0;
+
+    bus.on("showSharePreviewDialog", (msg) => {
+      dialogs.sharePreview.visible = true;
+      dialogs.sharePreview.attachmentId = msg.attachmentId;
+      dialogs.sharePreview.create = msg.create;
+    });
   });
 
-  bus.on("showSharePreviewDialog", (msg) => {
-    dialogs.sharePreview.visible = true;
-    dialogs.sharePreview.attachmentId = msg.attachmentId;
-    dialogs.sharePreview.create = msg.create;
+  onBeforeUnmount(() => {
+    bus.off("reAuthRequired");
+    bus.off("showDocumentFilePreviewDialog");
+    bus.off("showDocumentFilesPreviewDialog");
+    bus.off("showDocumentNotesPreviewDialog");
+    bus.off("showUploadingDialog");
+    bus.off("refreshUploadingDialog.fileUploaded");
+    bus.off("refreshUploadingDialog.fileUploadRejected");
+    bus.off("refreshUploadingDialog.fileUploadFailed");
+    bus.off("showSharePreviewDialog");
   });
-});
-
-onBeforeUnmount(() => {
-  bus.off("reAuthRequired");
-  bus.off("showDocumentFilePreviewDialog");
-  bus.off("showDocumentFilesPreviewDialog");
-  bus.off("showDocumentNotesPreviewDialog");
-  bus.off("showUploadingDialog");
-  bus.off("refreshUploadingDialog.fileUploaded");
-  bus.off("refreshUploadingDialog.fileUploadRejected");
-  bus.off("refreshUploadingDialog.fileUploadFailed");
-  bus.off("showSharePreviewDialog");
-});
 
 </script>

@@ -246,7 +246,7 @@
         switch (errorResponse.response.status) {
           case 401:
             state.ajaxErrors = false;
-            bus.emit("reAuthRequired", { emitter: "SharePreviewDialog.onCreate" });
+            bus.emit("reAuthRequired", { emitter: "AttachmentShareDialog.onCreate" });
             break;
           default:
             state.ajaxErrorMessage = "API Error: Error adding attachment share";
@@ -279,7 +279,7 @@
         switch (errorResponse.response.status) {
           case 401:
             state.ajaxErrors = false;
-            bus.emit("reAuthRequired", { emitter: "SharePreviewDialog.onGet" });
+            bus.emit("reAuthRequired", { emitter: "AttachmentShareDialog.onGet" });
             break;
           default:
             state.ajaxErrorMessage = "API Error: Error getting attachment share";
@@ -313,7 +313,7 @@
         switch (errorResponse.response.status) {
           case 401:
             state.ajaxErrors = false;
-            bus.emit("reAuthRequired", { emitter: "SharePreviewDialog.onSave" });
+            bus.emit("reAuthRequired", { emitter: "AttachmentShareDialog.onSave" });
             break;
           default:
             state.ajaxErrorMessage = "API Error: Error saving attachment share";
@@ -341,7 +341,7 @@
         switch (errorResponse.response.status) {
           case 401:
             state.ajaxErrors = false;
-            bus.emit("reAuthRequired", { emitter: "SharePreviewDialog.onDelete" });
+            bus.emit("reAuthRequired", { emitter: "AttachmentShareDialog.onDelete" });
             break;
           default:
             state.ajaxErrorMessage = "API Error: Error removing attachment share";
@@ -358,13 +358,13 @@
 
   onMounted(() => {
     bus.on("reAuthSucess", (msg) => {
-      if (msg.to?.includes("SharePreviewDialog.onCreate")) {
+      if (msg.to?.includes("AttachmentShareDialog.onCreate")) {
         onCreate();
-      } else if (msg.to?.includes("SharePreviewDialog.onGet")) {
+      } else if (msg.to?.includes("AttachmentShareDialog.onGet")) {
         onGet();
-      } else if (msg.to?.includes("SharePreviewDialog.onSave")) {
+      } else if (msg.to?.includes("AttachmentShareDialog.onSave")) {
         onSave();
-      } else if (msg.to?.includes("SharePreviewDialog.onDelete")) {
+      } else if (msg.to?.includes("AttachmentShareDialog.onDelete")) {
         onDelete();
       }
     });
