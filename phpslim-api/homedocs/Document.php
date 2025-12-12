@@ -621,7 +621,7 @@ class Document
                 property_exists($item, "size") && is_numeric($item->size) ? intval($item->size) : 0,
                 property_exists($item, "hash") && is_string($item->hash) ? $item->hash : null,
                 property_exists($item, "createdAtTimestamp") && is_numeric($item->createdAtTimestamp) ? intval($item->createdAtTimestamp) : 0,
-                property_exists($item, "shareAttachmentId") && is_string($item->shareAttachmentId) && ! empty($item->shareAttachmentId),
+                property_exists($item, "shareAttachmentId") && is_string($item->shareAttachmentId) && ($item->shareAttachmentId !== '' && $item->shareAttachmentId !== '0'),
             );
         }
 

@@ -210,11 +210,8 @@ return function (\Slim\App $app): void {
             $routeCollectorProxy->get('/shared/attachment/{attachment_id}', function (Request $request, Response $response, array $args) use ($container): \Psr\Http\Message\MessageInterface {
 
                 $params = $request->getQueryParams();
-                if (! is_array($params)) {
-                    throw new \HomeDocs\Exception\InvalidParamsException();
-                }
 
-                if (! (array_key_exists("id", $params) && is_string($params['id']) && ! empty($params['id']))) {
+                if (! (array_key_exists("id", $params) && is_string($params['id']) && (($params['id'] !== '' && $params['id'] !== '0')))) {
                     throw new \HomeDocs\Exception\InvalidParamsException("id");
                 }
 
@@ -222,11 +219,13 @@ return function (\Slim\App $app): void {
                 if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
                     throw new \RuntimeException("Failed to create database handler from container");
                 }
+
                 // check existence
                 $attachment = new \HomeDocs\Attachment(
                     array_key_exists("attachment_id", $args) && is_string($args['attachment_id']) ? $args['attachment_id'] : ""
                 );
                 $attachment->get($dbh);
+
                 $share = new \HomeDocs\ShareAttachment($params['id'], 0, 0, 0, false);
                 $share->get($dbh, null);
                 if ($share->isEnabled() && ! $share->isExpired() && ! $share->hasExceedAccessLimit()) {
@@ -614,6 +613,7 @@ return function (\Slim\App $app): void {
                             if (! is_array($documentNote)) {
                                 throw new \HomeDocs\Exception\InvalidParamsException("notes");
                             }
+
                             $notes[] = new \HomeDocs\Note(
                                 is_string($documentNote["id"]) ? $documentNote["id"] : null,
                                 null,
@@ -697,12 +697,14 @@ return function (\Slim\App $app): void {
                         array_key_exists("attachment_id", $args) && is_string($args['attachment_id']) ? $args['attachment_id'] : ""
                     );
                     $attachment->get($dbh);
+
                     $share = new \HomeDocs\ShareAttachment("", 0, 0, 0, false);
                     $share->add($dbh, $attachment->id);
                     $share->get($dbh, null);
+
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'share' => $share
+                            'share' => $share,
                         ]
                     );
                     $response->getBody()->write($payload);
@@ -722,19 +724,23 @@ return function (\Slim\App $app): void {
                     if (! (array_key_exists("expiresAtTimestamp", $params) && is_numeric($params["expiresAtTimestamp"]))) {
                         throw new \HomeDocs\Exception\InvalidParamsException("expiresAtTimestamp");
                     }
+
                     if (! (array_key_exists("accessLimit", $params) && is_numeric($params["accessLimit"]))) {
                         throw new \HomeDocs\Exception\InvalidParamsException("accessLimit");
                     }
+
                     if (! (array_key_exists("enabled", $params) && is_bool($params["enabled"]))) {
                         throw new \HomeDocs\Exception\InvalidParamsException("enabled");
                     }
+
                     $attachment->get($dbh);
                     $share = new \HomeDocs\ShareAttachment("", 0, intval($params["expiresAtTimestamp"]), intval($params["accessLimit"]), $params["enabled"]);
                     $share->update($dbh, $attachment->id);
                     $share->get($dbh, $attachment->id);
+
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'share' => $share
+                            'share' => $share,
                         ]
                     );
                     $response->getBody()->write($payload);
@@ -747,8 +753,10 @@ return function (\Slim\App $app): void {
                         array_key_exists("attachment_id", $args) && is_string($args['attachment_id']) ? $args['attachment_id'] : ""
                     );
                     $attachment->get($dbh);
+
                     $share = new \HomeDocs\ShareAttachment("", 0, 0, 0, false);
                     $share->delete($dbh, $attachment->id);
+
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         []
                     );
@@ -762,11 +770,13 @@ return function (\Slim\App $app): void {
                         array_key_exists("attachment_id", $args) && is_string($args['attachment_id']) ? $args['attachment_id'] : ""
                     );
                     $attachment->get($dbh);
+
                     $share = new \HomeDocs\ShareAttachment("", 0, 0, 0, false);
                     $share->get($dbh, $attachment->id);
+
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            'share' => $share
+                            'share' => $share,
                         ]
                     );
                     $response->getBody()->write($payload);

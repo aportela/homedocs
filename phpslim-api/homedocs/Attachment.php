@@ -52,7 +52,7 @@ class Attachment
                 $this->size = property_exists($data[0], "size") && is_numeric($data[0]->size) ? intval($data[0]->size) : 0;
                 $this->hash = property_exists($data[0], "hash") && is_string($data[0]->hash) ? $data[0]->hash : null;
                 $this->createdAtTimestamp = property_exists($data[0], "createdAtTimestamp") && is_numeric($data[0]->createdAtTimestamp) ? intval($data[0]->createdAtTimestamp) : 0;
-                $this->shared = property_exists($data[0], "shareAttachmentId") && is_string($data[0]->shareAttachmentId) && ! empty($data[0]->shareAttachmentId);
+                $this->shared = property_exists($data[0], "shareAttachmentId") && is_string($data[0]->shareAttachmentId) && ($data[0]->shareAttachmentId !== '' && $data[0]->shareAttachmentId !== '0');
             } else {
                 throw new \HomeDocs\Exception\AccessDeniedException("id");
             }

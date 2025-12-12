@@ -95,5 +95,5 @@ return ([
                 FOREIGN KEY (attachment_id) REFERENCES ATTACHMENT(id)
             ) STRICT;
         ',
-    ]
+    ],
 ]);
