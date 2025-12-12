@@ -5,10 +5,13 @@
         <thead>
           <tr>
             <th class="text-left">{{ t('Enabled') }}</th>
+            <th class="text-left">{{ t('Attachment') }}</th>
+            <th class="text-left">{{ t('Document') }}</th>
             <th class="text-left">{{ t('Created on') }}</th>
-            <th class="text-left">Last activity on</th>
-            <th class="text-left">Expires on</th>
-            <th class="text-right">Total clicks</th>
+
+            <th class="text-left">{{ t('Last access on') }}</th>
+            <th class="text-left">{{ t('Expires on') }}</th>
+            <th class="text-right">{{ t('Total access') }}</th>
             <th class="text-center">{{ t('Actions') }}</th>
           </tr>
         </thead>
@@ -17,18 +20,35 @@
             <td class="text-left"><q-icon class="text-weight-bold" size="xs"
                 :name="attachmentShare.enabled ? 'done' : 'block'" :color="attachmentShare.enabled ? 'green' : 'red'" />
             </td>
+            <td>
+              <a :href="getAttachmentURL(attachmentShare.attachment.id, true)"
+                @click.stop.prevent="onDownload(attachmentShare.attachment.id, attachmentShare.attachment.name)">{{
+                  attachmentShare.attachment.name
+                }}</a>
+              ({{ format.humanStorageSize(attachmentShare.attachment.size) }})
+            </td>
+            <td>
+              <router-link :to="{ name: 'document', params: { id: attachmentShare.document.id } }">{{
+                attachmentShare.document.title
+                }}</router-link>
+
+            </td>
             <td class="text-left">{{ fullDateTimeHuman(attachmentShare.createdAtTimestamp) }} ({{
-              timeAgo(attachmentShare.createdAtTimestamp) }})</td>
+              t(timeAgo(attachmentShare.createdAtTimestamp).label, {
+                count:
+                  timeAgo(attachmentShare.createdAtTimestamp).count
+              })
+            }})
+            </td>
             <td class="text-left"><span v-if="attachmentShare.lastAccessTimestamp">{{
               attachmentShare.lastAccessTimestamp }} ({{
                   attachmentShare.lastAccessTimestamp }})</span></td>
-            <td class="text-left">{{ t('never') }}</td>
+            <td class="text-left">{{ attachmentShare.expiresAtTimestamp ?
+              fullDateTimeHuman(attachmentShare.expiresAtTimestamp) : '' }}</td>
             <td class="text-right">{{ attachmentShare.accessCount || 0 }}</td>
             <td class="text-center">
-              <q-btn-group flat>
-                <q-btn outline no-caps size="md" icon="settings" label="settings" />
-                <q-btn outline no-caps size="md" icon="delete" label="delete" />
-              </q-btn-group>
+              <q-btn flat outline no-caps size="md" icon="settings" :label="t('Settings')"
+                @click="onShareClick(attachmentShare.attachment.id)" />
             </td>
           </tr>
         </tbody>
@@ -41,13 +61,16 @@
 
 <script setup lang="ts">
   import { computed, reactive, shallowRef, onMounted } from 'vue';
+  import { format } from 'quasar';
   import { useI18n } from "vue-i18n";
   import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
   import { type SearchAttachmentShareResponse as SearchAttachmentShareResponseInterface } from 'src/types/apiResponses';
   import { type AttachmentShare as AttachmentShareInterface } from 'src/types/attachmentShare';
+  import { bgDownload } from 'src/composables/axios';
   import { bus } from 'src/composables/bus';
   import { fullDateTimeHuman, timeAgo } from "src/composables/dateUtils";
   import { api } from "src/composables/api";
+  import { getURL as getAttachmentURL } from 'src/composables/attachment';
   import { default as CustomBanner } from 'src/components/Banners/CustomBanner.vue';
 
   const { t } = useI18n();
@@ -131,6 +154,22 @@
         state.ajaxRunning = false;
       });
   }
+
+
+  const onShareClick = (attachmentId: string) => {
+    bus.emit('showSharePreviewDialog', { attachmentId: attachmentId, create: false });
+  };
+
+  const onDownload = (attachmentId: string, fileName: string) => {
+    bgDownload(getAttachmentURL(attachmentId), fileName)
+      .then(() => {
+        // TODO:
+      })
+      .catch(() => {
+        // TODO:
+      });
+  }
+
 
   onMounted(() => {
     onSubmitForm(true);
