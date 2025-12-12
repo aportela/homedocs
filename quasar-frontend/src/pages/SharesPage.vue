@@ -1,12 +1,12 @@
 <template>
   <q-page>
-    <div>
+    <div v-if="hasSharedAttachments">
       <div class="q-ma-md flex flex-center" v-if="pager.totalPages > 1">
         <q-pagination v-model="pager.currentPageIndex" color="dark" :max="pager.totalPages" :max-pages="5"
           boundary-numbers direction-links boundary-links @update:model-value="onPaginationChanged"
           :disable="state.ajaxRunning" class="theme-default-q-pagination" />
       </div>
-      <q-markup-table v-if="hasSharedAttachments">
+      <q-markup-table>
         <thead>
           <tr>
             <th class="text-left">{{ t('Created on') }}</th>
@@ -73,8 +73,8 @@
           boundary-numbers direction-links boundary-links @update:model-value="onPaginationChanged"
           :disable="state.ajaxRunning" class="theme-default-q-pagination" />
       </div>
-      <CustomBanner v-else warning text="You haven't created any share yet" />
     </div>
+    <CustomBanner v-else warning text="You haven't created any share yet" />
   </q-page>
 </template>
 
