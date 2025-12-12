@@ -190,7 +190,7 @@ interface GetActivityHeatMapDataResponse extends Omit<DefaultAxiosResponse, 'dat
 
 interface CreateUpdateGetAttachmentShareResponse extends Omit<DefaultAxiosResponse, 'data'> {
   data: {
-    share: AttachmentShareInterface;
+    attachmentShare: AttachmentShareInterface;
   };
 }
 

@@ -1,7 +1,12 @@
 <template>
   <BaseDialog v-model="visible" @close="onClose" width="1280px" max-width="80vw">
     <template v-slot:header-left>
-      <div>{{ t("Attachment share") }}</div>
+      <div v-if="attachmentShare.document.title">{{ t("Document title")
+        }}: <router-link :to="{ name: 'document', params: { id: attachmentShare.document.id } }"
+          class="text-decoration-hover">{{
+            attachmentShare.document.title
+          }}</router-link>
+      </div>
     </template>
     <template v-slot:body>
       <div class="row q-py-md">
@@ -39,14 +44,12 @@
           </q-banner>
           <CustomErrorBanner class="q-my-md" v-if="state.ajaxErrors && state.ajaxErrorMessage"
             :text="state.ajaxErrorMessage" />
-          <p>
-            <q-btn-group flat spread>
-              <q-btn outline no-caps icon="save" :label="t('Save')" class="full-width" @click="onSave" />
-              <q-btn outline no-caps icon="delete" :label="t('Remove')" class="full-width" @click="onDelete" />
-            </q-btn-group>
-          </p>
         </div>
       </div>
+    </template>
+    <template v-slot:actions-prepend>
+      <q-btn size="md" no-caps icon="save" :label="t('Save')" color="primary" @click="onSave" />
+      <q-btn size="md" no-caps icon="delete" :label="t('Remove')" color="red" @click="onDelete" />
     </template>
   </BaseDialog>
 </template>
@@ -62,6 +65,7 @@
   import { type CreateUpdateGetAttachmentShareResponse as CreateUpdateGetAttachmentShareResponseInterface, } from "src/types/apiResponses";
   import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
   import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
+  import { type AttachmentShare as AttachmentShareInterface } from "src/types/attachmentShare";
   const { t } = useI18n();
 
   const emit = defineEmits(['close']);
@@ -91,6 +95,25 @@
     { label: t('1 year'), value: 'oneYear' }
   ];
 
+  const attachmentShare = reactive<AttachmentShareInterface>({
+    id: "",
+    createdAtTimestamp: 0,
+    expiresAtTimestamp: 0,
+    lastAccessTimestamp: null,
+    accessLimit: 0,
+    accessCount: 0,
+    enabled: false,
+    document: {
+      id: "",
+      title: "",
+    },
+    attachment: {
+      id: "",
+      name: "",
+      size: 0,
+    }
+  });
+
   const visible = ref<boolean>(true);
 
   const copiedToClipboardMessage = ref<string | undefined>(undefined);
@@ -101,7 +124,6 @@
   const enabled = ref<boolean>(true);
 
   const hasExpiration = ref<boolean>(false);
-
 
   const expiresAtTimestamp = ref<number>(0);
   const expiresOn = ref<ExpireOnOption>(null);
@@ -231,14 +253,24 @@
     accessLimit.value = 0;
     accessCount.value = 0;
     api.sharedAttachment.create(props.attachmentId).then((successResponse: CreateUpdateGetAttachmentShareResponseInterface) => {
-      id.value = successResponse.data.share.id;
-      enabled.value = successResponse.data.share.enabled;
-      expiresAtTimestamp.value = successResponse.data.share.expiresAtTimestamp;
-      hasExpiration.value = successResponse.data.share.expiresAtTimestamp > 0;
-      accessLimit.value = successResponse.data.share.accessLimit;
-      accessCount.value = successResponse.data.share.accessCount;
+      attachmentShare.id = successResponse.data.attachmentShare.id;
+      attachmentShare.createdAtTimestamp = successResponse.data.attachmentShare.createdAtTimestamp;
+      attachmentShare.expiresAtTimestamp = successResponse.data.attachmentShare.expiresAtTimestamp;
+      attachmentShare.lastAccessTimestamp = successResponse.data.attachmentShare.lastAccessTimestamp;
+      attachmentShare.accessLimit = successResponse.data.attachmentShare.accessLimit;
+      attachmentShare.accessCount = successResponse.data.attachmentShare.accessCount;
+      attachmentShare.enabled = successResponse.data.attachmentShare.enabled;
+      attachmentShare.attachment = successResponse.data.attachmentShare.attachment;
+      attachmentShare.document = successResponse.data.attachmentShare.document;
+
+      id.value = successResponse.data.attachmentShare.id;
+      enabled.value = successResponse.data.attachmentShare.enabled;
+      expiresAtTimestamp.value = successResponse.data.attachmentShare.expiresAtTimestamp;
+      hasExpiration.value = successResponse.data.attachmentShare.expiresAtTimestamp > 0;
+      accessLimit.value = successResponse.data.attachmentShare.accessLimit;
+      accessCount.value = successResponse.data.attachmentShare.accessCount;
       onRefreshQRCode();
-      bus.emit("attachmentShareChanged", { attachmentShare: successResponse.data.share });
+      bus.emit("attachmentShareChanged", { attachmentShare: successResponse.data.attachmentShare });
     }).catch((errorResponse) => {
       state.ajaxErrors = true;
       if (errorResponse.isAPIError) {
@@ -265,12 +297,12 @@
     Object.assign(state, defaultAjaxState);
     state.ajaxRunning = true;
     api.sharedAttachment.get(props.attachmentId).then((successResponse: CreateUpdateGetAttachmentShareResponseInterface) => {
-      id.value = successResponse.data.share.id;
-      enabled.value = successResponse.data.share.enabled;
-      expiresAtTimestamp.value = successResponse.data.share.expiresAtTimestamp;
-      hasExpiration.value = successResponse.data.share.expiresAtTimestamp > 0;
-      accessLimit.value = successResponse.data.share.accessLimit;
-      accessCount.value = successResponse.data.share.accessCount;
+      id.value = successResponse.data.attachmentShare.id;
+      enabled.value = successResponse.data.attachmentShare.enabled;
+      expiresAtTimestamp.value = successResponse.data.attachmentShare.expiresAtTimestamp;
+      hasExpiration.value = successResponse.data.attachmentShare.expiresAtTimestamp > 0;
+      accessLimit.value = successResponse.data.attachmentShare.accessLimit;
+      accessCount.value = successResponse.data.attachmentShare.accessCount;
       onRefreshQRCode();
     }).catch((errorResponse) => {
       state.ajaxErrors = true;
@@ -298,13 +330,13 @@
     Object.assign(state, defaultAjaxState);
     state.ajaxRunning = true;
     api.sharedAttachment.update(props.attachmentId, enabled.value, expiresAtTimestamp.value, accessLimit.value).then((successResponse: CreateUpdateGetAttachmentShareResponseInterface) => {
-      id.value = successResponse.data.share.id;
-      enabled.value = successResponse.data.share.enabled;
-      expiresAtTimestamp.value = successResponse.data.share.expiresAtTimestamp;
-      hasExpiration.value = successResponse.data.share.expiresAtTimestamp > 0;
-      accessLimit.value = successResponse.data.share.accessLimit;
-      accessCount.value = successResponse.data.share.accessCount;
-      bus.emit("attachmentShareChanged", { attachmentShare: successResponse.data.share });
+      id.value = successResponse.data.attachmentShare.id;
+      enabled.value = successResponse.data.attachmentShare.enabled;
+      expiresAtTimestamp.value = successResponse.data.attachmentShare.expiresAtTimestamp;
+      hasExpiration.value = successResponse.data.attachmentShare.expiresAtTimestamp > 0;
+      accessLimit.value = successResponse.data.attachmentShare.accessLimit;
+      accessCount.value = successResponse.data.attachmentShare.accessCount;
+      bus.emit("attachmentShareChanged", { attachmentShare: successResponse.data.attachmentShare });
       onRefreshQRCode();
     }).catch((errorResponse) => {
       state.ajaxErrors = true;
