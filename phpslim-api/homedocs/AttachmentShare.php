@@ -345,6 +345,8 @@ class AttachmentShare
         $data = new \stdClass();
         foreach ($browserResults->items as $item) {
             $at = new \HomeDocs\AttachmentShare($item->id, $item->createdAtTimestamp, $item->expiresAtTimestamp, $item->accessLimit, $item->enabled);
+            $at->accessCount = $item->accessCount;
+            $at->lastAccessTimestamp = $item->lastAccessTimestamp;
             $at->attachment = new \stdClass();
             $at->attachment->id = $item->attachmentId;
             $at->attachment->name = $item->attachmentFileName;
