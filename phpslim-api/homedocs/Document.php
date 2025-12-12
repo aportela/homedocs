@@ -593,11 +593,11 @@ class Document
             sprintf(
                 "
                 SELECT
-                    ATTACHMENT.id, ATTACHMENT.name, ATTACHMENT.size, ATTACHMENT.sha1_hash AS hash, ATTACHMENT.ctime AS createdAtTimestamp, AS.attachment_id AS shareAttachmentId
+                    ATTACHMENT.id, ATTACHMENT.name, ATTACHMENT.size, ATTACHMENT.sha1_hash AS hash, ATTACHMENT.ctime AS createdAtTimestamp, ATTACHMENT_SHARE.attachment_id AS shareAttachmentId
                 FROM DOCUMENT_ATTACHMENT
                 INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_ATTACHMENT.document_id
                 LEFT JOIN ATTACHMENT ON ATTACHMENT.id = DOCUMENT_ATTACHMENT.attachment_id
-                LEFT JOIN ATTACHMENT_SHARE AS ON AS.attachment_id = DOCUMENT_ATTACHMENT.attachment_id
+                LEFT JOIN ATTACHMENT_SHARE ON ATTACHMENT_SHARE.attachment_id = DOCUMENT_ATTACHMENT.attachment_id
                 WHERE
                     DOCUMENT_ATTACHMENT.document_id = :document_id
                 %s
