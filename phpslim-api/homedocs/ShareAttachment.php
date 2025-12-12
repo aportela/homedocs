@@ -202,4 +202,128 @@ class ShareAttachment
             ]
         ));
     }
+
+    public static function search(\aportela\DatabaseWrapper\DB $db, \aportela\DatabaseBrowserWrapper\Pager $pager, string $sortField = "createdAtTimestamp", \aportela\DatabaseBrowserWrapper\Order $sortOrder = \aportela\DatabaseBrowserWrapper\Order::DESC): \stdClass
+    {
+        $fieldDefinitions = [
+            "id" => "SHARED_ATTACHMENT.id",
+            "createdAtTimestamp" => "SHARED_ATTACHMENT.ctime",
+            "expiresAtTimestamp" => "SHARED_ATTACHMENT.etime",
+            "accessLimit" => "SHARED_ATTACHMENT.access_limit",
+            "accessCount" => "SHARED_ATTACHMENT.access_count",
+            "enabled" => "SHARED_ATTACHMENT.enabled",
+        ];
+        $fieldCountDefinition = [
+            "total" => "COUNT (SHARED_ATTACHMENT.id)",
+        ];
+        $sortItems = [];
+        $sortItems[] = match ($sortField) {
+            "createdAtTimestamp", "expiresAtTimestamp", "accessLimit", "accessCount", "enabled", => new \aportela\DatabaseBrowserWrapper\SortItem($sortField, $sortOrder, true),
+            default => new \aportela\DatabaseBrowserWrapper\SortItem("createdAtTimestamp", $sortOrder, true),
+        };
+        // after launch search we need to make some changes foreach result
+        $afterBrowse = function (\aportela\DatabaseBrowserWrapper\BrowserResults $browserResults): void {
+            array_map(
+                function (object $item): \stdClass {
+                    // fix warnings on matchedFragments property
+                    if (! $item instanceof \stdClass) {
+                        throw new \RuntimeException("Invalid");
+                    }
+
+                    if (property_exists($item, "createdAtTimestamp") && is_numeric($item->createdAtTimestamp)) {
+                        $item->createdAtTimestamp =  intval($item->createdAtTimestamp);
+                    }
+
+                    if (property_exists($item, "expiresAtTimestamp") && is_numeric($item->expiresAtTimestamp)) {
+                        $item->expiresAtTimestamp =  intval($item->expiresAtTimestamp);
+                    }
+
+                    if (property_exists($item, "accessLimit") && is_numeric($item->accessLimit)) {
+                        $item->accessLimit =  intval($item->accessLimit);
+                    }
+
+                    if (property_exists($item, "accessCount") && is_numeric($item->accessCount)) {
+                        $item->accessCount =  intval($item->accessCount);
+                    }
+
+                    if (property_exists($item, "enabled") && is_numeric($item->enabled)) {
+                        $item->enabled =  intval($item->enabled) === 1;
+                    }
+
+                    return ($item);
+                },
+                $browserResults->items
+            );
+        };
+        $browser = new \aportela\DatabaseBrowserWrapper\Browser(
+            $db,
+            $fieldDefinitions,
+            $fieldCountDefinition,
+            $pager,
+            new \aportela\DatabaseBrowserWrapper\Sort($sortItems),
+            new \aportela\DatabaseBrowserWrapper\Filter(),
+            $afterBrowse
+        );
+        $queryConditions = [];
+        $params = [
+            new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
+            new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId()),
+        ];
+
+        $whereCondition = $queryConditions !== [] ? " WHERE " . implode(" AND ", $queryConditions) : "";
+        $browser->addDBQueryParams($params);
+        $query = $browser->buildQuery(
+            sprintf(
+                "
+                    SELECT
+                        %%s
+                    FROM SHARED_ATTACHMENT
+                    INNER JOIN ATTACHMENT ON ATTACHMENT.id = SHARED_ATTACHMENT.attachment_id
+                    INNER JOIN DOCUMENT_ATTACHMENT ON DOCUMENT_ATTACHMENT.attachment_id = ATTACHMENT.id
+                    INNER JOIN DOCUMENT_HISTORY ON (
+                        DOCUMENT_HISTORY.document_id = DOCUMENT_ATTACHMENT.document_id
+                        AND
+                        DOCUMENT_HISTORY.operation_type = :history_operation_add
+                        AND
+                        DOCUMENT_HISTORY.cuid = :session_user_id
+                    )
+                    %s
+                    %%s
+                    %%s
+                ",
+                $whereCondition
+            )
+        );
+        // TODO: only LEFT JOIN LAST UPDATE IF REQUIRED BY FILTERS
+        $queryCount = $browser->buildQueryCount(
+            sprintf(
+                "
+                    SELECT
+                        %%s
+                    FROM SHARED_ATTACHMENT
+                    INNER JOIN ATTACHMENT ON ATTACHMENT.id = SHARED_ATTACHMENT.attachment_id
+                    INNER JOIN DOCUMENT_ATTACHMENT ON DOCUMENT_ATTACHMENT.attachment_id = ATTACHMENT.id
+                    INNER JOIN DOCUMENT_HISTORY ON (
+                        DOCUMENT_HISTORY.document_id = DOCUMENT_ATTACHMENT.document_id
+                        AND
+                        DOCUMENT_HISTORY.operation_type = :history_operation_add
+                        AND
+                        DOCUMENT_HISTORY.cuid = :session_user_id
+                    )
+                    %s
+                ",
+                $whereCondition
+            )
+        );
+        $browserResults = $browser->launch($query, $queryCount);
+        // TODO: reuse $browserResults object ?
+        $data = new \stdClass();
+        $data->sharedAttachments = $browserResults->items;
+        $data->pagination = new \stdClass();
+        $data->pagination->currentPage = $pager->getCurrentPageIndex();
+        $data->pagination->resultsPage = $pager->getResultsPage();
+        $data->pagination->totalResults = $browserResults->pager->getTotalResults();
+        $data->pagination->totalPages = $browserResults->pager->getTotalPages();
+        return ($data);
+    }
 }

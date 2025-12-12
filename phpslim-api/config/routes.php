@@ -452,6 +452,26 @@ return function (\Slim\App $app): void {
                     $response->getBody()->write($payload);
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
+
+                $routeCollectorProxy->post('/shared_attachment', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
+                    $params = $request->getParsedBody();
+                    if (! is_array($params)) {
+                        throw new \HomeDocs\Exception\InvalidParamsException();
+                    }
+
+                    $payload = \HomeDocs\Utils::getJSONPayload(
+                        [
+                            'results' => \HomeDocs\ShareAttachment::search(
+                                $dbh,
+                                getPagerFromParams($params),
+                                getSortFieldFromParams($params),
+                                getSortOrderFromParams($params),
+                            ),
+                        ]
+                    );
+                    $response->getBody()->write($payload);
+                    return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
+                });
             })->add(\HomeDocs\Middleware\CheckAuth::class);
 
             $routeCollectorProxy->group('/document', function (RouteCollectorProxy $routeCollectorProxy) use ($container): void {

@@ -124,6 +124,13 @@ const api = {
     get: (attachmentId: string) => {
       return axiosInstance.get(`/attachment/${attachmentId}/share`);
     },
+    search: function (pager: PagerInterface, sort: SortInterface) {
+      const params = {
+        pager: pager,
+        sort: sort,
+      };
+      return axiosInstance.post('/search/shared_attachment', params);
+    },
   },
 };
 
