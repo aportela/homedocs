@@ -44,12 +44,24 @@
               <p class="q-my-sm"><q-icon name="work" class="q-mr-sm" />
                 <router-link :to="{ name: 'document', params: { id: attachmentShare.document.id } }">{{
                   attachmentShare.document.title
-                  }}</router-link>
+                }}</router-link>
               </p>
             </td>
-
-            <td class="text-left">{{ attachmentShare.expiresAtTimestamp ?
-              fullDateTimeHuman(attachmentShare.expiresAtTimestamp) : '' }}</td>
+            <td class="text-left">
+              <div v-if="attachmentShare.expiresAtTimestamp">
+                <p class="q-my-sm">{{ fullDateTimeHuman(attachmentShare.expiresAtTimestamp) }}</p>
+                <p class="q-my-sm" v-if="attachmentShare.expiresAtTimestamp > currentTimestamp()">({{
+                  t(timeUntil(attachmentShare.expiresAtTimestamp).label, {
+                    count:
+                      timeUntil(attachmentShare.expiresAtTimestamp).count
+                  })
+                }})
+                </p>
+                <p class="q-my-sm" v-else>
+                  {{ t('(expired)') }}
+                </p>
+              </div>
+            </td>
             <td class="text-right">{{ attachmentShare.accessCount || 0 }}<span v-if="attachmentShare.accessLimit">/{{
               attachmentShare.accessLimit }}</span></td>
             <td class="text-left">
@@ -87,7 +99,7 @@
   import { type AttachmentShare as AttachmentShareInterface } from 'src/types/attachmentShare';
   import { bgDownload } from 'src/composables/axios';
   import { bus } from 'src/composables/bus';
-  import { fullDateTimeHuman, timeAgo } from "src/composables/dateUtils";
+  import { fullDateTimeHuman, timeAgo, timeUntil, currentTimestamp } from "src/composables/dateUtils";
   import { api } from "src/composables/api";
   import { getURL as getAttachmentURL } from 'src/composables/attachment';
   //import { type SortClass as SortClassInterface, SortClass } from 'src/types/sort';
