@@ -1,11 +1,11 @@
 import { date } from 'quasar';
 
-interface timeAgoReturn {
+interface timeAgoUntilReturn {
   label: string;
   count: number | null;
 }
 
-const timeAgo = (timestamp: number): timeAgoReturn => {
+const timeAgo = (timestamp: number): timeAgoUntilReturn => {
   const now = Date.now();
   const diff = now - new Date(timestamp).getTime();
 
@@ -37,6 +37,34 @@ const currentTimeAgo = (): string => {
   return 'timeAgo.now';
 };
 
+const timeUntil = (timestamp: number): timeAgoUntilReturn => {
+  const now = Date.now();
+  const diff = new Date(timestamp).getTime() - now;
+
+  if (diff <= 0) return { label: 'timeUntil.now', count: null };
+
+  const seconds = Math.floor(diff / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  const months = Math.floor(days / 30); // WARNING: NOT EXACT (30 days / month)
+  const years = Math.floor(days / 365); // WARNING: NOT EXACT (365 days / year)
+
+  if (years > 0) {
+    return { label: 'timeUntil.year', count: years };
+  } else if (months > 0) {
+    return { label: 'timeUntil.month', count: months };
+  } else if (days > 0) {
+    return { label: 'timeUntil.day', count: days };
+  } else if (hours > 0) {
+    return { label: 'timeUntil.hour', count: hours };
+  } else if (minutes > 0) {
+    return { label: 'timeUntil.minute', count: minutes };
+  } else {
+    return { label: 'timeUntil.second', count: seconds };
+  }
+};
+
 const timestamp = (dateObj: Date): number => {
   return Number(date.formatDate(dateObj, 'x'));
 };
@@ -64,6 +92,7 @@ const currentFullDateTimeHuman = (format: string = 'YYYY/MM/DD HH:mm:ss'): strin
 export {
   timeAgo,
   currentTimeAgo,
+  timeUntil,
   timestamp,
   currentTimestamp,
   dateHuman,
