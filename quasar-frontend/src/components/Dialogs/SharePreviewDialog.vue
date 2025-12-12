@@ -238,7 +238,7 @@
       accessLimit.value = successResponse.data.share.accessLimit;
       accessCount.value = successResponse.data.share.accessCount;
       onRefreshQRCode();
-      bus.emit("attachmentShareCreated", { attachmentId: props.attachmentId });
+      bus.emit("attachmentShareChanged", { attachmentShare: successResponse.data.share });
     }).catch((errorResponse) => {
       state.ajaxErrors = true;
       if (errorResponse.isAPIError) {
@@ -304,6 +304,7 @@
       hasExpiration.value = successResponse.data.share.expiresAtTimestamp > 0;
       accessLimit.value = successResponse.data.share.accessLimit;
       accessCount.value = successResponse.data.share.accessCount;
+      bus.emit("attachmentShareChanged", { attachmentShare: successResponse.data.share });
       onRefreshQRCode();
     }).catch((errorResponse) => {
       state.ajaxErrors = true;
