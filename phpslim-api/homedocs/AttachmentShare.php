@@ -35,7 +35,7 @@ class AttachmentShare
             return ($db->execute(
                 "
                     INSERT
-                    INTO SHARED_ATTACHMENT
+                    INTO ATTACHMENT_SHARE
                         (id, cuid, attachment_id, ctime, etime, ltime, access_limit, access_count, enabled)
                     VALUES
                         (:id, :cuid, :attachment_id, :ctime, :etime, NULL, :access_limit, 0, :enabled)
@@ -60,7 +60,7 @@ class AttachmentShare
         if ($attachmentId !== '' && $attachmentId !== '0' && mb_strlen($attachmentId) === 36) {
             return ($db->execute(
                 "
-                    UPDATE SHARED_ATTACHMENT
+                    UPDATE ATTACHMENT_SHARE
                     SET
                         etime = :etime,
                         access_limit = :access_limit,
@@ -89,7 +89,7 @@ class AttachmentShare
             return ($db->execute(
                 "
                     DELETE
-                    FROM SHARED_ATTACHMENT
+                    FROM ATTACHMENT_SHARE
                     WHERE attachment_id = :attachment_id AND cuid = :cuid
                 ",
                 [
@@ -109,18 +109,18 @@ class AttachmentShare
             $results = $db->query(
                 "
                     SELECT
-                        SA.id,
-                        SA.cuid as creatorId,
-                        SA.attachment_id AS attachmentId,
-                        SA.ctime AS createdAtTimestamp,
-                        SA.etime AS expiresAtTimestamp,
-                        SA.ltime AS lastAccessTimestamp,
-                        SA.access_limit AS accessLimit,
-                        SA.access_count AS accessCount,
-                        SA.enabled
-                    FROM SHARED_ATTACHMENT SA
+                        AS.id,
+                        AS.cuid as creatorId,
+                        AS.attachment_id AS attachmentId,
+                        AS.ctime AS createdAtTimestamp,
+                        AS.etime AS expiresAtTimestamp,
+                        AS.ltime AS lastAccessTimestamp,
+                        AS.access_limit AS accessLimit,
+                        AS.access_count AS accessCount,
+                        AS.enabled
+                    FROM ATTACHMENT_SHARE AS
                     WHERE
-                        SA.attachment_id = :attachment_id
+                        AS.attachment_id = :attachment_id
                 ",
                 [
                     new \aportela\DatabaseWrapper\Param\StringParam(":attachment_id", $attachmentId),
@@ -130,18 +130,18 @@ class AttachmentShare
             $results = $db->query(
                 "
                     SELECT
-                        SA.id,
-                        SA.cuid as creatorId,
-                        SA.attachment_id AS attachmentId,
-                        SA.ctime AS createdAtTimestamp,
-                        SA.etime AS expiresAtTimestamp,
-                        SA.ltime AS lastAccessTimestamp,
-                        SA.access_limit AS accessLimit,
-                        SA.access_count AS accessCount,
-                        SA.enabled
-                    FROM SHARED_ATTACHMENT SA
+                        AS.id,
+                        AS.cuid as creatorId,
+                        AS.attachment_id AS attachmentId,
+                        AS.ctime AS createdAtTimestamp,
+                        AS.etime AS expiresAtTimestamp,
+                        AS.ltime AS lastAccessTimestamp,
+                        AS.access_limit AS accessLimit,
+                        AS.access_count AS accessCount,
+                        AS.enabled
+                    FROM ATTACHMENT_SHARE AS
                     WHERE
-                        SA.id = :id
+                        AS.id = :id
                 ",
                 [
                     new \aportela\DatabaseWrapper\Param\StringParam(":id", $this->id),
@@ -190,7 +190,7 @@ class AttachmentShare
     {
         return ($db->execute(
             "
-                UPDATE SHARED_ATTACHMENT
+                UPDATE ATTACHMENT_SHARE
                 SET
                     access_count = access_count + 1,
                     ltime = :current_timestamp
@@ -221,21 +221,21 @@ class AttachmentShare
     public static function search(\aportela\DatabaseWrapper\DB $db, \aportela\DatabaseBrowserWrapper\Pager $pager, string $sortField = "createdAtTimestamp", \aportela\DatabaseBrowserWrapper\Order $sortOrder = \aportela\DatabaseBrowserWrapper\Order::DESC): \stdClass
     {
         $fieldDefinitions = [
-            "id" => "SHARED_ATTACHMENT.id",
-            "createdAtTimestamp" => "SHARED_ATTACHMENT.ctime",
-            "expiresAtTimestamp" => "SHARED_ATTACHMENT.etime",
-            "lastAccessTimestamp" => "SHARED_ATTACHMENT.ltime",
-            "accessLimit" => "SHARED_ATTACHMENT.access_limit",
-            "accessCount" => "SHARED_ATTACHMENT.access_count",
-            "enabled" => "SHARED_ATTACHMENT.enabled",
-            "attachmentId" => "SHARED_ATTACHMENT.attachment_id",
+            "id" => "ATTACHMENT_SHARE.id",
+            "createdAtTimestamp" => "ATTACHMENT_SHARE.ctime",
+            "expiresAtTimestamp" => "ATTACHMENT_SHARE.etime",
+            "lastAccessTimestamp" => "ATTACHMENT_SHARE.ltime",
+            "accessLimit" => "ATTACHMENT_SHARE.access_limit",
+            "accessCount" => "ATTACHMENT_SHARE.access_count",
+            "enabled" => "ATTACHMENT_SHARE.enabled",
+            "attachmentId" => "ATTACHMENT_SHARE.attachment_id",
             "attachmentFileName" => "ATTACHMENT.name",
             "attachmentFileSize" => "ATTACHMENT.size",
             "documentId" => "DOCUMENT_ATTACHMENT.document_id",
             "documentTitle" => "DOCUMENT.title"
         ];
         $fieldCountDefinition = [
-            "total" => "COUNT (SHARED_ATTACHMENT.id)",
+            "total" => "COUNT (ATTACHMENT_SHARE.id)",
         ];
         $sortItems = [];
         $sortItems[] = match ($sortField) {
@@ -302,8 +302,8 @@ class AttachmentShare
                 "
                     SELECT
                         %%s
-                    FROM SHARED_ATTACHMENT
-                    INNER JOIN ATTACHMENT ON ATTACHMENT.id = SHARED_ATTACHMENT.attachment_id
+                    FROM ATTACHMENT_SHARE
+                    INNER JOIN ATTACHMENT ON ATTACHMENT.id = ATTACHMENT_SHARE.attachment_id
                     INNER JOIN DOCUMENT_ATTACHMENT ON DOCUMENT_ATTACHMENT.attachment_id = ATTACHMENT.id
                     INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_ATTACHMENT.document_id
                     INNER JOIN DOCUMENT_HISTORY ON (
@@ -325,8 +325,8 @@ class AttachmentShare
                 "
                     SELECT
                         %%s
-                    FROM SHARED_ATTACHMENT
-                    INNER JOIN ATTACHMENT ON ATTACHMENT.id = SHARED_ATTACHMENT.attachment_id
+                    FROM ATTACHMENT_SHARE
+                    INNER JOIN ATTACHMENT ON ATTACHMENT.id = ATTACHMENT_SHARE.attachment_id
                     INNER JOIN DOCUMENT_ATTACHMENT ON DOCUMENT_ATTACHMENT.attachment_id = ATTACHMENT.id
                     INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_ATTACHMENT.document_id
                     INNER JOIN DOCUMENT_HISTORY ON (

@@ -36,9 +36,9 @@ class Attachment
         $data = $db->query(
             "
                     SELECT
-                        A.name, A.size, A.sha1_hash AS hash, A.ctime AS createdAtTimestamp, A.cuid AS uploadedByUserId, SA.attachment_id AS shareAttachmentId
+                        A.name, A.size, A.sha1_hash AS hash, A.ctime AS createdAtTimestamp, A.cuid AS uploadedByUserId, AS.attachment_id AS shareAttachmentId
                     FROM ATTACHMENT A
-                    LEFT JOIN SHARED_ATTACHMENT SA ON SA.attachment_id = A.id
+                    LEFT JOIN ATTACHMENT_SHARE AS ON AS.attachment_id = A.id
                     WHERE
                         A.id = :id
                 ",

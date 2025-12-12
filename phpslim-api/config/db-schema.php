@@ -81,7 +81,7 @@ return ([
             CREATE INDEX idx_document_history_document_id ON DOCUMENT_HISTORY (document_id);
             CREATE INDEX idx_document_history_user_id ON DOCUMENT_HISTORY (cuid);
 
-            CREATE TABLE SHARED_ATTACHMENT (
+            CREATE TABLE ATTACHMENT_SHARE (
                 id TEXT NOT NULL UNIQUE CHECK(length(id) == 74),
                 cuid TEXT NOT NULL CHECK(length(cuid) == 36),
                 attachment_id TEXT NOT NULL UNIQUE CHECK(length(attachment_id) == 36),
