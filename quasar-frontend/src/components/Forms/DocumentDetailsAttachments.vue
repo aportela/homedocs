@@ -157,10 +157,10 @@
   const onDownload = (attachmentId: string, fileName: string) => {
     bgDownload(getAttachmentURL(attachmentId), fileName)
       .then(() => {
-        /* TODO */
+        // TODO:
       })
       .catch(() => {
-        /* TODO */
+        // TODO:
       });
   }
 
