@@ -104,6 +104,9 @@ export default {
   "Attachments":
     "Adjuntos",
 
+  "Attachments shares":
+    "Adjuntos compartidos",
+
   "Between dates":
     "Entre fechas",
 
@@ -511,9 +514,6 @@ export default {
 
   "Shared":
     "Compartido",
-
-  "Shares":
-    "Compartidos",
 
   "Show password":
     "Mostrar contraseña",

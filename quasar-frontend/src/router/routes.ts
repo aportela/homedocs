@@ -75,9 +75,9 @@ const routes: RouteRecordRaw[] = [
         meta: { conditionsFilterExpanded: false, autoLaunchSearch: true },
       },
       {
-        name: 'shares',
-        path: 'shares',
-        component: () => import('pages/SharesPage.vue'),
+        name: 'attachmentsShares',
+        path: 'attachments_shares',
+        component: () => import('pages/AttachmentsSharesPage.vue'),
       },
     ],
   },
