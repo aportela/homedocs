@@ -151,6 +151,7 @@ class ShareAttachment
             $this->expiresAtTimestamp = property_exists($results[0], "expiresAtTimestamp") && is_numeric($results[0]->expiresAtTimestamp) ? intval($results[0]->expiresAtTimestamp) : 0;
             $this->accessLimit = property_exists($results[0], "accessLimit") && is_numeric($results[0]->accessLimit) ? intval($results[0]->accessLimit) : 0;
             $this->accessCount = property_exists($results[0], "accessCount") && is_numeric($results[0]->accessCount) ? intval($results[0]->accessCount) : 0;
+            $this->enabled = property_exists($results[0], "enabled") && is_numeric($results[0]->enabled) ? intval($results[0]->enabled) === 1 : false;
         } else {
             throw new \HomeDocs\Exception\NotFoundException("id");
         }
