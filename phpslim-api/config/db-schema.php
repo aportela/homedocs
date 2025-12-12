@@ -87,6 +87,7 @@ return ([
                 attachment_id TEXT NOT NULL UNIQUE CHECK(length(attachment_id) == 36),
                 ctime INTEGER NOT NULL,
                 etime INTEGER NOT NULL,
+                ltime INTEGER,
                 access_limit INTEGER NOT NULL,
                 access_count INTEGER NOT NULL,
                 enabled INTEGER NOT NULL,
