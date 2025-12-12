@@ -207,6 +207,87 @@ return function (\Slim\App $app): void {
                 });
             });
 
+            $routeCollectorProxy->get('/shared/attachment/{attachment_id}', function (Request $request, Response $response, array $args) use ($container): \Psr\Http\Message\MessageInterface {
+
+                $params = $request->getQueryParams();
+                if (! is_array($params)) {
+                    throw new \HomeDocs\Exception\InvalidParamsException();
+                }
+
+                if (! (array_key_exists("id", $params) && is_string($params['id']) && ! empty($params['id']))) {
+                    throw new \HomeDocs\Exception\InvalidParamsException("id");
+                }
+
+                $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
+                if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
+                    throw new \RuntimeException("Failed to create database handler from container");
+                }
+                // check existence
+                $attachment = new \HomeDocs\Attachment(
+                    array_key_exists("attachment_id", $args) && is_string($args['attachment_id']) ? $args['attachment_id'] : ""
+                );
+                $attachment->get($dbh);
+                $share = new \HomeDocs\ShareAttachment($params['id'], 0, 0, 0, false);
+                $share->get($dbh, null);
+                if ($share->isEnabled() && ! $share->isExpired() && ! $share->hasExceedAccessLimit()) {
+                    $share->incrementAccessCount($dbh);
+                    $localStoragePath = $attachment->getLocalStoragePath();
+                    if (file_exists($localStoragePath)) {
+                        $partialContent = false;
+                        $attachmentSize = filesize($localStoragePath);
+                        if (! is_int($attachmentSize)) {
+                            throw new \RuntimeException("Error getting attachment size");
+                        }
+
+                        $offset = 0;
+                        $length = $attachmentSize;
+                        if (isset($_SERVER['HTTP_RANGE']) && is_string($_SERVER['HTTP_RANGE'])) {
+                            // if the HTTP_RANGE header is set we're dealing with partial content
+                            $partialContent = true;
+                            // find the requested range
+                            // this might be too simplistic, apparently the client can request
+                            // multiple ranges, which can become pretty complex, so ignore it for now
+                            preg_match('/bytes=(\d+)-(\d+)?/', $_SERVER['HTTP_RANGE'], $matches);
+                            $offset = intval($matches[1]);
+                            $length = ((isset($matches[2])) ? intval($matches[2]) : $attachment->size) - $offset;
+                        }
+
+                        $f = fopen($localStoragePath, 'r');
+                        if (! is_resource($f)) {
+                            throw new \RuntimeException("Error opening local storage path");
+                        }
+
+                        fseek($f, $offset);
+                        $data = fread($f, max(1, $length));
+                        if (! is_string($data)) {
+                            throw new \RuntimeException("Error reading attachment data");
+                        }
+
+                        fclose($f);
+                        $response->getBody()->write($data);
+                        if ($partialContent) {
+                            // output the right headers for partial content
+                            return $response->withStatus(206)
+                                ->withHeader('Content-Type', \HomeDocs\Utils::getMimeType($attachment->name ?? ""))
+                                ->withHeader('Content-Disposition', 'attachment; filename="' . basename((string) $attachment->name) . '"')
+                                ->withHeader('Content-Length', (string) $length)
+                                ->withHeader('Content-Range', 'bytes ' . $offset . '-' . ($offset + $length - 1) . '/' . $attachmentSize)
+                                ->withHeader('Accept-Ranges', 'bytes');
+                        } else {
+                            return $response->withStatus(200)
+                                ->withHeader('Content-Type', \HomeDocs\Utils::getMimeType($attachment->name ?? ""))
+                                ->withHeader('Content-Disposition', 'attachment; filename="' . basename((string) $attachment->name) . '"')
+                                ->withHeader('Content-Length', (string) $attachmentSize)
+                                ->withHeader('Accept-Ranges', 'bytes');
+                        }
+                    } else {
+                        throw new \HomeDocs\Exception\NotFoundException(array_key_exists("id", $args) && is_string($args['id']) ? $args['id'] : "");
+                    }
+                } else {
+                    throw new \HomeDocs\Exception\AccessDeniedException("");
+                }
+            });
+
             $routeCollectorProxy->group('/user', function (RouteCollectorProxy $routeCollectorProxy) use ($container): void {
                 $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
                 if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
@@ -455,7 +536,7 @@ return function (\Slim\App $app): void {
 
                             $notes[] = new \HomeDocs\Note(
                                 is_string($documentNote["id"]) ? $documentNote["id"] : null,
-                                is_int($documentNote["createdOnTimestamp"]) ? $documentNote["createdOnTimestamp"] : null,
+                                null,
                                 is_string($documentNote["body"]) ? $documentNote["body"] : null
                             );
                         }
@@ -533,10 +614,9 @@ return function (\Slim\App $app): void {
                             if (! is_array($documentNote)) {
                                 throw new \HomeDocs\Exception\InvalidParamsException("notes");
                             }
-
                             $notes[] = new \HomeDocs\Note(
                                 is_string($documentNote["id"]) ? $documentNote["id"] : null,
-                                is_int($documentNote["createdOnTimestamp"]) ? $documentNote["createdOnTimestamp"] : null,
+                                null,
                                 is_string($documentNote["body"]) ? $documentNote["body"] : null
                             );
                         }
@@ -651,7 +731,7 @@ return function (\Slim\App $app): void {
                     $attachment->get($dbh);
                     $share = new \HomeDocs\ShareAttachment("", 0, intval($params["expiresAtTimestamp"]), intval($params["accessLimit"]), $params["enabled"]);
                     $share->update($dbh, $attachment->id);
-                    $share->get($dbh, null);
+                    $share->get($dbh, $attachment->id);
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
                             'share' => $share
