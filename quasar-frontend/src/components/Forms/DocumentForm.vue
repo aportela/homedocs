@@ -26,8 +26,6 @@
           <q-btn type="button" icon="delete" size="md" color="red" :title="t('Delete')" :label="t('Delete')" no-caps
             v-if="!isNewDocument" @click="onShowDeleteDocumentConfirmationDialog">
           </q-btn>
-          <q-btn type="button" icon="share" size="md" color="grey-7" :label="t('Share')" no-caps v-if="!isNewDocument"
-            @click="onShowShareDocumentDialog" />
         </q-btn-group>
         <q-tabs class="lt-lg q-mb-sm" v-model="smallScreensTopTab">
           <q-tab name="metadata" icon="description" :label="t('Document metadata')" class="cursor-default full-width"
@@ -127,8 +125,6 @@
           <q-btn type="button" icon="delete" size="md" color="red" :title="t('Delete')" :label="t('Delete')" no-caps
             v-if="!isNewDocument" @click="onShowDeleteDocumentConfirmationDialog">
           </q-btn>
-          <q-btn type="button" icon="share" size="md" color="grey-7" :label="t('Share')" no-caps v-if="!isNewDocument"
-            @click="onShowShareDocumentDialog" />
         </q-btn-group>
       </form>
     </q-card>
@@ -436,10 +432,6 @@
     if (document.id) {
       showDeleteDocumentConfirmationDialog.value = true;
     }
-  };
-
-  const onShowShareDocumentDialog = () => {
-    bus.emit('showSharePreviewDialog', { document: { id: document.id, title: document.title } });
   };
 
   const onShowAttachmentsPicker = (evt: Event) => {
