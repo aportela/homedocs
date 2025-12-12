@@ -4,48 +4,58 @@
       <q-markup-table v-if="hasSharedAttachments">
         <thead>
           <tr>
-            <th class="text-left">{{ t('Enabled') }}</th>
-            <th class="text-left">{{ t('Attachment') }}</th>
-            <th class="text-left">{{ t('Document') }}</th>
             <th class="text-left">{{ t('Created on') }}</th>
-
-            <th class="text-left">{{ t('Last access on') }}</th>
+            <th class="text-left">{{ t('Enabled') }}</th>
+            <th class="text-left">{{ t('Element') }}</th>
             <th class="text-left">{{ t('Expires on') }}</th>
             <th class="text-right">{{ t('Total access') }}</th>
+            <th class="text-left">{{ t('Last access on') }}</th>
             <th class="text-center">{{ t('Actions') }}</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="attachmentShare in results" :key="attachmentShare.id">
-            <td class="text-left"><q-icon class="text-weight-bold" size="xs"
-                :name="attachmentShare.enabled ? 'done' : 'block'" :color="attachmentShare.enabled ? 'green' : 'red'" />
+            <td class="text-left">
+              <p class="q-my-sm">{{ fullDateTimeHuman(attachmentShare.createdAtTimestamp) }}</p>
+              <p class="q-my-sm">({{
+                t(timeAgo(attachmentShare.createdAtTimestamp).label, {
+                  count:
+                    timeAgo(attachmentShare.createdAtTimestamp).count
+                })
+              }})
+              </p>
+            </td>
+            <td class="text-left"><q-icon class="text-weight-bold" size="sm"
+                :name="attachmentShare.enabled ? 'done' : 'block'" />
             </td>
             <td>
-              <a :href="getAttachmentURL(attachmentShare.attachment.id, true)"
-                @click.stop.prevent="onDownload(attachmentShare.attachment.id, attachmentShare.attachment.name)">{{
-                  attachmentShare.attachment.name
-                }}</a>
-              ({{ format.humanStorageSize(attachmentShare.attachment.size) }})
+              <p class="q-my-sm"><q-icon name="file_download" class="q-mr-sm" />
+                <a :href="getAttachmentURL(attachmentShare.attachment.id, true)"
+                  @click.stop.prevent="onDownload(attachmentShare.attachment.id, attachmentShare.attachment.name)">{{
+                    attachmentShare.attachment.name
+                  }}</a>
+                ({{ format.humanStorageSize(attachmentShare.attachment.size) }})
+              </p>
+              <p class="q-my-sm"><q-icon name="work" class="q-mr-sm" />
+                <router-link :to="{ name: 'document', params: { id: attachmentShare.document.id } }">{{
+                  attachmentShare.document.title
+                  }}</router-link>
+              </p>
             </td>
-            <td>
-              <router-link :to="{ name: 'document', params: { id: attachmentShare.document.id } }">{{
-                attachmentShare.document.title
-                }}</router-link>
 
-            </td>
-            <td class="text-left">{{ fullDateTimeHuman(attachmentShare.createdAtTimestamp) }} ({{
-              t(timeAgo(attachmentShare.createdAtTimestamp).label, {
-                count:
-                  timeAgo(attachmentShare.createdAtTimestamp).count
-              })
-            }})
-            </td>
-            <td class="text-left"><span v-if="attachmentShare.lastAccessTimestamp">{{
-              attachmentShare.lastAccessTimestamp }} ({{
-                  attachmentShare.lastAccessTimestamp }})</span></td>
             <td class="text-left">{{ attachmentShare.expiresAtTimestamp ?
               fullDateTimeHuman(attachmentShare.expiresAtTimestamp) : '' }}</td>
-            <td class="text-right">{{ attachmentShare.accessCount || 0 }}</td>
+            <td class="text-right">{{ attachmentShare.accessCount || 0 }}<span v-if="attachmentShare.accessLimit">/{{
+              attachmentShare.accessLimit }}</span></td>
+            <td class="text-left">
+              <div v-if="attachmentShare.lastAccessTimestamp">
+                <p class="q-my-sm">{{ fullDateTimeHuman(attachmentShare.lastAccessTimestamp) }}</p>
+                <p class="q-my-sm">({{ t(timeAgo(attachmentShare.lastAccessTimestamp).label, {
+                  count:
+                    timeAgo(attachmentShare.lastAccessTimestamp).count
+                }) }})</p>
+              </div>
+            </td>
             <td class="text-center">
               <q-btn flat outline no-caps size="md" icon="settings" :label="t('Settings')"
                 @click="onShareClick(attachmentShare.attachment.id)" />
@@ -60,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, reactive, shallowRef, onMounted } from 'vue';
+  import { computed, reactive, shallowRef, onMounted, onBeforeUnmount } from 'vue';
   import { format } from 'quasar';
   import { useI18n } from "vue-i18n";
   import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
@@ -172,6 +182,20 @@
 
 
   onMounted(() => {
+    bus.on("attachmentShareChanged", () => {
+      onSubmitForm(true);
+    });
+
+    bus.on("attachmentShareDeleted", () => {
+      onSubmitForm(true);
+    });
+
     onSubmitForm(true);
+  });
+
+  onBeforeUnmount(() => {
+    bus.off("reAuthSucess");
+    bus.off("attachmentShareChanged");
+    bus.off("attachmentShareDeleted");
   });
 </script>
