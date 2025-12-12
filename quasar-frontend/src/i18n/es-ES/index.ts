@@ -2,6 +2,24 @@ export default {
   " change/s on date ":
     " cambio/s en la fecha ",
 
+  "1 minute":
+    "1 minuto",
+
+  "1 hour":
+    "1 hora",
+
+  "1 day":
+    "1 día",
+
+  "1 week":
+    "1 semana",
+
+  "1 month":
+    "1 mes",
+
+  "1 year":
+    "1 año",
+
   "Access denied":
     "Acceso denegado",
 
@@ -80,6 +98,9 @@ export default {
   "Attachment names":
     "Nombres de adjuntos",
 
+  "Attachment share":
+    "Compartir adjunto",
+
   "Attachments":
     "Adjuntos",
 
@@ -133,6 +154,9 @@ export default {
 
   "Collapse sidebar":
     "Contraer sidebar",
+
+  "Copied to clipboard!":
+	"¡Copiado al portatapeles!",
 
   "Created on":
     "Fecha de creación",
@@ -239,6 +263,9 @@ export default {
   "Email not registered":
     "El correo electrónico no está asociado",
 
+  "Enabled":
+    "Activo",
+
   "End":
     "Fin",
 
@@ -256,6 +283,9 @@ export default {
 
   "Expand sidebar":
     "Expandir sidebar",
+
+  "Expires at":
+    "Expira el",
 
   "Fast search match fragment":
     "Coincidencia encontrada en {matchedOn}: {fragment}",
@@ -296,6 +326,12 @@ export default {
   "Go Home":
     "Volver al inicio",
 
+  "Has access count limit":
+    "Tiene límite de accesos",
+
+  "Has expiration":
+    "Tiene expiración",
+
   "Hide password":
     "Ocultar contraseña",
 
@@ -331,6 +367,9 @@ export default {
 
   "Let's start organizing.":
     "Es momento de comenzar la organización.",
+
+  "Limit":
+    "Límite",
 
   "Loading...":
     "Cargando...",
@@ -535,6 +574,10 @@ export default {
 
   "This operation cannot be undone. Would you like to proceed ?":
     "Esta operación no se puede deshacer. ¿ Quiere continuar ?",
+  
+  "This share has been accessed n times.":
+    "Se ha accedido a este recurso compartido {count} veces.|Se ha accedido a este recurso compartido {count} vez.|Se ha accedido a este recurso compartido {count} veces.",
+
   "timeAgo": {
 
     "day":

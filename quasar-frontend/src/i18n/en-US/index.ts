@@ -2,6 +2,24 @@ export default {
   " change/s on date ":
     " change/s on date ",
 
+  "1 minute":
+    "1 minute",
+
+  "1 hour":
+    "1 hour",
+
+  "1 day":
+    "1 day",
+
+  "1 week":
+    "1 week",
+
+  "1 month":
+    "1 month",
+
+  "1 year":
+    "1 year",
+
   "Access denied":
     "Access denied",
 
@@ -80,6 +98,9 @@ export default {
   "Attachment names":
     "Attachment names",
 
+  "Attachment share":
+    "Attachment share",
+
   "Attachments":
     "Attachments",
 
@@ -133,6 +154,9 @@ export default {
 
   "Collapse sidebar":
     "Collapse sidebar",
+	
+  "Copied to clipboard!":
+	"Copied to clipboard!",
 
   "Created on":
     "Created on",
@@ -239,6 +263,9 @@ export default {
   "Email not registered":
     "Email not registered",
 
+  "Enabled":
+    "Enabled",
+
   "End":
     "End",
 
@@ -256,6 +283,9 @@ export default {
 
   "Expand sidebar":
     "Expand sidebar",
+
+  "Expires at":
+    "Expires at",
 
   "Fast search match fragment":
     "Fragment matched on {matchedOn}: {fragment}",
@@ -296,6 +326,12 @@ export default {
   "Go Home":
     "Go Home",
 
+  "Has access count limit":
+    "Has access count limit",
+
+  "Has expiration":
+    "Has expiration",
+
   "Hide password":
     "Hide password",
 
@@ -331,6 +367,9 @@ export default {
 
   "Let's start organizing.":
     "Let's start organizing.",
+
+  "Limit":
+    "Limit",
 
   "Loading...":
     "Loading...",
@@ -535,6 +574,10 @@ export default {
 
   "This operation cannot be undone. Would you like to proceed ?":
     "This operation cannot be undone. Would you like to proceed ?",
+	
+  "This share has been accessed n times.":
+    "This share has been accessed {count} times.|This share has been accessed {count} time.|This share has been accessed {count} times.",
+		
   "timeAgo": {
 
     "day":

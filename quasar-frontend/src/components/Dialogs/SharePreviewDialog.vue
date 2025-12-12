@@ -19,24 +19,24 @@
             </q-input>
           </p>
           <p><q-toggle size="xl" v-model="enabled" :disable="state.ajaxRunning" color="green" icon="share"
-              label="Enabled" /></p>
+              :label="t('Enabled')" /></p>
           <p><q-toggle size="xl" v-model="hasExpiration" :disable="!enabled || state.ajaxRunning" color="green"
-              icon="lock_clock" label="Has expiration" @update:model-value="onToggleHasExpiration" /> <span
-              class="text-weight-bold" v-if="hasExpiration">(Expires
-              at {{ expiresAtTimestampLabel }})</span></p>
+              icon="lock_clock" :label="t('Has expiration')" @update:model-value="onToggleHasExpiration" /> <span
+              class="text-weight-bold" v-if="hasExpiration">({{ t('Expires at') }} {{ expiresAtTimestampLabel }})</span>
+          </p>
           <p v-if="hasExpiration">
-            <q-btn-toggle v-model="expiresOn" :disable="!enabled || state.ajaxRunning" toggle-color="primary"
+            <q-btn-toggle no-caps v-model="expiresOn" :disable="!enabled || state.ajaxRunning" toggle-color="primary"
               :options="expiresOnOptions" />
           </p>
           <p class="row">
             <q-toggle class="col-6" size="xl" v-model="hasAccessCountLimit" :disable="!enabled || state.ajaxRunning"
-              color="green" icon="lock_clock" label="Has access count limit" />
+              color="green" icon="lock_clock" :label="t('Has access count limit')" />
             <q-input class="col-6" type="number" v-model.number="accessLimit" v-if="hasAccessCountLimit" min="1"
-              label="Limit" :disable="!enabled || state.ajaxRunning" />
+              :label="t('Limit')" :disable="!enabled || state.ajaxRunning" />
           </p>
-          <q-banner rounded :class="accessClass"><q-icon name="link" size="sm" />This share has been accessed {{
-            accessCount }}
-            times.</q-banner>
+          <q-banner rounded :class="accessClass"><q-icon name="link" size="sm" />
+            {{ t('This share has been accessed n times.', { count: accessCount }) }}
+          </q-banner>
           <CustomErrorBanner class="q-my-md" v-if="state.ajaxErrors && state.ajaxErrorMessage"
             :text="state.ajaxErrorMessage" />
           <p>
@@ -83,12 +83,12 @@
   };
 
   const expiresOnOptions: ExpiresOnOptionInterface[] = [
-    { label: '1 minute', value: 'oneMinute' },
-    { label: '1 hour', value: 'oneHour' },
-    { label: '1 day', value: 'oneDay' },
-    { label: '1 week', value: 'oneWeek' },
-    { label: '1 month', value: 'oneMonth' },
-    { label: '1 year', value: 'oneYear' }
+    { label: t('1 minute'), value: 'oneMinute' },
+    { label: t('1 hour'), value: 'oneHour' },
+    { label: t('1 day'), value: 'oneDay' },
+    { label: t('1 week'), value: 'oneWeek' },
+    { label: t('1 month'), value: 'oneMonth' },
+    { label: t('1 year'), value: 'oneYear' }
   ];
 
   const visible = ref<boolean>(true);
@@ -216,7 +216,7 @@
     if (url.value) {
       navigator.clipboard.writeText(url.value)
         .then(() => {
-          copiedToClipboardMessage.value = "Copied to clipboard!";
+          copiedToClipboardMessage.value = t("Copied to clipboard!");
         })
         .catch((error) => {
           console.error("Error copying url to clipboard", error);
