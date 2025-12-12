@@ -193,7 +193,7 @@ class ShareAttachment
                     (
                         etime = 0
                         OR
-                        etime < :current_timestamp
+                        etime > :current_timestamp
                     )
             ",
             [
