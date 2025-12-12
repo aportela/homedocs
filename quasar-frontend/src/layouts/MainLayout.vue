@@ -13,7 +13,7 @@
         <q-btn type="button" no-caps no-wrap align="left" outline :label="searchButtonLabel" icon="search"
           class="full-width no-caps theme-default-q-btn" @click.prevent="dialogs.fastSearch.visible = true">
           <DesktopToolTip anchor="bottom middle" self="top middle">{{ t("Click to open fast search")
-            }}</DesktopToolTip>
+          }}</DesktopToolTip>
         </q-btn>
         <!--
         <FastSearchSelector dense class="full-width"></FastSearchSelector>
@@ -46,8 +46,8 @@
       @close="dialogs.documentNotesPreview.visible = false" />
     <UploadingDialog v-model="dialogs.uploading.visible" :transfers="dialogs.uploading.transfers"
       @clear-processed-transfers="onClearProcessedTransfers" />
-    <AttachmentShareDialog v-if="dialogs.sharePreview.visible" :attachment-id="dialogs.sharePreview.attachmentId"
-      :create="dialogs.sharePreview.create" @close="dialogs.sharePreview.visible = false" />
+    <AttachmentShareDialog v-if="dialogs.attachmentShare.visible" :attachment-id="dialogs.attachmentShare.attachmentId"
+      :create="dialogs.attachmentShare.create" @close="dialogs.attachmentShare.visible = false" />
   </q-layout>
 
 </template>
@@ -116,7 +116,7 @@
       visible: boolean;
       transfers: UploadTransferInterface[]
     },
-    sharePreview: {
+    attachmentShare: {
       visible: boolean;
       attachmentId: string;
       create: false,
@@ -153,7 +153,7 @@
       visible: false,
       transfers: []
     },
-    sharePreview: {
+    attachmentShare: {
       visible: false,
       attachmentId: "",
       create: false,
@@ -306,10 +306,10 @@
       dialogs.uploading.visible = dialogs.uploading.transfers?.length > 0;
     });
 
-    bus.on("showSharePreviewDialog", (msg) => {
-      dialogs.sharePreview.visible = true;
-      dialogs.sharePreview.attachmentId = msg.attachmentId;
-      dialogs.sharePreview.create = msg.create;
+    bus.on("showAttachmentShareDialog", (msg) => {
+      dialogs.attachmentShare.visible = true;
+      dialogs.attachmentShare.attachmentId = msg.attachmentId;
+      dialogs.attachmentShare.create = msg.create;
     });
   });
 
@@ -322,7 +322,7 @@
     bus.off("refreshUploadingDialog.fileUploaded");
     bus.off("refreshUploadingDialog.fileUploadRejected");
     bus.off("refreshUploadingDialog.fileUploadFailed");
-    bus.off("showSharePreviewDialog");
+    bus.off("showAttachmentShareDialog");
   });
 
 </script>

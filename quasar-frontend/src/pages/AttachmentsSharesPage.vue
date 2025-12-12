@@ -156,7 +156,7 @@
   }
 
   const onShareClick = (attachmentId: string) => {
-    bus.emit('showSharePreviewDialog', { attachmentId: attachmentId, create: false });
+    bus.emit('showAttachmentShareDialog', { attachmentId: attachmentId, create: false });
   };
 
 

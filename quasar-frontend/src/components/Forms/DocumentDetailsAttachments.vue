@@ -151,7 +151,7 @@
   };
 
   const onShareClick = (attachment: AttachmentInterface) => {
-    bus.emit('showSharePreviewDialog', { attachmentId: attachment.id, create: !attachment.shared });
+    bus.emit('showAttachmentShareDialog', { attachmentId: attachment.id, create: !attachment.shared });
   };
 
   const onDownload = (attachmentId: string, fileName: string) => {
