@@ -135,110 +135,325 @@
 
 <script setup lang="ts">
 
-import { ref, reactive, nextTick, computed, watch, onMounted, onBeforeUnmount } from "vue";
-import { useRouter } from "vue-router";
-import { useI18n } from "vue-i18n";
-import { uid, useQuasar, QUploader, type QRejectedEntry } from "quasar";
-import { type AxiosResponse } from "axios";
+  import { ref, reactive, nextTick, computed, watch, onMounted, onBeforeUnmount } from "vue";
+  import { useRouter } from "vue-router";
+  import { useI18n } from "vue-i18n";
+  import { uid, useQuasar, QUploader, type QRejectedEntry } from "quasar";
+  import { type AxiosResponse } from "axios";
 
-import { bus } from "src/composables/bus";
-import { api } from "src/composables/api";
-import { useFormUtils } from "src/composables/useFormUtils"
-import { DocumentClass } from "src/types/document";
-import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
+  import { bus } from "src/composables/bus";
+  import { api } from "src/composables/api";
+  import { useFormUtils } from "src/composables/useFormUtils"
+  import { DocumentClass } from "src/types/document";
+  import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
 
-import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
-import { type GetDocumentResponse as GetDocumentResponseInterface } from "src/types/apiResponses";
-import { UploadTransferClass } from "src/types/uploadTransfer";
+  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
+  import { type GetDocumentResponse as GetDocumentResponseInterface } from "src/types/apiResponses";
+  import { UploadTransferClass } from "src/types/uploadTransfer";
 
-import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
-import { default as DocumentMetadataTopForm } from "src/components/Forms/DocumentMetadataTopForm.vue"
-import { default as DocumentDetailsAttachments } from "src/components/Forms/DocumentDetailsAttachments.vue"
-import { default as DocumentDetailsNotes } from "src/components/Forms/DocumentDetailsNotes.vue"
-import { default as DocumentDetailsHistory } from "src/components/Forms/DocumentDetailsHistory.vue"
-import { default as InteractiveTextFieldCustomInput } from "src/components/Forms/Fields/InteractiveTextFieldCustomInput.vue"
-import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
-import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue"
-import { default as DeleteDocumentConfirmationDialog } from "src/components/Dialogs/DeleteDocumentConfirmationDialog.vue"
-import { AttachmentClass } from "src/types/attachment";
-import { NoteClass } from "src/types/note";
-import { DateTimeClass } from "src/types/dateTime";
-import { currentTimestamp } from "src/composables/dateUtils";
+  import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
+  import { default as DocumentMetadataTopForm } from "src/components/Forms/DocumentMetadataTopForm.vue"
+  import { default as DocumentDetailsAttachments } from "src/components/Forms/DocumentDetailsAttachments.vue"
+  import { default as DocumentDetailsNotes } from "src/components/Forms/DocumentDetailsNotes.vue"
+  import { default as DocumentDetailsHistory } from "src/components/Forms/DocumentDetailsHistory.vue"
+  import { default as InteractiveTextFieldCustomInput } from "src/components/Forms/Fields/InteractiveTextFieldCustomInput.vue"
+  import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
+  import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue"
+  import { default as DeleteDocumentConfirmationDialog } from "src/components/Dialogs/DeleteDocumentConfirmationDialog.vue"
+  import { AttachmentClass } from "src/types/attachment";
+  import { NoteClass } from "src/types/note";
+  import { DateTimeClass } from "src/types/dateTime";
+  import { currentTimestamp } from "src/composables/dateUtils";
 
-const { t } = useI18n();
-const router = useRouter();
-const { screen } = useQuasar();
-const serverEnvironment = useServerEnvironmentStore();
-const { requiredFieldRule, fieldIsRequiredLabel } = useFormUtils();
+  const { t } = useI18n();
+  const router = useRouter();
+  const { screen } = useQuasar();
+  const serverEnvironment = useServerEnvironmentStore();
+  const { requiredFieldRule, fieldIsRequiredLabel } = useFormUtils();
 
-interface DocumentFormProps {
-  documentId: string | null;
-};
+  interface DocumentFormProps {
+    documentId: string | null;
+  };
 
-const props = defineProps<DocumentFormProps>();
+  const props = defineProps<DocumentFormProps>();
 
-watch(() => props.documentId, val => {
-  if (val) {
-    document.id = val;
-    onRefresh();
-  } else {
-    document.reset();
-    documentTitleFieldRef.value?.unsetReadOnly();
+  watch(() => props.documentId, val => {
+    if (val) {
+      document.id = val;
+      onRefresh();
+    } else {
+      document.reset();
+      documentTitleFieldRef.value?.unsetReadOnly();
+      nextTick()
+        .then(() => {
+          documentTitleFieldRef.value?.focus()
+        }).catch((e) => {
+          console.error(e);
+        });
+    }
+  });
+
+  const isScreenGreaterThanMD = computed(() => screen.gt.md);
+  const isNewDocument = computed(() => !props.documentId);
+
+  const document = reactive<DocumentClass>(
+    new DocumentClass()
+  );
+
+  const maxUploadFileSize = computed(() => serverEnvironment.maxUploadFileSize);
+  const uploaderRef = ref<QUploader | null>(null);
+  const documentTitleFieldRef = ref<InstanceType<typeof InteractiveTextFieldCustomInput> | null>(null);
+
+  const exists = ref<boolean>(true);
+  const saveSuccess = ref<boolean>(false);
+
+  const isUploading = ref<boolean>(false);
+
+  const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
+
+  const showDeleteDocumentConfirmationDialog = ref(false);
+
+  const smallScreensTopTab = ref("metadata");
+  const leftMetadataTab = ref("metadata");
+  const rightDetailsTab = ref("attachments");
+
+  // handle drag&drop files into q-uploader component
+  const handleDrop = (evt: DragEvent) => {
+    evt.preventDefault();
+    const files = evt.dataTransfer?.files || [];
+    if (files.length) {
+      uploaderRef.value?.addFiles(files);
+    };
+  };
+
+
+  // refresh document data from api
+  const onRefresh = () => {
+    if (document.id) {
+      if (!state.ajaxRunning) {
+        exists.value = true;
+        Object.assign(state, defaultAjaxState);
+        state.ajaxRunning = true;
+        smallScreensTopTab.value = "metadata";
+        api.document
+          .get(document.id)
+          .then((successResponse: GetDocumentResponseInterface) => {
+            document.parseJSONResponse(t, successResponse);
+          })
+          .catch((errorResponse) => {
+            state.ajaxErrors = true;
+            if (errorResponse.isAPIError) {
+              state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
+              switch (errorResponse.response.status) {
+                case 401:
+                  state.ajaxErrors = false;
+                  bus.emit("reAuthRequired", { emitter: "DocumentPage.onRefresh" });
+                  break;
+                case 404:
+                  state.ajaxErrorMessage = "Document not found";
+                  exists.value = false;
+                  break;
+                default:
+                  // TODO: on this error (example 404 not found) do not use error validation fields on title (required, red border, this field is required)
+                  state.ajaxErrorMessage = "API Error: fatal error";
+                  break;
+              }
+            } else {
+              state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
+              console.error(errorResponse);
+            }
+          }).finally(() => {
+            state.ajaxRunning = false;
+            if (!state.ajaxErrors) {
+              if (smallScreensTopTab.value == "metadata") {
+                nextTick()
+                  .then(() => {
+                    documentTitleFieldRef.value?.focus();
+                  }).catch((e) => {
+                    console.error(e);
+                  });
+              }
+            }
+          });
+      }
+    } else {
+      // TODO
+    }
+
+  }
+
+  // submit (add/update) document data to api
+  const onSubmitForm = () => {
+    if (!state.ajaxRunning) {
+      saveSuccess.value = false;
+      Object.assign(state, defaultAjaxState);
+      state.ajaxRunning = true;
+      if (!isNewDocument.value) {
+        api.document
+          .update(document)
+          .then((successResponse: GetDocumentResponseInterface) => {
+            document.parseJSONResponse(t, successResponse);
+          })
+          .catch((errorResponse) => {
+            state.ajaxErrors = true;
+            if (errorResponse.isAPIError) {
+              state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
+              switch (errorResponse.response.status) {
+                case 400:
+                  if (
+                    errorResponse.response.data.invalidOrMissingParams.find(function (e: string) {
+                      return e === "title";
+                    })
+                  ) {
+                    state.ajaxErrorMessage = t("API Error: missing document title param");
+                    smallScreensTopTab.value = "metadata";
+                    nextTick()
+                      .then(() => {
+                        documentTitleFieldRef.value?.focus()
+                      }).catch((e) => {
+                        console.error(e);
+                      });
+                  } else if (
+                    errorResponse.response.data.invalidOrMissingParams.find(function (e: string) {
+                      return e === "noteBody";
+                    })
+                  ) {
+                    state.ajaxErrorMessage = t("API Error: missing document note body");
+                    smallScreensTopTab.value = "details";
+                    rightDetailsTab.value = "notes";
+                    // TODO: focus note without body ???
+                  } else {
+                    state.ajaxErrorMessage = "API Error: fatal error";
+                  }
+                  break;
+                case 401:
+                  state.ajaxErrors = false;
+                  bus.emit("reAuthRequired", { emitter: "AdvancedSearchPage.onSubmitForm" });
+                  break;
+                default:
+                  state.ajaxErrorMessage = "API Error: fatal error";
+                  break;
+              }
+            } else {
+              state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
+              console.error(errorResponse);
+            }
+          }).finally(() => {
+            state.ajaxRunning = false;
+            if (!state.ajaxErrors) {
+              saveSuccess.value = true;
+              if (smallScreensTopTab.value == "metadata") {
+                nextTick()
+                  .then(() => {
+                    documentTitleFieldRef.value?.focus();
+                  }).catch((e) => {
+                    console.error(e);
+                  });
+              }
+            }
+          });
+      } else {
+        if (!document.id) {
+          document.id = uid();
+        }
+        api.document
+          .add(document)
+          .then(() => {
+            router.push({
+              name: "document",
+              params: { id: document.id }
+            }).catch((e) => {
+              console.error(e);
+            });
+          })
+          .catch((errorResponse) => {
+            state.ajaxErrors = true;
+            if (errorResponse.isAPIError) {
+              state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
+              switch (errorResponse.response.status) {
+                case 400:
+                  if (
+                    errorResponse.response.data.invalidOrMissingParams.find(function (e: string) {
+                      return e === "title";
+                    })
+                  ) {
+                    state.ajaxErrorMessage = t("API Error: missing document title param");
+                    smallScreensTopTab.value = "metadata";
+                    nextTick()
+                      .then(() => {
+                        documentTitleFieldRef.value?.focus()
+                      }).catch((e) => {
+                        console.error(e);
+                      });
+                  } else if (
+                    errorResponse.response.data.invalidOrMissingParams.find(function (e: string) {
+                      return e === "noteBody";
+                    })
+                  ) {
+                    state.ajaxErrorMessage = t("API Error: missing document note body");
+                    smallScreensTopTab.value = "details";
+                    rightDetailsTab.value = "notes";
+                    // TODO: focus note without body ???
+                  } else {
+                    state.ajaxErrorMessage = "API Error: fatal error";
+                  }
+                  break;
+                case 401:
+                  state.ajaxErrors = false;
+                  bus.emit("reAuthRequired", { emitter: "AdvancedSearchPage.onSubmitForm" });
+                  break;
+                default:
+                  state.ajaxErrorMessage = "API Error: fatal error";
+                  break;
+              }
+            } else {
+              state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
+              console.error(errorResponse);
+            }
+          }).finally(() => {
+            state.ajaxRunning = false;
+            if (!state.ajaxErrors) {
+              saveSuccess.value = true;
+              if (smallScreensTopTab.value == "metadata") {
+                nextTick()
+                  .then(() => {
+                    documentTitleFieldRef.value?.focus();
+                  }).catch((e) => {
+                    console.error(e);
+                  });
+              }
+            }
+          });
+      }
+    }
+  }
+
+  const onShowDeleteDocumentConfirmationDialog = () => {
+    if (document.id) {
+      showDeleteDocumentConfirmationDialog.value = true;
+    }
+  };
+
+  const onShowAttachmentsPicker = (evt: Event) => {
+    rightDetailsTab.value = 'attachments';
     nextTick()
       .then(() => {
-        documentTitleFieldRef.value?.focus()
+        uploaderRef.value?.pickFiles(evt);
       }).catch((e) => {
         console.error(e);
       });
   }
-});
 
-const isScreenGreaterThanMD = computed(() => screen.gt.md);
-const isNewDocument = computed(() => !props.documentId);
-
-const document = reactive<DocumentClass>(
-  new DocumentClass()
-);
-
-const maxUploadFileSize = computed(() => serverEnvironment.maxUploadFileSize);
-const uploaderRef = ref<QUploader | null>(null);
-const documentTitleFieldRef = ref<InstanceType<typeof InteractiveTextFieldCustomInput> | null>(null);
-
-const exists = ref<boolean>(true);
-const saveSuccess = ref<boolean>(false);
-
-const isUploading = ref<boolean>(false);
-
-const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
-
-const showDeleteDocumentConfirmationDialog = ref(false);
-
-const smallScreensTopTab = ref("metadata");
-const leftMetadataTab = ref("metadata");
-const rightDetailsTab = ref("attachments");
-
-// handle drag&drop files into q-uploader component
-const handleDrop = (evt: DragEvent) => {
-  evt.preventDefault();
-  const files = evt.dataTransfer?.files || [];
-  if (files.length) {
-    uploaderRef.value?.addFiles(files);
-  };
-};
-
-
-// refresh document data from api
-const onRefresh = () => {
-  if (document.id) {
-    if (!state.ajaxRunning) {
-      exists.value = true;
+  const onRemoveAttachmentAtIndex = (index: number) => {
+    // orphaned elements are uploaded to server, but not associated (until document saved)
+    // so we must remove them
+    if (document.attachments[index]!.orphaned) {
       Object.assign(state, defaultAjaxState);
       state.ajaxRunning = true;
-      smallScreensTopTab.value = "metadata";
-      api.document
-        .get(document.id)
-        .then((successResponse: GetDocumentResponseInterface) => {
-          document.parseJSONResponse(t, successResponse);
+      api.document.
+        removeFile(document.attachments[index]!.id)
+        .then(() => {
+          document.attachments = document.attachments.filter((_, i) => i !== index);
         })
         .catch((errorResponse) => {
           state.ajaxErrors = true;
@@ -247,88 +462,7 @@ const onRefresh = () => {
             switch (errorResponse.response.status) {
               case 401:
                 state.ajaxErrors = false;
-                bus.emit("reAuthRequired", { emitter: "DocumentPage.onRefresh" });
-                break;
-              case 404:
-                state.ajaxErrorMessage = "Document not found";
-                exists.value = false;
-                break;
-              default:
-                // TODO: on this error (example 404 not found) do not use error validation fields on title (required, red border, this field is required)
-                state.ajaxErrorMessage = "API Error: fatal error";
-                break;
-            }
-          } else {
-            state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
-            console.error(errorResponse);
-          }
-        }).finally(() => {
-          state.ajaxRunning = false;
-          if (!state.ajaxErrors) {
-            if (smallScreensTopTab.value == "metadata") {
-              nextTick()
-                .then(() => {
-                  documentTitleFieldRef.value?.focus();
-                }).catch((e) => {
-                  console.error(e);
-                });
-            }
-          }
-        });
-    }
-  } else {
-    // TODO
-  }
-
-}
-
-// submit (add/update) document data to api
-const onSubmitForm = () => {
-  if (!state.ajaxRunning) {
-    saveSuccess.value = false;
-    Object.assign(state, defaultAjaxState);
-    state.ajaxRunning = true;
-    if (!isNewDocument.value) {
-      api.document
-        .update(document)
-        .then((successResponse: GetDocumentResponseInterface) => {
-          document.parseJSONResponse(t, successResponse);
-        })
-        .catch((errorResponse) => {
-          state.ajaxErrors = true;
-          if (errorResponse.isAPIError) {
-            state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
-            switch (errorResponse.response.status) {
-              case 400:
-                if (
-                  errorResponse.response.data.invalidOrMissingParams.find(function (e: string) {
-                    return e === "title";
-                  })
-                ) {
-                  state.ajaxErrorMessage = t("API Error: missing document title param");
-                  smallScreensTopTab.value = "metadata";
-                  nextTick()
-                    .then(() => {
-                      documentTitleFieldRef.value?.focus()
-                    }).catch((e) => {
-                      console.error(e);
-                    });
-                } else if (
-                  errorResponse.response.data.invalidOrMissingParams.find(function (e: string) {
-                    return e === "noteBody";
-                  })
-                ) {
-                  state.ajaxErrorMessage = t("API Error: missing document note body");
-                  smallScreensTopTab.value = "details";
-                  rightDetailsTab.value = "notes";
-                  // TODO: focus note without body ???
-                } else {
-                  state.ajaxErrorMessage = "API Error: fatal error";
-                }
-                break;
-              case 401:
-                state.ajaxErrors = false;
-                bus.emit("reAuthRequired", { emitter: "AdvancedSearchPage.onSubmitForm" });
+                bus.emit("reAuthRequired", { emitter: "DocumentDetailsAttachments.onRemoveAttachmentAtIndex" });
                 break;
               default:
                 state.ajaxErrorMessage = "API Error: fatal error";
@@ -340,213 +474,39 @@ const onSubmitForm = () => {
           }
         }).finally(() => {
           state.ajaxRunning = false;
-          if (!state.ajaxErrors) {
-            saveSuccess.value = true;
-            if (smallScreensTopTab.value == "metadata") {
-              nextTick()
-                .then(() => {
-                  documentTitleFieldRef.value?.focus();
-                }).catch((e) => {
-                  console.error(e);
-                });
-            }
-          }
         });
     } else {
-      if (!document.id) {
-        document.id = uid();
-      }
-      api.document
-        .add(document)
-        .then(() => {
-          router.push({
-            name: "document",
-            params: { id: document.id }
-          }).catch((e) => {
-            console.error(e);
-          });
-        })
-        .catch((errorResponse) => {
-          state.ajaxErrors = true;
-          if (errorResponse.isAPIError) {
-            state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
-            switch (errorResponse.response.status) {
-              case 400:
-                if (
-                  errorResponse.response.data.invalidOrMissingParams.find(function (e: string) {
-                    return e === "title";
-                  })
-                ) {
-                  state.ajaxErrorMessage = t("API Error: missing document title param");
-                  smallScreensTopTab.value = "metadata";
-                  nextTick()
-                    .then(() => {
-                      documentTitleFieldRef.value?.focus()
-                    }).catch((e) => {
-                      console.error(e);
-                    });
-                } else if (
-                  errorResponse.response.data.invalidOrMissingParams.find(function (e: string) {
-                    return e === "noteBody";
-                  })
-                ) {
-                  state.ajaxErrorMessage = t("API Error: missing document note body");
-                  smallScreensTopTab.value = "details";
-                  rightDetailsTab.value = "notes";
-                  // TODO: focus note without body ???
-                } else {
-                  state.ajaxErrorMessage = "API Error: fatal error";
-                }
-                break;
-              case 401:
-                state.ajaxErrors = false;
-                bus.emit("reAuthRequired", { emitter: "AdvancedSearchPage.onSubmitForm" });
-                break;
-              default:
-                state.ajaxErrorMessage = "API Error: fatal error";
-                break;
-            }
-          } else {
-            state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
-            console.error(errorResponse);
-          }
-        }).finally(() => {
-          state.ajaxRunning = false;
-          if (!state.ajaxErrors) {
-            saveSuccess.value = true;
-            if (smallScreensTopTab.value == "metadata") {
-              nextTick()
-                .then(() => {
-                  documentTitleFieldRef.value?.focus();
-                }).catch((e) => {
-                  console.error(e);
-                });
-            }
-          }
-        });
+      document.attachments = document.attachments.filter((_, i) => i !== index);
     }
-  }
-}
+  };
 
-const onShowDeleteDocumentConfirmationDialog = () => {
-  if (document.id) {
-    showDeleteDocumentConfirmationDialog.value = true;
-  }
-};
-
-const onShowAttachmentsPicker = (evt: Event) => {
-  rightDetailsTab.value = 'attachments';
-  nextTick()
-    .then(() => {
-      uploaderRef.value?.pickFiles(evt);
-    }).catch((e) => {
-      console.error(e);
-    });
-}
-
-const onRemoveAttachmentAtIndex = (index: number) => {
-  // orphaned elements are uploaded to server, but not associated (until document saved)
-  // so we must remove them
-  if (document.attachments[index]!.orphaned) {
-    Object.assign(state, defaultAjaxState);
-    state.ajaxRunning = true;
-    api.document.
-      removeFile(document.attachments[index]!.id)
-      .then(() => {
-        document.attachments = document.attachments.filter((_, i) => i !== index);
-      })
-      .catch((errorResponse) => {
-        state.ajaxErrors = true;
-        if (errorResponse.isAPIError) {
-          state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
-          switch (errorResponse.response.status) {
-            case 401:
-              state.ajaxErrors = false;
-              bus.emit("reAuthRequired", { emitter: "DocumentDetailsAttachments.onRemoveAttachmentAtIndex" });
-              break;
-            default:
-              state.ajaxErrorMessage = "API Error: fatal error";
-              break;
-          }
-        } else {
-          state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
-          console.error(errorResponse);
-        }
-      }).finally(() => {
-        state.ajaxRunning = false;
-      });
-  } else {
-    document.attachments = document.attachments.filter((_, i) => i !== index);
-  }
-};
-
-const onAddNote = () => {
-  //document.addNote(t);
-  document.notes.unshift(
-    new NoteClass(
-      uid(),
-      "",
-      new DateTimeClass(t, currentTimestamp()),
-      false,
-      true, // new notes start with view mode = "edit" (for allowing input body text)
-    )
-  );
-};
-
-const onRemoveNoteAtIndex = (index: number) => {
-  document.notes = document.notes.filter((_, i) => i !== index);
-};
-
-// q-uploader component event => file upload starts
-const onUploadsStart = () => {
-  isUploading.value = true;
-  bus.emit("showUploadingDialog", {
-    transfers: uploaderRef.value?.files.map((file) =>
-      new UploadTransferClass(
+  const onAddNote = () => {
+    //document.addNote(t);
+    document.notes.unshift(
+      new NoteClass(
         uid(),
-        file.name,
-        file.size,
-        currentTimestamp(),
-        null,
-        false,
-        false,
-        false,
-        null,
-        null,
-        false
-      )
-    )
-  });
-};
-
-// q-uploader component event => file was uploaded
-const onFileUploaded = (info: { files: readonly File[]; xhr: XMLHttpRequest | AxiosResponse; }): void => {
-  let jsonResponse = null;
-  try {
-    if (info.xhr instanceof XMLHttpRequest) {
-      jsonResponse = JSON.parse(info.xhr.response);
-    } else if (info.xhr.data) {
-      jsonResponse = info.xhr.data;
-    }
-  } catch (e) { console.error(e); }
-  if (jsonResponse != null) {
-    document.attachments.unshift(
-      new AttachmentClass(
-        (jsonResponse.data).id,
-        info.files[0]!.name,
         "",
-        info.files[0]!.size,
         new DateTimeClass(t, currentTimestamp()),
-        true // this property is used for checking if file was uploaded but not associated to document (while not saving document)
+        false,
+        true, // new notes start with view mode = "edit" (for allowing input body text)
       )
     );
-    bus.emit("refreshUploadingDialog.fileUploaded", {
-      transfers: info.files.map((file) =>
+  };
+
+  const onRemoveNoteAtIndex = (index: number) => {
+    document.notes = document.notes.filter((_, i) => i !== index);
+  };
+
+  // q-uploader component event => file upload starts
+  const onUploadsStart = () => {
+    isUploading.value = true;
+    bus.emit("showUploadingDialog", {
+      transfers: uploaderRef.value?.files.map((file) =>
         new UploadTransferClass(
           uid(),
           file.name,
           file.size,
-          0,
+          currentTimestamp(),
           null,
           false,
           false,
@@ -557,8 +517,93 @@ const onFileUploaded = (info: { files: readonly File[]; xhr: XMLHttpRequest | Ax
         )
       )
     });
-  } else {
-    bus.emit("refreshUploadingDialog.fileUploadRejected", {
+  };
+
+  // q-uploader component event => file was uploaded
+  const onFileUploaded = (info: { files: readonly File[]; xhr: XMLHttpRequest | AxiosResponse; }): void => {
+    let jsonResponse = null;
+    try {
+      if (info.xhr instanceof XMLHttpRequest) {
+        jsonResponse = JSON.parse(info.xhr.response);
+      } else if (info.xhr.data) {
+        jsonResponse = info.xhr.data;
+      }
+    } catch (e) { console.error(e); }
+    if (jsonResponse != null) {
+      document.attachments.unshift(
+        new AttachmentClass(
+          (jsonResponse.data).id,
+          info.files[0]!.name,
+          "",
+          info.files[0]!.size,
+          new DateTimeClass(t, currentTimestamp()),
+          true, // this property is used for checking if file was uploaded but not associated to document (while not saving document)
+          false,
+        )
+      );
+      bus.emit("refreshUploadingDialog.fileUploaded", {
+        transfers: info.files.map((file) =>
+          new UploadTransferClass(
+            uid(),
+            file.name,
+            file.size,
+            0,
+            null,
+            false,
+            false,
+            false,
+            null,
+            null,
+            false
+          )
+        )
+      });
+    } else {
+      bus.emit("refreshUploadingDialog.fileUploadRejected", {
+        transfers: info.files.map((file) =>
+          new UploadTransferClass(
+            uid(),
+            file.name,
+            file.size,
+            currentTimestamp(),
+            currentTimestamp(),
+            false,
+            false,
+            true,
+            500,
+            "Transfer rejected",
+            true
+          )
+        )
+      });
+    }
+  }
+
+  // q-uploader component event => file upload is rejected
+  const onUploadRejected = (rejectedEntries: QRejectedEntry[]): void => {
+    console.log("rejected");
+    const transfers =
+      rejectedEntries.map((error) =>
+        new UploadTransferClass(
+          uid(),
+          error.file.name,
+          error.file.size,
+          0,
+          null,
+          false,
+          false,
+          true,
+          error.failedPropValidation == "max-file-size" ? 413 : 500,
+          error.failedPropValidation == "max-file-size" ? "Content Too Large" : "Internal Server Error",
+          false
+        )
+      );
+    bus.emit("refreshUploadingDialog.fileUploadRejected", { transfers: transfers });
+  }
+
+  // q-uploader component event => file upload failed
+  const onUploadFailed = (info: { files: readonly File[]; xhr: XMLHttpRequest | AxiosResponse; }) => {
+    bus.emit("refreshUploadingDialog.fileUploadFailed", {
       transfers: info.files.map((file) =>
         new UploadTransferClass(
           uid(),
@@ -569,85 +614,63 @@ const onFileUploaded = (info: { files: readonly File[]; xhr: XMLHttpRequest | Ax
           false,
           false,
           true,
-          500,
-          "Transfer rejected",
+          info.xhr.status,
+          "Transfer failed",
           true
         )
       )
     });
   }
-}
 
-// q-uploader component event => file upload is rejected
-const onUploadRejected = (rejectedEntries: QRejectedEntry[]): void => {
-  console.log("rejected");
-  const transfers =
-    rejectedEntries.map((error) =>
-      new UploadTransferClass(
-        uid(),
-        error.file.name,
-        error.file.size,
-        0,
-        null,
-        false,
-        false,
-        true,
-        error.failedPropValidation == "max-file-size" ? 413 : 500,
-        error.failedPropValidation == "max-file-size" ? "Content Too Large" : "Internal Server Error",
-        false
-      )
-    );
-  bus.emit("refreshUploadingDialog.fileUploadRejected", { transfers: transfers });
-}
-
-// q-uploader component event => file upload failed
-const onUploadFailed = (info: { files: readonly File[]; xhr: XMLHttpRequest | AxiosResponse; }) => {
-  bus.emit("refreshUploadingDialog.fileUploadFailed", {
-    transfers: info.files.map((file) =>
-      new UploadTransferClass(
-        uid(),
-        file.name,
-        file.size,
-        currentTimestamp(),
-        currentTimestamp(),
-        false,
-        false,
-        true,
-        info.xhr.status,
-        "Transfer failed",
-        true
-      )
-    )
-  });
-}
-
-// q-uploader component event => file upload finish (all files)
-const onUploadsFinish = (): void => {
-  isUploading.value = false;
-  uploaderRef.value?.reset();
-}
-
-onMounted(() => {
-  if (!isNewDocument.value) { // existent document
-    if (props.documentId) {
-      document.id = props.documentId;
-      onRefresh();
-    } else {
-      // TODO: ROUTE ERROR (MISSING PARAM)
-    }
-  } else { // new document
+  // q-uploader component event => file upload finish (all files)
+  const onUploadsFinish = (): void => {
+    isUploading.value = false;
+    uploaderRef.value?.reset();
   }
-  bus.on("reAuthSucess", (msg) => {
-    if (msg.to?.includes("DocumentPage.onRefresh")) {
-      onRefresh();
-    }
-    if (msg.to?.includes("DocumentPage.onSubmitForm")) {
-      onSubmitForm();
-    }
-  });
-});
 
-onBeforeUnmount(() => {
-  bus.off("reAuthSucess");
-});
+  onMounted(() => {
+    if (!isNewDocument.value) { // existent document
+      if (props.documentId) {
+        document.id = props.documentId;
+        onRefresh();
+      } else {
+        // TODO: ROUTE ERROR (MISSING PARAM)
+      }
+    } else { // new document
+    }
+    bus.on("reAuthSucess", (msg) => {
+      if (msg.to?.includes("DocumentPage.onRefresh")) {
+        onRefresh();
+      }
+      if (msg.to?.includes("DocumentPage.onSubmitForm")) {
+        onSubmitForm();
+      }
+    });
+
+    bus.on("attachmentShareChanged", (msg) => {
+      if (msg.attachmentShare) {
+        document.attachments.forEach((attachment) => {
+          if (attachment.id === msg.attachmentShare.attachment.id) {
+            attachment.shared = msg.attachmentShare.enabled;
+          }
+        });
+      }
+    });
+
+    bus.on("attachmentShareDeleted", (msg) => {
+      if (msg.attachmentId) {
+        document.attachments.forEach((attachment) => {
+          if (attachment.id === msg.attachmentId) {
+            attachment.shared = false;
+          }
+        });
+      }
+    });
+  });
+
+  onBeforeUnmount(() => {
+    bus.off("reAuthSucess");
+    bus.off("attachmentShareChanged");
+    bus.off("attachmentShareDeleted");
+  });
 </script>

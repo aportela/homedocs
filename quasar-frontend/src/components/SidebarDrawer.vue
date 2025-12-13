@@ -36,69 +36,70 @@
 
 <script setup lang="ts">
 
-import { computed } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import { useI18n } from "vue-i18n";
-import { api } from "src/composables/api";
-import { useSessionStore } from "src/stores/session";
+  import { computed } from "vue";
+  import { useRouter, useRoute } from "vue-router";
+  import { useI18n } from "vue-i18n";
+  import { api } from "src/composables/api";
+  import { useSessionStore } from "src/stores/session";
 
-interface SidebarDrawerProps {
-  modelValue: boolean;
-  mini: boolean
-};
+  interface SidebarDrawerProps {
+    modelValue: boolean;
+    mini: boolean
+  };
 
-const props = withDefaults(defineProps<SidebarDrawerProps>(), {
-  mini: false
-});
+  const props = withDefaults(defineProps<SidebarDrawerProps>(), {
+    mini: false
+  });
 
-const emit = defineEmits(['update:modelValue']);
+  const emit = defineEmits(['update:modelValue']);
 
-const drawerModel = computed({
-  get() {
-    return props.modelValue;
-  },
-  set(value) {
-    emit('update:modelValue', value);
-  }
-});
+  const drawerModel = computed({
+    get() {
+      return props.modelValue;
+    },
+    set(value) {
+      emit('update:modelValue', value);
+    }
+  });
 
-const { t } = useI18n();
-const router = useRouter();
-const route = useRoute();
+  const { t } = useI18n();
+  const router = useRouter();
+  const route = useRoute();
 
-const currentRouteName = computed(() => String(route.name));
+  const currentRouteName = computed(() => String(route.name));
 
-const sessionStore = useSessionStore();
+  const sessionStore = useSessionStore();
 
-const mini = computed(() => props.mini);
+  const mini = computed(() => props.mini);
 
-const menuItems = [
-  { icon: 'home', text: "Home", routeName: 'index' },
-  { icon: 'account_circle', text: "My profile", routeName: 'profile' },
-  { icon: 'note_add', text: "Add", routeName: 'newDocument' },
-  { icon: 'find_in_page', text: "Advanced search", routeName: 'advancedSearch', alternateRouteNames: ['advancedSearchByTag', 'advancedSearchByFixedCreationDate', 'advancedSearchByFixedLastUpdate', 'advancedSearchByFixedUpdatedOn'] }
-];
+  const menuItems = [
+    { icon: 'home', text: "Home", routeName: 'index' },
+    { icon: 'account_circle', text: "My profile", routeName: 'profile' },
+    { icon: 'note_add', text: "Add", routeName: 'newDocument' },
+    { icon: 'find_in_page', text: "Advanced search", routeName: 'advancedSearch', alternateRouteNames: ['advancedSearchByTag', 'advancedSearchByFixedCreationDate', 'advancedSearchByFixedLastUpdate', 'advancedSearchByFixedUpdatedOn'] },
+    { icon: 'share', text: "Attachments shares", routeName: 'attachmentsShares' },
+  ];
 
-const logout = () => {
-  api.auth
-    .logout()
-    .then(() => {
-      sessionStore.removeAccessToken();
-      router.push({
-        name: "login",
-      }).catch((e) => {
-        console.error(e);
+  const logout = () => {
+    api.auth
+      .logout()
+      .then(() => {
+        sessionStore.removeAccessToken();
+        router.push({
+          name: "login",
+        }).catch((e) => {
+          console.error(e);
+        });
+      })
+      .catch((errorResponse) => {
+        console.error(errorResponse);
+        sessionStore.removeAccessToken();
+        router.push({
+          name: "login",
+        }).catch((e) => {
+          console.error(e);
+        });
       });
-    })
-    .catch((errorResponse) => {
-      console.error(errorResponse);
-      sessionStore.removeAccessToken();
-      router.push({
-        name: "login",
-      }).catch((e) => {
-        console.error(e);
-      });
-    });
-};
+  };
 
 </script>

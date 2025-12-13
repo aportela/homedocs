@@ -1,8 +1,8 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
-import { Dark } from "quasar";
-import { createStorageEntry } from "src/composables/localStorage";
+import { Dark } from 'quasar';
+import { createStorageEntry } from 'src/composables/localStorage';
 
-const localStorageDarkMode = createStorageEntry<boolean | null>("darkMode", null);
+const localStorageDarkMode = createStorageEntry<boolean | null>('darkMode', null);
 
 const savedMode = localStorageDarkMode.get();
 
@@ -11,19 +11,19 @@ if (savedMode === true) {
 } else if (savedMode === false) {
   Dark.set(false);
 } else {
-  Dark.set("auto");
+  Dark.set('auto');
 }
 
 interface State {
   active: boolean;
-};
+}
 
 export const useDarkModeStore = defineStore('darkModeStore', {
   state: (): State => ({
-    active: Dark.isActive
+    active: Dark.isActive,
   }),
   getters: {
-    isActive: (state): boolean => state.active,
+    isActive: (state: State): boolean => state.active,
   },
   actions: {
     set(active: boolean): void {
@@ -33,8 +33,8 @@ export const useDarkModeStore = defineStore('darkModeStore', {
     },
     toggle(): void {
       this.set(!this.active);
-    }
-  }
+    },
+  },
 });
 
 if (import.meta.hot) {

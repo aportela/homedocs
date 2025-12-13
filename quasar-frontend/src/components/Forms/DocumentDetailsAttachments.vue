@@ -49,6 +49,11 @@
                 <q-avatar class="theme-default-q-avatar text-white bg-blue-6" icon="preview" />
                 {{ t("Preview") }}
               </q-chip>
+              <q-chip size="md" square class="theme-default-q-chip shadow-1 full-width" :clickable="!isDisabled"
+                @click.stop.prevent="onShareClick(attachment)">
+                <q-avatar class="theme-default-q-avatar text-white bg-blue-6" icon="share" />
+                {{ t(attachment.shared ? "Shared" : "Share") }}
+              </q-chip>
             </div>
           </q-item-section>
           <q-item-section side middle class="q-mr-sm q-item-section-attachment-actions" v-if="!screen.lt.xl">
@@ -66,6 +71,11 @@
               <q-avatar class="theme-default-q-avatar text-white bg-blue-6" icon="preview" />
               {{ t("Preview") }}
             </q-chip>
+            <q-chip size="md" square class="theme-default-q-chip shadow-1 full-width" :clickable="!isDisabled"
+              @click.stop.prevent="onShareClick(attachment)">
+              <q-avatar class="theme-default-q-avatar text-white bg-blue-6" icon="share" />
+              {{ t(attachment.shared ? "Shared" : "Share") }}
+            </q-chip>
           </q-item-section>
           <DesktopToolTip>{{ t("Click to download") }}</DesktopToolTip>
         </q-item>
@@ -76,103 +86,105 @@
     <CustomBanner v-else-if="!isDisabled" warning text="No document attachments found" class="q-ma-none">
     </CustomBanner>
   </q-list>
-
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
-import { useI18n } from "vue-i18n";
-import { format, useQuasar } from "quasar";
+  import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { format, useQuasar } from "quasar";
+  import { bgDownload } from "src/composables/axios";
+  import { bus } from "src/composables/bus";
+  import { allowPreview } from "src/composables/fileUtils"
+  import { getRegexForStringMatch } from "src/composables/common";
+  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
+  import { type Attachment as AttachmentInterface } from "src/types/attachment";
+  import { getURL as getAttachmentURL } from "src/composables/attachment";
 
-import { bgDownload } from "src/composables/axios";
-import { bus } from "src/composables/bus";
-import { allowPreview } from "src/composables/fileUtils"
-import { getRegexForStringMatch } from "src/composables/common";
-import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
-import { type Attachment as AttachmentInterface } from "src/types/attachment";
-import { getURL as getAttachmentURL } from "src/composables/attachment";
+  import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
+  import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
+  import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 
-import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
-import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
-import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
+  const { t } = useI18n();
 
-const { t } = useI18n();
+  const emit = defineEmits(['update:modelValue', 'addAttachment', 'previewAttachmentAtIndex', 'removeAttachmentAtIndex']);
 
-const emit = defineEmits(['update:modelValue', 'addAttachment', 'previewAttachmentAtIndex', 'removeAttachmentAtIndex']);
+  interface DocumentDetailsAttachmentsProps {
+    attachments: AttachmentInterface[];
+    disable: boolean;
+  };
 
-interface DocumentDetailsAttachmentsProps {
-  attachments: AttachmentInterface[];
-  disable: boolean;
-};
-
-const props = withDefaults(defineProps<DocumentDetailsAttachmentsProps>(), {
-  disable: false
-});
-
-const { screen } = useQuasar();
-
-const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
-
-const isDisabled = computed(() => props.disable || state.ajaxRunning);
-
-const hiddenIds = reactive<Array<string>>([]);
-
-const hasAttachments = computed(() => props.attachments?.length > 0);
-
-const searchText = ref(null);
-
-const onSearchTextChanged = (text: string | number | null) => {
-  hiddenIds.length = 0;
-  if (text) {
-    const regex = getRegexForStringMatch(String(text));
-    hiddenIds.push(...props.attachments.filter(attachment => !attachment.name?.match(regex)).map(attachment => attachment.id));
-    // TODO: map new fragment with bold ?
-  }
-};
-
-const onAddAttachment = () => {
-  emit("addAttachment");
-};
-
-const onRemoveAttachmentAtIndex = (index: number) => {
-  emit("removeAttachmentAtIndex", index);
-};
-
-const onPreviewAttachment = (index: number) => {
-  emit("previewAttachmentAtIndex", index);
-};
-
-const onDownload = (attachmentId: string, fileName: string) => {
-  bgDownload(getAttachmentURL(attachmentId), fileName)
-    .then(() => {
-      /* TODO */
-    })
-    .catch(() => {
-      /* TODO */
-    });
-}
-
-onMounted(() => {
-  bus.on("reAuthSucess", (msg) => {
-    if (msg.to?.includes("DocumentDetailsAttachments.onRemoveAttachmentAtIndex")) {
-      // TODO: save old selected index to remove & re-submit removeFile api call
-      //onRemoveAttachmentAtIndex(savedIndex);
-    }
+  const props = withDefaults(defineProps<DocumentDetailsAttachmentsProps>(), {
+    disable: false
   });
-});
 
-onBeforeUnmount(() => {
-  bus.off("reAuthSucess");
-});
+  const { screen } = useQuasar();
+
+  const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
+
+  const isDisabled = computed(() => props.disable || state.ajaxRunning);
+
+  const hiddenIds = reactive<Array<string>>([]);
+
+  const hasAttachments = computed(() => props.attachments?.length > 0);
+
+  const searchText = ref(null);
+
+  const onSearchTextChanged = (text: string | number | null) => {
+    hiddenIds.length = 0;
+    if (text) {
+      const regex = getRegexForStringMatch(String(text));
+      hiddenIds.push(...props.attachments.filter(attachment => !attachment.name?.match(regex)).map(attachment => attachment.id));
+      // TODO: map new fragment with bold ?
+    }
+  };
+
+  const onAddAttachment = () => {
+    emit("addAttachment");
+  };
+
+  const onRemoveAttachmentAtIndex = (index: number) => {
+    emit("removeAttachmentAtIndex", index);
+  };
+
+  const onPreviewAttachment = (index: number) => {
+    emit("previewAttachmentAtIndex", index);
+  };
+
+  const onShareClick = (attachment: AttachmentInterface) => {
+    bus.emit('showAttachmentShareDialog', { attachmentId: attachment.id, create: !attachment.shared });
+  };
+
+  const onDownload = (attachmentId: string, fileName: string) => {
+    bgDownload(getAttachmentURL(attachmentId), fileName)
+      .then(() => {
+        // TODO:
+      })
+      .catch(() => {
+        // TODO:
+      });
+  }
+
+  onMounted(() => {
+    bus.on("reAuthSucess", (msg) => {
+      if (msg.to?.includes("DocumentDetailsAttachments.onRemoveAttachmentAtIndex")) {
+        // TODO: save old selected index to remove & re-submit removeFile api call
+        //onRemoveAttachmentAtIndex(savedIndex);
+      }
+    });
+  });
+
+  onBeforeUnmount(() => {
+    bus.off("reAuthSucess");
+  });
 </script>
 
 <style lang="css" scoped>
-.q-list-attachments-container {
-  min-height: 50vh;
-  max-height: 50vh;
-}
+  .q-list-attachments-container {
+    min-height: 50vh;
+    max-height: 50vh;
+  }
 
-.q-item-section-attachment-actions {
-  width: 12em;
-}
+  .q-item-section-attachment-actions {
+    width: 12em;
+  }
 </style>

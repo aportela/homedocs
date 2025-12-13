@@ -122,7 +122,7 @@
                         document.createdAt.timeAgo }})</q-item-label>
                       <q-item-label caption v-if="document.updatedAt?.dateTime">{{ t("Last update") }}: {{
                         document.updatedAt.dateTime
-                      }} ({{ document.updatedAt.timeAgo }})</q-item-label>
+                        }} ({{ document.updatedAt.timeAgo }})</q-item-label>
                     </q-item-section>
                     <q-item-section side top>
                       <ViewDocumentDetailsButton size="md" square class="min-width-9em"
@@ -152,7 +152,7 @@
                 <q-icon :name="store.sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <DesktopToolTip>{{ t('Toggle sort by this column', { field: t(column.title) })
-                }}</DesktopToolTip>
+                  }}</DesktopToolTip>
               </th>
             </tr>
           </thead>
@@ -193,233 +193,233 @@
 </template>
 
 <script setup lang="ts">
-import { ref, shallowRef, reactive, computed, onMounted, onBeforeUnmount, nextTick } from "vue";
-import { useRoute } from "vue-router";
-import { useI18n } from "vue-i18n";
-import { useQuasar } from "quasar";
+  import { ref, shallowRef, reactive, computed, onMounted, onBeforeUnmount, nextTick } from "vue";
+  import { useRoute } from "vue-router";
+  import { useI18n } from "vue-i18n";
+  import { useQuasar } from "quasar";
 
-import { useAdvancedSearchData } from "src/stores/advancedSearchData"
-import { bus, onShowDocumentFiles, onShowDocumentNotes } from "src/composables/bus";
-import { api } from "src/composables/api";
+  import { useAdvancedSearchData } from "src/stores/advancedSearchData"
+  import { bus, onShowDocumentFiles, onShowDocumentNotes } from "src/composables/bus";
+  import { api } from "src/composables/api";
 
-import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
-import { DateTimeClass } from "src/types/dateTime";
-import { type SearchDocumentResponse as SearchDocumentResponseInterface, type SearchDocumentResponseItem as SearchDocumentResponseItemInterface } from "src/types/apiResponses";
-import { SearchDocumentItemClass } from "src/types/searchDocumentItem";
-import { type OrderType } from "src/types/orderType";
-import { type Sort as SortInterface, SortClass } from "src/types/sort";
+  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
+  import { DateTimeClass } from "src/types/dateTime";
+  import { type SearchDocumentResponse as SearchDocumentResponseInterface, type SearchDocumentResponseItem as SearchDocumentResponseItemInterface } from "src/types/apiResponses";
+  import { SearchDocumentItemClass } from "src/types/searchDocumentItem";
+  import { type OrderType } from "src/types/orderType";
+  import { type Sort as SortInterface, SortClass } from "src/types/sort";
 
-import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
-import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
-import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
-import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
-import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
-import { default as DateFilterFieldCustomInputSelector } from "src/components/Forms/Fields/DateFilterFieldCustomInputSelector.vue";
-import { default as SortByFieldCustomButtonDropdown } from "src/components/Forms/Fields/SortByFieldCustomButtonDropdown.vue";
-import { default as ViewDocumentDetailsButton } from "src/components/Buttons/ViewDocumentDetailsButton.vue";
+  import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
+  import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
+  import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
+  import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
+  import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
+  import { default as DateFilterFieldCustomInputSelector } from "src/components/Forms/Fields/DateFilterFieldCustomInputSelector.vue";
+  import { default as SortByFieldCustomButtonDropdown } from "src/components/Forms/Fields/SortByFieldCustomButtonDropdown.vue";
+  import { default as ViewDocumentDetailsButton } from "src/components/Buttons/ViewDocumentDetailsButton.vue";
 
-const { t } = useI18n();
+  const { t } = useI18n();
 
-const route = useRoute();
-const { screen } = useQuasar();
+  const route = useRoute();
+  const { screen } = useQuasar();
 
-const columns = [
-  { field: 'title', title: 'Title', defaultClass: "gt-lg" },
-  { field: 'createdOnTimestamp', title: 'Creation date', defaultClass: "gt-lg" },
-  { field: 'lastUpdateTimestamp', title: 'Last update', defaultClass: "gt-lg" },
-  { field: 'attachmentCount', title: 'Attachments', defaultClass: "gt-lg" },
-  { field: 'noteCount', title: 'Notes', defaultClass: "gt-lg" }
-];
+  const columns = [
+    { field: 'title', title: 'Title', defaultClass: "gt-lg" },
+    { field: 'createdOnTimestamp', title: 'Creation date', defaultClass: "gt-lg" },
+    { field: 'lastUpdateTimestamp', title: 'Last update', defaultClass: "gt-lg" },
+    { field: 'attachmentCount', title: 'Attachments', defaultClass: "gt-lg" },
+    { field: 'noteCount', title: 'Notes', defaultClass: "gt-lg" }
+  ];
 
-// options for selecting order via dropdown button on small screens
-// (on normal screens, order is toggled clicking in column header)
-const sortFields: SortInterface[] = [];
-columns.forEach(column => {
-  sortFields.push(new SortClass(column.field, column.title, "ASC"));
-  sortFields.push(new SortClass(column.field, column.title, "DESC"));
-});
+  // options for selecting order via dropdown button on small screens
+  // (on normal screens, order is toggled clicking in column header)
+  const sortFields: SortInterface[] = [];
+  columns.forEach(column => {
+    sortFields.push(new SortClass(column.field, column.title, "ASC"));
+    sortFields.push(new SortClass(column.field, column.title, "DESC"));
+  });
 
-const searchLaunched = ref<boolean>(false);
+  const searchLaunched = ref<boolean>(false);
 
-const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
+  const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-const isFilterWidgetExpanded = ref<boolean>(route.meta.conditionsFilterExpanded === true);
+  const isFilterWidgetExpanded = ref<boolean>(route.meta.conditionsFilterExpanded === true);
 
-const resultsWidgetRef = ref<typeof CustomExpansionWidget | null>(null);
+  const resultsWidgetRef = ref<typeof CustomExpansionWidget | null>(null);
 
-// some routes ignore previous store saved values (ex: browsing by tag from Tag cloud widget, or click on profile activity heatmap widget) and use custom fixed values
-const usePreviousStoreValues = computed(() => route.name === 'advancedSearch');
+  // some routes ignore previous store saved values (ex: browsing by tag from Tag cloud widget, or click on profile activity heatmap widget) and use custom fixed values
+  const usePreviousStoreValues = computed(() => route.name === 'advancedSearch');
 
-const results = shallowRef<Array<SearchDocumentItemClass>>([]);
+  const results = shallowRef<Array<SearchDocumentItemClass>>([]);
 
-// on screens less than xl (width 1920px / fullhd) show compacted table (one col with all fields grouped per item)
-const showCompactedTable = computed(() => screen.lt.xl);
+  // on screens less than xl (width 1920px / fullhd) show compacted table (one col with all fields grouped per item)
+  const showCompactedTable = computed(() => screen.lt.xl);
 
-const hasResults = computed(() => results.value.length > 0);
+  const hasResults = computed(() => results.value.length > 0);
 
-const showErrorBanner = computed(() => !state.ajaxRunning && state.ajaxErrors);
-const showNoResultsBanner = computed(() => !state.ajaxRunning && searchLaunched.value && !hasResults.value);
+  const showErrorBanner = computed(() => !state.ajaxRunning && state.ajaxErrors);
+  const showNoResultsBanner = computed(() => !state.ajaxRunning && searchLaunched.value && !hasResults.value);
 
-const hasCreationDateRouteParamsFilter = computed(() => route.params.fixedCreationDate !== undefined);
-const hasLastUpdateRouteParamsFilter = computed(() => route.params.fixedLastUpdate !== undefined);
-const hasUpdatedOnRouteParamsFilter = computed(() => route.params.fixedUpdatedOn !== undefined);
+  const hasCreationDateRouteParamsFilter = computed(() => route.params.fixedCreationDate !== undefined);
+  const hasLastUpdateRouteParamsFilter = computed(() => route.params.fixedLastUpdate !== undefined);
+  const hasUpdatedOnRouteParamsFilter = computed(() => route.params.fixedUpdatedOn !== undefined);
 
-const sortOrderIcon = computed(() => store.sort.order == "ASC" ? "keyboard_double_arrow_up" : "keyboard_double_arrow_down");
+  const sortOrderIcon = computed(() => store.sort.order === "ASC" ? "keyboard_double_arrow_up" : "keyboard_double_arrow_down");
 
-const totalSearchConditions = computed(() => {
-  let total = 0;
-  if (store.filter.text.title) {
-    total++;
+  const totalSearchConditions = computed(() => {
+    let total = 0;
+    if (store.filter.text.title) {
+      total++;
+    }
+    if (store.filter.text.description) {
+      total++;
+    }
+    if (store.filter.text.notesBody) {
+      total++;
+    }
+    if (store.filter.text.attachmentsFilename) {
+      total++;
+    }
+    if (store.filter.tags.length > 0) {
+      total += store.filter.tags.length;
+    }
+    if (store.filter.dates?.createdAt.state.hasValue) {
+      total++;
+    }
+    if (store.filter.dates?.lastUpdateAt.state.hasValue) {
+      total++;
+    }
+    if (store.filter.dates?.updatedAt.state.hasValue) {
+      total++;
+    }
+    return (total);
+  });
+
+  const store = useAdvancedSearchData();
+
+  if (!usePreviousStoreValues.value) {
+    store.reset();
+
+    if (route.params.tag !== undefined && typeof route.params.tag === "string") {
+      store.filter.tags = [route.params.tag];
+    }
+
+    if (hasCreationDateRouteParamsFilter.value && typeof route.params.fixedCreationDate === "string") {
+      store.filter.dates.createdAt.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
+      store.filter.dates.createdAt.formattedDate.fixed = route.params.fixedCreationDate ? route.params.fixedCreationDate.replaceAll("-", "/") : null;
+      store.filter.dates.createdAt.setType(7); // fixed date
+    } else if (hasLastUpdateRouteParamsFilter.value && typeof route.params.fixedLastUpdate === "string") {
+      store.filter.dates.lastUpdateAt.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
+      store.filter.dates.lastUpdateAt.formattedDate.fixed = route.params.fixedLastUpdate ? route.params.fixedLastUpdate.replaceAll("-", "/") : null;
+      store.filter.dates.lastUpdateAt.setType(7); // fixed date
+    } else if (hasUpdatedOnRouteParamsFilter.value && typeof route.params.fixedUpdatedOn === "string") {
+      store.filter.dates.updatedAt.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
+      store.filter.dates.updatedAt.formattedDate.fixed = route.params.fixedUpdatedOn ? route.params.fixedUpdatedOn.replaceAll("-", "/") : null;
+      store.filter.dates.updatedAt.setType(7); // fixed date
+    }
   }
-  if (store.filter.text.description) {
-    total++;
-  }
-  if (store.filter.text.notesBody) {
-    total++;
-  }
-  if (store.filter.text.attachmentsFilename) {
-    total++;
-  }
-  if (store.filter.tags.length > 0) {
-    total += store.filter.tags.length;
-  }
-  if (store.filter.dates?.createdAt.state.hasValue) {
-    total++;
-  }
-  if (store.filter.dates?.lastUpdateAt.state.hasValue) {
-    total++;
-  }
-  if (store.filter.dates?.updatedAt.state.hasValue) {
-    total++;
-  }
-  return (total);
-});
 
-const store = useAdvancedSearchData();
-
-if (!usePreviousStoreValues.value) {
-  store.reset();
-
-  if (route.params.tag !== undefined && typeof route.params.tag === "string") {
-    store.filter.tags = [route.params.tag];
-  }
-
-  if (hasCreationDateRouteParamsFilter.value && typeof route.params.fixedCreationDate === "string") {
-    store.filter.dates.createdAt.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
-    store.filter.dates.createdAt.formattedDate.fixed = route.params.fixedCreationDate ? route.params.fixedCreationDate.replaceAll("-", "/") : null;
-    store.filter.dates.createdAt.setType(7); // fixed date
-  } else if (hasLastUpdateRouteParamsFilter.value && typeof route.params.fixedLastUpdate === "string") {
-    store.filter.dates.lastUpdateAt.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
-    store.filter.dates.lastUpdateAt.formattedDate.fixed = route.params.fixedLastUpdate ? route.params.fixedLastUpdate.replaceAll("-", "/") : null;
-    store.filter.dates.lastUpdateAt.setType(7); // fixed date
-  } else if (hasUpdatedOnRouteParamsFilter.value && typeof route.params.fixedUpdatedOn === "string") {
-    store.filter.dates.updatedAt.skipClearOnRecalc.fixed = true; // UGLY HACK to skip clearing/reseting values on filterType watchers
-    store.filter.dates.updatedAt.formattedDate.fixed = route.params.fixedUpdatedOn ? route.params.fixedUpdatedOn.replaceAll("-", "/") : null;
-    store.filter.dates.updatedAt.setType(7); // fixed date
-  }
-}
-
-const onPaginationChanged = (pageIndex: number) => {
-  store.pager.currentPageIndex = pageIndex;
-  onSubmitForm(false);
-}
-
-const onToggleSort = (field: string, order?: OrderType) => {
-  if (!state.ajaxRunning) {
-    store.sort.toggle(field, order);
-    store.sort.refreshLabel(sortFields);
+  const onPaginationChanged = (pageIndex: number) => {
+    store.pager.currentPageIndex = pageIndex;
     onSubmitForm(false);
   }
-}
 
-const onSubmitForm = (resetPager: boolean) => {
-  if (resetPager) {
-    store.pager.currentPageIndex = 1;
-  }
-  Object.assign(state, defaultAjaxState);
-  state.ajaxRunning = true;
-  api.document.search(store.pager, store.filter, store.sort, false)
-    .then((successResponse: SearchDocumentResponseInterface) => {
-      if (successResponse.data.results) {
-        results.value = [];
-        store.pager.currentPageIndex = successResponse.data.results.pagination.currentPage;
-        store.pager.resultsPage = successResponse.data.results.pagination.resultsPage;
-        store.pager.totalResults = successResponse.data.results.pagination.totalResults;
-        store.pager.totalPages = successResponse.data.results.pagination.totalPages;
-        results.value = successResponse.data.results.documents.map((document: SearchDocumentResponseItemInterface) =>
-          new SearchDocumentItemClass(
-            t,
-            document.id,
-            new DateTimeClass(t, document.createdAtTimestamp),
-            new DateTimeClass(t, document.updatedAtTimestamp),
-            document.title,
-            document.description,
-            document.tags,
-            document.attachmentCount,
-            document.noteCount,
-            document.matchedFragments,
-            "",
-          )
-        );
-        searchLaunched.value = true;
-        resultsWidgetRef.value?.expand();
-      }
-    })
-    .catch((errorResponse) => {
-      state.ajaxErrors = true;
-      if (errorResponse.isAPIError) {
-        state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
-        switch (errorResponse.response.status) {
-          case 400:
-            state.ajaxErrorMessage = "API Error: invalid/missing param";
-            break;
-          case 401:
-            state.ajaxErrors = false;
-            bus.emit("reAuthRequired", { emitter: "AdvancedSearchPage.onSubmitForm" });
-            break;
-          default:
-            state.ajaxErrorMessage = "API Error: fatal error";
-            break;
-        }
-      } else {
-        state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
-        console.error(errorResponse);
-      }
-      searchLaunched.value = true;
-    }).finally(() => {
-      state.ajaxRunning = false;
-    });
-}
-
-const onResetForm = () => {
-  store.reset();
-  searchLaunched.value = false;
-  results.value = [];;
-};
-
-onMounted(() => {
-  if (route.meta.autoLaunchSearch === true) {
-    nextTick()
-      .then(() => {
-        onSubmitForm(true);
-      }).catch((e) => {
-        console.error(e);
-      });
-  }
-  bus.on("reAuthSucess", (msg) => {
-    if (msg.to?.includes("AdvancedSearchPage.onSubmitForm")) {
+  const onToggleSort = (field: string, order?: OrderType) => {
+    if (!state.ajaxRunning) {
+      store.sort.toggle(field, order);
+      store.sort.refreshLabel(sortFields);
       onSubmitForm(false);
     }
-  });
-});
+  }
 
-onBeforeUnmount(() => {
-  bus.off("reAuthSucess");
-});
+  const onSubmitForm = (resetPager: boolean) => {
+    if (resetPager) {
+      store.pager.currentPageIndex = 1;
+    }
+    Object.assign(state, defaultAjaxState);
+    state.ajaxRunning = true;
+    api.document.search(store.pager, store.filter, store.sort, false)
+      .then((successResponse: SearchDocumentResponseInterface) => {
+        if (successResponse.data.results) {
+          results.value = [];
+          store.pager.currentPageIndex = successResponse.data.results.pagination.currentPage;
+          store.pager.resultsPage = successResponse.data.results.pagination.resultsPage;
+          store.pager.totalResults = successResponse.data.results.pagination.totalResults;
+          store.pager.totalPages = successResponse.data.results.pagination.totalPages;
+          results.value = successResponse.data.results.documents.map((document: SearchDocumentResponseItemInterface) =>
+            new SearchDocumentItemClass(
+              t,
+              document.id,
+              new DateTimeClass(t, document.createdAtTimestamp),
+              new DateTimeClass(t, document.updatedAtTimestamp),
+              document.title,
+              document.description,
+              document.tags,
+              document.attachmentCount,
+              document.noteCount,
+              document.matchedFragments,
+              "",
+            )
+          );
+          searchLaunched.value = true;
+          resultsWidgetRef.value?.expand();
+        }
+      })
+      .catch((errorResponse) => {
+        state.ajaxErrors = true;
+        if (errorResponse.isAPIError) {
+          state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
+          switch (errorResponse.response.status) {
+            case 400:
+              state.ajaxErrorMessage = "API Error: invalid/missing param";
+              break;
+            case 401:
+              state.ajaxErrors = false;
+              bus.emit("reAuthRequired", { emitter: "AdvancedSearchPage.onSubmitForm" });
+              break;
+            default:
+              state.ajaxErrorMessage = "API Error: fatal error";
+              break;
+          }
+        } else {
+          state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
+          console.error(errorResponse);
+        }
+        searchLaunched.value = true;
+      }).finally(() => {
+        state.ajaxRunning = false;
+      });
+  }
+
+  const onResetForm = () => {
+    store.reset();
+    searchLaunched.value = false;
+    results.value = [];;
+  };
+
+  onMounted(() => {
+    if (route.meta.autoLaunchSearch === true) {
+      nextTick()
+        .then(() => {
+          onSubmitForm(true);
+        }).catch((e) => {
+          console.error(e);
+        });
+    }
+    bus.on("reAuthSucess", (msg) => {
+      if (msg.to?.includes("AdvancedSearchPage.onSubmitForm")) {
+        onSubmitForm(false);
+      }
+    });
+  });
+
+  onBeforeUnmount(() => {
+    bus.off("reAuthSucess");
+  });
 </script>
 
 <style lang="css" scoped>
-.q-chip-8em {
-  width: 8em;
-}
+  .q-chip-8em {
+    width: 8em;
+  }
 </style>

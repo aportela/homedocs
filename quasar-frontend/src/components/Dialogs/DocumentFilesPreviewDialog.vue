@@ -140,7 +140,8 @@ const onRefresh = (documentId: string) => {
             attachment.hash,
             attachment.size,
             new DateTimeClass(t, attachment.createdAtTimestamp),
-            false
+            false,
+            attachment.shared,
           )
         ));
       })

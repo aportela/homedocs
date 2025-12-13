@@ -593,10 +593,11 @@ class Document
             sprintf(
                 "
                 SELECT
-                    ATTACHMENT.id, ATTACHMENT.name, ATTACHMENT.size, ATTACHMENT.sha1_hash AS hash, ATTACHMENT.ctime AS createdAtTimestamp
+                    ATTACHMENT.id, ATTACHMENT.name, ATTACHMENT.size, ATTACHMENT.sha1_hash AS hash, ATTACHMENT.ctime AS createdAtTimestamp, ATTACHMENT_SHARE.attachment_id AS shareAttachmentId
                 FROM DOCUMENT_ATTACHMENT
                 INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_ATTACHMENT.document_id
                 LEFT JOIN ATTACHMENT ON ATTACHMENT.id = DOCUMENT_ATTACHMENT.attachment_id
+                LEFT JOIN ATTACHMENT_SHARE ON ATTACHMENT_SHARE.attachment_id = DOCUMENT_ATTACHMENT.attachment_id
                 WHERE
                     DOCUMENT_ATTACHMENT.document_id = :document_id
                 %s
@@ -619,7 +620,8 @@ class Document
                 property_exists($item, "name") && is_string($item->name) ? $item->name : null,
                 property_exists($item, "size") && is_numeric($item->size) ? intval($item->size) : 0,
                 property_exists($item, "hash") && is_string($item->hash) ? $item->hash : null,
-                property_exists($item, "createdAtTimestamp") && is_numeric($item->createdAtTimestamp) ? intval($item->createdAtTimestamp) : 0
+                property_exists($item, "createdAtTimestamp") && is_numeric($item->createdAtTimestamp) ? intval($item->createdAtTimestamp) : 0,
+                property_exists($item, "shareAttachmentId") && is_string($item->shareAttachmentId) && ($item->shareAttachmentId !== '' && $item->shareAttachmentId !== '0'),
             );
         }
 

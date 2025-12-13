@@ -1,28 +1,24 @@
-import { defineStore, acceptHMRUpdate } from "pinia";
-import { createStorageEntry } from "src/composables/localStorage";
+import { defineStore, acceptHMRUpdate } from 'pinia';
+import { createStorageEntry } from 'src/composables/localStorage';
 
-const localStorageShowToolTips = createStorageEntry<boolean>("showToolTips", false);
+const localStorageShowToolTips = createStorageEntry<boolean>('showToolTips', false);
 
 const localStorageAlwaysOpenUploadDialog = createStorageEntry<boolean>(
-  "alwaysOpenUploadDialog",
-  true
+  'alwaysOpenUploadDialog',
+  true,
 );
 
-const localStorageDateFormat = createStorageEntry<string>(
-  "dateFormat",
-  "YYYY/MM/DD"
-);
+const localStorageDateFormat = createStorageEntry<string>('dateFormat', 'YYYY/MM/DD');
 
 const localStorageDateTimeFormat = createStorageEntry<string>(
-  "dateTimeFormat",
-  "YYYY/MM/DD HH:mm:ss"
+  'dateTimeFormat',
+  'YYYY/MM/DD HH:mm:ss',
 );
 
 const localStorageSearchDialogResultsPage = createStorageEntry<number>(
-  "searchDialogResultsPage",
-  8
+  'searchDialogResultsPage',
+  8,
 );
-
 
 interface State {
   tokens: {
@@ -34,10 +30,10 @@ interface State {
     dateFormat: string;
     dateTimeFormat: string;
     searchDialogResultsPage: number;
-  }
-};
+  };
+}
 
-export const useSessionStore = defineStore("session", {
+export const useSessionStore = defineStore('session', {
   state: (): State => ({
     tokens: {
       access: null,
@@ -51,13 +47,13 @@ export const useSessionStore = defineStore("session", {
     },
   }),
   getters: {
-    hasAccessToken: (state): boolean => state.tokens.access !== null,
-    accessToken: (state): string | null => state.tokens.access,
-    toolTipsEnabled: (state): boolean => state.other.toolTips,
-    openUploadDialog: (state): boolean => state.other.alwaysOpenUploadDialog,
-    savedDateFormat: (state): string => state.other.dateFormat,
-    savedDateTimeFormat: (state): string => state.other.dateTimeFormat,
-    searchDialogResultsPage: (state): number => state.other.searchDialogResultsPage,
+    hasAccessToken: (state: State): boolean => state.tokens.access !== null,
+    accessToken: (state: State): string | null => state.tokens.access,
+    toolTipsEnabled: (state: State): boolean => state.other.toolTips,
+    openUploadDialog: (state: State): boolean => state.other.alwaysOpenUploadDialog,
+    savedDateFormat: (state: State): string => state.other.dateFormat,
+    savedDateTimeFormat: (state: State): string => state.other.dateTimeFormat,
+    searchDialogResultsPage: (state: State): number => state.other.searchDialogResultsPage,
   },
   actions: {
     setAccessToken(token: string): void {
@@ -79,7 +75,7 @@ export const useSessionStore = defineStore("session", {
       localStorageDateFormat.set(this.other.dateFormat);
     },
     removeDateFormat() {
-      this.other.dateFormat = "YYYY/MM/DD";
+      this.other.dateFormat = 'YYYY/MM/DD';
       localStorageDateFormat.remove();
     },
     setDateTimeFormat(value: string) {
@@ -87,13 +83,13 @@ export const useSessionStore = defineStore("session", {
       localStorageDateTimeFormat.set(this.other.dateTimeFormat);
     },
     removeDateTimeFormat() {
-      this.other.dateTimeFormat = "YYYY/MM/DD HH:mm:ss";
+      this.other.dateTimeFormat = 'YYYY/MM/DD HH:mm:ss';
       localStorageDateTimeFormat.remove();
     },
     setSearchDialogResultsPage(value: number) {
       this.other.searchDialogResultsPage = value;
       localStorageSearchDialogResultsPage.set(this.other.searchDialogResultsPage);
-    }
+    },
   },
 });
 

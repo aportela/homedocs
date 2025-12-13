@@ -1,28 +1,28 @@
-import { defineStore, acceptHMRUpdate } from "pinia";
+import { defineStore, acceptHMRUpdate } from 'pinia';
 
-import { type EnvironmentType } from "src/types/common";
+import { type EnvironmentType } from 'src/types/common';
 
 interface State {
   allowSignUp: boolean;
   environment: EnvironmentType;
   maxUploadFileSize: number;
-};
+}
 
-export const useServerEnvironmentStore = defineStore("serverEnvironment", {
+export const useServerEnvironmentStore = defineStore('serverEnvironment', {
   state: (): State => ({
     allowSignUp: true,
-    environment: "production",
+    environment: 'production',
     maxUploadFileSize: 0,
   }),
   getters: {
-    isSignUpAllowed: (state): boolean => state.allowSignUp,
-    isCurrentEnvironmentDevelopment: (state): boolean => state.environment == "development",
-    currentEnvironmentMaxUploadFileSize: (state): number => state.maxUploadFileSize,
+    isSignUpAllowed: (state: State): boolean => state.allowSignUp,
+    isCurrentEnvironmentDevelopment: (state: State): boolean => state.environment == 'development',
+    currentEnvironmentMaxUploadFileSize: (state: State): number => state.maxUploadFileSize,
   },
   actions: {
     set(
       allowSignUp: boolean = false,
-      environment: EnvironmentType = "production",
+      environment: EnvironmentType = 'production',
       maxUploadFileSize: number = 0,
     ): void {
       this.allowSignUp = allowSignUp;

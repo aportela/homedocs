@@ -2,6 +2,30 @@ export default {
   " change/s on date ":
     " change/s on date ",
 
+  "1 minute":
+    "1 minute",
+
+  "1 hour":
+    "1 hour",
+
+  "1 day":
+    "1 day",
+
+  "1 week":
+    "1 week",
+
+  "1 month":
+    "1 month",
+
+  "1 year":
+    "1 year",
+
+  "(expired)":
+    "(expired)",
+
+  "Access count":
+    "Access count",
+
   "Access denied":
     "Access denied",
 
@@ -80,8 +104,14 @@ export default {
   "Attachment names":
     "Attachment names",
 
+  "Attachment share":
+    "Attachment share",
+
   "Attachments":
     "Attachments",
+
+  "Attachments shares":
+    "Attachments shares",
 
   "Between dates":
     "Between dates",
@@ -133,6 +163,9 @@ export default {
 
   "Collapse sidebar":
     "Collapse sidebar",
+	
+  "Copied to clipboard!":
+	"Copied to clipboard!",
 
   "Created on":
     "Created on",
@@ -239,6 +272,9 @@ export default {
   "Email not registered":
     "Email not registered",
 
+  "Enabled":
+    "Enabled",
+
   "End":
     "End",
 
@@ -256,6 +292,9 @@ export default {
 
   "Expand sidebar":
     "Expand sidebar",
+
+  "Expires on":
+    "Expires on",
 
   "Fast search match fragment":
     "Fragment matched on {matchedOn}: {fragment}",
@@ -296,6 +335,12 @@ export default {
   "Go Home":
     "Go Home",
 
+  "Has access count limit":
+    "Has access count limit",
+
+  "Has expiration":
+    "Has expiration",
+
   "Hide password":
     "Hide password",
 
@@ -332,11 +377,17 @@ export default {
   "Let's start organizing.":
     "Let's start organizing.",
 
+  "Limit":
+    "Limit",
+
   "Loading...":
     "Loading...",
 
   "Max results":
     "Max results",
+
+  "Most recent access":
+    "Most recent access",
 
   "Most recent activity":
     "Most recent activity",
@@ -467,6 +518,21 @@ export default {
   "Session lost... re-auth required":
     "Session lost... re-auth required",
 
+  "Set access count limit":
+    "Set access count limit",
+
+  "Set expiration":
+    "Set expiration",
+
+  "Share":
+    "Share",
+
+  "Shared":
+    "Shared",
+
+  "Shared element":
+    "Shared element",
+
   "Show password":
     "Show password",
 
@@ -526,6 +592,10 @@ export default {
 
   "This operation cannot be undone. Would you like to proceed ?":
     "This operation cannot be undone. Would you like to proceed ?",
+	
+  "This share has been accessed n times.":
+    "This share has been accessed {count} times.|This share has been accessed {count} time.|This share has been accessed {count} times.",
+		
   "timeAgo": {
 
     "day":
@@ -548,6 +618,30 @@ export default {
 
     "year":
       "{count} year ago|{count} years ago"
+  },
+  
+  "timeUntil": {
+
+    "day":
+      "in {count} day|in {count} days",
+
+    "hour":
+      "in {count} hour|in {count} hours",
+
+    "minute":
+      "in {count} minute|in {count} minutes",
+
+    "month":
+      "in {count} month|in {count} months",
+
+    "now":
+      "now",
+
+    "second":
+      "in {count} second|in {count} seconds",
+
+    "year":
+      "in {count} year|in {count} years"
   },
 
   "Title":
@@ -657,6 +751,9 @@ export default {
 
   "You haven't created any documents yet":
     "You haven't created any documents yet",
+
+  "You haven't created any share yet":
+    "You haven't created any share yet",
 
   "You haven't created any tags yet":
     "You haven't created any tags yet",

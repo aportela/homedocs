@@ -2,6 +2,30 @@ export default {
   " change/s on date ":
     " cambio/s na data ",
 
+  "1 minute":
+    "1 minuto",
+
+  "1 hour":
+    "1 hora",
+
+  "1 day":
+    "1 día",
+
+  "1 week":
+    "1 semana",
+
+  "1 month":
+    "1 mes",
+
+  "1 year":
+    "1 ano",
+
+  "(expired)":
+    "(expirado)",
+
+  "Access count":
+    "Nº de accesos",
+
   "Access denied":
     "Acceso denegado",
 
@@ -80,8 +104,14 @@ export default {
   "Attachment names":
     "Nomes de adxuntos",
 
+  "Attachment share":
+    "Compartir adxunto",
+
   "Attachments":
     "Adxuntos",
+
+  "Attachments shares":
+    "Adxuntos compartidos",
 
   "Between dates":
     "Entre datas",
@@ -133,6 +163,9 @@ export default {
 
   "Collapse sidebar":
     "Contraer sidebar",
+
+  "Copied to clipboard!":
+	"¡Copiado ço portatapeis!",
 
   "Created on":
     "Data de creación",
@@ -239,6 +272,9 @@ export default {
   "Email not registered":
     "O correo electrónico non está asociado",
 
+  "Enabled":
+    "Activo",
+
   "End":
     "Fin",
 
@@ -256,7 +292,10 @@ export default {
 
   "Expand sidebar":
     "Expandir sidebar",
-
+	
+  "Expires on":
+    "Expira en",
+	
   "Fast search match fragment":
     "Coincidencia atopada en {matchedOn}: {fragment}",
 
@@ -296,6 +335,12 @@ export default {
   "Go Home":
     "Volver o inicio",
 
+  "Has access count limit":
+    "Ten límite de accesos",
+
+  "Has expiration":
+    "Ten expiración",
+
   "Hide password":
     "Ocultar contrasinal",
 
@@ -332,11 +377,17 @@ export default {
   "Let's start organizing.":
     "É momento de comenza-la organización.",
 
+  "Limit":
+    "Límite",
+
   "Loading...":
     "Cargando...",
 
   "Max results":
     "Nº máximo resultados",
+
+  "Most recent access":
+    "Acceso máis recente",
 
   "Most recent activity":
     "Actividade máis recente",
@@ -467,6 +518,21 @@ export default {
   "Session lost... re-auth required":
     "Perdeuse a sesión... requírese re-autentificación",
 
+  "Set access count limit":
+    "Establecer límite de accesos",
+
+  "Set expiration":
+    "Establecer expiración",
+
+  "Share":
+    "Compartir",
+
+  "Shared":
+    "Compartido",
+
+  "Shared element":
+    "Elemento compartido",
+
   "Show password":
     "Mostrar contrasinal",
 
@@ -526,6 +592,10 @@ export default {
 
   "This operation cannot be undone. Would you like to proceed ?":
     "Esta operación non se puede desfacer. ¿ Quere continuar ?",
+
+  "This share has been accessed n times.":
+    "Accedeuse a este recurso compartido {count} veces.|Accedeuse a este recurso compartido {count} vez.|Accedeuse a este recurso compartido {count} veces.",
+	
   "timeAgo": {
 
     "day":
@@ -548,6 +618,30 @@ export default {
 
     "year":
       "fai {count} año | fai {count} anos"
+  },
+  
+  "timeUntil": {
+
+    "day":
+      "dentro de {count} día|dentro de {count} días",
+
+    "hour":
+      "dentro de {count} hora|dentro de {count} horas",
+
+    "minute":
+      "dentro de {count} minuto|dentro de {count} minutos",
+
+    "month":
+      "dentro de {count} mes|dentro de {count} meses",
+
+    "now":
+      "ahora",
+
+    "second":
+      "dentro de {count} segundo|dentro de {count} segundos",
+
+    "year":
+      "dentro de {count} ano|dentro de {count} anos"
   },
 
   "Title":
@@ -657,6 +751,9 @@ export default {
 
   "You haven't created any documents yet":
     "Aínda non creou ningún documento",
+
+  "You haven't created any share yet":
+    "Aínda non compartíu ningún elemento",
 
   "You haven't created any tags yet":
     "Aínda non creou ningunha etiqueta",
