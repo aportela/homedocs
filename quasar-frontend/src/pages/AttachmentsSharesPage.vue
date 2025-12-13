@@ -14,12 +14,12 @@
       <q-markup-table>
         <thead>
           <tr>
-            <th class="text-left"><q-icon name="keyboard_double_arrow_down" size="sm" />{{ t('Created on') }}</th>
-            <th class="text-left">{{ t('Enabled') }}</th>
-            <th class="text-left">{{ t('Shared element') }}</th>
-            <th class="text-left">{{ t('Expires on') }}</th>
-            <th class="text-right">{{ t('Access count') }}</th>
-            <th class="text-left">{{ t('Most recent access') }}</th>
+            <th v-for="(column, index) in columns" :key="index"
+              :class="['text-left', column.defaultClass, { 'cursor-not-allowed': state.ajaxRunning, 'cursor-pointer': !state.ajaxRunning, 'action-primary': sort.field === column.field }]"
+              @click="onToggleSort(column.field)">
+              <q-icon :name="sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
+              {{ t(column.title) }}
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -92,12 +92,28 @@
   import { fullDateTimeHuman, timeAgo, timeUntil, currentTimestamp } from "src/composables/dateUtils";
   import { api } from "src/composables/api";
   import { PagerClass } from 'src/types/pager';
-
+  import { type OrderType } from "src/types/orderType";
+  import { SortClass } from "src/types/sort";
   import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
   import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 
 
   const { t } = useI18n();
+
+
+  const columns = [
+    { field: 'createdAtTimestamp', title: 'Created on', defaultClass: "" },
+    { field: 'enabled', title: 'Enabled', defaultClass: "" },
+    { field: 'documentTitle', title: 'Shared element', defaultClass: "" },
+    { field: 'expiresAtTimestamp', title: 'Expires on', defaultClass: "" },
+    { field: 'accessCount', title: 'Access count', defaultClass: "text-right" },
+    { field: 'lastAccessTimestamp', title: 'Most recent access', defaultClass: "" }
+  ];
+
+
+  const sort = reactive<SortClass>(new SortClass("createdAtTimestamp", "createdAtTimestamp", "DESC"));
+
+  const sortOrderIcon = computed(() => sort.order === "ASC" ? "keyboard_double_arrow_up" : "keyboard_double_arrow_down");
 
   const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
@@ -117,17 +133,20 @@
     onSubmitForm(false);
   }
 
+  const onToggleSort = (field: string, order?: OrderType) => {
+    if (!state.ajaxRunning) {
+      sort.toggle(field, order);
+      onSubmitForm(false);
+    }
+  }
+
   const onSubmitForm = (resetPager: boolean) => {
     if (resetPager) {
       pager.currentPageIndex = 1;
     }
     Object.assign(state, defaultAjaxState);
     state.ajaxRunning = true;
-    api.attachmentShare.search(pager, {
-      field: "createdAtTimestamp",
-      label: "",
-      order: "DESC"
-    })
+    api.attachmentShare.search(pager, sort)
       .then((successResponse: SearchAttachmentShareResponseInterface) => {
         if (successResponse.data.results) {
           results.value = [];
