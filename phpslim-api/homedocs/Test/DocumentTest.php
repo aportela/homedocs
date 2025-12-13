@@ -130,6 +130,27 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
         $document->update(self::$dbh);
     }
 
+    public function testUpdateWithInvalidNoteBody(): void
+    {
+        $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
+        $this->expectExceptionMessage("noteBody");
+        $this->createValidSession();
+        $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["tag1", "tag2"], [], [new \HomeDocs\Note(\HomeDocs\Utils::uuidv4(), null, "This is the note body")]);
+        $document->add(self::$dbh);
+        $document->notes[0]->body = "";
+        $document->update(self::$dbh);
+    }
+
+    public function testUpdateWithNote(): void
+    {
+        $this->expectNotToPerformAssertions();
+        $this->createValidSession();
+        $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["tag1", "tag2"], [], [new \HomeDocs\Note(\HomeDocs\Utils::uuidv4(), null, "This is the note body")]);
+        $document->add(self::$dbh);
+        $document->notes[0]->body = "New note body";
+        $document->update(self::$dbh);
+    }
+
     public function testDeleteWithoutId(): void
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
