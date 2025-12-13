@@ -1,6 +1,11 @@
 <template>
   <q-page>
-    <div v-if="hasSharedAttachments">
+    <CustomErrorBanner v-if="showErrorBanner" :text="state.ajaxErrorMessage || 'Error loading data'"
+      :api-error="state.ajaxAPIErrorDetails" class="q-ma-md">
+    </CustomErrorBanner>
+    <CustomBanner v-else-if="showNoResultsBanner" warning text="You haven't created any share yet" class="q-ma-md">
+    </CustomBanner>
+    <div v-else>
       <div class="q-ma-md flex flex-center" v-if="pager.totalPages > 1">
         <q-pagination v-model="pager.currentPageIndex" color="dark" :max="pager.totalPages" :max-pages="5"
           boundary-numbers direction-links boundary-links @update:model-value="onPaginationChanged"
@@ -73,12 +78,11 @@
           :disable="state.ajaxRunning" class="theme-default-q-pagination" />
       </div>
     </div>
-    <CustomBanner v-else warning text="You haven't created any share yet" />
   </q-page>
 </template>
 
 <script setup lang="ts">
-  import { computed, reactive, shallowRef, onMounted, onBeforeUnmount } from 'vue';
+  import { ref, computed, reactive, shallowRef, onMounted, onBeforeUnmount } from 'vue';
   import { format } from 'quasar';
   import { useI18n } from "vue-i18n";
   import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
@@ -89,7 +93,9 @@
   import { api } from "src/composables/api";
   import { PagerClass } from 'src/types/pager';
 
-  import { default as CustomBanner } from 'src/components/Banners/CustomBanner.vue';
+  import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
+  import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
+
 
   const { t } = useI18n();
 
@@ -97,9 +103,14 @@
 
   const results = shallowRef<AttachmentShareInterface[]>([]);
 
-  const hasSharedAttachments = computed(() => results.value.length > 0);
+  const searchLaunched = ref<boolean>(false);
 
-  const pager = new PagerClass(1, 16, 0, 0);
+  const hasResults = computed(() => results.value.length > 0);
+
+  const showErrorBanner = computed(() => !state.ajaxRunning && state.ajaxErrors);
+  const showNoResultsBanner = computed(() => !state.ajaxRunning && searchLaunched.value && !hasResults.value);
+
+  const pager = reactive<PagerClass>(new PagerClass(1, 16, 0, 0));
 
   const onPaginationChanged = (pageIndex: number) => {
     pager.currentPageIndex = pageIndex;
@@ -127,6 +138,7 @@
           pager.resultsPage = successResponse.data.results.pagination.resultsPage;
           pager.totalResults = successResponse.data.results.pagination.totalResults;
           pager.totalPages = successResponse.data.results.pagination.totalPages;
+          searchLaunched.value = true;
         }
       })
       .catch((errorResponse) => {
