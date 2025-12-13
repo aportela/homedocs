@@ -78,6 +78,26 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
         $document->add(self::$dbh);
     }
 
+    public function testAddWithMissingAttachmentId(): void
+    {
+        $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
+        $this->expectExceptionMessage("id");
+        $this->createValidSession();
+        $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["tag1", "tag2"], [new \HomeDocs\Attachment("")], []);
+        $document->add(self::$dbh);
+    }
+
+    public function testAddWithAttachment(): void
+    {
+        $this->expectNotToPerformAssertions();
+        $this->createValidSession();
+        $attachment = new \HomeDocs\Attachment(\HomeDocs\Utils::uuidv4(), "file.txt", 10, sha1("file.txt"), null, false);
+        $attachment->saveMetadata(self::$dbh);
+
+        $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["tag1", "tag2"], [$attachment], []);
+        $document->add(self::$dbh);
+    }
+
     public function testUpdateWithoutTitle(): void
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
