@@ -56,6 +56,28 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
         $document->add(self::$dbh);
     }
 
+    public function testAddWithEmptyNoteBody(): void
+    {
+        $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);
+        $this->expectExceptionMessage("noteBody");
+        $this->createValidSession();
+        $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["tag1", "tag2"], [], [new \HomeDocs\Note(\HomeDocs\Utils::uuidv4(), null, "")]);
+        $document->add(self::$dbh);
+    }
+
+    public function testAddWithNotes(): void
+    {
+        $this->expectNotToPerformAssertions();
+        $this->createValidSession();
+        $notes = [];
+        for ($i = 0; $i < 3; ++$i) {
+            $notes[] = new \HomeDocs\Note(\HomeDocs\Utils::uuidv4(), null, sprintf("Note body %d", $i + 1));
+        }
+
+        $document = new \HomeDocs\Document(\HomeDocs\Utils::uuidv4(), "document title", "document description", null, null, ["tag1", "tag2"], [], $notes);
+        $document->add(self::$dbh);
+    }
+
     public function testUpdateWithoutTitle(): void
     {
         $this->expectException(\HomeDocs\Exception\InvalidParamsException::class);

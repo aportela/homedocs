@@ -328,8 +328,6 @@ class AttachmentShare
             new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
             new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId()),
         ];
-
-        $whereCondition = "";
         $browser->addDBQueryParams($params);
         $query = $browser->buildQuery(
             "
@@ -376,7 +374,7 @@ class AttachmentShare
                 property_exists($item, "createdAtTimestamp") && is_numeric($item->createdAtTimestamp) ? intval($item->createdAtTimestamp) : 0,
                 property_exists($item, "expiresAtTimestamp") && is_numeric($item->expiresAtTimestamp) ? intval($item->expiresAtTimestamp) : 0,
                 property_exists($item, "accessLimit") && is_numeric($item->accessLimit) ? intval($item->accessLimit) : 0,
-                property_exists($item, "enabled") && is_bool($item->enabled) ? $item->enabled : false,
+                property_exists($item, "enabled") && is_bool($item->enabled) && $item->enabled,
             );
             $at->accessCount = property_exists($item, "accessCount") && is_numeric($item->accessCount) ? intval($item->accessCount) : 0;
             $at->lastAccessTimestamp = property_exists($item, "lastAccessTimestamp") && is_numeric($item->lastAccessTimestamp) ? intval($item->lastAccessTimestamp) : null;
