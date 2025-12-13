@@ -518,6 +518,12 @@ export default {
   "Session lost... re-auth required":
     "La sesión se ha perdido... se requiere re-autentificación",
 
+  "Set access count limit":
+    "Establecer límite de accesos",
+
+  "Set expiration":
+    "Establecer expiración",
+
   "Share":
     "Compartir",
 

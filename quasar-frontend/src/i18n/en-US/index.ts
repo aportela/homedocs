@@ -518,6 +518,12 @@ export default {
   "Session lost... re-auth required":
     "Session lost... re-auth required",
 
+  "Set access count limit":
+    "Set access count limit",
+
+  "Set expiration":
+    "Set expiration",
+
   "Share":
     "Share",
 
