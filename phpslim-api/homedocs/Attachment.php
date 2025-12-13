@@ -86,7 +86,7 @@ class Attachment
         }
     }
 
-    private function saveMetadata(\aportela\DatabaseWrapper\DB $db): void
+    public function saveMetadata(\aportela\DatabaseWrapper\DB $db): void
     {
         $this->createdAtTimestamp = intval(microtime(true) * 1000);
         $db->execute(
