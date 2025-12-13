@@ -9,12 +9,15 @@ class AttachmentShare
     public string $id;
 
     public int $createdAtTimestamp;
-    public int|null $lastAccessTimestamp;
+
+    public ?int $lastAccessTimestamp = null;
+
     public int $accessLimit;
 
     public int $accessCount;
 
     public \stdClass $attachment;
+
     public \stdClass $document;
 
     public function __construct(string $id, int $createdAtTimestamp, public int $expiresAtTimestamp, int $accessLimit, public bool $enabled)
@@ -264,7 +267,7 @@ class AttachmentShare
             "attachmentFileName" => "ATTACHMENT.name",
             "attachmentFileSize" => "ATTACHMENT.size",
             "documentId" => "DOCUMENT_ATTACHMENT.document_id",
-            "documentTitle" => "DOCUMENT.title"
+            "documentTitle" => "DOCUMENT.title",
         ];
         $fieldCountDefinition = [
             "total" => "COUNT (ATTACHMENT_SHARE.id)",
@@ -321,71 +324,69 @@ class AttachmentShare
             new \aportela\DatabaseBrowserWrapper\Filter(),
             $afterBrowse
         );
-        $queryConditions = [];
         $params = [
             new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
             new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId()),
         ];
 
-        $whereCondition = $queryConditions !== [] ? " WHERE " . implode(" AND ", $queryConditions) : "";
+        $whereCondition = "";
         $browser->addDBQueryParams($params);
         $query = $browser->buildQuery(
-            sprintf(
-                "
-                    SELECT
-                        %%s
-                    FROM ATTACHMENT_SHARE
-                    INNER JOIN ATTACHMENT ON ATTACHMENT.id = ATTACHMENT_SHARE.attachment_id
-                    INNER JOIN DOCUMENT_ATTACHMENT ON DOCUMENT_ATTACHMENT.attachment_id = ATTACHMENT.id
-                    INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_ATTACHMENT.document_id
-                    INNER JOIN DOCUMENT_HISTORY ON (
-                        DOCUMENT_HISTORY.document_id = DOCUMENT_ATTACHMENT.document_id
-                        AND
-                        DOCUMENT_HISTORY.operation_type = :history_operation_add
-                        AND
-                        DOCUMENT_HISTORY.cuid = :session_user_id
-                    )
+            "
+                SELECT
                     %s
-                    %%s
-                    %%s
-                ",
-                $whereCondition
-            )
+                FROM ATTACHMENT_SHARE
+                INNER JOIN ATTACHMENT ON ATTACHMENT.id = ATTACHMENT_SHARE.attachment_id
+                INNER JOIN DOCUMENT_ATTACHMENT ON DOCUMENT_ATTACHMENT.attachment_id = ATTACHMENT.id
+                INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_ATTACHMENT.document_id
+                INNER JOIN DOCUMENT_HISTORY ON (
+                    DOCUMENT_HISTORY.document_id = DOCUMENT_ATTACHMENT.document_id
+                    AND
+                    DOCUMENT_HISTORY.operation_type = :history_operation_add
+                    AND
+                    DOCUMENT_HISTORY.cuid = :session_user_id
+                )
+                %s
+                %s
+            "
         );
         $queryCount = $browser->buildQueryCount(
-            sprintf(
-                "
-                    SELECT
-                        %%s
-                    FROM ATTACHMENT_SHARE
-                    INNER JOIN ATTACHMENT ON ATTACHMENT.id = ATTACHMENT_SHARE.attachment_id
-                    INNER JOIN DOCUMENT_ATTACHMENT ON DOCUMENT_ATTACHMENT.attachment_id = ATTACHMENT.id
-                    INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_ATTACHMENT.document_id
-                    INNER JOIN DOCUMENT_HISTORY ON (
-                        DOCUMENT_HISTORY.document_id = DOCUMENT_ATTACHMENT.document_id
-                        AND
-                        DOCUMENT_HISTORY.operation_type = :history_operation_add
-                        AND
-                        DOCUMENT_HISTORY.cuid = :session_user_id
-                    )
+            "
+                SELECT
                     %s
-                ",
-                $whereCondition
-            )
+                FROM ATTACHMENT_SHARE
+                INNER JOIN ATTACHMENT ON ATTACHMENT.id = ATTACHMENT_SHARE.attachment_id
+                INNER JOIN DOCUMENT_ATTACHMENT ON DOCUMENT_ATTACHMENT.attachment_id = ATTACHMENT.id
+                INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_ATTACHMENT.document_id
+                INNER JOIN DOCUMENT_HISTORY ON (
+                    DOCUMENT_HISTORY.document_id = DOCUMENT_ATTACHMENT.document_id
+                    AND
+                    DOCUMENT_HISTORY.operation_type = :history_operation_add
+                    AND
+                    DOCUMENT_HISTORY.cuid = :session_user_id
+                )
+            "
         );
         $browserResults = $browser->launch($query, $queryCount);
         $data = new \stdClass();
+        $data->sharedAttachments = [];
         foreach ($browserResults->items as $item) {
-            $at = new \HomeDocs\AttachmentShare($item->id, $item->createdAtTimestamp, $item->expiresAtTimestamp, $item->accessLimit, $item->enabled);
-            $at->accessCount = $item->accessCount;
-            $at->lastAccessTimestamp = $item->lastAccessTimestamp;
+            $at = new \HomeDocs\AttachmentShare(
+                property_exists($item, "id") && is_string($item->id) ? $item->id : "",
+                property_exists($item, "createdAtTimestamp") && is_numeric($item->createdAtTimestamp) ? intval($item->createdAtTimestamp) : 0,
+                property_exists($item, "expiresAtTimestamp") && is_numeric($item->expiresAtTimestamp) ? intval($item->expiresAtTimestamp) : 0,
+                property_exists($item, "accessLimit") && is_numeric($item->accessLimit) ? intval($item->accessLimit) : 0,
+                property_exists($item, "enabled") && is_bool($item->enabled) ? $item->enabled : false,
+            );
+            $at->accessCount = property_exists($item, "accessCount") && is_numeric($item->accessCount) ? intval($item->accessCount) : 0;
+            $at->lastAccessTimestamp = property_exists($item, "lastAccessTimestamp") && is_numeric($item->lastAccessTimestamp) ? intval($item->lastAccessTimestamp) : null;
             $at->attachment = new \stdClass();
-            $at->attachment->id = $item->attachmentId;
-            $at->attachment->name = $item->attachmentFileName;
-            $at->attachment->size = $item->attachmentFileSize;
+            $at->attachment->id = $item->attachmentId ?? null;
+            $at->attachment->name = $item->attachmentFileName ?? null;
+            $at->attachment->size = $item->attachmentFileSize ?? 0;
             $at->document = new \stdClass();
-            $at->document->id = $item->documentId;
-            $at->document->title = $item->documentTitle;
+            $at->document->id = $item->documentId ?? null;
+            $at->document->title = $item->documentTitle ?? null;
             $data->sharedAttachments[] = $at;
         }
 

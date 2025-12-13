@@ -298,7 +298,8 @@ class Mock
                 $attachmentId
             );
         }
-        if (count($documentAttachments) > 0 && mt_rand(1, 5) === 1) {
+
+        if ($documentAttachments !== [] && mt_rand(1, 5) === 1) {
             $queries[] = sprintf(
                 '
                     INSERT INTO ATTACHMENT_SHARE
