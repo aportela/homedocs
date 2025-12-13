@@ -112,18 +112,33 @@ class AttachmentShare
                         ATTACHMENT_SHARE.id,
                         ATTACHMENT_SHARE.cuid as creatorId,
                         ATTACHMENT_SHARE.attachment_id AS attachmentId,
+                        ATTACHMENT.name AS attachmentFileName,
+                        ATTACHMENT.size AS attachmentFileSize,
                         ATTACHMENT_SHARE.ctime AS createdAtTimestamp,
                         ATTACHMENT_SHARE.etime AS expiresAtTimestamp,
                         ATTACHMENT_SHARE.ltime AS lastAccessTimestamp,
                         ATTACHMENT_SHARE.access_limit AS accessLimit,
                         ATTACHMENT_SHARE.access_count AS accessCount,
-                        ATTACHMENT_SHARE.enabled
+                        ATTACHMENT_SHARE.enabled,
+                        DOCUMENT.id AS documentId,
+                        DOCUMENT.title AS documentTitle
                     FROM ATTACHMENT_SHARE
                     INNER JOIN ATTACHMENT ON ATTACHMENT.id = ATTACHMENT_SHARE.attachment_id
+                    INNER JOIN DOCUMENT_ATTACHMENT ON DOCUMENT_ATTACHMENT.attachment_id = ATTACHMENT.id
+                    INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_ATTACHMENT.document_id
+                    INNER JOIN DOCUMENT_HISTORY ON (
+                        DOCUMENT_HISTORY.document_id = DOCUMENT_ATTACHMENT.document_id
+                        AND
+                        DOCUMENT_HISTORY.operation_type = :history_operation_add
+                        AND
+                        DOCUMENT_HISTORY.cuid = :session_user_id
+                    )
                     WHERE
                         ATTACHMENT_SHARE.attachment_id = :attachment_id
                 ",
                 [
+                    new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
+                    new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId()),
                     new \aportela\DatabaseWrapper\Param\StringParam(":attachment_id", $attachmentId),
                 ]
             );
@@ -134,18 +149,33 @@ class AttachmentShare
                         ATTACHMENT_SHARE.id,
                         ATTACHMENT_SHARE.cuid as creatorId,
                         ATTACHMENT_SHARE.attachment_id AS attachmentId,
+                        ATTACHMENT.name AS attachmentFileName,
+                        ATTACHMENT.size AS attachmentFileSize,
                         ATTACHMENT_SHARE.ctime AS createdAtTimestamp,
                         ATTACHMENT_SHARE.etime AS expiresAtTimestamp,
                         ATTACHMENT_SHARE.ltime AS lastAccessTimestamp,
                         ATTACHMENT_SHARE.access_limit AS accessLimit,
                         ATTACHMENT_SHARE.access_count AS accessCount,
-                        ATTACHMENT_SHARE.enabled
+                        ATTACHMENT_SHARE.enabled,
+                        DOCUMENT.id AS documentId,
+                        DOCUMENT.title AS documentTitle
                     FROM ATTACHMENT_SHARE
                     INNER JOIN ATTACHMENT ON ATTACHMENT.id = ATTACHMENT_SHARE.attachment_id
+                    INNER JOIN DOCUMENT_ATTACHMENT ON DOCUMENT_ATTACHMENT.attachment_id = ATTACHMENT.id
+                    INNER JOIN DOCUMENT ON DOCUMENT.id = DOCUMENT_ATTACHMENT.document_id
+                    INNER JOIN DOCUMENT_HISTORY ON (
+                        DOCUMENT_HISTORY.document_id = DOCUMENT_ATTACHMENT.document_id
+                        AND
+                        DOCUMENT_HISTORY.operation_type = :history_operation_add
+                        AND
+                        DOCUMENT_HISTORY.cuid = :session_user_id
+                    )
                     WHERE
                         ATTACHMENT_SHARE.id = :id
                 ",
                 [
+                    new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_add", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
+                    new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", \HomeDocs\UserSession::getUserId()),
                     new \aportela\DatabaseWrapper\Param\StringParam(":id", $this->id),
                 ]
             );
@@ -164,10 +194,10 @@ class AttachmentShare
             $this->attachment = new \stdClass();
             $this->attachment->id = property_exists($results[0], "attachmentId") && is_string($results[0]->attachmentId) ? $results[0]->attachmentId : null;
             $this->attachment->name = property_exists($results[0], "attachmentFileName") && is_string($results[0]->attachmentFileName) ? $results[0]->attachmentFileName : null;
-            $this->attachment->size = property_exists($results[0], "attachmentFileSize") && is_string($results[0]->attachmentFileSize) ? $results[0]->attachmentFileSize : null;
+            $this->attachment->size = property_exists($results[0], "attachmentFileSize") && is_numeric($results[0]->attachmentFileSize) ? intval($results[0]->attachmentFileSize) : null;
             $this->document = new \stdClass();
-            $this->document->id = null;
-            $this->document->title = null;
+            $this->document->id = property_exists($results[0], "documentId") && is_string($results[0]->documentId) ? $results[0]->documentId : null;
+            $this->document->title = property_exists($results[0], "documentTitle") && is_string($results[0]->documentTitle) ? $results[0]->documentTitle : null;
         } else {
             throw new \HomeDocs\Exception\NotFoundException("id");
         }
