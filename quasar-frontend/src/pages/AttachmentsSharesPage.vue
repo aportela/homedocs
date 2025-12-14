@@ -192,6 +192,10 @@
 
 
   onMounted(() => {
+    bus.on("attachmentShareAdded", () => {
+      onSubmitForm(true);
+    });
+
     bus.on("attachmentShareChanged", () => {
       onSubmitForm(false);
     });
@@ -205,6 +209,7 @@
 
   onBeforeUnmount(() => {
     bus.off("reAuthSucess");
+    bus.off("attachmentShareAdded");
     bus.off("attachmentShareChanged");
     bus.off("attachmentShareDeleted");
   });

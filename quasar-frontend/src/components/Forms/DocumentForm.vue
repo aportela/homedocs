@@ -76,7 +76,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.ajaxRunning" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                      }}</q-badge>
+                    }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>
@@ -647,11 +647,11 @@
       }
     });
 
-    bus.on("attachmentShareChanged", (msg) => {
+    bus.on("attachmentShareAdded", (msg) => {
       if (msg.attachmentShare) {
         document.attachments.forEach((attachment) => {
           if (attachment.id === msg.attachmentShare.attachment.id) {
-            attachment.shared = msg.attachmentShare.enabled;
+            attachment.shared = true;
           }
         });
       }
@@ -670,7 +670,7 @@
 
   onBeforeUnmount(() => {
     bus.off("reAuthSucess");
-    bus.off("attachmentShareChanged");
+    bus.off("attachmentShareAdded");
     bus.off("attachmentShareDeleted");
   });
 </script>
