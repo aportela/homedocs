@@ -169,7 +169,6 @@
     }
   });
 
-
   const copiedToClipboardMessage = ref<string | undefined>(undefined);
 
   const url = computed(() => attachmentShare.id ? `${window.location.protocol}//${window.location.hostname}${window.location.port ? `:${window.location.port}` : ""}/api3/shared/attachment/${props.attachmentId}?id=${encodeURI(attachmentShare.id)}` : null);
@@ -285,7 +284,7 @@
       hasExpiration.value = attachmentShare.expiresAtTimestamp > 0;
       hasAccessCountLimit.value = attachmentShare.accessLimit > 0;
       onRefreshQRCode();
-      bus.emit("attachmentShareChanged", { attachmentShare: successResponse.data.attachmentShare });
+      bus.emit("attachmentShareAdded", { attachmentShare: successResponse.data.attachmentShare });
     }).catch((errorResponse) => {
       state.ajaxErrors = true;
       if (errorResponse.isAPIError) {
