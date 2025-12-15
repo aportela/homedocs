@@ -16,7 +16,7 @@ return [
     'jwt' => [
         // WARNING: for security reasons, generate a random string for using as your OWN (not default) passphrase
         'passphrase' => '/@q]/?pc`c&bq,P/MCp{5#E~-Nr2]NXQ$pvSKiz$tLQd]K)>eIOOk!&6rKVO7J~',
-        'accessTokenExpirationTimeInSeconds' => 86400, // access token expires in 1 day
+        'accessTokenExpirationTimeInSeconds' => 3600, // access token expires in 1 hour
         'refreshTokenExpirationTimeInSeconds' => 31536000, // refresh token expires in 365 days
     ],
     'paths' => [
