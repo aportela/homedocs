@@ -34,6 +34,10 @@ Homedocs is a simple personal document manager. You can conveniently store your 
     <img width="1280" height="613" alt="Image preview dialog screenshot" src="https://github.com/user-attachments/assets/421f4681-cba3-432e-86e1-9a01f8fd325f" />
 </details>
 <details>
+    <summary>Shared attachment preview dialog</summary>
+    <img width="1280" height="607" alt="Shared attachment preview dialog screenshot" src="https://github.com/user-attachments/assets/58d92117-e981-4016-a861-bae8abbb0d1d" />
+</details>
+<details>
     <summary>Dark mode</summary>
     <img width="1280" height="640" alt="Profile page (dark mode)" src="https://github.com/user-attachments/assets/d6d4b259-a17a-4026-91b6-9eacf667b456" />
 </details>
