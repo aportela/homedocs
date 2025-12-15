@@ -219,7 +219,7 @@
         reAuthEmitters.push(msg.emitter);
       }
       api.auth.renewAccessToken().then((successResponse: GetNewAccessTokenResponseInterface) => {
-        sessionStore.setAccessToken(successResponse.data.accessToken);
+        sessionStore.setAccessToken(successResponse.data.accessToken.token, successResponse.data.accessToken.expiresAtTimestamp);
         bus.emit("reAuthSucess", ({ to: reAuthEmitters }))
         reAuthEmitters.length = 0;
       }).catch((errorResponse) => {
