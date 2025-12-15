@@ -10,7 +10,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    if (sessionStore.accessToken) {
+    if (sessionStore.hasAccessToken) {
       config.headers['Authorization'] = `Bearer ${sessionStore.accessToken}`;
       config.withCredentials = true;
     }
