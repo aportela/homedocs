@@ -10,15 +10,24 @@ interface DefaultAxiosResponse<T = unknown> {
 
 interface LoginResponse extends Omit<DefaultAxiosResponse, 'data'> {
   data: {
-    accessToken: string;
-    refreshToken: string;
+    accessToken: {
+      token: string;
+      expiresAtTimestamp: number;
+    };
+    refreshToken: {
+      token: string;
+      expiresAtTimestamp: number;
+    };
     tokenType: ValidAuthTypes;
   };
 }
 
 interface GetNewAccessTokenResponse extends Omit<DefaultAxiosResponse, 'data'> {
   data: {
-    accessToken: string;
+    accessToken: {
+      token: string;
+      expiresAtTimestamp: number;
+    };
     tokenType: ValidAuthTypes;
   };
 }

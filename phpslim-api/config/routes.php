@@ -107,8 +107,14 @@ return function (\Slim\App $app): void {
                     \HomeDocs\UserSession::setAccessTokenData($accessToken, $currentTimestamp + $settings->getAccessTokenExpirationTimeInSeconds());
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
-                            "accessToken" => $accessToken,
-                            "refreshToken" => $refreshToken,
+                            "accessToken" => [
+                                "token" => $accessToken,
+                                "expiresAtTimestamp" => $currentTimestamp + $settings->getAccessTokenExpirationTimeInSeconds(),
+                            ],
+                            "refreshToken" => [
+                                "token" => $refreshToken,
+                                "expiresAtTimestamp" => $currentTimestamp + $settings->getRefreshTokenExpirationTimeInSeconds(),
+                            ],
                             "tokenType" => "Bearer",
                         ]
                     );
@@ -175,7 +181,10 @@ return function (\Slim\App $app): void {
                         \HomeDocs\UserSession::setAccessTokenData($accessToken, $currentTimestamp + $settings->getAccessTokenExpirationTimeInSeconds());
                         $payload = \HomeDocs\Utils::getJSONPayload(
                             [
-                                "accessToken" => $accessToken,
+                                "accessToken" => [
+                                    "token" => $accessToken,
+                                    "expiresAtTimestamp" => $currentTimestamp + $settings->getAccessTokenExpirationTimeInSeconds(),
+                                ],
                                 "tokenType" => "Bearer",
                             ]
                         );
