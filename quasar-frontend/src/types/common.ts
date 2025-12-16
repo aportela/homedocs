@@ -1,7 +1,5 @@
-type EnvironmentType = "development" | "production";
+type EnvironmentType = 'development' | 'production';
 
-type ValidAuthTypes = "Bearer";
+type ValidAuthTypes = 'Bearer';
 
-export {
-  type EnvironmentType, type ValidAuthTypes
-}
+export { type EnvironmentType, type ValidAuthTypes };

@@ -1,5 +1,5 @@
-import { type DateTime as DateTimeInterface } from "./dateTime";
-import { uid } from "quasar";
+import { type DateTime as DateTimeInterface } from './dateTime';
+import { uid } from 'quasar';
 
 type HistoryOperationType = 1 | 2;
 
@@ -9,7 +9,7 @@ interface HistoryOperation {
   //operationType: HistoryOperationType;
   label: string;
   icon: string;
-};
+}
 
 class HistoryOperationClass implements HistoryOperation {
   id: string;
@@ -23,20 +23,20 @@ class HistoryOperationClass implements HistoryOperation {
     //this.operationType = operationType;
     switch (operationType) {
       case 1:
-        this.label = "Document created";
-        this.icon = "post_add";
+        this.label = 'Document created';
+        this.icon = 'post_add';
         break;
       case 2:
-        this.label = "Document updated";
-        this.icon = "edit_note";
+        this.label = 'Document updated';
+        this.icon = 'edit_note';
         break;
       default:
-        this.label = "Unknown operation";
-        this.icon = "error";
+        this.label = 'Unknown operation';
+        this.icon = 'error';
         break;
     }
     this.createdAt = createdAt;
   }
-};
+}
 
 export { type HistoryOperationType, type HistoryOperation, HistoryOperationClass };

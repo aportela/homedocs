@@ -3,14 +3,14 @@ interface UploadTransfer {
   filename: string;
   filesize: number;
   start: number;
-  end: number | null,
-  uploading: boolean,
-  done: boolean,
-  error: boolean,
-  errorHTTPCode: number | null,
-  errorMessage: string | null,
-  processed: boolean,
-};
+  end: number | null;
+  uploading: boolean;
+  done: boolean;
+  error: boolean;
+  errorHTTPCode: number | null;
+  errorMessage: string | null;
+  processed: boolean;
+}
 
 class UploadTransferClass implements UploadTransfer {
   id: string;
@@ -25,7 +25,19 @@ class UploadTransferClass implements UploadTransfer {
   errorMessage: string | null;
   processed: boolean;
 
-  constructor(id: string, filename: string, filesize: number, start: number, end: number | null, uploading: boolean, done: boolean, error: boolean, errorHTTPCode: number | null, errorMessage: string | null, processed: boolean) {
+  constructor(
+    id: string,
+    filename: string,
+    filesize: number,
+    start: number,
+    end: number | null,
+    uploading: boolean,
+    done: boolean,
+    error: boolean,
+    errorHTTPCode: number | null,
+    errorMessage: string | null,
+    processed: boolean,
+  ) {
     this.id = id;
     this.filename = filename;
     this.filesize = filesize;
@@ -38,6 +50,6 @@ class UploadTransferClass implements UploadTransfer {
     this.errorMessage = errorMessage;
     this.processed = processed;
   }
-};
+}
 
 export { type UploadTransfer, UploadTransferClass };

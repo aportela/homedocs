@@ -1,4 +1,4 @@
-import { type OrderType } from "./orderType";
+import { type OrderType } from './orderType';
 
 interface Sort {
   field: string;
@@ -18,21 +18,21 @@ class SortClass implements Sort {
   }
 
   refreshLabel(availableItems: Sort[]) {
-    this.label = availableItems.find((item) => item.field == this.field)?.label || "";
-  };
+    this.label = availableItems.find((item) => item.field == this.field)?.label || '';
+  }
 
   toggle(field: string, order?: OrderType) {
     if (this.field == field) {
       if (!order) {
-        this.order = this.order == "ASC" ? "DESC" : "ASC";
+        this.order = this.order == 'ASC' ? 'DESC' : 'ASC';
       } else {
         this.order = order;
       }
     } else {
       this.field = field;
-      this.order = !order ? "ASC" : order;
+      this.order = !order ? 'ASC' : order;
     }
   }
-};
+}
 
 export { type Sort, SortClass };

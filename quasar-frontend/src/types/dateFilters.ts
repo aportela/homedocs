@@ -1,24 +1,24 @@
-import { date } from "quasar";
+import { date } from 'quasar';
 
 type SelectorOptionTypeValue = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 
 interface SelectorOption {
   labelKey: string;
   value: SelectorOptionTypeValue;
-};
+}
 
 const selectorAvailableOptions = <SelectorOption[]>[
-  { labelKey: "Any date", value: 0 },
-  { labelKey: "Today", value: 1 },
-  { labelKey: "Yesterday", value: 2 },
-  { labelKey: "Last 7 days", value: 3 },
-  { labelKey: "Last 15 days", value: 4 },
-  { labelKey: "Last 31 days", value: 5 },
-  { labelKey: "Last 365 days", value: 6 },
-  { labelKey: "Fixed date", value: 7 },
-  { labelKey: "From date", value: 8 },
-  { labelKey: "To date", value: 9 },
-  { labelKey: "Between dates", value: 10 },
+  { labelKey: 'Any date', value: 0 },
+  { labelKey: 'Today', value: 1 },
+  { labelKey: 'Yesterday', value: 2 },
+  { labelKey: 'Last 7 days', value: 3 },
+  { labelKey: 'Last 15 days', value: 4 },
+  { labelKey: 'Last 31 days', value: 5 },
+  { labelKey: 'Last 365 days', value: 6 },
+  { labelKey: 'Fixed date', value: 7 },
+  { labelKey: 'From date', value: 8 },
+  { labelKey: 'To date', value: 9 },
+  { labelKey: 'Between dates', value: 10 },
 ];
 
 const defaultSelectorOptionValue: SelectorOptionTypeValue = selectorAvailableOptions[0]!.value;
@@ -30,7 +30,7 @@ interface DateFilterOptionType extends SelectorOption {
 */
 
 // TODO: use storage ????
-const dateMask = "YYYY/MM/DD";
+const dateMask = 'YYYY/MM/DD';
 
 interface DateFilter {
   currentType: SelectorOptionTypeValue;
@@ -39,25 +39,25 @@ interface DateFilter {
     fixed: string | null;
     from: string | null;
     to: string | null;
-  }
+  };
   timestamps: {
     from: number | null;
     to: number | null;
-  }
+  };
   state: {
     hasFrom: boolean;
     hasTo: boolean;
     hasFixed: boolean;
     hasValue: boolean;
     denyChanges: boolean;
-  },
+  };
   // UGLY HACK to skip clearing/reseting values on filterType watchers
   skipClearOnRecalc: {
-    from: boolean,
-    to: boolean,
-    fixed: boolean,
-  },
-};
+    from: boolean;
+    to: boolean;
+    fixed: boolean;
+  };
+}
 
 class DateFilterClass implements DateFilter {
   currentType: SelectorOptionTypeValue;
@@ -80,9 +80,9 @@ class DateFilterClass implements DateFilter {
   };
   // UGLY HACK to skip clearing/reseting values on filterType watchers
   skipClearOnRecalc: {
-    from: boolean,
-    to: boolean,
-    fixed: boolean,
+    from: boolean;
+    to: boolean;
+    fixed: boolean;
   };
 
   constructor() {
@@ -118,10 +118,7 @@ class DateFilterClass implements DateFilter {
   }
 
   getFormattedDate = (daysToSubtract = 0) => {
-    return date.formatDate(
-      date.addToDate(Date.now(), { days: daysToSubtract }),
-      dateMask,
-    );
+    return date.formatDate(date.addToDate(Date.now(), { days: daysToSubtract }), dateMask);
   };
 
   onRecalcDates = () => {
@@ -190,62 +187,78 @@ class DateFilterClass implements DateFilter {
   onRecalcTimestamps = () => {
     // generate API timestamps (real filters)
     if (this.formattedDate.fixed) {
-      this.timestamps.from = Number(date.formatDate(
-        date.adjustDate(
-          date.extractDate(this.formattedDate.fixed, dateMask),
-          { hour: 0, minute: 0, second: 0, millisecond: 0 },
+      this.timestamps.from = Number(
+        date.formatDate(
+          date.adjustDate(date.extractDate(this.formattedDate.fixed, dateMask), {
+            hour: 0,
+            minute: 0,
+            second: 0,
+            millisecond: 0,
+          }),
+          'x', // timestamp in ms
         ),
-        "x", // timestamp in ms
-      ));
-      this.timestamps.to = Number(date.formatDate(
-        date.adjustDate(
-          date.extractDate(this.formattedDate.fixed, dateMask),
-          { hour: 23, minute: 59, second: 59, millisecond: 999 },
+      );
+      this.timestamps.to = Number(
+        date.formatDate(
+          date.adjustDate(date.extractDate(this.formattedDate.fixed, dateMask), {
+            hour: 23,
+            minute: 59,
+            second: 59,
+            millisecond: 999,
+          }),
+          'x', // timestamp in ms
         ),
-        "x", // timestamp in ms
-      ));
+      );
     } else {
       if (this.formattedDate.from) {
-        this.timestamps.from = Number(date.formatDate(
-          date.adjustDate(
-            date.extractDate(this.formattedDate.from, "YYYY/MM/DD"),
-            { hour: 0, minute: 0, second: 0, millisecond: 0 },
+        this.timestamps.from = Number(
+          date.formatDate(
+            date.adjustDate(date.extractDate(this.formattedDate.from, 'YYYY/MM/DD'), {
+              hour: 0,
+              minute: 0,
+              second: 0,
+              millisecond: 0,
+            }),
+            'x', // timestamp in ms
           ),
-          "x", // timestamp in ms
-        ));
+        );
       }
       if (this.formattedDate.to) {
-        this.timestamps.to = Number(date.formatDate(
-          date.adjustDate(
-            date.extractDate(this.formattedDate.to, "YYYY/MM/DD"),
-            { hour: 23, minute: 59, second: 59, millisecond: 999 },
+        this.timestamps.to = Number(
+          date.formatDate(
+            date.adjustDate(date.extractDate(this.formattedDate.to, 'YYYY/MM/DD'), {
+              hour: 23,
+              minute: 59,
+              second: 59,
+              millisecond: 999,
+            }),
+            'x', // timestamp in ms
           ),
-          "x", // timestamp in ms
-        ));
+        );
       }
     }
   };
 
   hasFrom() {
-    return (this.state.hasFrom);
-  };
+    return this.state.hasFrom;
+  }
 
   hasTo() {
-    return (this.state.hasTo);
-  };
+    return this.state.hasTo;
+  }
 
   hasFixed() {
-    return (this.state.hasFixed);
-  };
+    return this.state.hasFixed;
+  }
 
   recalcDates() {
     this.onRecalcDates();
     this.onRecalcTimestamps();
-  };
+  }
 
   recalcTimestamps() {
     this.onRecalcTimestamps();
-  };
+  }
 
   setType(type: SelectorOptionTypeValue) {
     this.currentType = type;
@@ -256,7 +269,15 @@ class DateFilterClass implements DateFilter {
     this.state.denyChanges = [1, 2, 3, 4, 5, 6].includes(type);
     this.onRecalcDates();
     this.onRecalcTimestamps();
-  };
-};
+  }
+}
 
-export { type SelectorOptionTypeValue, type SelectorOption, selectorAvailableOptions, defaultSelectorOptionValue, dateMask, type DateFilter, DateFilterClass };
+export {
+  type SelectorOptionTypeValue,
+  type SelectorOption,
+  selectorAvailableOptions,
+  defaultSelectorOptionValue,
+  dateMask,
+  type DateFilter,
+  DateFilterClass,
+};

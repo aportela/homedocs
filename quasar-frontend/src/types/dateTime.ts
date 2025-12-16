@@ -1,13 +1,13 @@
-import { type Date as DateInterface, DateClass } from "./date";
-import { useSessionStore } from "src/stores/session";
-import { fullDateTimeHuman, } from "src/composables/dateUtils";
-import { type Ti18NFunction } from "./i18n";
+import { type Date as DateInterface, DateClass } from './date';
+import { useSessionStore } from 'src/stores/session';
+import { fullDateTimeHuman } from 'src/composables/dateUtils';
+import { type Ti18NFunction } from './i18n';
 
 const sessionStore = useSessionStore();
 
 interface DateTime extends DateInterface {
-  dateTime: string | null,
-};
+  dateTime: string | null;
+}
 
 class DateTimeClass extends DateClass implements DateTime {
   // TODO: refactor to formattedDateTime
@@ -21,6 +21,6 @@ class DateTimeClass extends DateClass implements DateTime {
       this.dateTime = null;
     }
   }
-};
+}
 
-export { type DateTime, DateTimeClass }
+export { type DateTime, DateTimeClass };

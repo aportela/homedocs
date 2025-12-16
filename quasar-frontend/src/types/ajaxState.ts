@@ -1,11 +1,11 @@
-import type { APIErrorDetails } from "./apiErrorDetails";
+import type { APIErrorDetails } from './apiErrorDetails';
 
 interface AjaxState {
   ajaxRunning: boolean;
   ajaxErrors: boolean;
   ajaxErrorMessage: string | null;
   ajaxAPIErrorDetails: APIErrorDetails | null;
-};
+}
 
 const defaultAjaxState: AjaxState = {
   ajaxRunning: false,
