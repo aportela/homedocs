@@ -78,8 +78,6 @@
 
   import { type UploadTransfer as UploadTransferInterface } from "src/types/uploadTransfer";
   import { type Document as DocumentInterface, DocumentClass } from "src/types/document";
-  import { type GetNewAccessTokenResponse as GetNewAccessTokenResponseInterface } from "src/types/apiResponses";
-  import { api } from "src/composables/api";
   import AttachmentShareDialog from "src/components/Dialogs/AttachmentShareDialog.vue";
 
   const $q = useQuasar();
@@ -218,13 +216,17 @@
       if (msg.emitter) {
         reAuthEmitters.push(msg.emitter);
       }
-      api.auth.renewAccessToken().then((successResponse: GetNewAccessTokenResponseInterface) => {
-        sessionStore.setAccessToken(successResponse.data.accessToken.token, successResponse.data.accessToken.expiresAtTimestamp);
-        bus.emit("reAuthSucess", ({ to: reAuthEmitters }))
-        reAuthEmitters.length = 0;
-      }).catch((errorResponse) => {
-        console.error(errorResponse);
+      sessionStore.refreshAccessToken().then((success: boolean) => {
+        if (success) {
+          bus.emit("reAuthSucess", ({ to: reAuthEmitters }))
+          reAuthEmitters.length = 0;
+        } else {
+          dialogs.reauth.visible = true;
+        }
+      }).catch((e: Error) => {
+        console.error("An unhandled exception occurred during access token refresh", e);
         dialogs.reauth.visible = true;
+      }).finally(() => {
       });
     });
 
