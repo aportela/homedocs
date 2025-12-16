@@ -23,42 +23,42 @@
 
 <script setup lang="ts">
 
-import { computed } from "vue";
-import { useI18n } from "vue-i18n";
-import { useQuasar } from "quasar";
+  import { computed } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { useQuasar } from "quasar";
 
-import { type DateTime as DateTimeInterface } from "src/types/dateTime";
+  import { type DateTime as DateTimeInterface } from "src/types/dateTime";
 
-interface DocumentMetadataTopFormProps {
-  createdAt: DateTimeInterface | null;
-  updatedAt: DateTimeInterface | null;
-};
+  interface DocumentMetadataTopFormProps {
+    createdAt: DateTimeInterface | null;
+    updatedAt: DateTimeInterface | null;
+  };
 
-const props = defineProps<DocumentMetadataTopFormProps>();
+  const props = defineProps<DocumentMetadataTopFormProps>();
 
-const { t } = useI18n();
-const { screen } = useQuasar();
+  const { t } = useI18n();
+  const { screen } = useQuasar();
 
-const isScreenGreaterThanXS = computed(() => screen.gt.xs);
+  const isScreenGreaterThanXS = computed(() => screen.gt.xs);
 
-const showBothDates = computed(() => props.createdAt?.timestamp != props.updatedAt?.timestamp);
+  const showBothDates = computed(() => props.createdAt?.timestamp != props.updatedAt?.timestamp);
 
-const createdAtModel = computed({
-  get() {
-    return props.createdAt?.dateTime;
-  },
-  set() {
-    /* */
-  }
-});
+  const createdAtModel = computed({
+    get() {
+      return props.createdAt?.dateTime;
+    },
+    set() {
+      /* */
+    }
+  });
 
-const updatedAtModel = computed({
-  get() {
-    return props.createdAt?.dateTime;
-  },
-  set() {
-    /* */
-  }
-});
+  const updatedAtModel = computed({
+    get() {
+      return props.createdAt?.dateTime;
+    },
+    set() {
+      /* */
+    }
+  });
 
 </script>

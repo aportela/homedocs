@@ -16,22 +16,22 @@
 
 <script setup lang="ts">
 
-import { useI18n } from "vue-i18n";
+  import { useI18n } from "vue-i18n";
 
-import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
+  import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 
-const { t } = useI18n();
+  const { t } = useI18n();
 
-interface BrowseByTagButtonProps {
-  tag: string;
-  icon?: string;
-  caption?: string;
-  toolTip?: boolean;
-  qChipClass?: string;
-};
+  interface BrowseByTagButtonProps {
+    tag: string;
+    icon?: string;
+    caption?: string;
+    toolTip?: boolean;
+    qChipClass?: string;
+  };
 
-withDefaults(defineProps<BrowseByTagButtonProps>(), {
-  toolTip: true
-});
+  withDefaults(defineProps<BrowseByTagButtonProps>(), {
+    toolTip: true
+  });
 
 </script>

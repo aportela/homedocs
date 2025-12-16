@@ -38,143 +38,143 @@
 
 <script setup lang="ts">
 
-import { ref, useAttrs, computed, nextTick, onMounted } from "vue";
-import { useI18n } from "vue-i18n";
-import { useQuasar, QInput } from "quasar";
+  import { ref, useAttrs, computed, nextTick, onMounted } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { useQuasar, QInput } from "quasar";
 
-import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
+  import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 
-interface InteractiveTextFieldCustomInput {
-  modelValue: string;
-  label?: string;
-  maxLines?: number;
-  rules?: Array<(val: string) => boolean | string>;
-  autofocus?: boolean;
-  startModeEditable?: boolean;
-  error?: boolean;
-  errorMessage?: string;
-};
+  interface InteractiveTextFieldCustomInput {
+    modelValue: string;
+    label?: string;
+    maxLines?: number;
+    rules?: Array<(val: string) => boolean | string>;
+    autofocus?: boolean;
+    startModeEditable?: boolean;
+    error?: boolean;
+    errorMessage?: string;
+  };
 
-const props = withDefaults(defineProps<InteractiveTextFieldCustomInput>(), {
-  label: "",
-  maxLines: 2,
-  rules: () => [],
-  autofocus: false,
-  startModeEditable: true,
-  error: false,
-  errorMessage: ""
-});
+  const props = withDefaults(defineProps<InteractiveTextFieldCustomInput>(), {
+    label: "",
+    maxLines: 2,
+    rules: () => [],
+    autofocus: false,
+    startModeEditable: true,
+    error: false,
+    errorMessage: ""
+  });
 
-const attrs = useAttrs();
-const { t } = useI18n();
+  const attrs = useAttrs();
+  const { t } = useI18n();
 
-const $q = useQuasar();
-const isDesktop = computed(() => $q.platform.is.desktop);
+  const $q = useQuasar();
+  const isDesktop = computed(() => $q.platform.is.desktop);
 
-const emit = defineEmits(['update:modelValue']);
+  const emit = defineEmits(['update:modelValue']);
 
-const qInputRef = ref<QInput | null>(null);
+  const qInputRef = ref<QInput | null>(null);
 
-const readOnly = ref(!props.startModeEditable);
+  const readOnly = ref(!props.startModeEditable);
 
-const text = computed({
-  get() {
-    return props.modelValue;
-  },
-  set(value) {
-    emit('update:modelValue', value);
+  const text = computed({
+    get() {
+      return props.modelValue;
+    },
+    set(value) {
+      emit('update:modelValue', value);
+    }
+  });
+
+  const showTopHoverIcons = ref(!isDesktop.value);
+
+  const collapsedView = ref(true);
+
+  const focus = () => {
+    nextTick()
+      .then(() => {
+        qInputRef.value?.focus();
+      }).catch((e) => {
+        console.error(e);
+      });
   }
-});
 
-const showTopHoverIcons = ref(!isDesktop.value);
+  const onMouseEnter = () => {
+    if (isDesktop.value) {
+      showTopHoverIcons.value = true
+    }
+  };
 
-const collapsedView = ref(true);
+  const onMouseLeave = () => {
+    if (isDesktop.value) {
+      showTopHoverIcons.value = false
+    }
+  };
 
-const focus = () => {
-  nextTick()
-    .then(() => {
-      qInputRef.value?.focus();
-    }).catch((e) => {
-      console.error(e);
-    });
-}
-
-const onMouseEnter = () => {
-  if (isDesktop.value) {
-    showTopHoverIcons.value = true
+  const onToggleReadOnly = () => {
+    readOnly.value = !readOnly.value;
+    if (!readOnly.value) {
+      focus();
+    }
   }
-};
 
-const onMouseLeave = () => {
-  if (isDesktop.value) {
-    showTopHoverIcons.value = false
+  const unsetReadOnly = () => {
+    readOnly.value = false;
   }
-};
 
-const onToggleReadOnly = () => {
-  readOnly.value = !readOnly.value;
-  if (!readOnly.value) {
-    focus();
-  }
-}
+  defineExpose({
+    focus, unsetReadOnly
+  });
 
-const unsetReadOnly = () => {
-  readOnly.value = false;
-}
-
-defineExpose({
-  focus, unsetReadOnly
-});
-
-onMounted(() => {
-  if (props.autofocus && props.startModeEditable) {
-    focus();
-  }
-});
+  onMounted(() => {
+    if (props.autofocus && props.startModeEditable) {
+      focus();
+    }
+  });
 
 </script>
 
 <style lang="css" scoped>
-.collapsed {
-  overflow: hidden;
-  -webkit-line-clamp: var(--max-lines);
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  text-overflow: ellipsis;
-}
+  .collapsed {
+    overflow: hidden;
+    -webkit-line-clamp: var(--max-lines);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+  }
 
-.read-only-input-container {
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 4px;
-}
-
-.body--dark {
   .read-only-input-container {
-    border: 1px solid rgba(255, 255, 255, 0.28);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 4px;
   }
-}
 
-.border-error {
-  border: 2px solid red !important;
-}
+  .body--dark {
+    .read-only-input-container {
+      border: 1px solid rgba(255, 255, 255, 0.28);
+    }
+  }
 
-/* TODO: do not use relative position */
-.error-message {
-  position: relative;
-  top: -10px;
-  font-size: 0.8em;
-}
+  .border-error {
+    border: 2px solid red !important;
+  }
 
-.readonly-label {
-  font-size: 12px;
-  color: rgba(0, 0, 0, 0.6);
-  margin-left: 0px;
-  margin-bottom: 4px;
-}
+  /* TODO: do not use relative position */
+  .error-message {
+    position: relative;
+    top: -10px;
+    font-size: 0.8em;
+  }
 
-.body--dark {
   .readonly-label {
-    color: rgba(255, 255, 255, 0.7);
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.6);
+    margin-left: 0px;
+    margin-bottom: 4px;
   }
-}
+
+  .body--dark {
+    .readonly-label {
+      color: rgba(255, 255, 255, 0.7);
+    }
+  }
 </style>

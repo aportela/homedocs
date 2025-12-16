@@ -8,29 +8,29 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
+  import { useI18n } from "vue-i18n";
 
-import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
-import { useSessionStore } from "src/stores/session";
+  import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
+  import { useSessionStore } from "src/stores/session";
 
-const { t } = useI18n();
+  const { t } = useI18n();
 
-const emit = defineEmits(['click'])
+  const emit = defineEmits(['click'])
 
-const sessionStore = useSessionStore();
+  const sessionStore = useSessionStore();
 
-interface ViewDocumentDetailsButtonProps {
-  disable?: boolean;
-  label: string;
-  count: number;
-  toolTip?: string | null;
-};
+  interface ViewDocumentDetailsButtonProps {
+    disable?: boolean;
+    label: string;
+    count: number;
+    toolTip?: string | null;
+  };
 
-withDefaults(defineProps<ViewDocumentDetailsButtonProps>(), {
-  disable: false
-});
+  withDefaults(defineProps<ViewDocumentDetailsButtonProps>(), {
+    disable: false
+  });
 
-const onClick = (evt: Event) => {
-  emit("click", evt);
-}
+  const onClick = (evt: Event) => {
+    emit("click", evt);
+  }
 </script>

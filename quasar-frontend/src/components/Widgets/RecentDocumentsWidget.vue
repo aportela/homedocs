@@ -8,7 +8,7 @@
           count:
             recentDocuments.length
         })
-        }}</q-chip>
+      }}</q-chip>
     </template>
     <template v-slot:content>
       <q-list v-if="state.ajaxRunning">
@@ -81,91 +81,91 @@
 </template>
 
 <script setup lang="ts">
-import { ref, shallowRef, reactive, computed, onMounted, onBeforeUnmount } from "vue";
-import { useI18n } from "vue-i18n";
+  import { ref, shallowRef, reactive, computed, onMounted, onBeforeUnmount } from "vue";
+  import { useI18n } from "vue-i18n";
 
-import { bus, onShowDocumentFiles, onShowDocumentNotes } from "src/composables/bus";
-import { api } from "src/composables/api";
-import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
-import { type RecentDocumentsResponse, type RecentDocumentResponseItem } from "src/types/apiResponses";
-import { type RecentDocumentItem, RecentDocumentItemClass } from "src/types/recentDocumentItem";
-import { DateTimeClass } from "src/types/dateTime";
+  import { bus, onShowDocumentFiles, onShowDocumentNotes } from "src/composables/bus";
+  import { api } from "src/composables/api";
+  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
+  import { type RecentDocumentsResponse, type RecentDocumentResponseItem } from "src/types/apiResponses";
+  import { type RecentDocumentItem, RecentDocumentItemClass } from "src/types/recentDocumentItem";
+  import { DateTimeClass } from "src/types/dateTime";
 
-import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
-import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
-import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
-import { default as BrowseByTagButton } from "src/components/Buttons/BrowseByTagButton.vue";
-import { default as ViewDocumentDetailsButton } from "src/components/Buttons/ViewDocumentDetailsButton.vue";
+  import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
+  import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
+  import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
+  import { default as BrowseByTagButton } from "src/components/Buttons/BrowseByTagButton.vue";
+  import { default as ViewDocumentDetailsButton } from "src/components/Buttons/ViewDocumentDetailsButton.vue";
 
-const { t } = useI18n();
+  const { t } = useI18n();
 
-interface RecentDocumentsWidgetProps {
-  expanded?: boolean
-};
+  interface RecentDocumentsWidgetProps {
+    expanded?: boolean
+  };
 
-const props = withDefaults(defineProps<RecentDocumentsWidgetProps>(), {
-  expanded: true
-});
-
-const isExpanded = ref(props.expanded);
-
-const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
-
-const recentDocuments = shallowRef<Array<RecentDocumentItem>>([]);
-
-const hasRecentDocuments = computed(() => recentDocuments.value.length > 0);
-
-const onRefresh = () => {
-  if (!state.ajaxRunning) {
-    Object.assign(state, defaultAjaxState);
-    state.ajaxRunning = true;
-    api.document.searchRecent(16)
-      .then((successResponse: RecentDocumentsResponse) => {
-        recentDocuments.value = successResponse.data.documents.map((document: RecentDocumentResponseItem) =>
-          new RecentDocumentItemClass(
-            document.id,
-            new DateTimeClass(t, document.updatedAtTimestamp),
-            document.title,
-            document.description,
-            document.tags,
-            document.attachmentCount,
-            document.noteCount,
-          )
-        );
-      })
-      .catch((errorResponse) => {
-        state.ajaxErrors = true;
-        if (errorResponse.isAPIError) {
-          state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
-          switch (errorResponse.response.status) {
-            case 401:
-              state.ajaxErrors = false;
-              bus.emit("reAuthRequired", { emitter: "RecentDocumentsWidget" });
-              break;
-            default:
-              state.ajaxErrorMessage = "API Error: fatal error";
-              break;
-          }
-        } else {
-          state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
-          console.error(errorResponse);
-        }
-      }).finally(() => {
-        state.ajaxRunning = false;
-      });
-  }
-};
-
-onMounted(() => {
-  onRefresh();
-  bus.on("reAuthSucess", (msg) => {
-    if (msg.to?.includes("RecentDocumentsWidget")) {
-      onRefresh();
-    }
+  const props = withDefaults(defineProps<RecentDocumentsWidgetProps>(), {
+    expanded: true
   });
-});
 
-onBeforeUnmount(() => {
-  bus.off("reAuthSucess");
-});
+  const isExpanded = ref(props.expanded);
+
+  const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
+
+  const recentDocuments = shallowRef<Array<RecentDocumentItem>>([]);
+
+  const hasRecentDocuments = computed(() => recentDocuments.value.length > 0);
+
+  const onRefresh = () => {
+    if (!state.ajaxRunning) {
+      Object.assign(state, defaultAjaxState);
+      state.ajaxRunning = true;
+      api.document.searchRecent(16)
+        .then((successResponse: RecentDocumentsResponse) => {
+          recentDocuments.value = successResponse.data.documents.map((document: RecentDocumentResponseItem) =>
+            new RecentDocumentItemClass(
+              document.id,
+              new DateTimeClass(t, document.updatedAtTimestamp),
+              document.title,
+              document.description,
+              document.tags,
+              document.attachmentCount,
+              document.noteCount,
+            )
+          );
+        })
+        .catch((errorResponse) => {
+          state.ajaxErrors = true;
+          if (errorResponse.isAPIError) {
+            state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
+            switch (errorResponse.response.status) {
+              case 401:
+                state.ajaxErrors = false;
+                bus.emit("reAuthRequired", { emitter: "RecentDocumentsWidget" });
+                break;
+              default:
+                state.ajaxErrorMessage = "API Error: fatal error";
+                break;
+            }
+          } else {
+            state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
+            console.error(errorResponse);
+          }
+        }).finally(() => {
+          state.ajaxRunning = false;
+        });
+    }
+  };
+
+  onMounted(() => {
+    onRefresh();
+    bus.on("reAuthSucess", (msg) => {
+      if (msg.to?.includes("RecentDocumentsWidget")) {
+        onRefresh();
+      }
+    });
+  });
+
+  onBeforeUnmount(() => {
+    bus.off("reAuthSucess");
+  });
 </script>

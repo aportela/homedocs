@@ -76,7 +76,7 @@
                   <q-tab name="history" icon="view_timeline" :disable="state.ajaxRunning" :label="t('History')"
                     v-if="document.id">
                     <q-badge floating v-show="document.hasHistoryOperations">{{ document.historyOperations.length
-                      }}</q-badge>
+                    }}</q-badge>
                   </q-tab>
                 </q-tabs>
               </q-card-section>

@@ -21,39 +21,39 @@
 
 <script setup lang="ts">
 
-import { computed } from "vue";
-import { useI18n } from "vue-i18n";
-import { type HistoryOperation as HistoryOperationInterface } from "src/types/historyOperation";
-import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
+  import { computed } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { type HistoryOperation as HistoryOperationInterface } from "src/types/historyOperation";
+  import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
 
-const { t } = useI18n();
+  const { t } = useI18n();
 
-interface DocumentDetailsHistoryProps {
-  modelValue: HistoryOperationInterface[];
-  disable: boolean;
-};
+  interface DocumentDetailsHistoryProps {
+    modelValue: HistoryOperationInterface[];
+    disable: boolean;
+  };
 
-const props = withDefaults(defineProps<DocumentDetailsHistoryProps>(), {
-  disable: false
-});
+  const props = withDefaults(defineProps<DocumentDetailsHistoryProps>(), {
+    disable: false
+  });
 
 
-const historyOperations = computed({
-  get() {
-    return props.modelValue;
-  },
-  set() {
-    /* */
-  }
-});
+  const historyOperations = computed({
+    get() {
+      return props.modelValue;
+    },
+    set() {
+      /* */
+    }
+  });
 
-const hasHistoryOperations = computed(() => historyOperations.value?.length > 0);
+  const hasHistoryOperations = computed(() => historyOperations.value?.length > 0);
 
 </script>
 
 <style lang="css" scoped>
-.q-list-history-container {
-  min-height: 50vh;
-  max-height: 50vh;
-}
+  .q-list-history-container {
+    min-height: 50vh;
+    max-height: 50vh;
+  }
 </style>

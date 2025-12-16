@@ -5,33 +5,33 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { useQuasar } from "quasar";
+  import { computed } from "vue";
+  import { useQuasar } from "quasar";
 
-import { useSessionStore } from "src/stores/session";
+  import { useSessionStore } from "src/stores/session";
 
-const $q = useQuasar()
+  const $q = useQuasar()
 
-const isDesktop = computed(() => $q.platform.is.desktop);
+  const isDesktop = computed(() => $q.platform.is.desktop);
 
-const sessionStore = useSessionStore();
+  const sessionStore = useSessionStore();
 
-type TooltipAnchor =
-  | 'top left' | 'top middle' | 'top right' | 'top start' | 'top end'
-  | 'center left' | 'center middle' | 'center right' | 'center start' | 'center end'
-  | 'bottom left' | 'bottom middle' | 'bottom right' | 'bottom start' | 'bottom end';
+  type TooltipAnchor =
+    | 'top left' | 'top middle' | 'top right' | 'top start' | 'top end'
+    | 'center left' | 'center middle' | 'center right' | 'center start' | 'center end'
+    | 'bottom left' | 'bottom middle' | 'bottom right' | 'bottom start' | 'bottom end';
 
-type TooltipSelf = TooltipAnchor;
+  type TooltipSelf = TooltipAnchor;
 
-interface TooltipProps {
-  delay?: number;
-  anchor?: TooltipAnchor;
-  self?: TooltipSelf;
-};
+  interface TooltipProps {
+    delay?: number;
+    anchor?: TooltipAnchor;
+    self?: TooltipSelf;
+  };
 
-withDefaults(defineProps<TooltipProps>(), {
-  delay: 0,
-  anchor: 'top middle',
-  self: 'bottom middle',
-});
+  withDefaults(defineProps<TooltipProps>(), {
+    delay: 0,
+    anchor: 'top middle',
+    self: 'bottom middle',
+  });
 </script>

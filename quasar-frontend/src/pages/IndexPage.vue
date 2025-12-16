@@ -12,14 +12,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { useQuasar } from "quasar";
+  import { ref } from "vue";
+  import { useQuasar } from "quasar";
 
-import { default as RecentDocuments } from "src/components/Widgets/RecentDocumentsWidget.vue";
-import { default as TagCloudWidget } from "src/components/Widgets/TagCloudWidget.vue";
+  import { default as RecentDocuments } from "src/components/Widgets/RecentDocumentsWidget.vue";
+  import { default as TagCloudWidget } from "src/components/Widgets/TagCloudWidget.vue";
 
-const $q = useQuasar();
+  const $q = useQuasar();
 
-const expanded = ref(!$q.screen.lt.md);
+  const expanded = ref(!$q.screen.lt.md);
 
 </script>

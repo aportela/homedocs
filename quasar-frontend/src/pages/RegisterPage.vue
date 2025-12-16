@@ -7,5 +7,5 @@
 </template>
 
 <script setup lang="ts">
-import { default as RegisterForm } from "src/components/Forms/RegisterForm.vue";
+  import { default as RegisterForm } from "src/components/Forms/RegisterForm.vue";
 </script>

@@ -74,102 +74,102 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from "vue";
-import { useI18n } from "vue-i18n";
-import { bgDownload } from "src/composables/axios";
-import { allowPreview, isImage, isAudio, isPDF } from "src/composables/fileUtils";
-import { getURL as getAttachmentURL, getInlineURL as getAttachmentInlineURL } from "src/composables/attachment";
-import { useBrowserSupportStore } from "src/stores/browserSupport";
-import { type Document } from "src/types/document";
-import { type CustomBanner as CustomBannerInterface, defaultCustomBanner } from "src/types/customBanner";
+  import { ref, reactive, computed } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { bgDownload } from "src/composables/axios";
+  import { allowPreview, isImage, isAudio, isPDF } from "src/composables/fileUtils";
+  import { getURL as getAttachmentURL, getInlineURL as getAttachmentInlineURL } from "src/composables/attachment";
+  import { useBrowserSupportStore } from "src/stores/browserSupport";
+  import { type Document } from "src/types/document";
+  import { type CustomBanner as CustomBannerInterface, defaultCustomBanner } from "src/types/customBanner";
 
-import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
-import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
-import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
-import { type Attachment as AttachmentInterface } from "src/types/attachment";
-import { default as PDFWrapper } from "src/components/PDFWrapper.vue";
-import { DateTimeClass } from "src/types/dateTime";
+  import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
+  import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
+  import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
+  import { type Attachment as AttachmentInterface } from "src/types/attachment";
+  import { default as PDFWrapper } from "src/components/PDFWrapper.vue";
+  import { DateTimeClass } from "src/types/dateTime";
 
-const { t } = useI18n();
+  const { t } = useI18n();
 
-const emit = defineEmits(['close']);
+  const emit = defineEmits(['close']);
 
-const previewLoadingError = ref(false);
+  const previewLoadingError = ref(false);
 
-interface FilePreviewDialogProps {
-  document: Document;
-  currentIndex?: number;
-};
+  interface FilePreviewDialogProps {
+    document: Document;
+    currentIndex?: number;
+  };
 
-const props = withDefaults(defineProps<FilePreviewDialogProps>(), {
-  currentIndex: 0
-});
+  const props = withDefaults(defineProps<FilePreviewDialogProps>(), {
+    currentIndex: 0
+  });
 
-const visible = ref<boolean>(true);
+  const visible = ref<boolean>(true);
 
-const hasAttachments = computed(() => props.document?.attachments?.length > 0);
-const attachmentsCount = computed(() => hasAttachments.value ? props.document?.attachments?.length : 0);
+  const hasAttachments = computed(() => props.document?.attachments?.length > 0);
+  const attachmentsCount = computed(() => hasAttachments.value ? props.document?.attachments?.length : 0);
 
-const currentAttachmentIndex = ref<number>(props.currentIndex + 1 || 1);
+  const currentAttachmentIndex = ref<number>(props.currentIndex + 1 || 1);
 
-const currentAttachment = computed(() => props.document.attachments.length > 0 && currentAttachmentIndex.value <= props.document.attachments.length ? props.document.attachments[currentAttachmentIndex.value - 1] : <AttachmentInterface>{
-  id: '',
-  name: '',
-  size: 0,
-  hash: '',
-  humanSize: '',
-  createdAt: new DateTimeClass(t, null),
-  orphaned: true,
-});
+  const currentAttachment = computed(() => props.document.attachments.length > 0 && currentAttachmentIndex.value <= props.document.attachments.length ? props.document.attachments[currentAttachmentIndex.value - 1] : <AttachmentInterface>{
+    id: '',
+    name: '',
+    size: 0,
+    hash: '',
+    humanSize: '',
+    createdAt: new DateTimeClass(t, null),
+    orphaned: true,
+  });
 
-const onClose = () => {
-  emit('close');
-};
+  const onClose = () => {
+    emit('close');
+  };
 
-const downloadBanner: CustomBannerInterface = reactive({ ...defaultCustomBanner });
+  const downloadBanner: CustomBannerInterface = reactive({ ...defaultCustomBanner });
 
-const browserSupportStore = useBrowserSupportStore();
+  const browserSupportStore = useBrowserSupportStore();
 
-const onPaginationChange = () => {
-  Object.assign(downloadBanner, defaultCustomBanner);
-  previewLoadingError.value = false
-};
+  const onPaginationChange = () => {
+    Object.assign(downloadBanner, defaultCustomBanner);
+    previewLoadingError.value = false
+  };
 
-const onImageLoadError = () => {
-  previewLoadingError.value = true;
-  downloadBanner.success = false;
-  downloadBanner.error = true;
-  downloadBanner.text = t("Error loading preview");
-  downloadBanner.visible = true;
-};
+  const onImageLoadError = () => {
+    previewLoadingError.value = true;
+    downloadBanner.success = false;
+    downloadBanner.error = true;
+    downloadBanner.text = t("Error loading preview");
+    downloadBanner.visible = true;
+  };
 
-const onDownload = (attachmentId: string, fileName: string) => {
-  Object.assign(downloadBanner, defaultCustomBanner);
-  bgDownload(getAttachmentURL(attachmentId), fileName)
-    .then((successResponse) => {
-      downloadBanner.success = true;
-      downloadBanner.text = t("FileDownloadedMessage", { filename: successResponse.fileName, length: successResponse.length });
-    })
-    .catch(() => {
-      downloadBanner.error = true;
-      downloadBanner.text = t("FileDownloadErrorMessage", { filename: fileName });
-    }).finally(() => {
-      downloadBanner.visible = true;
-    });
-}
+  const onDownload = (attachmentId: string, fileName: string) => {
+    Object.assign(downloadBanner, defaultCustomBanner);
+    bgDownload(getAttachmentURL(attachmentId), fileName)
+      .then((successResponse) => {
+        downloadBanner.success = true;
+        downloadBanner.text = t("FileDownloadedMessage", { filename: successResponse.fileName, length: successResponse.length });
+      })
+      .catch(() => {
+        downloadBanner.error = true;
+        downloadBanner.text = t("FileDownloadErrorMessage", { filename: fileName });
+      }).finally(() => {
+        downloadBanner.visible = true;
+      });
+  }
 </script>
 
 <style>
-.q-img-max-height {
-  max-height: 40vh;
-}
+  .q-img-max-height {
+    max-height: 40vh;
+  }
 
-.pdf-container {
-  width: 98%;
-  min-height: 70vh;
-}
+  .pdf-container {
+    width: 98%;
+    min-height: 70vh;
+  }
 
-.pdf-wrapper-inner-class {
-  height: 70vh;
-}
+  .pdf-wrapper-inner-class {
+    height: 70vh;
+  }
 </style>

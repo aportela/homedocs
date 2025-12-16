@@ -16,24 +16,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { useI18n } from "vue-i18n";
+  import { ref } from "vue";
+  import { useI18n } from "vue-i18n";
 
-import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue"
-import { default as LoginForm } from "src/components/Forms/LoginForm.vue"
+  import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue"
+  import { default as LoginForm } from "src/components/Forms/LoginForm.vue"
 
-const { t } = useI18n();
+  const { t } = useI18n();
 
-const emit = defineEmits(['close', 'success']);
+  const emit = defineEmits(['close', 'success']);
 
-const visible = ref<boolean>(true);
+  const visible = ref<boolean>(true);
 
-const onClose = () => {
-  emit('close');
-}
+  const onClose = () => {
+    emit('close');
+  }
 
-const onSuccess = () => {
-  emit('success');
-};
+  const onSuccess = () => {
+    emit('success');
+  };
 
 </script>

@@ -25,83 +25,83 @@
 </template>
 
 <script setup lang="ts">
-import { ref, shallowRef, reactive, computed, onMounted, onBeforeUnmount } from "vue";
-import { useI18n } from "vue-i18n";
-import { bus } from "src/composables/bus";
-import { api } from "src/composables/api";
-import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
-import { type TagCloudResponse, type TagCloudResponseItem } from "src/types/apiResponses";
+  import { ref, shallowRef, reactive, computed, onMounted, onBeforeUnmount } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { bus } from "src/composables/bus";
+  import { api } from "src/composables/api";
+  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
+  import { type TagCloudResponse, type TagCloudResponseItem } from "src/types/apiResponses";
 
-import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
-import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
-import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
-import { default as BrowseByTagButton } from "src/components/Buttons/BrowseByTagButton.vue";
+  import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
+  import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
+  import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
+  import { default as BrowseByTagButton } from "src/components/Buttons/BrowseByTagButton.vue";
 
-const { t } = useI18n();
+  const { t } = useI18n();
 
-interface TagCloudWidgetProps {
-  expanded?: boolean
-};
+  interface TagCloudWidgetProps {
+    expanded?: boolean
+  };
 
-const props = withDefaults(defineProps<TagCloudWidgetProps>(), {
-  expanded: true
-});
-
-const isExpanded = ref(props.expanded);
-
-const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
-
-const tags = shallowRef<Array<TagCloudResponseItem>>([]);
-
-const hasTags = computed(() => tags.value.length > 0);
-
-const onRefresh = () => {
-  if (!state.ajaxRunning) {
-    Object.assign(state, defaultAjaxState);
-    state.ajaxRunning = true;
-    api.tag.getCloud()
-      .then((successResponse: TagCloudResponse) => {
-        tags.value = successResponse.data.tags;
-      })
-      .catch((errorResponse) => {
-        state.ajaxErrors = true;
-        if (errorResponse.isAPIError) {
-          state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
-          switch (errorResponse.response.status) {
-            case 401:
-              state.ajaxErrors = false;
-              bus.emit("reAuthRequired", { emitter: "TagCloudWidget" });
-              break;
-            default:
-              state.ajaxErrorMessage = "API Error: fatal error";
-              break;
-          }
-        } else {
-          state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
-          console.error(errorResponse);
-        }
-      }).finally(() => {
-        state.ajaxRunning = false;
-      });
-  }
-};
-
-onMounted(() => {
-  onRefresh();
-  bus.on("reAuthSucess", (msg) => {
-    if (msg.to?.includes("TagCloudWidget")) {
-      onRefresh();
-    }
+  const props = withDefaults(defineProps<TagCloudWidgetProps>(), {
+    expanded: true
   });
-});
 
-onBeforeUnmount(() => {
-  bus.off("reAuthSucess");
-});
+  const isExpanded = ref(props.expanded);
+
+  const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
+
+  const tags = shallowRef<Array<TagCloudResponseItem>>([]);
+
+  const hasTags = computed(() => tags.value.length > 0);
+
+  const onRefresh = () => {
+    if (!state.ajaxRunning) {
+      Object.assign(state, defaultAjaxState);
+      state.ajaxRunning = true;
+      api.tag.getCloud()
+        .then((successResponse: TagCloudResponse) => {
+          tags.value = successResponse.data.tags;
+        })
+        .catch((errorResponse) => {
+          state.ajaxErrors = true;
+          if (errorResponse.isAPIError) {
+            state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
+            switch (errorResponse.response.status) {
+              case 401:
+                state.ajaxErrors = false;
+                bus.emit("reAuthRequired", { emitter: "TagCloudWidget" });
+                break;
+              default:
+                state.ajaxErrorMessage = "API Error: fatal error";
+                break;
+            }
+          } else {
+            state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
+            console.error(errorResponse);
+          }
+        }).finally(() => {
+          state.ajaxRunning = false;
+        });
+    }
+  };
+
+  onMounted(() => {
+    onRefresh();
+    bus.on("reAuthSucess", (msg) => {
+      if (msg.to?.includes("TagCloudWidget")) {
+        onRefresh();
+      }
+    });
+  });
+
+  onBeforeUnmount(() => {
+    bus.off("reAuthSucess");
+  });
 </script>
 
 <style lang="css">
-.q-chip-10em {
-  width: 10em;
-}
+  .q-chip-10em {
+    width: 10em;
+  }
 </style>

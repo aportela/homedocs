@@ -20,47 +20,47 @@
 
 <script setup lang="ts">
 
-import { computed, useAttrs } from "vue";
-import { useI18n } from "vue-i18n";
-import { type Sort as SortInterface } from "src/types/sort";
+  import { computed, useAttrs } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { type Sort as SortInterface } from "src/types/sort";
 
-const attrs = useAttrs();
+  const attrs = useAttrs();
 
-const { t } = useI18n();
+  const { t } = useI18n();
 
-const emit = defineEmits(['change'])
+  const emit = defineEmits(['change'])
 
-// TODO: v-model ?
-interface SortByFieldCustomButtonDropdownProps {
-  options: SortInterface[];
-  current: SortInterface;
-  dense?: boolean;
-};
+  // TODO: v-model ?
+  interface SortByFieldCustomButtonDropdownProps {
+    options: SortInterface[];
+    current: SortInterface;
+    dense?: boolean;
+  };
 
-const props = withDefaults(defineProps<SortByFieldCustomButtonDropdownProps>(), {
-  dense: false,
-});
+  const props = withDefaults(defineProps<SortByFieldCustomButtonDropdownProps>(), {
+    dense: false,
+  });
 
-const currentSort = computed({
-  get() {
-    return props.current;
-  },
-  set() {
-    /* */
-  }
-});
-
-const currentLabel = computed(() =>
-  t("Current sort by",
-    {
-      label: currentSort.value.label ? t(currentSort.value.label) : null,
-      order: currentSort.value.order ? t(currentSort.value.order == "DESC" ? "descending" : "ascending") : null
+  const currentSort = computed({
+    get() {
+      return props.current;
+    },
+    set() {
+      /* */
     }
-  )
-);
+  });
 
-const onClick = (option: SortInterface) => {
-  emit("change", option);
-};
+  const currentLabel = computed(() =>
+    t("Current sort by",
+      {
+        label: currentSort.value.label ? t(currentSort.value.label) : null,
+        order: currentSort.value.order ? t(currentSort.value.order == "DESC" ? "descending" : "ascending") : null
+      }
+    )
+  );
+
+  const onClick = (option: SortInterface) => {
+    emit("change", option);
+  };
 
 </script>

@@ -65,161 +65,161 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, nextTick } from "vue";
-import { useI18n } from "vue-i18n";
-import { QInput, QPopupProxy } from 'quasar';
-import { type DateFilterClass } from "src/types/dateFilters";
-import { selectorAvailableOptions, type SelectorOption as SelectorOptionInterface } from "src/types/dateFilters";
+  import { ref, computed, onMounted, nextTick } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { QInput, QPopupProxy } from 'quasar';
+  import { type DateFilterClass } from "src/types/dateFilters";
+  import { selectorAvailableOptions, type SelectorOption as SelectorOptionInterface } from "src/types/dateFilters";
 
-const { t } = useI18n();
+  const { t } = useI18n();
 
-const emit = defineEmits(['update:modelValue'])
+  const emit = defineEmits(['update:modelValue'])
 
-interface DateFieldCustomInput {
-  modelValue: DateFilterClass;
-  label?: string;
-  dense?: boolean;
-  outlined?: boolean;
-  autofocus?: boolean;
-  disable?: boolean;
-  autoOpenPopUps?: boolean;
-};
+  interface DateFieldCustomInput {
+    modelValue: DateFilterClass;
+    label?: string;
+    dense?: boolean;
+    outlined?: boolean;
+    autofocus?: boolean;
+    disable?: boolean;
+    autoOpenPopUps?: boolean;
+  };
 
-const props = withDefaults(defineProps<DateFieldCustomInput>(), {
-  label: "",
-  dense: false,
-  outlined: false,
-  autofocus: false,
-  disable: false,
-  autoOpenPopUps: true
-});
+  const props = withDefaults(defineProps<DateFieldCustomInput>(), {
+    label: "",
+    dense: false,
+    outlined: false,
+    autofocus: false,
+    disable: false,
+    autoOpenPopUps: true
+  });
 
-const qInputFromDateRef = ref<QInput | null>(null);
-const qInputToDateRef = ref<QInput | null>(null);
-const qInputFixedDateRef = ref<QInput | null>(null);
+  const qInputFromDateRef = ref<QInput | null>(null);
+  const qInputToDateRef = ref<QInput | null>(null);
+  const qInputFixedDateRef = ref<QInput | null>(null);
 
-const qInputFromDatePopupProfyRef = ref<QPopupProxy | null>(null);
-const qInputToDatePopupProfyRef = ref<QPopupProxy | null>(null);
-const qInputFixedDatePopupProfyRef = ref<QPopupProxy | null>(null);
+  const qInputFromDatePopupProfyRef = ref<QPopupProxy | null>(null);
+  const qInputToDatePopupProfyRef = ref<QPopupProxy | null>(null);
+  const qInputFixedDatePopupProfyRef = ref<QPopupProxy | null>(null);
 
-const dateFilter = computed({
-  get() {
-    return props.modelValue;
-  },
-  set(value) {
-    emit('update:modelValue', value);
-  }
-});
-
-const dateFilterTypeOptions = computed(() =>
-  selectorAvailableOptions.map((option: SelectorOptionInterface) => ({
-    ...option,
-    label: t(option.labelKey),
-  })),
-);
-
-const currentFilterTypeSelectorModel = computed({
-  get() {
-    if (props.modelValue.currentType === 0) {
-      return (dateFilterTypeOptions.value[0]);
-    } else {
-      return (dateFilterTypeOptions.value.find((option) => option.value === props.modelValue.currentType));
+  const dateFilter = computed({
+    get() {
+      return props.modelValue;
+    },
+    set(value) {
+      emit('update:modelValue', value);
     }
-  },
-  set(option?: SelectorOptionInterface) {
-    dateFilter.value.setType(option?.value || 0);
-    emit('update:modelValue', dateFilter.value);
-  }
-});
+  });
 
-const extraDateInputFieldsDisabled = computed(() => props.disable || dateFilter.value.state.denyChanges);
+  const dateFilterTypeOptions = computed(() =>
+    selectorAvailableOptions.map((option: SelectorOptionInterface) => ({
+      ...option,
+      label: t(option.labelKey),
+    })),
+  );
 
-/*
-watch(() => props.modelValue, (newValue: DateFilterClass) => dateFilter.value = newValue);
+  const currentFilterTypeSelectorModel = computed({
+    get() {
+      if (props.modelValue.currentType === 0) {
+        return (dateFilterTypeOptions.value[0]);
+      } else {
+        return (dateFilterTypeOptions.value.find((option) => option.value === props.modelValue.currentType));
+      }
+    },
+    set(option?: SelectorOptionInterface) {
+      dateFilter.value.setType(option?.value || 0);
+      emit('update:modelValue', dateFilter.value);
+    }
+  });
 
-watch(dateFilter.value, (val: DateFilterClass) => {
-  focus();
-  emit('update:modelValue', val);
-  if (props.autoOpenPopUps) {
-    nextTick()
-      .then(() => {
-        //switch (val.filterType.value) {
-        switch (val.currentType) {
-          case 7: // fixed date
-            if (!val.formattedDate.fixed) {
-              qInputFixedDatePopupProfyRef.value?.show();
-            }
-            break;
-          case 8: // from date
-            if (!val.formattedDate.from) {
-              qInputFromDatePopupProfyRef.value?.show();
-            }
-            break;
-          case 9: // to date
-            if (!val.formattedDate.to) {
-              qInputToDatePopupProfyRef.value?.show();
-            }
-            break;
-          case 10: // between dates
-            if (!val.formattedDate.from) {
-              qInputFromDatePopupProfyRef.value?.show();
-            }
-            break;
-        }
-      }).catch((e) => {
-        console.error(e);
-      });
-  }
-});
+  const extraDateInputFieldsDisabled = computed(() => props.disable || dateFilter.value.state.denyChanges);
 
-*/
-const hideFromDatePopupProxy = () => {
-  dateFilter.value.recalcTimestamps();
-  qInputFromDatePopupProfyRef.value?.hide();
-}
-
-const hideToDatePopupProxy = () => {
-  dateFilter.value.recalcTimestamps();
-  qInputToDatePopupProfyRef.value?.hide();
-}
-
-const hideFixedDatePopupProxy = () => {
-  dateFilter.value.recalcTimestamps();
-  qInputFixedDatePopupProfyRef.value?.hide();
-}
-
-// TODO: focus based on dateFilter.state.denyChanges
-const focus = () => {
-  if (!dateFilter.value.state.denyChanges) {
-    nextTick()
-      .then(() => {
-        switch (dateFilter.value.currentType) {
-          case 7: // fixed date
-            qInputFixedDateRef.value?.focus();
-            break;
-          case 8: // from date
-            qInputFromDateRef.value?.focus();
-            break;
-          case 9: // to date
-            qInputToDateRef.value?.focus();
-            break;
-          case 10: // between dates
-            qInputFromDateRef.value?.focus();
-            break;
-        }
-      }).catch((e) => {
-        console.error(e);
-      });
-  }
-};
-
-defineExpose({
-  focus
-});
-
-onMounted(() => {
-  if (props.autofocus) {
+  /*
+  watch(() => props.modelValue, (newValue: DateFilterClass) => dateFilter.value = newValue);
+  
+  watch(dateFilter.value, (val: DateFilterClass) => {
     focus();
+    emit('update:modelValue', val);
+    if (props.autoOpenPopUps) {
+      nextTick()
+        .then(() => {
+          //switch (val.filterType.value) {
+          switch (val.currentType) {
+            case 7: // fixed date
+              if (!val.formattedDate.fixed) {
+                qInputFixedDatePopupProfyRef.value?.show();
+              }
+              break;
+            case 8: // from date
+              if (!val.formattedDate.from) {
+                qInputFromDatePopupProfyRef.value?.show();
+              }
+              break;
+            case 9: // to date
+              if (!val.formattedDate.to) {
+                qInputToDatePopupProfyRef.value?.show();
+              }
+              break;
+            case 10: // between dates
+              if (!val.formattedDate.from) {
+                qInputFromDatePopupProfyRef.value?.show();
+              }
+              break;
+          }
+        }).catch((e) => {
+          console.error(e);
+        });
+    }
+  });
+  
+  */
+  const hideFromDatePopupProxy = () => {
+    dateFilter.value.recalcTimestamps();
+    qInputFromDatePopupProfyRef.value?.hide();
   }
-});
+
+  const hideToDatePopupProxy = () => {
+    dateFilter.value.recalcTimestamps();
+    qInputToDatePopupProfyRef.value?.hide();
+  }
+
+  const hideFixedDatePopupProxy = () => {
+    dateFilter.value.recalcTimestamps();
+    qInputFixedDatePopupProfyRef.value?.hide();
+  }
+
+  // TODO: focus based on dateFilter.state.denyChanges
+  const focus = () => {
+    if (!dateFilter.value.state.denyChanges) {
+      nextTick()
+        .then(() => {
+          switch (dateFilter.value.currentType) {
+            case 7: // fixed date
+              qInputFixedDateRef.value?.focus();
+              break;
+            case 8: // from date
+              qInputFromDateRef.value?.focus();
+              break;
+            case 9: // to date
+              qInputToDateRef.value?.focus();
+              break;
+            case 10: // between dates
+              qInputFromDateRef.value?.focus();
+              break;
+          }
+        }).catch((e) => {
+          console.error(e);
+        });
+    }
+  };
+
+  defineExpose({
+    focus
+  });
+
+  onMounted(() => {
+    if (props.autofocus) {
+      focus();
+    }
+  });
 </script>

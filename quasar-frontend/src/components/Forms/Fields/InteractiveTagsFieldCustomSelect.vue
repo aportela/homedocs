@@ -34,182 +34,182 @@
 
 <script setup lang="ts">
 
-import { ref, reactive, computed, onMounted, onBeforeUnmount, nextTick } from "vue";
-import { useI18n } from "vue-i18n";
-import { QSelect } from "quasar";
+  import { ref, reactive, computed, onMounted, onBeforeUnmount, nextTick } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { QSelect } from "quasar";
 
-import { bus } from "src/composables/bus";
-import { api } from "src/composables/api";
-import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
-import { type GetTagsResponse as GetTagsResponseInterface } from "src/types/apiResponses";
+  import { bus } from "src/composables/bus";
+  import { api } from "src/composables/api";
+  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
+  import { type GetTagsResponse as GetTagsResponseInterface } from "src/types/apiResponses";
 
-import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
-import { default as BrowseByTagButton } from "src/components/Buttons/BrowseByTagButton.vue";
+  import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
+  import { default as BrowseByTagButton } from "src/components/Buttons/BrowseByTagButton.vue";
 
-const { t } = useI18n();
+  const { t } = useI18n();
 
-interface InteractiveTagsFieldCustomSelectProps {
-  startModeEditable?: boolean;
-  denyChangeEditableMode?: boolean;
-  modelValue: string[];
-  disabled?: boolean;
-  dense?: boolean;
-  label?: string;
-};
+  interface InteractiveTagsFieldCustomSelectProps {
+    startModeEditable?: boolean;
+    denyChangeEditableMode?: boolean;
+    modelValue: string[];
+    disabled?: boolean;
+    dense?: boolean;
+    label?: string;
+  };
 
-const props = withDefaults(defineProps<InteractiveTagsFieldCustomSelectProps>(), {
-  startModeEditable: false,
-  denyChangeEditableMode: false,
-  disabled: false,
-  delse: false,
-  label: "Document tags",
-});
+  const props = withDefaults(defineProps<InteractiveTagsFieldCustomSelectProps>(), {
+    startModeEditable: false,
+    denyChangeEditableMode: false,
+    disabled: false,
+    delse: false,
+    label: "Document tags",
+  });
 
-const emit = defineEmits(['update:modelValue', 'error']);
+  const emit = defineEmits(['update:modelValue', 'error']);
 
-const showUpdateHoverIcon = ref(false);
+  const showUpdateHoverIcon = ref(false);
 
-const readOnly = ref(!props.startModeEditable);
-const selectRef = ref<QSelect | null>(null);
+  const readOnly = ref(!props.startModeEditable);
+  const selectRef = ref<QSelect | null>(null);
 
-const tags = computed({
-  get() {
-    return props.modelValue || [];
-  },
-  set(value) {
-    emit('update:modelValue', value || []);
-  }
-});
-
-const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
-
-const availableTags = reactive<Array<string>>([]);
-const filteredTags = reactive<Array<string>>([]);
-
-const invalidTagFormat = ref<boolean>(false);
-
-const errorMessage = computed(() => invalidTagFormat.value ? "Only lowercase letters, numbers and hyphens are allowed in tags" : "Error loading available tags");
-
-const onFilterTags = (inputValue: string, doneFn: (callbackFn: () => void, afterFn?: (ref: QSelect) => void) => void): void => {
-  const regex = /^[0-9a-z-]*$/;
-
-  invalidTagFormat.value = inputValue.length > 0 && !regex.test(inputValue);
-
-  const filtered = inputValue === ''
-    ? availableTags
-    : availableTags.filter(tag => tag.toLowerCase().includes(inputValue.toLowerCase()));
-
-  doneFn(() => {
-    filteredTags.length = 0;
-    if (inputValue.length > 0 && !invalidTagFormat.value) {
-      filteredTags.push(...filtered);
+  const tags = computed({
+    get() {
+      return props.modelValue || [];
+    },
+    set(value) {
+      emit('update:modelValue', value || []);
     }
   });
-};
 
-const onNewValue = (value: string, done: (value?: string) => void): void => {
-  if (!invalidTagFormat.value) {
-    done(value);
-  }
-};
+  const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-const onRefresh = () => {
-  if (!state.ajaxRunning) {
-    Object.assign(state, defaultAjaxState);
-    state.ajaxRunning = true;
-    api.tag.search()
-      .then((successResponse: GetTagsResponseInterface) => {
-        availableTags.length = 0;
-        availableTags.push(...successResponse.data.tags);
-      }).catch((errorResponse) => {
-        state.ajaxErrors = true;
-        if (errorResponse.isAPIError) {
-          state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
-          switch (errorResponse.response.status) {
-            case 401:
-              state.ajaxErrors = false;
-              bus.emit("reAuthRequired", { emitter: "InteractiveTagsFieldCustomSelect" });
-              break;
-            default:
-              state.ajaxErrorMessage = "API Error: fatal error";
-              break;
-          }
-        } else {
-          state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
-          console.error(errorResponse);
-        }
-        emit('error', errorResponse.response);
-      }).finally(() => {
-        state.ajaxRunning = false;
-      });
-  }
-};
+  const availableTags = reactive<Array<string>>([]);
+  const filteredTags = reactive<Array<string>>([]);
 
-const onAddTag = (): void => {
-  selectRef.value?.hidePopup()
-  selectRef.value?.reset();
-  selectRef.value?.updateInputValue("");
-};
+  const invalidTagFormat = ref<boolean>(false);
 
-const removeTagAtIndex = (index: number) => {
-  tags.value?.splice(index, 1);
-};
+  const errorMessage = computed(() => invalidTagFormat.value ? "Only lowercase letters, numbers and hyphens are allowed in tags" : "Error loading available tags");
 
-const focus = () => {
-  nextTick()
-    .then(() => {
-      selectRef.value?.focus()
-    }).catch((e) => {
-      console.error(e);
+  const onFilterTags = (inputValue: string, doneFn: (callbackFn: () => void, afterFn?: (ref: QSelect) => void) => void): void => {
+    const regex = /^[0-9a-z-]*$/;
+
+    invalidTagFormat.value = inputValue.length > 0 && !regex.test(inputValue);
+
+    const filtered = inputValue === ''
+      ? availableTags
+      : availableTags.filter(tag => tag.toLowerCase().includes(inputValue.toLowerCase()));
+
+    doneFn(() => {
+      filteredTags.length = 0;
+      if (inputValue.length > 0 && !invalidTagFormat.value) {
+        filteredTags.push(...filtered);
+      }
     });
-};
+  };
 
-defineExpose({
-  focus
-});
-
-const onToggleReadOnly = () => {
-  readOnly.value = !readOnly.value;
-  if (!readOnly.value) {
-    focus();
-  }
-};
-
-onMounted(() => {
-  onRefresh();
-  bus.on("reAuthSucess", (msg) => {
-    if (msg.to?.includes("InteractiveTagsFieldCustomSelect")) {
-      onRefresh();
+  const onNewValue = (value: string, done: (value?: string) => void): void => {
+    if (!invalidTagFormat.value) {
+      done(value);
     }
-  });
-});
+  };
 
-onBeforeUnmount(() => {
-  bus.off("reAuthSucess");
-});
+  const onRefresh = () => {
+    if (!state.ajaxRunning) {
+      Object.assign(state, defaultAjaxState);
+      state.ajaxRunning = true;
+      api.tag.search()
+        .then((successResponse: GetTagsResponseInterface) => {
+          availableTags.length = 0;
+          availableTags.push(...successResponse.data.tags);
+        }).catch((errorResponse) => {
+          state.ajaxErrors = true;
+          if (errorResponse.isAPIError) {
+            state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
+            switch (errorResponse.response.status) {
+              case 401:
+                state.ajaxErrors = false;
+                bus.emit("reAuthRequired", { emitter: "InteractiveTagsFieldCustomSelect" });
+                break;
+              default:
+                state.ajaxErrorMessage = "API Error: fatal error";
+                break;
+            }
+          } else {
+            state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
+            console.error(errorResponse);
+          }
+          emit('error', errorResponse.response);
+        }).finally(() => {
+          state.ajaxRunning = false;
+        });
+    }
+  };
+
+  const onAddTag = (): void => {
+    selectRef.value?.hidePopup()
+    selectRef.value?.reset();
+    selectRef.value?.updateInputValue("");
+  };
+
+  const removeTagAtIndex = (index: number) => {
+    tags.value?.splice(index, 1);
+  };
+
+  const focus = () => {
+    nextTick()
+      .then(() => {
+        selectRef.value?.focus()
+      }).catch((e) => {
+        console.error(e);
+      });
+  };
+
+  defineExpose({
+    focus
+  });
+
+  const onToggleReadOnly = () => {
+    readOnly.value = !readOnly.value;
+    if (!readOnly.value) {
+      focus();
+    }
+  };
+
+  onMounted(() => {
+    onRefresh();
+    bus.on("reAuthSucess", (msg) => {
+      if (msg.to?.includes("InteractiveTagsFieldCustomSelect")) {
+        onRefresh();
+      }
+    });
+  });
+
+  onBeforeUnmount(() => {
+    bus.off("reAuthSucess");
+  });
 
 </script>
 
 <style lang="css" scoped>
-.readonly-label {
-  font-size: 12px;
-  color: rgba(0, 0, 0, 0.6);
-  margin-left: 0px;
-  margin-bottom: 4px;
-}
-
-.read-only-input-container {
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 4px;
-}
-
-.body--dark {
-  .read-only-input-container {
-    border: 1px solid rgba(255, 255, 255, 0.28);
-  }
-
   .readonly-label {
-    color: rgba(255, 255, 255, 0.7);
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.6);
+    margin-left: 0px;
+    margin-bottom: 4px;
   }
-}
+
+  .read-only-input-container {
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 4px;
+  }
+
+  .body--dark {
+    .read-only-input-container {
+      border: 1px solid rgba(255, 255, 255, 0.28);
+    }
+
+    .readonly-label {
+      color: rgba(255, 255, 255, 0.7);
+    }
+  }
 </style>

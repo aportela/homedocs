@@ -15,59 +15,59 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { useI18n } from "vue-i18n";
+  import { computed } from "vue";
+  import { useI18n } from "vue-i18n";
 
-import { useSessionStore } from "src/stores/session";
+  import { useSessionStore } from "src/stores/session";
 
-import { default as BaseWidget } from "src/components/Widgets/BaseWidget.vue";
+  import { default as BaseWidget } from "src/components/Widgets/BaseWidget.vue";
 
-const { t } = useI18n();
+  const { t } = useI18n();
 
-const sessionStore = useSessionStore();
+  const sessionStore = useSessionStore();
 
-const dateFormatModel = computed({
-  get() {
-    return (sessionStore.savedDateFormat);
-  },
-  set(value: string | number | null) {
-    if (typeof value === 'string' && value.length > 0) {
-      sessionStore.setDateFormat(value);
-    } else {
-      sessionStore.removeDateFormat();
+  const dateFormatModel = computed({
+    get() {
+      return (sessionStore.savedDateFormat);
+    },
+    set(value: string | number | null) {
+      if (typeof value === 'string' && value.length > 0) {
+        sessionStore.setDateFormat(value);
+      } else {
+        sessionStore.removeDateFormat();
+      }
     }
-  }
-});
+  });
 
-const dateTimeFormatModel = computed({
-  get() {
-    return (sessionStore.savedDateTimeFormat);
-  },
-  set(value: string | number | null) {
-    if (typeof value === 'string' && value.length > 0) {
-      sessionStore.setDateTimeFormat(value);
-    } else {
-      sessionStore.removeDateTimeFormat();
+  const dateTimeFormatModel = computed({
+    get() {
+      return (sessionStore.savedDateTimeFormat);
+    },
+    set(value: string | number | null) {
+      if (typeof value === 'string' && value.length > 0) {
+        sessionStore.setDateTimeFormat(value);
+      } else {
+        sessionStore.removeDateTimeFormat();
+      }
     }
-  }
-});
+  });
 
-const visibilityCheckModel = computed({
-  get() {
-    return (sessionStore.openUploadDialog);
-  },
-  set(value: boolean) {
-    sessionStore.setOpenUploadDialog(value);
-  }
-});
+  const visibilityCheckModel = computed({
+    get() {
+      return (sessionStore.openUploadDialog);
+    },
+    set(value: boolean) {
+      sessionStore.setOpenUploadDialog(value);
+    }
+  });
 
-const toolTipsCheckModel = computed({
-  get() {
-    return (sessionStore.toolTipsEnabled);
-  },
-  set(value: boolean) {
-    sessionStore.toggleToolTips(value);
-  }
-});
+  const toolTipsCheckModel = computed({
+    get() {
+      return (sessionStore.toolTipsEnabled);
+    },
+    set(value: boolean) {
+      sessionStore.toggleToolTips(value);
+    }
+  });
 
 </script>

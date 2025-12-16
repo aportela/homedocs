@@ -26,95 +26,95 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, onBeforeUnmount } from "vue";
-import { useRouter } from "vue-router";
-import { useI18n } from "vue-i18n";
+  import { ref, reactive, onMounted, onBeforeUnmount } from "vue";
+  import { useRouter } from "vue-router";
+  import { useI18n } from "vue-i18n";
 
-import { bus } from "src/composables/bus";
-import { api } from "src/composables/api";
+  import { bus } from "src/composables/bus";
+  import { api } from "src/composables/api";
 
-import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
+  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
 
-import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
-import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
-import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue"
+  import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
+  import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
+  import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue"
 
-const { t } = useI18n();
+  const { t } = useI18n();
 
-const emit = defineEmits(['close']);
+  const emit = defineEmits(['close']);
 
-const router = useRouter();
+  const router = useRouter();
 
-interface DeleteDocumentConfirmationDialogProps {
-  documentId: string;
-};
+  interface DeleteDocumentConfirmationDialogProps {
+    documentId: string;
+  };
 
-const props = defineProps<DeleteDocumentConfirmationDialogProps>();
+  const props = defineProps<DeleteDocumentConfirmationDialogProps>();
 
-const visible = ref<boolean>(true);
+  const visible = ref<boolean>(true);
 
-const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
+  const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-const deleted = ref<boolean>(false);
+  const deleted = ref<boolean>(false);
 
-const onDelete = () => {
-  Object.assign(state, defaultAjaxState);
-  state.ajaxRunning = true;
-  api.document.
-    remove(props.documentId)
-    .then(() => {
-      deleted.value = true;
-    })
-    .catch((errorResponse) => {
-      state.ajaxErrors = true;
-      if (errorResponse.isAPIError) {
-        state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
-        switch (errorResponse.response.status) {
-          case 401:
-            state.ajaxErrors = false;
-            bus.emit("reAuthRequired", { emitter: "DeleteDocumentConfirmationDialog.onDelete" });
-            break;
-          case 403: // access denied
-            state.ajaxErrorMessage = "Error removing (non existent) document"; // TODO
-            break;
-          case 404: // document not found
-            state.ajaxErrorMessage = "Error removing document: access denied"; // TODO
-            break;
-          default:
-            state.ajaxErrorMessage = "API Error: fatal error";
-            break;
+  const onDelete = () => {
+    Object.assign(state, defaultAjaxState);
+    state.ajaxRunning = true;
+    api.document.
+      remove(props.documentId)
+      .then(() => {
+        deleted.value = true;
+      })
+      .catch((errorResponse) => {
+        state.ajaxErrors = true;
+        if (errorResponse.isAPIError) {
+          state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
+          switch (errorResponse.response.status) {
+            case 401:
+              state.ajaxErrors = false;
+              bus.emit("reAuthRequired", { emitter: "DeleteDocumentConfirmationDialog.onDelete" });
+              break;
+            case 403: // access denied
+              state.ajaxErrorMessage = "Error removing (non existent) document"; // TODO
+              break;
+            case 404: // document not found
+              state.ajaxErrorMessage = "Error removing document: access denied"; // TODO
+              break;
+            default:
+              state.ajaxErrorMessage = "API Error: fatal error";
+              break;
+          }
+        } else {
+          state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
+          console.error(errorResponse);
         }
-      } else {
-        state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
-        console.error(errorResponse);
-      }
-    }).finally(() => {
-      state.ajaxRunning = false;
-    });
-}
-
-const onClose = () => {
-  visible.value = false;
-  if (!deleted.value) {
-    emit('close');
-  } else {
-    router.push({
-      name: "index",
-    }).catch((e) => {
-      console.error(e);
-    });
+      }).finally(() => {
+        state.ajaxRunning = false;
+      });
   }
-}
 
-onMounted(() => {
-  bus.on("reAuthSucess", (msg) => {
-    if (msg.to?.includes("DeleteDocumentConfirmationDialog.onDelete")) {
-      onDelete();
+  const onClose = () => {
+    visible.value = false;
+    if (!deleted.value) {
+      emit('close');
+    } else {
+      router.push({
+        name: "index",
+      }).catch((e) => {
+        console.error(e);
+      });
     }
-  });
-});
+  }
 
-onBeforeUnmount(() => {
-  bus.off("reAuthSucess");
-});
+  onMounted(() => {
+    bus.on("reAuthSucess", (msg) => {
+      if (msg.to?.includes("DeleteDocumentConfirmationDialog.onDelete")) {
+        onDelete();
+      }
+    });
+  });
+
+  onBeforeUnmount(() => {
+    bus.off("reAuthSucess");
+  });
 </script>

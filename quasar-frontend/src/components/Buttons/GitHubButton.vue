@@ -6,16 +6,16 @@
 </template>
 
 <script setup lang="ts">
-import { useAttrs, computed } from "vue";
-import { useI18n } from "vue-i18n";
+  import { useAttrs, computed } from "vue";
+  import { useI18n } from "vue-i18n";
 
-import { fabGithub } from "@quasar/extras/fontawesome-v6";
+  import { fabGithub } from "@quasar/extras/fontawesome-v6";
 
-import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
+  import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 
-const attrs = useAttrs();
+  const attrs = useAttrs();
 
-const { t } = useI18n();
+  const { t } = useI18n();
 
-const tooltip = computed(() => t("Browse project page"));
+  const tooltip = computed(() => t("Browse project page"));
 </script>

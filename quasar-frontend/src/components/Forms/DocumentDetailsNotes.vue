@@ -47,59 +47,59 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from "vue";
-import { useI18n } from "vue-i18n";
+  import { ref, reactive, computed } from "vue";
+  import { useI18n } from "vue-i18n";
 
-import { useFormUtils } from "src/composables/useFormUtils"
-import { getRegexForStringMatch } from "src/composables/common";
-import { type Note as NoteInterface } from "src/types/note";
+  import { useFormUtils } from "src/composables/useFormUtils"
+  import { getRegexForStringMatch } from "src/composables/common";
+  import { type Note as NoteInterface } from "src/types/note";
 
-import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
-import { default as InteractiveTextFieldCustomInput } from "src/components/Forms/Fields/InteractiveTextFieldCustomInput.vue"
-import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
+  import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
+  import { default as InteractiveTextFieldCustomInput } from "src/components/Forms/Fields/InteractiveTextFieldCustomInput.vue"
+  import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 
-const { t } = useI18n();
+  const { t } = useI18n();
 
-const { requiredFieldRule, fieldIsRequiredLabel } = useFormUtils();
+  const { requiredFieldRule, fieldIsRequiredLabel } = useFormUtils();
 
-const emit = defineEmits(['update:modelValue', 'addNote', 'removeNoteAtIndex']);
+  const emit = defineEmits(['update:modelValue', 'addNote', 'removeNoteAtIndex']);
 
-interface DocumentDetailsNotesProps {
-  notes: NoteInterface[];
-  disable: boolean;
-};
+  interface DocumentDetailsNotesProps {
+    notes: NoteInterface[];
+    disable: boolean;
+  };
 
-const props = withDefaults(defineProps<DocumentDetailsNotesProps>(), {
-  disable: false
-});
+  const props = withDefaults(defineProps<DocumentDetailsNotesProps>(), {
+    disable: false
+  });
 
-const hiddenIds = reactive<Array<string>>([]);
+  const hiddenIds = reactive<Array<string>>([]);
 
-const hasNotes = computed(() => props.notes?.length > 0);
+  const hasNotes = computed(() => props.notes?.length > 0);
 
-const searchText = ref(null);
+  const searchText = ref(null);
 
-const onSearchTextChanged = (text: string | number | null) => {
-  hiddenIds.length = 0;
-  if (text) {
-    const regex = getRegexForStringMatch(String(text));
-    hiddenIds.push(...props.notes.filter(note => !note.body?.match(regex)).map(note => note.id));
-    // TODO: map new fragment with bold ?
-  }
-};
+  const onSearchTextChanged = (text: string | number | null) => {
+    hiddenIds.length = 0;
+    if (text) {
+      const regex = getRegexForStringMatch(String(text));
+      hiddenIds.push(...props.notes.filter(note => !note.body?.match(regex)).map(note => note.id));
+      // TODO: map new fragment with bold ?
+    }
+  };
 
-const onAddNote = () => {
-  emit("addNote");
-};
+  const onAddNote = () => {
+    emit("addNote");
+  };
 
-const onRemoveNoteAtIndex = (index: number) => {
-  emit("removeNoteAtIndex", index);
-};
+  const onRemoveNoteAtIndex = (index: number) => {
+    emit("removeNoteAtIndex", index);
+  };
 </script>
 
 <style lang="css" scoped>
-.q-list-notes-container {
-  min-height: 50vh;
-  max-height: 50vh;
-}
+  .q-list-notes-container {
+    min-height: 50vh;
+    max-height: 50vh;
+  }
 </style>

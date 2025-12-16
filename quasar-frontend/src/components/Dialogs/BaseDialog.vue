@@ -37,60 +37,60 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { useI18n } from "vue-i18n";
+  import { computed } from "vue";
+  import { useI18n } from "vue-i18n";
 
-const { t } = useI18n();
-const emit = defineEmits(['update:modelValue', 'show', 'close', 'confirm', 'cancel']);
+  const { t } = useI18n();
+  const emit = defineEmits(['update:modelValue', 'show', 'close', 'confirm', 'cancel']);
 
-interface BaseDialogProps {
-  modelValue: boolean,
-  showHeaderCloseButton?: boolean,
-  width?: string | null,
-  minWidth?: string | null,
-  maxWidth?: string | null,
-  confirmationDialog?: boolean,
-  disable?: boolean,
-  persistent?: boolean,
-  hideFooter?: boolean,
-};
+  interface BaseDialogProps {
+    modelValue: boolean,
+    showHeaderCloseButton?: boolean,
+    width?: string | null,
+    minWidth?: string | null,
+    maxWidth?: string | null,
+    confirmationDialog?: boolean,
+    disable?: boolean,
+    persistent?: boolean,
+    hideFooter?: boolean,
+  };
 
-const props = withDefaults(defineProps<BaseDialogProps>(), {
-  showHeaderCloseButton: true,
-  width: null,
-  minWidth: null,
-  maxWidth: null,
-  confirmationDialog: false,
-  disable: false,
-  persistent: false,
-  hideFooter: false,
-});
+  const props = withDefaults(defineProps<BaseDialogProps>(), {
+    showHeaderCloseButton: true,
+    width: null,
+    minWidth: null,
+    maxWidth: null,
+    confirmationDialog: false,
+    disable: false,
+    persistent: false,
+    hideFooter: false,
+  });
 
-const visible = computed({
-  get() {
-    return props.modelValue;
-  },
-  set(value) {
-    emit('update:modelValue', value);
+  const visible = computed({
+    get() {
+      return props.modelValue;
+    },
+    set(value) {
+      emit('update:modelValue', value);
+    }
+  });
+
+  const onShow = () => {
+    emit('show');
+  };
+
+  const onHide = () => {
+    visible.value = false;
+    emit('close');
   }
-});
 
-const onShow = () => {
-  emit('show');
-};
+  const onConfirm = () => {
+    visible.value = false;
+    emit('confirm');
+  }
 
-const onHide = () => {
-  visible.value = false;
-  emit('close');
-}
-
-const onConfirm = () => {
-  visible.value = false;
-  emit('confirm');
-}
-
-const onCancel = () => {
-  visible.value = false;
-  emit('cancel');
-}
+  const onCancel = () => {
+    visible.value = false;
+    emit('cancel');
+  }
 </script>

@@ -2,9 +2,9 @@
   <BaseDialog v-model="visible" @close="onClose" width="1280px" max-width="80vw">
     <template v-slot:header-left>
       <div v-if="documentTitle">{{ t("Document title")
-      }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
+        }}: <router-link :to="{ name: 'document', params: { id: documentId } }" class="text-decoration-hover">{{
           documentTitle
-        }}</router-link>
+          }}</router-link>
       </div>
       <div v-else>{{ t("Document attachments") }}</div>
     </template>
@@ -68,126 +68,126 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
-import { format } from "quasar";
-import { useI18n } from "vue-i18n";
-import { bus } from "src/composables/bus";
-import { allowPreview } from "src/composables/fileUtils"
-import { bgDownload } from "src/composables/axios";
-import { api } from "src/composables/api";
-import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
-import { type Attachment as AttachmentInterface, AttachmentClass } from "src/types/attachment";
-import { DateTimeClass } from "src/types/dateTime";
-import { type CustomBanner as CustomBannerInterface, defaultCustomBanner } from "src/types/customBanner";
-import { type DocumentAttachmentsResponse as DocumentAttachmentsResponseInterface, type DocumentAttachmentResponseItem as DocumentAttachmentResponseItemInterface } from "src/types/apiResponses";
-import { getURL as getAttachmentURL } from "src/composables/attachment";
+  import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
+  import { format } from "quasar";
+  import { useI18n } from "vue-i18n";
+  import { bus } from "src/composables/bus";
+  import { allowPreview } from "src/composables/fileUtils"
+  import { bgDownload } from "src/composables/axios";
+  import { api } from "src/composables/api";
+  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
+  import { type Attachment as AttachmentInterface, AttachmentClass } from "src/types/attachment";
+  import { DateTimeClass } from "src/types/dateTime";
+  import { type CustomBanner as CustomBannerInterface, defaultCustomBanner } from "src/types/customBanner";
+  import { type DocumentAttachmentsResponse as DocumentAttachmentsResponseInterface, type DocumentAttachmentResponseItem as DocumentAttachmentResponseItemInterface } from "src/types/apiResponses";
+  import { getURL as getAttachmentURL } from "src/composables/attachment";
 
-import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
-import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
-import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
+  import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
+  import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
+  import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
 
-const { t } = useI18n();
+  const { t } = useI18n();
 
-interface DocumentFilesPreviewDialogProps {
-  documentId: string;
-  documentTitle?: string;
-};
+  interface DocumentFilesPreviewDialogProps {
+    documentId: string;
+    documentTitle?: string;
+  };
 
-const props = defineProps<DocumentFilesPreviewDialogProps>();
+  const props = defineProps<DocumentFilesPreviewDialogProps>();
 
-const emit = defineEmits(['close']);
+  const emit = defineEmits(['close']);
 
-const visible = ref<boolean>(true);
+  const visible = ref<boolean>(true);
 
-const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
+  const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-const attachments = reactive<Array<AttachmentInterface>>([]);
-const hasAttachments = computed(() => attachments?.length > 0);
+  const attachments = reactive<Array<AttachmentInterface>>([]);
+  const hasAttachments = computed(() => attachments?.length > 0);
 
-const onFilePreview = (index: number) => {
-  bus.emit("showDocumentFilePreviewDialog", { document: { id: props.documentId, title: props.documentTitle, attachments: attachments }, currentIndex: index });
-};
+  const onFilePreview = (index: number) => {
+    bus.emit("showDocumentFilePreviewDialog", { document: { id: props.documentId, title: props.documentTitle, attachments: attachments }, currentIndex: index });
+  };
 
-const downloadBanner: CustomBannerInterface = reactive({ ...defaultCustomBanner });
+  const downloadBanner: CustomBannerInterface = reactive({ ...defaultCustomBanner });
 
-const onDownload = (attachmentId: string, fileName: string) => {
-  Object.assign(downloadBanner, defaultCustomBanner);
-  bgDownload(getAttachmentURL(attachmentId), fileName)
-    .then((successResponse) => {
-      downloadBanner.success = true;
-      downloadBanner.text = t("FileDownloadedMessage", { filename: successResponse.fileName, length: format.humanStorageSize(successResponse.length) });
-    })
-    .catch(() => {
-      downloadBanner.error = true;
-      downloadBanner.text = t("FileDownloadeErrorMessage", { filename: fileName });
-    }).finally(() => {
-      downloadBanner.visible = true;
-    });
-}
-
-const onRefresh = (documentId: string) => {
-  if (!state.ajaxRunning) {
-    Object.assign(state, defaultAjaxState);
-    state.ajaxRunning = true;
-    api.document
-      .getAttachments(documentId)
-      .then((successResponse: DocumentAttachmentsResponseInterface) => {
-        attachments.length = 0;
-        attachments.push(...successResponse.data.attachments.map((attachment: DocumentAttachmentResponseItemInterface) =>
-          new AttachmentClass(
-            attachment.id,
-            attachment.name,
-            attachment.hash,
-            attachment.size,
-            new DateTimeClass(t, attachment.createdAtTimestamp),
-            false,
-            attachment.shared,
-          )
-        ));
+  const onDownload = (attachmentId: string, fileName: string) => {
+    Object.assign(downloadBanner, defaultCustomBanner);
+    bgDownload(getAttachmentURL(attachmentId), fileName)
+      .then((successResponse) => {
+        downloadBanner.success = true;
+        downloadBanner.text = t("FileDownloadedMessage", { filename: successResponse.fileName, length: format.humanStorageSize(successResponse.length) });
       })
-      .catch((errorResponse) => {
-        state.ajaxErrors = true;
-        if (errorResponse.isAPIError) {
-          state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
-          switch (errorResponse.response.status) {
-            case 401:
-              state.ajaxErrors = false;
-              bus.emit("reAuthRequired", { emitter: "DocumentFilesPreviewDialog" });
-              break;
-            default:
-              state.ajaxErrorMessage = "API Error: fatal error";
-              break;
-          }
-        } else {
-          state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
-          console.error(errorResponse);
-        }
+      .catch(() => {
+        downloadBanner.error = true;
+        downloadBanner.text = t("FileDownloadeErrorMessage", { filename: fileName });
       }).finally(() => {
-        state.ajaxRunning = false;
+        downloadBanner.visible = true;
       });
   }
-};
 
-const onClose = () => {
-  emit('close');
-};
-
-onMounted(() => {
-  onRefresh(props.documentId);
-  bus.on("reAuthSucess", (msg) => {
-    if (msg.to?.includes("DocumentFilesPreviewDialog")) {
-      onRefresh(props.documentId);
+  const onRefresh = (documentId: string) => {
+    if (!state.ajaxRunning) {
+      Object.assign(state, defaultAjaxState);
+      state.ajaxRunning = true;
+      api.document
+        .getAttachments(documentId)
+        .then((successResponse: DocumentAttachmentsResponseInterface) => {
+          attachments.length = 0;
+          attachments.push(...successResponse.data.attachments.map((attachment: DocumentAttachmentResponseItemInterface) =>
+            new AttachmentClass(
+              attachment.id,
+              attachment.name,
+              attachment.hash,
+              attachment.size,
+              new DateTimeClass(t, attachment.createdAtTimestamp),
+              false,
+              attachment.shared,
+            )
+          ));
+        })
+        .catch((errorResponse) => {
+          state.ajaxErrors = true;
+          if (errorResponse.isAPIError) {
+            state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
+            switch (errorResponse.response.status) {
+              case 401:
+                state.ajaxErrors = false;
+                bus.emit("reAuthRequired", { emitter: "DocumentFilesPreviewDialog" });
+                break;
+              default:
+                state.ajaxErrorMessage = "API Error: fatal error";
+                break;
+            }
+          } else {
+            state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
+            console.error(errorResponse);
+          }
+        }).finally(() => {
+          state.ajaxRunning = false;
+        });
     }
-  });
-});
+  };
 
-onBeforeUnmount(() => {
-  bus.off("reAuthSucess");
-});
+  const onClose = () => {
+    emit('close');
+  };
+
+  onMounted(() => {
+    onRefresh(props.documentId);
+    bus.on("reAuthSucess", (msg) => {
+      if (msg.to?.includes("DocumentFilesPreviewDialog")) {
+        onRefresh(props.documentId);
+      }
+    });
+  });
+
+  onBeforeUnmount(() => {
+    bus.off("reAuthSucess");
+  });
 </script>
 
 <style lang="css" scoped>
-.attachments-scrolled-container {
-  max-height: 50vh;
-}
+  .attachments-scrolled-container {
+    max-height: 50vh;
+  }
 </style>

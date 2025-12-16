@@ -16,34 +16,34 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, useAttrs, watch } from "vue";
-import { useI18n } from "vue-i18n";
-import { availableLocaleSelectorOptionItems, getlocaleSelectorOptionItem } from "src/i18n";
-import { useI18nStore } from "src/stores/i18n";
-import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
+  import { ref, computed, useAttrs, watch } from "vue";
+  import { useI18n } from "vue-i18n";
+  import { availableLocaleSelectorOptionItems, getlocaleSelectorOptionItem } from "src/i18n";
+  import { useI18nStore } from "src/stores/i18n";
+  import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 
-const { t } = useI18n();
+  const { t } = useI18n();
 
-const i18NStore = useI18nStore();
+  const i18NStore = useI18nStore();
 
-const attrs = useAttrs();
+  const attrs = useAttrs();
 
-interface SwitchLanguageButtonProps {
-  shortLabels?: boolean
-};
-withDefaults(defineProps<SwitchLanguageButtonProps>(), {
-  shortLabels: false
-});
+  interface SwitchLanguageButtonProps {
+    shortLabels?: boolean
+  };
+  withDefaults(defineProps<SwitchLanguageButtonProps>(), {
+    shortLabels: false
+  });
 
-const tooltip = computed(() => t("Switch language"));
+  const tooltip = computed(() => t("Switch language"));
 
-const selectedLocale = ref(getlocaleSelectorOptionItem(i18NStore.currentLocale));
+  const selectedLocale = ref(getlocaleSelectorOptionItem(i18NStore.currentLocale));
 
-watch(() => i18NStore.currentLocale, () => {
-  selectedLocale.value = getlocaleSelectorOptionItem(i18NStore.currentLocale);
-});
+  watch(() => i18NStore.currentLocale, () => {
+    selectedLocale.value = getlocaleSelectorOptionItem(i18NStore.currentLocale);
+  });
 
-const onSetLocale = (newLocale: string) => {
-  i18NStore.setLocale(newLocale);
-};
+  const onSetLocale = (newLocale: string) => {
+    i18NStore.setLocale(newLocale);
+  };
 </script>

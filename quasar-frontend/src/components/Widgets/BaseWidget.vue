@@ -24,37 +24,37 @@
 
 <script setup lang="ts">
 
-import { computed } from "vue";
+  import { computed } from "vue";
 
-import { useI18n } from "vue-i18n";
+  import { useI18n } from "vue-i18n";
 
-import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
+  import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 
-const { t } = useI18n();
+  const { t } = useI18n();
 
-interface BaseWidgetProps {
-  title: string;
-  caption?: string;
-  icon: string;
-  iconToolTip?: string;
-  onHeaderIconClick?: (() => void) | null;
-  loading?: boolean;
-  error?: boolean;
-};
-const props = withDefaults(defineProps<BaseWidgetProps>(), {
-  caption: '',
-  iconToolTip: '',
-  onHeaderIconClick: null,
-  loading: false,
-  error: false
-});
+  interface BaseWidgetProps {
+    title: string;
+    caption?: string;
+    icon: string;
+    iconToolTip?: string;
+    onHeaderIconClick?: (() => void) | null;
+    loading?: boolean;
+    error?: boolean;
+  };
+  const props = withDefaults(defineProps<BaseWidgetProps>(), {
+    caption: '',
+    iconToolTip: '',
+    onHeaderIconClick: null,
+    loading: false,
+    error: false
+  });
 
-const iconClass = computed(() => props.onHeaderIconClick && typeof props.onHeaderIconClick === 'function' ? "cursor-pointer" : "cursor-default");
+  const iconClass = computed(() => props.onHeaderIconClick && typeof props.onHeaderIconClick === 'function' ? "cursor-pointer" : "cursor-default");
 
-const onHeaderIconClicked = () => {
-  if (props.onHeaderIconClick && typeof props.onHeaderIconClick === 'function') {
-    props.onHeaderIconClick();
+  const onHeaderIconClicked = () => {
+    if (props.onHeaderIconClick && typeof props.onHeaderIconClick === 'function') {
+      props.onHeaderIconClick();
+    }
   }
-}
 
 </script>

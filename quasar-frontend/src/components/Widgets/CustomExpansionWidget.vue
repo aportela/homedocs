@@ -29,64 +29,64 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
-import { useI18n } from "vue-i18n";
+  import { ref, computed, watch } from "vue";
+  import { useI18n } from "vue-i18n";
 
-import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
+  import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
 
-const { t } = useI18n();
+  const { t } = useI18n();
 
-const emit = defineEmits(['expand', 'collapse']);
+  const emit = defineEmits(['expand', 'collapse']);
 
-interface CustomExpansionWidgetProps {
-  expanded?: boolean;
-  title?: string;
-  caption?: string;
-  icon: string;
-  staticIcon?: boolean;
-  iconToolTip?: string;
-  onHeaderIconClick?: (() => void) | null;
-  loading?: boolean;
-  error?: boolean;
-};
+  interface CustomExpansionWidgetProps {
+    expanded?: boolean;
+    title?: string;
+    caption?: string;
+    icon: string;
+    staticIcon?: boolean;
+    iconToolTip?: string;
+    onHeaderIconClick?: (() => void) | null;
+    loading?: boolean;
+    error?: boolean;
+  };
 
-const props = withDefaults(defineProps<CustomExpansionWidgetProps>(), {
-  expanded: true,
-  title: "",
-  caption: "",
-  staticIcon: false,
-  onHeaderIconClick: null,
-  loading: false,
-  error: false,
-});
+  const props = withDefaults(defineProps<CustomExpansionWidgetProps>(), {
+    expanded: true,
+    title: "",
+    caption: "",
+    staticIcon: false,
+    onHeaderIconClick: null,
+    loading: false,
+    error: false,
+  });
 
-const isExpanded = ref(props.expanded === true);
-const iconClass = computed(() => props.onHeaderIconClick && typeof props.onHeaderIconClick === 'function' ? "cursor-pointer" : "cursor-default");
+  const isExpanded = ref(props.expanded === true);
+  const iconClass = computed(() => props.onHeaderIconClick && typeof props.onHeaderIconClick === 'function' ? "cursor-pointer" : "cursor-default");
 
-watch(() => isExpanded.value, val => {
-  if (val) {
-    emit('expand');
-  } else {
-    emit('collapse');
+  watch(() => isExpanded.value, val => {
+    if (val) {
+      emit('expand');
+    } else {
+      emit('collapse');
+    }
+  });
+
+  const expand = () => {
+    isExpanded.value = true;
+  };
+
+  const collapse = () => {
+    isExpanded.value = false;
+  };
+
+  defineExpose({
+    expand, collapse
+  });
+
+  const onHeaderIconClicked = () => {
+    if (props.onHeaderIconClick && typeof props.onHeaderIconClick === 'function') {
+      props.onHeaderIconClick();
+    }
   }
-});
-
-const expand = () => {
-  isExpanded.value = true;
-};
-
-const collapse = () => {
-  isExpanded.value = false;
-};
-
-defineExpose({
-  expand, collapse
-});
-
-const onHeaderIconClicked = () => {
-  if (props.onHeaderIconClick && typeof props.onHeaderIconClick === 'function') {
-    props.onHeaderIconClick();
-  }
-}
 
 </script>

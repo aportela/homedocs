@@ -28,33 +28,33 @@
 
 <script setup lang="ts">
 
-import { reactive } from "vue";
-import { useI18n } from "vue-i18n";
+  import { reactive } from "vue";
+  import { useI18n } from "vue-i18n";
 
-import ActivityHeatMap from "src/components/Widgets/ActivityHeatMap.vue";
-import { default as BaseWidget } from "src/components/Widgets/BaseWidget.vue";
-import { default as SystemStatsCountTotalDocumentsWidget } from "./SystemStatsCountTotalDocumentsWidget.vue";
-import { default as SystemStatsCountTotalAttachmentsWidget } from "./SystemStatsCountTotalAttachmentsWidget.vue";
-import { default as SystemStatsDiskUsage } from "./SystemStatsDiskUsage.vue";
+  import ActivityHeatMap from "src/components/Widgets/ActivityHeatMap.vue";
+  import { default as BaseWidget } from "src/components/Widgets/BaseWidget.vue";
+  import { default as SystemStatsCountTotalDocumentsWidget } from "./SystemStatsCountTotalDocumentsWidget.vue";
+  import { default as SystemStatsCountTotalAttachmentsWidget } from "./SystemStatsCountTotalAttachmentsWidget.vue";
+  import { default as SystemStatsDiskUsage } from "./SystemStatsDiskUsage.vue";
 
-const { t } = useI18n();
+  const { t } = useI18n();
 
-const heatmapStats = reactive({
-  loading: false,
-  loadingError: false
-});
+  const heatmapStats = reactive({
+    loading: false,
+    loadingError: false
+  });
 
-const onActivityHeatMapLoading = () => {
-  heatmapStats.loadingError = false;
-  heatmapStats.loading = true;
-};
+  const onActivityHeatMapLoading = () => {
+    heatmapStats.loadingError = false;
+    heatmapStats.loading = true;
+  };
 
-const onActivityHeatMapLoaded = () => {
-  heatmapStats.loading = false;
-};
+  const onActivityHeatMapLoaded = () => {
+    heatmapStats.loading = false;
+  };
 
-const onActivityHeatMapError = () => {
-  heatmapStats.loadingError = true;
-  heatmapStats.loading = false;
-};
+  const onActivityHeatMapError = () => {
+    heatmapStats.loadingError = true;
+    heatmapStats.loading = false;
+  };
 </script>

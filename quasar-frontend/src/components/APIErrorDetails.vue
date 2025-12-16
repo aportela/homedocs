@@ -28,54 +28,54 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { useI18n } from "vue-i18n";
-import type { APIErrorDetails } from "src/types/apiErrorDetails";
+  import { ref, computed } from "vue";
+  import { useI18n } from "vue-i18n";
+  import type { APIErrorDetails } from "src/types/apiErrorDetails";
 
-const { t } = useI18n();
+  const { t } = useI18n();
 
-interface APIErrorDetailsProps {
-  apiError: APIErrorDetails
-};
+  interface APIErrorDetailsProps {
+    apiError: APIErrorDetails
+  };
 
-const props = defineProps<APIErrorDetailsProps>();
+  const props = defineProps<APIErrorDetailsProps>();
 
-const tabModel = ref("request");
+  const tabModel = ref("request");
 
-const formattedBodyParams = ref<string | null>(null);
-const formattedResponse = ref<string | null>(null);
+  const formattedBodyParams = ref<string | null>(null);
+  const formattedResponse = ref<string | null>(null);
 
-if (props.apiError?.request?.params?.data) {
-  try {
-    formattedBodyParams.value = JSON.stringify(JSON.parse(props.apiError.request.params.data), null, 4);
-  } catch (e) {
-    console.error("JSON.stringify error", e);
-  }
-}
-
-if (props.apiError?.response) {
-  if (props.apiError.contentType === "application/json" && typeof props.apiError.response === "string") {
+  if (props.apiError?.request?.params?.data) {
     try {
-      formattedResponse.value = JSON.stringify(JSON.parse(props.apiError.response), null, 4);
-    } catch (e) {
-      console.error("JSON.stringify error", e);
-    }
-  } else if (typeof props.apiError.response === "object") {
-    // TODO: remove ???
-    try {
-      formattedResponse.value = JSON.stringify(props.apiError.response, null, 4);
+      formattedBodyParams.value = JSON.stringify(JSON.parse(props.apiError.request.params.data), null, 4);
     } catch (e) {
       console.error("JSON.stringify error", e);
     }
   }
-}
 
-const hasRequestParams = computed(() => props.apiError?.request?.params?.query || formattedBodyParams.value || props.apiError?.request?.params?.data);
-const hasResponseData = computed(() => formattedResponse.value || props.apiError.response);
+  if (props.apiError?.response) {
+    if (props.apiError.contentType === "application/json" && typeof props.apiError.response === "string") {
+      try {
+        formattedResponse.value = JSON.stringify(JSON.parse(props.apiError.response), null, 4);
+      } catch (e) {
+        console.error("JSON.stringify error", e);
+      }
+    } else if (typeof props.apiError.response === "object") {
+      // TODO: remove ???
+      try {
+        formattedResponse.value = JSON.stringify(props.apiError.response, null, 4);
+      } catch (e) {
+        console.error("JSON.stringify error", e);
+      }
+    }
+  }
+
+  const hasRequestParams = computed(() => props.apiError?.request?.params?.query || formattedBodyParams.value || props.apiError?.request?.params?.data);
+  const hasResponseData = computed(() => formattedResponse.value || props.apiError.response);
 </script>
 
 <style lang="css" scoped>
-.q-tab-panel-fixed-height {
-  height: 40vh;
-}
+  .q-tab-panel-fixed-height {
+    height: 40vh;
+  }
 </style>

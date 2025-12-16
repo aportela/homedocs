@@ -5,60 +5,60 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, onBeforeUnmount } from "vue";
+  import { ref, reactive, onMounted, onBeforeUnmount } from "vue";
 
-import { bus } from "src/composables/bus";
-import { api } from "src/composables/api";
-import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
-import { type GetTotalDocumentsStatsResponse as GetTotalDocumentsStatsResponseInterface } from "src/types/apiResponses";
-import { default as SystemStatsWidgetBase } from "src/components/Widgets/SystemStatsWidgetBase.vue";
+  import { bus } from "src/composables/bus";
+  import { api } from "src/composables/api";
+  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
+  import { type GetTotalDocumentsStatsResponse as GetTotalDocumentsStatsResponseInterface } from "src/types/apiResponses";
+  import { default as SystemStatsWidgetBase } from "src/components/Widgets/SystemStatsWidgetBase.vue";
 
 
-const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
+  const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-const total = ref<number>(0);
+  const total = ref<number>(0);
 
-const onRefresh = () => {
-  if (!state.ajaxRunning) {
-    Object.assign(state, defaultAjaxState);
-    state.ajaxRunning = true;
-    api.stats.documentCount()
-      .then((successResponse: GetTotalDocumentsStatsResponseInterface) => {
-        total.value = successResponse.data.count;
-      })
-      .catch((errorResponse) => {
-        state.ajaxErrors = true;
-        if (errorResponse.isAPIError) {
-          state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
-          switch (errorResponse.response.status) {
-            case 401:
-              state.ajaxErrors = false;
-              bus.emit("reAuthRequired", { emitter: "SystemStatsCountTotalDocumentsWidget" });
-              break;
-            default:
-              state.ajaxErrorMessage = "API Error: fatal error";
-              break;
+  const onRefresh = () => {
+    if (!state.ajaxRunning) {
+      Object.assign(state, defaultAjaxState);
+      state.ajaxRunning = true;
+      api.stats.documentCount()
+        .then((successResponse: GetTotalDocumentsStatsResponseInterface) => {
+          total.value = successResponse.data.count;
+        })
+        .catch((errorResponse) => {
+          state.ajaxErrors = true;
+          if (errorResponse.isAPIError) {
+            state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
+            switch (errorResponse.response.status) {
+              case 401:
+                state.ajaxErrors = false;
+                bus.emit("reAuthRequired", { emitter: "SystemStatsCountTotalDocumentsWidget" });
+                break;
+              default:
+                state.ajaxErrorMessage = "API Error: fatal error";
+                break;
+            }
+          } else {
+            state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
+            console.error(errorResponse);
           }
-        } else {
-          state.ajaxErrorMessage = `Uncaught exception: ${errorResponse}`;
-          console.error(errorResponse);
-        }
-      }).finally(() => {
-        state.ajaxRunning = false;
-      });
-  }
-}
-
-onMounted(() => {
-  onRefresh();
-  bus.on("reAuthSucess", (msg) => {
-    if (msg.to?.includes("SystemStatsCountTotalDocumentsWidget")) {
-      onRefresh();
+        }).finally(() => {
+          state.ajaxRunning = false;
+        });
     }
-  });
-});
+  }
 
-onBeforeUnmount(() => {
-  bus.off("reAuthSucess");
-});
+  onMounted(() => {
+    onRefresh();
+    bus.on("reAuthSucess", (msg) => {
+      if (msg.to?.includes("SystemStatsCountTotalDocumentsWidget")) {
+        onRefresh();
+      }
+    });
+  });
+
+  onBeforeUnmount(() => {
+    bus.off("reAuthSucess");
+  });
 </script>

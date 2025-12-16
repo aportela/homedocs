@@ -15,23 +15,23 @@
 
 <script setup lang="ts">
 
-import { useI18n } from "vue-i18n";
+  import { useI18n } from "vue-i18n";
 
-import { type APIErrorDetails as APIErrorDetailsInterface } from "src/types/apiErrorDetails";
-import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
+  import { type APIErrorDetails as APIErrorDetailsInterface } from "src/types/apiErrorDetails";
+  import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
 
-const { t } = useI18n();
+  const { t } = useI18n();
 
-interface SystemStatsCountWidgetBaseProps {
-  loading: boolean;
-  error: boolean;
-  icon: string;
-  headerLabel: string;
-  value: number | string;
-  errorMessage: string | null;
-  apiErrorDetails: APIErrorDetailsInterface | null;
-};
+  interface SystemStatsCountWidgetBaseProps {
+    loading: boolean;
+    error: boolean;
+    icon: string;
+    headerLabel: string;
+    value: number | string;
+    errorMessage: string | null;
+    apiErrorDetails: APIErrorDetailsInterface | null;
+  };
 
-defineProps<SystemStatsCountWidgetBaseProps>();
+  defineProps<SystemStatsCountWidgetBaseProps>();
 
 </script>

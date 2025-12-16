@@ -22,41 +22,41 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from "vue-i18n";
+  import { useI18n } from "vue-i18n";
 
-import { default as UpdateProfileForm } from "src/components/Forms/UpdateProfileForm.vue";
-import { default as ProfileStorageSettingsWidget } from "src/components/Widgets/ProfileStorageSettingsWidget.vue";
-import { default as SystemStatsContainerWidget } from "src/components/Widgets/SystemStatsContainerWidget.vue";
+  import { default as UpdateProfileForm } from "src/components/Forms/UpdateProfileForm.vue";
+  import { default as ProfileStorageSettingsWidget } from "src/components/Widgets/ProfileStorageSettingsWidget.vue";
+  import { default as SystemStatsContainerWidget } from "src/components/Widgets/SystemStatsContainerWidget.vue";
 
-const { t } = useI18n();
+  const { t } = useI18n();
 </script>
 
 <style lang="css" scoped>
-.my-profile-header-container {
-  height: 350px;
-  margin-bottom: 1em;
-}
+  .my-profile-header-container {
+    height: 350px;
+    margin-bottom: 1em;
+  }
 
-.my-profile-header-background-image-cover {
-  width: 100%;
-  height: 260px;
-  /* image credits: https://www.pexels.com/photo/keyboard-and-mouse-on-beige-background-3184460/ */
-  background-image: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.8) 100%), url('/images/pexels-photo-3184460.jpg');
-  background-size: cover;
-  background-position: bottom;
-  filter: grayscale(100%);
-  border-radius: 16px;
-}
+  .my-profile-header-background-image-cover {
+    width: 100%;
+    height: 260px;
+    /* image credits: https://www.pexels.com/photo/keyboard-and-mouse-on-beige-background-3184460/ */
+    background-image: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.8) 100%), url('/images/pexels-photo-3184460.jpg');
+    background-size: cover;
+    background-position: bottom;
+    filter: grayscale(100%);
+    border-radius: 16px;
+  }
 
-.my-profile-header-top-right-icon {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  color: blue;
-}
+  .my-profile-header-top-right-icon {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    color: blue;
+  }
 
-.my-profile-header-center-icon {
-  position: relative;
-  top: -80px;
-}
+  .my-profile-header-center-icon {
+    position: relative;
+    top: -80px;
+  }
 </style>

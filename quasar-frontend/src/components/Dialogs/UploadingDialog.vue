@@ -62,77 +62,77 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed } from "vue";
-import { format } from "quasar";
-import { useI18n } from "vue-i18n";
+  import { ref, watch, computed } from "vue";
+  import { format } from "quasar";
+  import { useI18n } from "vue-i18n";
 
-import { useSessionStore } from "src/stores/session";
-import { fullDateTimeHuman } from "src/composables/dateUtils";
-import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
+  import { useSessionStore } from "src/stores/session";
+  import { fullDateTimeHuman } from "src/composables/dateUtils";
+  import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
 
-import { type UploadTransfer as UploadTransferInterface } from "src/types/uploadTransfer";
-import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue"
+  import { type UploadTransfer as UploadTransferInterface } from "src/types/uploadTransfer";
+  import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue"
 
-const { t } = useI18n();
+  const { t } = useI18n();
 
-const serverEnvironment = useServerEnvironmentStore();
-const sessionStore = useSessionStore();
+  const serverEnvironment = useServerEnvironmentStore();
+  const sessionStore = useSessionStore();
 
-const emit = defineEmits(['update:modelValue', 'close', 'clearProcessedTransfers']);
+  const emit = defineEmits(['update:modelValue', 'close', 'clearProcessedTransfers']);
 
-interface UploadingDialogProps {
-  modelValue: boolean;
-  transfers: UploadTransferInterface[]
-};
+  interface UploadingDialogProps {
+    modelValue: boolean;
+    transfers: UploadTransferInterface[]
+  };
 
-const props = defineProps<UploadingDialogProps>();
+  const props = defineProps<UploadingDialogProps>();
 
-const hasTransfers = computed(() => props.transfers?.length > 0);
+  const hasTransfers = computed(() => props.transfers?.length > 0);
 
-const visible = computed({
-  get() {
-    return props.modelValue;
-  },
-  set(value) {
-    if (value) {
-      // before showing dialog always set q-toggle value
-      const toggleValue = sessionStore.openUploadDialog;
-      if (toggleValue !== visibilityCheck.value) {
-        visibilityCheck.value = toggleValue; // only if there are changes
+  const visible = computed({
+    get() {
+      return props.modelValue;
+    },
+    set(value) {
+      if (value) {
+        // before showing dialog always set q-toggle value
+        const toggleValue = sessionStore.openUploadDialog;
+        if (toggleValue !== visibilityCheck.value) {
+          visibilityCheck.value = toggleValue; // only if there are changes
+        }
       }
+      emit('update:modelValue', value);
     }
-    emit('update:modelValue', value);
+  });
+
+  const hasProcessedTransfers = computed(() => props.transfers.length > 0 ? props.transfers.find((transfer) => transfer.processed === true) !== undefined : false);
+
+  const visibilityCheck = ref<boolean>(sessionStore.openUploadDialog);
+
+  watch(() => visible.value, (val: boolean) => {
+    if (val) {
+      visibilityCheck.value = sessionStore.openUploadDialog;
+    }
+  });
+
+  const saveVisibilityCheck = (val: boolean) => {
+    sessionStore.setOpenUploadDialog(val);
+  };
+
+  const visibilityCheckLabel = computed(() => visibilityCheck.value ? "Always display this progress window when uploading files" : "Only display this progress window when uploading failed");
+
+  const onClose = () => {
+    visible.value = false;
+    emit('update:modelValue', false);
   }
-});
 
-const hasProcessedTransfers = computed(() => props.transfers.length > 0 ? props.transfers.find((transfer) => transfer.processed === true) !== undefined : false);
-
-const visibilityCheck = ref<boolean>(sessionStore.openUploadDialog);
-
-watch(() => visible.value, (val: boolean) => {
-  if (val) {
-    visibilityCheck.value = sessionStore.openUploadDialog;
-  }
-});
-
-const saveVisibilityCheck = (val: boolean) => {
-  sessionStore.setOpenUploadDialog(val);
-};
-
-const visibilityCheckLabel = computed(() => visibilityCheck.value ? "Always display this progress window when uploading files" : "Only display this progress window when uploading failed");
-
-const onClose = () => {
-  visible.value = false;
-  emit('update:modelValue', false);
-}
-
-const onClearProcessedTransfers = () => {
-  emit('clearProcessedTransfers');
-};
+  const onClearProcessedTransfers = () => {
+    emit('clearProcessedTransfers');
+  };
 </script>
 
 <style lang="css" scoped>
-.q-markup-table-container {
-  height: 40vh;
-}
+  .q-markup-table-container {
+    height: 40vh;
+  }
 </style>
