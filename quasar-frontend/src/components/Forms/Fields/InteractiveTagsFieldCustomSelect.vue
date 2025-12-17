@@ -77,6 +77,7 @@
       return props.modelValue || [];
     },
     set(value) {
+      console.log("es:", value);
       emit('update:modelValue', value || []);
     }
   });
@@ -152,7 +153,9 @@
   };
 
   const removeTagAtIndex = (index: number) => {
-    tags.value?.splice(index, 1);
+    const newTags = [...tags.value];
+    newTags.splice(index, 1);
+    tags.value = newTags;
   };
 
   const focus = () => {
