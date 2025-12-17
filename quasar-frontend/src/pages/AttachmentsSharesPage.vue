@@ -128,6 +128,8 @@
 
   const pager = reactive<PagerClass>(new PagerClass(1, 16, 0, 0));
 
+  const skipCount = ref<boolean>(false);
+
   const onPaginationChanged = (pageIndex: number) => {
     pager.currentPageIndex = pageIndex;
     onSubmitForm(false);
@@ -146,17 +148,20 @@
     }
     Object.assign(state, defaultAjaxState);
     state.ajaxRunning = true;
-    api.attachmentShare.search(pager, sort)
+    api.attachmentShare.search(pager, sort, skipCount.value)
       .then((successResponse: SearchAttachmentShareResponseInterface) => {
-        if (successResponse.data.results) {
+        if (successResponse.data.sharedAttachments) {
           results.value = [];
-          results.value = successResponse.data.results.sharedAttachments.map((result) => {
+          results.value = successResponse.data.sharedAttachments.map((result) => {
             return (result);
           });
-          pager.currentPageIndex = successResponse.data.results.pagination.currentPage;
-          pager.resultsPage = successResponse.data.results.pagination.resultsPage;
-          pager.totalResults = successResponse.data.results.pagination.totalResults;
-          pager.totalPages = successResponse.data.results.pagination.totalPages;
+          if (successResponse.data.pager) {
+            pager.currentPageIndex = successResponse.data.pager?.currentPage;
+            pager.resultsPage = successResponse.data.pager?.resultsPage;
+            pager.totalResults = successResponse.data.pager?.totalResults;
+            pager.totalPages = successResponse.data.pager?.totalPages;
+            skipCount.value = true;
+          }
           searchLaunched.value = true;
         }
       })

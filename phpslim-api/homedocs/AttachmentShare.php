@@ -253,7 +253,7 @@ class AttachmentShare
         ));
     }
 
-    public static function search(\aportela\DatabaseWrapper\DB $db, \aportela\DatabaseBrowserWrapper\Pager $pager, string $sortField = "createdAtTimestamp", \aportela\DatabaseBrowserWrapper\Order $sortOrder = \aportela\DatabaseBrowserWrapper\Order::DESC): \stdClass
+    public static function search(\aportela\DatabaseWrapper\DB $db, \aportela\DatabaseBrowserWrapper\Pager $pager, string $sortField = "createdAtTimestamp", \aportela\DatabaseBrowserWrapper\Order $sortOrder = \aportela\DatabaseBrowserWrapper\Order::DESC, bool $skipCount = false): \stdClass
     {
         $fieldDefinitions = [
             "id" => "ATTACHMENT_SHARE.id",
@@ -365,7 +365,7 @@ class AttachmentShare
                 )
             "
         );
-        $browserResults = $browser->launch($query, $queryCount);
+        $browserResults = $browser->launch($query, $queryCount, $skipCount);
         $data = new \stdClass();
         $data->sharedAttachments = [];
         foreach ($browserResults->items as $item) {
@@ -388,11 +388,14 @@ class AttachmentShare
             $data->sharedAttachments[] = $at;
         }
 
-        $data->pagination = new \stdClass();
-        $data->pagination->currentPage = $pager->getCurrentPageIndex();
-        $data->pagination->resultsPage = $pager->getResultsPage();
-        $data->pagination->totalResults = $browserResults->pager->getTotalResults();
-        $data->pagination->totalPages = $browserResults->pager->getTotalPages();
+        if (! $skipCount) {
+            $data->pager = new \stdClass();
+            $data->pager->currentPage = $pager->getCurrentPageIndex();
+            $data->pager->resultsPage = $pager->getResultsPage();
+            $data->pager->totalResults = $browserResults->pager->getTotalResults();
+            $data->pager->totalPages = $browserResults->pager->getTotalPages();
+        }
+
         return ($data);
     }
 }

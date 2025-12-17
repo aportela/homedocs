@@ -420,6 +420,14 @@ return function (\Slim\App $app): void {
                     );
                 }
 
+                /**
+                 * @param array<mixed> $params
+                 */
+                function getSkipCountFlagFromParams(array $params = []): bool
+                {
+                    return (array_key_exists("skipCount", $params) && is_bool($params["skipCount"]) && $params["skipCount"]);
+                }
+
                 // TODO: is this route required ? can be replaced only with /search/document using custom params ??
                 $routeCollectorProxy->post('/recent_documents', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $params = $request->getParsedBody();
@@ -468,14 +476,20 @@ return function (\Slim\App $app): void {
                         throw new \HomeDocs\Exception\InvalidParamsException();
                     }
 
+                    $skipCount = getSkipCountFlagFromParams($params);
+                    $results = \HomeDocs\AttachmentShare::search(
+                        $dbh,
+                        getPagerFromParams($params),
+                        getSortFieldFromParams($params),
+                        getSortOrderFromParams($params),
+                        $skipCount
+                    );
                     $payload = \HomeDocs\Utils::getJSONPayload(
-                        [
-                            'results' => \HomeDocs\AttachmentShare::search(
-                                $dbh,
-                                getPagerFromParams($params),
-                                getSortFieldFromParams($params),
-                                getSortOrderFromParams($params),
-                            ),
+                        $skipCount ? [
+                            "sharedAttachments" => $results->sharedAttachments,
+                        ] : [
+                            "pager" => $results->pager,
+                            "sharedAttachments" => $results->sharedAttachments,
                         ]
                     );
                     $response->getBody()->write($payload);

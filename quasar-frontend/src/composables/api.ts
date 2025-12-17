@@ -51,12 +51,14 @@ const api = {
       filter: SearchFilterInterface,
       sort: SortInterface,
       returnFragments: boolean,
+      skipCount: boolean,
     ) {
       const params = {
         pager: pager,
         filter: filter,
         sort: sort,
         returnFragments: returnFragments,
+        skipCount: skipCount,
       };
       return axiosInstance.post('/search/document', params);
     },
@@ -124,10 +126,11 @@ const api = {
     get: (attachmentId: string) => {
       return axiosInstance.get(`/attachment/${attachmentId}/share`);
     },
-    search: function (pager: PagerInterface, sort: SortInterface) {
+    search: function (pager: PagerInterface, sort: SortInterface, skipCount: boolean) {
       const params = {
         pager: pager,
         sort: sort,
+        skipCount: skipCount,
       };
       return axiosInstance.post('/search/attachment_share', params);
     },

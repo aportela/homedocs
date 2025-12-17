@@ -205,10 +205,8 @@ interface CreateUpdateGetAttachmentShareResponse extends Omit<DefaultAxiosRespon
 
 interface SearchAttachmentShareResponse extends Omit<DefaultAxiosResponse, 'data'> {
   data: {
-    results: {
-      pagination: PaginationResponse;
-      sharedAttachments: AttachmentShareInterface[];
-    };
+    pager?: PaginationResponse | null;
+    sharedAttachments: AttachmentShareInterface[];
   };
 }
 
