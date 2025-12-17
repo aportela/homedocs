@@ -714,7 +714,7 @@ class Document
         return ($historyOperations);
     }
 
-    public static function search(\aportela\DatabaseWrapper\DB $db, \aportela\DatabaseBrowserWrapper\Pager $pager, \HomeDocs\DocumentSearchFilter $documentSearchFilter, string $sortField = "createdAtTimestamp", \aportela\DatabaseBrowserWrapper\Order $sortOrder = \aportela\DatabaseBrowserWrapper\Order::DESC, bool $returnFragments = false): \stdClass
+    public static function search(\aportela\DatabaseWrapper\DB $db, \aportela\DatabaseBrowserWrapper\Pager $pager, \HomeDocs\DocumentSearchFilter $documentSearchFilter, string $sortField = "createdAtTimestamp", \aportela\DatabaseBrowserWrapper\Order $sortOrder = \aportela\DatabaseBrowserWrapper\Order::DESC, bool $returnFragments = false, bool $skipCount = false): \stdClass
     {
         $fieldDefinitions = [
             "id" => "DOCUMENT.id",
@@ -1068,7 +1068,7 @@ class Document
                 $whereCondition
             )
         );
-        $browserResults = $browser->launch($query, $queryCount);
+        $browserResults = $browser->launch($query, $queryCount, $skipCount);
         // TODO: reuse $browserResults object ?
         $data = new \stdClass();
         $data->documents = $browserResults->items;

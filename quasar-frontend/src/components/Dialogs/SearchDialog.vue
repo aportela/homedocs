@@ -217,7 +217,7 @@
         tags: [],
         dates: new SearchDatesFilterClass(),
       };
-      api.document.search(pager, params, sort, true)
+      api.document.search(pager, params, sort, true, false)
         .then((successResponse: SearchDocumentResponseInterface) => {
           pager.totalResults = successResponse.data.results.pagination.totalResults;
           pager.totalPages = successResponse.data.results.pagination.totalPages;

@@ -463,6 +463,7 @@ return function (\Slim\App $app): void {
                                 getSortFieldFromParams($params),
                                 getSortOrderFromParams($params),
                                 getReturnFragmentsFlagFromParams($params),
+                                getSkipCountFlagFromParams($params),
                             ),
                         ]
                     );
