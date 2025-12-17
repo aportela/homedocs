@@ -454,17 +454,27 @@ return function (\Slim\App $app): void {
                         throw new \HomeDocs\Exception\InvalidParamsException();
                     }
 
+                    $skipCount = getSkipCountFlagFromParams($params);
+                    $browserResults = \HomeDocs\Document::browse(
+                        $dbh,
+                        getPagerFromParams($params),
+                        new \HomeDocs\DocumentSearchFilter($params, \HomeDocs\UserSession::getUserId() ?? ""),
+                        getSortFieldFromParams($params),
+                        getSortOrderFromParams($params),
+                        getReturnFragmentsFlagFromParams($params),
+                        $skipCount,
+                    );
                     $payload = \HomeDocs\Utils::getJSONPayload(
-                        [
-                            'results' => \HomeDocs\Document::search(
-                                $dbh,
-                                getPagerFromParams($params),
-                                new \HomeDocs\DocumentSearchFilter($params, \HomeDocs\UserSession::getUserId() ?? ""),
-                                getSortFieldFromParams($params),
-                                getSortOrderFromParams($params),
-                                getReturnFragmentsFlagFromParams($params),
-                                getSkipCountFlagFromParams($params),
-                            ),
+                        $skipCount ? [
+                            "documents" => $browserResults->items,
+                        ] : [
+                            "pager" => [
+                                "currentPageIndex" => $browserResults->pager->getCurrentPageIndex(),
+                                "resultsPage" => $browserResults->pager->getResultsPage(),
+                                "totalPages" => $browserResults->pager->getTotalPages(),
+                                "totalResults" => $browserResults->pager->getTotalResults(),
+                            ],
+                            "documents" => $browserResults->items,
                         ]
                     );
                     $response->getBody()->write($payload);
