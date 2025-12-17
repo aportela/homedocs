@@ -714,7 +714,7 @@ class Document
         return ($historyOperations);
     }
 
-    public static function search(\aportela\DatabaseWrapper\DB $db, \aportela\DatabaseBrowserWrapper\Pager $pager, \HomeDocs\DocumentSearchFilter $documentSearchFilter, string $sortField = "createdAtTimestamp", \aportela\DatabaseBrowserWrapper\Order $sortOrder = \aportela\DatabaseBrowserWrapper\Order::DESC, bool $returnFragments = false, bool $skipCount = false): \stdClass
+    public static function browse(\aportela\DatabaseWrapper\DB $db, \aportela\DatabaseBrowserWrapper\Pager $pager, \HomeDocs\DocumentSearchFilter $documentSearchFilter, string $sortField = "createdAtTimestamp", \aportela\DatabaseBrowserWrapper\Order $sortOrder = \aportela\DatabaseBrowserWrapper\Order::DESC, bool $returnFragments = false, bool $skipCount = false): \aportela\DatabaseBrowserWrapper\BrowserResults
     {
         $fieldDefinitions = [
             "id" => "DOCUMENT.id",
@@ -733,7 +733,7 @@ class Document
             "title", "description", "attachmentCount", "noteCount", "createdAtTimestamp", "updatedAtTimestamp" => new \aportela\DatabaseBrowserWrapper\SortItem($sortField, $sortOrder, true),
             default => new \aportela\DatabaseBrowserWrapper\SortItem("createdAtTimestamp", $sortOrder, true),
         };
-        // after launch search we need to make some changes foreach result
+        // after launch search query, transform data results into desired objects
         $afterBrowse = function (\aportela\DatabaseBrowserWrapper\BrowserResults $browserResults) use ($documentSearchFilter, $db, $returnFragments): void {
             array_map(
                 function (object $item) use ($documentSearchFilter, $db, $returnFragments): \stdClass {
@@ -829,7 +829,6 @@ class Document
             new \aportela\DatabaseWrapper\Param\IntegerParam(":history_operation_update", \HomeDocs\DocumentHistoryOperation::OPERATION_UPDATE_DOCUMENT),
             new \aportela\DatabaseWrapper\Param\StringParam(":session_user_id", $documentSearchFilter->currentUserId),
         ];
-
 
         if (is_string($documentSearchFilter->textFilter->title) && ($documentSearchFilter->textFilter->title !== '' && $documentSearchFilter->textFilter->title !== '0')) {
             // explode into words, remove duplicated & empty elements
@@ -1068,15 +1067,6 @@ class Document
                 $whereCondition
             )
         );
-        $browserResults = $browser->launch($query, $queryCount, $skipCount);
-        // TODO: reuse $browserResults object ?
-        $data = new \stdClass();
-        $data->documents = $browserResults->items;
-        $data->pagination = new \stdClass();
-        $data->pagination->currentPage = $pager->getCurrentPageIndex();
-        $data->pagination->resultsPage = $pager->getResultsPage();
-        $data->pagination->totalResults = $browserResults->pager->getTotalResults();
-        $data->pagination->totalPages = $browserResults->pager->getTotalPages();
-        return ($data);
+        return ($browser->launch($query, $queryCount, $skipCount));
     }
 }
