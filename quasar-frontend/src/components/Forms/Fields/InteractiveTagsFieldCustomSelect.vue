@@ -77,7 +77,6 @@
       return props.modelValue || [];
     },
     set(value) {
-      console.log("es:", value);
       emit('update:modelValue', value || []);
     }
   });
