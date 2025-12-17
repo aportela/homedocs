@@ -119,7 +119,7 @@ interface DocumentHistoryOperationResponse extends Omit<DefaultAxiosResponse, 'd
 }
 
 interface PaginationResponse {
-  currentPage: number;
+  currentPageIndex: number;
   resultsPage: number;
   totalResults: number;
   totalPages: number;
