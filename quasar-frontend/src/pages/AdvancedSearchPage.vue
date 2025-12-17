@@ -15,29 +15,31 @@
           autocapitalize="off" autocomplete="off" spellcheck="false" class="q-pa-md">
           <div class="row q-col-gutter-sm">
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
-              <q-input class="q-mb-md" dense outlined v-model.trim="store.filter.text.title" type="text" name="title"
-                clearable :label="t('Document title')" :disable="state.ajaxRunning" :autofocus="true"
+              <q-input class="q-mb-md" dense outlined v-model.trim="store.filter.text.title"
+                @update:model-value="onConditionFilterChanged" type="text" name="title" clearable
+                :label="t('Document title')" :disable="state.ajaxRunning" :autofocus="true"
                 :placeholder="t('Type text condition')">
                 <template v-slot:prepend>
                   <q-icon name="article" />
                 </template>
               </q-input>
-              <q-input class="q-mb-md" dense outlined v-model.trim="store.filter.text.description" type="text"
-                name="description" clearable :label="t('Document description')" :disable="state.ajaxRunning"
-                :placeholder="t('Type text condition')">
+              <q-input class="q-mb-md" dense outlined v-model.trim="store.filter.text.description"
+                @update:model-value="onConditionFilterChanged" type="text" name="description" clearable
+                :label="t('Document description')" :disable="state.ajaxRunning" :placeholder="t('Type text condition')">
                 <template v-slot:prepend>
                   <q-icon name="article" />
                 </template>
               </q-input>
-              <q-input class="q-mb-md" dense outlined v-model.trim="store.filter.text.notesBody" type="text"
-                name="notesBody" clearable :label="t('Document notes')" :disable="state.ajaxRunning"
-                :placeholder="t('Type text condition')">
+              <q-input class="q-mb-md" dense outlined v-model.trim="store.filter.text.notesBody"
+                @update:model-value="onConditionFilterChanged" type="text" name="notesBody" clearable
+                :label="t('Document notes')" :disable="state.ajaxRunning" :placeholder="t('Type text condition')">
                 <template v-slot:prepend>
                   <q-icon name="speaker_notes" />
                 </template>
               </q-input>
-              <q-input class="q-mb-md" dense outlined v-model.trim="store.filter.text.attachmentsFilename" type="text"
-                name="notesBody" clearable :label="t('Document attachment filenames')" :disable="state.ajaxRunning"
+              <q-input class="q-mb-md" dense outlined v-model.trim="store.filter.text.attachmentsFilename"
+                @update:model-value="onConditionFilterChanged" type="text" name="notesBody" clearable
+                :label="t('Document attachment filenames')" :disable="state.ajaxRunning"
                 :placeholder="t('Type text condition')">
                 <template v-slot:prepend>
                   <q-icon name="attach_file" />
@@ -47,19 +49,23 @@
             <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
               <DateFilterFieldCustomInputSelector :label="t('Document creation date')"
                 :disable="state.ajaxRunning || hasCreationDateRouteParamsFilter" v-model="store.filter.dates.createdAt"
-                :auto-open-pop-ups="!hasCreationDateRouteParamsFilter" class="q-mb-md">
+                @update:model-value="onConditionFilterChanged" :auto-open-pop-ups="!hasCreationDateRouteParamsFilter"
+                class="q-mb-md">
               </DateFilterFieldCustomInputSelector>
               <DateFilterFieldCustomInputSelector :label="t('Document last update')"
                 :disable="state.ajaxRunning || hasLastUpdateRouteParamsFilter" v-model="store.filter.dates.lastUpdateAt"
-                :auto-open-pop-ups="!hasLastUpdateRouteParamsFilter" class="q-mb-md">
+                @update:model-value="onConditionFilterChanged" :auto-open-pop-ups="!hasLastUpdateRouteParamsFilter"
+                class="q-mb-md">
               </DateFilterFieldCustomInputSelector>
               <DateFilterFieldCustomInputSelector :label="t('Document updated on')"
                 :disable="state.ajaxRunning || hasUpdatedOnRouteParamsFilter" v-model="store.filter.dates.updatedAt"
-                :auto-open-pop-ups="!hasUpdatedOnRouteParamsFilter" class="q-mb-md">
+                @update:model-value="onConditionFilterChanged" :auto-open-pop-ups="!hasUpdatedOnRouteParamsFilter"
+                class="q-mb-md">
               </DateFilterFieldCustomInputSelector>
-              <InteractiveTagsFieldCustomSelect v-model="store.filter.tags" label="Document tags"
-                :disabled="state.ajaxRunning" dense :start-mode-editable="true" :deny-change-editable-mode="true"
-                clearable :placeholder="t('Type text condition')" class="q-mb-md q-pb-none">
+              <InteractiveTagsFieldCustomSelect v-model="store.filter.tags"
+                @update:model-value="onConditionFilterChanged" label="Document tags" :disabled="state.ajaxRunning" dense
+                :start-mode-editable="true" :deny-change-editable-mode="true" clearable
+                :placeholder="t('Type text condition')" class="q-mb-md q-pb-none">
               </InteractiveTagsFieldCustomSelect>
             </div>
           </div>
@@ -122,7 +128,7 @@
                         document.createdAt.timeAgo }})</q-item-label>
                       <q-item-label caption v-if="document.updatedAt?.dateTime">{{ t("Last update") }}: {{
                         document.updatedAt.dateTime
-                      }} ({{ document.updatedAt.timeAgo }})</q-item-label>
+                        }} ({{ document.updatedAt.timeAgo }})</q-item-label>
                     </q-item-section>
                     <q-item-section side top>
                       <ViewDocumentDetailsButton size="md" square class="min-width-9em"
@@ -152,7 +158,7 @@
                 <q-icon :name="store.sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <DesktopToolTip>{{ t('Toggle sort by this column', { field: t(column.title) })
-                }}</DesktopToolTip>
+                  }}</DesktopToolTip>
               </th>
             </tr>
           </thead>
@@ -239,6 +245,7 @@
     sortFields.push(new SortClass(column.field, column.title, "DESC"));
   });
 
+  const skipCount = ref<boolean>(false);
   const searchLaunched = ref<boolean>(false);
 
   const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
@@ -332,21 +339,28 @@
     }
   }
 
+  const onConditionFilterChanged = (): void => {
+    skipCount.value = false;
+  };
+
   const onSubmitForm = (resetPager: boolean) => {
     if (resetPager) {
       store.pager.currentPageIndex = 1;
     }
     Object.assign(state, defaultAjaxState);
     state.ajaxRunning = true;
-    api.document.search(store.pager, store.filter, store.sort, false)
+    api.document.search(store.pager, store.filter, store.sort, false, skipCount.value)
       .then((successResponse: SearchDocumentResponseInterface) => {
-        if (successResponse.data.results) {
+        if (successResponse.data.documents) {
           results.value = [];
-          store.pager.currentPageIndex = successResponse.data.results.pagination.currentPage;
-          store.pager.resultsPage = successResponse.data.results.pagination.resultsPage;
-          store.pager.totalResults = successResponse.data.results.pagination.totalResults;
-          store.pager.totalPages = successResponse.data.results.pagination.totalPages;
-          results.value = successResponse.data.results.documents.map((document: SearchDocumentResponseItemInterface) =>
+          if (successResponse.data.pager) {
+            store.pager.currentPageIndex = successResponse.data.pager.currentPageIndex;
+            store.pager.resultsPage = successResponse.data.pager.resultsPage;
+            store.pager.totalResults = successResponse.data.pager.totalResults;
+            store.pager.totalPages = successResponse.data.pager.totalPages;
+            skipCount.value = true;
+          }
+          results.value = successResponse.data.documents.map((document: SearchDocumentResponseItemInterface) =>
             new SearchDocumentItemClass(
               t,
               document.id,
