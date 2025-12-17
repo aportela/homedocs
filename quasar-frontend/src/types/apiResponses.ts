@@ -139,10 +139,8 @@ interface SearchDocumentResponseItem {
 
 interface SearchDocumentResponse extends Omit<DefaultAxiosResponse, 'data'> {
   data: {
-    results: {
-      pagination: PaginationResponse;
-      documents: SearchDocumentResponseItem[];
-    };
+    pager?: PaginationResponse | null;
+    documents: SearchDocumentResponseItem[];
   };
 }
 

@@ -219,9 +219,11 @@
       };
       api.document.search(pager, params, sort, true, false)
         .then((successResponse: SearchDocumentResponseInterface) => {
-          pager.totalResults = successResponse.data.results.pagination.totalResults;
-          pager.totalPages = successResponse.data.results.pagination.totalPages;
-          searchResults.value = successResponse.data.results.documents.map((document: SearchDocumentResponseItemInterface) =>
+          if (successResponse.data.pager) {
+            pager.totalResults = successResponse.data.pager.totalResults;
+            pager.totalPages = successResponse.data.pager.totalPages;
+          }
+          searchResults.value = successResponse.data.documents.map((document: SearchDocumentResponseItemInterface) =>
             new SearchDocumentItemClass(
               t,
               document.id,
