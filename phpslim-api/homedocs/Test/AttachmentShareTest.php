@@ -83,4 +83,30 @@ final class AttachmentShareTest extends \HomeDocs\Test\BaseTest
         $attachmentShare->add(self::$dbh, $attachment->id);
         $attachmentShare->delete(self::$dbh, $attachment->id);
     }
+
+    public function testBrowseAttachmentShareSkippingCount(): void
+    {
+        $this->expectNotToPerformAssertions();
+        $this->createValidSession();
+        \HomeDocs\AttachmentShare::browse(
+            self::$dbh,
+            new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16),
+            "createdAtTimestamp",
+            \aportela\DatabaseBrowserWrapper\Order::DESC,
+            true
+        );
+    }
+
+    public function testBrowseAttachmentShareNotSkippingCount(): void
+    {
+        $this->expectNotToPerformAssertions();
+        $this->createValidSession();
+        \HomeDocs\AttachmentShare::browse(
+            self::$dbh,
+            new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16),
+            "createdAtTimestamp",
+            \aportela\DatabaseBrowserWrapper\Order::DESC,
+            false
+        );
+    }
 }
