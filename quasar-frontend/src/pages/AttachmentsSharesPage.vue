@@ -156,7 +156,7 @@
             return (result);
           });
           if (successResponse.data.pager) {
-            pager.currentPageIndex = successResponse.data.pager?.currentPage;
+            pager.currentPageIndex = successResponse.data.pager?.currentPageIndex;
             pager.resultsPage = successResponse.data.pager?.resultsPage;
             pager.totalResults = successResponse.data.pager?.totalResults;
             pager.totalPages = successResponse.data.pager?.totalPages;
