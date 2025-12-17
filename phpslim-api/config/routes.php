@@ -477,7 +477,7 @@ return function (\Slim\App $app): void {
                     }
 
                     $skipCount = getSkipCountFlagFromParams($params);
-                    $results = \HomeDocs\AttachmentShare::search(
+                    $browserResults = \HomeDocs\AttachmentShare::browse(
                         $dbh,
                         getPagerFromParams($params),
                         getSortFieldFromParams($params),
@@ -486,10 +486,15 @@ return function (\Slim\App $app): void {
                     );
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         $skipCount ? [
-                            "sharedAttachments" => $results->sharedAttachments,
+                            "sharedAttachments" => $browserResults->items,
                         ] : [
-                            "pager" => $results->pager,
-                            "sharedAttachments" => $results->sharedAttachments,
+                            "pager" => [
+                                "currentPageIndex" => $browserResults->pager->getCurrentPageIndex(),
+                                "resultsPage" => $browserResults->pager->getResultsPage(),
+                                "totalPages" => $browserResults->pager->getTotalPages(),
+                                "totalResults" => $browserResults->pager->getTotalResults(),
+                            ],
+                            "sharedAttachments" => $browserResults->items,
                         ]
                     );
                     $response->getBody()->write($payload);

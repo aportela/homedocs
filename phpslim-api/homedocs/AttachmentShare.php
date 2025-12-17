@@ -253,7 +253,7 @@ class AttachmentShare
         ));
     }
 
-    public static function search(\aportela\DatabaseWrapper\DB $db, \aportela\DatabaseBrowserWrapper\Pager $pager, string $sortField = "createdAtTimestamp", \aportela\DatabaseBrowserWrapper\Order $sortOrder = \aportela\DatabaseBrowserWrapper\Order::DESC, bool $skipCount = false): \stdClass
+    public static function browse(\aportela\DatabaseWrapper\DB $db, \aportela\DatabaseBrowserWrapper\Pager $pager, string $sortField = "createdAtTimestamp", \aportela\DatabaseBrowserWrapper\Order $sortOrder = \aportela\DatabaseBrowserWrapper\Order::DESC, bool $skipCount = false): \aportela\DatabaseBrowserWrapper\BrowserResults
     {
         $fieldDefinitions = [
             "id" => "ATTACHMENT_SHARE.id",
@@ -277,40 +277,27 @@ class AttachmentShare
             "createdAtTimestamp", "expiresAtTimestamp", "lastAccessTimestamp", "accessLimit", "accessCount", "enabled", => new \aportela\DatabaseBrowserWrapper\SortItem($sortField, $sortOrder, true),
             default => new \aportela\DatabaseBrowserWrapper\SortItem("createdAtTimestamp", $sortOrder, true),
         };
-        // after launch search we need to make some changes foreach result
+        // after launch search query, transform data results into desired objects
         $afterBrowse = function (\aportela\DatabaseBrowserWrapper\BrowserResults $browserResults): void {
-            array_map(
-                function (object $item): \stdClass {
-                    // fix warnings on matchedFragments property
-                    if (! $item instanceof \stdClass) {
-                        throw new \RuntimeException("Invalid");
-                    }
-
-                    if (property_exists($item, "createdAtTimestamp") && is_numeric($item->createdAtTimestamp)) {
-                        $item->createdAtTimestamp =  intval($item->createdAtTimestamp);
-                    }
-
-                    if (property_exists($item, "expiresAtTimestamp") && is_numeric($item->expiresAtTimestamp)) {
-                        $item->expiresAtTimestamp =  intval($item->expiresAtTimestamp);
-                    }
-
-                    if (property_exists($item, "accessLimit") && is_numeric($item->accessLimit)) {
-                        $item->accessLimit =  intval($item->accessLimit);
-                    }
-
-                    if (property_exists($item, "accessCount") && is_numeric($item->accessCount)) {
-                        $item->accessCount =  intval($item->accessCount);
-                    }
-
-                    if (property_exists($item, "enabled") && is_numeric($item->enabled)) {
-                        $item->enabled =  intval($item->enabled) === 1;
-                    }
-
-                    if (property_exists($item, "attachmentFileSize") && is_numeric($item->attachmentFileSize)) {
-                        $item->attachmentFileSize = intval($item->attachmentFileSize);
-                    }
-
-                    return ($item);
+            $browserResults->items = array_map(
+                function (object $item): \HomeDocs\AttachmentShare {
+                    $attachmentShare = new \HomeDocs\AttachmentShare(
+                        property_exists($item, "id") && is_string($item->id) ? $item->id : "",
+                        property_exists($item, "createdAtTimestamp") && is_numeric($item->createdAtTimestamp) ? intval($item->createdAtTimestamp) : 0,
+                        property_exists($item, "expiresAtTimestamp") && is_numeric($item->expiresAtTimestamp) ? intval($item->expiresAtTimestamp) : 0,
+                        property_exists($item, "accessLimit") && is_numeric($item->accessLimit) ? intval($item->accessLimit) : 0,
+                        property_exists($item, "enabled") && is_numeric($item->enabled) && intval($item->enabled) === 1,
+                    );
+                    $attachmentShare->accessCount = property_exists($item, "accessCount") && is_numeric($item->accessCount) ? intval($item->accessCount) : 0;
+                    $attachmentShare->lastAccessTimestamp = property_exists($item, "lastAccessTimestamp") && is_numeric($item->lastAccessTimestamp) ? intval($item->lastAccessTimestamp) : null;
+                    $attachmentShare->attachment = new \stdClass();
+                    $attachmentShare->attachment->id = $item->attachmentId ?? null;
+                    $attachmentShare->attachment->name = $item->attachmentFileName ?? null;
+                    $attachmentShare->attachment->size = $item->attachmentFileSize ?? 0;
+                    $attachmentShare->document = new \stdClass();
+                    $attachmentShare->document->id = $item->documentId ?? null;
+                    $attachmentShare->document->title = $item->documentTitle ?? null;
+                    return ($attachmentShare);
                 },
                 $browserResults->items
             );
@@ -365,37 +352,6 @@ class AttachmentShare
                 )
             "
         );
-        $browserResults = $browser->launch($query, $queryCount, $skipCount);
-        $data = new \stdClass();
-        $data->sharedAttachments = [];
-        foreach ($browserResults->items as $item) {
-            $at = new \HomeDocs\AttachmentShare(
-                property_exists($item, "id") && is_string($item->id) ? $item->id : "",
-                property_exists($item, "createdAtTimestamp") && is_numeric($item->createdAtTimestamp) ? intval($item->createdAtTimestamp) : 0,
-                property_exists($item, "expiresAtTimestamp") && is_numeric($item->expiresAtTimestamp) ? intval($item->expiresAtTimestamp) : 0,
-                property_exists($item, "accessLimit") && is_numeric($item->accessLimit) ? intval($item->accessLimit) : 0,
-                property_exists($item, "enabled") && is_bool($item->enabled) && $item->enabled,
-            );
-            $at->accessCount = property_exists($item, "accessCount") && is_numeric($item->accessCount) ? intval($item->accessCount) : 0;
-            $at->lastAccessTimestamp = property_exists($item, "lastAccessTimestamp") && is_numeric($item->lastAccessTimestamp) ? intval($item->lastAccessTimestamp) : null;
-            $at->attachment = new \stdClass();
-            $at->attachment->id = $item->attachmentId ?? null;
-            $at->attachment->name = $item->attachmentFileName ?? null;
-            $at->attachment->size = $item->attachmentFileSize ?? 0;
-            $at->document = new \stdClass();
-            $at->document->id = $item->documentId ?? null;
-            $at->document->title = $item->documentTitle ?? null;
-            $data->sharedAttachments[] = $at;
-        }
-
-        if (! $skipCount) {
-            $data->pager = new \stdClass();
-            $data->pager->currentPage = $pager->getCurrentPageIndex();
-            $data->pager->resultsPage = $pager->getResultsPage();
-            $data->pager->totalResults = $browserResults->pager->getTotalResults();
-            $data->pager->totalPages = $browserResults->pager->getTotalPages();
-        }
-
-        return ($data);
+        return ($browser->launch($query, $queryCount, $skipCount));
     }
 }
