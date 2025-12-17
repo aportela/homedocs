@@ -215,170 +215,169 @@ final class DocumentTest extends \HomeDocs\Test\BaseTest
 
     public function testSearchWithPager(): void
     {
-        $results = \HomeDocs\Document::search(
+        $results = \HomeDocs\Document::browse(
             self::$dbh,
             new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16),
             new \HomeDocs\DocumentSearchFilter(["filter" => []], \HomeDocs\UserSession::getUserId() ?? ""),
             "createdAtTimestamp",
             \aportela\DatabaseBrowserWrapper\Order::ASC
         );
-        $this->assertIsObject($results->pagination);
-        $this->assertIsArray($results->documents);
-        $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->documents));
+        $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->items));
+    }
+
+    public function testSearchSkippingCount(): void
+    {
+        $results = \HomeDocs\Document::browse(
+            self::$dbh,
+            new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16),
+            new \HomeDocs\DocumentSearchFilter(["filter" => []], \HomeDocs\UserSession::getUserId() ?? ""),
+            "createdAtTimestamp",
+            \aportela\DatabaseBrowserWrapper\Order::ASC
+        );
+        $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->items));
+    }
+    public function testSearchWithoutSkippingCount(): void
+    {
+        $results = \HomeDocs\Document::browse(
+            self::$dbh,
+            new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16),
+            new \HomeDocs\DocumentSearchFilter(["filter" => []], \HomeDocs\UserSession::getUserId() ?? ""),
+            "createdAtTimestamp",
+            \aportela\DatabaseBrowserWrapper\Order::ASC
+        );
+        $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->items));
     }
 
     public function testSearchWithPagerAndTitleFilter(): void
     {
-        $results = \HomeDocs\Document::search(
+        $results = \HomeDocs\Document::browse(
             self::$dbh,
             new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16),
             new \HomeDocs\DocumentSearchFilter(["filter" => ["text" => ["title" => "condition"]]], \HomeDocs\UserSession::getUserId() ?? ""),
             "createdAtTimestamp",
             \aportela\DatabaseBrowserWrapper\Order::DESC
         );
-        $this->assertIsObject($results->pagination);
-        $this->assertIsArray($results->documents);
-        $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->documents));
+        $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->items));
     }
 
     public function testSearchWithPagerAndDescriptionFilter(): void
     {
-        $results = \HomeDocs\Document::search(
+        $results = \HomeDocs\Document::browse(
             self::$dbh,
             new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16),
             new \HomeDocs\DocumentSearchFilter(["filter" => ["text" => ["description" => "condition"]]], \HomeDocs\UserSession::getUserId() ?? ""),
             "createdAtTimestamp",
             \aportela\DatabaseBrowserWrapper\Order::ASC
         );
-        $this->assertIsObject($results->pagination);
-        $this->assertIsArray($results->documents);
-        $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->documents));
+        $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->items));
     }
 
     public function testSearchWithPagerAndNotesBodyFilter(): void
     {
-        $results = \HomeDocs\Document::search(
+        $results = \HomeDocs\Document::browse(
             self::$dbh,
             new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16),
             new \HomeDocs\DocumentSearchFilter(["filter" => ["text" => ["notesBody" => "condition"]]], \HomeDocs\UserSession::getUserId() ?? ""),
             "createdAtTimestamp",
             \aportela\DatabaseBrowserWrapper\Order::ASC
         );
-        $this->assertIsObject($results->pagination);
-        $this->assertIsArray($results->documents);
-        $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->documents));
+        $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->items));
     }
 
     public function testSearchWithPagerAndAttachmentsFilenameFilter(): void
     {
-        $results = \HomeDocs\Document::search(
+        $results = \HomeDocs\Document::browse(
             self::$dbh,
             new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16),
             new \HomeDocs\DocumentSearchFilter(["filter" => ["text" => ["attachmentsFilename" => "condition"]]], \HomeDocs\UserSession::getUserId() ?? ""),
             "createdAtTimestamp",
             \aportela\DatabaseBrowserWrapper\Order::DESC
         );
-        $this->assertIsObject($results->pagination);
-        $this->assertIsArray($results->documents);
-        $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->documents));
+        $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->items));
     }
 
     public function testSearchWithPagerAndTagsFilter(): void
     {
-        $results = \HomeDocs\Document::search(
+        $results = \HomeDocs\Document::browse(
             self::$dbh,
             new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16),
             new \HomeDocs\DocumentSearchFilter(["filter" => ["tags" => ["tag1", "tag2"]]], \HomeDocs\UserSession::getUserId() ?? ""),
             "createdAtTimestamp",
             \aportela\DatabaseBrowserWrapper\Order::DESC
         );
-        $this->assertIsObject($results->pagination);
-        $this->assertIsArray($results->documents);
-        $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->documents));
+        $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->items));
     }
 
     public function testSearchWithPagerAndFromCreationTimestampFilter(): void
     {
-        $results = \HomeDocs\Document::search(
+        $results = \HomeDocs\Document::browse(
             self::$dbh,
             new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16),
             new \HomeDocs\DocumentSearchFilter(["filter" => ["dates" => ["createdAt" => ["timestamps" => ["from" => 1690236000]]]]], \HomeDocs\UserSession::getUserId() ?? ""),
             "createdAtTimestamp",
             \aportela\DatabaseBrowserWrapper\Order::ASC
         );
-        $this->assertIsObject($results->pagination);
-        $this->assertIsArray($results->documents);
-        $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->documents));
+        $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->items));
     }
 
     public function testSearchWithPagerAndToCreationTimestampFilter(): void
     {
-        $results = \HomeDocs\Document::search(
+        $results = \HomeDocs\Document::browse(
             self::$dbh,
             new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16),
             new \HomeDocs\DocumentSearchFilter(["filter" => ["dates" => ["createdAt" => ["timestamps" => ["to" => 1690408799]]]]], \HomeDocs\UserSession::getUserId() ?? ""),
             "createdAtTimestamp",
             \aportela\DatabaseBrowserWrapper\Order::DESC
         );
-        $this->assertIsObject($results->pagination);
-        $this->assertIsArray($results->documents);
-        $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->documents));
+        $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->items));
     }
 
     public function testSearchWithPagerAndFromLastUpdateTimestampFilter(): void
     {
-        $results = \HomeDocs\Document::search(
+        $results = \HomeDocs\Document::browse(
             self::$dbh,
             new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16),
             new \HomeDocs\DocumentSearchFilter(["filter" => ["dates" => ["lastUpdateAt" => ["timestamps" => ["from" => 1690236000]]]]], \HomeDocs\UserSession::getUserId() ?? ""),
             "lastUpdateTimestamp",
             \aportela\DatabaseBrowserWrapper\Order::ASC
         );
-        $this->assertIsObject($results->pagination);
-        $this->assertIsArray($results->documents);
-        $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->documents));
+        $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->items));
     }
 
     public function testSearchWithPagerAndToLastUpdateTimestampFilter(): void
     {
-        $results = \HomeDocs\Document::search(
+        $results = \HomeDocs\Document::browse(
             self::$dbh,
             new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16),
             new \HomeDocs\DocumentSearchFilter(["filter" => ["dates" => ["lastUpdateAt" => ["timestamps" => ["to" => 1690408799]]]]], \HomeDocs\UserSession::getUserId() ?? ""),
             "lastUpdateTimestamp",
             \aportela\DatabaseBrowserWrapper\Order::DESC
         );
-        $this->assertIsObject($results->pagination);
-        $this->assertIsArray($results->documents);
-        $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->documents));
+        $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->items));
     }
 
     public function testSearchWithPagerAndFromUpdatedOnTimestampFilter(): void
     {
-        $results = \HomeDocs\Document::search(
+        $results = \HomeDocs\Document::browse(
             self::$dbh,
             new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16),
             new \HomeDocs\DocumentSearchFilter(["filter" => ["dates" => ["updatedAt" => ["timestamps" => ["from" => 1690236000]]]]], \HomeDocs\UserSession::getUserId() ?? ""),
             "lastUpdateTimestamp",
             \aportela\DatabaseBrowserWrapper\Order::ASC
         );
-        $this->assertIsObject($results->pagination);
-        $this->assertIsArray($results->documents);
-        $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->documents));
+        $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->items));
     }
 
     public function testSearchWithPagerAndToUpdatedOnTimestampFilter(): void
     {
-        $results = \HomeDocs\Document::search(
+        $results = \HomeDocs\Document::browse(
             self::$dbh,
             new \aportela\DatabaseBrowserWrapper\Pager(true, 1, 16),
             new \HomeDocs\DocumentSearchFilter(["filter" => ["dates" => ["updatedAt" => ["timestamps" => ["to" => 1690408799]]]]], \HomeDocs\UserSession::getUserId() ?? ""),
             "lastUpdateTimestamp",
             \aportela\DatabaseBrowserWrapper\Order::DESC
         );
-        $this->assertIsObject($results->pagination);
-        $this->assertIsArray($results->documents);
-        $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->documents));
+        $this->assertTrue(($results->pagination->totalResults ?? 0) >= count($results->items));
     }
 
     public function testSearchRecent(): void
