@@ -136,7 +136,7 @@
 
   /*
   watch(() => props.modelValue, (newValue: DateFilterClass) => dateFilter.value = newValue);
-  
+
   watch(dateFilter.value, (val: DateFilterClass) => {
     focus();
     emit('update:modelValue', val);
@@ -171,21 +171,24 @@
         });
     }
   });
-  
+
   */
   const hideFromDatePopupProxy = () => {
     dateFilter.value.recalcTimestamps();
     qInputFromDatePopupProfyRef.value?.hide();
+    emit('update:modelValue', dateFilter.value);
   }
 
   const hideToDatePopupProxy = () => {
     dateFilter.value.recalcTimestamps();
     qInputToDatePopupProfyRef.value?.hide();
+    emit('update:modelValue', dateFilter.value);
   }
 
   const hideFixedDatePopupProxy = () => {
     dateFilter.value.recalcTimestamps();
     qInputFixedDatePopupProfyRef.value?.hide();
+    emit('update:modelValue', dateFilter.value);
   }
 
   // TODO: focus based on dateFilter.state.denyChanges
