@@ -18,6 +18,7 @@
             <file>homedocs/Test/DocumentTest.php</file>
             <file>homedocs/Test/TagTest.php</file>
             <file>homedocs/Test/StatsTest.php</file>
+            <file>homedocs/Test/AttachmentShareTest.php</file>
         </testsuite>
     </testsuites>
 </phpunit>
