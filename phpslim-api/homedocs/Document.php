@@ -150,6 +150,7 @@ class Document
             if (! $hasActiveTransaction) {
                 $db->beginTransaction();
             }
+
             $params = [
                 (new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower((string) $this->id))),
                 (new \aportela\DatabaseWrapper\Param\StringParam(":title", $this->title)),
@@ -238,14 +239,16 @@ class Document
                     ]
                 );
             }
+
             if (! $hasActiveTransaction) {
                 $db->commit();
             }
-        } catch (\aportela\DatabaseWrapper\Exception\DBException $e) {
+        } catch (\aportela\DatabaseWrapper\Exception\DBException $dBException) {
             if (! $hasActiveTransaction) {
                 $db->rollBack();
             }
-            throw $e;
+
+            throw $dBException;
         }
     }
 
@@ -257,6 +260,7 @@ class Document
             if (! $hasActiveTransaction) {
                 $db->beginTransaction();
             }
+
             $params = [
                 new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower((string) $this->id)),
                 new \aportela\DatabaseWrapper\Param\StringParam(":title", $this->title),
@@ -454,14 +458,16 @@ class Document
                     );
                 }
             }
+
             if (! $hasActiveTransaction) {
                 $db->commit();
             }
-        } catch (\aportela\DatabaseWrapper\Exception\DBException $e) {
+        } catch (\aportela\DatabaseWrapper\Exception\DBException $dBException) {
             if (! $hasActiveTransaction) {
                 $db->rollBack();
             }
-            throw $e;
+
+            throw $dBException;
         }
     }
 
@@ -473,6 +479,7 @@ class Document
                 if (! $hasActiveTransaction) {
                     $db->beginTransaction();
                 }
+
                 $params = [
                     new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
                 ];
@@ -528,6 +535,7 @@ class Document
                 if (! $hasActiveTransaction) {
                     $db->rollBack();
                 }
+
                 throw $e;
             }
         } else {
