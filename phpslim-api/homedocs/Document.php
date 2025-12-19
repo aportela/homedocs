@@ -145,44 +145,53 @@ class Document
     public function add(\aportela\DatabaseWrapper\DB $db): void
     {
         $this->validate();
-        $params = [
-            (new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower((string) $this->id))),
-            (new \aportela\DatabaseWrapper\Param\StringParam(":title", $this->title)),
-        ];
-        if (!in_array($this->description, [null, '', '0'], true)) {
-            $params[] = (new \aportela\DatabaseWrapper\Param\StringParam(":description", $this->description));
-        } else {
-            $params[] = (new \aportela\DatabaseWrapper\Param\NullParam(":description"));
-        }
+        $hasActiveTransaction = $db->inTransaction();
+        try {
+            if (! $hasActiveTransaction) {
+                $db->beginTransaction();
+            }
+            $params = [
+                (new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower((string) $this->id))),
+                (new \aportela\DatabaseWrapper\Param\StringParam(":title", $this->title)),
+            ];
+            if (!in_array($this->description, [null, '', '0'], true)) {
+                $params[] = (new \aportela\DatabaseWrapper\Param\StringParam(":description", $this->description));
+            } else {
+                $params[] = (new \aportela\DatabaseWrapper\Param\NullParam(":description"));
+            }
 
-        if ($db->execute("
-                INSERT INTO DOCUMENT
-                    (id, title, description)
-                VALUES
-                    (:id, :title, :description)
-            ", $params) && $db->execute(
-            "
-                INSERT INTO DOCUMENT_HISTORY
-                    (document_id, ctime, operation_type, cuid)
-                VALUES
-                    (:document_id, :ctime, :operation_type, :cuid)
-            ",
-            [
-                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
-                new \aportela\DatabaseWrapper\Param\IntegerParam(":ctime", intval(microtime(true) * 1000)),
-                new \aportela\DatabaseWrapper\Param\IntegerParam(":operation_type", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
-                new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId()),
-            ]
-        )) {
+            $db->execute(
+                "
+                    INSERT INTO DOCUMENT
+                        (id, title, description)
+                    VALUES
+                        (:id, :title, :description)
+                ",
+                $params
+            );
+            $db->execute(
+                "
+                    INSERT INTO DOCUMENT_HISTORY
+                        (document_id, ctime, operation_type, cuid)
+                    VALUES
+                        (:document_id, :ctime, :operation_type, :cuid)
+                ",
+                [
+                    new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
+                    new \aportela\DatabaseWrapper\Param\IntegerParam(":ctime", intval(microtime(true) * 1000)),
+                    new \aportela\DatabaseWrapper\Param\IntegerParam(":operation_type", \HomeDocs\DocumentHistoryOperation::OPERATION_ADD_DOCUMENT),
+                    new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId()),
+                ]
+            );
             foreach ($this->tags as $tag) {
                 if (!empty($tag)) {
                     $db->execute(
                         "
-                                INSERT INTO DOCUMENT_TAG
-                                    (document_id, tag)
-                                VALUES
-                                    (:document_id, :tag)
-                            ",
+                            INSERT INTO DOCUMENT_TAG
+                                (document_id, tag)
+                            VALUES
+                                (:document_id, :tag)
+                        ",
                         [
                             new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
                             new \aportela\DatabaseWrapper\Param\StringParam(":tag", mb_strtolower($tag)),
@@ -197,11 +206,11 @@ class Document
                 if (!empty($attachment->id)) {
                     $db->execute(
                         "
-                                INSERT INTO DOCUMENT_ATTACHMENT
-                                    (document_id, attachment_id)
-                                VALUES
-                                    (:document_id, :attachment_id)
-                            ",
+                            INSERT INTO DOCUMENT_ATTACHMENT
+                                (document_id, attachment_id)
+                            VALUES
+                                (:document_id, :attachment_id)
+                        ",
                         [
                             new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
                             new \aportela\DatabaseWrapper\Param\StringParam(":attachment_id", mb_strtolower((string) $attachment->id)),
@@ -215,11 +224,11 @@ class Document
             foreach ($this->notes as $note) {
                 $db->execute(
                     "
-                            INSERT INTO DOCUMENT_NOTE
-                                (note_id, document_id, ctime, cuid, body)
-                            VALUES
-                                (:note_id, :document_id, :ctime, :cuid, :note_body)
-                        ",
+                        INSERT INTO DOCUMENT_NOTE
+                            (note_id, document_id, ctime, cuid, body)
+                        VALUES
+                            (:note_id, :document_id, :ctime, :cuid, :note_body)
+                    ",
                     [
                         new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower((string) $note->id)),
                         new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
@@ -229,48 +238,65 @@ class Document
                     ]
                 );
             }
+            if (! $hasActiveTransaction) {
+                $db->commit();
+            }
+        } catch (\aportela\DatabaseWrapper\Exception\DBException $e) {
+            if (! $hasActiveTransaction) {
+                $db->rollBack();
+            }
+            throw $e;
         }
     }
 
     public function update(\aportela\DatabaseWrapper\DB $db): void
     {
         $this->validate();
-        $params = [
-            new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower((string) $this->id)),
-            new \aportela\DatabaseWrapper\Param\StringParam(":title", $this->title),
-        ];
-        if (!in_array($this->description, [null, '', '0'], true)) {
-            $params[] = new \aportela\DatabaseWrapper\Param\StringParam(":description", $this->description);
-        } else {
-            $params[] = new \aportela\DatabaseWrapper\Param\NullParam(":description");
-        }
+        $hasActiveTransaction = $db->inTransaction();
+        try {
+            if (! $hasActiveTransaction) {
+                $db->beginTransaction();
+            }
+            $params = [
+                new \aportela\DatabaseWrapper\Param\StringParam(":id", mb_strtolower((string) $this->id)),
+                new \aportela\DatabaseWrapper\Param\StringParam(":title", $this->title),
+            ];
+            if (!in_array($this->description, [null, '', '0'], true)) {
+                $params[] = new \aportela\DatabaseWrapper\Param\StringParam(":description", $this->description);
+            } else {
+                $params[] = new \aportela\DatabaseWrapper\Param\NullParam(":description");
+            }
 
-        if ($db->execute("
-                UPDATE DOCUMENT SET
-                    title = :title,
-                    description = :description
-                WHERE
-                    id = :id
-            ", $params) && $db->execute(
-            "
+            $db->execute(
+                "
+                    UPDATE DOCUMENT SET
+                        title = :title,
+                        description = :description
+                    WHERE
+                        id = :id
+                ",
+                $params
+            );
+            $db->execute(
+                "
                     INSERT INTO DOCUMENT_HISTORY
                         (document_id, ctime, operation_type, cuid)
                     VALUES
                         (:document_id, :ctime, :operation_type, :cuid)
                 ",
-            [
-                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
-                new \aportela\DatabaseWrapper\Param\IntegerParam(":ctime", intval(microtime(true) * 1000)),
-                new \aportela\DatabaseWrapper\Param\IntegerParam(":operation_type", \HomeDocs\DocumentHistoryOperation::OPERATION_UPDATE_DOCUMENT),
-                new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId()),
-            ]
-        )) {
+                [
+                    new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
+                    new \aportela\DatabaseWrapper\Param\IntegerParam(":ctime", intval(microtime(true) * 1000)),
+                    new \aportela\DatabaseWrapper\Param\IntegerParam(":operation_type", \HomeDocs\DocumentHistoryOperation::OPERATION_UPDATE_DOCUMENT),
+                    new \aportela\DatabaseWrapper\Param\StringParam(":cuid", \HomeDocs\UserSession::getUserId()),
+                ]
+            );
             $db->execute(
                 "
-                        DELETE FROM DOCUMENT_TAG
-                        WHERE
-                            document_id = :document_id
-                    ",
+                    DELETE FROM DOCUMENT_TAG
+                    WHERE
+                        document_id = :document_id
+                ",
                 [
                     new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
                 ]
@@ -279,11 +305,11 @@ class Document
                 if (!empty($tag)) {
                     $db->execute(
                         "
-                                INSERT INTO DOCUMENT_TAG
-                                    (document_id, tag)
-                                VALUES
-                                    (:document_id, :tag)
-                            ",
+                            INSERT INTO DOCUMENT_TAG
+                                (document_id, tag)
+                            VALUES
+                                (:document_id, :tag)
+                        ",
                         [
                             new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
                             new \aportela\DatabaseWrapper\Param\StringParam(":tag", mb_strtolower($tag)),
@@ -306,12 +332,12 @@ class Document
                 if ($notFound) {
                     $db->execute(
                         "
-                                DELETE FROM DOCUMENT_ATTACHMENT
-                                WHERE
-                                    document_id = :document_id
-                                AND
-                                    attachment_id = :attachment_id
-                            ",
+                            DELETE FROM DOCUMENT_ATTACHMENT
+                            WHERE
+                                document_id = :document_id
+                            AND
+                                attachment_id = :attachment_id
+                        ",
                         [
                             new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
                             new \aportela\DatabaseWrapper\Param\StringParam(":attachment_id", mb_strtolower((string) $originalAttachment->id)),
@@ -333,11 +359,11 @@ class Document
                     if ($notFound) {
                         $db->execute(
                             "
-                                    INSERT INTO DOCUMENT_ATTACHMENT
-                                        (document_id, attachment_id)
-                                    VALUES
-                                        (:document_id, :attachment_id)
-                                ",
+                                INSERT INTO DOCUMENT_ATTACHMENT
+                                    (document_id, attachment_id)
+                                VALUES
+                                    (:document_id, :attachment_id)
+                            ",
                             [
                                 new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
                                 new \aportela\DatabaseWrapper\Param\StringParam(":attachment_id", mb_strtolower((string) $attachment->id)),
@@ -361,12 +387,12 @@ class Document
                 if ($notFound) {
                     $db->execute(
                         "
-                                DELETE FROM DOCUMENT_NOTE
-                                WHERE
-                                    document_id = :document_id
-                                AND
-                                    note_id = :note_id
-                            ",
+                            DELETE FROM DOCUMENT_NOTE
+                            WHERE
+                                document_id = :document_id
+                            AND
+                                note_id = :note_id
+                        ",
                         [
                             new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
                             new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower((string) $originalNote->id)),
@@ -395,7 +421,7 @@ class Document
                                         document_id =:document_id
                                     AND
                                         cuid = :cuid
-                                    ",
+                                ",
                                 [
                                     new \aportela\DatabaseWrapper\Param\StringParam(":note_body", $note->body),
                                     new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower($note->id)),
@@ -413,11 +439,11 @@ class Document
                 if ($notFound) {
                     $db->execute(
                         "
-                                INSERT INTO DOCUMENT_NOTE
-                                    (note_id, document_id, ctime, cuid, body)
-                                VALUES
-                                    (:note_id, :document_id, :ctime, :cuid, :note_body)
-                            ",
+                            INSERT INTO DOCUMENT_NOTE
+                                (note_id, document_id, ctime, cuid, body)
+                            VALUES
+                                (:note_id, :document_id, :ctime, :cuid, :note_body)
+                        ",
                         [
                             new \aportela\DatabaseWrapper\Param\StringParam(":note_id", mb_strtolower((string) $note->id)),
                             new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower((string) $this->id)),
@@ -428,60 +454,82 @@ class Document
                     );
                 }
             }
+            if (! $hasActiveTransaction) {
+                $db->commit();
+            }
+        } catch (\aportela\DatabaseWrapper\Exception\DBException $e) {
+            if (! $hasActiveTransaction) {
+                $db->rollBack();
+            }
+            throw $e;
         }
     }
 
     public function delete(\aportela\DatabaseWrapper\DB $db): void
     {
         if (!in_array($this->id, [null, '', '0'], true) && mb_strlen($this->id) === \HomeDocs\Constants::UUID_V4_LENGTH) {
-            $params = [
-                new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
-            ];
-            $db->execute(
-                "
-                    DELETE FROM DOCUMENT_TAG
-                    WHERE
-                        document_id = :document_id
-                ",
-                $params
-            );
-            $db->execute(
-                "
+            $hasActiveTransaction = $db->inTransaction();
+            try {
+                if (! $hasActiveTransaction) {
+                    $db->beginTransaction();
+                }
+                $params = [
+                    new \aportela\DatabaseWrapper\Param\StringParam(":document_id", mb_strtolower($this->id)),
+                ];
+                $db->execute(
+                    "
+                        DELETE FROM DOCUMENT_TAG
+                        WHERE
+                            document_id = :document_id
+                    ",
+                    $params
+                );
+                $db->execute(
+                    "
                     DELETE FROM DOCUMENT_ATTACHMENT
                     WHERE
                         document_id = :document_id
                 ",
-                $params
-            );
-            $originalAttachments = $this->getAttachments($db);
-            foreach ($originalAttachments as $originalAttachment) {
-                $originalAttachment->remove($db);
-            }
+                    $params
+                );
+                $originalAttachments = $this->getAttachments($db);
+                foreach ($originalAttachments as $originalAttachment) {
+                    $originalAttachment->remove($db);
+                }
 
-            $db->execute(
-                "
-                    DELETE FROM DOCUMENT_NOTE
-                    WHERE
-                        document_id = :document_id
-                ",
-                $params
-            );
-            $db->execute(
-                "
-                    DELETE FROM DOCUMENT_HISTORY
-                    WHERE
-                        document_id = :document_id
-                ",
-                $params
-            );
-            $db->execute(
-                "
-                    DELETE FROM DOCUMENT
-                    WHERE
-                        id = :document_id
-                ",
-                $params
-            );
+                $db->execute(
+                    "
+                        DELETE FROM DOCUMENT_NOTE
+                        WHERE
+                            document_id = :document_id
+                    ",
+                    $params
+                );
+                $db->execute(
+                    "
+                        DELETE FROM DOCUMENT_HISTORY
+                        WHERE
+                            document_id = :document_id
+                    ",
+                    $params
+                );
+                $db->execute(
+                    "
+                        DELETE FROM DOCUMENT
+                        WHERE
+                            id = :document_id
+                    ",
+                    $params
+                );
+                if (! $hasActiveTransaction) {
+                    $db->commit();
+                }
+            } catch (\aportela\DatabaseWrapper\Exception\DBException $e) {
+                if (! $hasActiveTransaction) {
+                    $db->rollBack();
+                }
+                throw $e;
+            }
         } else {
             throw new \HomeDocs\Exception\InvalidParamsException("id");
         }

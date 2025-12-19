@@ -616,14 +616,7 @@ return function (\Slim\App $app): void {
                         $notes,
                     );
 
-                    $dbh->beginTransaction();
-                    try {
-                        $document->add($dbh);
-                        $dbh->commit();
-                    } catch (\aportela\DatabaseWrapper\Exception\DBException $dBException) {
-                        $dbh->rollBack();
-                        throw $dBException;
-                    }
+                    $document->add($dbh);
 
                     $document->get($dbh);
 
@@ -696,21 +689,10 @@ return function (\Slim\App $app): void {
                         $attachments,
                         $notes
                     );
-                    try {
-                        $dbh->beginTransaction();
-                        $document->update($dbh);
-                        $dbh->commit();
-                    } catch (\aportela\DatabaseWrapper\Exception\DBException $dBException) {
-                        $dbh->rollBack();
-                        throw $dBException;
-                    }
-
-                    $dbh = $container->get(\aportela\DatabaseWrapper\DB::class);
-                    if (! $dbh instanceof \aportela\DatabaseWrapper\DB) {
-                        throw new \RuntimeException("Failed to create database handler from container");
-                    }
+                    $document->update($dbh);
 
                     $document->get($dbh);
+
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         [
                             'document' => $document,
@@ -727,14 +709,8 @@ return function (\Slim\App $app): void {
 
                     // test existence && check permissions
                     $document->get($dbh);
-                    try {
-                        $dbh->beginTransaction();
-                        $document->delete($dbh);
-                        $dbh->commit();
-                    } catch (\aportela\DatabaseWrapper\Exception\DBException $dBException) {
-                        $dbh->rollBack();
-                        throw $dBException;
-                    }
+
+                    $document->delete($dbh);
 
                     $payload = \HomeDocs\Utils::getJSONPayload(
                         []
