@@ -629,7 +629,7 @@ return function (\Slim\App $app): void {
                     return $response->withStatus(200)->withHeader('Content-Type', 'application/json');
                 });
 
-                $routeCollectorProxy->put('/{id}', function (Request $request, Response $response, array $args) use ($container, $dbh): \Psr\Http\Message\MessageInterface {
+                $routeCollectorProxy->put('/{id}', function (Request $request, Response $response, array $args) use ($dbh): \Psr\Http\Message\MessageInterface {
                     $params = $request->getParsedBody();
                     if (! is_array($params)) {
                         throw new \HomeDocs\Exception\InvalidParamsException();
