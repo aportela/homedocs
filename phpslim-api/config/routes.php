@@ -158,8 +158,6 @@ return function (\Slim\App $app): void {
                         throw new \RuntimeException("Failed to create logger from container");
                     }
 
-                    \HomeDocs\UserSession::clear();
-
                     $jwt = new \HomeDocs\JWT($logger, $settings->getJWTPassphrase());
                     $decoded = null;
                     try {
@@ -178,6 +176,7 @@ return function (\Slim\App $app): void {
                         $jwt = new \HomeDocs\JWT($logger, $settings->getJWTPassphrase());
                         $currentTimestamp = time();
                         $accessToken = $jwt->encode(strval($user->id), $currentTimestamp + $settings->getAccessTokenExpirationTimeInSeconds());
+                        \HomeDocs\UserSession::init($user->id, $user->email);
                         \HomeDocs\UserSession::setAccessTokenData($accessToken, $currentTimestamp + $settings->getAccessTokenExpirationTimeInSeconds());
                         $payload = \HomeDocs\Utils::getJSONPayload(
                             [
