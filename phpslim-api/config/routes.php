@@ -176,8 +176,11 @@ return function (\Slim\App $app): void {
                         $jwt = new \HomeDocs\JWT($logger, $settings->getJWTPassphrase());
                         $currentTimestamp = time();
                         $accessToken = $jwt->encode(strval($user->id), $currentTimestamp + $settings->getAccessTokenExpirationTimeInSeconds());
-                        \HomeDocs\UserSession::init($user->id, $user->email);
-                        \HomeDocs\UserSession::setAccessTokenData($accessToken, $currentTimestamp + $settings->getAccessTokenExpirationTimeInSeconds());
+                        if (!in_array($user->id, [null, '', '0'], true) && !in_array($user->email, [null, '', '0'], true)) {
+                            \HomeDocs\UserSession::init($user->id, $user->email);
+                            \HomeDocs\UserSession::setAccessTokenData($accessToken, $currentTimestamp + $settings->getAccessTokenExpirationTimeInSeconds());
+                        }
+
                         $payload = \HomeDocs\Utils::getJSONPayload(
                             [
                                 "accessToken" => [
