@@ -1,0 +1,1 @@
+import{i as e}from"./index-CeBqGszH.js";import{t}from"./browserSupport-B4pfkC9m.js";import{n}from"./common-BtH2RPdA.js";var r=e(async()=>{let e=t();if(!e.hasPDFPreviewSavedValue)try{e.setAllowPDFPreview(await n())}catch(e){console.error(`Error testing PDF support in browser`,e)}});export{r as default};

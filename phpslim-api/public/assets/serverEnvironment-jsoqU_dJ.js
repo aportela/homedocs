@@ -1,0 +1,1 @@
+import{i as e}from"./index-CeBqGszH.js";import{n as t}from"./session-Dm3Y9HTh.js";import{t as n}from"./serverEnvironment-C5_MsyoM.js";var r=n(),i=e(async()=>{try{let e=await t.common.getServerEnvironment();r.set(e.data.serverEnvironment.allowSignUp,e.data.serverEnvironment.environment,e.data.serverEnvironment.maxUploadFileSize)}catch(e){console.error(e)}});export{i as default};

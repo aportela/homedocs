@@ -1,0 +1,1 @@
+import{w as e}from"./event-CG_vv-7C.js";import{u as t}from"./index-CeBqGszH.js";function n(){let{t:n}=t(),r=e(()=>n(`Field is required`));return{requiredFieldRule:e=>!!e||r.value,fieldIsRequiredLabel:r}}export{n as t};

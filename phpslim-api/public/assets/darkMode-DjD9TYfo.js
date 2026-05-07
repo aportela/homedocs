@@ -1,0 +1,1 @@
+import{s as e,t}from"./localStorage-B6ZTUkBY.js";import{x as n}from"./index-CeBqGszH.js";var r=t(`darkMode`,null),i=r.get();i===!0?n.set(!0):i===!1?n.set(!1):n.set(`auto`);var a=e(`darkModeStore`,{state:()=>({active:n.isActive}),getters:{isActive:e=>e.active},actions:{set(e){this.active=e,n.set(this.active),r.set(this.active)},toggle(){this.set(!this.active)}}});export{a as t};

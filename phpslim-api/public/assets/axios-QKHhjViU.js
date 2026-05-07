@@ -1,0 +1,1 @@
+import{n as e}from"./axios-B8uAjJaV.js";import{i as t}from"./index-CeBqGszH.js";var n=t(({app:t})=>{t.config.globalProperties.$axios=e});export{n as default};

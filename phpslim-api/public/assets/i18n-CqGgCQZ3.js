@@ -1,0 +1,1 @@
+import{a as e,c as t,i as n,l as r}from"./index-CeBqGszH.js";var i=r({locale:e().currentLocale,legacy:!1,globalInjection:!0,messages:t}),a=n(({app:e})=>{e.use(i)});export{a as default};

@@ -1,0 +1,1 @@
+import{N as e,ct as t,g as n,ut as r}from"./event-CG_vv-7C.js";function i(n){return t(e(n))}function a(e){return t(e)}var o=(e,t)=>{let i=r(e);for(let r in e)n(t,r,()=>i[r],e=>{i[r]=e});return t};export{a as n,o as r,i as t};
