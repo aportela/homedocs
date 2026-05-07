@@ -2,14 +2,13 @@ import axios from 'axios';
 import { SERVER_API_BASE_PATH } from 'src/constants';
 import { useSessionStore } from 'src/stores/session';
 
-const sessionStore = useSessionStore();
-
 const axiosInstance = axios.create({
   baseURL: SERVER_API_BASE_PATH,
 });
 
 axiosInstance.interceptors.request.use(
   (config) => {
+    const sessionStore = useSessionStore();
     if (sessionStore.hasAccessToken) {
       config.headers['Authorization'] = `Bearer ${sessionStore.accessToken}`;
       config.withCredentials = true;
@@ -35,6 +34,7 @@ axiosInstance.interceptors.response.use(
           statusText: 'undefined',
         };
       }
+      const sessionStore = useSessionStore();
       if (error.response?.status === 401) {
         if (sessionStore.hasAccessToken) {
           sessionStore.removeAccessToken();
