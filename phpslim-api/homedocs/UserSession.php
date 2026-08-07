@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace HomeDocs;
 
+/**
+ * @see \HomeDocs\Test\UserSessionTest
+ */
 class UserSession
 {
     public static function start(): void

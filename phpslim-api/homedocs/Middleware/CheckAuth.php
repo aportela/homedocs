@@ -62,10 +62,10 @@ class CheckAuth
                     $decoded = new \HomeDocs\JWT($this->logger, $this->passphrase)->decode($bearerToken);
                 } catch (\Firebase\JWT\ExpiredException $e) {
                     $this->logger->notice("JWT expired", [$e->getMessage()]);
-                    throw new \HomeDocs\Exception\UnauthorizedException("JWT expired");
+                    throw new \HomeDocs\Exception\UnauthorizedException("JWT expired", $e->getCode(), $e);
                 } catch (\Throwable $e) {
                     $this->logger->notice("JWT decode error", [$e->getMessage()]);
-                    throw new \HomeDocs\Exception\UnauthorizedException("JWT decode error");
+                    throw new \HomeDocs\Exception\UnauthorizedException("JWT decode error", $e->getCode(), $e);
                 }
 
                 if (property_exists($decoded, "sub") && is_string($decoded->sub) && ($decoded->sub !== '' && $decoded->sub !== '0')) {

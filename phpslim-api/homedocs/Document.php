@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace HomeDocs;
 
+/**
+ * @see \HomeDocs\Test\DocumentTest
+ */
 class Document
 {
     /**
@@ -124,7 +127,7 @@ class Document
 
                     foreach ($this->notes as $note) {
                         if (! empty($note->id) && mb_strlen((string) $note->id) === \HomeDocs\Constants::UUID_V4_LENGTH) {
-                            if (! (!empty($note->body) && mb_strlen((string) $note->body) <= \HomeDocs\Constants::MAX_DOCUMENT_NOTE_BODY_LENGTH)) {
+                            if (empty($note->body) || mb_strlen((string) $note->body) > \HomeDocs\Constants::MAX_DOCUMENT_NOTE_BODY_LENGTH) {
                                 throw new \HomeDocs\Exception\InvalidParamsException("noteBody");
                             }
                         } else {

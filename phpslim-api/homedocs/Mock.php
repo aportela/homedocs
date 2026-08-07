@@ -211,7 +211,7 @@ class Mock
     private function generateNoteBody(string $title): string
     {
         foreach ($this->notesTemplates as $key => $note) {
-            if (mb_strpos($title, mb_strtolower($key)) !== false) {
+            if (str_contains($title, mb_strtolower($key))) {
                 return $note;
             }
         }

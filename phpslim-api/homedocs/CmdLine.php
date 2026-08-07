@@ -9,7 +9,7 @@ class CmdLine
     /**
      * @var array<string, list<mixed>|false>
      */
-    private array|false $options = [];
+    private array|false $options;
 
     /**
      * commandline constructor
