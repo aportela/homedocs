@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace HomeDocs;
 
+/**
+ * @see \HomeDocs\Test\StatsTest
+ */
 class Stats
 {
     public static function getTotalPublishedDocuments(\aportela\DatabaseWrapper\DB $db, string $userId): int

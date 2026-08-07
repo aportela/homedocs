@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 $environment = 'production'; // (development|production)
 
 $basePath = dirname(__DIR__);

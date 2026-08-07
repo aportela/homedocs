@@ -164,10 +164,10 @@ return function (\Slim\App $app): void {
                         $decoded = $jwt->decode($refreshToken);
                     } catch (\Firebase\JWT\ExpiredException $e) {
                         $logger->notice("JWT expired", [$e->getMessage()]);
-                        throw new \HomeDocs\Exception\UnauthorizedException("JWT expired");
+                        throw new \HomeDocs\Exception\UnauthorizedException("JWT expired", $e->getCode(), $e);
                     } catch (\Throwable $e) {
                         $logger->notice("JWT decode error", [$e->getMessage()]);
-                        throw new \HomeDocs\Exception\UnauthorizedException("JWT decode error");
+                        throw new \HomeDocs\Exception\UnauthorizedException("JWT decode error", $e->getCode(), $e);
                     }
 
                     if (property_exists($decoded, "sub") && is_string($decoded->sub) && ($decoded->sub !== '' && $decoded->sub !== '0')) {
@@ -324,7 +324,7 @@ return function (\Slim\App $app): void {
                         throw new \HomeDocs\Exception\InvalidParamsException();
                     }
 
-                    if (! (array_key_exists("email", $params) && is_string($params["email"]))) {
+                    if (!array_key_exists("email", $params) || !is_string($params["email"])) {
                         throw new \HomeDocs\Exception\InvalidParamsException("email");
                     }
 
@@ -758,15 +758,15 @@ return function (\Slim\App $app): void {
                         throw new \HomeDocs\Exception\InvalidParamsException();
                     }
 
-                    if (! (array_key_exists("expiresAtTimestamp", $params) && is_numeric($params["expiresAtTimestamp"]))) {
+                    if (!array_key_exists("expiresAtTimestamp", $params) || !is_numeric($params["expiresAtTimestamp"])) {
                         throw new \HomeDocs\Exception\InvalidParamsException("expiresAtTimestamp");
                     }
 
-                    if (! (array_key_exists("accessLimit", $params) && is_numeric($params["accessLimit"]))) {
+                    if (!array_key_exists("accessLimit", $params) || !is_numeric($params["accessLimit"])) {
                         throw new \HomeDocs\Exception\InvalidParamsException("accessLimit");
                     }
 
-                    if (! (array_key_exists("enabled", $params) && is_bool($params["enabled"]))) {
+                    if (!array_key_exists("enabled", $params) || !is_bool($params["enabled"])) {
                         throw new \HomeDocs\Exception\InvalidParamsException("enabled");
                     }
 

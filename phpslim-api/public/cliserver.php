@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 // https://gist.github.com/ckressibucher/e37520cf2f1d08ec56d250c54d96ed72
 
 // public/cliserver.php (router script)
