@@ -42,7 +42,7 @@
           <PDFWrapper :path="getAttachmentInlineURL(currentAttachment.id, true)"
             v-if="browserSupportStore.allowPDFPreviews" inner-content-class="pdf-wrapper-inner-class">
           </PDFWrapper>
-          <CustomErrorBanner v-else :text="t('Missing browser PDF preview support')" />
+          <CustomErrorBanner v-else text="Missing browser PDF preview support" />
         </div>
         <div v-else>
           <p class="text-center q-my-md">
