@@ -85,17 +85,17 @@
   import { ref, computed, reactive, shallowRef, onMounted, onBeforeUnmount } from 'vue';
   import { format } from 'quasar';
   import { useI18n } from "vue-i18n";
-  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
-  import { type SearchAttachmentShareResponse as SearchAttachmentShareResponseInterface } from 'src/types/apiResponses';
-  import { type AttachmentShare as AttachmentShareInterface } from 'src/types/attachmentShare';
-  import { bus } from 'src/composables/bus';
-  import { fullDateTimeHuman, timeAgo, timeUntil, currentTimestamp } from "src/composables/dateUtils";
-  import { api } from "src/composables/api";
-  import { PagerClass } from 'src/types/pager';
-  import { type OrderType } from "src/types/orderType";
-  import { SortClass } from "src/types/sort";
-  import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
-  import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
+  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "@/types/ajaxState";
+  import { type SearchAttachmentShareResponse as SearchAttachmentShareResponseInterface } from '@/types/apiResponses';
+  import { type AttachmentShare as AttachmentShareInterface } from '@/types/attachmentShare';
+  import { bus } from '@/composables/bus';
+  import { fullDateTimeHuman, timeAgo, timeUntil, currentTimestamp } from "@/composables/dateUtils";
+  import { api } from "@/composables/api";
+  import { PagerClass } from '@/types/pager';
+  import { type OrderType } from "@/types/orderType";
+  import { SortClass } from "@/types/sort";
+  import { default as CustomErrorBanner } from "@/components/Banners/CustomErrorBanner.vue";
+  import { default as CustomBanner } from "@/components/Banners/CustomBanner.vue";
 
 
   const { t } = useI18n();

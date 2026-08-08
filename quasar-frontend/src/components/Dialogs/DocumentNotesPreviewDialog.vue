@@ -49,16 +49,16 @@
 <script setup lang="ts">
   import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
   import { useI18n } from "vue-i18n";
-  import { bus } from "src/composables/bus";
-  import { api } from "src/composables/api";
-  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
-  import { type Note as NoteInterface, NoteClass } from "src/types/note";
-  import { type DocumentNoteResponse as DocumentNoteResponseInterface, type DocumentNoteResponseItem as DocumentNoteResponseItemInterface } from "src/types/apiResponses";
-  import { DateTimeClass } from "src/types/dateTime";
-  import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
-  import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
-  import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
-  import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
+  import { bus } from "@/composables/bus";
+  import { api } from "@/composables/api";
+  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "@/types/ajaxState";
+  import { type Note as NoteInterface, NoteClass } from "@/types/note";
+  import { type DocumentNoteResponse as DocumentNoteResponseInterface, type DocumentNoteResponseItem as DocumentNoteResponseItemInterface } from "@/types/apiResponses";
+  import { DateTimeClass } from "@/types/dateTime";
+  import { default as BaseDialog } from "@/components/Dialogs/BaseDialog.vue";
+  import { default as DesktopToolTip } from "@/components/DesktopToolTip.vue";
+  import { default as CustomErrorBanner } from "@/components/Banners/CustomErrorBanner.vue";
+  import { default as CustomBanner } from "@/components/Banners/CustomBanner.vue";
 
   const { t } = useI18n();
 

@@ -18,9 +18,9 @@
   import { computed } from "vue";
   import { useI18n } from "vue-i18n";
 
-  import { useSessionStore } from "src/stores/session";
+  import { useSessionStore } from "@/stores/session";
 
-  import { default as BaseWidget } from "src/components/Widgets/BaseWidget.vue";
+  import { default as BaseWidget } from "@/components/Widgets/BaseWidget.vue";
 
   const { t } = useI18n();
 

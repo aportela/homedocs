@@ -39,8 +39,8 @@
   import { computed } from "vue";
   import { useRouter, useRoute } from "vue-router";
   import { useI18n } from "vue-i18n";
-  import { api } from "src/composables/api";
-  import { useSessionStore } from "src/stores/session";
+  import { api } from "@/composables/api";
+  import { useSessionStore } from "@/stores/session";
 
   interface SidebarDrawerProps {
     modelValue: boolean;

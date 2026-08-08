@@ -10,8 +10,8 @@
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
 
-  import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
-  import { useSessionStore } from "src/stores/session";
+  import { default as DesktopToolTip } from "@/components/DesktopToolTip.vue";
+  import { useSessionStore } from "@/stores/session";
 
   const { t } = useI18n();
 

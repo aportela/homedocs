@@ -38,13 +38,13 @@
   import { useI18n } from "vue-i18n";
   import { QSelect } from "quasar";
 
-  import { bus } from "src/composables/bus";
-  import { api } from "src/composables/api";
-  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
-  import { type GetTagsResponse as GetTagsResponseInterface } from "src/types/apiResponses";
+  import { bus } from "@/composables/bus";
+  import { api } from "@/composables/api";
+  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "@/types/ajaxState";
+  import { type GetTagsResponse as GetTagsResponseInterface } from "@/types/apiResponses";
 
-  import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
-  import { default as BrowseByTagButton } from "src/components/Buttons/BrowseByTagButton.vue";
+  import { default as DesktopToolTip } from "@/components/DesktopToolTip.vue";
+  import { default as BrowseByTagButton } from "@/components/Buttons/BrowseByTagButton.vue";
 
   const { t } = useI18n();
 

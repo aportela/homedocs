@@ -23,8 +23,8 @@
 
   import { computed } from "vue";
   import { useI18n } from "vue-i18n";
-  import { type HistoryOperation as HistoryOperationInterface } from "src/types/historyOperation";
-  import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
+  import { type HistoryOperation as HistoryOperationInterface } from "@/types/historyOperation";
+  import { default as CustomBanner } from "@/components/Banners/CustomBanner.vue"
 
   const { t } = useI18n();
 

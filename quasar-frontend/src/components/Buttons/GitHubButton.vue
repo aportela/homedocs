@@ -9,9 +9,9 @@
   import { useAttrs, computed } from "vue";
   import { useI18n } from "vue-i18n";
 
-  import { fabGithub } from "@quasar/extras/fontawesome-v6";
+  import { fabGithub } from "@quasar/extras/fontawesome-v7";
 
-  import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
+  import { default as DesktopToolTip } from "@/components/DesktopToolTip.vue";
 
   const attrs = useAttrs();
 

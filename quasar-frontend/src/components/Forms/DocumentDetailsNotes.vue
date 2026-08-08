@@ -50,13 +50,13 @@
   import { ref, reactive, computed } from "vue";
   import { useI18n } from "vue-i18n";
 
-  import { useFormUtils } from "src/composables/useFormUtils"
-  import { getRegexForStringMatch } from "src/composables/common";
-  import { type Note as NoteInterface } from "src/types/note";
+  import { useFormUtils } from "@/composables/useFormUtils"
+  import { getRegexForStringMatch } from "@/composables/common";
+  import { type Note as NoteInterface } from "@/types/note";
 
-  import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
-  import { default as InteractiveTextFieldCustomInput } from "src/components/Forms/Fields/InteractiveTextFieldCustomInput.vue"
-  import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
+  import { default as DesktopToolTip } from "@/components/DesktopToolTip.vue";
+  import { default as InteractiveTextFieldCustomInput } from "@/components/Forms/Fields/InteractiveTextFieldCustomInput.vue"
+  import { default as CustomBanner } from "@/components/Banners/CustomBanner.vue";
 
   const { t } = useI18n();
 

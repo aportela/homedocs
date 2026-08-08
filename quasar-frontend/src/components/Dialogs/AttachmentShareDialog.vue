@@ -109,16 +109,16 @@
   import { ref, reactive, watch, computed, onMounted, onBeforeUnmount } from "vue";
   import { useI18n } from "vue-i18n";
   import { format } from "quasar";
-  import { bus } from "src/composables/bus";
-  import { api } from "src/composables/api";
-  import { getURL as getAttachmentURL } from "src/composables/attachment";
-  import { timestamp, fullDateTimeHuman, timeAgo, timeUntil, currentTimestamp } from "src/composables/dateUtils";
+  import { bus } from "@/composables/bus";
+  import { api } from "@/composables/api";
+  import { getURL as getAttachmentURL } from "@/composables/attachment";
+  import { timestamp, fullDateTimeHuman, timeAgo, timeUntil, currentTimestamp } from "@/composables/dateUtils";
   import { default as QRCodeStyling } from "qr-code-styling";
-  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
-  import { type CreateUpdateGetAttachmentShareResponse as CreateUpdateGetAttachmentShareResponseInterface, } from "src/types/apiResponses";
-  import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
-  import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
-  import { type AttachmentShare as AttachmentShareInterface } from "src/types/attachmentShare";
+  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "@/types/ajaxState";
+  import { type CreateUpdateGetAttachmentShareResponse as CreateUpdateGetAttachmentShareResponseInterface, } from "@/types/apiResponses";
+  import { default as BaseDialog } from "@/components/Dialogs/BaseDialog.vue";
+  import { default as CustomErrorBanner } from "@/components/Banners/CustomErrorBanner.vue";
+  import { type AttachmentShare as AttachmentShareInterface } from "@/types/attachmentShare";
   const { t } = useI18n();
 
   const emit = defineEmits(['close']);

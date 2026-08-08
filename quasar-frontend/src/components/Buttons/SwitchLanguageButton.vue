@@ -18,9 +18,9 @@
 <script setup lang="ts">
   import { ref, computed, useAttrs, watch } from "vue";
   import { useI18n } from "vue-i18n";
-  import { availableLocaleSelectorOptionItems, getlocaleSelectorOptionItem } from "src/i18n";
-  import { useI18nStore } from "src/stores/i18n";
-  import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
+  import { availableLocaleSelectorOptionItems, getlocaleSelectorOptionItem } from "@/i18n";
+  import { useI18nStore } from "@/stores/i18n";
+  import { default as DesktopToolTip } from "@/components/DesktopToolTip.vue";
 
   const { t } = useI18n();
 

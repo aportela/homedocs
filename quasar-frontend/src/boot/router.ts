@@ -1,5 +1,5 @@
-import { defineBoot } from '#q-app/wrappers';
-import { useSessionStore } from 'src/stores/session';
+import { defineBoot } from '#q-app';
+import { useSessionStore } from '@/stores/session';
 
 const sessionStore = useSessionStore();
 const accessTokenCheckInterval = 300; // check every 5 min (300 seconds)
@@ -31,23 +31,23 @@ export default defineBoot(async ({ router }) => {
       .finally(() => {});
   }, accessTokenCheckInterval * 1000);
 
-  router.beforeEach((to, _from, next) => {
+  router.beforeEach((to) => {
     if (!to.matched.length) {
-      next({ name: 'notFound' });
-      return;
+      return { name: 'notFound' };
     }
+
     if (sessionStore.hasAccessToken) {
       if (to.name === 'login' || to.name === 'register') {
-        next({ name: 'index' });
-      } else {
-        next();
+        return { name: 'index' };
       }
-    } else {
-      if (to.name === 'login' || to.name === 'register') {
-        next();
-      } else {
-        next({ name: 'login' });
-      }
+
+      return true;
     }
+
+    if (to.name === 'login' || to.name === 'register') {
+      return true;
+    }
+
+    return { name: 'login' };
   });
 });

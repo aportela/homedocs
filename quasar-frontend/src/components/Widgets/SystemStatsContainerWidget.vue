@@ -31,8 +31,8 @@
   import { reactive } from "vue";
   import { useI18n } from "vue-i18n";
 
-  import ActivityHeatMap from "src/components/Widgets/ActivityHeatMap.vue";
-  import { default as BaseWidget } from "src/components/Widgets/BaseWidget.vue";
+  import ActivityHeatMap from "@/components/Widgets/ActivityHeatMap.vue";
+  import { default as BaseWidget } from "@/components/Widgets/BaseWidget.vue";
   import { default as SystemStatsCountTotalDocumentsWidget } from "./SystemStatsCountTotalDocumentsWidget.vue";
   import { default as SystemStatsCountTotalAttachmentsWidget } from "./SystemStatsCountTotalAttachmentsWidget.vue";
   import { default as SystemStatsDiskUsage } from "./SystemStatsDiskUsage.vue";

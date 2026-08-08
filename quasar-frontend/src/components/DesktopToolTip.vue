@@ -8,7 +8,7 @@
   import { computed } from "vue";
   import { useQuasar } from "quasar";
 
-  import { useSessionStore } from "src/stores/session";
+  import { useSessionStore } from "@/stores/session";
 
   const $q = useQuasar()
 

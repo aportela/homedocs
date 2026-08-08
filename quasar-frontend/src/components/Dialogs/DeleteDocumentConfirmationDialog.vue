@@ -30,14 +30,14 @@
   import { useRouter } from "vue-router";
   import { useI18n } from "vue-i18n";
 
-  import { bus } from "src/composables/bus";
-  import { api } from "src/composables/api";
+  import { bus } from "@/composables/bus";
+  import { api } from "@/composables/api";
 
-  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
+  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "@/types/ajaxState";
 
-  import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
-  import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
-  import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue"
+  import { default as BaseDialog } from "@/components/Dialogs/BaseDialog.vue";
+  import { default as CustomBanner } from "@/components/Banners/CustomBanner.vue"
+  import { default as CustomErrorBanner } from "@/components/Banners/CustomErrorBanner.vue"
 
   const { t } = useI18n();
 

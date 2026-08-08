@@ -40,18 +40,18 @@
   import { useI18n } from "vue-i18n";
   import { QInput } from "quasar";
 
-  import { bus } from "src/composables/bus";
-  import { api } from "src/composables/api";
-  import { useFormUtils } from "src/composables/useFormUtils";
-  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
-  import { type AuthValidator as AuthValidatorInterface, defaultAuthValidator } from "src/types/authValidator";
-  import { type AuthFields as AuthFieldsInterface } from "src/types/authFields";
-  import { type GetProfileResponse, type SetProfileResponse } from "src/types/apiResponses";
+  import { bus } from "@/composables/bus";
+  import { api } from "@/composables/api";
+  import { useFormUtils } from "@/composables/useFormUtils";
+  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "@/types/ajaxState";
+  import { type AuthValidator as AuthValidatorInterface, defaultAuthValidator } from "@/types/authValidator";
+  import { type AuthFields as AuthFieldsInterface } from "@/types/authFields";
+  import { type GetProfileResponse, type SetProfileResponse } from "@/types/apiResponses";
 
-  import { default as BaseWidget } from "src/components/Widgets/BaseWidget.vue";
-  import { default as PasswordFieldCustomInput } from "src/components/Forms/Fields/PasswordFieldCustomInput.vue";
-  import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
-  import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
+  import { default as BaseWidget } from "@/components/Widgets/BaseWidget.vue";
+  import { default as PasswordFieldCustomInput } from "@/components/Forms/Fields/PasswordFieldCustomInput.vue";
+  import { default as CustomErrorBanner } from "@/components/Banners/CustomErrorBanner.vue";
+  import { default as CustomBanner } from "@/components/Banners/CustomBanner.vue";
 
   const { t } = useI18n();
   const { requiredFieldRule } = useFormUtils();

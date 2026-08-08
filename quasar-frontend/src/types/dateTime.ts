@@ -1,7 +1,7 @@
-import { type Date as DateInterface, DateClass } from './date';
-import { useSessionStore } from 'src/stores/session';
-import { fullDateTimeHuman } from 'src/composables/dateUtils';
-import { type Ti18NFunction } from './i18n';
+import { type Date as DateInterface, DateClass } from "./date";
+import { useSessionStore } from "@/stores/session";
+import { fullDateTimeHuman } from "@/composables/dateUtils";
+import { type Ti18NFunction } from "./i18n";
 
 const sessionStore = useSessionStore();
 
@@ -16,7 +16,10 @@ class DateTimeClass extends DateClass implements DateTime {
   constructor(t: Ti18NFunction, timestamp: number | null) {
     super(t, timestamp);
     if (timestamp) {
-      this.dateTime = fullDateTimeHuman(timestamp, sessionStore.savedDateTimeFormat);
+      this.dateTime = fullDateTimeHuman(
+        timestamp,
+        sessionStore.savedDateTimeFormat,
+      );
     } else {
       this.dateTime = null;
     }
