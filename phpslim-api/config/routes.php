@@ -257,7 +257,9 @@ return function (\Slim\App $app): void {
                             // find the requested range
                             // this might be too simplistic, apparently the client can request
                             // multiple ranges, which can become pretty complex, so ignore it for now
-                            preg_match('/bytes=(\d+)-(\d+)?/', $_SERVER['HTTP_RANGE'], $matches);
+                            if (preg_match('/bytes=(\d+)-(\d+)?/', $_SERVER['HTTP_RANGE'], $matches) !== 1) {
+                                throw new \InvalidArgumentException('Invalid HTTP Range header');
+                            }
                             $offset = intval($matches[1]);
                             $length = ((isset($matches[2])) ? intval($matches[2]) : $attachment->size) - $offset;
                         }
@@ -842,7 +844,9 @@ return function (\Slim\App $app): void {
                             // find the requested range
                             // this might be too simplistic, apparently the client can request
                             // multiple ranges, which can become pretty complex, so ignore it for now
-                            preg_match('/bytes=(\d+)-(\d+)?/', $_SERVER['HTTP_RANGE'], $matches);
+                            if (preg_match('/bytes=(\d+)-(\d+)?/', $_SERVER['HTTP_RANGE'], $matches) !== 1) {
+                                throw new \InvalidArgumentException('Invalid HTTP Range header');
+                            }
                             $offset = intval($matches[1]);
                             $length = ((isset($matches[2])) ? intval($matches[2]) : $attachment->size) - $offset;
                         }
