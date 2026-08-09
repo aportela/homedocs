@@ -26,7 +26,7 @@ class AttachmentShare
     public function __construct(string $id, int $createdAtTimestamp, public int $expiresAtTimestamp, int $accessLimit, public bool $enabled)
     {
         if ($id === '' || $id === '0') {
-            $this->id = sprintf("%s%014d", password_hash(bin2hex(random_bytes(1024)), CRYPT_BLOWFISH), intval(microtime(true) * 1000));
+            $this->id = sprintf("%s%014d", password_hash(bin2hex(random_bytes(1024)), PASSWORD_BCRYPT), intval(microtime(true) * 1000));
         } else {
             $this->id = $id;
         }

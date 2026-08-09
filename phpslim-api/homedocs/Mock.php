@@ -281,6 +281,7 @@ class Mock
 
         shuffle($this->attachments);
         $documentAttachments =  array_slice($this->attachments, 0, mt_rand(1, $this->maxDocumentAttachmentsCount));
+        $attachmentId = null;
         foreach ($documentAttachments as $documentAttachment) {
             $attachmentId = \HomeDocs\Utils::uuidv4();
             $queries[] = sprintf(
@@ -306,7 +307,7 @@ class Mock
                         (id, cuid, attachment_id, ctime, etime, ltime, access_limit, access_count, enabled)
                     VALUES
                         ("%s", "%s", "%s", %d, %d, NULL, %d, 0, %d);',
-                sprintf("%s%014d", password_hash(bin2hex(random_bytes(1024)), CRYPT_BLOWFISH), intval(microtime(true) * 1000)),
+                sprintf("%s%014d", password_hash(bin2hex(random_bytes(1024)), PASSWORD_BCRYPT), intval(microtime(true) * 1000)),
                 $this->userId,
                 $attachmentId,
                 ($creationTimestamp * 1000) + mt_rand(0, 86400000),
