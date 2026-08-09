@@ -1,5 +1,13 @@
-const allowPreview = (filename: string) => {
-  return !!filename?.match(/.(jpg|jpeg|png|gif|mp3|pdf)$/i);
+const allowPreview = (filename: string): boolean => {
+  if (filename?.match(/\.(jpg|jpeg|png|gif|mp3)$/i)) {
+    return true;
+  }
+
+  if (filename?.match(/\.pdf$/i)) {
+    return navigator.pdfViewerEnabled === true;
+  }
+
+  return false;
 };
 
 const isImage = (filename: string) => {
