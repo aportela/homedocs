@@ -19,11 +19,11 @@
   const darkModeStore = useDarkModeStore();
 
   const currentDarkModeIcon = computed(() => {
-    return (darkModeStore.isActive ? "dark_mode" : "light_mode");
+    return (darkModeStore.isDarkModeActive ? "dark_mode" : "light_mode");
   });
 
   const toolTipLight = computed(() => t("Switch to light mode"));
   const toolTipDark = computed(() => t("Switch to dark mode"));
 
-  const tooltip = computed(() => darkModeStore.isActive ? toolTipLight : toolTipDark);
+  const tooltip = computed(() => darkModeStore.isDarkModeActive ? toolTipLight : toolTipDark);
 </script>

@@ -4,9 +4,9 @@ import { Dark } from 'quasar';
 
 export default defineBoot(() => {
   const darkModeStore = useDarkModeStore();
-  if (darkModeStore.isActive === true) {
+  if (darkModeStore.isDarkModeActive === true) {
     Dark.set(true);
-  } else if (darkModeStore.isActive === false) {
+  } else if (darkModeStore.isDarkModeActive === false) {
     Dark.set(false);
   } else {
     Dark.set('auto');

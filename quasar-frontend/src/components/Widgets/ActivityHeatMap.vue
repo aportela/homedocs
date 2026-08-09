@@ -138,7 +138,7 @@
       label: { text: 'MMM', textAlign: 'start', position: 'top' },
     },
     subDomain: { type: 'ghDay', radius: 2, width: 11, height: 11, gutter: 4 },
-    theme: darkModeStore.isActive ? "dark" : "light"
+    theme: darkModeStore.isDarkModeActive ? "dark" : "light"
   });
 
   const calDefaultPlugins = [
@@ -167,7 +167,7 @@
 
   // UGLY-HACK
   // official dynamic cal-heatmap theme toggle is not supported (https://cal-heatmap.com/docs/options/theme)
-  watch(() => darkModeStore.isActive, () => {
+  watch(() => darkModeStore.isDarkModeActive, () => {
     cal.destroy();
     cal = new CalHeatmap(calDefaultOptions);
     onCalRefresh();
@@ -228,7 +228,7 @@
       calOptions.scale.color.domain = scaleColorDomain;
     }
     calOptions.date.locale = currentLocale.value;
-    calOptions.theme = darkModeStore.isActive ? "dark" : "light";
+    calOptions.theme = darkModeStore.isDarkModeActive ? "dark" : "light";
     cal.paint(
       calOptions,
       calDefaultPlugins
