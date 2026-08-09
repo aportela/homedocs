@@ -1,38 +1,26 @@
-import { defineStore, acceptHMRUpdate } from "pinia";
-import { Dark } from "quasar";
-import { createStorageEntry } from "@/composables/localStorage";
+import { defineStore, acceptHMRUpdate } from 'pinia';
+import { Dark } from 'quasar';
 
-const localStorageDarkMode = createStorageEntry<boolean | null>(
-  "darkMode",
-  null,
-);
-
-const savedMode = localStorageDarkMode.get();
-
-if (savedMode === true) {
-  Dark.set(true);
-} else if (savedMode === false) {
-  Dark.set(false);
-} else {
-  Dark.set("auto");
-}
+const storePersistenceKey = 'homedocs.settings.darkMode';
 
 interface State {
-  active: boolean;
+  active: boolean | null;
 }
 
-export const useDarkModeStore = defineStore("darkModeStore", {
+export const useDarkModeStore = defineStore('darkModeStore', {
+  persist: {
+    key: storePersistenceKey,
+  },
   state: (): State => ({
     active: Dark.isActive,
   }),
   getters: {
-    isActive: (state: State): boolean => state.active,
+    isActive: (state: State): boolean | null => state.active,
   },
   actions: {
     set(active: boolean): void {
       this.active = active;
       Dark.set(this.active);
-      localStorageDarkMode.set(this.active);
     },
     toggle(): void {
       this.set(!this.active);
