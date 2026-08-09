@@ -28,6 +28,7 @@
     "cal-heatmap": "^4.2.4",
     "dayjs": "^1.11.21",
     "pinia": "^4.0.2",
+    "pinia-plugin-persistedstate": "^4.7.1",
     "qr-code-styling": "^1.9.2",
     "quasar": "^2.24.0",
     "vue": "^3.5.41",
