@@ -7,10 +7,4 @@ namespace HomeDocs\Exception;
 /**
  * "deleted element" custom exception (operation fails due element has been deleted and can not be accessed)
  */
-class DeletedException extends \Exception
-{
-    public function __construct(string $message = "", int $code = 0, ?\Exception $previous = null)
-    {
-        parent::__construct($message, $code, $previous);
-    }
-}
+class DeletedException extends \Exception {}
