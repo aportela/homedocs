@@ -1,10 +1,10 @@
-import { defineStore, acceptHMRUpdate } from 'pinia';
-import { Lang } from 'quasar';
-import { createStorageEntry } from 'src/composables/localStorage';
-import { availableSystemLocales } from 'src/i18n';
-import { DEFAULT_LOCALE } from 'src/constants';
+import { defineStore, acceptHMRUpdate } from "pinia";
+import { Lang } from "quasar";
+import { createStorageEntry } from "@/composables/localStorage";
+import { availableSystemLocales } from "@/i18n";
+import { DEFAULT_LOCALE } from "@/constants";
 
-const localStorageLocale = createStorageEntry<string | null>('locale', null);
+const localStorageLocale = createStorageEntry<string | null>("locale", null);
 
 const getMatchedLocale = (locale: string): string | null => {
   if (availableSystemLocales.includes(locale)) {
@@ -25,9 +25,11 @@ interface State {
   locale: string;
 }
 
-export const useI18nStore = defineStore('i18nStore', {
+export const useI18nStore = defineStore("i18nStore", {
   state: (): State => ({
-    locale: getMatchedLocale(localStorageLocale.get() || Lang.getLocale() || '') ?? DEFAULT_LOCALE,
+    locale:
+      getMatchedLocale(localStorageLocale.get() || Lang.getLocale() || "") ??
+      DEFAULT_LOCALE,
   }),
   getters: {
     currentLocale: (state: State): string => state.locale,

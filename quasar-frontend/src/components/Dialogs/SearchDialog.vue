@@ -103,23 +103,23 @@
   import { useI18n } from "vue-i18n";
   import { useRoute, useRouter } from "vue-router";
 
-  import { useSessionStore } from "src/stores/session";
-  import { bus, onShowDocumentFiles, onShowDocumentNotes } from "src/composables/bus";
-  import { api } from "src/composables/api";
-  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
-  import { type SearchDocumentResponse as SearchDocumentResponseInterface, type SearchDocumentResponseItem as SearchDocumentResponseItemInterface } from "src/types/apiResponses";
-  import { SearchDocumentItemClass } from "src/types/searchDocumentItem";
-  import { type QuasarVirtualScrollEventDetails as QuasarVirtualScrollEventDetailsInterface } from "src/types/quasarVirtualScrollEventDetails";
-  import { DateTimeClass } from "src/types/dateTime";
-  import { type Pager as PagerInterface } from "src/types/pager";
-  import { type Sort as SortInterface } from "src/types/sort";
-  import { type SearchFilter as SearchFilterInterface, SearchDatesFilterClass } from "src/types/searchFilter";
-  import { SearchOnTextEntitiesFilterClass } from "src/types/searchFilter";
+  import { useSessionStore } from "@/stores/session";
+  import { bus, onShowDocumentFiles, onShowDocumentNotes } from "@/composables/bus";
+  import { api } from "@/composables/api";
+  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "@/types/ajaxState";
+  import { type SearchDocumentResponse as SearchDocumentResponseInterface, type SearchDocumentResponseItem as SearchDocumentResponseItemInterface } from "@/types/apiResponses";
+  import { SearchDocumentItemClass } from "@/types/searchDocumentItem";
+  import { type QuasarVirtualScrollEventDetails as QuasarVirtualScrollEventDetailsInterface } from "@/types/quasarVirtualScrollEventDetails";
+  import { DateTimeClass } from "@/types/dateTime";
+  import { type Pager as PagerInterface } from "@/types/pager";
+  import { type Sort as SortInterface } from "@/types/sort";
+  import { type SearchFilter as SearchFilterInterface, SearchDatesFilterClass } from "@/types/searchFilter";
+  import { SearchOnTextEntitiesFilterClass } from "@/types/searchFilter";
 
-  import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue"
-  import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
-  import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
-  import { default as ViewDocumentDetailsButton } from "src/components/Buttons/ViewDocumentDetailsButton.vue";
+  import { default as BaseDialog } from "@/components/Dialogs/BaseDialog.vue"
+  import { default as CustomErrorBanner } from "@/components/Banners/CustomErrorBanner.vue";
+  import { default as CustomBanner } from "@/components/Banners/CustomBanner.vue";
+  import { default as ViewDocumentDetailsButton } from "@/components/Buttons/ViewDocumentDetailsButton.vue";
 
   interface SearchDialogProps {
     modelValue: boolean;

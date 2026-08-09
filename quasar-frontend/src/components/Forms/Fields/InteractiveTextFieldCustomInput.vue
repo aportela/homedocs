@@ -42,7 +42,7 @@
   import { useI18n } from "vue-i18n";
   import { useQuasar, QInput } from "quasar";
 
-  import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
+  import { default as DesktopToolTip } from "@/components/DesktopToolTip.vue";
 
   interface InteractiveTextFieldCustomInput {
     modelValue: string;

@@ -128,7 +128,7 @@
                         document.createdAt.timeAgo }})</q-item-label>
                       <q-item-label caption v-if="document.updatedAt?.dateTime">{{ t("Last update") }}: {{
                         document.updatedAt.dateTime
-                        }} ({{ document.updatedAt.timeAgo }})</q-item-label>
+                      }} ({{ document.updatedAt.timeAgo }})</q-item-label>
                     </q-item-section>
                     <q-item-section side top>
                       <ViewDocumentDetailsButton size="md" square class="min-width-9em"
@@ -158,7 +158,7 @@
                 <q-icon :name="store.sort.field === column.field ? sortOrderIcon : 'sort'" size="sm"></q-icon>
                 {{ t(column.title) }}
                 <DesktopToolTip>{{ t('Toggle sort by this column', { field: t(column.title) })
-                  }}</DesktopToolTip>
+                }}</DesktopToolTip>
               </th>
             </tr>
           </thead>
@@ -204,25 +204,25 @@
   import { useI18n } from "vue-i18n";
   import { useQuasar } from "quasar";
 
-  import { useAdvancedSearchData } from "src/stores/advancedSearchData"
-  import { bus, onShowDocumentFiles, onShowDocumentNotes } from "src/composables/bus";
-  import { api } from "src/composables/api";
+  import { useAdvancedSearchData } from "@/stores/advancedSearchData"
+  import { bus, onShowDocumentFiles, onShowDocumentNotes } from "@/composables/bus";
+  import { api } from "@/composables/api";
 
-  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
-  import { DateTimeClass } from "src/types/dateTime";
-  import { type SearchDocumentResponse as SearchDocumentResponseInterface, type SearchDocumentResponseItem as SearchDocumentResponseItemInterface } from "src/types/apiResponses";
-  import { SearchDocumentItemClass } from "src/types/searchDocumentItem";
-  import { type OrderType } from "src/types/orderType";
-  import { type Sort as SortInterface, SortClass } from "src/types/sort";
+  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "@/types/ajaxState";
+  import { DateTimeClass } from "@/types/dateTime";
+  import { type SearchDocumentResponse as SearchDocumentResponseInterface, type SearchDocumentResponseItem as SearchDocumentResponseItemInterface } from "@/types/apiResponses";
+  import { SearchDocumentItemClass } from "@/types/searchDocumentItem";
+  import { type OrderType } from "@/types/orderType";
+  import { type Sort as SortInterface, SortClass } from "@/types/sort";
 
-  import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
-  import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
-  import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
-  import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
-  import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
-  import { default as DateFilterFieldCustomInputSelector } from "src/components/Forms/Fields/DateFilterFieldCustomInputSelector.vue";
-  import { default as SortByFieldCustomButtonDropdown } from "src/components/Forms/Fields/SortByFieldCustomButtonDropdown.vue";
-  import { default as ViewDocumentDetailsButton } from "src/components/Buttons/ViewDocumentDetailsButton.vue";
+  import { default as DesktopToolTip } from "@/components/DesktopToolTip.vue";
+  import { default as InteractiveTagsFieldCustomSelect } from "@/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
+  import { default as CustomExpansionWidget } from "@/components/Widgets/CustomExpansionWidget.vue";
+  import { default as CustomErrorBanner } from "@/components/Banners/CustomErrorBanner.vue";
+  import { default as CustomBanner } from "@/components/Banners/CustomBanner.vue";
+  import { default as DateFilterFieldCustomInputSelector } from "@/components/Forms/Fields/DateFilterFieldCustomInputSelector.vue";
+  import { default as SortByFieldCustomButtonDropdown } from "@/components/Forms/Fields/SortByFieldCustomButtonDropdown.vue";
+  import { default as ViewDocumentDetailsButton } from "@/components/Buttons/ViewDocumentDetailsButton.vue";
 
   const { t } = useI18n();
 

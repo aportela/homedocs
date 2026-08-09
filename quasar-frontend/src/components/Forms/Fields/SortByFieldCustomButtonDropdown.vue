@@ -22,7 +22,7 @@
 
   import { computed, useAttrs } from "vue";
   import { useI18n } from "vue-i18n";
-  import { type Sort as SortInterface } from "src/types/sort";
+  import { type Sort as SortInterface } from "@/types/sort";
 
   const attrs = useAttrs();
 

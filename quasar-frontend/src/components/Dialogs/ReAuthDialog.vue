@@ -19,8 +19,8 @@
   import { ref } from "vue";
   import { useI18n } from "vue-i18n";
 
-  import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue"
-  import { default as LoginForm } from "src/components/Forms/LoginForm.vue"
+  import { default as BaseDialog } from "@/components/Dialogs/BaseDialog.vue"
+  import { default as LoginForm } from "@/components/Forms/LoginForm.vue"
 
   const { t } = useI18n();
 

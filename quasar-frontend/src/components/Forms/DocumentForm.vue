@@ -141,29 +141,29 @@
   import { uid, useQuasar, QUploader, type QRejectedEntry } from "quasar";
   import { type AxiosResponse } from "axios";
 
-  import { bus } from "src/composables/bus";
-  import { api } from "src/composables/api";
-  import { useFormUtils } from "src/composables/useFormUtils"
-  import { DocumentClass } from "src/types/document";
-  import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
+  import { bus } from "@/composables/bus";
+  import { api } from "@/composables/api";
+  import { useFormUtils } from "@/composables/useFormUtils"
+  import { DocumentClass } from "@/types/document";
+  import { useServerEnvironmentStore } from "@/stores/serverEnvironment";
 
-  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
-  import { type GetDocumentResponse as GetDocumentResponseInterface } from "src/types/apiResponses";
-  import { UploadTransferClass } from "src/types/uploadTransfer";
+  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "@/types/ajaxState";
+  import { type GetDocumentResponse as GetDocumentResponseInterface } from "@/types/apiResponses";
+  import { UploadTransferClass } from "@/types/uploadTransfer";
 
-  import { default as InteractiveTagsFieldCustomSelect } from "src/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
-  import { default as DocumentMetadataTopForm } from "src/components/Forms/DocumentMetadataTopForm.vue"
-  import { default as DocumentDetailsAttachments } from "src/components/Forms/DocumentDetailsAttachments.vue"
-  import { default as DocumentDetailsNotes } from "src/components/Forms/DocumentDetailsNotes.vue"
-  import { default as DocumentDetailsHistory } from "src/components/Forms/DocumentDetailsHistory.vue"
-  import { default as InteractiveTextFieldCustomInput } from "src/components/Forms/Fields/InteractiveTextFieldCustomInput.vue"
-  import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue"
-  import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue"
-  import { default as DeleteDocumentConfirmationDialog } from "src/components/Dialogs/DeleteDocumentConfirmationDialog.vue"
-  import { AttachmentClass } from "src/types/attachment";
-  import { NoteClass } from "src/types/note";
-  import { DateTimeClass } from "src/types/dateTime";
-  import { currentTimestamp } from "src/composables/dateUtils";
+  import { default as InteractiveTagsFieldCustomSelect } from "@/components/Forms/Fields/InteractiveTagsFieldCustomSelect.vue"
+  import { default as DocumentMetadataTopForm } from "@/components/Forms/DocumentMetadataTopForm.vue"
+  import { default as DocumentDetailsAttachments } from "@/components/Forms/DocumentDetailsAttachments.vue"
+  import { default as DocumentDetailsNotes } from "@/components/Forms/DocumentDetailsNotes.vue"
+  import { default as DocumentDetailsHistory } from "@/components/Forms/DocumentDetailsHistory.vue"
+  import { default as InteractiveTextFieldCustomInput } from "@/components/Forms/Fields/InteractiveTextFieldCustomInput.vue"
+  import { default as CustomBanner } from "@/components/Banners/CustomBanner.vue"
+  import { default as CustomErrorBanner } from "@/components/Banners/CustomErrorBanner.vue"
+  import { default as DeleteDocumentConfirmationDialog } from "@/components/Dialogs/DeleteDocumentConfirmationDialog.vue"
+  import { AttachmentClass } from "@/types/attachment";
+  import { NoteClass } from "@/types/note";
+  import { DateTimeClass } from "@/types/dateTime";
+  import { currentTimestamp } from "@/composables/dateUtils";
 
   const { t } = useI18n();
   const router = useRouter();

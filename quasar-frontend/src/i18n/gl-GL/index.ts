@@ -1,769 +1,530 @@
 export default {
-  " change/s on date ":
-    " cambio/s na data ",
+  ' change/s on date ': ' cambio/s na data ',
 
-  "1 minute":
-    "1 minuto",
+  '1 minute': '1 minuto',
 
-  "1 hour":
-    "1 hora",
+  '1 hour': '1 hora',
 
-  "1 day":
-    "1 día",
+  '1 day': '1 día',
 
-  "1 week":
-    "1 semana",
+  '1 week': '1 semana',
 
-  "1 month":
-    "1 mes",
+  '1 month': '1 mes',
 
-  "1 year":
-    "1 ano",
+  '1 year': '1 ano',
 
-  "(expired)":
-    "(expirado)",
+  '(expired)': '(expirado)',
 
-  "Access count":
-    "Nº de accesos",
+  'Access count': 'Nº de accesos',
 
-  "Access denied":
-    "Acceso denegado",
+  'Access denied': 'Acceso denegado',
 
-  "Actions":
-    "Accións",
+  Actions: 'Accións',
 
-  "Activity Heatmap":
-    "Mapa de calor de actividade",
+  'Activity Heatmap': 'Mapa de calor de actividade',
 
-  "Add":
-    "Engadir",
+  Add: 'Engadir',
 
-  "Add attachment":
-    "Engadir adxunto",
+  'Add attachment': 'Engadir adxunto',
 
-  "Add note":
-    "Engadir nota",
+  'Add note': 'Engadir nota',
 
-  "Advanced search":
-    "Procura avanzada",
+  'Advanced search': 'Procura avanzada',
 
-  "Already have an account ?":
-    "¿ Xa dispón dunha conta ?",
+  'Already have an account ?': '¿ Xa dispón dunha conta ?',
 
-  "Always display this progress window when uploading files":
-    "Mostrar sempre esta diálogo de progreso o subir arquivos",
+  'Always display this progress window when uploading files':
+    'Mostrar sempre esta diálogo de progreso o subir arquivos',
 
-  "Always show uploading dialog after adding files":
-    "Mostrar sempre o diálogo de transferencias o engadir arquivos",
+  'Always show uploading dialog after adding files':
+    'Mostrar sempre o diálogo de transferencias o engadir arquivos',
 
-  "Any date":
-    "Calquera data",
+  'Any date': 'Calquera data',
 
-  "API Error: error adding document":
-    "Error de API: error engadindo o documento",
+  'API Error: error adding document': 'Error de API: error engadindo o documento',
 
-  "API Error: error deleting document":
-    "Error de API: error eliminando o documento",
+  'API Error: error deleting document': 'Error de API: error eliminando o documento',
 
-  "API Error: error loading document":
-    "Error de API: error cargando o documento",
+  'API Error: error loading document': 'Error de API: error cargando o documento',
 
-  "API Error: error removing attachment":
-    "Error de API: error eliminando o adxunto",
+  'API Error: error removing attachment': 'Error de API: error eliminando o adxunto',
 
-  "API Error: error updating document":
-    "Error de API: error gardando o documento",
+  'API Error: error updating document': 'Error de API: error gardando o documento',
 
-  "API Error: fatal error":
-    "Error de API: error fatal",
+  'API Error: fatal error': 'Error de API: error fatal',
 
-  "API Error: fatal error details":
-    "HTTP {status} ({statusText})",
+  'API Error: fatal error details': 'HTTP {status} ({statusText})',
 
-  "API Error: invalid response data":
-    "Error de API: datos de resposta non válidos",
+  'API Error: invalid response data': 'Error de API: datos de resposta non válidos',
 
-  "API Error: invalid/missing param":
-    "Error de API: falta un parámetro ou é incorrecto",
+  'API Error: invalid/missing param': 'Error de API: falta un parámetro ou é incorrecto',
 
-  "API Error: missing document title param":
-    "Error de API: falta o parámetro do título do documento",
+  'API Error: missing document title param':
+    'Error de API: falta o parámetro do título do documento',
 
-  "API Error: missing email param":
-    "Error de API: falta o correo electrónico",
+  'API Error: missing email param': 'Error de API: falta o correo electrónico',
 
-  "API Error: missing password param":
-    "Error de API: falta o contrasinal",
+  'API Error: missing password param': 'Error de API: falta o contrasinal',
 
-  "ascending":
-    "ascendente",
+  ascending: 'ascendente',
 
-  "attachment filename":
-    "nome do adxunto",
+  'attachment filename': 'nome do adxunto',
 
-  "Attachment names":
-    "Nomes de adxuntos",
+  'Attachment names': 'Nomes de adxuntos',
 
-  "Attachment share":
-    "Compartir adxunto",
+  'Attachment share': 'Compartir adxunto',
 
-  "Attachments":
-    "Adxuntos",
+  Attachments: 'Adxuntos',
 
-  "Attachments shares":
-    "Adxuntos compartidos",
+  'Attachments shares': 'Adxuntos compartidos',
 
-  "Between dates":
-    "Entre datas",
+  'Between dates': 'Entre datas',
 
-  "Browse by tag: ":
-    "Navegar por etiqueta: {tag}",
+  'Browse by tag: ': 'Navegar por etiqueta: {tag}',
 
-  "Browse project page":
-    "Visitar páxina do proxecto",
+  'Browse project page': 'Visitar páxina do proxecto',
 
-  "Can not upload file":
-    "Non se pode subir o arquivo {filename}",
+  'Can not upload file': 'Non se pode subir o arquivo {filename}',
 
-  "Cancel":
-    "Cancelar",
+  Cancel: 'Cancelar',
 
-  "Clear processed transfers":
-    "Oiminar transferencias finalizadas",
+  'Clear processed transfers': 'Oiminar transferencias finalizadas',
 
-  "Click here to sign in":
-    "Falga click eiquí pra iniciar sesión",
+  'Click here to sign in': 'Falga click eiquí pra iniciar sesión',
 
-  "Click here to sign up":
-    "Falga click eiquí pra crear unha",
+  'Click here to sign up': 'Falga click eiquí pra crear unha',
 
-  "Click to collapse":
-    "Falga click pra contraer",
+  'Click to collapse': 'Falga click pra contraer',
 
-  "Click to download":
-    "Falga click pra descargar",
+  'Click to download': 'Falga click pra descargar',
 
-  "Click to expand":
-    "Falga click pra expandir",
+  'Click to expand': 'Falga click pra expandir',
 
-  "Click to open fast search":
-    "Falga click pra abri-la procura rápida",
+  'Click to open fast search': 'Falga click pra abri-la procura rápida',
 
-  "Click to refresh data":
-    "Falga click pra refresca-los datos",
+  'Click to refresh data': 'Falga click pra refresca-los datos',
 
-  "Click to remove note":
-    "Falga click pra elimina-la nota",
+  'Click to remove note': 'Falga click pra elimina-la nota',
 
-  "Click to toggle edit mode":
-    "Falga click pra alterna-lo modo de edición",
+  'Click to toggle edit mode': 'Falga click pra alterna-lo modo de edición',
 
-  "Close":
-    "Pechar",
+  Close: 'Pechar',
 
-  "Collapse sidebar":
-    "Contraer sidebar",
+  'Collapse sidebar': 'Contraer sidebar',
 
-  "Copied to clipboard!":
-	"¡Copiado ço portatapeis!",
+  'Copied to clipboard!': '¡Copiado ço portatapeis!',
 
-  "Created on":
-    "Data de creación",
+  'Created on': 'Data de creación',
 
-  "Creation date":
-    "Data de creación",
+  'Creation date': 'Data de creación',
 
-  "Current sort by":
-    "Orden por \"{label}\" ({order})",
+  'Current sort by': 'Orden por "{label}" ({order})',
 
-  "Customize how you interact with the platform.":
-    "Personaliza cómo interactúas coa plataforma.",
+  'Customize how you interact with the platform.': 'Personaliza cómo interactúas coa plataforma.',
 
-  "Date":
-    "Data",
+  Date: 'Data',
 
-  "Date format":
-    "Formato de data",
+  'Date format': 'Formato de data',
 
-  "Datetime format":
-    "Formato de data e hora",
+  'Datetime format': 'Formato de data e hora',
 
-  "Delete":
-    "Oiminar",
+  Delete: 'Oiminar',
 
-  "Delete document":
-    "Oiminar documento",
+  'Delete document': 'Oiminar documento',
 
-  "descending":
-    "descendente",
+  descending: 'descendente',
 
-  "Description":
-    "Descripción",
+  Description: 'Descripción',
 
-  "description":
-    "descripción",
+  description: 'descripción',
 
-  "Disk usage":
-    "Uso en disco",
+  'Disk usage': 'Uso en disco',
 
-  "Document attachment filenames":
-    "Nomes de adxuntos do documento",
+  'Document attachment filenames': 'Nomes de adxuntos do documento',
 
-  "Document attachments preview":
-    "Previsualización do archivo do documento|Previsualización dos arquivos do documento",
+  'Document attachments preview':
+    'Previsualización do archivo do documento|Previsualización dos arquivos do documento',
 
-  "Document created":
-    "Documento creado",
+  'Document created': 'Documento creado',
 
-  "Document creation date":
-    "Data de creación do documento",
+  'Document creation date': 'Data de creación do documento',
 
-  "Document description":
-    "Descripción do documento",
+  'Document description': 'Descripción do documento',
 
-  "Document details":
-    "Detalles do documento",
+  'Document details': 'Detalles do documento',
 
-  "Document has been removed":
-    "O documento foi eliminado",
+  'Document has been removed': 'O documento foi eliminado',
 
-  "Document last update":
-    "Data do último cambio do documento",
+  'Document last update': 'Data do último cambio do documento',
 
-  "Document metadata":
-    "Metadatos do documento",
+  'Document metadata': 'Metadatos do documento',
 
-  "Document not found":
-    "Documento non atopado",
+  'Document not found': 'Documento non atopado',
 
-  "Document note (click on body to update)":
-    "Nota do documento (faga click no corpo pra editar)",
+  'Document note (click on body to update)': 'Nota do documento (faga click no corpo pra editar)',
 
-  "Document notes":
-    "Notas do documento",
+  'Document notes': 'Notas do documento',
 
-  "Document saved":
-    "Documento gardado",
+  'Document saved': 'Documento gardado',
 
-  "Document tags":
-    "Etiquetas do documento",
+  'Document tags': 'Etiquetas do documento',
 
-  "Document title":
-    "Título do documento",
+  'Document title': 'Título do documento',
 
-  "Document updated":
-    "Documento modificado",
+  'Document updated': 'Documento modificado',
 
-  "Document updated on":
-    "Documento modificado en",
+  'Document updated on': 'Documento modificado en',
 
-  "Don't have an account yet ?":
-    "¿ Aínda non dispón dunha conta ?",
+  "Don't have an account yet ?": '¿ Aínda non dispón dunha conta ?',
 
-  "Download":
-    "Descargar",
+  Download: 'Descargar',
 
-  "Email":
-    "Correo electrónico",
+  Email: 'Correo electrónico',
 
-  "Email already used":
-    "O correo electrónico xa está en uso",
+  'Email already used': 'O correo electrónico xa está en uso',
 
-  "Email not registered":
-    "O correo electrónico non está asociado",
+  'Email not registered': 'O correo electrónico non está asociado',
 
-  "Enabled":
-    "Activo",
+  Enabled: 'Activo',
 
-  "End":
-    "Fin",
+  End: 'Fin',
 
-  "Error":
-    "Error",
+  Error: 'Error',
 
-  "Error loading available tags":
-    "Error cargando as etiquetas dispoñibles",
+  'Error loading available tags': 'Error cargando as etiquetas dispoñibles',
 
-  "Error loading data":
-    "Error cargando datos",
+  'Error loading data': 'Error cargando datos',
 
-  "Error loading preview":
-    "Error cargando a previsualización",
+  'Error loading preview': 'Error cargando a previsualización',
 
-  "Expand sidebar":
-    "Expandir sidebar",
-	
-  "Expires on":
-    "Expira en",
-	
-  "Fast search match fragment":
-    "Coincidencia atopada en {matchedOn}: {fragment}",
+  'Expand sidebar': 'Expandir sidebar',
 
-  "Field is required":
-    "Este campo é requerido",
+  'Expires on': 'Expira en',
 
-  "File preview":
-    "Previsualizar arquivo",
+  'Fast search match fragment': 'Coincidencia atopada en {matchedOn}: {fragment}',
 
-  "Attachment preview not available":
-    "O arquivo {filename} non dispón de previsualización",
+  'Field is required': 'Este campo é requerido',
 
-  "File upload activity & status":
-    "Estado e actividad das subidas de arquivos",
+  'File preview': 'Previsualizar arquivo',
 
-  "FileDownloadedMessage":
-    "O arquivo {filename} se descargou ({length})",
+  'Attachment preview not available': 'O arquivo {filename} non dispón de previsualización',
 
-  "FileDownloadErrorMessage":
-    "Error descargando o arquivo {filename}",
+  'File upload activity & status': 'Estado e actividad das subidas de arquivos',
 
-  "Filter by text on attachment filename":
-    "Filtrar por texto en nome do adxunto",
+  FileDownloadedMessage: 'O arquivo {filename} se descargou ({length})',
 
-  "Filter by text on note body":
-    "Filtrar por texto no corpo de la nota",
+  FileDownloadErrorMessage: 'Error descargando o arquivo {filename}',
 
-  "Fixed date":
-    "Data fixa",
+  'Filter by text on attachment filename': 'Filtrar por texto en nome do adxunto',
 
-  "From date":
-    "Dende unha data",
+  'Filter by text on note body': 'Filtrar por texto no corpo de la nota',
 
-  "Glad to see you again!":
-    "¡Alégranos verte de novo!",
+  'Fixed date': 'Data fixa',
 
-  "Go Home":
-    "Volver o inicio",
+  'From date': 'Dende unha data',
 
-  "Has access count limit":
-    "Ten límite de accesos",
+  'Glad to see you again!': '¡Alégranos verte de novo!',
 
-  "Has expiration":
-    "Ten expiración",
+  'Go Home': 'Volver o inicio',
 
-  "Hide password":
-    "Ocultar contrasinal",
+  'Has access count limit': 'Ten límite de accesos',
 
-  "History":
-    "Historial",
+  'Has expiration': 'Ten expiración',
 
-  "Home":
-    "Inicio",
+  'Hide password': 'Ocultar contrasinal',
 
-  "Homedocs":
-    "Homedocs",
+  History: 'Historial',
 
-  "Invalid password":
-    "Contrasinal incorrecta",
+  Home: 'Inicio',
 
-  "Last 15 days":
-    "Últimos 15 días",
+  Homedocs: 'Homedocs',
 
-  "Last 31 days":
-    "Últimos 31 días",
+  'Invalid password': 'Contrasinal incorrecta',
 
-  "Last 365 days":
-    "Últimos 365 días",
+  'Last 15 days': 'Últimos 15 días',
 
-  "Last 7 days":
-    "Últimos 7 días",
+  'Last 31 days': 'Últimos 31 días',
 
-  "Last update":
-    "Data do último cambio",
+  'Last 365 days': 'Últimos 365 días',
 
-  "Let's get back to organizing.":
-    "É momento de retoma-la organización.",
+  'Last 7 days': 'Últimos 7 días',
 
-  "Let's start organizing.":
-    "É momento de comenza-la organización.",
+  'Last update': 'Data do último cambio',
 
-  "Limit":
-    "Límite",
+  "Let's get back to organizing.": 'É momento de retoma-la organización.',
 
-  "Loading...":
-    "Cargando...",
+  "Let's start organizing.": 'É momento de comenza-la organización.',
 
-  "Max results":
-    "Nº máximo resultados",
+  Limit: 'Límite',
 
-  "Most recent access":
-    "Acceso máis recente",
+  'Loading...': 'Cargando...',
 
-  "Most recent activity":
-    "Actividade máis recente",
+  'Max results': 'Nº máximo resultados',
 
-  "My profile":
-    "O meu perfil",
+  'Most recent access': 'Acceso máis recente',
 
-  "Name":
-    "Nome",
+  'Most recent activity': 'Actividade máis recente',
 
-  "New password":
-    "Nova contrasinal",
+  'My profile': 'O meu perfil',
 
-  "New sign ups are not allowed on this system":
-    "Non se permiten novos rexistros neste sistema",
+  Name: 'Nome',
 
-  "Next":
-    "Seguinte",
+  'New password': 'Nova contrasinal',
 
-  "No activity on date ":
-    "Sen actividade na data ",
+  'New sign ups are not allowed on this system': 'Non se permiten novos rexistros neste sistema',
 
-  "No document attachments found":
-    "O documento non ten adxuntos",
+  Next: 'Seguinte',
 
-  "No document notes found":
-    "O documento non ten notas",
+  'No activity on date ': 'Sen actividade na data ',
 
-  "No results found with current filter":
-    "Non hai resultados pra as condicións de filtro especificadas",
+  'No document attachments found': 'O documento non ten adxuntos',
 
-  "note body":
-    "corpo da nota",
+  'No document notes found': 'O documento non ten notas',
 
-  "Notes":
-    "Notas",
+  'No results found with current filter':
+    'Non hai resultados pra as condicións de filtro especificadas',
 
-  "notes":
-    "notas",
+  'note body': 'corpo da nota',
 
-  "Ok":
-    "Confirmar",
+  Notes: 'Notas',
 
-  "Only display this progress window when uploading failed":
-    "Mostrar unicamente este diálogo cando haxa errores o subir arquivos",
+  notes: 'notas',
 
-  "Only lowercase letters, numbers and hyphens are allowed in tags":
-    "Só se permiten letras minúsculas, números e guións nas etiquetas",
+  Ok: 'Confirmar',
 
-  "Oooops":
-    "¡Ups!",
+  'Only display this progress window when uploading failed':
+    'Mostrar unicamente este diálogo cando haxa errores o subir arquivos',
 
-  "Oops. Nothing here...":
-    "Oops. Parece que non hai nada por eiquí...",
+  'Only lowercase letters, numbers and hyphens are allowed in tags':
+    'Só se permiten letras minúsculas, números e guións nas etiquetas',
 
-  "Operation":
-    "Operación",
+  Oooops: '¡Ups!',
 
-  "Operations":
-    "Operacións",
+  'Oops. Nothing here...': 'Oops. Parece que non hai nada por eiquí...',
 
-  "Password":
-    "Contrasinal",
+  Operation: 'Operación',
 
-  "Personal information":
-    "Información persoal",
+  Operations: 'Operacións',
 
-  "Please enter again your credentials":
-    "Por favor introduzca de novo as súas credenciais",
+  Password: 'Contrasinal',
 
-  "Preview":
-    "Previsualizar",
+  'Personal information': 'Información persoal',
 
-  "Previous":
-    "Anterior",
+  'Please enter again your credentials': 'Por favor introduzca de novo as súas credenciais',
 
-  "Profile has been successfully updated":
-    "O perfil actualizouse con éxito",
+  Preview: 'Previsualizar',
 
-  "Profile settings":
-    "Preferencias do perfil",
+  Previous: 'Anterior',
 
-  "Recent documents":
-    "Documentos recentes",
+  'Profile has been successfully updated': 'O perfil actualizouse con éxito',
 
-  "Reload":
-    "Recargar",
+  'Profile settings': 'Preferencias do perfil',
 
-  "Remove":
-    "Eliminar",
+  'Recent documents': 'Documentos recentes',
 
-  "Reset filters":
-    "Reiniciar filtros",
+  Reload: 'Recargar',
 
-  "Results":
-    "Resultados",
+  Remove: 'Eliminar',
 
-  "Results count":
-    "resultado|resultados",
+  'Reset filters': 'Reiniciar filtros',
 
-  "Save":
-    "Gardar",
+  Results: 'Resultados',
 
-  "Save changes":
-    "Gardar cambios",
+  'Results count': 'resultado|resultados',
 
-  "Saving...":
-    "Gardando...",
+  Save: 'Gardar',
 
-  "Search":
-    "Procurar",
+  'Save changes': 'Gardar cambios',
 
-  "Search on":
-    "Procurar en",
+  'Saving...': 'Gardando...',
 
-  "Search on HomeDocs...":
-    "Procurar en HomeDocs...",
+  Search: 'Procurar',
 
-  "Search text...":
-    "Procurar texto...",
+  'Search on': 'Procurar en',
 
-  "Searching...":
-    "Procurando...",
+  'Search on HomeDocs...': 'Procurar en HomeDocs...',
 
-  "Selected language":
-    "Idioma seleccionado",
+  'Search text...': 'Procurar texto...',
 
-  "Session lost... re-auth required":
-    "Perdeuse a sesión... requírese re-autentificación",
+  'Searching...': 'Procurando...',
 
-  "Set access count limit":
-    "Establecer límite de accesos",
+  'Selected language': 'Idioma seleccionado',
 
-  "Set expiration":
-    "Establecer expiración",
+  'Session lost... re-auth required': 'Perdeuse a sesión... requírese re-autentificación',
 
-  "Share":
-    "Compartir",
+  'Set access count limit': 'Establecer límite de accesos',
 
-  "Shared":
-    "Compartido",
+  'Set expiration': 'Establecer expiración',
 
-  "Shared element":
-    "Elemento compartido",
+  Share: 'Compartir',
 
-  "Show password":
-    "Mostrar contrasinal",
+  Shared: 'Compartido',
 
-  "Show tooltips":
-    "Mostrar pistas/suxerencias emerxentes",
+  'Shared element': 'Elemento compartido',
 
-  "Sign in":
-    "Iniciar sesión",
+  'Show password': 'Mostrar contrasinal',
 
-  "Sign out":
-    "Pechar sesión",
+  'Show tooltips': 'Mostrar pistas/suxerencias emerxentes',
 
-  "Sign up":
-    "Crear conta",
+  'Sign in': 'Iniciar sesión',
 
-  "Sign up now and take control.":
-    "Rexístrate agora e toma o control.",
+  'Sign out': 'Pechar sesión',
 
-  "Size":
-    "Tamaño",
+  'Sign up': 'Crear conta',
 
-  "Size: ":
-    "Tamaño: ",
+  'Sign up now and take control.': 'Rexístrate agora e toma o control.',
 
-  "Small resume of your platform usage":
-    "Pequeno resumen do teu uso da plataforma",
+  Size: 'Tamaño',
 
-  "Started":
-    "Iniciada",
+  'Size: ': 'Tamaño: ',
 
-  "Status":
-    "Estado",
+  'Small resume of your platform usage': 'Pequeno resumen do teu uso da plataforma',
 
-  "Switch language":
-    "Trocar idioma",
+  Started: 'Iniciada',
 
-  "Switch to dark mode":
-    "Trocar a modo oscuro",
+  Status: 'Estado',
 
-  "Switch to light mode":
-    "Trocar a modo claro",
+  'Switch language': 'Trocar idioma',
 
-  "Tag cloud":
-    "Nube de etiquetas",
+  'Switch to dark mode': 'Trocar a modo oscuro',
 
-  "Tags":
-    "Etiquetas",
+  'Switch to light mode': 'Trocar a modo claro',
 
-  "The document has been deleted. Upon closing this dialog, you will be redirected to the home screen.":
-    "O documento foi eliminado. Unha vez peche este diálogo será redireccionado a pantalla de inicio.",
+  'Tag cloud': 'Nube de etiquetas',
 
-  "The first step to a more organized you starts here!":
-    "¡O primeiro paso ata un ti máis organizado comenza eiquí!",
+  Tags: 'Etiquetas',
 
-  "This document has no associated notes.":
-    "Este documento non ten notas asociadas.",
+  'The document has been deleted. Upon closing this dialog, you will be redirected to the home screen.':
+    'O documento foi eliminado. Unha vez peche este diálogo será redireccionado a pantalla de inicio.',
 
-  "This operation cannot be undone. Would you like to proceed ?":
-    "Esta operación non se puede desfacer. ¿ Quere continuar ?",
+  'The first step to a more organized you starts here!':
+    '¡O primeiro paso ata un ti máis organizado comenza eiquí!',
 
-  "This share has been accessed n times.":
-    "Accedeuse a este recurso compartido {count} veces.|Accedeuse a este recurso compartido {count} vez.|Accedeuse a este recurso compartido {count} veces.",
-	
-  "timeAgo": {
+  'This document has no associated notes.': 'Este documento non ten notas asociadas.',
 
-    "day":
-      "fai {count} día | fai {count} días",
+  'This operation cannot be undone. Would you like to proceed ?':
+    'Esta operación non se puede desfacer. ¿ Quere continuar ?',
 
-    "hour":
-      "fai {count} hora | fai {count} horas",
+  'This share has been accessed n times.':
+    'Accedeuse a este recurso compartido {count} veces.|Accedeuse a este recurso compartido {count} vez.|Accedeuse a este recurso compartido {count} veces.',
 
-    "minute":
-      "fai {count} minuto | fai {count} minutos",
+  timeAgo: {
+    day: 'fai {count} día | fai {count} días',
 
-    "month":
-      "fai {count} mes | fai {count} meses",
+    hour: 'fai {count} hora | fai {count} horas',
 
-    "now":
-      "agora",
+    minute: 'fai {count} minuto | fai {count} minutos',
 
-    "second":
-      "fai {count} segundo | fai {count} segundos",
+    month: 'fai {count} mes | fai {count} meses',
 
-    "year":
-      "fai {count} año | fai {count} anos"
-  },
-  
-  "timeUntil": {
+    now: 'agora',
 
-    "day":
-      "dentro de {count} día|dentro de {count} días",
+    second: 'fai {count} segundo | fai {count} segundos',
 
-    "hour":
-      "dentro de {count} hora|dentro de {count} horas",
-
-    "minute":
-      "dentro de {count} minuto|dentro de {count} minutos",
-
-    "month":
-      "dentro de {count} mes|dentro de {count} meses",
-
-    "now":
-      "ahora",
-
-    "second":
-      "dentro de {count} segundo|dentro de {count} segundos",
-
-    "year":
-      "dentro de {count} ano|dentro de {count} anos"
+    year: 'fai {count} año | fai {count} anos',
   },
 
-  "Title":
-    "Título",
+  timeUntil: {
+    day: 'dentro de {count} día|dentro de {count} días',
 
-  "title":
-    "título",
+    hour: 'dentro de {count} hora|dentro de {count} horas',
 
-  "To date":
-    "Ata unha data",
+    minute: 'dentro de {count} minuto|dentro de {count} minutos',
 
-  "Today":
-    "Hoxe",
+    month: 'dentro de {count} mes|dentro de {count} meses',
 
-  "Toggle sort by this column":
-    "Troca-lo orden por esta columna: {field}",
+    now: 'ahora',
 
-  "Total attachments":
-    "Adxuntos totais",
+    second: 'dentro de {count} segundo|dentro de {count} segundos',
 
-  "Total attachments count":
-    "adxunto|adxuntos",
+    year: 'dentro de {count} ano|dentro de {count} anos',
+  },
 
-  "Total document count":
-    "{count} documento|{count} documentos",
+  Title: 'Título',
 
-  "Total documents":
-    "Documentos totais",
+  title: 'título',
 
-  "Total notes":
-    "nota|notas",
+  'To date': 'Ata unha data',
 
-  "Total search conditions count":
-    "{count} condición|{count} condicións",
+  Today: 'Hoxe',
 
-  "Total search results count":
-    "{count} documento|{count} documentos",
+  'Toggle sort by this column': 'Troca-lo orden por esta columna: {field}',
 
-  "Total tags":
-    "{count} etiqueta|{count} etiquetas",
+  'Total attachments': 'Adxuntos totais',
 
-  "Total transfers":
-    "transferencia|transferencias",
+  'Total attachments count': 'adxunto|adxuntos',
 
-  "Transfer complete":
-    "Transferencia completa",
+  'Total document count': '{count} documento|{count} documentos',
 
-  "Transfer failed":
-    "Transferencia fallida",
+  'Total documents': 'Documentos totais',
 
-  "Transfer rejected":
-    "Transferencia rexeitada",
+  'Total notes': 'nota|notas',
 
-  "Transfer rejected max filesize":
-    "Transferencia rexeitada (tamaño máximo permitido: {maxUploadFileSize})",
+  'Total search conditions count': '{count} condición|{count} condicións',
 
-  "Transfering...":
-    "Transferindo...",
+  'Total search results count': '{count} documento|{count} documentos',
 
-  "type note body":
-    "teclee o corpo da nota",
+  'Total tags': '{count} etiqueta|{count} etiquetas',
 
-  "Type text condition":
-    "Teclee a condición de texto",
+  'Total transfers': 'transferencia|transferencias',
 
-  "type text search condition":
-    "teclee a condición de procura por texto",
+  'Transfer complete': 'Transferencia completa',
+
+  'Transfer failed': 'Transferencia fallida',
+
+  'Transfer rejected': 'Transferencia rexeitada',
+
+  'Transfer rejected max filesize':
+    'Transferencia rexeitada (tamaño máximo permitido: {maxUploadFileSize})',
+
+  'Transfering...': 'Transferindo...',
+
+  'type note body': 'teclee o corpo da nota',
+
+  'Type text condition': 'Teclee a condición de texto',
+
+  'type text search condition': 'teclee a condición de procura por texto',
 
   "Unfortunately, your search didn't return any results. You might want to modify your filters or search terms":
-    "Desafortunhadamente, a tu procura non devolveu ningún resultado. Quizáis queiras modifica-los teus filtros ou términos de procura.",
+    'Desafortunhadamente, a tu procura non devolveu ningún resultado. Quizáis queiras modifica-los teus filtros ou términos de procura.',
 
-  "Unknown operation":
-    "Operación desconocida",
+  'Unknown operation': 'Operación desconocida',
 
-  "Update profile":
-    "Actualizar perfil",
+  'Update profile': 'Actualizar perfil',
 
-  "Update your data":
-    "Actualice os seus datos",
+  'Update your data': 'Actualice os seus datos',
 
-  "Uploaded on":
-    "Subido en",
+  'Uploaded on': 'Subido en',
 
-  "Uploaded on: ":
-    "Subido en: ",
+  'Uploaded on: ': 'Subido en: ',
 
-  "View document attachments":
-    "Ve-los arquivos do documento",
+  'View document attachments': 'Ve-los arquivos do documento',
 
-  "View document notes":
-    "Ve-las notas do documento",
+  'View document notes': 'Ve-las notas do documento',
 
-  "Welcome aboard!":
-    "Benvido a bordo!",
+  'Welcome aboard!': 'Benvido a bordo!',
 
-  "Welcome to HomeDocs":
-    "Benvido a HomeDocs",
+  'Welcome to HomeDocs': 'Benvido a HomeDocs',
 
-  "Where your documents find their place.":
-    "Onde os teus documentos atopan o seu lugar.",
+  'Where your documents find their place.': 'Onde os teus documentos atopan o seu lugar.',
 
-  "Yesterday":
-    "Onte",
+  Yesterday: 'Onte',
 
-  "You are about to delete the current document. Are you sure? (this action cannot be undone).":
-    "Está a punto de elimina-lo documento actual. ¿ Está seguro ? (esta operación non se pode revertir)",
+  'You are about to delete the current document. Are you sure? (this action cannot be undone).':
+    'Está a punto de elimina-lo documento actual. ¿ Está seguro ? (esta operación non se pode revertir)',
 
-  "You haven't created any documents yet":
-    "Aínda non creou ningún documento",
+  "You haven't created any documents yet": 'Aínda non creou ningún documento',
 
-  "You haven't created any share yet":
-    "Aínda non compartíu ningún elemento",
+  "You haven't created any share yet": 'Aínda non compartíu ningún elemento',
 
-  "You haven't created any tags yet":
-    "Aínda non creou ningunha etiqueta",
+  "You haven't created any tags yet": 'Aínda non creou ningunha etiqueta',
 
-  "Your account has been created":
-    "A súa conta foi creada",
+  'Your account has been created': 'A súa conta foi creada',
 
-  "Your browser does not support the audio element":
-    "O seu navegador non soporta o elemento audio",
+  'Your browser does not support the audio element': 'O seu navegador non soporta o elemento audio',
 
-  "Your system stats":
-    "As túas estadísticas do sistema"
+  'Missing browser PDF preview support':
+    'O seu navegador non soporta previsualizacións de arquivos PDF',
+
+  'Your system stats': 'As túas estadísticas do sistema',
 };

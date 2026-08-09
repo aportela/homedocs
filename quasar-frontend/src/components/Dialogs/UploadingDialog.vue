@@ -66,12 +66,12 @@
   import { format } from "quasar";
   import { useI18n } from "vue-i18n";
 
-  import { useSessionStore } from "src/stores/session";
-  import { fullDateTimeHuman } from "src/composables/dateUtils";
-  import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
+  import { useSessionStore } from "@/stores/session";
+  import { fullDateTimeHuman } from "@/composables/dateUtils";
+  import { useServerEnvironmentStore } from "@/stores/serverEnvironment";
 
-  import { type UploadTransfer as UploadTransferInterface } from "src/types/uploadTransfer";
-  import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue"
+  import { type UploadTransfer as UploadTransferInterface } from "@/types/uploadTransfer";
+  import { default as BaseDialog } from "@/components/Dialogs/BaseDialog.vue"
 
   const { t } = useI18n();
 

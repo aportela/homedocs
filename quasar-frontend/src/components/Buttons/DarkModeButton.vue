@@ -9,9 +9,9 @@
   import { useAttrs, computed } from "vue";
   import { useI18n } from "vue-i18n";
 
-  import { useDarkModeStore } from "src/stores/darkMode";
+  import { useDarkModeStore } from "@/stores/darkMode";
 
-  import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
+  import { default as DesktopToolTip } from "@/components/DesktopToolTip.vue";
 
   const { t } = useI18n();
   const attrs = useAttrs();

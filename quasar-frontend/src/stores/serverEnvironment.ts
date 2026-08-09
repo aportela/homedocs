@@ -1,6 +1,6 @@
-import { defineStore, acceptHMRUpdate } from 'pinia';
+import { defineStore, acceptHMRUpdate } from "pinia";
 
-import { type EnvironmentType } from 'src/types/common';
+import { type EnvironmentType } from "@/types/common";
 
 interface State {
   allowSignUp: boolean;
@@ -8,21 +8,23 @@ interface State {
   maxUploadFileSize: number;
 }
 
-export const useServerEnvironmentStore = defineStore('serverEnvironment', {
+export const useServerEnvironmentStore = defineStore("serverEnvironment", {
   state: (): State => ({
     allowSignUp: true,
-    environment: 'production',
+    environment: "production",
     maxUploadFileSize: 0,
   }),
   getters: {
     isSignUpAllowed: (state: State): boolean => state.allowSignUp,
-    isCurrentEnvironmentDevelopment: (state: State): boolean => state.environment == 'development',
-    currentEnvironmentMaxUploadFileSize: (state: State): number => state.maxUploadFileSize,
+    isCurrentEnvironmentDevelopment: (state: State): boolean =>
+      state.environment == "development",
+    currentEnvironmentMaxUploadFileSize: (state: State): number =>
+      state.maxUploadFileSize,
   },
   actions: {
     set(
       allowSignUp: boolean = false,
-      environment: EnvironmentType = 'production',
+      environment: EnvironmentType = "production",
       maxUploadFileSize: number = 0,
     ): void {
       this.allowSignUp = allowSignUp;
@@ -33,5 +35,7 @@ export const useServerEnvironmentStore = defineStore('serverEnvironment', {
 });
 
 if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(useServerEnvironmentStore, import.meta.hot));
+  import.meta.hot.accept(
+    acceptHMRUpdate(useServerEnvironmentStore, import.meta.hot),
+  );
 }

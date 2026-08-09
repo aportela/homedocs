@@ -92,17 +92,17 @@
   import { ref, reactive, computed, onMounted, onBeforeUnmount } from "vue";
   import { useI18n } from "vue-i18n";
   import { format, useQuasar } from "quasar";
-  import { bgDownload } from "src/composables/axios";
-  import { bus } from "src/composables/bus";
-  import { allowPreview } from "src/composables/fileUtils"
-  import { getRegexForStringMatch } from "src/composables/common";
-  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
-  import { type Attachment as AttachmentInterface } from "src/types/attachment";
-  import { getURL as getAttachmentURL } from "src/composables/attachment";
+  import { bgDownload } from "@/composables/axios";
+  import { bus } from "@/composables/bus";
+  import { allowPreview } from "@/composables/fileUtils"
+  import { getRegexForStringMatch } from "@/composables/common";
+  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "@/types/ajaxState";
+  import { type Attachment as AttachmentInterface } from "@/types/attachment";
+  import { getURL as getAttachmentURL } from "@/composables/attachment";
 
-  import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
-  import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
-  import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
+  import { default as DesktopToolTip } from "@/components/DesktopToolTip.vue";
+  import { default as CustomErrorBanner } from "@/components/Banners/CustomErrorBanner.vue";
+  import { default as CustomBanner } from "@/components/Banners/CustomBanner.vue";
 
   const { t } = useI18n();
 

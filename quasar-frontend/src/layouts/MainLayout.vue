@@ -57,28 +57,28 @@
   import { useQuasar, LocalStorage } from "quasar";
   import { useI18n } from "vue-i18n";
 
-  import { useSessionStore } from "src/stores/session";
-  import { currentTimestamp } from "src/composables/dateUtils";
-  import { bus } from "src/composables/bus";
-  import type { Document } from "src/types/document";
+  import { useSessionStore } from "@/stores/session";
+  import { currentTimestamp } from "@/composables/dateUtils";
+  import { bus } from "@/composables/bus";
+  import type { Document } from "@/types/document";
 
-  import { default as SidebarDrawer } from "src/components/SidebarDrawer.vue"
-  import { default as SearchDialog } from "src/components/Dialogs/SearchDialog.vue"
-  import { default as DarkModeButton } from "src/components/Buttons/DarkModeButton.vue"
-  import { default as SwitchLanguageButton } from "src/components/Buttons/SwitchLanguageButton.vue"
-  import { default as GitHubButton } from "src/components/Buttons/GitHubButton.vue"
-  import { GITHUB_PROJECT_URL } from "src/constants"
-  import { default as ReAuthDialog } from "src/components/Dialogs/ReAuthDialog.vue"
+  import { default as SidebarDrawer } from "@/components/SidebarDrawer.vue"
+  import { default as SearchDialog } from "@/components/Dialogs/SearchDialog.vue"
+  import { default as DarkModeButton } from "@/components/Buttons/DarkModeButton.vue"
+  import { default as SwitchLanguageButton } from "@/components/Buttons/SwitchLanguageButton.vue"
+  import { default as GitHubButton } from "@/components/Buttons/GitHubButton.vue"
+  import { GITHUB_PROJECT_URL } from "@/constants"
+  import { default as ReAuthDialog } from "@/components/Dialogs/ReAuthDialog.vue"
 
-  import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
-  import { default as FilePreviewDialog } from "src/components/Dialogs/FilePreviewDialog.vue"
-  import { default as DocumentFilesPreviewDialog } from "src/components/Dialogs/DocumentFilesPreviewDialog.vue"
-  import { default as DocumentNotesPreviewDialog } from "src/components/Dialogs/DocumentNotesPreviewDialog.vue";
-  import { default as UploadingDialog } from "src/components/Dialogs/UploadingDialog.vue";
+  import { default as DesktopToolTip } from "@/components/DesktopToolTip.vue";
+  import { default as FilePreviewDialog } from "@/components/Dialogs/FilePreviewDialog.vue"
+  import { default as DocumentFilesPreviewDialog } from "@/components/Dialogs/DocumentFilesPreviewDialog.vue"
+  import { default as DocumentNotesPreviewDialog } from "@/components/Dialogs/DocumentNotesPreviewDialog.vue";
+  import { default as UploadingDialog } from "@/components/Dialogs/UploadingDialog.vue";
 
-  import { type UploadTransfer as UploadTransferInterface } from "src/types/uploadTransfer";
-  import { type Document as DocumentInterface, DocumentClass } from "src/types/document";
-  import AttachmentShareDialog from "src/components/Dialogs/AttachmentShareDialog.vue";
+  import { type UploadTransfer as UploadTransferInterface } from "@/types/uploadTransfer";
+  import { type Document as DocumentInterface, DocumentClass } from "@/types/document";
+  import AttachmentShareDialog from "@/components/Dialogs/AttachmentShareDialog.vue";
 
   const $q = useQuasar();
 

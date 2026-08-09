@@ -1,35 +1,30 @@
 # HomeDocs (homedocs-quasar-frontend)
 
-mini (selfhosted) personal document manager
-
 ## Install the dependencies
 
 ```bash
-yarn
-# or
-npm install
+pnpm install
+# or: yarn/npm/bun install
 ```
 
-### Start the app in development mode (hot-code reloading, error reporting, etc.)
+### Start the app in development mode (HMR, error reporting, etc.)
 
 ```bash
 quasar dev
 ```
 
-### Lint the files
+### Format & Lint the files
 
 ```bash
-yarn lint
-# or
-npm run lint
+pnpm run lint
+# or: yarn/npm/bun run lint
 ```
 
-### Format the files
+...or just check formatting & linting:
 
 ```bash
-yarn format
-# or
-npm run format
+pnpm run lint:check
+# or: yarn/npm/bun run lint:check
 ```
 
 ### Build the app for production
@@ -40,4 +35,4 @@ quasar build
 
 ### Customize the configuration
 
-See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-config-js).
+See [Configuring quasar.config.js](https://v2.quasar.dev/quasar-cli-vite/quasar-config-file).

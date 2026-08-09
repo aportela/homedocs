@@ -7,12 +7,12 @@
 </template>
 
 <script setup lang="ts">
-  import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
+  import { useServerEnvironmentStore } from "@/stores/serverEnvironment";
 
-  import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
-  import { default as APIErrorDetails } from "src/components/APIErrorDetails.vue";
+  import { default as CustomBanner } from "@/components/Banners/CustomBanner.vue";
+  import { default as APIErrorDetails } from "@/components/APIErrorDetails.vue";
 
-  import type { APIErrorDetails as APIErrorDetailsInterface } from "src/types/apiErrorDetails";
+  import type { APIErrorDetails as APIErrorDetailsInterface } from "@/types/apiErrorDetails";
 
   const serverEnvironment = useServerEnvironmentStore();
 

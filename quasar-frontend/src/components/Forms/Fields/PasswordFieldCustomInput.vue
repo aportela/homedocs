@@ -19,7 +19,7 @@
   import { useI18n } from "vue-i18n";
   import { QInput } from "quasar";
 
-  import { default as DesktopToolTip } from "src/components/DesktopToolTip.vue";
+  import { default as DesktopToolTip } from "@/components/DesktopToolTip.vue";
 
   const attrs = useAttrs();
 

@@ -1,769 +1,526 @@
 export default {
-  " change/s on date ":
-    " change/s on date ",
+  ' change/s on date ': ' change/s on date ',
 
-  "1 minute":
-    "1 minute",
+  '1 minute': '1 minute',
 
-  "1 hour":
-    "1 hour",
+  '1 hour': '1 hour',
 
-  "1 day":
-    "1 day",
+  '1 day': '1 day',
 
-  "1 week":
-    "1 week",
+  '1 week': '1 week',
 
-  "1 month":
-    "1 month",
+  '1 month': '1 month',
 
-  "1 year":
-    "1 year",
+  '1 year': '1 year',
 
-  "(expired)":
-    "(expired)",
+  '(expired)': '(expired)',
 
-  "Access count":
-    "Access count",
+  'Access count': 'Access count',
 
-  "Access denied":
-    "Access denied",
+  'Access denied': 'Access denied',
 
-  "Actions":
-    "Actions",
+  Actions: 'Actions',
 
-  "Activity Heatmap":
-    "Activity Heatmap",
+  'Activity Heatmap': 'Activity Heatmap',
 
-  "Add":
-    "Add",
+  Add: 'Add',
 
-  "Add attachment":
-    "Add attachment",
+  'Add attachment': 'Add attachment',
 
-  "Add note":
-    "Add note",
+  'Add note': 'Add note',
 
-  "Advanced search":
-    "Advanced search",
+  'Advanced search': 'Advanced search',
 
-  "Already have an account ?":
-    "Already have an account ?",
+  'Already have an account ?': 'Already have an account ?',
 
-  "Always display this progress window when uploading files":
-    "Always display this progress window when uploading files",
+  'Always display this progress window when uploading files':
+    'Always display this progress window when uploading files',
 
-  "Always show uploading dialog after adding files":
-    "Always show uploading dialog after adding files",
+  'Always show uploading dialog after adding files':
+    'Always show uploading dialog after adding files',
 
-  "Any date":
-    "Any date",
+  'Any date': 'Any date',
 
-  "API Error: error adding document":
-    "API Error: error adding document",
+  'API Error: error adding document': 'API Error: error adding document',
 
-  "API Error: error deleting document":
-    "API Error: error deleting document",
+  'API Error: error deleting document': 'API Error: error deleting document',
 
-  "API Error: error loading document":
-    "API Error: error loading document",
+  'API Error: error loading document': 'API Error: error loading document',
 
-  "API Error: error removing attachment":
-    "API Error: error removing attachment",
+  'API Error: error removing attachment': 'API Error: error removing attachment',
 
-  "API Error: error updating document":
-    "API Error: error updating document",
+  'API Error: error updating document': 'API Error: error updating document',
 
-  "API Error: fatal error":
-    "API Error: fatal error",
+  'API Error: fatal error': 'API Error: fatal error',
 
-  "API Error: fatal error details":
-    "HTTP {status} ({statusText})",
+  'API Error: fatal error details': 'HTTP {status} ({statusText})',
 
-  "API Error: invalid response data":
-    "API Error: invalid response data",
+  'API Error: invalid response data': 'API Error: invalid response data',
 
-  "API Error: invalid/missing param":
-    "API Error: invalid/missing param",
+  'API Error: invalid/missing param': 'API Error: invalid/missing param',
 
-  "API Error: missing document title param":
-    "API Error: missing document title param",
+  'API Error: missing document title param': 'API Error: missing document title param',
 
-  "API Error: missing email param":
-    "API Error: missing email param",
+  'API Error: missing email param': 'API Error: missing email param',
 
-  "API Error: missing password param":
-    "API Error: missing password param",
+  'API Error: missing password param': 'API Error: missing password param',
 
-  "ascending":
-    "ascending",
+  ascending: 'ascending',
 
-  "attachment filename":
-    "attachment filename",
+  'attachment filename': 'attachment filename',
 
-  "Attachment names":
-    "Attachment names",
+  'Attachment names': 'Attachment names',
 
-  "Attachment share":
-    "Attachment share",
+  'Attachment share': 'Attachment share',
 
-  "Attachments":
-    "Attachments",
+  Attachments: 'Attachments',
 
-  "Attachments shares":
-    "Attachments shares",
+  'Attachments shares': 'Attachments shares',
 
-  "Between dates":
-    "Between dates",
+  'Between dates': 'Between dates',
 
-  "Browse by tag: ":
-    "Browse by tag: {tag}",
+  'Browse by tag: ': 'Browse by tag: {tag}',
 
-  "Browse project page":
-    "Browse project page",
+  'Browse project page': 'Browse project page',
 
-  "Can not upload file":
-    "Can not upload file {filename}",
+  'Can not upload file': 'Can not upload file {filename}',
 
-  "Cancel":
-    "Cancel",
+  Cancel: 'Cancel',
 
-  "Clear processed transfers":
-    "Clear processed transfers",
+  'Clear processed transfers': 'Clear processed transfers',
 
-  "Click here to sign in":
-    "Click here to sign in",
+  'Click here to sign in': 'Click here to sign in',
 
-  "Click here to sign up":
-    "Click here to sign up",
+  'Click here to sign up': 'Click here to sign up',
 
-  "Click to collapse":
-    "Click to collapse",
+  'Click to collapse': 'Click to collapse',
 
-  "Click to download":
-    "Click to download",
+  'Click to download': 'Click to download',
 
-  "Click to expand":
-    "Click to expand",
+  'Click to expand': 'Click to expand',
 
-  "Click to open fast search":
-    "Click to open fast search",
+  'Click to open fast search': 'Click to open fast search',
 
-  "Click to refresh data":
-    "Click to refresh data",
+  'Click to refresh data': 'Click to refresh data',
 
-  "Click to remove note":
-    "Click to remove note",
+  'Click to remove note': 'Click to remove note',
 
-  "Click to toggle edit mode":
-    "Click to toggle edit mode",
+  'Click to toggle edit mode': 'Click to toggle edit mode',
 
-  "Close":
-    "Close",
+  Close: 'Close',
 
-  "Collapse sidebar":
-    "Collapse sidebar",
-	
-  "Copied to clipboard!":
-	"Copied to clipboard!",
+  'Collapse sidebar': 'Collapse sidebar',
 
-  "Created on":
-    "Created on",
+  'Copied to clipboard!': 'Copied to clipboard!',
 
-  "Creation date":
-    "Creation date",
+  'Created on': 'Created on',
 
-  "Current sort by":
-    "Order by \"{label}\" ({order})",
+  'Creation date': 'Creation date',
 
-  "Customize how you interact with the platform.":
-    "Customize how you interact with the platform.",
+  'Current sort by': 'Order by "{label}" ({order})',
 
-  "Date":
-    "Date",
+  'Customize how you interact with the platform.': 'Customize how you interact with the platform.',
 
-  "Date format":
-    "Date format",
+  Date: 'Date',
 
-  "Datetime format":
-    "Datetime format",
+  'Date format': 'Date format',
 
-  "Delete":
-    "Delete",
+  'Datetime format': 'Datetime format',
 
-  "Delete document":
-    "Delete document",
+  Delete: 'Delete',
 
-  "descending":
-    "descending",
+  'Delete document': 'Delete document',
 
-  "Description":
-    "Description",
+  descending: 'descending',
 
-  "description":
-    "description",
+  Description: 'Description',
 
-  "Disk usage":
-    "Disk usage",
+  description: 'description',
 
-  "Document attachment filenames":
-    "Document attachment filenames",
+  'Disk usage': 'Disk usage',
 
-  "Document attachments preview":
-    "Document attachment preview|Document attachments preview",
+  'Document attachment filenames': 'Document attachment filenames',
 
-  "Document created":
-    "Document created",
+  'Document attachments preview': 'Document attachment preview|Document attachments preview',
 
-  "Document creation date":
-    "Document creation date",
+  'Document created': 'Document created',
 
-  "Document description":
-    "Document description",
+  'Document creation date': 'Document creation date',
 
-  "Document details":
-    "Document details",
+  'Document description': 'Document description',
 
-  "Document has been removed":
-    "Document has been removed",
+  'Document details': 'Document details',
 
-  "Document last update":
-    "Document last update",
+  'Document has been removed': 'Document has been removed',
 
-  "Document metadata":
-    "Document metadata",
+  'Document last update': 'Document last update',
 
-  "Document not found":
-    "Document not found",
+  'Document metadata': 'Document metadata',
 
-  "Document note (click on body to update)":
-    "Document note (click on body to update)",
+  'Document not found': 'Document not found',
 
-  "Document notes":
-    "Document notes",
+  'Document note (click on body to update)': 'Document note (click on body to update)',
 
-  "Document saved":
-    "Document saved",
+  'Document notes': 'Document notes',
 
-  "Document tags":
-    "Document tags",
+  'Document saved': 'Document saved',
 
-  "Document title":
-    "Document title",
+  'Document tags': 'Document tags',
 
-  "Document updated":
-    "Document updated",
+  'Document title': 'Document title',
 
-  "Document updated on":
-    "Document updated on",
+  'Document updated': 'Document updated',
 
-  "Don't have an account yet ?":
-    "Don't have an account yet ?",
+  'Document updated on': 'Document updated on',
 
-  "Download":
-    "Download",
+  "Don't have an account yet ?": "Don't have an account yet ?",
 
-  "Email":
-    "Email",
+  Download: 'Download',
 
-  "Email already used":
-    "Email already used",
+  Email: 'Email',
 
-  "Email not registered":
-    "Email not registered",
+  'Email already used': 'Email already used',
 
-  "Enabled":
-    "Enabled",
+  'Email not registered': 'Email not registered',
 
-  "End":
-    "End",
+  Enabled: 'Enabled',
 
-  "Error":
-    "Error",
+  End: 'End',
 
-  "Error loading available tags":
-    "Error loading available tags",
+  Error: 'Error',
 
-  "Error loading data":
-    "Error loading data",
+  'Error loading available tags': 'Error loading available tags',
 
-  "Error loading preview":
-    "Error loading preview",
+  'Error loading data': 'Error loading data',
 
-  "Expand sidebar":
-    "Expand sidebar",
+  'Error loading preview': 'Error loading preview',
 
-  "Expires on":
-    "Expires on",
+  'Expand sidebar': 'Expand sidebar',
 
-  "Fast search match fragment":
-    "Fragment matched on {matchedOn}: {fragment}",
+  'Expires on': 'Expires on',
 
-  "Field is required":
-    "Field is required",
+  'Fast search match fragment': 'Fragment matched on {matchedOn}: {fragment}',
 
-  "File preview":
-    "File preview",
+  'Field is required': 'Field is required',
 
-  "Attachment preview not available":
-    "File {filename} preview not available",
+  'File preview': 'File preview',
 
-  "File upload activity & status":
-    "File upload activity & status",
+  'Attachment preview not available': 'File {filename} preview not available',
 
-  "FileDownloadedMessage":
-    "File {filename} has been downloaded ({length})",
+  'File upload activity & status': 'File upload activity & status',
 
-  "FileDownloadErrorMessage":
-    "Error downloading file {filename}",
+  FileDownloadedMessage: 'File {filename} has been downloaded ({length})',
 
-  "Filter by text on attachment filename":
-    "Filter by text on attachment filename",
+  FileDownloadErrorMessage: 'Error downloading file {filename}',
 
-  "Filter by text on note body":
-    "Filter by text on note body",
+  'Filter by text on attachment filename': 'Filter by text on attachment filename',
 
-  "Fixed date":
-    "Fixed date",
+  'Filter by text on note body': 'Filter by text on note body',
 
-  "From date":
-    "From date",
+  'Fixed date': 'Fixed date',
 
-  "Glad to see you again!":
-    "Glad to see you again!",
+  'From date': 'From date',
 
-  "Go Home":
-    "Go Home",
+  'Glad to see you again!': 'Glad to see you again!',
 
-  "Has access count limit":
-    "Has access count limit",
+  'Go Home': 'Go Home',
 
-  "Has expiration":
-    "Has expiration",
+  'Has access count limit': 'Has access count limit',
 
-  "Hide password":
-    "Hide password",
+  'Has expiration': 'Has expiration',
 
-  "History":
-    "History",
+  'Hide password': 'Hide password',
 
-  "Home":
-    "Home",
+  History: 'History',
 
-  "Homedocs":
-    "Homedocs",
+  Home: 'Home',
 
-  "Invalid password":
-    "Invalid password",
+  Homedocs: 'Homedocs',
 
-  "Last 15 days":
-    "Last 15 days",
+  'Invalid password': 'Invalid password',
 
-  "Last 31 days":
-    "Last 31 days",
+  'Last 15 days': 'Last 15 days',
 
-  "Last 365 days":
-    "Last 365 days",
+  'Last 31 days': 'Last 31 days',
 
-  "Last 7 days":
-    "Last 7 days",
+  'Last 365 days': 'Last 365 days',
 
-  "Last update":
-    "Last update",
+  'Last 7 days': 'Last 7 days',
 
-  "Let's get back to organizing.":
-    "Let's get back to organizing.",
+  'Last update': 'Last update',
 
-  "Let's start organizing.":
-    "Let's start organizing.",
+  "Let's get back to organizing.": "Let's get back to organizing.",
 
-  "Limit":
-    "Limit",
+  "Let's start organizing.": "Let's start organizing.",
 
-  "Loading...":
-    "Loading...",
+  Limit: 'Limit',
 
-  "Max results":
-    "Max results",
+  'Loading...': 'Loading...',
 
-  "Most recent access":
-    "Most recent access",
+  'Max results': 'Max results',
 
-  "Most recent activity":
-    "Most recent activity",
+  'Most recent access': 'Most recent access',
 
-  "My profile":
-    "My profile",
+  'Most recent activity': 'Most recent activity',
 
-  "Name":
-    "Name",
+  'My profile': 'My profile',
 
-  "New password":
-    "New password",
+  Name: 'Name',
 
-  "New sign ups are not allowed on this system":
-    "New sign ups are not allowed on this system",
+  'New password': 'New password',
 
-  "Next":
-    "Next",
+  'New sign ups are not allowed on this system': 'New sign ups are not allowed on this system',
 
-  "No activity on date ":
-    "No activity on date ",
+  Next: 'Next',
 
-  "No document attachments found":
-    "No document attachments found",
+  'No activity on date ': 'No activity on date ',
 
-  "No document notes found":
-    "No document notes found",
+  'No document attachments found': 'No document attachments found',
 
-  "No results found with current filter":
-    "No results found with current filter",
+  'No document notes found': 'No document notes found',
 
-  "note body":
-    "note body",
+  'No results found with current filter': 'No results found with current filter',
 
-  "Notes":
-    "Notes",
+  'note body': 'note body',
 
-  "notes":
-    "notes",
+  Notes: 'Notes',
 
-  "Ok":
-    "Ok",
+  notes: 'notes',
 
-  "Only display this progress window when uploading failed":
-    "Only display this progress window when uploading failed",
+  Ok: 'Ok',
 
-  "Only lowercase letters, numbers and hyphens are allowed in tags":
-    "Only lowercase letters, numbers and hyphens are allowed in tags",
+  'Only display this progress window when uploading failed':
+    'Only display this progress window when uploading failed',
 
-  "Oooops":
-    "Oooops",
+  'Only lowercase letters, numbers and hyphens are allowed in tags':
+    'Only lowercase letters, numbers and hyphens are allowed in tags',
 
-  "Oops. Nothing here...":
-    "Oops. Nothing here...",
+  Oooops: 'Oooops',
 
-  "Operation":
-    "Operation",
+  'Oops. Nothing here...': 'Oops. Nothing here...',
 
-  "Operations":
-    "Operations",
+  Operation: 'Operation',
 
-  "Password":
-    "Password",
+  Operations: 'Operations',
 
-  "Personal information":
-    "Personal information",
+  Password: 'Password',
 
-  "Please enter again your credentials":
-    "Please enter again your credentials",
+  'Personal information': 'Personal information',
 
-  "Preview":
-    "Preview",
+  'Please enter again your credentials': 'Please enter again your credentials',
 
-  "Previous":
-    "Previous",
+  Preview: 'Preview',
 
-  "Profile has been successfully updated":
-    "Profile has been successfully updated",
+  Previous: 'Previous',
 
-  "Profile settings":
-    "Profile settings",
+  'Profile has been successfully updated': 'Profile has been successfully updated',
 
-  "Recent documents":
-    "Recent documents",
+  'Profile settings': 'Profile settings',
 
-  "Reload":
-    "Reload",
+  'Recent documents': 'Recent documents',
 
-  "Remove":
-    "Remove",
+  Reload: 'Reload',
 
-  "Reset filters":
-    "Reset filters",
+  Remove: 'Remove',
 
-  "Results":
-    "Results",
+  'Reset filters': 'Reset filters',
 
-  "Results count":
-    "result|results",
+  Results: 'Results',
 
-  "Save":
-    "Save",
+  'Results count': 'result|results',
 
-  "Save changes":
-    "Save changes",
+  Save: 'Save',
 
-  "Saving...":
-    "Saving...",
+  'Save changes': 'Save changes',
 
-  "Search":
-    "Search",
+  'Saving...': 'Saving...',
 
-  "Search on":
-    "Search on",
+  Search: 'Search',
 
-  "Search on HomeDocs...":
-    "Search on HomeDocs...",
+  'Search on': 'Search on',
 
-  "Search text...":
-    "Search text...",
+  'Search on HomeDocs...': 'Search on HomeDocs...',
 
-  "Searching...":
-    "Searching...",
+  'Search text...': 'Search text...',
 
-  "Selected language":
-    "Selected language",
+  'Searching...': 'Searching...',
 
-  "Session lost... re-auth required":
-    "Session lost... re-auth required",
+  'Selected language': 'Selected language',
 
-  "Set access count limit":
-    "Set access count limit",
+  'Session lost... re-auth required': 'Session lost... re-auth required',
 
-  "Set expiration":
-    "Set expiration",
+  'Set access count limit': 'Set access count limit',
 
-  "Share":
-    "Share",
+  'Set expiration': 'Set expiration',
 
-  "Shared":
-    "Shared",
+  Share: 'Share',
 
-  "Shared element":
-    "Shared element",
+  Shared: 'Shared',
 
-  "Show password":
-    "Show password",
+  'Shared element': 'Shared element',
 
-  "Show tooltips":
-    "Show tooltips",
+  'Show password': 'Show password',
 
-  "Sign in":
-    "Sign in",
+  'Show tooltips': 'Show tooltips',
 
-  "Sign out":
-    "Sign out",
+  'Sign in': 'Sign in',
 
-  "Sign up":
-    "Sign up",
+  'Sign out': 'Sign out',
 
-  "Sign up now and take control.":
-    "Sign up now and take control.",
+  'Sign up': 'Sign up',
 
-  "Size":
-    "Size",
+  'Sign up now and take control.': 'Sign up now and take control.',
 
-  "Size: ":
-    "Size: ",
+  Size: 'Size',
 
-  "Small resume of your platform usage":
-    "Small resume of your platform usage",
+  'Size: ': 'Size: ',
 
-  "Started":
-    "Started",
+  'Small resume of your platform usage': 'Small resume of your platform usage',
 
-  "Status":
-    "Status",
+  Started: 'Started',
 
-  "Switch language":
-    "Switch language",
+  Status: 'Status',
 
-  "Switch to dark mode":
-    "Switch to dark mode",
+  'Switch language': 'Switch language',
 
-  "Switch to light mode":
-    "Switch to light mode",
+  'Switch to dark mode': 'Switch to dark mode',
 
-  "Tag cloud":
-    "Tag cloud",
+  'Switch to light mode': 'Switch to light mode',
 
-  "Tags":
-    "Tags",
+  'Tag cloud': 'Tag cloud',
 
-  "The document has been deleted. Upon closing this dialog, you will be redirected to the home screen.":
-    "The document has been deleted. Upon closing this dialog, you will be redirected to the home screen.",
+  Tags: 'Tags',
 
-  "The first step to a more organized you starts here!":
-    "The first step to a more organized you starts here!",
+  'The document has been deleted. Upon closing this dialog, you will be redirected to the home screen.':
+    'The document has been deleted. Upon closing this dialog, you will be redirected to the home screen.',
 
-  "This document has no associated notes.":
-    "This document has no associated notes.",
+  'The first step to a more organized you starts here!':
+    'The first step to a more organized you starts here!',
 
-  "This operation cannot be undone. Would you like to proceed ?":
-    "This operation cannot be undone. Would you like to proceed ?",
-	
-  "This share has been accessed n times.":
-    "This share has been accessed {count} times.|This share has been accessed {count} time.|This share has been accessed {count} times.",
-		
-  "timeAgo": {
+  'This document has no associated notes.': 'This document has no associated notes.',
 
-    "day":
-      "{count} day ago|{count} days ago",
+  'This operation cannot be undone. Would you like to proceed ?':
+    'This operation cannot be undone. Would you like to proceed ?',
 
-    "hour":
-      "{count} hour ago|{count} hours ago",
+  'This share has been accessed n times.':
+    'This share has been accessed {count} times.|This share has been accessed {count} time.|This share has been accessed {count} times.',
 
-    "minute":
-      "{count} minute ago|{count} minutes ago",
+  timeAgo: {
+    day: '{count} day ago|{count} days ago',
 
-    "month":
-      "{count} month ago|{count} months ago",
+    hour: '{count} hour ago|{count} hours ago',
 
-    "now":
-      "now",
+    minute: '{count} minute ago|{count} minutes ago',
 
-    "second":
-      "{count} second ago|{count} seconds ago",
+    month: '{count} month ago|{count} months ago',
 
-    "year":
-      "{count} year ago|{count} years ago"
-  },
-  
-  "timeUntil": {
+    now: 'now',
 
-    "day":
-      "in {count} day|in {count} days",
+    second: '{count} second ago|{count} seconds ago',
 
-    "hour":
-      "in {count} hour|in {count} hours",
-
-    "minute":
-      "in {count} minute|in {count} minutes",
-
-    "month":
-      "in {count} month|in {count} months",
-
-    "now":
-      "now",
-
-    "second":
-      "in {count} second|in {count} seconds",
-
-    "year":
-      "in {count} year|in {count} years"
+    year: '{count} year ago|{count} years ago',
   },
 
-  "Title":
-    "Title",
+  timeUntil: {
+    day: 'in {count} day|in {count} days',
 
-  "title":
-    "title",
+    hour: 'in {count} hour|in {count} hours',
 
-  "To date":
-    "To date",
+    minute: 'in {count} minute|in {count} minutes',
 
-  "Today":
-    "Today",
+    month: 'in {count} month|in {count} months',
 
-  "Toggle sort by this column":
-    "Toggle sort by this column: {field}",
+    now: 'now',
 
-  "Total attachments":
-    "Total attachments",
+    second: 'in {count} second|in {count} seconds',
 
-  "Total attachments count":
-    "attachment|attachments",
+    year: 'in {count} year|in {count} years',
+  },
 
-  "Total document count":
-    "{count} document|{count} documents",
+  Title: 'Title',
 
-  "Total documents":
-    "Total documents",
+  title: 'title',
 
-  "Total notes":
-    "note|notes",
+  'To date': 'To date',
 
-  "Total search conditions count":
-    "{count} condition|{count} conditions",
+  Today: 'Today',
 
-  "Total search results count":
-    "{count} document|{count} documents",
+  'Toggle sort by this column': 'Toggle sort by this column: {field}',
 
-  "Total tags":
-    "{count} tag|{count} tags",
+  'Total attachments': 'Total attachments',
 
-  "Total transfers":
-    "upload|uploads",
+  'Total attachments count': 'attachment|attachments',
 
-  "Transfer complete":
-    "Transfer complete",
+  'Total document count': '{count} document|{count} documents',
 
-  "Transfer failed":
-    "Transfer failed",
+  'Total documents': 'Total documents',
 
-  "Transfer rejected":
-    "Transfer rejected",
+  'Total notes': 'note|notes',
 
-  "Transfer rejected max filesize":
-    "Transfer rejected (max filesize allowed: {maxUploadFileSize})",
+  'Total search conditions count': '{count} condition|{count} conditions',
 
-  "Transfering...":
-    "Transfering...",
+  'Total search results count': '{count} document|{count} documents',
 
-  "type note body":
-    "type note body",
+  'Total tags': '{count} tag|{count} tags',
 
-  "Type text condition":
-    "Type text condition",
+  'Total transfers': 'upload|uploads',
 
-  "type text search condition":
-    "type text search condition",
+  'Transfer complete': 'Transfer complete',
+
+  'Transfer failed': 'Transfer failed',
+
+  'Transfer rejected': 'Transfer rejected',
+
+  'Transfer rejected max filesize': 'Transfer rejected (max filesize allowed: {maxUploadFileSize})',
+
+  'Transfering...': 'Transfering...',
+
+  'type note body': 'type note body',
+
+  'Type text condition': 'Type text condition',
+
+  'type text search condition': 'type text search condition',
 
   "Unfortunately, your search didn't return any results. You might want to modify your filters or search terms":
     "Unfortunately, your search didn't return any results. You might want to modify your filters or search terms",
 
-  "Unknown operation":
-    "Unknown operation",
+  'Unknown operation': 'Unknown operation',
 
-  "Update profile":
-    "Update profile",
+  'Update profile': 'Update profile',
 
-  "Update your data":
-    "Update your data",
+  'Update your data': 'Update your data',
 
-  "Uploaded on":
-    "Uploaded on",
+  'Uploaded on': 'Uploaded on',
 
-  "Uploaded on: ":
-    "Uploaded on: ",
+  'Uploaded on: ': 'Uploaded on: ',
 
-  "View document attachments":
-    "View document attachments",
+  'View document attachments': 'View document attachments',
 
-  "View document notes":
-    "View document notes",
+  'View document notes': 'View document notes',
 
-  "Welcome aboard!":
-    "Welcome aboard!",
+  'Welcome aboard!': 'Welcome aboard!',
 
-  "Welcome to HomeDocs":
-    "Welcome to HomeDocs",
+  'Welcome to HomeDocs': 'Welcome to HomeDocs',
 
-  "Where your documents find their place.":
-    "Where your documents find their place.",
+  'Where your documents find their place.': 'Where your documents find their place.',
 
-  "Yesterday":
-    "Yesterday",
+  Yesterday: 'Yesterday',
 
-  "You are about to delete the current document. Are you sure? (this action cannot be undone).":
-    "You are about to delete the current document. Are you sure? (this action cannot be undone).",
+  'You are about to delete the current document. Are you sure? (this action cannot be undone).':
+    'You are about to delete the current document. Are you sure? (this action cannot be undone).',
 
-  "You haven't created any documents yet":
-    "You haven't created any documents yet",
+  "You haven't created any documents yet": "You haven't created any documents yet",
 
-  "You haven't created any share yet":
-    "You haven't created any share yet",
+  "You haven't created any share yet": "You haven't created any share yet",
 
-  "You haven't created any tags yet":
-    "You haven't created any tags yet",
+  "You haven't created any tags yet": "You haven't created any tags yet",
 
-  "Your account has been created":
-    "Your account has been created",
+  'Your account has been created': 'Your account has been created',
 
-  "Your browser does not support the audio element":
-    "Your browser does not support the audio element",
+  'Your browser does not support the audio element':
+    'Your browser does not support the audio element',
 
-  "Your system stats":
-    "Your system stats"
+  'Missing browser PDF preview support': 'Missing browser PDF preview support',
+
+  'Your system stats': 'Your system stats',
 };

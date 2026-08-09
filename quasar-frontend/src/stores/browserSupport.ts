@@ -1,8 +1,8 @@
-import { defineStore, acceptHMRUpdate } from 'pinia';
-import { createStorageEntry } from 'src/composables/localStorage';
+import { defineStore, acceptHMRUpdate } from "pinia";
+import { createStorageEntry } from "@/composables/localStorage";
 
 const localStorageBrowserAllowPDFPreview = createStorageEntry<boolean | null>(
-  'browserAllowPDFPreview',
+  "browserAllowPDFPreview",
   null,
 );
 
@@ -10,13 +10,15 @@ interface State {
   allowPDFPreviewSavedValue: boolean | null;
 }
 
-export const useBrowserSupportStore = defineStore('browserSupportStore', {
+export const useBrowserSupportStore = defineStore("browserSupportStore", {
   state: (): State => ({
     allowPDFPreviewSavedValue: localStorageBrowserAllowPDFPreview.get(),
   }),
   getters: {
-    hasPDFPreviewSavedValue: (state: State): boolean => state.allowPDFPreviewSavedValue !== null,
-    allowPDFPreviews: (state: State): boolean => state.allowPDFPreviewSavedValue === true,
+    hasPDFPreviewSavedValue: (state: State): boolean =>
+      state.allowPDFPreviewSavedValue !== null,
+    allowPDFPreviews: (state: State): boolean =>
+      state.allowPDFPreviewSavedValue === true,
   },
   actions: {
     setAllowPDFPreview(allowed: boolean) {
@@ -27,5 +29,7 @@ export const useBrowserSupportStore = defineStore('browserSupportStore', {
 });
 
 if (import.meta.hot) {
-  import.meta.hot.accept(acceptHMRUpdate(useBrowserSupportStore, import.meta.hot));
+  import.meta.hot.accept(
+    acceptHMRUpdate(useBrowserSupportStore, import.meta.hot),
+  );
 }

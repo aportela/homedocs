@@ -42,7 +42,7 @@
           <PDFWrapper :path="getAttachmentInlineURL(currentAttachment.id, true)"
             v-if="browserSupportStore.allowPDFPreviews" inner-content-class="pdf-wrapper-inner-class">
           </PDFWrapper>
-          <CustomErrorBanner v-else :text="t('Missing browser PDF preview support')" />
+          <CustomErrorBanner v-else text="Missing browser PDF preview support" />
         </div>
         <div v-else>
           <p class="text-center q-my-md">
@@ -76,19 +76,19 @@
 <script setup lang="ts">
   import { ref, reactive, computed } from "vue";
   import { useI18n } from "vue-i18n";
-  import { bgDownload } from "src/composables/axios";
-  import { allowPreview, isImage, isAudio, isPDF } from "src/composables/fileUtils";
-  import { getURL as getAttachmentURL, getInlineURL as getAttachmentInlineURL } from "src/composables/attachment";
-  import { useBrowserSupportStore } from "src/stores/browserSupport";
-  import { type Document } from "src/types/document";
-  import { type CustomBanner as CustomBannerInterface, defaultCustomBanner } from "src/types/customBanner";
+  import { bgDownload } from "@/composables/axios";
+  import { allowPreview, isImage, isAudio, isPDF } from "@/composables/fileUtils";
+  import { getURL as getAttachmentURL, getInlineURL as getAttachmentInlineURL } from "@/composables/attachment";
+  import { useBrowserSupportStore } from "@/stores/browserSupport";
+  import { type Document } from "@/types/document";
+  import { type CustomBanner as CustomBannerInterface, defaultCustomBanner } from "@/types/customBanner";
 
-  import { default as BaseDialog } from "src/components/Dialogs/BaseDialog.vue";
-  import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
-  import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
-  import { type Attachment as AttachmentInterface } from "src/types/attachment";
-  import { default as PDFWrapper } from "src/components/PDFWrapper.vue";
-  import { DateTimeClass } from "src/types/dateTime";
+  import { default as BaseDialog } from "@/components/Dialogs/BaseDialog.vue";
+  import { default as CustomBanner } from "@/components/Banners/CustomBanner.vue";
+  import { default as CustomErrorBanner } from "@/components/Banners/CustomErrorBanner.vue";
+  import { type Attachment as AttachmentInterface } from "@/types/attachment";
+  import { default as PDFWrapper } from "@/components/PDFWrapper.vue";
+  import { DateTimeClass } from "@/types/dateTime";
 
   const { t } = useI18n();
 

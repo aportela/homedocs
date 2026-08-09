@@ -17,8 +17,8 @@
 
   import { useI18n } from "vue-i18n";
 
-  import { type APIErrorDetails as APIErrorDetailsInterface } from "src/types/apiErrorDetails";
-  import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
+  import { type APIErrorDetails as APIErrorDetailsInterface } from "@/types/apiErrorDetails";
+  import { default as CustomErrorBanner } from "@/components/Banners/CustomErrorBanner.vue";
 
   const { t } = useI18n();
 

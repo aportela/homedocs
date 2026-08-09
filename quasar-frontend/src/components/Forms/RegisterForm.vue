@@ -67,21 +67,21 @@
   import { useI18n } from "vue-i18n";
   import { QInput } from "quasar";
 
-  import { api } from "src/composables/api";
-  import { useFormUtils } from "src/composables/useFormUtils";
-  import { useServerEnvironmentStore } from "src/stores/serverEnvironment";
-  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
-  import { type AuthValidator as AuthValidatorInterface, defaultAuthValidator } from "src/types/authValidator";
-  import { type AuthFields as AuthFieldsInterface } from "src/types/authFields";
-  import { type RegisterResponse } from "src/types/apiResponses";
+  import { api } from "@/composables/api";
+  import { useFormUtils } from "@/composables/useFormUtils";
+  import { useServerEnvironmentStore } from "@/stores/serverEnvironment";
+  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "@/types/ajaxState";
+  import { type AuthValidator as AuthValidatorInterface, defaultAuthValidator } from "@/types/authValidator";
+  import { type AuthFields as AuthFieldsInterface } from "@/types/authFields";
+  import { type RegisterResponse } from "@/types/apiResponses";
 
-  import { default as DarkModeButton } from "src/components/Buttons/DarkModeButton.vue"
-  import { default as SwitchLanguageButton } from "src/components/Buttons/SwitchLanguageButton.vue"
-  import { default as GitHubButton } from "src/components/Buttons/GitHubButton.vue"
-  import { GITHUB_PROJECT_URL } from "src/constants"
-  import { default as PasswordFieldCustomInput } from "src/components/Forms/Fields/PasswordFieldCustomInput.vue";
-  import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
-  import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
+  import { default as DarkModeButton } from "@/components/Buttons/DarkModeButton.vue"
+  import { default as SwitchLanguageButton } from "@/components/Buttons/SwitchLanguageButton.vue"
+  import { default as GitHubButton } from "@/components/Buttons/GitHubButton.vue"
+  import { GITHUB_PROJECT_URL } from "@/constants"
+  import { default as PasswordFieldCustomInput } from "@/components/Forms/Fields/PasswordFieldCustomInput.vue";
+  import { default as CustomBanner } from "@/components/Banners/CustomBanner.vue";
+  import { default as CustomErrorBanner } from "@/components/Banners/CustomErrorBanner.vue";
 
   const emit = defineEmits(['success']);
 

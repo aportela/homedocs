@@ -84,18 +84,18 @@
   import { ref, shallowRef, reactive, computed, onMounted, onBeforeUnmount } from "vue";
   import { useI18n } from "vue-i18n";
 
-  import { bus, onShowDocumentFiles, onShowDocumentNotes } from "src/composables/bus";
-  import { api } from "src/composables/api";
-  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
-  import { type RecentDocumentsResponse, type RecentDocumentResponseItem } from "src/types/apiResponses";
-  import { type RecentDocumentItem, RecentDocumentItemClass } from "src/types/recentDocumentItem";
-  import { DateTimeClass } from "src/types/dateTime";
+  import { bus, onShowDocumentFiles, onShowDocumentNotes } from "@/composables/bus";
+  import { api } from "@/composables/api";
+  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "@/types/ajaxState";
+  import { type RecentDocumentsResponse, type RecentDocumentResponseItem } from "@/types/apiResponses";
+  import { type RecentDocumentItem, RecentDocumentItemClass } from "@/types/recentDocumentItem";
+  import { DateTimeClass } from "@/types/dateTime";
 
-  import { default as CustomExpansionWidget } from "src/components/Widgets/CustomExpansionWidget.vue";
-  import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
-  import { default as CustomBanner } from "src/components/Banners/CustomBanner.vue";
-  import { default as BrowseByTagButton } from "src/components/Buttons/BrowseByTagButton.vue";
-  import { default as ViewDocumentDetailsButton } from "src/components/Buttons/ViewDocumentDetailsButton.vue";
+  import { default as CustomExpansionWidget } from "@/components/Widgets/CustomExpansionWidget.vue";
+  import { default as CustomErrorBanner } from "@/components/Banners/CustomErrorBanner.vue";
+  import { default as CustomBanner } from "@/components/Banners/CustomBanner.vue";
+  import { default as BrowseByTagButton } from "@/components/Buttons/BrowseByTagButton.vue";
+  import { default as ViewDocumentDetailsButton } from "@/components/Buttons/ViewDocumentDetailsButton.vue";
 
   const { t } = useI18n();
 

@@ -20,12 +20,12 @@
   import { date } from "quasar";
   import { type Dayjs } from 'dayjs';
 
-  import { api } from "src/composables/api";
-  import { bus } from "src/composables/bus";
-  import { useDarkModeStore } from "src/stores/darkMode";
-  import { useI18nStore } from "src/stores/i18n";
-  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "src/types/ajaxState";
-  import { type GetActivityHeatMapDataResponseItem as GetActivityHeatMapDataResponseItemInterface, type GetActivityHeatMapDataResponse as GetActivityHeatMapDataResponseInterface } from "src/types/apiResponses";
+  import { api } from "@/composables/api";
+  import { bus } from "@/composables/bus";
+  import { useDarkModeStore } from "@/stores/darkMode";
+  import { useI18nStore } from "@/stores/i18n";
+  import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "@/types/ajaxState";
+  import { type GetActivityHeatMapDataResponseItem as GetActivityHeatMapDataResponseItemInterface, type GetActivityHeatMapDataResponse as GetActivityHeatMapDataResponseInterface } from "@/types/apiResponses";
   // @ts-expect-error: `cCalHeatmap` is missing TypeScript type definitions
   import { default as CalHeatmap } from "cal-heatmap";
   import "cal-heatmap/cal-heatmap.css";
@@ -34,7 +34,7 @@
   // @ts-expect-error: `CalendarLabel` is missing TypeScript type definitions
   import { default as CalendarLabel } from "cal-heatmap/plugins/CalendarLabel";
 
-  import { default as CustomErrorBanner } from "src/components/Banners/CustomErrorBanner.vue";
+  import { default as CustomErrorBanner } from "@/components/Banners/CustomErrorBanner.vue";
 
   const router = useRouter();
   const { t } = useI18n();

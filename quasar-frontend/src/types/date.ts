@@ -1,6 +1,6 @@
-import { dateHuman, timeAgo } from 'src/composables/dateUtils';
-import { type Ti18NFunction } from './i18n';
-import { useSessionStore } from 'src/stores/session';
+import { dateHuman, timeAgo } from "@/composables/dateUtils";
+import { type Ti18NFunction } from "./i18n";
+import { useSessionStore } from "@/stores/session";
 
 const sessionStore = useSessionStore();
 

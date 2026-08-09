@@ -24,9 +24,9 @@
 <script setup lang="ts">
   import { useI18n } from "vue-i18n";
 
-  import { default as UpdateProfileForm } from "src/components/Forms/UpdateProfileForm.vue";
-  import { default as ProfileStorageSettingsWidget } from "src/components/Widgets/ProfileStorageSettingsWidget.vue";
-  import { default as SystemStatsContainerWidget } from "src/components/Widgets/SystemStatsContainerWidget.vue";
+  import { default as UpdateProfileForm } from "@/components/Forms/UpdateProfileForm.vue";
+  import { default as ProfileStorageSettingsWidget } from "@/components/Widgets/ProfileStorageSettingsWidget.vue";
+  import { default as SystemStatsContainerWidget } from "@/components/Widgets/SystemStatsContainerWidget.vue";
 
   const { t } = useI18n();
 </script>
