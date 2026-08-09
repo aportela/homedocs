@@ -39,8 +39,8 @@
           </audio>
         </div>
         <div v-else-if="isPDF(currentAttachment.name)" class="pdf-container q-mx-auto q-mb-md">
-          <PDFWrapper :path="getAttachmentInlineURL(currentAttachment.id, true)"
-            v-if="browserSupportStore.allowPDFPreviews" inner-content-class="pdf-wrapper-inner-class">
+          <PDFWrapper :path="getAttachmentInlineURL(currentAttachment.id, true)" v-if="pdfPreviewsAvailable"
+            inner-content-class="pdf-wrapper-inner-class">
           </PDFWrapper>
           <CustomErrorBanner v-else text="Missing browser PDF preview support" />
         </div>
@@ -79,7 +79,6 @@
   import { bgDownload } from "@/composables/axios";
   import { allowPreview, isImage, isAudio, isPDF } from "@/composables/fileUtils";
   import { getURL as getAttachmentURL, getInlineURL as getAttachmentInlineURL } from "@/composables/attachment";
-  import { useBrowserSupportStore } from "@/stores/browserSupport";
   import { type Document } from "@/types/document";
   import { type CustomBanner as CustomBannerInterface, defaultCustomBanner } from "@/types/customBanner";
 
@@ -105,7 +104,10 @@
     currentIndex: 0
   });
 
+
   const visible = ref<boolean>(true);
+
+  const pdfPreviewsAvailable = computed(() => navigator.pdfViewerEnabled);
 
   const hasAttachments = computed(() => props.document?.attachments?.length > 0);
   const attachmentsCount = computed(() => hasAttachments.value ? props.document?.attachments?.length : 0);
@@ -127,8 +129,6 @@
   };
 
   const downloadBanner: CustomBannerInterface = reactive({ ...defaultCustomBanner });
-
-  const browserSupportStore = useBrowserSupportStore();
 
   const onPaginationChange = () => {
     Object.assign(downloadBanner, defaultCustomBanner);
