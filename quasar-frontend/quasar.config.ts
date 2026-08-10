@@ -14,7 +14,7 @@ export default defineConfig((ctx) => {
     boot: ['axios', 'serverEnvironment', 'router', 'i18n', 'dark'],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#css
-    css: ['app.scss'],
+    css: ['app.scss', 'catppuccin.scss'],
 
     // https://github.com/quasarframework/quasar/tree/dev/extras
     extras: [
