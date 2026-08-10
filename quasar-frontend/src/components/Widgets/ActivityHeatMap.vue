@@ -19,6 +19,10 @@
   import { useI18n } from "vue-i18n";
   import { date } from "quasar";
   import { type Dayjs } from 'dayjs';
+  import dayjs from 'dayjs';
+  import 'dayjs/locale/es';
+  import 'dayjs/locale/en';
+  import 'dayjs/locale/gl';
 
   import { api } from "@/composables/api";
   import { bus } from "@/composables/bus";
@@ -58,6 +62,10 @@
 
   const currentLocale = computed(() => i18NStore.currentLocale.substring(0, 2));
 
+  const dayJSCurrentLocale = computed(
+    () => dayjs.Ls[currentLocale.value] ?? dayjs.Ls.en
+  );
+
   const calDefaultOptions = {
     itemSelector: '#cal-heatmap',
   };
@@ -77,7 +85,7 @@
   interface CalOptions {
     data: DataInterface;
     date: {
-      locale: string;
+      locale: ILocale | undefined;
       start: Date;
       end: Date;
       min: Date;
@@ -118,7 +126,7 @@
       type: "json",
     },
     date: {
-      locale: currentLocale.value,
+      locale: dayJSCurrentLocale.value,
       start: new Date(new Date().setFullYear(new Date().getFullYear() - 1)), // last 12 months
       end: new Date(),
       min: fromDate,
@@ -227,7 +235,7 @@
     if (scaleColorDomain) {
       calOptions.scale.color.domain = scaleColorDomain;
     }
-    calOptions.date.locale = currentLocale.value;
+    calOptions.date.locale = dayJSCurrentLocale.value;
     calOptions.theme = darkModeStore.isDarkModeActive ? "dark" : "light";
     cal.paint(
       calOptions,
