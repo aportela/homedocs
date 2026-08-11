@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <q-card class="q-pa-xl" flat style="height: 100vh;">
+    <q-card class="q-pa-xl homedocs-login-page-container" flat>
       <LoginForm @success="onSuccessLogin" />
     </q-card>
   </q-page>
@@ -21,3 +21,12 @@
   };
 
 </script>
+
+<style lang="css" scoped>
+  .homedocs-login-page-container {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+</style>
