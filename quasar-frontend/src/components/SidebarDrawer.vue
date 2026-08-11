@@ -14,7 +14,7 @@
       <q-item v-for="link in menuItems" :key="link.text" v-ripple clickable :to="{ name: link.routeName }"
         class="rounded-borders q-ma-sm theme-default-q-item"
         :active="link.routeName == currentRouteName || (link.alternateRouteNames?.includes(currentRouteName))"
-        active-class="theme-default-q-item-active">
+        active-class="theme-default-q-item-active homedocs-menu-q-item-active">
         <q-item-section avatar>
           <q-icon :name="link.icon" />
         </q-item-section>
@@ -103,3 +103,10 @@
   };
 
 </script>
+
+<style lang="css" scoped>
+  .homedocs-menu-q-item-active {
+    border: 1px solid var(--ctp-overlay1);
+    background-color: var(--ctp-surface1);
+  }
+</style>
